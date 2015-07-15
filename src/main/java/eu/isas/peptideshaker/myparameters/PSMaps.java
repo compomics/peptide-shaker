@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.myparameters;
 
 import com.compomics.util.experiment.personalization.UrParameter;
-import eu.isas.peptideshaker.scoring.FractionsMap;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.ProteinMap;
@@ -40,11 +39,6 @@ public class PSMaps implements UrParameter {
      * The target decoy map of all search engine scores.
      */
     private InputMap inputMap;
-    /**
-     * The fractions map.
-     * @deprecated not implemented
-     */
-    private FractionsMap fractionsMap;
 
     /**
      * Constructor.
@@ -121,16 +115,6 @@ public class PSMaps implements UrParameter {
      */
     public void setPsmPTMMap(PsmPTMMap psmPTMMap) {
         this.psmPTMMap = psmPTMMap;
-    }
-
-    /**
-     * Getter for the fractions map.
-     *
-     * @deprecated not implemented
-     * @return the fractions map
-     */
-    public FractionsMap getFractionsMap() {
-        return fractionsMap;
     }
 
     @Override

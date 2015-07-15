@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -196,7 +197,7 @@ public class OutputGenerator {
                     if (onlyValidated) {
                         proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(progressDialog, peptideShakerGUI.getFilterPreferences());
                     } else {
-                        proteinKeys = identification.getProteinIdentification();
+                        proteinKeys = new ArrayList<String>(identification.getProteinIdentification());
                     }
                 } else {
                     proteinKeys = aProteinKeys;
@@ -511,9 +512,6 @@ public class OutputGenerator {
                                             if (!onlyValidated) {
                                                 MatchValidationLevel matchValidationLevel = proteinPSParameter.getMatchValidationLevel();
                                                 writer.write(matchValidationLevel.toString());
-                                                if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinPSParameter.getReasonDoubtful().equals("")) {
-                                                    writer.write(" (" + proteinPSParameter.getReasonDoubtful() + ")");
-                                                }
                                                 writer.write(SEPARATOR);
                                             }
                                             if (includeHidden) {
@@ -650,7 +648,7 @@ public class OutputGenerator {
             }
 
             if (aPeptideKeys == null) {
-                peptideKeys = identification.getPeptideIdentification();
+                peptideKeys = new ArrayList<String>(identification.getPeptideIdentification());
             } else {
                 peptideKeys = aPeptideKeys;
             }
@@ -801,7 +799,7 @@ public class OutputGenerator {
                                             if (accession || proteinDescription || surroundings || location || uniqueOnly) {
                                                 if (proteinKey == null) {
                                                     for (String parentProtein : peptide.getParentProteins(sequenceMatchingPreferences)) {
-                                                        ArrayList<String> parentProteins = identification.getProteinMap().get(parentProtein);
+                                                        ArrayList<String> parentProteins = new ArrayList<String>(identification.getProteinMap().get(parentProtein));
                                                         if (parentProteins != null) {
                                                             for (String proteinKey : parentProteins) {
                                                                 if (!possibleProteins.contains(proteinKey)) {
@@ -1022,8 +1020,8 @@ public class OutputGenerator {
                                                     int cpt = 0;
 
                                                     // @TODO: replace with: peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);?
-                                                    identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), secondaryPSParameter, null, true);
-                                                    for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                                                    identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatchesKeys(), secondaryPSParameter, null, true);
+                                                    for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
                                                         secondaryPSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, secondaryPSParameter);
                                                         if (secondaryPSParameter.getMatchValidationLevel().isValidated()) {
                                                             cpt++;
@@ -1043,9 +1041,6 @@ public class OutputGenerator {
                                                 if (!onlyValidated) {
                                                     MatchValidationLevel matchValidationLevel = peptidePSParameter.getMatchValidationLevel();
                                                     writer.write(matchValidationLevel.toString());
-                                                    if (matchValidationLevel == MatchValidationLevel.doubtful && !peptidePSParameter.getReasonDoubtful().equals("")) {
-                                                        writer.write(" (" + peptidePSParameter.getReasonDoubtful() + ")");
-                                                    }
                                                     writer.write(SEPARATOR);
                                                     if (peptideMatch.getTheoreticPeptide().isDecoy(sequenceMatchingPreferences)) {
                                                         writer.write(1 + SEPARATOR);
@@ -1267,14 +1262,14 @@ public class OutputGenerator {
                         PSParameter psParameter = new PSParameter();
                         int psmCounter = 0;
 
-                        HashMap<String, ArrayList<String>> spectrumKeys = new HashMap<String, ArrayList<String>>();
+                        HashMap<String, HashSet<String>> spectrumKeys = new HashMap<String, HashSet<String>>();
                         if (psmKeys == null) {
                             spectrumKeys = identification.getSpectrumIdentificationMap();
                         } else {
                             for (String spectrumKey : psmKeys) {
                                 String spectrumFile = Spectrum.getSpectrumFile(spectrumKey);
                                 if (!spectrumKeys.containsKey(spectrumFile)) {
-                                    spectrumKeys.put(spectrumFile, new ArrayList<String>());
+                                    spectrumKeys.put(spectrumFile, new HashSet<String>());
                                 }
                                 spectrumKeys.get(spectrumFile).add(spectrumKey);
                             }
@@ -1291,9 +1286,9 @@ public class OutputGenerator {
                                 identification.loadSpectrumMatchParameters(spectrumFile, psParameter, progressDialog, true);
                             } else {
                                 progressDialog.setTitle("Copying Spectrum Matches to File. Please Wait... (" + ++fileCounter + "/" + spectrumKeys.size() + ")");
-                                identification.loadSpectrumMatches(spectrumKeys.get(spectrumFile), progressDialog, true);
+                                identification.loadSpectrumMatches(new ArrayList<String>(spectrumKeys.get(spectrumFile)), progressDialog, true);
                                 progressDialog.setTitle("Copying Spectrum Matches Details to File. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
-                                identification.loadSpectrumMatchParameters(spectrumKeys.get(spectrumFile), psParameter, progressDialog, true);
+                                identification.loadSpectrumMatchParameters(new ArrayList<String>(spectrumKeys.get(spectrumFile)), psParameter, progressDialog, true);
                             }
 
                             progressDialog.setMaxPrimaryProgressCounter(spectrumKeys.get(spectrumFile).size());
@@ -1525,9 +1520,6 @@ public class OutputGenerator {
                                                 if (!onlyValidated) {
                                                     MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
                                                     writer.write(matchValidationLevel.toString());
-                                                    if (matchValidationLevel == MatchValidationLevel.doubtful && !psParameter.getReasonDoubtful().equals("")) {
-                                                        writer.write(" (" + psParameter.getReasonDoubtful() + ")");
-                                                    }
                                                     writer.write(SEPARATOR);
 
                                                     if (bestAssumption.getPeptide().isDecoy(identificationParameters.getSequenceMatchingPreferences())) {
@@ -1690,16 +1682,16 @@ public class OutputGenerator {
                         PSParameter psParameter = new PSParameter();
                         int psmCounter = 0;
 
-                        HashMap<String, ArrayList<String>> spectrumKeys = identification.getSpectrumIdentificationMap();
+                        HashMap<String, HashSet<String>> spectrumKeys = identification.getSpectrumIdentificationMap();
 
                         int fileCounter = 0;
 
                         for (String spectrumFile : spectrumKeys.keySet()) {
 
                             progressDialog.setTitle("Loading Spectrum Matches. Please Wait... (" + ++fileCounter + "/" + spectrumKeys.size() + ")");
-                            identification.loadSpectrumMatches(spectrumKeys.get(spectrumFile), progressDialog, true);
+                            identification.loadSpectrumMatches(spectrumFile, progressDialog, true);
                             progressDialog.setTitle("Loading Spectrum Matches Details. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
-                            identification.loadSpectrumMatchParameters(spectrumKeys.get(spectrumFile), psParameter, progressDialog, true);
+                            identification.loadSpectrumMatchParameters(spectrumFile, psParameter, progressDialog, true);
                             progressDialog.setTitle("Copying Spectrum Matches Phospho Details to File. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
                             progressDialog.setMaxPrimaryProgressCounter(spectrumKeys.get(spectrumFile).size());
                             progressDialog.setValue(0);
@@ -1882,9 +1874,6 @@ public class OutputGenerator {
                                 writer.write(psParameter.getPsmConfidence() + SEPARATOR);
                                 MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
                                 writer.write(matchValidationLevel.toString());
-                                if (matchValidationLevel == MatchValidationLevel.doubtful && !psParameter.getReasonDoubtful().equals("")) {
-                                    writer.write(" (" + psParameter.getReasonDoubtful() + ")");
-                                }
                                 writer.write(SEPARATOR);
                                 if (bestAssumption.getPeptide().isDecoy(identificationParameters.getSequenceMatchingPreferences())) {
                                     writer.write(1 + SEPARATOR);
@@ -2035,9 +2024,6 @@ public class OutputGenerator {
                             writer.write(proteinPSParameter.getProteinConfidence() + SEPARATOR);
                             MatchValidationLevel matchValidationLevel = proteinPSParameter.getMatchValidationLevel();
                             writer.write(matchValidationLevel.toString());
-                            if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinPSParameter.getReasonDoubtful().equals("")) {
-                                writer.write(" (" + proteinPSParameter.getReasonDoubtful() + ")");
-                            }
                             writer.write(SEPARATOR);
                             if (proteinMatch.isDecoy()) {
                                 writer.write(1 + SEPARATOR);
@@ -2299,14 +2285,14 @@ public class OutputGenerator {
                         } else {
                             progressDialog.setMaxPrimaryProgressCounter(identification.getSpectrumIdentificationSize());
                         }
-                        HashMap<String, ArrayList<String>> spectrumKeys = new HashMap<String, ArrayList<String>>();
+                        HashMap<String, HashSet<String>> spectrumKeys = new HashMap<String, HashSet<String>>();
                         if (psmKeys == null) {
                             spectrumKeys = identification.getSpectrumIdentificationMap();
                         } else {
                             for (String spectrumKey : psmKeys) {
                                 String spectrumFile = Spectrum.getSpectrumFile(spectrumKey);
                                 if (!spectrumKeys.containsKey(spectrumFile)) {
-                                    spectrumKeys.put(spectrumFile, new ArrayList<String>());
+                                    spectrumKeys.put(spectrumFile, new HashSet<String>());
                                 }
                                 spectrumKeys.get(spectrumFile).add(spectrumKey);
                             }
@@ -2316,8 +2302,8 @@ public class OutputGenerator {
                                 identification.loadSpectrumMatches(spectrumFile, progressDialog, true);
                                 identification.loadSpectrumMatchParameters(spectrumFile, psParameter, progressDialog, true);
                             } else {
-                                identification.loadSpectrumMatches(spectrumKeys.get(spectrumFile), progressDialog, true);
-                                identification.loadSpectrumMatchParameters(spectrumKeys.get(spectrumFile), psParameter, progressDialog, true);
+                                identification.loadSpectrumMatches(new ArrayList<String>(spectrumKeys.get(spectrumFile)), progressDialog, true);
+                                identification.loadSpectrumMatchParameters(new ArrayList<String>(spectrumKeys.get(spectrumFile)), psParameter, progressDialog, true);
                             }
                             for (String spectrumKey : spectrumKeys.get(spectrumFile)) {
 
@@ -2547,7 +2533,7 @@ public class OutputGenerator {
                     if (onlyValidated) {
                         proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(progressDialog, peptideShakerGUI.getFilterPreferences());
                     } else {
-                        proteinKeys = identification.getProteinIdentification();
+                        proteinKeys = new ArrayList<String>(identification.getProteinIdentification());
                     }
                 } else {
                     proteinKeys = aProteinKeys;
@@ -2882,9 +2868,6 @@ public class OutputGenerator {
                                             }
                                             MatchValidationLevel matchValidationLevel = proteinPSParameter.getMatchValidationLevel();
                                             writer.write(matchValidationLevel.toString());
-                                            if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinPSParameter.getReasonDoubtful().equals("")) {
-                                                writer.write(" (" + proteinPSParameter.getReasonDoubtful() + ")");
-                                            }
                                             writer.write(SEPARATOR);
                                             if (includeHidden) {
                                                 writer.write(proteinPSParameter.isHidden() + SEPARATOR);
@@ -2932,7 +2915,7 @@ public class OutputGenerator {
 
         StringBuilder results = new StringBuilder();
 
-        ArrayList<String> spectrumKeys = peptideMatch.getSpectrumMatches();
+        ArrayList<String> spectrumKeys = peptideMatch.getSpectrumMatchesKeys();
         ArrayList<Integer> charges = new ArrayList<Integer>(5);
 
         // find all unique the charges

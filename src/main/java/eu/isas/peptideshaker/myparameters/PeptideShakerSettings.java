@@ -64,49 +64,6 @@ public class PeptideShakerSettings implements UrParameter {
      * Information about the protocol used.
      */
     private ShotgunProtocol shotgunProtocol;
-    /**
-     * The PTM scoring preferences.
-     *
-     * @deprecated use identificationParameters instead
-     */
-    private PTMScoringPreferences ptmScoringPreferences;
-    /**
-     * The gene preferences.
-     *
-     * @deprecated use identificationParameters instead
-     */
-    private GenePreferences genePreferences;
-    /**
-     * The sequence matching preferences.
-     *
-     * @deprecated use identificationParameters instead
-     */
-    private SequenceMatchingPreferences sequenceMatchingPreferences;
-    /**
-     * The identification filters.
-     *
-     * @deprecated use identificationParameters instead
-     */
-    private IdFilter idFilter;
-    /**
-     * The utilities annotation preferences.
-     *
-     * @deprecated use identificationParameters instead
-     */
-    private AnnotationPreferences utilitiesAnnotationPreferences = null;
-    /**
-     * The search parameters (versions older than 0.19) still present for
-     * backward compatibility.
-     *
-     * @deprecated use utilitiesSearchParamters
-     */
-    private eu.isas.peptideshaker.preferences.SearchParameters searchParameters;
-    /**
-     * The parameters linked to the search.
-     *
-     * @deprecated use
-     */
-    private SearchParameters utiltiesSearchParameters;
 
     /**
      * Blank constructor.
@@ -151,38 +108,6 @@ public class PeptideShakerSettings implements UrParameter {
      * @return the identification parameters
      */
     public IdentificationParameters getIdentificationParameters() {
-        if (identificationParameters == null) {
-
-            identificationParameters = new IdentificationParameters();
-
-            SearchParameters tempSearchParameters = getSearchParameters();
-            identificationParameters.setSearchParameters(tempSearchParameters);
-            identificationParameters.setAnnotationPreferences(getAnnotationPreferences());
-            identificationParameters.setIdFilter(getIdFilter());
-            identificationParameters.setIdValidationPreferences(new IdMatchValidationPreferences());
-            ProteinInferencePreferences proteinInferencePreferences = new ProteinInferencePreferences();
-            proteinInferencePreferences.setProteinSequenceDatabase(tempSearchParameters.getFastaFile());
-            identificationParameters.setProteinInferencePreferences(proteinInferencePreferences);
-            identificationParameters.setPsmScoringPreferences(new PsmScoringPreferences());
-            identificationParameters.setPtmScoringPreferences(getPTMScoringPreferences());
-
-            GenePreferences tempGenePreferences = getGenePreferences();
-            // backwards compatability for the gene preferences
-            if (tempGenePreferences.getCurrentSpecies() == null) {
-                tempGenePreferences = new GenePreferences();
-            }
-            if (tempGenePreferences.getCurrentSpecies() != null && tempGenePreferences.getCurrentSpeciesType() == null) {
-                tempGenePreferences.setCurrentSpeciesType("Vertebrates");
-            }
-            identificationParameters.setGenePreferences(tempGenePreferences);
-
-            // backwards compatability for the sequence matching preferences
-            SequenceMatchingPreferences tempSequenceMatchingPreferences = getSequenceMatchingPreferences();
-            if (tempSequenceMatchingPreferences == null) {
-                tempSequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(tempSearchParameters);
-            }
-            identificationParameters.setSequenceMatchingPreferences(tempSequenceMatchingPreferences);
-        }
         return identificationParameters;
     }
 
@@ -193,35 +118,6 @@ public class PeptideShakerSettings implements UrParameter {
      */
     public void setIdentificationParameters(IdentificationParameters identificationParameters) {
         this.identificationParameters = identificationParameters;
-    }
-
-    /**
-     * Returns the annotation preferences.
-     *
-     * @deprecated use identificationParameters instead
-     *
-     * @return the annotation preferences
-     */
-    public AnnotationPreferences getAnnotationPreferences() {
-        if (utilitiesAnnotationPreferences == null) {
-            // most likely a compatibility issue, reset the annotation preferences
-            utilitiesAnnotationPreferences = new AnnotationPreferences();
-        }
-        return utilitiesAnnotationPreferences;
-    }
-
-    /**
-     * Returns the parameters linked to the search.
-     *
-     * @deprecated use identificationParameters instead
-     *
-     * @return the parameters linked to the search
-     */
-    public SearchParameters getSearchParameters() {
-        if (utiltiesSearchParameters == null) {
-            utiltiesSearchParameters = searchParameters.getUpdatedVersion();
-        }
-        return utiltiesSearchParameters;
     }
 
     /**
@@ -279,31 +175,6 @@ public class PeptideShakerSettings implements UrParameter {
     }
 
     /**
-     * Returns the gene preferences.
-     *
-     * @deprecated use identificationParameters instead
-     *
-     * @return the gene preferences
-     */
-    public GenePreferences getGenePreferences() {
-        if (genePreferences == null) {
-            genePreferences = new GenePreferences();
-        }
-        return genePreferences;
-    }
-
-    /**
-     * Set the gene preferences.
-     *
-     * @deprecated use identificationParameters instead
-     *
-     * @param genePreferences the gene preferences
-     */
-    public void setGenePreferences(GenePreferences genePreferences) {
-        this.genePreferences = genePreferences;
-    }
-
-    /**
      * Returns the initial processing preferences.
      *
      * @return the initial processing preferences
@@ -347,28 +218,6 @@ public class PeptideShakerSettings implements UrParameter {
         return identificationFeaturesCache;
     }
 
-    /**
-     * Returns the PTM scoring preferences.
-     *
-     * @deprecated use identificationParameters instead
-     *
-     * @return the PTM scoring preferences
-     */
-    public PTMScoringPreferences getPTMScoringPreferences() {
-        if (ptmScoringPreferences == null) {
-            // backward compatibility check
-            ptmScoringPreferences = new PTMScoringPreferences();
-            ptmScoringPreferences.setFlrThreshold(1);
-            ptmScoringPreferences.setProbabilisticScoreNeutralLosses(true);
-            try {
-                ptmScoringPreferences.setProbabilitsticScoreCalculation(processingPreferences.isAScoreCalculated());
-            } catch (Exception e) {
-                ptmScoringPreferences.setProbabilitsticScoreCalculation(true);
-            }
-        }
-        return ptmScoringPreferences;
-    }
-
     @Override
     public String getFamilyName() {
         return "PeptideShaker";
@@ -377,49 +226,5 @@ public class PeptideShakerSettings implements UrParameter {
     @Override
     public int getIndex() {
         return 2;
-    }
-
-    /**
-     * Returns the ID filters.
-     *
-     * @deprecated use identificationParameters instead
-     *
-     * @return the idFilter
-     */
-    public IdFilter getIdFilter() {
-        return idFilter;
-    }
-
-    /**
-     * Sets the ID filter.
-     *
-     * @deprecated use identificationParameters instead
-     *
-     * @param idFilter the idFilter to set
-     */
-    public void setIdFilter(IdFilter idFilter) {
-        this.idFilter = idFilter;
-    }
-
-    /**
-     * Returns the sequence matching preferences.
-     *
-     * @deprecated use identificationParameters instead
-     *
-     * @return the sequence matching preferences
-     */
-    public SequenceMatchingPreferences getSequenceMatchingPreferences() {
-        return sequenceMatchingPreferences;
-    }
-
-    /**
-     * Sets the sequence matching preferences.
-     *
-     * @deprecated use identificationParameters instead
-     *
-     * @param sequenceMatchingPreferences the sequence matching preferences
-     */
-    public void setSequenceMatchingPreferences(SequenceMatchingPreferences sequenceMatchingPreferences) {
-        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
     }
 }

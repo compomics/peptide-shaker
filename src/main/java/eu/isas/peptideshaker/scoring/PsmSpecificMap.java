@@ -43,19 +43,6 @@ public class PsmSpecificMap implements Serializable {
      * relevance grouped per file.
      */
     private HashMap<Integer, ArrayList<String>> fileSpecificGrouping = new HashMap<Integer, ArrayList<String>>();
-    /**
-     * The filters to use to flag doubtful matches.
-     * 
-     * @deprecated use ValidationQCPreferences instead
-     */
-    private ArrayList<PsmFilter> doubtfulMatchesFilters = null;
-    /**
-     * The filters to use to flag doubtful matches in a map: charge &gt; file name
-     * &gt; list of filters.
-     * 
-     * @deprecated use ValidationQCPreferences instead
-     */
-    private HashMap<Integer, HashMap<String, ArrayList<PsmFilter>>> doubtfulMatchesFiltersSpecificMap = null;
 
     /**
      * Constructor.

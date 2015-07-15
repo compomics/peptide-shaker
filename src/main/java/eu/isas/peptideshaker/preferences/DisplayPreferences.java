@@ -133,10 +133,6 @@ public class DisplayPreferences implements Serializable {
      * @param displayed a boolean indicating whether the PTM shall be displayed
      */
     public void setDisplayedPTM(String ptmName, boolean displayed) {
-        if (displayedPTMs == null) {
-            // Backward compatibility check
-            displayedPTMs = new HashMap<String, Boolean>();
-        }
         displayedPTMs.put(ptmName, displayed);
     }
 
@@ -164,23 +160,8 @@ public class DisplayPreferences implements Serializable {
      * @param modificationProfile the modification profile
      */
     public void setDefaultSelection(com.compomics.util.preferences.ModificationProfile modificationProfile) {
-        if (modificationProfile.getAllNotFixedModifications() == null) {
-            modificationProfile.repair();
-        }
         for (String ptm : modificationProfile.getAllNotFixedModifications()) {
             setDisplayedPTM(ptm, true);
-        }
-    }
-
-    /**
-     * Verifies that the current object version has a display map and sets
-     * variable modifications visible if not.
-     *
-     * @param modificationProfile the modification profile
-     */
-    public void compatibilityCheck(com.compomics.util.preferences.ModificationProfile modificationProfile) {
-        if (displayedPTMs == null) {
-            setDefaultSelection(modificationProfile);
         }
     }
     

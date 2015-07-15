@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -915,11 +916,11 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
                     for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
 
-                        ArrayList<String> proteinMatches = identification.getProteinMap().get(accession);
+                        HashSet<String> proteinMatches = identification.getProteinMap().get(accession);
 
                         if (proteinMatches != null) {
 
-                            identification.loadProteinMatchParameters(proteinMatches, psParameter, null, false);
+                            identification.loadProteinMatchParameters(new ArrayList<String>(proteinMatches), psParameter, null, false);
 
                             for (String proteinMatchKey : proteinMatches) {
 
@@ -963,11 +964,11 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
                             for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
 
-                                ArrayList<String> proteinMatches = identification.getProteinMap().get(accession);
+                                HashSet<String> proteinMatches = identification.getProteinMap().get(accession);
 
                                 if (proteinMatches != null) {
 
-                                    identification.loadProteinMatchParameters(proteinMatches, psParameter, null, false);
+                                    identification.loadProteinMatchParameters(new ArrayList<String>(proteinMatches), psParameter, null, false);
 
                                     for (String proteinMatchKey : proteinMatches) {
 

@@ -248,7 +248,7 @@ public class ProgenesisExcelExport {
         }
         ArrayList<String> proteinGroups = identification.getProteinMatches(peptide);
 
-        ArrayList<String> spectrumKeys = peptideMatch.getSpectrumMatches();
+        ArrayList<String> spectrumKeys = peptideMatch.getSpectrumMatchesKeys();
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);

@@ -7,6 +7,7 @@ import com.compomics.util.experiment.identification.FastaIndex;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.ptm.PtmScore;
+import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -35,7 +36,6 @@ public class PeptideShakerMethods {
     public static String getSearchEnginesText(ProjectDetails projectDetails) {
         String text = "Peak lists obtained from MS/MS spectra were identified using ";
 
-        try {
             ArrayList<Integer> searchEngines = projectDetails.getIdentificationAlgorithms();
             Collections.sort(searchEngines);
             HashMap<String, ArrayList<String>> algorithmToVersionMap = projectDetails.getAlgorithmNameToVersionsMap();
@@ -88,10 +88,6 @@ public class PeptideShakerMethods {
             }
 
             text += ".";
-        } catch (Exception e) {
-            // A backward compatibility issue occurred
-            text += "[add the search eninges used here].";
-        }
         return text;
     }
 
@@ -296,14 +292,14 @@ public class PeptideShakerMethods {
     /**
      * Returns the validation thresholds used.
      *
-     * @param processingPreferences the processing preferences
+     * @param idMatchValidationPreferences the match validation preferences
      *
      * @return the validation thresholds used
      */
-    public static String getValidation(ProcessingPreferences processingPreferences) {
-        double psmFDR = processingPreferences.getPsmFDR();
-        double peptideFDR = processingPreferences.getPeptideFDR();
-        double proteinFDR = processingPreferences.getProteinFDR();
+    public static String getValidation(IdMatchValidationPreferences idMatchValidationPreferences) {
+        double psmFDR = idMatchValidationPreferences.getDefaultPsmFDR();
+        double peptideFDR = idMatchValidationPreferences.getDefaultPeptideFDR();
+        double proteinFDR = idMatchValidationPreferences.getDefaultProteinFDR();
         boolean sameThreshold = psmFDR == peptideFDR && peptideFDR == proteinFDR;
         String text;
         if (sameThreshold) {

@@ -119,7 +119,7 @@ public class FastaExport {
 
                         if (!sequenceFactory.isDecoyAccession(accession)) {
 
-                            ArrayList<String> matches = identification.getProteinMap().get(accession);
+                            ArrayList<String> matches = new ArrayList<String>(identification.getProteinMap().get(accession));
 
                             if (matches != null) {
                                 boolean validated = false;

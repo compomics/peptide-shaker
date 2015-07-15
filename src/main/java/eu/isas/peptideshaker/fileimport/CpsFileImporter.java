@@ -13,7 +13,6 @@ import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.myparameters.PSSettings;
 import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,8 +45,9 @@ public class CpsFileImporter {
      * the file
      * @throws ClassNotFoundException thrown if there is a problem loading the
      * experiment data
+     * @throws org.apache.commons.compress.archivers.ArchiveException exception thrown whenever an error occurred while untaring the file
      */
-    public CpsFileImporter(File cpsFile, String jarFilePath, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
+    public CpsFileImporter(File cpsFile, String jarFilePath, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException, ArchiveException {
 
         File matchFolderParent = PeptideShaker.getMatchesDirectoryParent(jarFilePath);
         File matchFolder = PeptideShaker.getSerializationDirectory(jarFilePath);
@@ -78,13 +78,7 @@ public class CpsFileImporter {
             waitingHandler.setMaxSecondaryProgressCounter(100);
         }
 
-        try {
-            TarUtils.extractFile(cpsFile, matchFolderParent, "resources", waitingHandler);
-        } catch (ArchiveException e) {
-            //Most likely an old project
-            experimentFile = cpsFile;
-            e.printStackTrace();
-        }
+            TarUtils.extractFile(cpsFile, matchFolderParent, waitingHandler);
 
         experiment = ExperimentIO.loadExperiment(experimentFile);
     }
@@ -97,39 +91,7 @@ public class CpsFileImporter {
     public PeptideShakerSettings getExperimentSettings() {
 
         PeptideShakerSettings experimentSettings = new PeptideShakerSettings();
-
-        if (experiment.getUrParam(experimentSettings) instanceof PSSettings) {
-
-            // convert old settings files using utilities version 3.10.68 or older
-            // convert the old ProcessingPreferences object
-            PSSettings tempSettings = (PSSettings) experiment.getUrParam(experimentSettings);
-            ProcessingPreferences tempProcessingPreferences = new ProcessingPreferences();
-            tempProcessingPreferences.setProteinFDR(tempSettings.getProcessingPreferences().getProteinFDR());
-            tempProcessingPreferences.setPeptideFDR(tempSettings.getProcessingPreferences().getPeptideFDR());
-            tempProcessingPreferences.setPsmFDR(tempSettings.getProcessingPreferences().getPsmFDR());
-
-            // convert the old PTMScoringPreferences object
-            PTMScoringPreferences tempPTMScoringPreferences = new PTMScoringPreferences();
-            tempPTMScoringPreferences.setaScoreCalculation(tempSettings.getPTMScoringPreferences().aScoreCalculation());
-            tempPTMScoringPreferences.setaScoreNeutralLosses(tempSettings.getPTMScoringPreferences().isaScoreNeutralLosses());
-            tempPTMScoringPreferences.setFlrThreshold(tempSettings.getPTMScoringPreferences().getFlrThreshold());
-
-            SearchParameters searchParameters = tempSettings.getSearchParameters();
-
-            IdentificationParameters identificationParameters = IdentificationParameters.getDefaultIdentificationParameters(searchParameters);
-            identificationParameters.setAnnotationPreferences(tempSettings.getAnnotationPreferences());
-            identificationParameters.setPtmScoringPreferences(tempPTMScoringPreferences);
-
-            ShotgunProtocol shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(searchParameters);
-
-            experimentSettings = new PeptideShakerSettings(shotgunProtocol, identificationParameters,
-                    tempSettings.getSpectrumCountingPreferences(), tempSettings.getProjectDetails(), tempSettings.getFilterPreferences(),
-                    tempSettings.getDisplayPreferences(),
-                    tempSettings.getMetrics(), tempProcessingPreferences, tempSettings.getIdentificationFeaturesCache());
-
-        } else {
             experimentSettings = (PeptideShakerSettings) experiment.getUrParam(experimentSettings);
-        }
 
         return experimentSettings;
     }

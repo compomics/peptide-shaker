@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * This class exports identifications for post-processing with Non-Linear
@@ -150,7 +151,7 @@ public class ProgenesisExport {
                                                     } else {
                                                         ArrayList<String> accessions = new ArrayList<String>();
                                                         for (String accession : peptide.getParentProteins(sequenceMatchingPreferences)) {
-                                                            ArrayList<String> groups = identification.getProteinMap().get(accession);
+                                                            HashSet<String> groups = identification.getProteinMap().get(accession);
                                                             if (groups != null) {
                                                                 for (String group : groups) {
                                                                     psParameter = (PSParameter) identification.getProteinMatchParameter(group, psParameter);

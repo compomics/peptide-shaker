@@ -124,9 +124,6 @@ public class SpectrumCountingPreferences implements Serializable {
      * @return the reference total mass to use for normalization in μg
      */
     public Double getReferenceMass() {
-        if (referenceMass == null) { // Backward compatibility
-            referenceMass = 2.0;
-        }
         return referenceMass;
     }
 
@@ -146,9 +143,6 @@ public class SpectrumCountingPreferences implements Serializable {
      * @return the unit used for normalization
      */
     public UnitOfMeasurement getUnit() {
-        if (unit == null) { // Backward compatibility
-            unit = new UnitOfMeasurement(StandardUnit.mol, MetricsPrefix.femto);
-        }
         return unit;
     }
 
@@ -167,9 +161,6 @@ public class SpectrumCountingPreferences implements Serializable {
      * @return true if the spectrum counting index should be normalized
      */
     public Boolean getNormalize() {
-        if (normalize == null) { // Backward compatibility
-            normalize = false;
-        }
         return normalize;
     }
 

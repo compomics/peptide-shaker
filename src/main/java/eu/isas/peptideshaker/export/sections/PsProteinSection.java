@@ -136,7 +136,7 @@ public class PsProteinSection {
         }
 
         if (keys == null) {
-            keys = identification.getProteinIdentification();
+            keys = new ArrayList<String>(identification.getProteinIdentification());
         }
         int line = 1;
 

@@ -532,7 +532,7 @@ public class MzIdentMLExport {
         // iterate the spectrum files
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), null, false, waitingHandler);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, null, false, waitingHandler);
 
             while (psmIterator.hasNext()) {
 
@@ -1105,7 +1105,7 @@ public class MzIdentMLExport {
         // iterate the spectrum files
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters, true, waitingHandler);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, true, waitingHandler);
 
             while (psmIterator.hasNext()) {
 
@@ -1207,7 +1207,7 @@ public class MzIdentMLExport {
                             br.write(getCurrentTabSpace() + "<PeptideHypothesis peptideEvidence_ref=\"" + peptideEvidenceId + "\">" + System.getProperty("line.separator"));
                             tabCounter++;
 
-                            for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                            for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
                                 br.write(getCurrentTabSpace() + "<SpectrumIdentificationItemRef spectrumIdentificationItem_ref=\""
                                         + spectrumIds.get(spectrumKey) + "\"/>" + System.getProperty("line.separator"));
                             }
@@ -1698,7 +1698,6 @@ public class MzIdentMLExport {
             String idFileName = Util.getFileName(idFile);
             HashMap<String, ArrayList<String>> algorithms = projectDetails.getIdentificationAlgorithmsForFile(idFileName);
 
-            if (algorithms != null && !algorithms.isEmpty()) {
                 for (String algorithmName : algorithms.keySet()) {
                     Advocate advocate = Advocate.getAdvocate(algorithmName);
                     int advocateIndex = advocate.getIndex();
@@ -1721,10 +1720,6 @@ public class MzIdentMLExport {
                         break;
                     }
                 }
-            } else {
-                // A backward compatibility error occurred
-                writeUserParam("Unknown"); // @TODO: add cv term?
-            }
 
             // @TODO: add children of MS:1000561 - data file checksum type?
             tabCounter--;

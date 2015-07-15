@@ -38,12 +38,6 @@ public class InputMap implements Serializable {
      */
     private HashMap<String, HashMap<Integer, HashMap<Integer, TargetDecoyMap>>> intermediateScores = new HashMap<String, HashMap<Integer, HashMap<Integer, TargetDecoyMap>>>();
     /**
-     * The filters to use to flag doubtful matches.
-     * 
-     * @deprecated use ValidationQCPreferences instead
-     */
-    private ArrayList<AssumptionFilter> doubtfulMatchesFilters = null;
-    /**
      * Map of the search engine contribution. Advocate Id &gt; Spectrum file name
      * &gt; number of validated hits.
      */

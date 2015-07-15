@@ -5,7 +5,7 @@
     <groupId>eu.isas.peptideshaker</groupId>
     <artifactId>PeptideShaker</artifactId>
     <packaging>jar</packaging>
-    <version>0.41.1</version>
+    <version>0.42.0-beta</version>
     <name>PeptideShaker</name>
     <url>http://peptide-shaker.googlecode.com</url>
     <description>Interpretation of proteomics identification results</description>
@@ -315,7 +315,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.49.21</version>
+            <version>3.50.0</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -343,13 +343,13 @@
         <dependency>
             <groupId>de.proteinms.omxparser</groupId>
             <artifactId>omssa-parser</artifactId>
-            <version>1.6.12</version>
+            <version>1.7.0</version>
         </dependency>
         
         <dependency>
             <groupId>de.proteinms.xtandemparser</groupId>
             <artifactId>xtandem-parser</artifactId>
-            <version>1.7.18</version>
+            <version>1.8.0</version>
         </dependency>
         
         <dependency>

@@ -46,13 +46,6 @@ public class PeptideSpecificMap implements Serializable {
      * Separator for the key construction.
      */
     public final static String SEPARATOR = "_cus_";
-    /**
-     * The filters to use to flag doubtful matches.
-     * 
-     * 
-     * @deprecated use ValidationQCPreferences instead
-     */
-    private ArrayList<PeptideFilter> doubtfulMatchesFilters = null;
 
     /**
      * Constructor.

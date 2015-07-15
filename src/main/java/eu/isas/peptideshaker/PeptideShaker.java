@@ -89,14 +89,6 @@ public class PeptideShaker {
      */
     public static final String ENZYME_FILE = "resources/conf/peptideshaker_enzymes.xml";
     /**
-     * Modification file.
-     */
-    public static final String MODIFICATIONS_FILE = "resources/conf/peptideshaker_mods.xml";
-    /**
-     * User modification file.
-     */
-    public static final String USER_MODIFICATIONS_FILE = "resources/conf/peptideshaker_usermods.xml";
-    /**
      * User preferences file.
      */
     private static String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
@@ -219,7 +211,6 @@ public class PeptideShaker {
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
         analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification(getIdentificationReference()));
         Identification identification = analysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        identification.setIsDB(true);
 
         fileImporter = new FileImporter(this, waitingHandler, analysis, shotgunProtocol, identificationParameters, metrics);
         fileImporter.importFiles(idFiles, spectrumFiles, processingPreferences, spectrumCountingPreferences, projectDetails, backgroundThread);
@@ -792,7 +783,7 @@ public class PeptideShaker {
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters, false, waitingHandler);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, false, waitingHandler);
 
             while (psmIterator.hasNext()) {
 

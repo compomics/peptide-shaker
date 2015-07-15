@@ -28,6 +28,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -130,7 +131,7 @@ public class PsPsmSection {
             writeHeader();
         }
 
-        HashMap<String, ArrayList<String>> psmMap = new HashMap<String, ArrayList<String>>();
+        HashMap<String, HashSet<String>> psmMap = new HashMap<String, HashSet<String>>();
 
         if (keys == null) {
             psmMap = identification.getSpectrumIdentificationMap();
@@ -138,7 +139,7 @@ public class PsPsmSection {
             for (String key : keys) {
                 String fileName = Spectrum.getSpectrumFile(key);
                 if (!psmMap.containsKey(fileName)) {
-                    psmMap.put(fileName, new ArrayList<String>());
+                    psmMap.put(fileName, new HashSet<String>());
                 }
                 psmMap.get(fileName).add(key);
             }
@@ -164,7 +165,7 @@ public class PsPsmSection {
 
         for (String spectrumFile : psmMap.keySet()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, psmMap.get(spectrumFile), parameters, !identificationAlgorithmMatchesFeatures.isEmpty(), waitingHandler);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, new ArrayList<String>(psmMap.get(spectrumFile)), parameters, !identificationAlgorithmMatchesFeatures.isEmpty(), waitingHandler);
 
             while (psmIterator.hasNext()) {
 

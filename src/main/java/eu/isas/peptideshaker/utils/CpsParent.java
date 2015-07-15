@@ -18,7 +18,6 @@ import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.ProteinInferencePreferences;
-import com.compomics.util.preferences.ValidationQCPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.fileimport.CpsFileImporter;
@@ -30,7 +29,6 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.preferences.UserPreferences;
 import eu.isas.peptideshaker.preferences.UserPreferencesParent;
-import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -128,8 +126,9 @@ public class CpsParent extends UserPreferencesParent {
      * error occurred while deserializing an object
      * @throws java.lang.InterruptedException exception thrown whenever a
      * threading error occurred while saving the project
+     * @throws org.apache.commons.compress.archivers.ArchiveException exception thrown whenever an error occurs while untaring the file
      */
-    public void loadCpsFromZipFile(File zipFile, String jarFilePath, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
+    public void loadCpsFromZipFile(File zipFile, String jarFilePath, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, SQLException, InterruptedException, ArchiveException {
 
         String newName = PsZipUtils.getTempFolderName(zipFile.getName());
         String parentFolder = PsZipUtils.getUnzipParentFolder();
@@ -170,8 +169,9 @@ public class CpsParent extends UserPreferencesParent {
      * error occurred while deserializing an object
      * @throws java.lang.InterruptedException exception thrown whenever a
      * threading error occurred while saving the project
+     * @throws org.apache.commons.compress.archivers.ArchiveException exception thrown whenever an error occurs while untaring the file
      */
-    public void loadCpsFile(String jarFilePath, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
+    public void loadCpsFile(String jarFilePath, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, SQLException, InterruptedException, ArchiveException {
 
         CpsFileImporter cpsFileImporter = new CpsFileImporter(cpsFile, jarFilePath, waitingHandler);
 
@@ -187,7 +187,7 @@ public class CpsParent extends UserPreferencesParent {
             throw new IllegalArgumentException("No sample found for the experiment " + experiment.getReference());
         }
         sample = samples.get(0);
-        if (samples.size() > 1) { // pretty unlikely to happen for now
+        if (samples.size() > 1) { // unlikely to happen for now
             String message = samples.size() + " samples found in experiment " + experiment.getReference() + ", sample " + sample.getReference() + " selected by default.";
             if (waitingHandler != null) {
                 waitingHandler.appendReport(message, true, true);
@@ -198,7 +198,7 @@ public class CpsParent extends UserPreferencesParent {
             throw new IllegalArgumentException("No replicate found for the sample " + sample.getReference() + " of experiment " + experiment.getReference());
         }
         replicateNumber = replicates.get(0);
-        if (replicates.size() > 1) { // pretty unlikely to happen for now
+        if (replicates.size() > 1) { // unlikely to happen for now
             if (waitingHandler != null) {
                 waitingHandler.appendReport(replicates.size() + " replicates found in sample " + sample.getReference()
                         + " of experiment " + experiment.getReference() + ", replicate " + sample.getReference() + " selected by default.", true, true);
@@ -221,44 +221,19 @@ public class CpsParent extends UserPreferencesParent {
         displayPreferences = experimentSettings.getDisplayPreferences();
         shotgunProtocol = experimentSettings.getShotgunProtocol();
 
-        // backwards compatability for the filter preferences
-        if (filterPreferences == null) {
-            filterPreferences = new FilterPreferences();
-        }
-
-        // backwards compatability for the display preferences
-        SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        if (displayPreferences != null) {
-            displayPreferences.compatibilityCheck(searchParameters.getModificationProfile());
-        } else {
-            displayPreferences = new DisplayPreferences();
-            displayPreferences.setDefaultSelection(searchParameters.getModificationProfile());
-        }
-
         if (waitingHandler != null && waitingHandler.isRunCanceled()) {
             waitingHandler.setRunFinished();
             return;
         }
 
         // Backward compatibility for the shotgun protocol
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
         if (shotgunProtocol == null) {
             shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(searchParameters);
         }
 
-        // Backward compatibility for the Validation quality control preferences
-        ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
-        if (validationQCPreferences.getPsmFilters() == null
-                || validationQCPreferences.getPeptideFilters() == null
-                || validationQCPreferences.getProteinFilters() == null) {
-            MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
-        }
-
         // Get identification details and set up caches
         identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        if (identification.getSpectrumIdentificationMap() == null) {
-            // 0.18 version, needs update of the spectrum mapping
-            identification.updateSpectrumMapping();
-        }
 
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, shotgunProtocol, identificationParameters, metrics, spectrumCountingPreferences);
         IdentificationFeaturesCache identificationFeaturesCache = experimentSettings.getIdentificationFeaturesCache();
@@ -271,7 +246,6 @@ public class CpsParent extends UserPreferencesParent {
         objectsCache.setReadOnly(false);
         String dbFolder = PeptideShaker.getSerializationDirectory(jarFilePath).getAbsolutePath();
         identification.restoreConnection(dbFolder, false, objectsCache);
-        identification.checkIdentificationDBTables(); // Backward compatibility check
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);
         saveUserPreferences();
@@ -297,9 +271,9 @@ public class CpsParent extends UserPreferencesParent {
      */
     public void saveProject(WaitingHandler waitingHandler, boolean emptyCache) throws IOException, SQLException, ArchiveException, ClassNotFoundException, InterruptedException {
         CpsExporter.saveAs(cpsFile, waitingHandler, experiment, identification, shotgunProtocol, identificationParameters,
-                spectrumCountingPreferences, projectDetails, metrics,
+                spectrumCountingPreferences, projectDetails, filterPreferences, metrics,
                 processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(),
-                objectsCache, emptyCache, PeptideShaker.getJarFilePath());
+                objectsCache, emptyCache, displayPreferences, PeptideShaker.getJarFilePath());
 
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);

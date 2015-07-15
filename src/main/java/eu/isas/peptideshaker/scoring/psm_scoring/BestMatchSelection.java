@@ -516,7 +516,7 @@ public class BestMatchSelection {
         }
 
         if (orderedPsmMap != null) {
-            metrics.setGroupedSpectrumKeys(orderedPsmMap);
+            metrics.setOrderedSpectrumKeys(orderedPsmMap);
         }
 
         // the protein count map is no longer needed

@@ -125,7 +125,7 @@ public class PsPeptideSection {
         }
 
         if (keys == null) {
-            keys = identification.getPeptideIdentification();
+            keys = new ArrayList<String>(identification.getPeptideIdentification());
         }
 
         int line = 1;
@@ -189,7 +189,7 @@ public class PsPeptideSection {
                         if (waitingHandler != null) {
                             waitingHandler.setDisplayProgress(false);
                         }
-                        psmSection.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideMatch.getSpectrumMatches(), psmSectionPrefix, validatedOnly, decoys, waitingHandler);
+                        psmSection.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideMatch.getSpectrumMatchesKeys(), psmSectionPrefix, validatedOnly, decoys, waitingHandler);
                         if (waitingHandler != null) {
                             waitingHandler.setDisplayProgress(true);
                         }

@@ -38,24 +38,6 @@ public class PtmScoring implements Serializable {
      */
     public static final int VERY_CONFIDENT = 3;
     /**
-     * The delta scores indexed by the modification location possibility.
-     *
-     * @deprecated use amino acid specific scoring instead
-     */
-    private HashMap<String, Double> deltaScores = new HashMap<String, Double>();
-    /**
-     * The A scores indexed by the modification location possibility.
-     *
-     * @deprecated use probabilistic scores instead
-     */
-    private HashMap<String, Double> aScores = new HashMap<String, Double>();
-    /**
-     * The A scores indexed by the modification location possibility.
-     *
-     * @deprecated use amino acid specific scoring instead
-     */
-    private HashMap<String, Double> probabilisticScores = new HashMap<String, Double>();
-    /**
      * Amino acid specific delta score. 1 is the first amino acid.
      */
     private HashMap<Integer, Double> deltaScoresAtAA = new HashMap<Integer, Double>();
@@ -127,7 +109,6 @@ public class PtmScoring implements Serializable {
      * @param score the delta score
      */
     public void setDeltaScore(int site, double score) {
-        compatibilityCheck();
         deltaScoresAtAA.put(site, score);
     }
 
@@ -138,7 +119,6 @@ public class PtmScoring implements Serializable {
      * @return the attached delta score. 0 if not found.
      */
     public double getDeltaScore(int site) {
-        compatibilityCheck();
         Double score = deltaScoresAtAA.get(site);
         if (score == null) {
             return 0;
@@ -154,7 +134,6 @@ public class PtmScoring implements Serializable {
      * @param score the delta score
      */
     public void setProbabilisticScore(int site, double score) {
-        compatibilityCheck();
         probabilisticScoresAtAA.put(site, score);
     }
 
@@ -165,7 +144,6 @@ public class PtmScoring implements Serializable {
      * @return the attached probabilistic score. 0 if not found.
      */
     public double getProbabilisticScore(int site) {
-        compatibilityCheck();
         Double score = probabilisticScoresAtAA.get(site);
         if (score == null) {
             return 0;
@@ -180,7 +158,6 @@ public class PtmScoring implements Serializable {
      * @return a list of sites where the probabilistic score was used
      */
     public Set<Integer> getProbabilisticSites() {
-        compatibilityCheck();
         return probabilisticScoresAtAA.keySet();
     }
 
@@ -192,7 +169,6 @@ public class PtmScoring implements Serializable {
      * @return a list of sites where the probabilistic score was used
      */
     public ArrayList<Integer> getOrderedProbabilisticSites() {
-        compatibilityCheck();
         HashMap<Double, ArrayList<Integer>> siteMap = new HashMap<Double, ArrayList<Integer>>();
         for (int site : probabilisticScoresAtAA.keySet()) {
             double score = probabilisticScoresAtAA.get(site);
@@ -222,7 +198,6 @@ public class PtmScoring implements Serializable {
      * @return a list of sites where the D-score was used
      */
     public Set<Integer> getDSites() {
-        compatibilityCheck();
         return deltaScoresAtAA.keySet();
     }
 
@@ -234,7 +209,6 @@ public class PtmScoring implements Serializable {
      * @return a list of sites where the D-score was used
      */
     public ArrayList<Integer> getOrderedDSites() {
-        compatibilityCheck();
         HashMap<Double, ArrayList<Integer>> siteMap = new HashMap<Double, ArrayList<Integer>>();
         for (int site : deltaScoresAtAA.keySet()) {
             double score = deltaScoresAtAA.get(site);
@@ -288,54 +262,6 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Backward compatibility check.
-     */
-    private void compatibilityCheck() {
-        if (deltaScoresAtAA == null) {
-            deltaScoresAtAA = new HashMap<Integer, Double>();
-            for (String oldKey : deltaScores.keySet()) {
-                ArrayList<Integer> positions = getLocations(oldKey);
-                double score = deltaScores.get(oldKey);
-                for (int site : positions) {
-                    if (!deltaScoresAtAA.containsKey(site) || deltaScoresAtAA.get(site) > score) {
-                        deltaScoresAtAA.put(site, score);
-                    }
-                }
-            }
-            probabilisticScoresAtAA = new HashMap<Integer, Double>();
-            if (probabilisticScores != null) {
-                for (String oldKey : probabilisticScores.keySet()) { // there should be only one there
-                    ArrayList<Integer> positions = getLocations(oldKey);
-                    double score = probabilisticScores.get(oldKey);
-                    for (int site : positions) {
-                        if (!deltaScoresAtAA.containsKey(site) || deltaScoresAtAA.get(site) > score) {
-                            deltaScoresAtAA.put(site, score);
-                        }
-                    }
-                }
-            }
-            if (aScores != null) {
-                for (String oldKey : aScores.keySet()) { // there should be only one there
-                    ArrayList<Integer> positions = getLocations(oldKey);
-                    double score = aScores.get(oldKey);
-                    for (int site : positions) {
-                        if (!deltaScoresAtAA.containsKey(site) || deltaScoresAtAA.get(site) > score) {
-                            deltaScoresAtAA.put(site, score);
-                        }
-                    }
-                }
-            }
-            ptmLocationAtAA = new HashMap<Integer, Integer>();
-            for (int site : ptmLocation) {
-                ptmLocationAtAA.put(site, siteConfidence);
-            }
-            for (int site : secondaryLocations) {
-                ptmLocationAtAA.put(site, DOUBTFUL);
-            }
-        }
-    }
-
-    /**
      * Sets the confidence level of a modification site. 1 is the first amino
      * acid.
      *
@@ -343,7 +269,6 @@ public class PtmScoring implements Serializable {
      * @param confidenceLevel the confidence level
      */
     public void setSiteConfidence(int site, int confidenceLevel) {
-        compatibilityCheck();
         ptmLocationAtAA.put(site, confidenceLevel);
     }
 
@@ -374,30 +299,11 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the key corresponding to modification possible locations.
-     *
-     * @deprecated use amino acid specific scoring instead
-     *
-     * @param locations the possible modification locations in the sequence
-     * @return the corresponding key
-     */
-    public static String getKey(ArrayList<Integer> locations) {
-        Collections.sort(locations);
-        StringBuilder buf = new StringBuilder();
-        for (int loc : locations) {
-            buf.append(loc);
-            buf.append(separator);
-        }
-        return buf.toString();
-    }
-
-    /**
      * Returns the map of the localization. site &gt; confidence level.
      *
      * @return the map of the localization
      */
     public HashMap<Integer, Integer> getPtmLocationAtAA() {
-        compatibilityCheck();
         return ptmLocationAtAA;
     }
 
@@ -407,7 +313,6 @@ public class PtmScoring implements Serializable {
      * @return the sites of all localized PTMs
      */
     public Set<Integer> getAllPtmLocations() {
-        compatibilityCheck();
         return ptmLocationAtAA.keySet();
     }
 
@@ -431,7 +336,6 @@ public class PtmScoring implements Serializable {
      * fields
      */
     public int getLocalizationConfidence(int site) {
-        compatibilityCheck();
         Integer confidence = ptmLocationAtAA.get(site);
         if (confidence == null) {
             confidence = NOT_FOUND;
@@ -445,7 +349,6 @@ public class PtmScoring implements Serializable {
      * @return the minimal confidence among the PTM sites of this scoring
      */
     public int getMinimalLocalizationConfidence() {
-        compatibilityCheck();
         if (ptmLocationAtAA.isEmpty()) {
             return NOT_FOUND;
         }
@@ -492,7 +395,6 @@ public class PtmScoring implements Serializable {
      * @return the PTM locations at the given confidence level
      */
     public ArrayList<Integer> getPtmLocations(int confidenceLevel) {
-        compatibilityCheck();
         ArrayList<Integer> result = new ArrayList<Integer>();
         for (int site : ptmLocationAtAA.keySet()) {
             if (confidenceLevel == ptmLocationAtAA.get(site)) {

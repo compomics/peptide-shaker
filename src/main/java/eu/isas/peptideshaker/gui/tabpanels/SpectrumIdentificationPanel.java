@@ -2251,18 +2251,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     PSMaps pSMaps = new PSMaps();
                     pSMaps = (PSMaps) identification.getUrParam(pSMaps);
                     eu.isas.peptideshaker.scoring.InputMap inputMap = pSMaps.getInputMap();
-                    if (inputMap == null || !inputMap.hasAdvocateContribution()) {
-                        // Backward compatibility
-                        loadDataFromIdentification();
-                    } else {
-                        advocatesUsed = new ArrayList<Integer>(inputMap.getInputAlgorithmsSorted());
-                        ArrayList<String> spectrumFileNames = identification.getSpectrumFiles();
-                        numberOfValidatedPsmsMap = new HashMap<String, Integer>();
-                        for (String fileName : spectrumFileNames) {
-                            numberOfValidatedPsmsMap.put(fileName, inputMap.getAdvocateContribution(Advocate.peptideShaker.getIndex(), fileName)); // @TODO: should be the same as psm count in the validation tab!
-                        }
-                        updateOverviewPlots(inputMap, pSMaps.getPsmSpecificMap());
+                    advocatesUsed = new ArrayList<Integer>(inputMap.getInputAlgorithmsSorted());
+                    ArrayList<String> spectrumFileNames = identification.getSpectrumFiles();
+                    numberOfValidatedPsmsMap = new HashMap<String, Integer>();
+                    for (String fileName : spectrumFileNames) {
+                        numberOfValidatedPsmsMap.put(fileName, inputMap.getAdvocateContribution(Advocate.peptideShaker.getIndex(), fileName)); // @TODO: should be the same as psm count in the validation tab!
                     }
+                    updateOverviewPlots(inputMap, pSMaps.getPsmSpecificMap());
 
                     // update the advocates color legend
                     ArrayList<Integer> usedAdvocatedAndPeptideShaker = new ArrayList<Integer>();
@@ -2282,7 +2277,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     showSparkLines(peptideShakerGUI.showSparklines());
                     progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
-                    ArrayList<String> spectrumFileNames = identification.getSpectrumFiles();
                     String[] filesArray = new String[spectrumFileNames.size()];
                     int cpt = 0;
 

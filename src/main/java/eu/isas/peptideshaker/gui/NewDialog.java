@@ -17,7 +17,6 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
-import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.filehandling.TempFilesManager;
@@ -959,6 +958,7 @@ public class NewDialog extends javax.swing.JDialog {
                         || myFile.getName().toLowerCase().endsWith("dat")
                         || myFile.getName().toLowerCase().endsWith("mzid")
                         || myFile.getName().toLowerCase().endsWith("csv")
+                        || myFile.getName().toLowerCase().endsWith("res")
                         || myFile.getName().toLowerCase().endsWith("tags")
                         || myFile.getName().toLowerCase().endsWith("zip")
                         || myFile.getName().toLowerCase().endsWith("tide-search.target.txt")
@@ -967,7 +967,7 @@ public class NewDialog extends javax.swing.JDialog {
 
             @Override
             public String getDescription() {
-                return "mzIdentML (.mzid), PepXML (.pep.xml), OMSSA (.omx), X!Tandem (.xml), MS Amanda (.csv), Tide (.txt) and Mascot (.dat)"; // @TODO: add directag
+                return "mzIdentML (.mzid), PepXML (.pep.xml), OMSSA (.omx), X!Tandem (.xml), MS Amanda (.csv), Tide (.txt), Andromeda (.res) and Mascot (.dat)"; // @TODO: add directag
             }
         };
 
@@ -998,6 +998,21 @@ public class NewDialog extends javax.swing.JDialog {
             @Override
             public String getDescription() {
                 return "OMSSA (.omx)";
+            }
+        };
+
+        // filter for Andromeda only
+        FileFilter andromedaFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                return myFile.getName().toLowerCase().endsWith("res")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Andromeda (.res)";
             }
         };
 
@@ -1060,7 +1075,7 @@ public class NewDialog extends javax.swing.JDialog {
                 return "MS Amanda (.csv)";
             }
         };
-        
+
         // filter for tide only
         FileFilter tideFilter = new FileFilter() {
             @Override
@@ -1111,6 +1126,7 @@ public class NewDialog extends javax.swing.JDialog {
         fileChooser.addChoosableFileFilter(pepXMLFilter);
         fileChooser.addChoosableFileFilter(mzidFilter);
         fileChooser.addChoosableFileFilter(omssaFilter);
+        fileChooser.addChoosableFileFilter(andromedaFilter);
         fileChooser.addChoosableFileFilter(tandemFilter);
         fileChooser.addChoosableFileFilter(msAmandaFilter);
         fileChooser.addChoosableFileFilter(tideFilter);
@@ -1389,43 +1405,17 @@ public class NewDialog extends javax.swing.JDialog {
 
             if (fileName.endsWith(".parameters") || fileName.endsWith(".properties")) {
 
-                SearchParameters tempParameters = null;
                 try {
-                    tempParameters = SearchParameters.getIdentificationParameters(file);
+                    SearchParameters tempParameters = SearchParameters.getIdentificationParameters(file);
                     PeptideShaker.loadModifications(tempParameters);
-                } catch (Exception e) {
-                    try {
-                        // Old school format, overwrite old file
-                        Properties props = loadProperties(file);
-                        // We need the user mods file, try to see if it is along the search parameters or use the PeptideShaker version
-                        File userMods = new File(file.getParent(), "usermods.xml");
-                        if (!userMods.exists()) {
-                            userMods = new File(peptideShakerGUI.getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE);
-                        }
-                        tempParameters = IdentificationParametersReader.getSearchParameters(props, userMods);
 
-                        if (fileName.endsWith(".properties")) {
-                            String newName = fileName.substring(0, fileName.lastIndexOf(".")) + ".parameters";
-                            try {
-                                file.delete();
-                            } catch (Exception deleteException) {
-                                deleteException.printStackTrace();
-                            }
-                            file = new File(file.getParentFile(), newName);
-                        }
-                        SearchParameters.saveIdentificationParameters(tempParameters, file);
-                    } catch (Exception saveException) {
-                        e.printStackTrace();
-                        saveException.printStackTrace();
-                        JOptionPane.showMessageDialog(null, "Error occurred while reading " + file + ". Please verify the search parameters.", "File error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-
-                if (tempParameters != null) {
                     String name = Util.removeExtension(file.getName());
                     searchTxt.setText(name);
                     setSearchParameters(tempParameters);
                     peptideShakerGUI.getLastSelectedFolder().setLastSelectedFolder(file.getAbsolutePath());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Error occurred while reading " + file + ". Please verify the search parameters.", "File error", JOptionPane.ERROR_MESSAGE);
                 }
 
             } else {
@@ -1544,9 +1534,9 @@ public class NewDialog extends javax.swing.JDialog {
             allValid = false;
         }
 
-        if (fastaFileTxt.getText() != null && fastaFileTxt.getText().length() > 0 
-                && identificationParameters.getProteinInferencePreferences() != null 
-                && identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase() != null 
+        if (fastaFileTxt.getText() != null && fastaFileTxt.getText().length() > 0
+                && identificationParameters.getProteinInferencePreferences() != null
+                && identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase() != null
                 && identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().exists()) {
             databaseLabel.setForeground(Color.BLACK);
             databaseLabel.setToolTipText(null);
@@ -1661,32 +1651,8 @@ public class NewDialog extends javax.swing.JDialog {
             tempParameters = SearchParameters.getIdentificationParameters(file);
             PeptideShaker.loadModifications(tempParameters);
         } catch (Exception e) {
-            try {
-                // Old school format, overwrite old file
-                Properties props = loadProperties(file);
-                // We need the user mods file, try to see if it is along the search parameters or use the PeptideShaker version
-                File userMods = new File(file.getParent(), "usermods.xml");
-                if (!userMods.exists()) {
-                    userMods = new File(peptideShakerGUI.getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE);
-                }
-                tempParameters = IdentificationParametersReader.getSearchParameters(props, userMods);
-
-                String fileName = file.getName();
-                if (fileName.endsWith(".properties")) {
-                    String newName = fileName.substring(0, fileName.lastIndexOf(".")) + ".parameters";
-                    try {
-                        file.delete();
-                    } catch (Exception deleteException) {
-                        deleteException.printStackTrace();
-                    }
-                    file = new File(file.getParentFile(), newName);
-                }
-                SearchParameters.saveIdentificationParameters(tempParameters, file);
-            } catch (Exception saveException) {
-                e.printStackTrace();
-                saveException.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Error occurred while reading " + file + ". Please verify the search paramters.", "File error", JOptionPane.ERROR_MESSAGE);
-            }
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error occurred while reading " + file + ". Please verify the search paramters.", "File error", JOptionPane.ERROR_MESSAGE);
         }
         if (tempParameters != null) {
 
@@ -1705,13 +1671,6 @@ public class NewDialog extends javax.swing.JDialog {
             }
             if (!missing.isEmpty()) {
                 // Might happen with old parameters files or when no parameter file is found
-                for (File modFile : modificationFiles) {
-                    try {
-                        ptmFactory.importModifications(modFile, true);
-                    } catch (Exception e) {
-                        // ignore error
-                    }
-                }
                 ArrayList<String> missing2 = new ArrayList<String>();
                 for (String ptmName : missing) {
                     if (!ptmFactory.containsPTM(ptmName)) {
@@ -1792,31 +1751,6 @@ public class NewDialog extends javax.swing.JDialog {
 
             setSearchParameters(tempParameters);
         }
-    }
-
-    /**
-     * This method loads the necessary parameters for populating (part of) the
-     * GUI from a properties file.
-     *
-     * @deprecated use SearchParameters instead
-     * @param aFile File with the relevant properties file.
-     * @return Properties with the loaded properties.
-     */
-    private Properties loadProperties(File aFile) {
-        Properties screenProps = new Properties();
-        try {
-            FileInputStream fis = new FileInputStream(aFile);
-            if (fis != null) {
-                screenProps.load(fis);
-                fis.close();
-            } else {
-                throw new IllegalArgumentException("Could not read the file you specified ('" + aFile.getAbsolutePath() + "').");
-            }
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Unable to read file: " + aFile.getName() + ".\n" + ioe.getMessage(), "Error Reading File", JOptionPane.WARNING_MESSAGE);
-        }
-        return screenProps;
     }
 
     /**
@@ -2253,6 +2187,7 @@ public class NewDialog extends javax.swing.JDialog {
 
         if (lowerCaseName.endsWith("dat")
                 || lowerCaseName.endsWith("omx")
+                || lowerCaseName.endsWith("res")
                 || lowerCaseName.endsWith("xml")
                 || lowerCaseName.endsWith("mzid")
                 || lowerCaseName.endsWith("csv")

@@ -52,6 +52,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -256,10 +258,7 @@ public class MatchesValidator {
                     + 2 * identification.getSpectrumIdentificationSize());
         }
 
-        HashMap<String, ArrayList<String>> spectrumKeysMap = identification.getSpectrumIdentificationMap();
-        if (metrics.getGroupedSpectrumKeys() != null) {
-            spectrumKeysMap = metrics.getGroupedSpectrumKeys();
-        }
+        HashMap<String, ArrayList<String>> spectrumKeysMap = metrics.getOrderedSpectrumKeys();
 
         // validate the spectrum matches
         if (inputMap != null) {
@@ -273,7 +272,10 @@ public class MatchesValidator {
 
             ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
-            ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
+            ArrayList<String> spectrumKeys = null;
+            if (spectrumKeysMap != null) {
+                spectrumKeys = spectrumKeysMap.get(spectrumFileName);
+            }
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false, waitingHandler);
 
             ArrayList<PsmValidatorRunnable> psmRunnables = new ArrayList<PsmValidatorRunnable>(processingPreferences.getnThreads());
@@ -331,7 +333,7 @@ public class MatchesValidator {
 
             pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
-            psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false, waitingHandler);
+            psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeysMap.get(spectrumFileName), parameters, false, waitingHandler);
 
             for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
                 PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, inputMap, true);
@@ -955,7 +957,7 @@ public class MatchesValidator {
             HashMap<String, Double> fractionScores = new HashMap<String, Double>();
 
             // get the fraction scores
-            for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+            for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 probaScore = probaScore * psParameter.getPsmProbability();
                 String fraction = Spectrum.getSpectrumFile(spectrumKey);
@@ -1045,7 +1047,11 @@ public class MatchesValidator {
             } else {
                 psParameter.setPeptideProbability(1.0);
             }
-            for (String fraction : psParameter.getFractions()) {
+            Set<String> fractions = psParameter.getFractions();
+            if (fractions == null) {
+                throw new IllegalArgumentException("Fractions not found for peptide " + peptideKey + ".");
+            }
+            for (String fraction : fractions) {
                 if (sequenceFactory.concatenatedTargetDecoy()) {
                     psParameter.setFractionPEP(fraction, peptideMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getFractionScore(fraction)));
                 } else {

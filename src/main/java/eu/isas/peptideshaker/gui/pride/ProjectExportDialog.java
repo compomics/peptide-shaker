@@ -12,7 +12,6 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.ptm.PtmDialog;
-import com.compomics.util.gui.ptm.PtmDialogParent;
 import com.compomics.util.pride.prideobjects.Reference;
 import com.compomics.util.pride.prideobjects.Contact;
 import com.compomics.util.pride.prideobjects.Sample;
@@ -45,7 +44,7 @@ import javax.swing.event.HyperlinkListener;
  *
  * @author Harald Barsnes
  */
-public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialogParent {
+public class ProjectExportDialog extends javax.swing.JDialog {
 
     /**
      * A simple progress dialog.
@@ -217,7 +216,7 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
             // have the user add the CV term mappings
             for (String modName : missingMods) {
                 PTM currentPtm = PTMFactory.getInstance().getPTM(modName);
-                new PtmDialog(this, this, ptmToPrideMap, currentPtm, false);
+                new PtmDialog(this, ptmToPrideMap, currentPtm, false);
             }
         }
     }
@@ -1565,10 +1564,5 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
         prideObjectsFactory.deleteReferenceGroup(referenceGroup);
         insertReferenceOptions();
         referenceGroupsJComboBoxActionPerformed(null);
-    }
-
-    @Override
-    public void updateModifications() {
-        // ignore
     }
 }

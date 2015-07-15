@@ -1739,8 +1739,8 @@ public class QCPanel extends javax.swing.JPanel {
 
                     double value = 0;
 
-                    peptideShakerGUI.getIdentification().loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), spectrumParameter, progressDialog, false);
-                    for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                    peptideShakerGUI.getIdentification().loadSpectrumMatchParameters(peptideMatch.getSpectrumMatchesKeys(), spectrumParameter, progressDialog, false);
+                    for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
 
                         if (progressDialog.isRunCanceled()) {
                             break;
@@ -1924,7 +1924,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-                    PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters, false, progressDialog);
+                    PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, false, progressDialog);
 
                     while (psmIterator.hasNext()) {
 
@@ -1979,7 +1979,7 @@ public class QCPanel extends javax.swing.JPanel {
                 nonValidatedDecoyValues = new ArrayList<Double>();
 
                 for (String spectrumFileName : identification.getSpectrumFiles()) {
-                    PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters, false, progressDialog);
+                    PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, false, progressDialog);
 
                     while (psmIterator.hasNext()) {
 
