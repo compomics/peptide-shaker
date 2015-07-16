@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.export;
 
+import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
+import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.BinaryArrayImpl;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.ShotgunProtocol;

@@ -1,5 +1,8 @@
 package eu.isas.peptideshaker;
 
+import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
+import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
+import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.exceptions.ExceptionHandler;
@@ -11,7 +14,7 @@ import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
-import com.compomics.util.experiment.identification.tags.Tag;
+import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.io.ConfigurationFile;
