@@ -8,10 +8,11 @@ import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.PeptideAssumption;
+import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.SearchParameters;
-import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
+import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.matches.*;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
@@ -3238,7 +3239,24 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             JMenuItem menuItem = new JMenuItem("Spectrum as MGF");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportSpectrumAsMgf();
+                    try {
+                        peptideShakerGUI.exportSelectedSpectraAsMgf();
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
+                }
+            });
+
+            popupMenu.add(menuItem);
+
+            menuItem = new JMenuItem("Spectrum Annotation");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    try {
+                        peptideShakerGUI.exportAnnotatedSpectrum();
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
                 }
             });
 
@@ -3256,7 +3274,24 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             menuItem = new JMenuItem("Spectrum as MGF");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportSpectrumAsMgf();
+                    try {
+                        peptideShakerGUI.exportSelectedSpectraAsMgf();
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
+                }
+            });
+
+            popupMenu.add(menuItem);
+
+            menuItem = new JMenuItem("Spectrum Annotation");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    try {
+                        peptideShakerGUI.exportAnnotatedSpectrum();
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
                 }
             });
 
@@ -3316,12 +3351,30 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 menuItem = new JMenuItem("Spectrum as MGF");
                 menuItem.addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        peptideShakerGUI.exportSpectrumAsMgf();
+                        try {
+                            peptideShakerGUI.exportSelectedSpectraAsMgf();
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
+                        }
                     }
                 });
-            }
 
-            popupMenu.add(menuItem);
+                popupMenu.add(menuItem);
+
+                menuItem = new JMenuItem("Spectrum Annotation");
+                menuItem.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        try {
+                            peptideShakerGUI.exportAnnotatedSpectrum();
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
+                        }
+                    }
+                });
+
+                popupMenu.add(menuItem);
+
+            }
         }
 
         popupMenu.show(exportSpectrumJButton, evt.getX(), evt.getY());
@@ -4988,26 +5041,79 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
-     * Returns an arraylist of all the selected spectra in the PSM table.
+     * Returns an ArrayList of the keys of the selected spectra in the PSM
+     * table.
      *
-     * @return an arraylist of all the selected spectra
-     * @throws MzMLUnmarshallerException
+     * @return an ArrayList of the keys of the selected spectra in the PSM table
      */
-    private ArrayList<MSnSpectrum> getSelectedSpectra() throws MzMLUnmarshallerException {
-
-        ArrayList<MSnSpectrum> allSpectra = new ArrayList<MSnSpectrum>();
+    public ArrayList<String> getSelectedSpectrumKeys() {
 
         int[] selectedRows = psmTable.getSelectedRows();
-        MSnSpectrum tempSpectrum;
+        ArrayList<String> keys = new ArrayList<String>(selectedRows.length);
 
         SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
         for (int row : selectedRows) {
             int psmIndex = tableModel.getViewIndex(row);
             String spectrumKey = psmKeys.get(psmIndex);
+            keys.add(spectrumKey);
+        }
+
+        return keys;
+    }
+
+    /**
+     * Returns a map of the selected spectrum identification assumptions as a
+     * map: spectrum key | assumption
+     *
+     * @return an ArrayList of the keys of the selected spectra in the PSM table
+     *
+     * @throws SQLException exception thrown whenever an error occurred while
+     * loading the object from the database
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading the object in the database
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while casting the database input in the desired match class
+     * @throws InterruptedException thrown whenever a threading issue occurred
+     * while interacting with the database
+     */
+    public HashMap<String, ArrayList<SpectrumIdentificationAssumption>> getSelectedIdentificationAssumptions() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        int[] selectedRows = psmTable.getSelectedRows();
+        HashMap<String, ArrayList<SpectrumIdentificationAssumption>> results = new HashMap<String, ArrayList<SpectrumIdentificationAssumption>>(selectedRows.length);
+
+        SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
+        for (int row : selectedRows) {
+            int psmIndex = tableModel.getViewIndex(row);
+            String spectrumKey = psmKeys.get(psmIndex);
+            SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+            ArrayList<SpectrumIdentificationAssumption> assumptions = new ArrayList<SpectrumIdentificationAssumption>(1);
+            assumptions.add(spectrumMatch.getBestPeptideAssumption());
+            results.put(spectrumKey, assumptions);
+        }
+
+        return results;
+    }
+
+    /**
+     * Returns an arraylist of all the selected spectra in the PSM table.
+     *
+     * @return an arraylist of all the selected spectra
+     *
+     * @throws MzMLUnmarshallerException exception thrown whenever an error
+     * occurred while interacting with an mzML file
+     */
+    public ArrayList<MSnSpectrum> getSelectedSpectra() throws MzMLUnmarshallerException {
+
+        ArrayList<String> spectrumKeys = getSelectedSpectrumKeys();
+        ArrayList<MSnSpectrum> allSpectra = new ArrayList<MSnSpectrum>(spectrumKeys.size());
+        MSnSpectrum tempSpectrum;
+
+        for (String spectrumKey : spectrumKeys) {
             tempSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-            if (tempSpectrum != null) {
-                allSpectra.add(tempSpectrum);
+            if (tempSpectrum == null) {
+                throw new IllegalArgumentException("Spectrum " + spectrumKey + " not found.");
             }
+            allSpectra.add(tempSpectrum);
         }
 
         return allSpectra;
@@ -5090,33 +5196,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             if (secondarySpectrumPlotsJPanel.getComponentCount() == 3) {
                 return (MassErrorPlot) secondarySpectrumPlotsJPanel.getComponent(2);
             }
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns the current spectrum as an mgf string.
-     *
-     * @return the current spectrum as an mgf string
-     */
-    public String getSpectrumAsMgf() {
-
-        int[] selectedRows = psmTable.getSelectedRows();
-
-        if (selectedRows.length > 0) {
-
-            StringBuilder spectraAsMgf = new StringBuilder();
-
-            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
-            for (int row : selectedRows) {
-                int psmIndex = tableModel.getViewIndex(row);
-                String spectrumKey = psmKeys.get(psmIndex);
-                MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-                spectraAsMgf.append(currentSpectrum.asMgf());
-            }
-
-            return spectraAsMgf.toString();
         }
 
         return null;

@@ -2,7 +2,7 @@ package eu.isas.peptideshaker.protein_inference;
 
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.IdentificationParameters;

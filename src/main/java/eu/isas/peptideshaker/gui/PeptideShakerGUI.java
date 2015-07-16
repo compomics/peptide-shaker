@@ -1,5 +1,8 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
+import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
+import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import eu.isas.peptideshaker.gui.filtering.FiltersDialog;
 import com.compomics.util.gui.error_handlers.notification.NotificationDialogParent;
 import com.compomics.util.gui.gene_mapping.SpeciesDialog;
@@ -78,6 +81,9 @@ import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.software.settings.gui.PathSettingsDialog;
 import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.experiment.filtering.Filter;
+import com.compomics.util.experiment.identification.matches.IonMatch;
+import com.compomics.util.experiment.identification.spectrum_annotators.TagSpectrumAnnotator;
+import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.SpecificAnnotationPreferences;
@@ -507,7 +513,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         }
 
         boolean firstRun = new File(getJarFilePath() + "/resources/conf/firstRun").exists();
-        
+
         if (!newVersion) {
 
             // set this version as the default PeptideShaker version
@@ -2186,16 +2192,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void exportSpectrumGraphicsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumGraphicsJMenuItemActionPerformed
-
-        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
-
-        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
-            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) overviewPanel.getSpectrum(), lastSelectedFolder);
-        } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
-            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) spectrumIdentificationPanel.getSpectrum(), lastSelectedFolder);
-        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
-            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) ptmPanel.getSpectrum(), lastSelectedFolder);
-        }
+        exportSpectrumAsFigure();
     }//GEN-LAST:event_exportSpectrumGraphicsJMenuItemActionPerformed
 
     /**
@@ -2341,14 +2338,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void bubblePlotJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bubblePlotJMenuItemActionPerformed
-
-        int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
-
-        if (selectedIndex == OVER_VIEW_TAB_INDEX) {
-            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) overviewPanel.getBubblePlot(), lastSelectedFolder);
-        } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
-            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) spectrumIdentificationPanel.getBubblePlot(), lastSelectedFolder);
-        }
+        exportBubblePlotAsFigure();
     }//GEN-LAST:event_bubblePlotJMenuItemActionPerformed
 
     /**
@@ -2597,38 +2587,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * Save the current spectrum/spectra to an MGF file.
      */
     private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumValuesJMenuItemActionPerformed
-        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
-
-        String spectrumAsMgf = null;
-
-        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
-            spectrumAsMgf = overviewPanel.getSpectrumAsMgf();
-        } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
-            spectrumAsMgf = spectrumIdentificationPanel.getSpectrumAsMgf();
-        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
-            spectrumAsMgf = ptmPanel.getSpectrumAsMgf();
-        }
-
-        if (spectrumAsMgf != null) {
-
-            File selectedFile = getUserSelectedFile(".mgf", "Mascot Generic Format (*.mgf)", "Save As...", false);
-
-            if (selectedFile != null) {
-                try {
-                    FileWriter w = new FileWriter(selectedFile);
-                    BufferedWriter bw = new BufferedWriter(w);
-                    bw.write(spectrumAsMgf);
-                    bw.close();
-                    w.close();
-
-                    JOptionPane.showMessageDialog(this, "Spectrum saved to " + selectedFile.getPath() + ".",
-                            "File Saved", JOptionPane.INFORMATION_MESSAGE);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "An error occurred while saving " + selectedFile.getPath() + ".\n"
-                            + "See resources/PeptideShaker.log for details.", "Save Error", JOptionPane.WARNING_MESSAGE);
-                }
-            }
+        try {
+            exportSelectedSpectraAsMgf();
+        } catch (Exception e) {
+            catchException(e);
         }
     }//GEN-LAST:event_exportSpectrumValuesJMenuItemActionPerformed
 
@@ -2656,19 +2618,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void exportSequenceFragmentationGraphicsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSequenceFragmentationGraphicsJMenuItemActionPerformed
-
-        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
-
-        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
-            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) overviewPanel.getSequenceFragmentationPlot(), lastSelectedFolder);
-        }
-//        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
-//            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
-//        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
-//            new ExportGraphicsDialog(this, true, (Component) ptmPanel.getSpectrum());
-//        }
-
-        // @TODO: add export support for the other tabs
+        exportSequenceFragmentationAsFigure();
     }//GEN-LAST:event_exportSequenceFragmentationGraphicsJMenuItemActionPerformed
 
     /**
@@ -2677,23 +2627,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void exportIntensityHistogramGraphicsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportIntensityHistogramGraphicsJMenuItemActionPerformed
-        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
-
-        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
-
-            ChartPanel chartPanel = overviewPanel.getIntensityHistogramPlot().getChartPanel();
-            ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart());
-            tempChartPanel.setBounds(new Rectangle(chartPanel.getBounds().width * 5, chartPanel.getBounds().height * 5));
-
-            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, tempChartPanel, lastSelectedFolder);
-        }
-//        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
-//            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
-//        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
-//            new ExportGraphicsDialog(this, true, (Component) ptmPanel.getSpectrum());
-//        }
-
-        // @TODO: add export support for the other tabs
+        exportIntensityHistogramAsFigure();
     }//GEN-LAST:event_exportIntensityHistogramGraphicsJMenuItemActionPerformed
 
     /**
@@ -2702,27 +2636,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void exportMassErrorPlotGraphicsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMassErrorPlotGraphicsJMenuItemActionPerformed
-        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
-
-        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
-            if (overviewPanel.getMassErrorPlot() != null) {
-
-                ChartPanel chartPanel = overviewPanel.getMassErrorPlot().getChartPanel();
-                ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart());
-                tempChartPanel.setBounds(new Rectangle(chartPanel.getBounds().width * 5, chartPanel.getBounds().height * 5));
-
-                new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, tempChartPanel, lastSelectedFolder);
-            } else {
-                JOptionPane.showMessageDialog(this, "No mass error plot to export!", "Export Error", JOptionPane.INFORMATION_MESSAGE);
-            }
-        }
-//        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
-//            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
-//        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
-//            new ExportGraphicsDialog(this, true, (Component) ptmPanel.getSpectrum());
-//        }
-
-        // @TODO: add export support for the other tabs
+        exportMassErrorPlotAsFigure();
     }//GEN-LAST:event_exportMassErrorPlotGraphicsJMenuItemActionPerformed
 
     /**
@@ -3396,7 +3310,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
     /**
      * Imports the gene mapping.
-     * 
+     *
      * @param updateEqualVersion if true, the version is updated with equal
      * version numbers, false, only update if the new version is newer
      */
@@ -5772,44 +5686,269 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
     /**
      * Export the current spectrum as an mgf.
+     *
+     * @throws java.io.IOException Exception thrown whenever an error occurred
+     * while writing the mgf file
      */
-    public void exportSpectrumAsMgf() {
-        exportSpectrumValuesJMenuItemActionPerformed(null);
+    public void exportSelectedSpectraAsMgf() throws IOException {
+
+        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+
+        ArrayList<String> selectedSpectra = new ArrayList<String>(1);
+
+        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+            selectedSpectra = overviewPanel.getSelectedSpectrumKeys();
+        } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
+            selectedSpectra.add(spectrumIdentificationPanel.getSelectedSpectrumKey());
+        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+            selectedSpectra = ptmPanel.getSelectedPsmsKeys();
+        }
+
+        if (!selectedSpectra.isEmpty()) {
+
+            File selectedFile = getUserSelectedFile(".mgf", "Mascot Generic Format (*.mgf)", "Save As...", false);
+
+            if (selectedFile != null) {
+                BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile));
+                try {
+                    for (String spectrumKey : selectedSpectra) {
+                        MSnSpectrum spectrum = getSpectrum(spectrumKey);
+                        if (spectrum == null) {
+                            throw new IllegalArgumentException("Spectrum " + spectrumKey + " not found.");
+                        }
+                        bw.write(spectrum.asMgf());
+                    }
+
+                    JOptionPane.showMessageDialog(this, "Spectrum saved to " + selectedFile.getPath() + ".",
+                            "File Saved", JOptionPane.INFORMATION_MESSAGE);
+                } finally {
+                    bw.close();
+                }
+            }
+        }
+    }
+
+    /**
+     * Export the current spectrum annotation.
+     *
+     * @throws SQLException exception thrown whenever an error occurred while
+     * loading the object from the database
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while casting the database input in the desired match class
+     * @throws InterruptedException thrown whenever a threading issue occurred
+     * while interacting with the database
+     */
+    public void exportAnnotatedSpectrum() throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+
+        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+
+        HashMap<String, ArrayList<SpectrumIdentificationAssumption>> selectedAssumptions = null;
+
+        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+            selectedAssumptions = overviewPanel.getSelectedIdentificationAssumptions();
+        } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
+            selectedAssumptions = spectrumIdentificationPanel.getSelectedIdentificationAssumptions();
+        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+            selectedAssumptions = ptmPanel.getSelectedIdentificationAssumptions();
+        }
+
+        if (selectedAssumptions != null && !selectedAssumptions.isEmpty()) {
+
+            File selectedFile = getUserSelectedFile(".txt", "Text (*.txt)", "Save As...", false);
+
+            if (selectedFile != null) {
+
+                AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
+                PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
+                TagSpectrumAnnotator tagSpectrumAnnotator = new TagSpectrumAnnotator();
+
+                String separator = "\t";
+                BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile));
+                try {
+                    for (String spectrumKey : selectedAssumptions.keySet()) {
+                        MSnSpectrum spectrum = getSpectrum(spectrumKey);
+                        if (spectrum == null) {
+                            throw new IllegalArgumentException("Spectrum " + spectrumKey + " not found.");
+                        }
+                        ArrayList<IonMatch> annotations = null;
+
+                        ArrayList<SpectrumIdentificationAssumption> assumptions = selectedAssumptions.get(spectrumKey);
+                        if (assumptions != null && !assumptions.isEmpty()) {
+                            for (SpectrumIdentificationAssumption assumption : assumptions) {
+                                String identifier;
+                                if (assumption instanceof PeptideAssumption) {
+                                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                                    Peptide peptide = peptideAssumption.getPeptide();
+                                    SpecificAnnotationPreferences exportAnnotationPreferences = new SpecificAnnotationPreferences(spectrumKey, peptideAssumption);
+                                    exportAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(exportAnnotationPreferences.getSpectrumKey(), exportAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingPreferences(), getIdentificationParameters().getPtmScoringPreferences().getSequenceMatchingPreferences());
+                                    annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, exportAnnotationPreferences, spectrum, peptide);
+                                    identifier = peptide.getSequenceWithLowerCasePtms();
+                                } else if (assumption instanceof TagAssumption) {
+                                    TagAssumption tagAssumption = (TagAssumption) assumption;
+                                    Tag tag = tagAssumption.getTag();
+                                    SpecificAnnotationPreferences exportAnnotationPreferences = new SpecificAnnotationPreferences(spectrumKey, tagAssumption);
+                                    exportAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(exportAnnotationPreferences.getSpectrumKey(), exportAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingPreferences(), getIdentificationParameters().getPtmScoringPreferences().getSequenceMatchingPreferences());
+                                    annotations = tagSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, exportAnnotationPreferences, spectrum, tag);
+                                    identifier = tag.asSequence(); //@TODO: add PTMs?
+                                } else {
+                                    throw new UnsupportedOperationException("Spectrum annotation not implemented for identification assumption of type " + assumption.getClass() + ".");
+                                }
+
+                                HashMap<Double, ArrayList<IonMatch>> annotationMap = new HashMap<Double, ArrayList<IonMatch>>();
+                                if (annotations != null) {
+                                    for (IonMatch ionMatch : annotations) {
+                                        Double mz = ionMatch.peak.mz;
+                                        ArrayList<IonMatch> matchesAtMz = annotationMap.get(mz);
+                                        if (matchesAtMz == null) {
+                                            matchesAtMz = new ArrayList<IonMatch>(1);
+                                            annotationMap.put(mz, matchesAtMz);
+                                        }
+                                        matchesAtMz.add(ionMatch);
+                                    }
+                                }
+
+                                bw.write("File: " + Spectrum.getSpectrumFile(spectrumKey) + separator + "Spectrum: " + Spectrum.getSpectrumTitle(spectrumKey) + separator + "Spectrum Identification Assumption: " + identifier);
+                                bw.newLine();
+                                bw.write("m/z" + separator + "Intensity" + separator + "Ion" + separator + "Theoretic m/z" + separator + "Absolute Error");
+                                bw.newLine();
+                                HashMap<Double, Peak> peakMap = spectrum.getPeakMap();
+                                for (Double mz : spectrum.getOrderedMzValues()) {
+                                    Peak peak = peakMap.get(mz);
+                                    ArrayList<IonMatch> matches = annotationMap.get(mz);
+                                    if (matches != null) {
+                                        for (IonMatch ionMatch : matches) {
+                                            bw.write(mz + separator + peak.intensity + separator + ionMatch.getPeakAnnotation() + separator + ionMatch.ion.getTheoreticMz(ionMatch.charge.value) + separator + ionMatch.getAbsoluteError());
+                                            bw.newLine();
+                                        }
+                                    } else {
+                                        bw.write(mz + separator + peak.intensity + separator + separator + separator);
+                                        bw.newLine();
+                                    }
+                                }
+                                bw.newLine();
+                            }
+                        } else {
+                            bw.write("File: " + Spectrum.getSpectrumFile(spectrumKey) + separator + "Spectrum: " + Spectrum.getSpectrumTitle(spectrumKey));
+                            bw.newLine();
+                            bw.write("m/z" + separator + "Intensity" + separator + "Ion" + separator + "Theoretic m/z" + separator + "Absolute Error");
+                            bw.newLine();
+                            HashMap<Double, Peak> peakMap = spectrum.getPeakMap();
+                            for (Double mz : spectrum.getOrderedMzValues()) {
+                                Peak peak = peakMap.get(mz);
+                                bw.write(mz + separator + peak.intensity + separator + separator + separator);
+                                bw.newLine();
+                            }
+
+                        }
+                    }
+
+                    JOptionPane.showMessageDialog(this, "Spectrum saved to " + selectedFile.getPath() + ".",
+                            "File Saved", JOptionPane.INFORMATION_MESSAGE);
+                } finally {
+                    bw.close();
+                }
+            }
+        }
     }
 
     /**
      * Export the current spectrum as a figure.
      */
     public void exportSpectrumAsFigure() {
-        exportSpectrumGraphicsJMenuItemActionPerformed(null);
+
+        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+
+        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) overviewPanel.getSpectrum(), lastSelectedFolder);
+        } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
+            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) spectrumIdentificationPanel.getSpectrum(), lastSelectedFolder);
+        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) ptmPanel.getSpectrum(), lastSelectedFolder);
+        }
     }
 
     /**
      * Export the current sequence fragmentation as a figure.
      */
     public void exportSequenceFragmentationAsFigure() {
-        exportSequenceFragmentationGraphicsJMenuItemActionPerformed(null);
+        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+
+        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) overviewPanel.getSequenceFragmentationPlot(), lastSelectedFolder);
+        }
+//        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
+//            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
+//        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+//            new ExportGraphicsDialog(this, true, (Component) ptmPanel.getSpectrum());
+//        }
+
+        // @TODO: add export support for the other tabs
     }
 
     /**
      * Export the current intensity histogram as a figure.
      */
     public void exportIntensityHistogramAsFigure() {
-        exportIntensityHistogramGraphicsJMenuItemActionPerformed(null);
+        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+
+        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+
+            ChartPanel chartPanel = overviewPanel.getIntensityHistogramPlot().getChartPanel();
+            ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart());
+            tempChartPanel.setBounds(new Rectangle(chartPanel.getBounds().width * 5, chartPanel.getBounds().height * 5));
+
+            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, tempChartPanel, lastSelectedFolder);
+        }
+//        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
+//            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
+//        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+//            new ExportGraphicsDialog(this, true, (Component) ptmPanel.getSpectrum());
+//        }
+
+        // @TODO: add export support for the other tabs
     }
 
     /**
      * Export the current mass error plot as a figure.
      */
     public void exportMassErrorPlotAsFigure() {
-        exportMassErrorPlotGraphicsJMenuItemActionPerformed(null);
+        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+
+        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+            if (overviewPanel.getMassErrorPlot() != null) {
+
+                ChartPanel chartPanel = overviewPanel.getMassErrorPlot().getChartPanel();
+                ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart());
+                tempChartPanel.setBounds(new Rectangle(chartPanel.getBounds().width * 5, chartPanel.getBounds().height * 5));
+
+                new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, tempChartPanel, lastSelectedFolder);
+            } else {
+                JOptionPane.showMessageDialog(this, "No mass error plot to export!", "Export Error", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+//        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
+//            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
+//        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+//            new ExportGraphicsDialog(this, true, (Component) ptmPanel.getSpectrum());
+//        }
+
+        // @TODO: add export support for the other tabs
     }
 
     /**
      * Export the current bubble plot as a figure.
      */
     public void exportBubblePlotAsFigure() {
-        bubblePlotJMenuItemActionPerformed(null);
+
+        int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
+
+        if (selectedIndex == OVER_VIEW_TAB_INDEX) {
+            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) overviewPanel.getBubblePlot(), lastSelectedFolder);
+        } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
+            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) spectrumIdentificationPanel.getBubblePlot(), lastSelectedFolder);
+        }
     }
 
     /**

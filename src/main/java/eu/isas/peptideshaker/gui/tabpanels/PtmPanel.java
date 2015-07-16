@@ -5,9 +5,10 @@ import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.PeptideAssumption;
+import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
+import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -2941,7 +2942,24 @@ public class PtmPanel extends javax.swing.JPanel {
             menuItem = new JMenuItem("Spectrum as MGF");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportSpectrumAsMgf();
+                    try {
+                        peptideShakerGUI.exportSelectedSpectraAsMgf();
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
+                }
+            });
+
+            popupMenu.add(menuItem);
+            
+            menuItem = new JMenuItem("Spectrum Annotation");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    try {
+                        peptideShakerGUI.exportAnnotatedSpectrum();
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
                 }
             });
 
@@ -3909,11 +3927,11 @@ public class PtmPanel extends javax.swing.JPanel {
         try {
             if (!getSelectedPeptide().equals("")) {
                 if (selectedPsmsTable.getSelectedRow() != -1 && relatedPsmsTable.getSelectedRow() != -1) {
-                    updateSpectrum(getSelectedPsm(false).get(0), getSelectedPsm(true).get(0));
+                    updateSpectrum(getSelectedPsmsKeys(false).get(0), getSelectedPsmsKeys(true).get(0));
                 } else if (selectedPsmsTable.getSelectedRow() != -1 && relatedPsmsTable.getSelectedRow() == -1) {
-                    updateSpectrum(getSelectedPsm(false).get(0), null);
+                    updateSpectrum(getSelectedPsmsKeys(false).get(0), null);
                 } else if (selectedPsmsTable.getSelectedRow() == -1 && relatedPsmsTable.getSelectedRow() != -1) {
-                    updateSpectrum(getSelectedPsm(true).get(0), null);
+                    updateSpectrum(getSelectedPsmsKeys(true).get(0), null);
                 }
             }
         } catch (Exception e) {
@@ -4125,9 +4143,10 @@ public class PtmPanel extends javax.swing.JPanel {
      *
      * @param relatedPeptide if true, the related PSM table is used, otherwise
      * the selected PSM table is used
+     *
      * @return the keys of the selected PSMs
      */
-    private ArrayList<String> getSelectedPsm(boolean relatedPeptide) {
+    private ArrayList<String> getSelectedPsmsKeys(boolean relatedPeptide) {
         ArrayList<String> psmKey = new ArrayList<String>();
         try {
             PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(relatedPeptide));
@@ -4153,8 +4172,41 @@ public class PtmPanel extends javax.swing.JPanel {
      *
      * @return the keys of the selected PSMs
      */
-    private ArrayList<String> getSelectedPsm() {
-        return getSelectedPsm(relatedSelected);
+    public ArrayList<String> getSelectedPsmsKeys() {
+        return getSelectedPsmsKeys(relatedSelected);
+    }
+
+    /**
+     * Returns a map of the selected spectrum identification assumptions as a
+     * map: spectrum key | assumption
+     *
+     * @return an ArrayList of the keys of the selected spectra in the PSM table
+     *
+     * @throws SQLException exception thrown whenever an error occurred while
+     * loading the object from the database
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading the object in the database
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while casting the database input in the desired match class
+     * @throws InterruptedException thrown whenever a threading issue occurred
+     * while interacting with the database
+     */
+    public HashMap<String, ArrayList<SpectrumIdentificationAssumption>> getSelectedIdentificationAssumptions() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        HashMap<String, ArrayList<SpectrumIdentificationAssumption>> result = new HashMap<String, ArrayList<SpectrumIdentificationAssumption>>(2);
+        for (String spectrumKey : getSelectedPsmsKeys(false)) {
+            SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+            ArrayList<SpectrumIdentificationAssumption> assumptions = new ArrayList<SpectrumIdentificationAssumption>(1);
+            assumptions.add(spectrumMatch.getBestPeptideAssumption());
+            result.put(spectrumKey, assumptions);
+        }
+        for (String spectrumKey : getSelectedPsmsKeys(true)) {
+            SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+            ArrayList<SpectrumIdentificationAssumption> assumptions = new ArrayList<SpectrumIdentificationAssumption>(1);
+            assumptions.add(spectrumMatch.getBestPeptideAssumption());
+            result.put(spectrumKey, assumptions);
+        }
+        return result;
     }
 
     /**
@@ -4503,28 +4555,6 @@ public class PtmPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Returns the current spectrum as an mgf string.
-     *
-     * @return the current spectrum as an mgf string
-     */
-    public String getSpectrumAsMgf() {
-
-        String spectrumAsMgf = "";
-        try {
-            for (String spectrumKey : getSelectedPsm()) {
-                MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-                spectrumAsMgf += currentSpectrum.asMgf() + System.getProperty("line.separator");
-            }
-            if (!spectrumAsMgf.isEmpty()) {
-                return spectrumAsMgf;
-            }
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-        }
-        return null;
-    }
-
-    /**
      * Updates the modification profile to the currently selected peptide.
      *
      * @param peptideMatch the peptide match to create the profile for
@@ -4811,9 +4841,9 @@ public class PtmPanel extends javax.swing.JPanel {
 
         String psmKey = "";
         if (selectedPsmsTable.getSelectedRow() != -1) {
-            psmKey = getSelectedPsm(false).get(0);
+            psmKey = getSelectedPsmsKeys(false).get(0);
         } else if (relatedPsmsTable.getSelectedRow() != -1) {
-            psmKey = getSelectedPsm(true).get(0);
+            psmKey = getSelectedPsmsKeys(true).get(0);
         }
 
         if (psmKey.equals("")) {

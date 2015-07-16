@@ -6,18 +6,18 @@ import com.compomics.util.experiment.biology.AminoAcidSequence;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.PeptideAssumption;
+import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
-import com.compomics.util.experiment.identification.TagAssumption;
+import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.spectrum_annotators.TagSpectrumAnnotator;
-import com.compomics.util.experiment.identification.tags.TagComponent;
-import com.compomics.util.experiment.identification.tags.tagcomponents.MassGap;
+import com.compomics.util.experiment.identification.amino_acid_tags.TagComponent;
+import com.compomics.util.experiment.biology.MassGap;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
@@ -1959,13 +1959,41 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             });
 
             popupMenu.add(menuItem);
+            menuItem = new JMenuItem("Spectrum Annotation");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    try {
+                        peptideShakerGUI.exportAnnotatedSpectrum();
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
+                }
+            });
+
+            popupMenu.add(menuItem);
         }
 
         if (searchResultsTable.getSelectedRowCount() == 1) {
             menuItem = new JMenuItem("Spectrum as MGF");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportSpectrumAsMgf();
+                    try {
+                        peptideShakerGUI.exportSelectedSpectraAsMgf();
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
+                }
+            });
+
+            popupMenu.add(menuItem);
+            menuItem = new JMenuItem("Spectrum Annotation");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    try {
+                        peptideShakerGUI.exportAnnotatedSpectrum();
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
                 }
             });
 
@@ -1975,6 +2003,18 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     peptideShakerGUI.exportBubblePlotAsFigure();
+                }
+            });
+
+            popupMenu.add(menuItem);
+            menuItem = new JMenuItem("Spectrum Annotation");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    try {
+                        peptideShakerGUI.exportAnnotatedSpectrum();
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
                 }
             });
 
@@ -2511,6 +2551,34 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }
 
     /**
+     * Returns a map of the selected spectrum identification assumptions as a
+     * map: spectrum key | assumption
+     *
+     * @return an ArrayList of the keys of the selected spectra in the PSM table
+     *
+     * @throws SQLException exception thrown whenever an error occurred while
+     * loading the object from the database
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading the object in the database
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while casting the database input in the desired match class
+     * @throws InterruptedException thrown whenever a threading issue occurred
+     * while interacting with the database
+     */
+    public HashMap<String, ArrayList<SpectrumIdentificationAssumption>> getSelectedIdentificationAssumptions() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        int[] selectedRows = searchResultsTable.getSelectedRows();
+        ArrayList<SpectrumIdentificationAssumption> assumptions = new ArrayList<SpectrumIdentificationAssumption>();
+        for (int i = 0; i < searchResultsTable.getSelectedRowCount(); i++) {
+            assumptions.add(currentAssumptionsList.get(selectedRows[i]));
+        }
+        HashMap<String, ArrayList<SpectrumIdentificationAssumption>> result = new HashMap<String, ArrayList<SpectrumIdentificationAssumption>>(selectedRows.length);
+        String spectrumKey = getSelectedSpectrumKey();
+        result.put(spectrumKey, assumptions);
+        return result;
+    }
+
+    /**
      * Updates the spectrum selected according to the user's last selection.
      */
     public void updateSelection() {
@@ -2923,6 +2991,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                                         modifiedSequence += tagAssumption.getTag().getTaggedModifiedSequence(
                                                 peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile(), false, false, true, false);
+                                    } else {
+                                        throw new UnsupportedOperationException("Spectrum annotation not implemented for identification assumption of type " + currentAssumption.getClass() + ".");
                                     }
                                 }
                             }
@@ -3012,25 +3082,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     public Component getSpectrum() {
         return (Component) spectrumChartPanel.getComponent(0);
-    }
-
-    /**
-     * Returns the current spectrum as an mgf string.
-     *
-     * @return the current spectrum as an mgf string
-     */
-    public String getSpectrumAsMgf() {
-
-        if (spectrumTable.getSelectedRow() != -1) {
-            String spectrumKey = getSelectedSpectrumKey();
-            MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-
-            if (currentSpectrum != null) {
-                return currentSpectrum.asMgf();
-            }
-        }
-
-        return null;
     }
 
     /**
