@@ -24,6 +24,7 @@ public enum PsProteinFeature implements ExportFeature {
     coverage("Coverage [%]", "Sequence coverage by validated peptides in percent of the protein designed by the main accession.", false),
     confident_coverage("Confident Coverage [%]", "Sequence coverage by confident peptides in percent of the protein designed by the main accession.", false),
     non_enzymatic("Non-Enzymatic", "Indicates how many non-enzymatic peptides were found for this protein match.", false),
+    spectrum_counting_normalized("Spectrum Counting Normalized ", "The selected spectrum counting metric normalized to a fixed sample amount.", false),
     spectrum_counting_nsaf("Spectrum Counting NSAF ", "Normalized Spectrum Abundance Factor (NSAF).", false),
     spectrum_counting_empai("Spectrum Counting emPAI", "exponentially modified Protein Abundance Index (emPAI).", false),
     confident_modification_sites("Confidently Localized Modification Sites", "List of the sites where a variable modification was confidently localized.", false),
