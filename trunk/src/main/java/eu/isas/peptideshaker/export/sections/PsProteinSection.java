@@ -446,6 +446,8 @@ public class PsProteinSection {
                 return -10 * FastMath.log10(psParameter.getProteinProbabilityScore()) + "";
             case raw_score:
                 return psParameter.getProteinProbabilityScore() + "";
+            case spectrum_counting_normalized:
+                return identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey) + "";
             case spectrum_counting_nsaf:
                 try {
                     return identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
