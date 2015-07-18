@@ -478,7 +478,7 @@ public class PsPsmSection {
                     String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
                     ArrayList<String> modifications = new ArrayList<String>();
                     for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
-                        if (ptm.contains("phospho")) {
+                        if (ptm.toLowerCase().contains("phospho")) {
                             modifications.add(ptm);
                         }
                     }
@@ -488,7 +488,7 @@ public class PsPsmSection {
             case confident_phosphosites_number:
                 ArrayList<String> modifications = new ArrayList<String>();
                 for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
-                    if (ptm.contains("phospho")) {
+                    if (ptm.toLowerCase().contains("phospho")) {
                         modifications.add(ptm);
                     }
                 }
@@ -498,7 +498,7 @@ public class PsPsmSection {
                     String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
                     modifications = new ArrayList<String>();
                     for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
-                        if (ptm.contains("phospho")) {
+                        if (ptm.toLowerCase().contains("phospho")) {
                             modifications.add(ptm);
                         }
                     }
@@ -508,7 +508,7 @@ public class PsPsmSection {
             case ambiguous_phosphosites_number:
                 modifications = new ArrayList<String>();
                 for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
-                    if (ptm.contains("phospho")) {
+                    if (ptm.toLowerCase().contains("phospho")) {
                         modifications.add(ptm);
                     }
                 }
