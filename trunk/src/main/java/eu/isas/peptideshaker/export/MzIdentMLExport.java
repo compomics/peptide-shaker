@@ -26,8 +26,6 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
-import com.compomics.util.experiment.refinementparameters.MascotScore;
-import com.compomics.util.experiment.refinementparameters.MsAmandaScore;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
@@ -1568,12 +1566,10 @@ public class MzIdentMLExport {
                                     scores.put(tempAdvocate, eValue);
 
                                     // save the special advocate scores
-                                    if (tempAdvocate == Advocate.mascot.getIndex()
-                                            && peptideAssumption.getUrParam(new MascotScore()) != null) {
-                                        mascotScore = ((MascotScore) peptideAssumption.getUrParam(new MascotScore())).getScore();
-                                    } else if (tempAdvocate == Advocate.msAmanda.getIndex()
-                                            && peptideAssumption.getUrParam(new MsAmandaScore()) != null) {
-                                        msAmandaScore = ((MsAmandaScore) peptideAssumption.getUrParam(new MsAmandaScore())).getScore();
+                                    if (tempAdvocate == Advocate.mascot.getIndex()) {
+                                        mascotScore = peptideAssumption.getRawScore();
+                                    } else if (tempAdvocate == Advocate.msAmanda.getIndex()) {
+                                        msAmandaScore = peptideAssumption.getRawScore();
                                     }
                                 }
                             }
