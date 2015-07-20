@@ -19,7 +19,6 @@ import com.compomics.util.experiment.identification.ptm.ptmscores.MDScore;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.ModificationProfile;
@@ -1821,11 +1820,10 @@ public class OutputGenerator {
                                                 mascotAssumptions.addAll(peptideAssumptionList);
                                                 for (SpectrumIdentificationAssumption assumption : peptideAssumptionList) {
                                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                                    MascotScore mascotScore = new MascotScore();
-                                                    mascotScore = (MascotScore) peptideAssumption.getUrParam(mascotScore);
-                                                    if (mascotScore.getScore() > bestScore) {
+                                                    double mascotScore = peptideAssumption.getRawScore();
+                                                    if (mascotScore > bestScore) {
                                                         mascotAssumption = peptideAssumption;
-                                                        bestScore = mascotScore.getScore();
+                                                        bestScore = mascotScore;
                                                     }
                                                 }
                                             }

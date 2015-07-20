@@ -20,8 +20,6 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
-import com.compomics.util.experiment.refinementparameters.MascotScore;
-import com.compomics.util.experiment.refinementparameters.MsAmandaScore;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
@@ -472,12 +470,10 @@ public class PrideXmlExport {
                                     if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide(), identificationParameters.getSequenceMatchingPreferences())) {
                                         if (!eValues.containsKey(se) || eValues.get(se) > eValue) {
                                             eValues.put(se, eValue);
-                                            if (se == Advocate.mascot.getIndex()
-                                                    && peptideAssumption.getUrParam(new MascotScore()) != null) {
-                                                mascotScore = ((MascotScore) assumption.getUrParam(new MascotScore())).getScore();
-                                            } else if (se == Advocate.msAmanda.getIndex()
-                                                    && peptideAssumption.getUrParam(new MsAmandaScore()) != null) {
-                                                msAmandaScore = ((MsAmandaScore) assumption.getUrParam(new MsAmandaScore())).getScore();
+                                            if (se == Advocate.mascot.getIndex()) {
+                                                mascotScore = assumption.getRawScore();
+                                            } else if (se == Advocate.msAmanda.getIndex()) {
+                                                msAmandaScore = assumption.getRawScore();
                                             }
                                         }
                                     }
