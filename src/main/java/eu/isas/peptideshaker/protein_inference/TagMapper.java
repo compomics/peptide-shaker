@@ -442,12 +442,14 @@ public class TagMapper {
                                 }
                                 modificationMatch.setTheoreticPtm(utilitiesPtmName);
                                 PTM ptm = ptmFactory.getPTM(utilitiesPtmName);
-                                ArrayList<Character> aaAtTarget = ptm.getPattern().getAminoAcidsAtTarget();
-                                if (aaAtTarget.size() > 1) {
-                                    throw new IllegalArgumentException("More than one amino acid can be targeted by the modification " + ptm + ", tag duplication required.");
+                                if (ptm.getPattern() != null) {
+                                    ArrayList<Character> aaAtTarget = ptm.getPattern().getAminoAcidsAtTarget();
+                                    if (aaAtTarget.size() > 1) {
+                                        throw new IllegalArgumentException("More than one amino acid can be targeted by the modification " + ptm + ", tag duplication required.");
+                                    }
+                                    int aaIndex = aa - 1;
+                                    aminoAcidPattern.setTargeted(aaIndex, aaAtTarget);
                                 }
-                                int aaIndex = aa - 1;
-                                aminoAcidPattern.setTargeted(aaIndex, aaAtTarget);
                             } else {
                                 Advocate notImplemented = Advocate.getAdvocate(advocateId);
                                 if (notImplemented == null) {
@@ -481,12 +483,14 @@ public class TagMapper {
                                 }
                                 modificationMatch.setTheoreticPtm(utilitiesPtmName);
                                 PTM ptm = ptmFactory.getPTM(utilitiesPtmName);
-                                ArrayList<Character> aaAtTarget = ptm.getPattern().getAminoAcidsAtTarget();
-                                if (aaAtTarget.size() > 1) {
-                                    throw new IllegalArgumentException("More than one amino acid can be targeted by the modification " + ptm + ", tag duplication required.");
+                                if (ptm.getPattern() != null) {
+                                    ArrayList<Character> aaAtTarget = ptm.getPattern().getAminoAcidsAtTarget();
+                                    if (aaAtTarget.size() > 1) {
+                                        throw new IllegalArgumentException("More than one amino acid can be targeted by the modification " + ptm + ", tag duplication required.");
+                                    }
+                                    int aaIndex = aa - 1;
+                                    aminoAcidSequence.setAaAtIndex(aaIndex, aaAtTarget.get(0));
                                 }
-                                int aaIndex = aa - 1;
-                                aminoAcidSequence.setAaAtIndex(aaIndex, aaAtTarget.get(0));
                             } else {
                                 Advocate notImplemented = Advocate.getAdvocate(advocateId);
                                 if (notImplemented == null) {

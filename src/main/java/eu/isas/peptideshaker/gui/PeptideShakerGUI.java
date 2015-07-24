@@ -6030,10 +6030,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             if (ptm != null) {
 
                 String shortName = ptm.getShortName();
-                AminoAcidPattern ptmPattern = ptm.getPattern();
                 double mass = ptm.getMass();
 
                 if (ptm.getType() == PTM.MODAA) {
+                    AminoAcidPattern ptmPattern = ptm.getPattern();
                     for (Character aa : ptmPattern.getAminoAcidsAtTarget()) {
                         if (!knownMassDeltas.containsValue(aa + "<" + shortName + ">")) {
                             AminoAcid aminoAcid = AminoAcid.getAminoAcid(aa);
