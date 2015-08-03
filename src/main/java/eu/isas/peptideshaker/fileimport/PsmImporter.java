@@ -500,7 +500,7 @@ public class PsmImporter {
                         // If there are not enough sites to put them all on the sequence, add an unknown modification
                         // Note: this needs to be done for tag based assumptions as well since the protein mapping can return erroneous modifications for some pattern based PTMs
                         ModificationProfile modificationProfile = searchParameters.getModificationProfile();
-
+                            
                         // set the matching type to amino acid for the fixed ptms
                         boolean fixedPtmIssue = false;
                         try {
@@ -517,7 +517,7 @@ public class PsmImporter {
                         }
 
                         if (!fixedPtmIssue) {
-
+                            
                             HashMap<Integer, ArrayList<String>> expectedNames = new HashMap<Integer, ArrayList<String>>();
                             HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<ModificationMatch, ArrayList<String>>();
 

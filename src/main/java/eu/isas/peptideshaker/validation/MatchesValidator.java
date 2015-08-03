@@ -1607,22 +1607,22 @@ public class MatchesValidator {
                         HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>(psParameter.getFractions().size());
                         HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionPeptideLevel = new HashMap<String, ArrayList<Double>>(psParameter.getFractions().size());
 
-                        for (String fraction : psParameter.getFractions()) {
+                        for (String fractionName : psParameter.getFractions()) {
 
                             ArrayList<Double> precursorIntensities = new ArrayList<Double>();
 
-                            if (metrics.getFractionPsmMatches().get(fraction + "_" + peptideKey) != null) {
-                                ArrayList<String> spectrumKeys = metrics.getFractionPsmMatches().get(fraction + "_" + peptideKey);
+                            if (metrics.getFractionPsmMatches().get(fractionName + "_" + peptideKey) != null) {
+                                ArrayList<String> spectrumKeys = metrics.getFractionPsmMatches().get(fractionName + "_" + peptideKey);
 
                                 for (String spectrumKey : spectrumKeys) {
 
                                     PSParameter psParameter2 = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                                     if (psParameter2.getMatchValidationLevel().isValidated()) {
-                                        if (validatedPsmsPerFraction.containsKey(fraction)) {
-                                            Integer value = validatedPsmsPerFraction.get(fraction);
-                                            validatedPsmsPerFraction.put(fraction, value + 1);
+                                        if (validatedPsmsPerFraction.containsKey(fractionName)) {
+                                            Integer value = validatedPsmsPerFraction.get(fractionName);
+                                            validatedPsmsPerFraction.put(fractionName, value + 1);
                                         } else {
-                                            validatedPsmsPerFraction.put(fraction, 1);
+                                            validatedPsmsPerFraction.put(fractionName, 1);
                                         }
                                         if (SpectrumFactory.getInstance().getPrecursor(spectrumKey).getIntensity() > 0) {
                                             // @TODO: replace by an mgf index map? (have to add intensity map to the index first...)
@@ -1637,16 +1637,11 @@ public class MatchesValidator {
                                 }
                             }
 
-                            precursorIntensitesPerFractionPeptideLevel.put(fraction, precursorIntensities);
+                            precursorIntensitesPerFractionPeptideLevel.put(fractionName, precursorIntensities);
 
                             // save the total number of peptides per fraction
                             if (psParameter.getMatchValidationLevel().isValidated()) {
-                                if (validatedTotalPeptidesPerFraction.containsKey(fraction)) {
-                                    Integer value = validatedTotalPeptidesPerFraction.get(fraction);
-                                    validatedTotalPeptidesPerFraction.put(fraction, value + 1);
-                                } else {
-                                    validatedTotalPeptidesPerFraction.put(fraction, 1);
-                                }
+                                addValidatedPeptideForFraction(fractionName);
                             }
                         }
 
@@ -1664,6 +1659,22 @@ public class MatchesValidator {
             } catch (Exception e) {
                 exceptionHandler.catchException(e);
                 waitingHandler.setRunCanceled();
+            }
+        }
+
+        /**
+         * Adds a validated peptide to the validatedTotalPeptidesPerFraction
+         * map.
+         *
+         * @param fractionName the name of the fraction
+         */
+        private synchronized void addValidatedPeptideForFraction(String fractionName) {
+
+            if (validatedTotalPeptidesPerFraction.containsKey(fractionName)) {
+                Integer value = validatedTotalPeptidesPerFraction.get(fractionName);
+                validatedTotalPeptidesPerFraction.put(fractionName, value + 1);
+            } else {
+                validatedTotalPeptidesPerFraction.put(fractionName, 1);
             }
         }
 
@@ -1800,8 +1811,7 @@ public class MatchesValidator {
                             double tempSpectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
                             double molecularWeight = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
                             double massContribution = molecularWeight * tempSpectrumCounting;
-                            totalSpectrumCountingMass += massContribution;
-
+                            increaseSpectrumCountingMass(massContribution);
                             // Load the coverage in cache
                             identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                         }
@@ -1831,13 +1841,13 @@ public class MatchesValidator {
                                     }
                                 }
 
-                                if (psParameter2.getPrecursorIntensityPerFraction(fraction) != null) {
-                                    if (precursorIntensitesPerFractionProteinLevel.containsKey(fraction)) {
-                                        for (int i = 0; i < psParameter2.getPrecursorIntensityPerFraction(fraction).size(); i++) {
-                                            precursorIntensitesPerFractionProteinLevel.get(fraction).add(psParameter2.getPrecursorIntensityPerFraction(fraction).get(i));
-                                        }
+                                ArrayList<Double> peptideIntensities = psParameter2.getPrecursorIntensityPerFraction(fraction);
+                                if (peptideIntensities != null) {
+                                    ArrayList<Double> proteinIntensities = precursorIntensitesPerFractionProteinLevel.get(fraction);
+                                    if (proteinIntensities != null) {
+                                        proteinIntensities.addAll(peptideIntensities);
                                     } else {
-                                        precursorIntensitesPerFractionProteinLevel.put(fraction, psParameter2.getPrecursorIntensityPerFraction(fraction));
+                                        precursorIntensitesPerFractionProteinLevel.put(fraction, new ArrayList<Double>(peptideIntensities));
                                     }
                                 }
 
@@ -1862,7 +1872,7 @@ public class MatchesValidator {
                             }
                         }
 
-                        // set the number of validated spectra per fraction for each peptide
+                        // set the number of validated spectra and peptides per fraction for each protein
                         if (psParameter.getFractions().size() > 1) {
                             psParameter.setFractionValidatedSpectra(validatedPsmsPerFraction);
                             psParameter.setFractionValidatedPeptides(validatedPeptidesPerFraction);
@@ -1893,6 +1903,15 @@ public class MatchesValidator {
             } catch (Exception e) {
                 exceptionHandler.catchException(e);
             }
+        }
+
+        /**
+         * Increases the mass contribution due to a protein.
+         *
+         * @param massContribution the mass contribution
+         */
+        private synchronized void increaseSpectrumCountingMass(Double massContribution) {
+            totalSpectrumCountingMass += massContribution;
         }
 
         /**
