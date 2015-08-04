@@ -375,16 +375,7 @@ public class SwathExport {
                                 if (modificationMatch.getModificationSite() == aa + 1) {
                                     String ptmName = modificationMatch.getTheoreticPtm();
                                     PTM ptm = ptmFactory.getPTM(ptmName);
-                                    CvTerm cvTerm = null;
-                                    if (ptmToPrideMap != null) {
-                                        try {
-                                            cvTerm = ptmToPrideMap.getCVTerm(ptmName);
-                                            if (cvTerm == null) {
-                                                cvTerm = PtmToPrideMap.getDefaultCVTerm(ptmName);
-                                            }
-                                        } catch (Exception e) {
-                                        }
-                                    }
+                                    CvTerm cvTerm = ptm.getCvTerm();
                                     if (cvTerm != null) {
                                         modifiedSequence += "[" + cvTerm.getName() + "]";
                                     } else {

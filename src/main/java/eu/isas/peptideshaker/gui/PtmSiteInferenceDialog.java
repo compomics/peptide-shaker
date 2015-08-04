@@ -98,7 +98,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 mainSelection = new boolean[peptide.getSequence().length()];
                 for (String ptmName : peptidePtmScore.getConfidentlyLocalizedPtms()) {
                     PTM tempPTM = ptmFactory.getPTM(ptmName);
-                    if (tempPTM.getMass() == ptmMass) {
+                    if (tempPTM.getMass() == ptmMass) { // @TODO: compare against the accuracy
                         for (int site : peptidePtmScore.getConfidentSitesForPtm(ptmName)) {
                             mainSelection[site - 1] = true;
                         }
@@ -108,7 +108,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 secondarySelection = new boolean[peptide.getSequence().length()];
                 for (String ptmName : peptidePtmScore.getAmbiguouslyLocalizedPtms()) {
                     PTM tempPTM = ptmFactory.getPTM(ptmName);
-                    if (tempPTM.getMass() == ptmMass) {
+                    if (tempPTM.getMass() == ptmMass) { // @TODO: compare against the accuracy
                         for (int site : peptidePtmScore.getAmbiguousModificationsSites(ptmName).keySet()) {
                             secondarySelection[site - 1] = true;
                         }

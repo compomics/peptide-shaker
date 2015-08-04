@@ -185,7 +185,7 @@ public class PtmScorer {
 
                                             PTM ptm2 = ptmFactory.getPTM(modMatch.getTheoreticPtm());
 
-                                            if (ptm1.getMass() == ptm2.getMass()) {
+                                            if (ptm1.getMass() == ptm2.getMass()) { // @TODO: compare against the accuracy
 
                                                 modificationFound = true;
                                                 psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
@@ -276,7 +276,6 @@ public class PtmScorer {
 
         HashMap<Double, ArrayList<PTM>> modifications = new HashMap<Double, ArrayList<PTM>>();
         HashMap<Double, Integer> nMod = new HashMap<Double, Integer>();
-        HashMap<Double, ModificationMatch> modificationMatches = new HashMap<Double, ModificationMatch>();
         PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
         Peptide peptide = bestPeptideAssumption.getPeptide();
 
@@ -294,7 +293,6 @@ public class PtmScorer {
                 } else {
                     nMod.put(ptmMass, nMod.get(ptmMass) + 1);
                 }
-                modificationMatches.put(ptmMass, modificationMatch);
             }
         }
 
@@ -1197,7 +1195,7 @@ public class PtmScorer {
                         PTM confidentPtm = ptmFactory.getPTM(modification);
                         for (String secondaryModification : secondarySitesMap.get(secondarySite)) {
                             PTM secondaryPtm = ptmFactory.getPTM(secondaryModification);
-                            if (secondaryPtm.getMass() == confidentPtm.getMass()) {
+                            if (secondaryPtm.getMass() == confidentPtm.getMass()) { // @TODO: compare against the accuracy
                                 samePtm = true;
                                 break;
                             }
@@ -1226,7 +1224,7 @@ public class PtmScorer {
                                 PTM previousPtm = ptmFactory.getPTM(modification);
                                 for (String secondaryModification : secondarySitesMap.get(secondarySite)) {
                                     PTM secondaryPtm = ptmFactory.getPTM(secondaryModification);
-                                    if (secondaryPtm.getMass() == previousPtm.getMass()) {
+                                    if (secondaryPtm.getMass() == previousPtm.getMass()) { // @TODO: compare against the accuracy
                                         samePtm = true;
                                         break;
                                     }
@@ -1604,7 +1602,7 @@ public class PtmScorer {
                                                     boolean siteOccupied = false;
                                                     for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
                                                         PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
-                                                        if (ptm.getMass() != ptmMass && modificationMatch.getModificationSite() == shiftedLocalization) {
+                                                        if (ptm.getMass() != ptmMass && modificationMatch.getModificationSite() == shiftedLocalization) { // @TODO: compare against the accuracy
                                                             siteOccupied = true;
                                                         }
                                                     }
@@ -1612,7 +1610,7 @@ public class PtmScorer {
                                                     if (!siteOccupied) {
                                                         for (String ptmName : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
                                                             PTM ptm = ptmFactory.getPTM(ptmName);
-                                                            if (ptm.getType() == PTM.MODAA && ptm.getMass() == ptm.getMass() && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(shiftedLocalization)) {
+                                                            if (ptm.getType() == PTM.MODAA && ptm.getMass() == ptm.getMass() && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(shiftedLocalization)) { // @TODO: compare against the accuracy
                                                                 candidatePtm = true;
                                                                 break;
                                                             }
@@ -1643,7 +1641,7 @@ public class PtmScorer {
                                                     boolean siteOccupied = false;
                                                     for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
                                                         PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
-                                                        if (ptm.getMass() != ptmMass && modificationMatch.getModificationSite() == shiftedLocalization) {
+                                                        if (ptm.getMass() != ptmMass && modificationMatch.getModificationSite() == shiftedLocalization) { // @TODO: compare against the accuracy
                                                             siteOccupied = true;
                                                         }
                                                     }
@@ -1651,7 +1649,7 @@ public class PtmScorer {
                                                     if (!siteOccupied) {
                                                         for (String ptmName : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
                                                             PTM ptm = ptmFactory.getPTM(ptmName);
-                                                            if (ptm.getType() == PTM.MODAA && ptm.getMass() == ptm.getMass() && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(shiftedLocalization)) {
+                                                            if (ptm.getType() == PTM.MODAA && ptm.getMass() == ptm.getMass() && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(shiftedLocalization)) { // @TODO: compare against the accuracy
                                                                 candidatePtm = true;
                                                                 break;
                                                             }
@@ -1675,7 +1673,7 @@ public class PtmScorer {
                             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
                                 String ptmName = modificationMatch.getTheoreticPtm();
                                 PTM ptm = ptmFactory.getPTM(ptmName);
-                                if (ptm.getMass() == ptmMass && !modificationMatch.isConfident()) {
+                                if (ptm.getMass() == ptmMass && !modificationMatch.isConfident()) { // @TODO: compare against the accuracy
                                     nonConfidentMatches.put(modificationMatch.getModificationSite(), modificationMatch);
                                 }
                             }
@@ -1691,7 +1689,7 @@ public class PtmScorer {
                                         PTM ptmCandidate = null;
                                         for (String ptmName : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
                                             PTM ptm = ptmFactory.getPTM(ptmName);
-                                            if (ptm.getType() == PTM.MODAA && ptm.getMass() == ptm.getMass() && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(newLocalization)) {
+                                            if (ptm.getType() == PTM.MODAA && ptm.getMass() == ptm.getMass() && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(newLocalization)) { // @TODO: compare against the accuracy
                                                 ptmCandidate = ptm;
                                                 break;
                                             }

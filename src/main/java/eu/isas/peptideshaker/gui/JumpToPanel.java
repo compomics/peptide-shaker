@@ -185,7 +185,7 @@ public class JumpToPanel extends javax.swing.JPanel {
             if (typeList.get(i) == Type.PROTEIN) {
                 proteinKeys.add(key);
             } else if (typeList.get(i) == Type.PEPTIDE) {
-                proteinKeys.add(key);
+                peptideKeys.add(key);
             }
         }
         if (!proteinKeys.isEmpty()) {

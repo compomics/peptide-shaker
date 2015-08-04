@@ -38,7 +38,7 @@ public class ModificationDialog extends javax.swing.JDialog {
         // make sure that the scroll panes are see-through
         modificationsJScrollPane.getViewport().setOpaque(false);
 
-        textArea.setText("The modification " + unknownPTM.getName() + " (" + unknownPTM.getMass()
+        textArea.setText("The modification " + unknownPTM.getName() + " (" + unknownPTM.getRoundedMass()
                 + " Da) could not be identified, please select one from the following list to ensure search engine compatibility:");
         modificationList.setListData(modifications.toArray());
         this.setLocationRelativeTo(parent);
