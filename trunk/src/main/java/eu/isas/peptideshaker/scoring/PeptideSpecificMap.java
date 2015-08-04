@@ -8,14 +8,12 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.filtering.PeptideFilter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import javax.swing.RowFilter;
 
 /**
  * This class contains the various peptides matches sorted according to their
@@ -178,8 +176,7 @@ public class PeptideSpecificMap implements Serializable {
         PTM ptm;
         ArrayList<Double> modificationMasses = new ArrayList<Double>();
         for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
-            if (modificationMatch.getTheoreticPtm() != null
-                    && modificationMatch.isVariable()) {
+            if (modificationMatch.getTheoreticPtm() != null && modificationMatch.isVariable()) {
                 ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
                 modificationMasses.add(ptm.getMass());
             }

@@ -4934,7 +4934,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                                 PTM ptm = ptmFactory.getPTM(ptmName);
 
-                                if (ptm.getMass() == selectedPtm.getMass()) {
+                                if (ptm.getMass() == selectedPtm.getMass()) { // @TODO: compare against the accuracy
 
                                     PtmScoring ptmScoring = ptmScores.getPtmScoring(ptmName);
                                     for (int site : ptmScoring.getAllPtmLocations()) {
@@ -4958,7 +4958,6 @@ public class PtmPanel extends javax.swing.JPanel {
                             for (int site : pScores.keySet()) {
                                 psmAScoresTable.setValueAt(pScores.get(site), i, site);
                             }
-
                         }
                     }
 

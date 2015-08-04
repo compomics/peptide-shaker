@@ -9,7 +9,6 @@ import com.compomics.util.experiment.identification.protein_sequences.SequenceFa
 import com.compomics.util.experiment.identification.ptm.PtmScore;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.PTMScoringPreferences;
-import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -195,12 +194,12 @@ public class PeptideShakerMethods {
                 String ptmName = fixedPtmsNames.get(i);
                 PTM ptm = ptmFactory.getPTM(ptmName);
                 String sign;
-                if (ptm.getMass() < 0) {
+                if (ptm.getRoundedMass() < 0) {
                     sign = "";
                 } else {
                     sign = "+";
                 }
-                text += ptmName + " (" + sign + ptm.getMass() + " Da)";
+                text += ptmName + " (" + sign + ptm.getRoundedMass() + " Da)";
             }
 
             text += ", ";
@@ -219,12 +218,12 @@ public class PeptideShakerMethods {
                 String ptmName = variablePtmsNames.get(i);
                 PTM ptm = ptmFactory.getPTM(ptmName);
                 String sign;
-                if (ptm.getMass() < 0) {
+                if (ptm.getRoundedMass() < 0) {
                     sign = "-";
                 } else {
                     sign = "+";
                 }
-                text += ptmName + " (" + sign + ptm.getMass() + " Da)";
+                text += ptmName + " (" + sign + ptm.getRoundedMass() + " Da)";
             }
 
             text += ", ";
@@ -243,12 +242,12 @@ public class PeptideShakerMethods {
                 String ptmName = refinementFixedPtmsNames.get(i);
                 PTM ptm = ptmFactory.getPTM(ptmName);
                 String sign;
-                if (ptm.getMass() < 0) {
+                if (ptm.getRoundedMass() < 0) {
                     sign = "-";
                 } else {
                     sign = "+";
                 }
-                text += ptmName + " (" + sign + ptm.getMass() + " Da)";
+                text += ptmName + " (" + sign + ptm.getRoundedMass() + " Da)";
             }
 
             text += ", ";
@@ -267,12 +266,12 @@ public class PeptideShakerMethods {
                 String ptmName = refinementVariablePtmsNames.get(i);
                 PTM ptm = ptmFactory.getPTM(ptmName);
                 String sign;
-                if (ptm.getMass() < 0) {
+                if (ptm.getRoundedMass() < 0) {
                     sign = "-";
                 } else {
                     sign = "+";
                 }
-                text += ptmName + " (" + sign + ptm.getMass() + " Da)";
+                text += ptmName + " (" + sign + ptm.getRoundedMass() + " Da)";
             }
         }
         text += ". All algorithms specific settings are listed in the Certificate of Analysis available in the supplementary information.";

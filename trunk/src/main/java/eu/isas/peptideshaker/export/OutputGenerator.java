@@ -2923,10 +2923,9 @@ public class OutputGenerator {
             e.printStackTrace();
             //ignore caching error
         }
-        for (int i = 0; i < spectrumKeys.size(); i++) {
+        for (String spectrumKey : spectrumKeys) {
             try {
-                int tempCharge = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKeys.get(i)).getBestPeptideAssumption().getIdentificationCharge().value;
-
+                int tempCharge = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey).getBestPeptideAssumption().getIdentificationCharge().value;
                 if (!charges.contains(tempCharge)) {
                     charges.add(tempCharge);
                 }

@@ -9,7 +9,6 @@ import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.ptm.PtmDialog;
 import com.compomics.util.pride.prideobjects.Reference;
@@ -189,18 +188,10 @@ public class ProjectExportDialog extends javax.swing.JDialog {
      */
     private void updatePtmMap() {
 
-        SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
-        PtmToPrideMap ptmToPrideMap = new PtmToPrideMap();
-        try {
-            ptmToPrideMap = PtmToPrideMap.loadPtmToPrideMap(searchParameters);
-        } catch (Exception e) {
-            System.out.println("Could not load the PTM map, using default values.");
-            e.printStackTrace();
-        }
         ArrayList<String> missingMods = checkModifications();
 
         if (!missingMods.isEmpty()) {
-            String report = "PSI-MOD mapping is missing for the following modifications:\n";
+            String report = "Unimod mapping is missing for the following modifications:\n";
             boolean first = true;
             for (String mod : missingMods) {
                 if (first) {
@@ -211,12 +202,12 @@ public class ProjectExportDialog extends javax.swing.JDialog {
                 report += mod;
             }
             report += ".";
-            JOptionPane.showMessageDialog(peptideShakerGUI, report, "PTM PSI-MOD Mapping", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(peptideShakerGUI, report, "Missing Unimod Mapping(s)", JOptionPane.WARNING_MESSAGE);
 
             // have the user add the CV term mappings
             for (String modName : missingMods) {
                 PTM currentPtm = PTMFactory.getInstance().getPTM(modName);
-                new PtmDialog(this, ptmToPrideMap, currentPtm, false);
+                new PtmDialog(this, currentPtm, false);
             }
         }
     }

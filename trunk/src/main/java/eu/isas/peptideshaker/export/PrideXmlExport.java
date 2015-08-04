@@ -781,17 +781,12 @@ public class PrideXmlExport {
             String modName = modMatch.getTheoreticPtm();
             PTM ptm = ptmFactory.getPTM(modName);
 
-            CvTerm cvTerm = ptmToPrideMap.getCVTerm(modName);
-            if (cvTerm == null) {
-                cvTerm = PtmToPrideMap.getDefaultCVTerm(ptm.getName());
-            }
-
-            String cvTermName;
-            String ptmMass;
+            CvTerm cvTerm = ptm.getCvTerm();
+            String cvTermName, ptmMass;
 
             if (cvTerm == null) {
                 cvTermName = modName;
-                ptmMass = "" + ptm.getMass();
+                ptmMass = "" + ptm.getRoundedMass();
             } else {
                 cvTermName = cvTerm.getName();
                 ptmMass = cvTerm.getValue();
@@ -801,7 +796,7 @@ public class PrideXmlExport {
                     cvTermName = modName;
                 }
                 if (ptmMass == null) {
-                    ptmMass = "" + ptm.getMass();
+                    ptmMass = "" + ptm.getRoundedMass();
                 }
             }
 

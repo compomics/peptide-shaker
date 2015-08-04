@@ -499,14 +499,11 @@ public class MzIdentMLExport {
                     ptmLocation = peptideSequence.length() + 1;
                 }
 
-                br.write(getCurrentTabSpace() + "<Modification monoisotopicMassDelta=\"" + currentPtm.getMass() + "\" "
+                br.write(getCurrentTabSpace() + "<Modification monoisotopicMassDelta=\"" + currentPtm.getRoundedMass() + "\" "
                         + "residues=\"" + peptideSequence.charAt(modMatch.getModificationSite() - 1) + "\" "
                         + "location=\"" + ptmLocation + "\" >" + System.getProperty("line.separator"));
 
-                CvTerm ptmCvTerm = ptmToPrideMap.getCVTerm(currentPtm.getName());
-                if (ptmCvTerm == null) {
-                    ptmCvTerm = PtmToPrideMap.getDefaultCVTerm(currentPtm.getName());
-                }
+                CvTerm ptmCvTerm = currentPtm.getCvTerm();
                 if (ptmCvTerm != null) {
                     tabCounter++;
                     writeCvTerm(ptmCvTerm);
@@ -737,7 +734,7 @@ public class MzIdentMLExport {
                 }
             }
 
-            br.write(getCurrentTabSpace() + "<SearchModification residues=\"" + aminoAcidsAtTarget + "\" massDelta=\"" + currentPtm.getMass()
+            br.write(getCurrentTabSpace() + "<SearchModification residues=\"" + aminoAcidsAtTarget + "\" massDelta=\"" + currentPtm.getRoundedMass()
                     + "\" fixedMod= \"" + searchParameters.getModificationProfile().getFixedModifications().contains(ptm) + "\" >" + System.getProperty("line.separator"));
             tabCounter++;
 
@@ -762,10 +759,7 @@ public class MzIdentMLExport {
             }
 
             // add the modification cv term
-            CvTerm ptmCvTerm = ptmToPrideMap.getCVTerm(ptm);
-            if (ptmCvTerm == null) {
-                ptmCvTerm = PtmToPrideMap.getDefaultCVTerm(currentPtm.getName());
-            }
+            CvTerm ptmCvTerm = currentPtm.getCvTerm();
             if (ptmCvTerm != null) {
                 writeCvTerm(ptmCvTerm);
             } else {
