@@ -471,7 +471,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
 
             String fileName = inputFile.getName();
-            if (fileName.toLowerCase().endsWith("zip")) {
+            if (fileName.toLowerCase().endsWith(".zip")) {
                 waitingHandler.appendReport("Unzipping " + fileName + ".", true, true);
                 String newName = PsZipUtils.getTempFolderName(fileName);
                 String parentFolder = PsZipUtils.getUnzipParentFolder();
@@ -491,23 +491,24 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
                 }
-                dataFolder = new File(destinationFolder, "mgf");
+                dataFolder = new File(destinationFolder, ".mgf");
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
                 }
-                dataFolder = new File(destinationFolder, "fasta");
+                dataFolder = new File(destinationFolder, ".fasta");
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
                 }
                 for (File zippedFile : destinationFolder.listFiles()) {
                     String nameLowerCase = zippedFile.getName().toLowerCase();
-                    if (nameLowerCase.endsWith("dat")
-                            || nameLowerCase.endsWith("omx")
-                            || nameLowerCase.endsWith("xml")
-                            || nameLowerCase.endsWith("mzid")
-                            || nameLowerCase.endsWith("csv")
-                            || nameLowerCase.endsWith("tags")
-                            || nameLowerCase.endsWith("tide-search.target.txt")) {
+                    if (nameLowerCase.endsWith(".dat")
+                            || nameLowerCase.endsWith(".omx")
+                            || nameLowerCase.endsWith(".xml")
+                            || nameLowerCase.endsWith(".mzid")
+                            || nameLowerCase.endsWith(".csv")
+                            || nameLowerCase.endsWith(".tags")
+                            || nameLowerCase.endsWith(".tide-search.target.txt")
+                            || nameLowerCase.endsWith(".res")) {
                         if (!nameLowerCase.endsWith("mods.xml")
                                 && !nameLowerCase.endsWith("usermods.xml")
                                 && !nameLowerCase.endsWith("settings.xml")) {
