@@ -52,7 +52,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Properties;
 
 /**
  * A dialog for selecting the files to load.
@@ -1997,7 +1996,7 @@ public class NewDialog extends javax.swing.JDialog {
                 File[] tempFiles = newFile.listFiles();
                 for (File file : tempFiles) {
                     String lowerCaseName = file.getName().toLowerCase();
-                    if (lowerCaseName.endsWith("zip")) {
+                    if (lowerCaseName.endsWith(".zip")) {
                         loadCanceled = !loadZipFile(file, parameterFiles, dataFolders, inputFiles);
                         if (loadCanceled) {
                             break;
@@ -2026,7 +2025,7 @@ public class NewDialog extends javax.swing.JDialog {
                 }
 
                 String lowerCaseName = newFile.getName().toLowerCase();
-                if (lowerCaseName.endsWith("zip")) {
+                if (lowerCaseName.endsWith(".zip")) {
                     loadCanceled = !loadZipFile(newFile, parameterFiles, dataFolders, inputFiles);
                     if (loadCanceled) {
                         break;

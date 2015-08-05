@@ -409,7 +409,6 @@ public class PsmImporter {
             return;
         }
         waitingHandler.setSecondaryProgressCounter(++progress);
-
     }
 
     /**
