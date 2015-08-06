@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import eu.isas.peptideshaker.export.exportfeatures.PsAnnotationFeature;
@@ -67,7 +67,7 @@ public class PsAnnotationSection {
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      */
-    public void writeSection(AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException {
+    public void writeSection(AnnotationSettings annotationPreferences, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);

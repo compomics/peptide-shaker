@@ -6,8 +6,8 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
-import com.compomics.util.experiment.identification.SearchParameters;
-import com.compomics.util.experiment.identification.SpectrumAnnotator;
+import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.experiment.identification.spectrum_annotation.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
@@ -25,12 +25,12 @@ import com.compomics.util.gui.spectrum.SpectrumPanel;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
-import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
-import com.compomics.util.preferences.ModificationProfile;
-import com.compomics.util.preferences.SpecificAnnotationPreferences;
+import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
+import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.gui.PtmSiteInferenceDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
@@ -3350,7 +3350,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     dm.getDataVector().removeAllElements();
                     dm.fireTableDataChanged();
 
-                    ModificationProfile modificationProfile = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile();
+                    PtmSettings modificationProfile = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile();
 
                     for (String modification : modificationProfile.getAllNotFixedModifications()) {
                         if (!modification.equalsIgnoreCase(NO_MODIFICATION)) {
@@ -3953,7 +3953,7 @@ public class PtmPanel extends javax.swing.JPanel {
             spectrumChartJPanel.revalidate();
             spectrumChartJPanel.repaint();
 
-            AnnotationPreferences annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
+            AnnotationSettings annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
             MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
 
             if (currentSpectrum != null && currentSpectrum.getMzValuesAsArray().length > 0) {
@@ -3990,9 +3990,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 Peptide peptide = peptideAssumption.getPeptide();
                 identificationChargeFirstPsm = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                 allModifications.addAll(peptide.getModificationMatches());
-                peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationPreferences(spectrumKey, peptideAssumption));
+                peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationSettings(spectrumKey, peptideAssumption));
                 peptideShakerGUI.updateAnnotationPreferences();
-                SpecificAnnotationPreferences specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
+                SpecificAnnotationSettings specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
                 ArrayList<IonMatch> annotations = peptideShakerGUI.getSpectrumAnnotator().getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, peptide);
                 currentSpectrumKey = spectrumMatch.getKey();
 
@@ -4031,7 +4031,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         peptide = peptideAssumption.getPeptide();
                         identificationChargeSecondPsm = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                         allModifications.addAll(peptide.getModificationMatches());
-                        peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationPreferences(spectrumKey, peptideAssumption));
+                        peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationSettings(spectrumKey, peptideAssumption));
                         peptideShakerGUI.updateAnnotationPreferences();
                         specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
                         annotations = peptideShakerGUI.getSpectrumAnnotator().getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, peptide);

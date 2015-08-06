@@ -4,7 +4,7 @@ import com.compomics.util.experiment.biology.Ion.IonType;
 import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.gui.error_handlers.HelpDialog;
-import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     /**
      * The annotation preferences.
      */
-    private AnnotationPreferences annotationPreferences;
+    private AnnotationSettings annotationPreferences;
     /**
      * The PeptideShakerGUI parent.
      */

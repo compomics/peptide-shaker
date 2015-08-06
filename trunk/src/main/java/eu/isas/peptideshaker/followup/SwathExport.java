@@ -14,14 +14,14 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
-import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
+import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.Charge;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
-import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
-import com.compomics.util.preferences.SpecificAnnotationPreferences;
+import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
@@ -78,7 +78,7 @@ public class SwathExport {
      * reading an mzML file
      */
     public static void writeSwathExport(File destinationFile, Identification identification, ExportType exportType, WaitingHandler waitingHandler,
-            ArrayList<String> targetedPTMs, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, SequenceMatchingPreferences ptmSequenceMatchingPreferences)
+            ArrayList<String> targetedPTMs, AnnotationSettings annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, SequenceMatchingPreferences ptmSequenceMatchingPreferences)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (exportType == ExportType.confident_ptms) {
@@ -269,7 +269,7 @@ public class SwathExport {
      * reading an mzML file
      */
     private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences, 
-            SequenceMatchingPreferences ptmSequenceMatchingPreferences, AnnotationPreferences annotationPreferences, PeptideSpectrumAnnotator spectrumAnnotator)
+            SequenceMatchingPreferences ptmSequenceMatchingPreferences, AnnotationSettings annotationPreferences, PeptideSpectrumAnnotator spectrumAnnotator)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         writePsm(writer, spectrumKey, null, identification, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, annotationPreferences, spectrumAnnotator);
     }
@@ -304,7 +304,7 @@ public class SwathExport {
      */
     private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification, 
             SequenceMatchingPreferences sequenceMatchingPreferences, SequenceMatchingPreferences ptmSequenceMatchingPreferences, 
-            AnnotationPreferences annotationPreferences, PeptideSpectrumAnnotator spectrumAnnotator)
+            AnnotationSettings annotationPreferences, PeptideSpectrumAnnotator spectrumAnnotator)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
@@ -327,7 +327,7 @@ public class SwathExport {
 
         for (String accession : accessions) {
 
-            SpecificAnnotationPreferences specificAnnotationPreferences 
+            SpecificAnnotationSettings specificAnnotationPreferences 
                     = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), bestAssumption, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
             ArrayList<IonMatch> matches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
                     (MSnSpectrum) spectrum, bestAssumption.getPeptide());

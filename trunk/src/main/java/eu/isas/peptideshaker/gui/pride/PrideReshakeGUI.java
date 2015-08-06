@@ -5,7 +5,7 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
-import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.io.identifications.MzIdentMLIdfileSearchParametersConverter;
 import com.compomics.util.experiment.massspectrometry.Charge;
 import com.compomics.util.experiment.massspectrometry.proteowizard.MsFormat;
@@ -16,7 +16,7 @@ import com.compomics.util.gui.searchsettings.EnzymeSelectionDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.preferences.LastSelectedFolder;
-import com.compomics.util.preferences.ModificationProfile;
+import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.WelcomeDialog;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
@@ -3388,7 +3388,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      * @param modProfile the modification profile to add the PTMs to
      * @return a string with the conversion details
      */
-    private String convertPtms(String allPtms, ModificationProfile modProfile) {
+    private String convertPtms(String allPtms, PtmSettings modProfile) {
 
         ArrayList<String> unknownPtms = new ArrayList<String>();
         String report = "<br><br><b>Post-Translational Modifications:</b>";

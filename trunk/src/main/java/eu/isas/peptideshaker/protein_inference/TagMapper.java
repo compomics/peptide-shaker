@@ -11,14 +11,14 @@ import com.compomics.util.experiment.biology.ions.TagFragmentIon;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
-import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
-import com.compomics.util.experiment.identification.identification_parameters.PepnovoParameters;
+import com.compomics.util.experiment.identification.identification_parameters.tool_specific.PepnovoParameters;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
-import com.compomics.util.experiment.identification.spectrum_annotators.TagSpectrumAnnotator;
+import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.TagSpectrumAnnotator;
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.experiment.identification.amino_acid_tags.TagComponent;
 import com.compomics.util.experiment.biology.MassGap;
@@ -30,11 +30,11 @@ import com.compomics.util.experiment.identification.SpectrumIdentificationAssump
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
 import com.compomics.util.experiment.identification.amino_acid_tags.matchers.TagMatcher;
 import com.compomics.util.memory.MemoryConsumptionStatus;
-import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.ModificationProfile;
+import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
-import com.compomics.util.preferences.SpecificAnnotationPreferences;
+import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -149,7 +149,7 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
-            ModificationProfile modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
+            PtmSettings modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
             for (String key : tagMap.keySet()) {
                 TagMatcher tagMatcher = new TagMatcher(modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences());
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
@@ -188,7 +188,7 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
-            ModificationProfile modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
+            PtmSettings modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
             for (String key : tagMap.keySet()) {
                 TagMatcher tagMatcher = new TagMatcher(modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences());
                 tagMatcher.setSynchronizedIndexing(true);
@@ -237,7 +237,7 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
-            ModificationProfile modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
+            PtmSettings modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
             for (String key : tagMap.keySet()) {
                 LinkedList<SpectrumMatch> spectrumMatches = tagMap.get(key);
                 KeyTagMapperRunnable tagMapperRunnable = new KeyTagMapperRunnable(identification, spectrumMatches, modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences(), key, waitingHandler);
@@ -285,7 +285,7 @@ public class TagMapper {
         charges.add(1); //@TODO: use other charges?
         String spectrumKey = spectrumMatch.getKey();
         MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
-        AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
+        AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         HashMap<Integer, HashMap<String, ArrayList<TagAssumption>>> tagAssumptionsMap = spectrumMatch.getTagAssumptionsMap(keySize, identificationParameters.getSequenceMatchingPreferences());
@@ -314,7 +314,7 @@ public class TagMapper {
                         mapPtmsForTag(tagAssumption.getTag(), advocateId);
                         ArrayList<TagAssumption> extendedTagList = new ArrayList<TagAssumption>();
                         extendedTagList.add(tagAssumption);
-                        SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, tagAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
+                        SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, tagAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
                         ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, tagAssumption.getTag());
                         int nB = 0, nY = 0;
                         for (IonMatch ionMatch : annotations) {
@@ -413,7 +413,7 @@ public class TagMapper {
     private void mapPtmsForTag(Tag tag, int advocateId) throws IOException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        ModificationProfile modificationProfile = searchParameters.getModificationProfile();
+        PtmSettings modificationProfile = searchParameters.getModificationProfile();
         // add the fixed PTMs
         ptmFactory.checkFixedModifications(modificationProfile, tag, identificationParameters.getSequenceMatchingPreferences());
 

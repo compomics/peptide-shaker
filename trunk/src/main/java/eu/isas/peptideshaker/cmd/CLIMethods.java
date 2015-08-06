@@ -2,7 +2,7 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.export.PSExportFactory;

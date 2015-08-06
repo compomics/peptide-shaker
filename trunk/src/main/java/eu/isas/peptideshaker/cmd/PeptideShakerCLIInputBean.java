@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CommandLineUtils;
-import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.ptm.PtmScore;
 import org.apache.commons.cli.CommandLine;
 

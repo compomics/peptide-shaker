@@ -159,7 +159,7 @@ public class DisplayPreferences implements Serializable {
      *
      * @param modificationProfile the modification profile
      */
-    public void setDefaultSelection(com.compomics.util.preferences.ModificationProfile modificationProfile) {
+    public void setDefaultSelection(com.compomics.util.experiment.identification.identification_parameters.PtmSettings modificationProfile) {
         for (String ptm : modificationProfile.getAllNotFixedModifications()) {
             setDisplayedPTM(ptm, true);
         }

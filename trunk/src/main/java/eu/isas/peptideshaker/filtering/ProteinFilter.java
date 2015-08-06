@@ -9,7 +9,7 @@ import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
+import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.protein.Header;
 import eu.isas.peptideshaker.filtering.items.ProteinFilterItem;

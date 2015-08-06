@@ -9,20 +9,20 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.IdentificationAlgorithmParameter;
+import com.compomics.util.experiment.identification.identification_parameters.IdentificationAlgorithmParameter;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
-import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
-import com.compomics.util.experiment.identification.identification_parameters.AndromedaParameters;
-import com.compomics.util.experiment.identification.identification_parameters.OmssaParameters;
-import com.compomics.util.experiment.identification.identification_parameters.XtandemParameters;
+import com.compomics.util.experiment.identification.identification_parameters.tool_specific.AndromedaParameters;
+import com.compomics.util.experiment.identification.identification_parameters.tool_specific.OmssaParameters;
+import com.compomics.util.experiment.identification.identification_parameters.tool_specific.XtandemParameters;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
-import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
+import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.AndromedaIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.DirecTagIdfileReader;
@@ -35,7 +35,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.ModificationProfile;
+import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
@@ -498,7 +498,7 @@ public class PsmImporter {
                         // map the algorithm specific modifications on utilities modifications
                         // If there are not enough sites to put them all on the sequence, add an unknown modification
                         // Note: this needs to be done for tag based assumptions as well since the protein mapping can return erroneous modifications for some pattern based PTMs
-                        ModificationProfile modificationProfile = searchParameters.getModificationProfile();
+                        PtmSettings modificationProfile = searchParameters.getModificationProfile();
                             
                         // set the matching type to amino acid for the fixed ptms
                         boolean fixedPtmIssue = false;
@@ -716,7 +716,7 @@ public class PsmImporter {
      * @param searchParameters the search parameters
      */
     private void initialPtmMapping(Peptide peptide, HashMap<Integer, ArrayList<String>> expectedNames, HashMap<ModificationMatch, ArrayList<String>> modNames, SearchParameters searchParameters) {
-        ModificationProfile modificationProfile = searchParameters.getModificationProfile();
+        PtmSettings modificationProfile = searchParameters.getModificationProfile();
         int peptideLength = peptide.getSequence().length();
 
         // If a terminal modification cannot be elsewhere lock the terminus
@@ -1103,7 +1103,7 @@ public class PsmImporter {
     private synchronized void verifyXTandemPtms() {
         if (!xTandemPtmsCheck) {
             SearchParameters searchParameters = identificationParameters.getSearchParameters();
-            ModificationProfile modificationProfile = searchParameters.getModificationProfile();
+            PtmSettings modificationProfile = searchParameters.getModificationProfile();
             IdentificationAlgorithmParameter algorithmParameter = searchParameters.getIdentificationAlgorithmParameter(Advocate.xtandem.getIndex());
             if (algorithmParameter != null) {
                 XtandemParameters xtandemParameters = (XtandemParameters) algorithmParameter;

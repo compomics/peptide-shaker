@@ -10,7 +10,7 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.preferences.ModificationProfile;
+import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.preferences.IdentificationParameters;
@@ -546,7 +546,7 @@ public class PsPeptideSection {
      * 
      * @return the peptide modification location confidence as a string
      */
-    public static String getPeptideModificationLocations(PeptideMatch peptideMatch, ModificationProfile ptmProfile) {
+    public static String getPeptideModificationLocations(PeptideMatch peptideMatch, PtmSettings ptmProfile) {
 
         PSPtmScores psPtmScores = new PSPtmScores();
         psPtmScores = (PSPtmScores) peptideMatch.getUrParam(psPtmScores);

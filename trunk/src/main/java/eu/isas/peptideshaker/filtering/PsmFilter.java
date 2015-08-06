@@ -4,7 +4,7 @@ import com.compomics.util.experiment.filtering.FilterItemComparator;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
+import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.filtering.items.AssumptionFilterItem;
 import eu.isas.peptideshaker.filtering.items.PsmFilterItem;

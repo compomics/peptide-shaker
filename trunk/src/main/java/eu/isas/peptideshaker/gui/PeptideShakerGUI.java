@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
@@ -36,7 +37,7 @@ import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
+import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.*;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
@@ -46,7 +47,7 @@ import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.error_handlers.notification.NotesDialog;
 import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
-import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.searchsettings.SearchSettingsDialog;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
@@ -63,7 +64,7 @@ import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.StatsPanel;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
-import com.compomics.util.preferences.ModificationProfile;
+import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.UserPreferences;
@@ -82,11 +83,11 @@ import com.compomics.software.settings.gui.PathSettingsDialog;
 import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.experiment.identification.matches.IonMatch;
-import com.compomics.util.experiment.identification.spectrum_annotators.TagSpectrumAnnotator;
+import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.TagSpectrumAnnotator;
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
-import com.compomics.util.preferences.SpecificAnnotationPreferences;
+import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
 import com.compomics.util.preferences.ValidationQCPreferences;
 import com.compomics.util.preferences.gui.ValidationQCPreferencesDialog;
 import com.compomics.util.preferences.gui.ValidationQCPreferencesDialogParent;
@@ -381,7 +382,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * The annotation preferences for the currently selected spectrum and
      * peptide.
      */
-    private SpecificAnnotationPreferences specificAnnotationPreferences;
+    private SpecificAnnotationSettings specificAnnotationPreferences;
 
     /**
      * The main method used to start PeptideShaker.
@@ -2282,7 +2283,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         }
 
                         // move the spectrum annotation menu bar and set the intensity slider value
-                        AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
+                        AnnotationSettings annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
                         if (selectedIndex == OVER_VIEW_TAB_INDEX) {
                             overviewPanel.showSpectrumAnnotationMenu();
                             overviewPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
@@ -3659,7 +3660,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public void updateAnnotationMenu() {
 
         IdentificationParameters identificationParameters = getIdentificationParameters();
-        AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
+        AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
         if (searchParameters.getIonSearched1() == PeptideFragmentIon.A_ION) {
@@ -3730,7 +3731,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
         IdentificationParameters identificationParameters = getIdentificationParameters();
-        AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
+        AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
@@ -4769,7 +4770,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     // clear the data and database folder
                     clearData(true, true);
 
-                    // closeFiles the jvm
+                    // close the jvm
                     System.exit(0);
                 }
             }
@@ -4972,7 +4973,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         }
 
         // General annotation settings
-        AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
+        AnnotationSettings annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
         highResAnnotationCheckBoxMenuItem.setSelected(annotationPreferences.isHighResolutionAnnotation());
         allCheckBoxMenuItem.setSelected(annotationPreferences.showAllPeaks());
         barsCheckBoxMenuItem.setSelected(annotationPreferences.showBars());
@@ -4986,7 +4987,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public void updateAnnotationPreferences() {
 
         try {
-            AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
+            AnnotationSettings annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
 
             specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(specificAnnotationPreferences.getSpectrumKey(), specificAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingPreferences(), getIdentificationParameters().getPtmScoringPreferences().getSequenceMatchingPreferences());
 
@@ -5759,7 +5760,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             if (selectedFile != null) {
 
-                AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
+                AnnotationSettings annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
                 PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
                 TagSpectrumAnnotator tagSpectrumAnnotator = new TagSpectrumAnnotator();
 
@@ -5780,14 +5781,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                 if (assumption instanceof PeptideAssumption) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                     Peptide peptide = peptideAssumption.getPeptide();
-                                    SpecificAnnotationPreferences exportAnnotationPreferences = new SpecificAnnotationPreferences(spectrumKey, peptideAssumption);
+                                    SpecificAnnotationSettings exportAnnotationPreferences = new SpecificAnnotationSettings(spectrumKey, peptideAssumption);
                                     exportAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(exportAnnotationPreferences.getSpectrumKey(), exportAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingPreferences(), getIdentificationParameters().getPtmScoringPreferences().getSequenceMatchingPreferences());
                                     annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, exportAnnotationPreferences, spectrum, peptide);
                                     identifier = peptide.getSequenceWithLowerCasePtms();
                                 } else if (assumption instanceof TagAssumption) {
                                     TagAssumption tagAssumption = (TagAssumption) assumption;
                                     Tag tag = tagAssumption.getTag();
-                                    SpecificAnnotationPreferences exportAnnotationPreferences = new SpecificAnnotationPreferences(spectrumKey, tagAssumption);
+                                    SpecificAnnotationSettings exportAnnotationPreferences = new SpecificAnnotationSettings(spectrumKey, tagAssumption);
                                     exportAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(exportAnnotationPreferences.getSpectrumKey(), exportAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingPreferences(), getIdentificationParameters().getPtmScoringPreferences().getSequenceMatchingPreferences());
                                     annotations = tagSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, exportAnnotationPreferences, spectrum, tag);
                                     identifier = tag.asSequence(); //@TODO: add PTMs?
@@ -6018,7 +6019,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 //        knownMassDeltas.put(44d, "PEG"); // @TODO: should this be added to neutral losses??
         // add the modifications
         SearchParameters searchParameters = getIdentificationParameters().getSearchParameters();
-        ModificationProfile modificationProfile = searchParameters.getModificationProfile();
+        PtmSettings modificationProfile = searchParameters.getModificationProfile();
         ArrayList<String> modificationList = modificationProfile.getAllModifications();
         Collections.sort(modificationList);
 
@@ -7027,7 +7028,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @return the specific annotation preferences for the currently selected
      * spectrum and peptide
      */
-    public SpecificAnnotationPreferences getSpecificAnnotationPreferences() {
+    public SpecificAnnotationSettings getSpecificAnnotationPreferences() {
         return specificAnnotationPreferences;
     }
 
@@ -7038,7 +7039,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param specificAnnotationPreferences the specific annotation preferences
      * for the currently selected spectrum and peptide
      */
-    public void setSpecificAnnotationPreferences(SpecificAnnotationPreferences specificAnnotationPreferences) {
+    public void setSpecificAnnotationPreferences(SpecificAnnotationSettings specificAnnotationPreferences) {
         this.specificAnnotationPreferences = specificAnnotationPreferences;
     }
 

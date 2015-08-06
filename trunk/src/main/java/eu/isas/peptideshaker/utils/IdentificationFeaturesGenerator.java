@@ -366,7 +366,8 @@ public class IdentificationFeaturesGenerator {
         int[] aaCoverage = getAACoverage(proteinMatchKey);
         double nAAValidated = 0;
         for (int validationLevel : aaCoverage) {
-            if (validationLevel > 0) {
+            if (validationLevel == MatchValidationLevel.doubtful.getIndex()
+                    || validationLevel == MatchValidationLevel.confident.getIndex()) {
                 nAAValidated++;
             }
         }
