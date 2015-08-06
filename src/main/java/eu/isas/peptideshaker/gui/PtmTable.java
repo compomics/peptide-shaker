@@ -8,8 +8,8 @@ import com.compomics.util.experiment.identification.ptm.PtmtableContent;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
-import com.compomics.util.preferences.AnnotationPreferences;
-import com.compomics.util.preferences.SpecificAnnotationPreferences;
+import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
+import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -151,7 +151,7 @@ public class PtmTable extends JTable {
         tempColumnTypes.add(java.lang.Integer.class);
         tooltips.add("a, b and c ion index");
 
-        AnnotationPreferences annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
+        AnnotationSettings annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
 
         if (annotationPreferences.getFragmentIonTypes().contains(PeptideFragmentIon.A_ION)) {
             columnHeaders.add("a");
@@ -279,7 +279,7 @@ public class PtmTable extends JTable {
      */
     private void insertAreaCharts() {
 
-        AnnotationPreferences annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
+        AnnotationSettings annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
         PtmtableContent tempContent, tableContent = new PtmtableContent();
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
@@ -287,7 +287,7 @@ public class PtmTable extends JTable {
             try {
                 MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
                 SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationPreferences(spectrumKey, spectrumMatch.getBestPeptideAssumption()));
+                peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationSettings(spectrumKey, spectrumMatch.getBestPeptideAssumption()));
                 peptideShakerGUI.updateAnnotationPreferences();
                 tempContent = PtmtableContent.getPTMTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences, peptideShakerGUI.getSpecificAnnotationPreferences());
                 tempContent.normalize();
@@ -451,7 +451,7 @@ public class PtmTable extends JTable {
      */
     private void insertBarCharts() {
 
-        AnnotationPreferences annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
+        AnnotationSettings annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
         PtmtableContent tempContent, tableContent = new PtmtableContent();
         MSnSpectrum spectrum;
         SpectrumMatch spectrumMatch;
@@ -462,7 +462,7 @@ public class PtmTable extends JTable {
             try {
                 spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
                 spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationPreferences(spectrumKey, spectrumMatch.getBestPeptideAssumption()));
+                peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationSettings(spectrumKey, spectrumMatch.getBestPeptideAssumption()));
                 peptideShakerGUI.updateAnnotationPreferences();
                 tempContent = PtmtableContent.getPTMTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences, peptideShakerGUI.getSpecificAnnotationPreferences());
                 tempContent.normalize();

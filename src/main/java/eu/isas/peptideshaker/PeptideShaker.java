@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker;
 
+import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
@@ -30,6 +31,7 @@ import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.PsmScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.waiting.Duration;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.protein_inference.ProteinInference;
@@ -142,6 +144,10 @@ public class PeptideShaker {
      * If true, a warning will be displayed when encountering memory issues.
      */
     private boolean memoryWarning = true;
+    /**
+     * Object used to monitor the duration of the project creation.
+     */
+    private Duration projectCreationDuration;
 
     /**
      * Empty constructor for instantiation purposes.
@@ -205,6 +211,9 @@ public class PeptideShaker {
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ProjectDetails projectDetails,
             ProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, boolean backgroundThread) {
 
+        projectCreationDuration = new Duration();
+        projectCreationDuration.start();
+        
         waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")", true, true);
         waitingHandler.appendReportEndLine();
 
@@ -213,7 +222,6 @@ public class PeptideShaker {
 
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
         analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification(getIdentificationReference()));
-        Identification identification = analysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
         fileImporter = new FileImporter(this, waitingHandler, analysis, shotgunProtocol, identificationParameters, metrics);
         fileImporter.importFiles(idFiles, spectrumFiles, processingPreferences, spectrumCountingPreferences, projectDetails, backgroundThread);
@@ -259,7 +267,7 @@ public class PeptideShaker {
             ExceptionHandler exceptionHandler, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
             ProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails)
             throws Exception {
-
+        
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, shotgunProtocol, identificationParameters, metrics, spectrumCountingPreferences);
 
@@ -465,7 +473,8 @@ public class PeptideShaker {
             return;
         }
 
-        report = "Identification processing completed.";
+        projectCreationDuration.end();
+        report = "Identification processing completed (" + projectCreationDuration.toString() + ").";
 
         // get the detailed report
         ArrayList<Integer> suspiciousInput = inputMap.suspiciousInput(identificationParameters.getIdValidationPreferences().getDefaultPsmFDR() / 100);

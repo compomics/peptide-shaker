@@ -7,7 +7,7 @@ import com.compomics.util.experiment.biology.AminoAcidSequence;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -18,12 +18,11 @@ import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.experiment.identification.amino_acid_tags.TagComponent;
 import com.compomics.util.experiment.biology.MassGap;
 import com.compomics.util.gui.TableProperties;
-import com.compomics.util.preferences.ModificationProfile;
+import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.protein.Header;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
-import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import java.awt.Color;
 import java.io.IOException;
@@ -42,7 +41,7 @@ public class DisplayFeaturesGenerator {
     /**
      * The modification profile containing the colors of the PTMs.
      */
-    private ModificationProfile modificationProfile;
+    private PtmSettings modificationProfile;
     /**
      * The notSelectedRowHtmlTagFontColor.
      */
@@ -67,7 +66,7 @@ public class DisplayFeaturesGenerator {
      * of the PTMs
      * @param exceptionHandler an exception handler to catch exceptions
      */
-    public DisplayFeaturesGenerator(ModificationProfile modificationProfile, ExceptionHandler exceptionHandler) {
+    public DisplayFeaturesGenerator(PtmSettings modificationProfile, ExceptionHandler exceptionHandler) {
         this.modificationProfile = modificationProfile;
         this.exceptionHandler = exceptionHandler;
     }

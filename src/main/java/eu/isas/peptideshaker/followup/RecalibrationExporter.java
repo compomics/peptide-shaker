@@ -5,7 +5,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.recalibration.RunMzDeviation;
 import eu.isas.peptideshaker.recalibration.SpectrumRecalibrator;

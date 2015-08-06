@@ -5,7 +5,7 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
-import com.compomics.util.preferences.ModificationProfile;
+import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.IOException;
@@ -238,7 +238,7 @@ public class PeptideSpecificMap implements Serializable {
      * @param key the key of interest
      * @return an intelligible string for the key of the map
      */
-    public static String getKeyName(ModificationProfile modificationProfile, String key) {
+    public static String getKeyName(PtmSettings modificationProfile, String key) {
 
         if (key.equals("")) {
             return "Unmodified";

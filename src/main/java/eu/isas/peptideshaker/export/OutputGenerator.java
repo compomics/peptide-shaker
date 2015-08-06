@@ -21,7 +21,7 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.ModificationProfile;
+import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -761,7 +761,7 @@ public class OutputGenerator {
                         HashMap<String, HashMap<Integer, String[]>> surroundingAAs = new HashMap<String, HashMap<Integer, String[]>>();
                         ProteinMatch proteinMatch = null;
                         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                        ModificationProfile ptmProfile = identificationParameters.getSearchParameters().getModificationProfile();
+                        PtmSettings ptmProfile = identificationParameters.getSearchParameters().getModificationProfile();
                         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
                         ShotgunProtocol shotgunProtocol = peptideShakerGUI.getShotgunProtocol();
 
@@ -1188,7 +1188,7 @@ public class OutputGenerator {
 
                         PTMFactory ptmFactory = PTMFactory.getInstance();
                         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                        ModificationProfile ptmProfile = identificationParameters.getSearchParameters().getModificationProfile();
+                        PtmSettings ptmProfile = identificationParameters.getSearchParameters().getModificationProfile();
                         PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
@@ -1636,7 +1636,7 @@ public class OutputGenerator {
 
                         PTMFactory ptmFactory = PTMFactory.getInstance();
                         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                        ModificationProfile ptmProfile = identificationParameters.getSearchParameters().getModificationProfile();
+                        PtmSettings ptmProfile = identificationParameters.getSearchParameters().getModificationProfile();
                         PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
 
                         ProjectDetails projectDetails = peptideShakerGUI.getProjectDetails();
@@ -3011,7 +3011,7 @@ public class OutputGenerator {
      * @param ptmProfile the PTM profile
      * @return the peptide modification location confidence as a string.
      */
-    public static String getPeptideModificationLocations(Peptide peptide, PeptideMatch peptideMatch, ModificationProfile ptmProfile) {
+    public static String getPeptideModificationLocations(Peptide peptide, PeptideMatch peptideMatch, PtmSettings ptmProfile) {
 
         PTMFactory ptmFactory = PTMFactory.getInstance();
 
