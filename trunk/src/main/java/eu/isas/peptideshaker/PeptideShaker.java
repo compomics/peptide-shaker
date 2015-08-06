@@ -531,7 +531,7 @@ public class PeptideShaker {
                     } else {
                         detailedReport += "<br>";
                     }
-                    detailedReport += PeptideSpecificMap.getKeyName(identificationParameters.getSearchParameters().getModificationProfile(), fraction);
+                    detailedReport += PeptideSpecificMap.getKeyName(identificationParameters.getSearchParameters().getPtmSettings(), fraction);
                     if (suspiciousPeptides.size() > 0) {
                         detailedReport += " peptides.<br>";
                     }

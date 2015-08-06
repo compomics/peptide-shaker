@@ -3045,7 +3045,7 @@ public class StatsPanel extends javax.swing.JPanel {
                         peptideMap.put(++cpt, peptideKey);
                         modifiedMaps.put(cpt, false);
 
-                        String title = PeptideSpecificMap.getKeyName(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile(), peptideKey);
+                        String title = PeptideSpecificMap.getKeyName(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), peptideKey);
                         ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, title + " Peptides"});
                     }
                 }

@@ -230,12 +230,14 @@ public class SwathExport {
      */
     private static boolean isTargetedPeptide(Peptide peptide, ArrayList<String> targetedPTMs) {
         boolean found = false, confident = true;
-        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-            if (targetedPTMs.contains(modificationMatch.getTheoreticPtm())) {
-                found = true;
-                if (!modificationMatch.isConfident()) {
-                    confident = false;
-                    break;
+        if (peptide.isModified()) {
+            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                if (targetedPTMs.contains(modificationMatch.getTheoreticPtm())) {
+                    found = true;
+                    if (!modificationMatch.isConfident()) {
+                        confident = false;
+                        break;
+                    }
                 }
             }
         }
@@ -268,7 +270,7 @@ public class SwathExport {
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
      */
-    private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences, 
+    private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences,
             SequenceMatchingPreferences ptmSequenceMatchingPreferences, AnnotationSettings annotationPreferences, PeptideSpectrumAnnotator spectrumAnnotator)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         writePsm(writer, spectrumKey, null, identification, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, annotationPreferences, spectrumAnnotator);
@@ -302,8 +304,8 @@ public class SwathExport {
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
      */
-    private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification, 
-            SequenceMatchingPreferences sequenceMatchingPreferences, SequenceMatchingPreferences ptmSequenceMatchingPreferences, 
+    private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification,
+            SequenceMatchingPreferences sequenceMatchingPreferences, SequenceMatchingPreferences ptmSequenceMatchingPreferences,
             AnnotationSettings annotationPreferences, PeptideSpectrumAnnotator spectrumAnnotator)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -327,7 +329,7 @@ public class SwathExport {
 
         for (String accession : accessions) {
 
-            SpecificAnnotationSettings specificAnnotationPreferences 
+            SpecificAnnotationSettings specificAnnotationPreferences
                     = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), bestAssumption, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
             ArrayList<IonMatch> matches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
                     (MSnSpectrum) spectrum, bestAssumption.getPeptide());
@@ -338,7 +340,7 @@ public class SwathExport {
 
                     PeptideFragmentIon peptideFragmentIon = (PeptideFragmentIon) ionMatch.ion;
 
-                    if (peptideFragmentIon.getNeutralLosses().isEmpty()) {
+                    if (!peptideFragmentIon.hasNeutralLosses()) {
 
                         //Q1
                         Charge charge = bestAssumption.getIdentificationCharge();
@@ -371,15 +373,17 @@ public class SwathExport {
                         String modifiedSequence = "";
                         for (int aa = 0; aa < sequence.length(); aa++) {
                             modifiedSequence += sequence.charAt(aa);
-                            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                if (modificationMatch.getModificationSite() == aa + 1) {
-                                    String ptmName = modificationMatch.getTheoreticPtm();
-                                    PTM ptm = ptmFactory.getPTM(ptmName);
-                                    CvTerm cvTerm = ptm.getCvTerm();
-                                    if (cvTerm != null) {
-                                        modifiedSequence += "[" + cvTerm.getName() + "]";
-                                    } else {
-                                        modifiedSequence += "[" + ptm.getShortName() + "]";
+                            if (peptide.isModified()) {
+                                for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                                    if (modificationMatch.getModificationSite() == aa + 1) {
+                                        String ptmName = modificationMatch.getTheoreticPtm();
+                                        PTM ptm = ptmFactory.getPTM(ptmName);
+                                        CvTerm cvTerm = ptm.getCvTerm();
+                                        if (cvTerm != null) {
+                                            modifiedSequence += "[" + cvTerm.getName() + "]";
+                                        } else {
+                                            modifiedSequence += "[" + ptm.getShortName() + "]";
+                                        }
                                     }
                                 }
                             }

@@ -180,7 +180,7 @@ public class PeptideShakerMethods {
         String msmsToleranceUnit = "Da";
         text += searchParameters.getPrecursorAccuracy() + " " + msToleranceUnit + " as MS1 and " + searchParameters.getFragmentIonAccuracy() + " " + msmsToleranceUnit + " as MS2 tolerances; ";
         PTMFactory ptmFactory = PTMFactory.getInstance();
-        ArrayList<String> fixedPtmsNames = searchParameters.getModificationProfile().getFixedModifications();
+        ArrayList<String> fixedPtmsNames = searchParameters.getPtmSettings().getFixedModifications();
         if (!fixedPtmsNames.isEmpty()) {
             text += "fixed modifications: ";
             for (int i = 0; i < fixedPtmsNames.size(); i++) {
@@ -204,7 +204,7 @@ public class PeptideShakerMethods {
 
             text += ", ";
         }
-        ArrayList<String> variablePtmsNames = searchParameters.getModificationProfile().getVariableModifications();
+        ArrayList<String> variablePtmsNames = searchParameters.getPtmSettings().getVariableModifications();
         if (!variablePtmsNames.isEmpty()) {
             text += " variable modifications: ";
             for (int i = 0; i < variablePtmsNames.size(); i++) {
@@ -228,7 +228,7 @@ public class PeptideShakerMethods {
 
             text += ", ";
         }
-        ArrayList<String> refinementFixedPtmsNames = searchParameters.getModificationProfile().getRefinementFixedModifications();
+        ArrayList<String> refinementFixedPtmsNames = searchParameters.getPtmSettings().getRefinementFixedModifications();
         if (!refinementFixedPtmsNames.isEmpty()) {
             text += "fixed modifications during refinement procedure: ";
             for (int i = 0; i < refinementFixedPtmsNames.size(); i++) {
@@ -252,7 +252,7 @@ public class PeptideShakerMethods {
 
             text += ", ";
         }
-        ArrayList<String> refinementVariablePtmsNames = searchParameters.getModificationProfile().getRefinementVariableModifications();
+        ArrayList<String> refinementVariablePtmsNames = searchParameters.getPtmSettings().getRefinementVariableModifications();
         if (!refinementVariablePtmsNames.isEmpty()) {
             text += "variable modifications during refinement procedure: ";
             for (int i = 0; i < refinementVariablePtmsNames.size(); i++) {

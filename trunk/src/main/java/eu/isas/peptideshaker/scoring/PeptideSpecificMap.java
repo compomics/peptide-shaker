@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.scoring;
 
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.biology.Peptide;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -104,7 +105,7 @@ public class PeptideSpecificMap implements Serializable {
      * @throws IllegalArgumentException thrown if an IllegalArgumentException
      * occurs
      */
-    public void addPoint(double probabilityScore, PeptideMatch peptideMatch, SequenceMatchingPreferences sequenceMatchingPreferences) 
+    public void addPoint(double probabilityScore, PeptideMatch peptideMatch, SequenceMatchingPreferences sequenceMatchingPreferences)
             throws IOException, InterruptedException, SQLException, ClassNotFoundException {
         String key = getKey(peptideMatch);
         if (!peptideMaps.containsKey(key)) {
@@ -174,11 +175,14 @@ public class PeptideSpecificMap implements Serializable {
     public String getKey(PeptideMatch peptideMatch) {
         PTMFactory ptmFactory = PTMFactory.getInstance();
         PTM ptm;
-        ArrayList<Double> modificationMasses = new ArrayList<Double>();
-        for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
-            if (modificationMatch.getTheoreticPtm() != null && modificationMatch.isVariable()) {
-                ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
-                modificationMasses.add(ptm.getMass());
+        Peptide peptide = peptideMatch.getTheoreticPeptide();
+        ArrayList<Double> modificationMasses = new ArrayList<Double>(peptide.getNModifications());
+        if (peptide.isModified()) {
+            for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
+                if (modificationMatch.getTheoreticPtm() != null && modificationMatch.isVariable()) {
+                    ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
+                    modificationMasses.add(ptm.getMass());
+                }
             }
         }
         Collections.sort(modificationMasses);

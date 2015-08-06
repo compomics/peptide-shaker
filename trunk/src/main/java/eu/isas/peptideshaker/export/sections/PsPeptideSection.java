@@ -223,10 +223,14 @@ public class PsPeptideSection {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * interacting with a file while mapping potential modification sites
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping potential modification sites
-     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the ProteinTree
-     * @throws SQLException exception thrown whenever an error occurred while interacting with the ProteinTree
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown whenever an error occurred while reading an mzML file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while mapping potential modification sites
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the ProteinTree
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the ProteinTree
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown
+     * whenever an error occurred while reading an mzML file
      */
     public static String getfeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAA, String linePrefix, PeptideMatch peptideMatch, PSParameter psParameter, PsPeptideFeature peptideFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
@@ -270,7 +274,7 @@ public class PsPeptideSection {
                     return "0";
                 }
             case localization_confidence:
-                return getPeptideModificationLocations(peptideMatch, identificationParameters.getSearchParameters().getModificationProfile()) + "";
+                return getPeptideModificationLocations(peptideMatch, identificationParameters.getSearchParameters().getPtmSettings()) + "";
             case pi:
                 return psParameter.getProteinInferenceClassAsString();
             case position:
@@ -312,7 +316,7 @@ public class PsPeptideSection {
                 String sequence = peptideMatch.getTheoreticPeptide().getSequence();
                 return Peptide.getNMissedCleavages(sequence, shotgunProtocol.getEnzyme()) + "";
             case modified_sequence:
-                return peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getModificationProfile(), false, false, true);
+                return peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getPtmSettings(), false, false, true);
             case starred:
                 if (psParameter.isStarred()) {
                     return "1";
@@ -453,7 +457,7 @@ public class PsPeptideSection {
                 return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(peptideMatch);
             case confident_phosphosites:
                 ArrayList<String> modifications = new ArrayList<String>();
-                for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.contains("phospho")) {
                         modifications.add(ptm);
                     }
@@ -461,7 +465,7 @@ public class PsPeptideSection {
                 return identificationFeaturesGenerator.getConfidentPtmSites(peptideMatch, peptideMatch.getTheoreticPeptide().getSequence(), modifications);
             case confident_phosphosites_number:
                 modifications = new ArrayList<String>();
-                for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.contains("phospho")) {
                         modifications.add(ptm);
                     }
@@ -469,7 +473,7 @@ public class PsPeptideSection {
                 return identificationFeaturesGenerator.getConfidentPtmSitesNumber(peptideMatch, modifications);
             case ambiguous_phosphosites:
                 modifications = new ArrayList<String>();
-                for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.contains("phospho")) {
                         modifications.add(ptm);
                     }
@@ -477,7 +481,7 @@ public class PsPeptideSection {
                 return identificationFeaturesGenerator.getAmbiguousPtmSites(peptideMatch, peptideMatch.getTheoreticPeptide().getSequence(), modifications);
             case ambiguous_phosphosites_number:
                 modifications = new ArrayList<String>();
-                for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.contains("phospho")) {
                         modifications.add(ptm);
                     }
@@ -494,7 +498,7 @@ public class PsPeptideSection {
      * @param peptide the peptide
      * @param variablePtms if true, only variable PTMs are shown, false return
      * only the fixed PTMs
-     * 
+     *
      * @return the peptide modifications as a string
      */
     public static String getPeptideModificationsAsString(Peptide peptide, boolean variablePtms) {
@@ -502,12 +506,14 @@ public class PsPeptideSection {
         StringBuilder result = new StringBuilder();
 
         HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
-        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-            if ((variablePtms && modificationMatch.isVariable()) || (!variablePtms && !modificationMatch.isVariable())) {
-                if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                    modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+        if (peptide.isModified()) {
+            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                if ((variablePtms && modificationMatch.isVariable()) || (!variablePtms && !modificationMatch.isVariable())) {
+                    if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
+                        modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                    }
+                    modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                 }
-                modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
             }
         }
 
@@ -543,7 +549,7 @@ public class PsPeptideSection {
      *
      * @param peptideMatch the peptide match
      * @param ptmProfile the PTM profile
-     * 
+     *
      * @return the peptide modification location confidence as a string
      */
     public static String getPeptideModificationLocations(PeptideMatch peptideMatch, PtmSettings ptmProfile) {

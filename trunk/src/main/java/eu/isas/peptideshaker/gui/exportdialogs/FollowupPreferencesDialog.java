@@ -550,7 +550,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             final int userChoice = psmSelectionComboBox.getSelectedIndex();
             ArrayList<String> ptms = new ArrayList<String>();
             if (userChoice == 3) {
-                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().getAllNotFixedModifications(), true);
+                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings().getAllNotFixedModifications(), true);
                 if (ptmChooser.isCanceled()) {
                     return;
                 }
@@ -760,10 +760,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
                             // write the peptide node
                             if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
-                                nodeWriter.write("create n={id:'" + peptideKey + "', name:'" + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile(), false, false, true, false) + "', type:'Peptide'};\n");
+                                nodeWriter.write("create n={id:'" + peptideKey + "', name:'" + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), false, false, true, false) + "', type:'Peptide'};\n");
                             } else {
                                 nodeWriter.write(peptideKey + "\t"
-                                        + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile(), false, false, true, false)
+                                        + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), false, false, true, false)
                                         + "\tpeptide" + "\t" + psParameter.getMatchValidationLevel() + "\t" + peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences()) + "\n"); // @TODO: add more information?
                             }
 
@@ -881,7 +881,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             final int userChoice = psmSelectionComboBoxSwath.getSelectedIndex();
             ArrayList<String> ptms = new ArrayList<String>();
             if (userChoice == 3) {
-                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().getAllNotFixedModifications(), true);
+                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings().getAllNotFixedModifications(), true);
                 if (ptmChooser.isCanceled()) {
                     return;
                 }

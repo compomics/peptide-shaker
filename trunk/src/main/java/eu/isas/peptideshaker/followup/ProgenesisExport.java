@@ -204,12 +204,14 @@ public class ProgenesisExport {
      */
     private static boolean isTargetedPeptide(Peptide peptide, ArrayList<String> targetedPTMs) {
         boolean found = false, confident = true;
-        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-            if (targetedPTMs.contains(modificationMatch.getTheoreticPtm())) {
-                found = true;
-                if (!modificationMatch.isConfident()) {
-                    confident = false;
-                    break;
+        if (peptide.isModified()) {
+            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                if (targetedPTMs.contains(modificationMatch.getTheoreticPtm())) {
+                    found = true;
+                    if (!modificationMatch.isConfident()) {
+                        confident = false;
+                        break;
+                    }
                 }
             }
         }
@@ -274,13 +276,15 @@ public class ProgenesisExport {
 
             // modifications
             HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
-            for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
-
-                if (modificationMatch.isVariable()) {
-                    if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                        modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+            Peptide peptide = bestAssumption.getPeptide();
+            if (peptide.isModified()) {
+                for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                    if (modificationMatch.isVariable()) {
+                        if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
+                            modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                        }
+                        modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                     }
-                    modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                 }
             }
 

@@ -93,10 +93,12 @@ public class PtmTable extends JTable {
 
         modificationSites = new ArrayList<Integer>();
 
-        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-            if (modMatch.getTheoreticPtm().equals(ptm.getName())) {
-                modificationSites.add(modMatch.getModificationSite());
-                nPTM++;
+        if (peptide.isModified()) {
+            for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+                if (modMatch.getTheoreticPtm().equals(ptm.getName())) {
+                    modificationSites.add(modMatch.getModificationSite());
+                    nPTM++;
+                }
             }
         }
 

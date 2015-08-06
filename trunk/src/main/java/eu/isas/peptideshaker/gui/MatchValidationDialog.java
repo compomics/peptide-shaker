@@ -205,7 +205,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         TargetDecoyMap targetDecoyMap = peptideSpecificMap.getTargetDecoyMap(peptideSpecificMap.getCorrectedKey(peptideGroupKey));
         String groupName = "";
         if (peptideSpecificMap.getKeys().size() > 1) {
-            groupName += PeptideSpecificMap.getKeyName(identificationParameters.getSearchParameters().getModificationProfile(), peptideGroupKey) + " ";
+            groupName += PeptideSpecificMap.getKeyName(identificationParameters.getSearchParameters().getPtmSettings(), peptideGroupKey) + " ";
         }
         groupName += "Peptides";
         populateGUI(targetDecoyMap, groupName);

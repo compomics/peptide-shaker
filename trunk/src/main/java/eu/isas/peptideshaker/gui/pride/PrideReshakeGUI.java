@@ -2600,7 +2600,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                                         }
 
                                         // add details about the ptms
-                                        prideSearchParametersReport += convertPtms(allPtms, prideSearchParameters.getModificationProfile());
+                                        prideSearchParametersReport += convertPtms(allPtms, prideSearchParameters.getPtmSettings());
                                     }
                                 } else {
                                     prideSearchParametersReport
@@ -2960,7 +2960,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
         // map the ptms to utilities ptms
         String allPtms = (String) projectsTable.getValueAt(projectsTable.getSelectedRow(), projectsTable.getColumn("PTMs").getModelIndex());
-        prideParametersReport += convertPtms(allPtms, prideSearchParameters.getModificationProfile());
+        prideParametersReport += convertPtms(allPtms, prideSearchParameters.getPtmSettings());
 
         boolean debugOutput = false;
 

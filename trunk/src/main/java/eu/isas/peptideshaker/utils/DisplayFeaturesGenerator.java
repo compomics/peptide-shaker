@@ -358,24 +358,26 @@ public class DisplayFeaturesGenerator {
      */
     public String getPeptideModificationTooltipAsHtml(Peptide peptide) {
 
-        HashMap<Integer, ArrayList<String>> confidentModificationSites = new HashMap<Integer, ArrayList<String>>();
-        HashMap<Integer, ArrayList<String>> representativeModificationSites = new HashMap<Integer, ArrayList<String>>();
+        HashMap<Integer, ArrayList<String>> confidentModificationSites = new HashMap<Integer, ArrayList<String>>(peptide.getNModifications());
+        HashMap<Integer, ArrayList<String>> representativeModificationSites = new HashMap<Integer, ArrayList<String>>(peptide.getNModifications());
         HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
 
-        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-            String modName = modMatch.getTheoreticPtm();
-            int modSite = modMatch.getModificationSite();
-            if (modMatch.isVariable()) {
-                if (modMatch.isConfident()) {
-                    if (!confidentModificationSites.containsKey(modSite)) {
-                        confidentModificationSites.put(modSite, new ArrayList<String>());
+        if (peptide.isModified()) {
+            for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+                String modName = modMatch.getTheoreticPtm();
+                int modSite = modMatch.getModificationSite();
+                if (modMatch.isVariable()) {
+                    if (modMatch.isConfident()) {
+                        if (!confidentModificationSites.containsKey(modSite)) {
+                            confidentModificationSites.put(modSite, new ArrayList<String>());
+                        }
+                        confidentModificationSites.get(modSite).add(modName);
+                    } else {
+                        if (!representativeModificationSites.containsKey(modSite)) {
+                            representativeModificationSites.put(modSite, new ArrayList<String>());
+                        }
+                        representativeModificationSites.get(modSite).add(modName);
                     }
-                    confidentModificationSites.get(modSite).add(modName);
-                } else {
-                    if (!representativeModificationSites.containsKey(modSite)) {
-                        representativeModificationSites.put(modSite, new ArrayList<String>());
-                    }
-                    representativeModificationSites.get(modSite).add(modName);
                 }
             }
         }
