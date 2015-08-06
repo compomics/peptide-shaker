@@ -205,7 +205,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     private void updateSequenceLabel() {
         try {
             DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
-            PtmSettings modificationProfile = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile();
+            PtmSettings modificationProfile = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings();
             Peptide peptide = peptideMatch.getTheoreticPeptide();
             PSPtmScores ptmScores = new PSPtmScores();
             ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);

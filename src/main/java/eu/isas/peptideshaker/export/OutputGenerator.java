@@ -761,7 +761,7 @@ public class OutputGenerator {
                         HashMap<String, HashMap<Integer, String[]>> surroundingAAs = new HashMap<String, HashMap<Integer, String[]>>();
                         ProteinMatch proteinMatch = null;
                         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                        PtmSettings ptmProfile = identificationParameters.getSearchParameters().getModificationProfile();
+                        PtmSettings ptmProfile = identificationParameters.getSearchParameters().getPtmSettings();
                         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
                         ShotgunProtocol shotgunProtocol = peptideShakerGUI.getShotgunProtocol();
 
@@ -934,7 +934,7 @@ public class OutputGenerator {
 
                                                 if (sequence) {
                                                     writer.write(peptide.getSequence() + SEPARATOR);
-                                                    writer.write(peptide.getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile(),
+                                                    writer.write(peptide.getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(),
                                                             false, false, true) + SEPARATOR);
                                                 }
 
@@ -1188,7 +1188,7 @@ public class OutputGenerator {
 
                         PTMFactory ptmFactory = PTMFactory.getInstance();
                         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                        PtmSettings ptmProfile = identificationParameters.getSearchParameters().getModificationProfile();
+                        PtmSettings ptmProfile = identificationParameters.getSearchParameters().getPtmSettings();
                         PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
@@ -1347,12 +1347,15 @@ public class OutputGenerator {
                                                 }
                                                 if (modification) {
                                                     HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
-                                                    for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
-                                                        if (modificationMatch.isVariable()) {
-                                                            if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                                                                modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                                                    Peptide peptide = bestAssumption.getPeptide();
+                                                    if (peptide.isModified()) {
+                                                        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                                                            if (modificationMatch.isVariable()) {
+                                                                if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
+                                                                    modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                                                                }
+                                                                modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                                                             }
-                                                            modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                                                         }
                                                     }
                                                     boolean first = true, first2;
@@ -1380,12 +1383,15 @@ public class OutputGenerator {
                                                 }
                                                 if (location) {
                                                     ArrayList<String> modList = new ArrayList<String>();
-                                                    for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
-                                                        if (modificationMatch.isVariable()) {
-                                                            PTM refPtm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
-                                                            for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
-                                                                if (!modList.contains(equivalentPtm)) {
-                                                                    modList.add(equivalentPtm);
+                                                    Peptide peptide = bestAssumption.getPeptide();
+                                                    if (peptide.isModified()) {
+                                                        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                                                            if (modificationMatch.isVariable()) {
+                                                                PTM refPtm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
+                                                                for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
+                                                                    if (!modList.contains(equivalentPtm)) {
+                                                                        modList.add(equivalentPtm);
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -1636,7 +1642,7 @@ public class OutputGenerator {
 
                         PTMFactory ptmFactory = PTMFactory.getInstance();
                         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                        PtmSettings ptmProfile = identificationParameters.getSearchParameters().getModificationProfile();
+                        PtmSettings ptmProfile = identificationParameters.getSearchParameters().getPtmSettings();
                         PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
 
                         ProjectDetails projectDetails = peptideShakerGUI.getProjectDetails();
@@ -1722,13 +1728,16 @@ public class OutputGenerator {
                                 writer.write(proteinDescriptions + SEPARATOR);
                                 String sequence = bestAssumption.getPeptide().getSequence();
                                 writer.write(sequence + SEPARATOR);
-                                HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
-                                for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
-                                    if (modificationMatch.isVariable()) {
-                                        if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                                            modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                                Peptide peptide = bestAssumption.getPeptide();
+                                HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>(peptide.getNModifications());
+                                if (peptide.isModified()) {
+                                    for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                                        if (modificationMatch.isVariable()) {
+                                            if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
+                                                modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                                            }
+                                            modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                                         }
-                                        modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                                     }
                                 }
                                 boolean first = true, first2;
@@ -1755,16 +1764,19 @@ public class OutputGenerator {
                                 writer.write(SEPARATOR);
                                 int nPhospho = 0;
                                 ArrayList<String> modList = new ArrayList<String>();
-                                for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
-                                    if (modificationMatch.isVariable()) {
-                                        String ptmName = modificationMatch.getTheoreticPtm();
-                                        if (ptmName.contains("phospho")) {
-                                            nPhospho++;
-                                        }
-                                        PTM refPtm = ptmFactory.getPTM(ptmName);
-                                        for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
-                                            if (!modList.contains(equivalentPtm)) {
-                                                modList.add(equivalentPtm);
+                                peptide = bestAssumption.getPeptide();
+                                if (peptide.isModified()) {
+                                    for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                                        if (modificationMatch.isVariable()) {
+                                            String ptmName = modificationMatch.getTheoreticPtm();
+                                            if (ptmName.contains("phospho")) {
+                                                nPhospho++;
+                                            }
+                                            PTM refPtm = ptmFactory.getPTM(ptmName);
+                                            for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
+                                                if (!modList.contains(equivalentPtm)) {
+                                                    modList.add(equivalentPtm);
+                                                }
                                             }
                                         }
                                     }
@@ -1834,9 +1846,11 @@ public class OutputGenerator {
                                                     mdScore = score.toString();
                                                 }
                                                 ArrayList<Integer> sites = new ArrayList<Integer>();
-                                                for (ModificationMatch modificationMatch : mascotPeptide.getModificationMatches()) {
-                                                    if (modificationMatch.getTheoreticPtm().contains("phospho")) {
-                                                        sites.add(modificationMatch.getModificationSite());
+                                                if (mascotPeptide.isModified()) {
+                                                    for (ModificationMatch modificationMatch : mascotPeptide.getModificationMatches()) {
+                                                        if (modificationMatch.getTheoreticPtm().contains("phospho")) {
+                                                            sites.add(modificationMatch.getModificationSite());
+                                                        }
                                                     }
                                                 }
                                                 Collections.sort(sites);
@@ -2361,15 +2375,18 @@ public class OutputGenerator {
                                                     }
                                                     if (modifications) {
                                                         boolean first = true;
-                                                        for (ModificationMatch modificationMatch : peptideAssumption.getPeptide().getModificationMatches()) {
-                                                            if (modificationMatch.isVariable()) {
-                                                                if (first) {
-                                                                    first = false;
-                                                                } else {
-                                                                    writer.write(", ");
+                                                        Peptide peptide = peptideAssumption.getPeptide();
+                                                        if (peptide.isModified()) {
+                                                            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                                                                if (modificationMatch.isVariable()) {
+                                                                    if (first) {
+                                                                        first = false;
+                                                                    } else {
+                                                                        writer.write(", ");
+                                                                    }
+                                                                    String modName = modificationMatch.getTheoreticPtm();
+                                                                    writer.write(modName + "(" + modificationMatch.getModificationSite() + ")");
                                                                 }
-                                                                String modName = modificationMatch.getTheoreticPtm();
-                                                                writer.write(modName + "(" + modificationMatch.getModificationSite() + ")");
                                                             }
                                                         }
                                                         writer.write(SEPARATOR);
@@ -2963,12 +2980,14 @@ public class OutputGenerator {
         StringBuilder result = new StringBuilder();
         HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
 
-        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-            if ((variablePtms && modificationMatch.isVariable()) || (!variablePtms && !modificationMatch.isVariable())) {
-                if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                    modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+        if (peptide.isModified()) {
+            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                if ((variablePtms && modificationMatch.isVariable()) || (!variablePtms && !modificationMatch.isVariable())) {
+                    if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
+                        modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                    }
+                    modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                 }
-                modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
             }
         }
 
@@ -3018,12 +3037,14 @@ public class OutputGenerator {
         String result = "";
         ArrayList<String> modList = new ArrayList<String>();
 
-        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-            if (modificationMatch.isVariable()) {
-                PTM refPtm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
-                for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
-                    if (!modList.contains(equivalentPtm)) {
-                        modList.add(equivalentPtm);
+        if (peptide.isModified()) {
+            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                if (modificationMatch.isVariable()) {
+                    PTM refPtm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
+                    for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
+                        if (!modList.contains(equivalentPtm)) {
+                            modList.add(equivalentPtm);
+                        }
                     }
                 }
             }

@@ -273,13 +273,15 @@ public class PsIdentificationAlgorithmMatchesSection {
      */
     private static HashMap<String, ArrayList<Integer>> getModMap(Peptide peptide, boolean variablePtms) {
 
-        HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
-        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-            if ((variablePtms && modificationMatch.isVariable()) || (!variablePtms && !modificationMatch.isVariable())) {
-                if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                    modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+        HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>(peptide.getNModifications());
+        if (peptide.isModified()) {
+            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                if ((variablePtms && modificationMatch.isVariable()) || (!variablePtms && !modificationMatch.isVariable())) {
+                    if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
+                        modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                    }
+                    modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                 }
-                modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
             }
         }
 
@@ -494,7 +496,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                 String sequence = peptideAssumption.getPeptide().getSequence();
                 return Peptide.getNMissedCleavages(sequence, shotgunProtocol.getEnzyme()) + "";
             case modified_sequence:
-                return peptideAssumption.getPeptide().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getModificationProfile(), false, false, true) + "";
+                return peptideAssumption.getPeptide().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getPtmSettings(), false, false, true) + "";
             case spectrum_charge:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getPossibleChargesAsString() + "";
@@ -631,17 +633,17 @@ public class PsIdentificationAlgorithmMatchesSection {
                         if (ion instanceof PeptideFragmentIon) {
                             PeptideFragmentIon peptideFragmentIon = (PeptideFragmentIon) ion;
                             int number = peptideFragmentIon.getNumber();
-                            if (peptideFragmentIon.getSubType() == PeptideFragmentIon.A_ION && peptideFragmentIon.getNeutralLosses().isEmpty()) {
+                            if (peptideFragmentIon.getSubType() == PeptideFragmentIon.A_ION && !peptideFragmentIon.hasNeutralLosses()) {
                                 ionCoverage.get(PeptideFragmentIon.A_ION)[number - 1] = true;
-                            } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.B_ION && peptideFragmentIon.getNeutralLosses().isEmpty()) {
+                            } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.B_ION && !peptideFragmentIon.hasNeutralLosses()) {
                                 ionCoverage.get(PeptideFragmentIon.B_ION)[number - 1] = true;
-                            } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.C_ION && peptideFragmentIon.getNeutralLosses().isEmpty()) {
+                            } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.C_ION && !peptideFragmentIon.hasNeutralLosses()) {
                                 ionCoverage.get(PeptideFragmentIon.C_ION)[number - 1] = true;
-                            } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.X_ION && peptideFragmentIon.getNeutralLosses().isEmpty()) {
+                            } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.X_ION && !peptideFragmentIon.hasNeutralLosses()) {
                                 ionCoverage.get(PeptideFragmentIon.X_ION)[number - 1] = true;
-                            } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.Y_ION && peptideFragmentIon.getNeutralLosses().isEmpty()) {
+                            } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.Y_ION && !peptideFragmentIon.hasNeutralLosses()) {
                                 ionCoverage.get(PeptideFragmentIon.Y_ION)[number - 1] = true;
-                            } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.Z_ION && peptideFragmentIon.getNeutralLosses().isEmpty()) {
+                            } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.Z_ION && !peptideFragmentIon.hasNeutralLosses()) {
                                 ionCoverage.get(PeptideFragmentIon.Z_ION)[number - 1] = true;
                             }
                         }
@@ -900,7 +902,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             case missed_cleavages:
                 return "";
             case modified_sequence:
-                return tagAssumption.getTag().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getModificationProfile(), false, false, true, false);
+                return tagAssumption.getTag().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getPtmSettings(), false, false, true, false);
             case spectrum_charge:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getPossibleChargesAsString() + "";

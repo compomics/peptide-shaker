@@ -2879,7 +2879,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
                     int forwardIon = searchParameters.getIonSearched1();
                     int rewindIon = searchParameters.getIonSearched2();
-                    PtmSettings modificationProfile = searchParameters.getModificationProfile();
+                    PtmSettings modificationProfile = searchParameters.getPtmSettings();
 
                     if (currentSpectrum != null && spectrum != null) {
 
@@ -2939,7 +2939,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                                         modifiedSequence += peptide.getTaggedModifiedSequence(modificationProfile, false, false, true);
 
-                                        allModifications.addAll(peptide.getModificationMatches());
+                                        if (peptide.isModified()) {
+                                            allModifications.addAll(peptide.getModificationMatches());
+                                        }
                                     } else if (currentAssumption instanceof TagAssumption) {
                                         TagAssumption tagAssumption = (TagAssumption) currentAssumption;
 
@@ -2990,7 +2992,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                         }
 
                                         modifiedSequence += tagAssumption.getTag().getTaggedModifiedSequence(
-                                                peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile(), false, false, true, false);
+                                                peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), false, false, true, false);
                                     } else {
                                         throw new UnsupportedOperationException("Spectrum annotation not implemented for identification assumption of type " + currentAssumption.getClass() + ".");
                                     }
@@ -3459,7 +3461,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 return displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true);
                             } else if (spectrumMatch.getBestTagAssumption() != null) {
                                 //TODO: include fixed ptms
-                                return spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile(), true, true, true, false, false);
+                                return spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), true, true, true, false, false);
                             }
                         }
                         return null;
@@ -3601,7 +3603,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         sequence = displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true);
                         peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch);
                     } else if (spectrumMatch.getBestTagAssumption() != null) {
-                        sequence = spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile(), true, true, true, false, false);
+                        sequence = spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), true, true, true, false, false);
                         peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getTagModificationTooltipAsHtml(spectrumMatch.getBestTagAssumption().getTag());
                     } else {
                         throw new IllegalArgumentException("No best hit found for spectrum " + spectrumMatch.getKey());
@@ -3719,7 +3721,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     case 3:
                         if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
                             SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
-                            PtmSettings modificationProfile = searchParameters.getModificationProfile();
+                            PtmSettings modificationProfile = searchParameters.getPtmSettings();
                             Peptide peptide = ((PeptideAssumption) spectrumIdentificationAssumption).getPeptide();
 
                             boolean showFixed = false;
@@ -3732,7 +3734,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             return peptide.getTaggedModifiedSequence(modificationProfile, true, true, true, !showFixed);
                         } else if (spectrumIdentificationAssumption instanceof TagAssumption) {
                             TagAssumption tagAssumption = (TagAssumption) spectrumIdentificationAssumption;
-                            return tagAssumption.getTag().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile(), true, true, true, false, false);
+                            return tagAssumption.getTag().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), true, true, true, false, false);
                         } else {
                             throw new UnsupportedOperationException("Sequence display not implemented for assumption " + spectrumIdentificationAssumption.getClass() + ".");
                         }

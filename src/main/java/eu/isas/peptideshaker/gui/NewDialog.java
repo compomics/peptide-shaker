@@ -1655,7 +1655,7 @@ public class NewDialog extends javax.swing.JDialog {
         }
         if (tempParameters != null) {
 
-            PtmSettings modificationProfile = tempParameters.getModificationProfile();
+            PtmSettings modificationProfile = tempParameters.getPtmSettings();
 
             ArrayList<String> missing = new ArrayList<String>();
 
@@ -1664,7 +1664,7 @@ public class NewDialog extends javax.swing.JDialog {
                     missing.add(name);
                 } else {
                     if (modificationProfile.getColor(name) == null) {
-                        tempParameters.getModificationProfile().setColor(name, Color.lightGray);
+                        tempParameters.getPtmSettings().setColor(name, Color.lightGray);
                     }
                 }
             }

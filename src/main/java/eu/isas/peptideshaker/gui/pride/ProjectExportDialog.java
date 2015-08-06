@@ -220,7 +220,7 @@ public class ProjectExportDialog extends javax.swing.JDialog {
     private ArrayList<String> checkModifications() {
         ArrayList<String> missingTerm = new ArrayList<String>();
         PtmToPrideMap ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
-        for (String modification : peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().getAllModifications()) {
+        for (String modification : peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings().getAllModifications()) {
             if (!modification.equals(PtmPanel.NO_MODIFICATION) && ptmToPrideMap.getCVTerm(modification) == null) {
                 missingTerm.add(modification);
             }

@@ -3142,11 +3142,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             peptideSequence = Peptide.getSequence(peptideKey);
             aminoAcidPattern = new AminoAcidPattern(peptideSequence);
 
-            ArrayList<ModificationMatch> modifications = new ArrayList<ModificationMatch>();
+            ArrayList<ModificationMatch> modifications = null;
             try {
                 modifications = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModificationMatches();
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
+            }
+            if (modifications == null) {
+                modifications = new ArrayList<ModificationMatch>(0);
             }
 
             for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
@@ -3163,7 +3166,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         if (displayPreferences.isDisplayedPTM(modName)) {
                             if (modMatch.getModificationSite() == peptideIndex) {
 
-                                Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().getColor(modName);
+                                Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings().getColor(modName);
 
                                 jmolPanel.getViewer().evalString(
                                         "select resno =" + (j - chains[selectedChainIndex - 1].getDifference())

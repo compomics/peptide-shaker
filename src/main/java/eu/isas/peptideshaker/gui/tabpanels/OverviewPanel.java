@@ -3996,7 +3996,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             maxCharge = currentCharge;
                         }
 
-                        allModifications.addAll(spectrumMatch.getBestPeptideAssumption().getPeptide().getModificationMatches());
+                        if (peptide.isModified()) {
+                            allModifications.addAll(peptide.getModificationMatches());
+                        }
 
                         currentSpectrumKey = spectrumKey;
                     }
@@ -4414,7 +4416,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 //                            }
 //                        }
                         // @TODO: are peptide terminal mods excluded??  
-                        Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().getColor(ptmName);
+                        Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings().getColor(ptmName);
                         if (ptmColor == null) {
                             ptmColor = Color.lightGray;
                         }
@@ -4589,7 +4591,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             secondarySpectrumPlotsJPanel.removeAll();
                             SequenceFragmentationPanel sequenceFragmentationPanel = new SequenceFragmentationPanel(
                                     peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(spectrumMatch, false, false, false),
-                                    annotations, true, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile(), forwardIon, rewindIon);
+                                    annotations, true, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), forwardIon, rewindIon);
                             sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
                             sequenceFragmentationPanel.setOpaque(true);
                             sequenceFragmentationPanel.setBackground(Color.WHITE);

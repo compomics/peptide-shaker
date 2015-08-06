@@ -246,8 +246,8 @@ public class BestMatchSelection {
                                         HashMap<String, PeptideAssumption> assumptionMap = coverageMap.get(-1.0);
                                         for (PeptideAssumption tempAssumption : assumptionMap.values()) { // There should be only one
                                             Peptide peptide = tempAssumption.getPeptide();
-            SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), tempAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-            HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
+                                            SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), tempAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
+                                            HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
                                             int nIons = coveredAminoAcids.size();
                                             nSeMap.put(nIons, coverageMap);
                                         }
@@ -255,8 +255,8 @@ public class BestMatchSelection {
                                     }
 
                                     Peptide peptide = peptideAssumption1.getPeptide();
-            SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption1, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-            HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
+                                    SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption1, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
+                                    HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
                                     int nIons = coveredAminoAcids.size();
 
                                     coverageMap = nSeMap.get(nIons);
@@ -300,7 +300,7 @@ public class BestMatchSelection {
 
                 SpectrumMatch spectrumMatch = new SpectrumMatch(spectrumKey);
                 if (!peptideAssumptions.isEmpty()) {
-                    
+
                     PeptideAssumption bestPeptideAssumption = null;
                     ArrayList<Double> ps = new ArrayList<Double>(peptideAssumptions.keySet());
                     Collections.sort(ps);
@@ -441,10 +441,12 @@ public class BestMatchSelection {
                         // create a PeptideShaker match based on the best search engine match
                         Peptide sePeptide = bestPeptideAssumption.getPeptide();
                         ArrayList<String> psProteins = new ArrayList<String>(sePeptide.getParentProteins(sequenceMatchingPreferences));
-                        ArrayList<ModificationMatch> psModificationMatches = new ArrayList<ModificationMatch>();
-
-                        for (ModificationMatch seModMatch : sePeptide.getModificationMatches()) {
-                            psModificationMatches.add(new ModificationMatch(seModMatch.getTheoreticPtm(), seModMatch.isVariable(), seModMatch.getModificationSite()));
+                        ArrayList<ModificationMatch> psModificationMatches = null;
+                        if (sePeptide.isModified()) {
+                            psModificationMatches = new ArrayList<ModificationMatch>(sePeptide.getNModifications());
+                            for (ModificationMatch seModMatch : sePeptide.getModificationMatches()) {
+                                psModificationMatches.add(new ModificationMatch(seModMatch.getTheoreticPtm(), seModMatch.isVariable(), seModMatch.getModificationSite()));
+                            }
                         }
 
                         Peptide psPeptide = new Peptide(sePeptide.getSequence(), psModificationMatches);

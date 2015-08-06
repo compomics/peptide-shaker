@@ -518,7 +518,7 @@ public class FilterDialog extends javax.swing.JDialog {
         FilterItem filterItem = matchFilter.getFilterItem(itemName);
         ListChooser listChooser = null;
         if (filterItem.isPtm()) {
-            ArrayList<String> ptms = identificationParameters.getSearchParameters().getModificationProfile().getAllModifications();
+            ArrayList<String> ptms = identificationParameters.getSearchParameters().getPtmSettings().getAllModifications();
             if (ptms != null && ptms.size() > 0) {
                 listChooser = new PtmChooser(parentFrame, ptms, false); //@TODO: allow multiple selection
             }

@@ -477,7 +477,7 @@ public class PsPsmSection {
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
                     String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
                     ArrayList<String> modifications = new ArrayList<String>();
-                    for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
+                    for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                         if (ptm.toLowerCase().contains("phospho")) {
                             modifications.add(ptm);
                         }
@@ -487,7 +487,7 @@ public class PsPsmSection {
                 return "";
             case confident_phosphosites_number:
                 ArrayList<String> modifications = new ArrayList<String>();
-                for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.toLowerCase().contains("phospho")) {
                         modifications.add(ptm);
                     }
@@ -497,7 +497,7 @@ public class PsPsmSection {
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
                     String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
                     modifications = new ArrayList<String>();
-                    for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
+                    for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                         if (ptm.toLowerCase().contains("phospho")) {
                             modifications.add(ptm);
                         }
@@ -507,7 +507,7 @@ public class PsPsmSection {
                 return "";
             case ambiguous_phosphosites_number:
                 modifications = new ArrayList<String>();
-                for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.toLowerCase().contains("phospho")) {
                         modifications.add(ptm);
                     }

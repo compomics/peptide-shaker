@@ -2942,11 +2942,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         // @TODO: replace by user select ptm visability
         if (fixedModsJCheckBoxMenuItem.isSelected()) {
-            for (String ptm : getIdentificationParameters().getSearchParameters().getModificationProfile().getFixedModifications()) {
+            for (String ptm : getIdentificationParameters().getSearchParameters().getPtmSettings().getFixedModifications()) {
                 getDisplayPreferences().setDisplayedPTM(ptm, true);
             }
         } else {
-            for (String ptm : getIdentificationParameters().getSearchParameters().getModificationProfile().getFixedModifications()) {
+            for (String ptm : getIdentificationParameters().getSearchParameters().getPtmSettings().getFixedModifications()) {
                 getDisplayPreferences().setDisplayedPTM(ptm, false);
             }
         }
@@ -3341,7 +3341,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             sequenceCoverageJCheckBoxMenuItem.setSelected(true);
 
             // Display the variable modifications
-            getDisplayPreferences().setDefaultSelection(getIdentificationParameters().getSearchParameters().getModificationProfile());
+            getDisplayPreferences().setDefaultSelection(getIdentificationParameters().getSearchParameters().getPtmSettings());
             getDisplayFeaturesGenerator().setDisplayedPTMs(getDisplayPreferences().getDisplayedPtms());
 
             overviewPanel.setDisplayOptions(true, true, true, true);
@@ -3698,7 +3698,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public ArrayList<Integer> getReporterIons() {
 
         SearchParameters searchParameters = getIdentificationParameters().getSearchParameters();
-        ArrayList<String> modifications = searchParameters.getModificationProfile().getAllModifications();
+        ArrayList<String> modifications = searchParameters.getPtmSettings().getAllModifications();
         ArrayList<Integer> reporterIonsSubtypes = new ArrayList<Integer>();
 
         for (String mod : modifications) {
@@ -6019,7 +6019,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 //        knownMassDeltas.put(44d, "PEG"); // @TODO: should this be added to neutral losses??
         // add the modifications
         SearchParameters searchParameters = getIdentificationParameters().getSearchParameters();
-        PtmSettings modificationProfile = searchParameters.getModificationProfile();
+        PtmSettings modificationProfile = searchParameters.getPtmSettings();
         ArrayList<String> modificationList = modificationProfile.getAllModifications();
         Collections.sort(modificationList);
 
@@ -6277,7 +6277,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public void resetDisplayFeaturesGenerator() {
         SearchParameters searchParameters = getIdentificationParameters().getSearchParameters();
-        displayFeaturesGenerator = new DisplayFeaturesGenerator(searchParameters.getModificationProfile(), exceptionHandler);
+        displayFeaturesGenerator = new DisplayFeaturesGenerator(searchParameters.getPtmSettings(), exceptionHandler);
         displayFeaturesGenerator.setDisplayedPTMs(getDisplayPreferences().getDisplayedPtms());
     }
 

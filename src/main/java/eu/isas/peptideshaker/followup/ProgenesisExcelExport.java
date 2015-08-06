@@ -176,10 +176,10 @@ public class ProgenesisExcelExport {
             int proteinStartRow = currentRow;
 
             PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, true, parameters, waitingHandler);
-            
+
             // print the peptide details
             while (peptideMatchesIterator.hasNext()) {
-                
+
                 PeptideMatch peptideMatch = peptideMatchesIterator.next();
 
                 // insert peptide data
@@ -206,7 +206,7 @@ public class ProgenesisExcelExport {
      * Insert the protein details.
      *
      * @param proteinAccession the protein key
-     * 
+     *
      * @throws Exception thrown if an error occurs when getting the sequence
      * details
      */
@@ -252,7 +252,7 @@ public class ProgenesisExcelExport {
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
-        
+
         PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, parameters, false, waitingHandler);
 
         while (psmIterator.hasNext()) {
@@ -559,19 +559,21 @@ public class ProgenesisExcelExport {
 
         StringBuilder result = new StringBuilder();
 
-        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-            int site = modificationMatch.getModificationSite();
-            String ptmName = modificationMatch.getTheoreticPtm();
+        if (peptide.isModified()) {
+            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                int site = modificationMatch.getModificationSite();
+                String ptmName = modificationMatch.getTheoreticPtm();
 
-            if (result.length() > 0) {
-                result.append("; ");
+                if (result.length() > 0) {
+                    result.append("; ");
+                }
+
+                result.append(peptide.getSequence().charAt(site - 1));
+                result.append(site);
+                result.append("(");
+                result.append(ptmName);
+                result.append(")");
             }
-
-            result.append(peptide.getSequence().charAt(site - 1));
-            result.append(site);
-            result.append("(");
-            result.append(ptmName);
-            result.append(")");
         }
 
         return result.toString();

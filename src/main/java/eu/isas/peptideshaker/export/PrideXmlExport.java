@@ -486,10 +486,13 @@ public class PrideXmlExport {
                     // PTM scores
                     ArrayList<String> modifications = new ArrayList<String>();
 
-                    for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
-                        if (modificationMatch.isVariable()) {
-                            if (!modifications.contains(modificationMatch.getTheoreticPtm())) {
-                                modifications.add(modificationMatch.getTheoreticPtm());
+                    Peptide peptide = bestAssumption.getPeptide();
+                    if (peptide.isModified()) {
+                        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                            if (modificationMatch.isVariable()) {
+                                if (!modifications.contains(modificationMatch.getTheoreticPtm())) {
+                                    modifications.add(modificationMatch.getTheoreticPtm());
+                                }
                             }
                         }
                     }
@@ -773,68 +776,70 @@ public class PrideXmlExport {
      */
     private void writePtms(Peptide peptide) throws IOException {
 
-        for (int i = 0; i < peptide.getModificationMatches().size(); i++) {
+        if (peptide.isModified()) {
+            for (int i = 0; i < peptide.getModificationMatches().size(); i++) {
 
-            br.write(getCurrentTabSpace() + "<ModificationItem>" + System.getProperty("line.separator"));
-            tabCounter++;
+                br.write(getCurrentTabSpace() + "<ModificationItem>" + System.getProperty("line.separator"));
+                tabCounter++;
 
-            ModificationMatch modMatch = peptide.getModificationMatches().get(i);
-            String modName = modMatch.getTheoreticPtm();
-            PTM ptm = ptmFactory.getPTM(modName);
+                ModificationMatch modMatch = peptide.getModificationMatches().get(i);
+                String modName = modMatch.getTheoreticPtm();
+                PTM ptm = ptmFactory.getPTM(modName);
 
-            CvTerm cvTerm = ptm.getCvTerm();
-            String cvTermName, ptmMass;
+                CvTerm cvTerm = ptm.getCvTerm();
+                String cvTermName, ptmMass;
 
-            if (cvTerm == null) {
-                cvTermName = modName;
-                ptmMass = "" + ptm.getRoundedMass();
-            } else {
-                cvTermName = cvTerm.getName();
-                ptmMass = cvTerm.getValue();
-
-                // two extra tests to guard against problems with the cv terms, better to have a valid ptm than no ptm at all...
-                if (cvTermName == null) {
+                if (cvTerm == null) {
                     cvTermName = modName;
-                }
-                if (ptmMass == null) {
                     ptmMass = "" + ptm.getRoundedMass();
+                } else {
+                    cvTermName = cvTerm.getName();
+                    ptmMass = cvTerm.getValue();
+
+                    // two extra tests to guard against problems with the cv terms, better to have a valid ptm than no ptm at all...
+                    if (cvTermName == null) {
+                        cvTermName = modName;
+                    }
+                    if (ptmMass == null) {
+                        ptmMass = "" + ptm.getRoundedMass();
+                    }
                 }
+
+                // get the modification location
+                int modLocation = modMatch.getModificationSite();
+
+                // have to handle terminal ptms separatly
+                if (ptm.isNTerm()) {
+                    modLocation = 0;
+                } else if (ptm.isCTerm()) {
+                    modLocation = peptide.getSequence().length() + 1;
+                }
+
+                br.write(getCurrentTabSpace() + "<ModLocation>" + modLocation + "</ModLocation>" + System.getProperty("line.separator"));
+
+                if (cvTerm == null) {
+                    br.write(getCurrentTabSpace() + "<ModAccession>" + cvTermName + "</ModAccession>" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<ModDatabase>" + "PSI-MS" + "</ModDatabase>" + System.getProperty("line.separator"));
+                } else {
+                    br.write(getCurrentTabSpace() + "<ModAccession>" + cvTerm.getAccession() + "</ModAccession>" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<ModDatabase>" + "UNIMOD" + "</ModDatabase>" + System.getProperty("line.separator"));
+                }
+
+                br.write(getCurrentTabSpace() + "<ModMonoDelta>" + ptmMass + "</ModMonoDelta>" + System.getProperty("line.separator"));
+
+                br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
+                tabCounter++;
+                if (cvTerm == null) {
+                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001460\" name=\"" + cvTermName + "\" value=\"" + ptmMass + "\" />" + System.getProperty("line.separator"));
+                } else {
+                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"UNIMOD\" accession=\"" + cvTerm.getAccession() + "\" name=\"" + cvTermName + "\" value=\"" + ptmMass + "\" />" + System.getProperty("line.separator"));
+                }
+                tabCounter--;
+                br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
+
+                tabCounter--;
+                br.write(getCurrentTabSpace() + "</ModificationItem>" + System.getProperty("line.separator"));
             }
-
-            // get the modification location
-            int modLocation = modMatch.getModificationSite();
-
-            // have to handle terminal ptms separatly
-            if (ptm.isNTerm()) {
-                modLocation = 0;
-            } else if (ptm.isCTerm()) {
-                modLocation = peptide.getSequence().length() + 1;
-            }
-
-            br.write(getCurrentTabSpace() + "<ModLocation>" + modLocation + "</ModLocation>" + System.getProperty("line.separator"));
-
-            if (cvTerm == null) {
-                br.write(getCurrentTabSpace() + "<ModAccession>" + cvTermName + "</ModAccession>" + System.getProperty("line.separator"));
-                br.write(getCurrentTabSpace() + "<ModDatabase>" + "PSI-MS" + "</ModDatabase>" + System.getProperty("line.separator"));
-            } else {
-                br.write(getCurrentTabSpace() + "<ModAccession>" + cvTerm.getAccession() + "</ModAccession>" + System.getProperty("line.separator"));
-                br.write(getCurrentTabSpace() + "<ModDatabase>" + "UNIMOD" + "</ModDatabase>" + System.getProperty("line.separator"));
-            }
-
-            br.write(getCurrentTabSpace() + "<ModMonoDelta>" + ptmMass + "</ModMonoDelta>" + System.getProperty("line.separator"));
-
-            br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
-            tabCounter++;
-            if (cvTerm == null) {
-                br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001460\" name=\"" + cvTermName + "\" value=\"" + ptmMass + "\" />" + System.getProperty("line.separator"));
-            } else {
-                br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"UNIMOD\" accession=\"" + cvTerm.getAccession() + "\" name=\"" + cvTermName + "\" value=\"" + ptmMass + "\" />" + System.getProperty("line.separator"));
-            }
-            tabCounter--;
-            br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
-
-            tabCounter--;
-            br.write(getCurrentTabSpace() + "</ModificationItem>" + System.getProperty("line.separator"));
         }
     }
 

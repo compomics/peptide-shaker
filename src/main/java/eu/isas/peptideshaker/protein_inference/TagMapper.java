@@ -149,7 +149,7 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
-            PtmSettings modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
+            PtmSettings modificationProfile = identificationParameters.getSearchParameters().getPtmSettings();
             for (String key : tagMap.keySet()) {
                 TagMatcher tagMatcher = new TagMatcher(modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences());
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
@@ -188,7 +188,7 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
-            PtmSettings modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
+            PtmSettings modificationProfile = identificationParameters.getSearchParameters().getPtmSettings();
             for (String key : tagMap.keySet()) {
                 TagMatcher tagMatcher = new TagMatcher(modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences());
                 tagMatcher.setSynchronizedIndexing(true);
@@ -237,7 +237,7 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
-            PtmSettings modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
+            PtmSettings modificationProfile = identificationParameters.getSearchParameters().getPtmSettings();
             for (String key : tagMap.keySet()) {
                 LinkedList<SpectrumMatch> spectrumMatches = tagMap.get(key);
                 KeyTagMapperRunnable tagMapperRunnable = new KeyTagMapperRunnable(identification, spectrumMatches, modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences(), key, waitingHandler);
@@ -413,7 +413,7 @@ public class TagMapper {
     private void mapPtmsForTag(Tag tag, int advocateId) throws IOException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        PtmSettings modificationProfile = searchParameters.getModificationProfile();
+        PtmSettings modificationProfile = searchParameters.getPtmSettings();
         // add the fixed PTMs
         ptmFactory.checkFixedModifications(modificationProfile, tag, identificationParameters.getSequenceMatchingPreferences());
 

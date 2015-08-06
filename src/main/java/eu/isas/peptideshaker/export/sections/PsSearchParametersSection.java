@@ -102,7 +102,7 @@ public class PsSearchParametersSection {
                     break;
                 case fixed_modifications:
                     String modifications = "";
-                    for (String modification : searchParameters.getModificationProfile().getFixedModifications()) {
+                    for (String modification : searchParameters.getPtmSettings().getFixedModifications()) {
                         if (!modifications.equals("")) {
                             modifications += ", ";
                         }
@@ -112,7 +112,7 @@ public class PsSearchParametersSection {
                     break;
                 case variable_modifications:
                     modifications = "";
-                    for (String modification : searchParameters.getModificationProfile().getVariableModifications()) {
+                    for (String modification : searchParameters.getPtmSettings().getVariableModifications()) {
                         if (!modifications.equals("")) {
                             modifications += ", ";
                         }
@@ -122,7 +122,7 @@ public class PsSearchParametersSection {
                     break;
                 case refinement_variable_modifications:
                     modifications = "";
-                    for (String modification : searchParameters.getModificationProfile().getRefinementVariableModifications()) {
+                    for (String modification : searchParameters.getPtmSettings().getRefinementVariableModifications()) {
                         if (!modifications.equals("")) {
                             modifications += ", ";
                         }
@@ -132,7 +132,7 @@ public class PsSearchParametersSection {
                     break;
                 case refinement_fixed_modifications:
                     modifications = "";
-                    for (String modification : searchParameters.getModificationProfile().getRefinementFixedModifications()) {
+                    for (String modification : searchParameters.getPtmSettings().getRefinementFixedModifications()) {
                         if (!modifications.equals("")) {
                             modifications += ", ";
                         }

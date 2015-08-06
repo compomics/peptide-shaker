@@ -362,7 +362,7 @@ public class PsProteinSection {
                 return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(proteinMatch);
             case confident_phosphosites:
                 ArrayList<String> modifications = new ArrayList<String>();
-                for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.contains("phospho")) {
                         modifications.add(ptm);
                     }
@@ -373,7 +373,7 @@ public class PsProteinSection {
                 return identificationFeaturesGenerator.getConfidentPtmSites(proteinMatch, sequence, modifications);
             case confident_phosphosites_number:
                 modifications = new ArrayList<String>();
-                for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.contains("phospho")) {
                         modifications.add(ptm);
                     }
@@ -384,7 +384,7 @@ public class PsProteinSection {
                 protein = SequenceFactory.getInstance().getProtein(mainAccession);
                 sequence = protein.getSequence();
                 modifications = new ArrayList<String>();
-                for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.contains("phospho")) {
                         modifications.add(ptm);
                     }
@@ -392,7 +392,7 @@ public class PsProteinSection {
                 return identificationFeaturesGenerator.getAmbiguousPtmSites(proteinMatch, sequence, modifications);
             case ambiguous_phosphosites_number:
                 modifications = new ArrayList<String>();
-                for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.contains("phospho")) {
                         modifications.add(ptm);
                     }
