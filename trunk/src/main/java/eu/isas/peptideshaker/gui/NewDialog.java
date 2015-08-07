@@ -26,7 +26,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.GenePreferences;
-import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
@@ -1186,8 +1186,8 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editImportFilterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editImportFilterButtonActionPerformed
-        ImportSettingsDialog importSettingsDialog = new ImportSettingsDialog(this, identificationParameters.getIdFilter(), true);
-        IdFilter newFilter = importSettingsDialog.getFilter();
+        ImportSettingsDialog importSettingsDialog = new ImportSettingsDialog(this, identificationParameters.getPeptideAssumptionFilter(), true);
+        PeptideAssumptionFilter newFilter = importSettingsDialog.getFilter();
         if (newFilter != null) {
             importFilterTxt.setText("User Defined");
             identificationParameters.setIdFilter(newFilter);

@@ -577,7 +577,7 @@ public class IdentificationFeaturesGenerator {
                 if (enzyme.isCleavageSite(previousChar, nextChar)) {
                     int length = i - lastCleavage;
                     if (peptideLengthDistribution == null) { // < 100 validated peptide
-                        int pepMax = identificationParameters.getIdFilter().getMaxPepLength();
+                        int pepMax = identificationParameters.getPeptideAssumptionFilter().getMaxPepLength();
                         if (length > pepMax) {
                             p = 0;
                         }
@@ -601,7 +601,7 @@ public class IdentificationFeaturesGenerator {
         if (!enzyme.isSemiSpecific()) {
             int length = sequence.length() - lastCleavage + 1;
             if (peptideLengthDistribution == null) { // < 100 validated peptide
-                int pepMax = identificationParameters.getIdFilter().getMaxPepLength();
+                int pepMax = identificationParameters.getPeptideAssumptionFilter().getMaxPepLength();
                 if (length > pepMax) {
                     p = 0;
                 }
@@ -967,7 +967,7 @@ public class IdentificationFeaturesGenerator {
             SpectrumCountingPreferences tempPreferences = new SpectrumCountingPreferences();
             tempPreferences.setSelectedMethod(method);
             return estimateSpectrumCounting(identification, sequenceFactory, proteinMatchKey, tempPreferences,
-                    shotgunProtocol.getEnzyme(), identificationParameters.getIdFilter().getMaxPepLength(), identificationParameters.getSequenceMatchingPreferences());
+                    shotgunProtocol.getEnzyme(), identificationParameters.getPeptideAssumptionFilter().getMaxPepLength(), identificationParameters.getSequenceMatchingPreferences());
         }
     }
 
@@ -1006,7 +1006,7 @@ public class IdentificationFeaturesGenerator {
     private double estimateSpectrumCounting(String proteinMatchKey) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         return estimateSpectrumCounting(identification, sequenceFactory, proteinMatchKey,
                 spectrumCountingPreferences, shotgunProtocol.getEnzyme(),
-                identificationParameters.getIdFilter().getMaxPepLength(), identificationParameters.getSequenceMatchingPreferences());
+                identificationParameters.getPeptideAssumptionFilter().getMaxPepLength(), identificationParameters.getSequenceMatchingPreferences());
     }
 
     /**
@@ -1248,7 +1248,7 @@ public class IdentificationFeaturesGenerator {
             mainMatch = proteinMatch.getMainMatch();
         }
         Protein currentProtein = sequenceFactory.getProtein(mainMatch);
-        double lengthMax = identificationParameters.getIdFilter().getMaxPepLength();
+        double lengthMax = identificationParameters.getPeptideAssumptionFilter().getMaxPepLength();
         if (metrics.getPeptideLengthDistribution() != null) {
             MathContext mathContext = new MathContext(10, RoundingMode.HALF_DOWN);
             lengthMax = Math.min(lengthMax, metrics.getPeptideLengthDistribution().getValueAtCumulativeProbability(0.99, mathContext).doubleValue());

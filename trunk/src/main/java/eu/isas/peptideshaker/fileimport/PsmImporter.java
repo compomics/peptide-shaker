@@ -33,7 +33,7 @@ import com.compomics.util.experiment.io.identifications.idfilereaders.TideIdfile
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.memory.MemoryConsumptionStatus;
-import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.preferences.ProcessingPreferences;
@@ -435,7 +435,7 @@ public class PsmImporter {
     private void importAssumptions(SpectrumMatch spectrumMatch, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
             throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
-        IdFilter idFilter = identificationParameters.getIdFilter();
+        PeptideAssumptionFilter peptideAssumptionFilter = identificationParameters.getPeptideAssumptionFilter();
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
         SequenceMatchingPreferences ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
@@ -466,7 +466,7 @@ public class PsmImporter {
                 for (SpectrumIdentificationAssumption assumption : oldAssumptions) {
                     if (assumption instanceof PeptideAssumption) {
                         PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                        if (!idFilter.validatePeptide(peptideAssumption.getPeptide(), sequenceMatchingPreferences)) {
+                        if (!peptideAssumptionFilter.validatePeptide(peptideAssumption.getPeptide(), sequenceMatchingPreferences)) {
                             peptideIssue++;
                         } else {
                             newAssumptions.add(assumption);
@@ -505,7 +505,7 @@ public class PsmImporter {
                         try {
                             ptmFactory.checkFixedModifications(modificationProfile, peptide, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
                         } catch (IllegalArgumentException e) {
-                            if (idFilter.removeUnknownPTMs()) {
+                            if (peptideAssumptionFilter.removeUnknownPTMs()) {
                                 // Exclude peptides with aberrant PTM mapping
                                 System.out.println(e.getMessage());
                                 ptmIssue++;
@@ -624,13 +624,13 @@ public class PsmImporter {
                             initialPtmMapping(peptide, expectedNames, modNames, searchParameters);
 
                             boolean filterPassed = true;
-                            if (idFilter.validateModifications(peptide, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getPtmSettings())) {
+                            if (peptideAssumptionFilter.validateModifications(peptide, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getPtmSettings())) {
                                 // Estimate the theoretic mass with the new modifications
                                 peptide.estimateTheoreticMass();
-                                if (!idFilter.validatePrecursor(peptideAssumption, spectrumKey, spectrumFactory)) {
+                                if (!peptideAssumptionFilter.validatePrecursor(peptideAssumption, spectrumKey, spectrumFactory)) {
                                     filterPassed = false;
                                     precursorIssue++;
-                                } else if (!idFilter.validateProteins(peptideAssumption.getPeptide(), sequenceMatchingPreferences)) {
+                                } else if (!peptideAssumptionFilter.validateProteins(peptideAssumption.getPeptide(), sequenceMatchingPreferences)) {
                                     // Check whether there is a potential first hit which does not belong to both the target and the decoy database
                                     filterPassed = false;
                                     proteinIssue++;
@@ -1111,11 +1111,11 @@ public class PsmImporter {
             IdentificationAlgorithmParameter algorithmParameter = searchParameters.getIdentificationAlgorithmParameter(Advocate.xtandem.getIndex());
             if (algorithmParameter != null) {
                 XtandemParameters xtandemParameters = (XtandemParameters) algorithmParameter;
-                if (xtandemParameters.isProteinQuickAcetyl() && !modificationProfile.contains("acetylation of protein n-term")) {
-                    PTM ptm = PTMFactory.getInstance().getPTM("acetylation of protein n-term");
+                if (xtandemParameters.isProteinQuickAcetyl() && !modificationProfile.contains("Acetylation of protein N-term")) {
+                    PTM ptm = PTMFactory.getInstance().getPTM("Acetylation of protein N-term");
                     modificationProfile.addVariableModification(ptm);
                 }
-                String[] pyroMods = {"pyro-cmc", "pyro-glu from n-term e", "pyro-glu from n-term q"};
+                String[] pyroMods = {"Pyrolidone from E", "Pyrolidone from Q", "Pyrolidone from carbamidomethylated C"};
                 if (xtandemParameters.isQuickPyrolidone()) {
                     for (String ptmName : pyroMods) {
                         if (!modificationProfile.getVariableModifications().contains(ptmName)) {

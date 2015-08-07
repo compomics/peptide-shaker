@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import eu.isas.peptideshaker.export.exportfeatures.PsInputFilterFeature;
@@ -64,7 +64,7 @@ public class PsInputFilterSection {
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file
      */
-    public void writeSection(IdFilter idFilter, WaitingHandler waitingHandler) throws IOException {
+    public void writeSection(PeptideAssumptionFilter idFilter, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);

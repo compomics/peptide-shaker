@@ -252,7 +252,7 @@ public class PeptideMapper {
      */
     private void mapPeptide(Peptide peptide, boolean increaseProgressBar) throws IOException, InterruptedException, SQLException, ClassNotFoundException {
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-        if (identificationParameters.getIdFilter().validatePeptide(peptide, sequenceMatchingPreferences)) {
+        if (identificationParameters.getPeptideAssumptionFilter().validatePeptide(peptide, sequenceMatchingPreferences)) {
             try {
                 if (peptide.getParentProteins(sequenceMatchingPreferences).isEmpty()) {
                     throw new IllegalArgumentException("No protein was found for peptide of sequence " + peptide.getSequence() + ". Please verify the following:" + System.getProperty("line.separator")

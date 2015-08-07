@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.fileimport;
 
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
-import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import eu.isas.peptideshaker.gui.MgfFilesNotFoundDialog;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.identification.*;
@@ -779,7 +779,7 @@ public class FileImporter {
                             waitingHandler.appendReport(psmsRejected + " PSMs (" + Util.roundDouble(sharePsmsRejected, 1) + "%) excluded by the import filters:", true, true);
 
                             String padding = "    ";
-                            IdFilter idFilter = identificationParameters.getIdFilter();
+                            PeptideAssumptionFilter idFilter = identificationParameters.getPeptideAssumptionFilter();
 
                             double share = 100 * ((double) proteinIssue) / totalAssumptionsRejected;
                             if (share >= 1) {

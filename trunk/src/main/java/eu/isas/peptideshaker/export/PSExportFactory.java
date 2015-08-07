@@ -285,7 +285,7 @@ public class PSExportFactory implements ExportFactory {
                 section.writeSection(identificationParameters.getAnnotationPreferences(), waitingHandler);
             } else if (sectionName.equals(PsInputFilterFeature.type)) {
                 PsInputFilterSection section = new PsInputFilterSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identificationParameters.getIdFilter(), waitingHandler);
+                section.writeSection(identificationParameters.getPeptideAssumptionFilter(), waitingHandler);
             } else if (sectionName.equals(PsPeptideFeature.type)) {
                 PsPeptideSection section = new PsPeptideSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
                 section.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideKeys, nSurroundingAA, "", exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
