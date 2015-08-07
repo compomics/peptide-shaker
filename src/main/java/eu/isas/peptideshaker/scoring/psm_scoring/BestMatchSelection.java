@@ -17,7 +17,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
-import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
@@ -113,7 +113,7 @@ public class BestMatchSelection {
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
         AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
 
-        IdFilter idFilter = identificationParameters.getIdFilter();
+        PeptideAssumptionFilter idFilter = identificationParameters.getPeptideAssumptionFilter();
 
         // Keep a map of the spectrum keys grouped by peptide
         HashMap<String, ArrayList<String>> orderedPsmMap = null;
@@ -614,7 +614,7 @@ public class BestMatchSelection {
             bestPeptideAssumptions = new ArrayList<PeptideAssumption>(firstHits.size());
         }
 
-        double minMassError = identificationParameters.getIdFilter().getMaxMzDeviation();
+        double minMassError = identificationParameters.getPeptideAssumptionFilter().getMaxMzDeviation();
         if (minMassError == -1.0) {
             minMassError = identificationParameters.getSearchParameters().getPrecursorAccuracy();
         }

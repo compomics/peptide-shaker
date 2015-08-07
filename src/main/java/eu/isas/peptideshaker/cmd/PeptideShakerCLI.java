@@ -22,7 +22,7 @@ import com.compomics.util.experiment.identification.protein_sequences.SequenceFa
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import eu.isas.peptideshaker.PeptideShaker;
-import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
@@ -600,7 +600,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         identificationParameters = IdentificationParameters.getDefaultIdentificationParameters(searchParameters);
 
         // set the filtering import settings
-        IdFilter idFilter = new IdFilter();
+        PeptideAssumptionFilter idFilter = new PeptideAssumptionFilter();
         idFilter.setMinPepLength(cliInputBean.getMinPepLength());
         idFilter.setMaxPepLength(cliInputBean.getMaxPepLength());
         if (cliInputBean.getMaxMzDeviation() != null) {

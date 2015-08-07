@@ -52,7 +52,7 @@ import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.searchsettings.SearchSettingsDialog;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import eu.isas.peptideshaker.PeptideShaker;
-import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.*;
 import eu.isas.peptideshaker.gui.tabpanels.AnnotationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.GOEAPanel;
@@ -2646,8 +2646,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void importFilterMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importFilterMenuActionPerformed
         IdentificationParameters identificationParameters = getIdentificationParameters();
-        ImportSettingsDialog importSettingsDialog = new ImportSettingsDialog(this, identificationParameters.getIdFilter(), true);
-        IdFilter newFilter = importSettingsDialog.getFilter();
+        ImportSettingsDialog importSettingsDialog = new ImportSettingsDialog(this, identificationParameters.getPeptideAssumptionFilter(), true);
+        PeptideAssumptionFilter newFilter = importSettingsDialog.getFilter();
         if (newFilter != null) {
             identificationParameters.setIdFilter(newFilter);
         }

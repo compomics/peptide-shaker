@@ -18,7 +18,7 @@ import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
-import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -1410,7 +1410,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     } else if (peptideLengthJRadioButton.isSelected()) {
 
-                        IdFilter idFilter = peptideShakerGUI.getIdentificationParameters().getIdFilter();
+                        PeptideAssumptionFilter idFilter = peptideShakerGUI.getIdentificationParameters().getPeptideAssumptionFilter();
                         int min = idFilter.getMinPepLength();
                         int max = idFilter.getMaxPepLength();
 
