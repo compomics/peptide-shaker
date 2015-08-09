@@ -367,6 +367,12 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.MzidCLI [parameters]
 
 ==E) PathSettingsCLI==
 
+*Standard command line*
+
+{{{
+java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PathSettingsCLI [parameters]
+}}}
+
 *Generic temporary folder*
 
 {{{
