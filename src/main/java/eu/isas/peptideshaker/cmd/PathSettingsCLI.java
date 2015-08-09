@@ -61,10 +61,10 @@ public class PathSettingsCLI {
                     if (utilitiesPathKey == null) {
                         System.out.println("Path id " + id + " not recognized.");
                     } else {
-                        UtilitiesPathPreferences.setPathPreference(utilitiesPathKey, path);
+                        UtilitiesPathPreferences.setPathPreference(utilitiesPathKey, pathInput.get(id));
                     }
                 } else {
-                    PeptideShakerPathPreferences.setPathPreference(peptideShakerPathKey, path);
+                    PeptideShakerPathPreferences.setPathPreference(peptideShakerPathKey, pathInput.get(id));
                 }
             } catch (Exception e) {
                 System.out.println("An error occurred when setting the path " + id + ".");

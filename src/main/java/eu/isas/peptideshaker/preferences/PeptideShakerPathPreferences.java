@@ -30,7 +30,7 @@ public class PeptideShakerPathPreferences {
          * Directory where identification matches are temporarily saved to
          * reduce the memory footprint.
          */
-        matchesDirectory("peptideshaker_matches_directory", "Directory where identification matches are temporarily saved to reduce the memory footprint.", "", true),
+        matchesDirectory("peptideshaker_matches_directory", "Folder where identification matches are temporarily saved to reduce the memory footprint.", "", true),
         /**
          * Folder containing the PeptideShaker user preferences file.
          */
