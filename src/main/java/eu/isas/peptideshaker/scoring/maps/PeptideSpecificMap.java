@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.scoring;
+package eu.isas.peptideshaker.scoring.maps;
 
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;

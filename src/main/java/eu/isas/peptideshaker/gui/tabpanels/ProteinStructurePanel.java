@@ -27,7 +27,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
-import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;

@@ -21,7 +21,7 @@ import com.compomics.util.preferences.ProteinInferencePreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.fileimport.CpsFileImporter;
-import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
+import eu.isas.peptideshaker.parameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
@@ -109,6 +109,10 @@ public class CpsParent extends UserPreferencesParent {
      * The currently loaded cps file.
      */
     protected File cpsFile = null;
+    /**
+     * The name of the table to use to store PeptideShaker experiment settings.
+     */
+    public static final String settingsTableName = "PeptideShaker_experiment_settings";
 
     /**
      * Loads the information from a cps file.
@@ -187,7 +191,7 @@ public class CpsParent extends UserPreferencesParent {
             throw new IllegalArgumentException("No sample found for the experiment " + experiment.getReference());
         }
         sample = samples.get(0);
-        if (samples.size() > 1) { // unlikely to happen for now
+        if (samples.size() > 1) {
             String message = samples.size() + " samples found in experiment " + experiment.getReference() + ", sample " + sample.getReference() + " selected by default.";
             if (waitingHandler != null) {
                 waitingHandler.appendReport(message, true, true);
@@ -198,7 +202,7 @@ public class CpsParent extends UserPreferencesParent {
             throw new IllegalArgumentException("No replicate found for the sample " + sample.getReference() + " of experiment " + experiment.getReference());
         }
         replicateNumber = replicates.get(0);
-        if (replicates.size() > 1) { // unlikely to happen for now
+        if (replicates.size() > 1) {
             if (waitingHandler != null) {
                 waitingHandler.appendReport(replicates.size() + " replicates found in sample " + sample.getReference()
                         + " of experiment " + experiment.getReference() + ", replicate " + sample.getReference() + " selected by default.", true, true);
@@ -206,8 +210,16 @@ public class CpsParent extends UserPreferencesParent {
         }
         proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
 
+        // Get identification and restore connection
+        identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        objectsCache = new ObjectsCache();
+        objectsCache.setAutomatedMemoryManagement(true);
+        objectsCache.setReadOnly(false);
+        String dbFolder = PeptideShaker.getSerializationDirectory(jarFilePath).getAbsolutePath();
+        identification.restoreConnection(dbFolder, false, objectsCache);
+
         // Get PeptideShaker settings
-        PeptideShakerSettings experimentSettings = cpsFileImporter.getExperimentSettings();
+        PeptideShakerSettings experimentSettings = cpsFileImporter.getPeptideShakerSettings(identification.getIdentificationDB().getObjectsDB());
         identificationParameters = experimentSettings.getIdentificationParameters();
         spectrumCountingPreferences = experimentSettings.getSpectrumCountingPreferences();
         projectDetails = experimentSettings.getProjectDetails();
@@ -220,32 +232,20 @@ public class CpsParent extends UserPreferencesParent {
         filterPreferences = experimentSettings.getFilterPreferences();
         displayPreferences = experimentSettings.getDisplayPreferences();
         shotgunProtocol = experimentSettings.getShotgunProtocol();
-
-        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
-            waitingHandler.setRunFinished();
-            return;
-        }
-
-        // Backward compatibility for the shotgun protocol
-        SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        if (shotgunProtocol == null) {
-            shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(searchParameters);
-        }
-
-        // Get identification details and set up caches
-        identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-
+        
+        // Set up caches
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, shotgunProtocol, identificationParameters, metrics, spectrumCountingPreferences);
         IdentificationFeaturesCache identificationFeaturesCache = experimentSettings.getIdentificationFeaturesCache();
         if (identificationFeaturesCache != null) {
             identificationFeaturesGenerator.setIdentificationFeaturesCache(experimentSettings.getIdentificationFeaturesCache());
             identificationFeaturesCache.setReadOnly(false);
         }
-        objectsCache = new ObjectsCache();
-        objectsCache.setAutomatedMemoryManagement(true);
-        objectsCache.setReadOnly(false);
-        String dbFolder = PeptideShaker.getSerializationDirectory(jarFilePath).getAbsolutePath();
-        identification.restoreConnection(dbFolder, false, objectsCache);
+
+        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
+            waitingHandler.setRunFinished();
+            return;
+        }
+        
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);
         saveUserPreferences();

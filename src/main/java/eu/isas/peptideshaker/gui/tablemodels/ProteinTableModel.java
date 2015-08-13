@@ -11,7 +11,7 @@ import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;

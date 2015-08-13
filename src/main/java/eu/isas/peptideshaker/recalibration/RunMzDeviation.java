@@ -10,7 +10,7 @@ import com.compomics.util.experiment.massspectrometry.*;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.math.BasicMathFunctions;
-import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.parameters.PSParameter;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;

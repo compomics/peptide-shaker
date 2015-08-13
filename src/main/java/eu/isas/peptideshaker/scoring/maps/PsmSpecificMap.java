@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.scoring;
+package eu.isas.peptideshaker.scoring.maps;
 
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;

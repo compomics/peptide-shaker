@@ -13,8 +13,8 @@ import com.compomics.util.experiment.identification.spectrum_annotation.spectrum
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.protein.Header;
 import eu.isas.peptideshaker.filtering.items.ProteinFilterItem;
-import eu.isas.peptideshaker.myparameters.PSParameter;
-import eu.isas.peptideshaker.myparameters.PSPtmScores;
+import eu.isas.peptideshaker.parameters.PSParameter;
+import eu.isas.peptideshaker.parameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;

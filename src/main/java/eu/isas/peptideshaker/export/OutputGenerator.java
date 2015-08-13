@@ -25,8 +25,8 @@ import com.compomics.util.experiment.identification.identification_parameters.Pt
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.myparameters.PSParameter;
-import eu.isas.peptideshaker.myparameters.PSPtmScores;
+import eu.isas.peptideshaker.parameters.PSParameter;
+import eu.isas.peptideshaker.parameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;

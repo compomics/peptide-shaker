@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.scoring;
+package eu.isas.peptideshaker.scoring.maps;
 
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.waiting.WaitingHandler;

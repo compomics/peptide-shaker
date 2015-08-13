@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.db.ObjectsCache;
+import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.identification.Advocate;
@@ -13,9 +14,10 @@ import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
-import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
+import eu.isas.peptideshaker.parameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
 import eu.isas.peptideshaker.utils.Metrics;
 import java.io.*;
@@ -28,7 +30,6 @@ import org.apache.commons.compress.archivers.ArchiveException;
  * @author Marc Vaudel
  */
 public class CpsExporter {
-
 
     /**
      * Saves the given data in a cps file.
@@ -78,7 +79,15 @@ public class CpsExporter {
             // set the experiment parameters
             PeptideShakerSettings peptideShakerSettings = new PeptideShakerSettings(shotgunProtocol, identificationParameters, spectrumCountingPreferences,
                     projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences, identificationFeaturesCache);
-            experiment.addUrParam(peptideShakerSettings);
+            ObjectsDB objectsDB = identification.getIdentificationDB().getObjectsDB();
+            if (!objectsDB.hasTable(CpsParent.settingsTableName)) {
+                objectsDB.addTable(CpsParent.settingsTableName);
+            }
+            if (objectsDB.inDB(CpsParent.settingsTableName, peptideShakerSettings.getFamilyName(), false)) {
+                objectsDB.updateObject(CpsParent.settingsTableName, peptideShakerSettings.getFamilyName(), peptideShakerSettings, false);
+            } else {
+                objectsDB.insertObject(CpsParent.settingsTableName, peptideShakerSettings.getFamilyName(), peptideShakerSettings, false);
+            }
 
             // save the objects in cache
             objectsCache.saveCache(waitingHandler, emptyCache);
@@ -89,7 +98,6 @@ public class CpsExporter {
 
             // transfer all files in the match directory
             if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
-
                 waitingHandler.setPrimaryProgressCounterIndeterminate(true);
                 waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                 File experimentFile = new File(matchesFolder, PeptideShaker.experimentObjectName);

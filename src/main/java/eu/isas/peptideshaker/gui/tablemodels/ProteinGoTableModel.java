@@ -4,7 +4,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.util.ArrayList;
 import java.util.HashMap;

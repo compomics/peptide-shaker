@@ -31,7 +31,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.protein_inference.PeptideMapper;
 import eu.isas.peptideshaker.protein_inference.TagMapper;
-import eu.isas.peptideshaker.scoring.InputMap;
+import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.utils.Metrics;
 import org.xml.sax.SAXException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;

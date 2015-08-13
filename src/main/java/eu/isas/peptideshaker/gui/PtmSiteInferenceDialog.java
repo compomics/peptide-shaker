@@ -11,11 +11,11 @@ import com.compomics.util.experiment.identification.matches_iterators.PsmIterato
 import com.compomics.util.gui.renderers.AlignedTableCellRenderer;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
-import eu.isas.peptideshaker.myparameters.PSMaps;
-import eu.isas.peptideshaker.myparameters.PSPtmScores;
+import eu.isas.peptideshaker.scoring.PSMaps;
+import eu.isas.peptideshaker.parameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.ptm.PtmScorer;
-import eu.isas.peptideshaker.scoring.PsmPTMMap;
+import eu.isas.peptideshaker.scoring.maps.PsmPTMMap;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.awt.Color;

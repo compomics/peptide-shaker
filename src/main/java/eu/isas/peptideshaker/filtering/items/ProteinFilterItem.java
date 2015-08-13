@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.filtering.items;
 
 import com.compomics.util.experiment.filtering.FilterItem;
-import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.util.ArrayList;
 import java.util.Arrays;

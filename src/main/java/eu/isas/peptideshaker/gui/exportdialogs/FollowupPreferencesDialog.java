@@ -22,7 +22,7 @@ import eu.isas.peptideshaker.followup.ProgenesisExport;
 import eu.isas.peptideshaker.followup.RecalibrationExporter;
 import eu.isas.peptideshaker.followup.SwathExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.awt.Toolkit;
 import java.io.BufferedWriter;

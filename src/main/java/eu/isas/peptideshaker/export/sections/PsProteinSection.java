@@ -19,7 +19,7 @@ import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatc
 import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsProteinFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPsmFeature;
-import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
