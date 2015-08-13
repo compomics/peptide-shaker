@@ -71,7 +71,7 @@ import eu.isas.peptideshaker.preferences.UserPreferences;
 import eu.isas.peptideshaker.PeptideShakerWrapper;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
-import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.PSProcessingPreferences;
 import eu.isas.peptideshaker.gui.pride.ProjectExportDialog;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import com.compomics.util.preferences.GenePreferences;
@@ -3618,7 +3618,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-    /**
+     * /**
      * Returns the user preferences.
      *
      * @return the user preferences
@@ -3924,9 +3924,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @return the initial processing preferences
      */
-    public ProcessingPreferences getProcessingPreferences() {
+    public PSProcessingPreferences getProcessingPreferences() {
         if (cpsParent.getProcessingPreferences() == null) {
-            cpsParent.setProcessingPreferences(new ProcessingPreferences());
+            cpsParent.setProcessingPreferences(new PSProcessingPreferences());
         }
         return cpsParent.getProcessingPreferences();
     }
@@ -3936,8 +3936,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @param processingPreferences the initial processing preferences
      */
-    public void setProcessingPreferences(ProcessingPreferences processingPreferences) {
-        cpsParent.setProcessingPreferences(new ProcessingPreferences());
+    public void setProcessingPreferences(PSProcessingPreferences processingPreferences) {
+        cpsParent.setProcessingPreferences(new PSProcessingPreferences());
     }
 
     /**
@@ -4977,8 +4977,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         AnnotationSettings annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
         highResAnnotationCheckBoxMenuItem.setSelected(annotationPreferences.isHighResolutionAnnotation());
         allCheckBoxMenuItem.setSelected(annotationPreferences.showAllPeaks());
-        barsCheckBoxMenuItem.setSelected(annotationPreferences.showBars());
-        intensityIonTableRadioButtonMenuItem.setSelected(annotationPreferences.useIntensityIonTable());
+
+        // Display preferenecs
+        DisplayPreferences displayPreferences = getDisplayPreferences();
+        barsCheckBoxMenuItem.setSelected(displayPreferences.showBars());
+        intensityIonTableRadioButtonMenuItem.setSelected(displayPreferences.useIntensityIonTable());
     }
 
     /**
@@ -5055,10 +5058,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             // The following preferences are kept for all spectra
             annotationPreferences.setHighResolutionAnnotation(highResAnnotationCheckBoxMenuItem.isSelected());
             annotationPreferences.setShowAllPeaks(allCheckBoxMenuItem.isSelected());
-            annotationPreferences.setShowBars(barsCheckBoxMenuItem.isSelected());
-            annotationPreferences.setIntensityIonTable(intensityIonTableRadioButtonMenuItem.isSelected());
             annotationPreferences.setShowForwardIonDeNovoTags(forwardIonsDeNovoCheckBoxMenuItem.isSelected());
             annotationPreferences.setShowRewindIonDeNovoTags(rewindIonsDeNovoCheckBoxMenuItem.isSelected());
+
+            // Display preferenecs
+            DisplayPreferences displayPreferences = getDisplayPreferences();
+            barsCheckBoxMenuItem.setSelected(displayPreferences.showBars());
+            intensityIonTableRadioButtonMenuItem.setSelected(displayPreferences.useIntensityIonTable());
 
             if (deNovoChargeOneJRadioButtonMenuItem.isSelected()) {
                 annotationPreferences.setDeNovoCharge(1);

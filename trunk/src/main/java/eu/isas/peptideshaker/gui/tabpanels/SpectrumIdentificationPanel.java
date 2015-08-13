@@ -58,6 +58,7 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Annotati
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
+import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
@@ -1634,7 +1635,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
-        peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setAnnotationLevel(((Integer) intensitySlider.getValue()) / 100.0);
+        peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(((Integer) intensitySlider.getValue()) / 100.0);
         peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
         intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
@@ -3033,9 +3034,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     bubbleScale = annotationPreferences.getFragmentIonAccuracy() * 10000 * peptideShakerGUI.getBubbleScale();
                                 }
 
+                                DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
                                 MassErrorBubblePlot massErrorBubblePlot = new MassErrorBubblePlot(
                                         selectedIndexes, allAnnotations, allSpectra, annotationPreferences.getFragmentIonAccuracy(),
-                                        bubbleScale, selectedIndexes.size() == 1, annotationPreferences.showBars(), peptideShakerGUI.useRelativeError());
+                                        bubbleScale, selectedIndexes.size() == 1, displayPreferences.showBars(), peptideShakerGUI.useRelativeError());
 
                                 // hide the legend if selecting more than 20 spectra // @TODO: 20 should not be hardcoded here..
                                 if (selectedIndexes.size() > 20) {

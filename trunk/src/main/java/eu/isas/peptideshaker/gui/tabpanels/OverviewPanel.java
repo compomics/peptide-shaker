@@ -2372,7 +2372,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
         AnnotationSettings annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
-        annotationPreferences.setAnnotationLevel(intensitySlider.getValue() / 100.0);
+        annotationPreferences.setIntensityLimit(intensitySlider.getValue() / 100.0);
         peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
         intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
@@ -3971,6 +3971,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 ArrayList<MSnSpectrum> allSpectra = new ArrayList<MSnSpectrum>();
                 IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
                 AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
+                DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
                 ArrayList<Peptide> peptides = new ArrayList<Peptide>();
 
                 int maxCharge = 1;
@@ -4012,7 +4013,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 MassErrorBubblePlot massErrorBubblePlot = new MassErrorBubblePlot(
                         selectedIndexes, allAnnotations, allSpectra, annotationPreferences.getFragmentIonAccuracy(),
-                        bubbleScale, selectedIndexes.size() == 1, annotationPreferences.showBars(), peptideShakerGUI.useRelativeError());
+                        bubbleScale, selectedIndexes.size() == 1, displayPreferences.showBars(), peptideShakerGUI.useRelativeError());
 
                 // hide the legend if selecting more than 20 spectra // @TODO: 20 should not be hardcoded here..
                 if (selectedIndexes.size() > 20) {
@@ -4574,8 +4575,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                             // create and display the fragment ion table
                             ArrayList<ArrayList<IonMatch>> allAnnotations = getAnnotationsForAllSelectedSpectra();
+                            DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
 
-                            if (!peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().useIntensityIonTable()) {
+                            if (!displayPreferences.useIntensityIonTable()) {
                                 fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, specificAnnotationPreferences.getFragmentIonTypes(),
                                         specificAnnotationPreferences.getNeutralLossesMap(),
                                         specificAnnotationPreferences.getSelectedCharges().contains(1),

@@ -34,11 +34,12 @@ import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.preferences.gui.ImportSettingsDialog;
 import com.compomics.util.preferences.gui.ProcessingPreferencesDialog;
 import com.compomics.util.preferences.PTMScoringPreferences;
-import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.preferences.ProteinInferencePreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.protein.Header.DatabaseType;
+import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
@@ -116,7 +117,11 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * The processing preferences.
      */
-    private ProcessingPreferences processingPreferences = new ProcessingPreferences();
+    private PSProcessingPreferences processingPreferences = new PSProcessingPreferences();
+    /**
+     * The display preferences
+     */
+    private DisplayPreferences displayPreferences = new DisplayPreferences();
     /**
      * Information on the protocol.
      */
@@ -693,7 +698,6 @@ public class NewDialog extends javax.swing.JDialog {
 
             this.setVisible(false);
             peptideShakerGUI.setVisible(true);
-            // peptideShakerGUI.clearData(true, false); // @TODO: is it ok to remove this one?
 
 //            sequenceMatchingPreferences.setMutationMatrix(MutationMatrix.synonymousMutation);
 //            sequenceMatchingPreferences.setMaxMutationsPerPeptide(1);
@@ -703,6 +707,7 @@ public class NewDialog extends javax.swing.JDialog {
             }
             peptideShakerGUI.setShotgunProtocol(shotgunProtocol);
             peptideShakerGUI.setProcessingPreferences(processingPreferences);
+            peptideShakerGUI.setDisplayPreferences(displayPreferences);
             projectDetails = new ProjectDetails();
             projectDetails.setCreationDate(new Date());
             projectDetails.setPeptideShakerVersion(new eu.isas.peptideshaker.utils.Properties().getVersion());

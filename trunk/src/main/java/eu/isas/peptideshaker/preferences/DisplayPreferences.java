@@ -37,6 +37,15 @@ public class DisplayPreferences implements Serializable {
      */
     private HashMap<String, Boolean> displayedPTMs = new HashMap<String, Boolean>();
     /**
+     * If true, the ion table is shown as an intensity version, false displays
+     * the standard Mascot version.
+     */
+    private boolean intensityIonTable = true;
+    /**
+     * If true, bars are shown in the bubble plot highlighting the ions.
+     */
+    private boolean showBars = false;
+    /**
      * The text displayed in the cell of a table in case the data is not loaded.
      */
     public static final String LOADING_MESSAGE = "Loading...";
@@ -178,5 +187,44 @@ public class DisplayPreferences implements Serializable {
             }
         }
         return result;
+    }
+
+    /**
+     * If true, bars are shown in the bubble plot highlighting the ions.
+     *
+     * @return true if bars are to be shown in the bubble plot
+     */
+    public boolean showBars() {
+        return showBars;
+    }
+
+    /**
+     * Set if the bars in the bubble plot are to be shown or not.
+     *
+     * @param showBars if the bars in the bubble plot are to be shown
+     */
+    public void setShowBars(boolean showBars) {
+        this.showBars = showBars;
+    }
+
+    /**
+     * If true, the ion table is shown as an intensity version, false displays
+     * the standard Mascot version.
+     *
+     * @return if true, the ion table is shown as an intensity version, false
+     * displays the standard Mascot version
+     */
+    public boolean useIntensityIonTable() {
+        return intensityIonTable;
+    }
+
+    /**
+     * Set if the intensity or m/z ion table should be shown.
+     *
+     * @param intensityIonTable if the intensity or m/z ion table should be
+     * shown
+     */
+    public void setIntensityIonTable(boolean intensityIonTable) {
+        this.intensityIonTable = intensityIonTable;
     }
 }

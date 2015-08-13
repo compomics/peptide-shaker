@@ -35,7 +35,7 @@ import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.PTMScoringPreferences;
-import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
@@ -618,7 +618,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         MatchesValidator.setDefaultMatchesQCFilters(identificationParameters.getIdValidationPreferences().getValidationQCPreferences());
 
         // set the processing settings
-        processingPreferences = new ProcessingPreferences();
+        processingPreferences = new PSProcessingPreferences();
         Integer nThreads = cliInputBean.getnThreads();
         if (nThreads != null) {
             processingPreferences.setnThreads(nThreads);

@@ -13,7 +13,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.preferences.PsmScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
@@ -63,7 +63,7 @@ public class PsmScorer {
      * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      * occurs
      */
-    public void estimateIntermediateScores(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences,
+    public void estimateIntermediateScores(Identification identification, InputMap inputMap, PSProcessingPreferences processingPreferences,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
             throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
@@ -171,7 +171,7 @@ public class PsmScorer {
      * @param processingPreferences the processing preferences
      * @param waitingHandler the handler displaying feedback to the user
      */
-    public void estimateIntermediateScoreProbabilities(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences, WaitingHandler waitingHandler) {
+    public void estimateIntermediateScoreProbabilities(Identification identification, InputMap inputMap, PSProcessingPreferences processingPreferences, WaitingHandler waitingHandler) {
 
         int totalProgress = 0;
         for (String spectrumFileName : identification.getSpectrumFiles()) {
@@ -224,7 +224,7 @@ public class PsmScorer {
      * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      * occurs
      */
-    public void scorePsms(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences,
+    public void scorePsms(Identification identification, InputMap inputMap, PSProcessingPreferences processingPreferences,
             IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
             throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 

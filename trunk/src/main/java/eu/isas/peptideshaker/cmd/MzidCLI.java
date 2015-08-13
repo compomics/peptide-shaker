@@ -185,7 +185,7 @@ public class MzidCLI extends CpsParent {
         // export mzid file
         // make sure that all annotations are included
         double currentIntensityLimit = this.getIdentificationParameters().getAnnotationPreferences().getAnnotationIntensityLimit();
-        this.getIdentificationParameters().getAnnotationPreferences().setAnnotationLevel(0.0);
+        this.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(0.0);
         
         try {
             CLIMethods.exportMzId(mzidCLIInputBean, this, waitingHandler);
@@ -194,7 +194,7 @@ public class MzidCLI extends CpsParent {
             e.printStackTrace();
         } finally {
             // reset the annotation level
-            this.getIdentificationParameters().getAnnotationPreferences().setAnnotationLevel(currentIntensityLimit);
+            this.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(currentIntensityLimit);
         }
 
         try {

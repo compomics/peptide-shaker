@@ -2387,7 +2387,7 @@ public class PtmPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
-        peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setAnnotationLevel(((Integer) intensitySlider.getValue()) / 100.0);
+        peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(((Integer) intensitySlider.getValue()) / 100.0);
         peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
         intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");

@@ -16,7 +16,7 @@ import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.preferences.ProteinInferencePreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.CpsExporter;
@@ -64,7 +64,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * The processing preferences.
      */
-    protected ProcessingPreferences processingPreferences;
+    protected PSProcessingPreferences processingPreferences;
     /**
      * The metrics stored during processing.
      */
@@ -510,7 +510,7 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @return the processing preferences
      */
-    public ProcessingPreferences getProcessingPreferences() {
+    public PSProcessingPreferences getProcessingPreferences() {
         return processingPreferences;
     }
 
@@ -628,7 +628,7 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param processingPreferences the processing preferences
      */
-    public void setProcessingPreferences(ProcessingPreferences processingPreferences) {
+    public void setProcessingPreferences(PSProcessingPreferences processingPreferences) {
         this.processingPreferences = processingPreferences;
     }
 
@@ -719,7 +719,7 @@ public class CpsParent extends UserPreferencesParent {
         spectrumCountingPreferences = new SpectrumCountingPreferences();
         spectrumCountingPreferences.setSelectedMethod(SpectralCountingMethod.NSAF);
         spectrumCountingPreferences.setValidatedHits(true);
-        processingPreferences = new ProcessingPreferences();
+        processingPreferences = new PSProcessingPreferences();
     }
 
     /**
