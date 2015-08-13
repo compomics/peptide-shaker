@@ -42,7 +42,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import de.proteinms.omxparser.util.OMSSAIdfileReader;
 import de.proteinms.xtandemparser.parser.XTandemIdfileReader;
 import static eu.isas.peptideshaker.fileimport.FileImporter.ptmMassTolerance;
-import eu.isas.peptideshaker.scoring.InputMap;
+import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.psm_scoring.BestMatchSelection;
 import java.io.File;
 import java.io.IOException;

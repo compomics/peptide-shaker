@@ -32,8 +32,8 @@ import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.spectrum.MassErrorBubblePlot;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.myparameters.PSMaps;
-import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.scoring.PSMaps;
+import eu.isas.peptideshaker.parameters.PSParameter;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -59,7 +59,7 @@ import com.compomics.util.experiment.identification.identification_parameters.Pt
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
-import eu.isas.peptideshaker.scoring.PsmSpecificMap;
+import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
@@ -2290,7 +2290,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     PSMaps pSMaps = new PSMaps();
                     pSMaps = (PSMaps) identification.getUrParam(pSMaps);
-                    eu.isas.peptideshaker.scoring.InputMap inputMap = pSMaps.getInputMap();
+                    eu.isas.peptideshaker.scoring.maps.InputMap inputMap = pSMaps.getInputMap();
                     advocatesUsed = new ArrayList<Integer>(inputMap.getInputAlgorithmsSorted());
                     ArrayList<String> spectrumFileNames = identification.getSpectrumFiles();
                     numberOfValidatedPsmsMap = new HashMap<String, Integer>();
@@ -3785,7 +3785,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      *
      * @param inputMap the input map
      */
-    private void updateOverviewPlots(eu.isas.peptideshaker.scoring.InputMap inputMap, PsmSpecificMap psmSpecificMap) {
+    private void updateOverviewPlots(eu.isas.peptideshaker.scoring.maps.InputMap inputMap, PsmSpecificMap psmSpecificMap) {
 
         // The selected file, null for the entire dataset
         String selectedFileName = null; //@TODO: let the user choose the file

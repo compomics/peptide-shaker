@@ -9,7 +9,7 @@ import com.compomics.util.experiment.identification.matches_iterators.PeptideMat
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.parameters.PSParameter;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.io.IOException;

@@ -12,8 +12,8 @@ import com.compomics.util.experiment.identification.matches_iterators.ProteinMat
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.myparameters.PSParameter;
-import eu.isas.peptideshaker.scoring.ProteinMap;
+import eu.isas.peptideshaker.parameters.PSParameter;
+import eu.isas.peptideshaker.scoring.maps.ProteinMap;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 import java.io.IOException;

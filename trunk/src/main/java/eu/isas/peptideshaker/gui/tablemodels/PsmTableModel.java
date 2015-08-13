@@ -11,7 +11,7 @@ import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
-import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;

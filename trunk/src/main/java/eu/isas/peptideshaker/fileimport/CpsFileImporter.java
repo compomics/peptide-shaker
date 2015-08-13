@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.fileimport;
 
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
+import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Sample;
@@ -13,10 +14,12 @@ import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
+import eu.isas.peptideshaker.parameters.PeptideShakerSettings;
+import eu.isas.peptideshaker.utils.CpsParent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import org.apache.commons.compress.archivers.ArchiveException;
 
@@ -45,7 +48,8 @@ public class CpsFileImporter {
      * the file
      * @throws ClassNotFoundException thrown if there is a problem loading the
      * experiment data
-     * @throws org.apache.commons.compress.archivers.ArchiveException exception thrown whenever an error occurred while untaring the file
+     * @throws org.apache.commons.compress.archivers.ArchiveException exception
+     * thrown whenever an error occurred while untaring the file
      */
     public CpsFileImporter(File cpsFile, String jarFilePath, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException, ArchiveException {
 
@@ -78,22 +82,32 @@ public class CpsFileImporter {
             waitingHandler.setMaxSecondaryProgressCounter(100);
         }
 
-            TarUtils.extractFile(cpsFile, matchFolderParent, waitingHandler);
+        TarUtils.extractFile(cpsFile, matchFolderParent, waitingHandler);
 
         experiment = ExperimentIO.loadExperiment(experimentFile);
     }
 
     /**
-     * Returns the experiment settings as imported from the cps file.
+     * Retursn the PeptideShaker settings saved in the given database.
      *
-     * @return the experiment settings as imported from the cps file
+     * @param objectsDB the database containing the settings
+     *
+     * @return the PeptideShaker settings
+     *
+     * @throws SQLException exception thrown whenever an error occurs while
+     * queying with the database.
+     * @throws IOException exception thrown whenever an error occurs while
+     * queying with the database.
+     * @throws ClassNotFoundException exception thrown whenever an error occurs
+     * while deserializing the settings object.
+     * @throws InterruptedException exception thrown whenever an threading issue
+     * occurs while queying with the database.
      */
-    public PeptideShakerSettings getExperimentSettings() {
+    public PeptideShakerSettings getPeptideShakerSettings(ObjectsDB objectsDB) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
-        PeptideShakerSettings experimentSettings = new PeptideShakerSettings();
-            experimentSettings = (PeptideShakerSettings) experiment.getUrParam(experimentSettings);
-
-        return experimentSettings;
+        PeptideShakerSettings peptideShakerSettings = new PeptideShakerSettings();
+        peptideShakerSettings = (PeptideShakerSettings) objectsDB.retrieveObject(CpsParent.settingsTableName, peptideShakerSettings.getFamilyName(), true, false);
+        return peptideShakerSettings;
     }
 
     /**

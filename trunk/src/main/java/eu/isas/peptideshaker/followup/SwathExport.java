@@ -26,7 +26,7 @@ import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.parameters.PSParameter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;

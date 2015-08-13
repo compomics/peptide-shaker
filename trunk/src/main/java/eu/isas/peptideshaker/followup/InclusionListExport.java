@@ -11,7 +11,7 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.BufferedWriter;

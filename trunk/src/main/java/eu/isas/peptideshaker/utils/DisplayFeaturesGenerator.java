@@ -23,7 +23,7 @@ import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.protein.Header;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
-import eu.isas.peptideshaker.myparameters.PSPtmScores;
+import eu.isas.peptideshaker.parameters.PSPtmScores;
 import java.awt.Color;
 import java.io.IOException;
 import java.sql.SQLException;

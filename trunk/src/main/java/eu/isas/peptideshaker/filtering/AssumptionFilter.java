@@ -18,7 +18,7 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Annotati
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
 import eu.isas.peptideshaker.filtering.items.AssumptionFilterItem;
-import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.math.BigDecimal;

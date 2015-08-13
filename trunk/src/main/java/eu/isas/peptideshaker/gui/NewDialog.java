@@ -702,6 +702,7 @@ public class NewDialog extends javax.swing.JDialog {
                 shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(identificationParameters.getSearchParameters());
             }
             peptideShakerGUI.setShotgunProtocol(shotgunProtocol);
+            peptideShakerGUI.setProcessingPreferences(processingPreferences);
             projectDetails = new ProjectDetails();
             projectDetails.setCreationDate(new Date());
             projectDetails.setPeptideShakerVersion(new eu.isas.peptideshaker.utils.Properties().getVersion());

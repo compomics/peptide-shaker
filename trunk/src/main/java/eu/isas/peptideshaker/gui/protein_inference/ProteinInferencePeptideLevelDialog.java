@@ -13,7 +13,7 @@ import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.preferences.GenePreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
-import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.parameters.PSParameter;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;

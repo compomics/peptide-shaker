@@ -34,7 +34,7 @@ import eu.isas.peptideshaker.export.sections.PsPtmScoringSection;
 import eu.isas.peptideshaker.export.sections.PsSearchParametersSection;
 import eu.isas.peptideshaker.export.sections.PsSpectrumCountingSection;
 import eu.isas.peptideshaker.export.sections.PsValidationSection;
-import eu.isas.peptideshaker.myparameters.PSMaps;
+import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
