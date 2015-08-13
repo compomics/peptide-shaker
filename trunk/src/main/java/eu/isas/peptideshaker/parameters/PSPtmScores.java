@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.myparameters;
+package eu.isas.peptideshaker.parameters;
 
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;

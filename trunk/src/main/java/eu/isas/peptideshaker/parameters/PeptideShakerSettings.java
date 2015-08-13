@@ -1,19 +1,13 @@
-package eu.isas.peptideshaker.myparameters;
+package eu.isas.peptideshaker.parameters;
 
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.personalization.UrParameter;
-import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
-import com.compomics.util.preferences.GenePreferences;
-import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
-import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.ProteinInferencePreferences;
-import com.compomics.util.preferences.PsmScoringPreferences;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
-import eu.isas.peptideshaker.preferences.*;
+import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import eu.isas.peptideshaker.preferences.FilterPreferences;
+import eu.isas.peptideshaker.preferences.ProjectDetails;
+import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
 import eu.isas.peptideshaker.utils.Metrics;
 
@@ -92,6 +86,7 @@ public class PeptideShakerSettings implements UrParameter {
             Metrics metrics,
             ProcessingPreferences processingPreferences,
             IdentificationFeaturesCache identificationFeaturesCache) {
+        this.shotgunProtocol = shotgunProtocol;
         this.identificationParameters = identificationParameters;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.projectDetails = projectDetails;

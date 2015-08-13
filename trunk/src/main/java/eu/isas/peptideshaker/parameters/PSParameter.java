@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.myparameters;
+package eu.isas.peptideshaker.parameters;
 
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
