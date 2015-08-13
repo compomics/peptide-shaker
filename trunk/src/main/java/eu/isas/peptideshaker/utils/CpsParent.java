@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.db.ObjectsCache;
+import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.ShotgunProtocol;
@@ -467,6 +468,15 @@ public class CpsParent extends UserPreferencesParent {
             genePreferences = identificationParameters.getGenePreferences();
         }
         return genePreferences.loadGeneMappings(jarFilePath, updateEqualVersion, waitingHandler);
+    }
+    
+    /**
+     * Returns the objects database used for this project.
+     * 
+     * @return the objects database used for this project
+     */
+    public ObjectsDB getObjectsDB() {
+        return identification.getIdentificationDB().getObjectsDB(); //@TODO: avoid using the identification object.
     }
 
     /**
