@@ -31,7 +31,7 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Annotati
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
-import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
 import com.compomics.util.pride.CvTerm;
@@ -124,7 +124,7 @@ public class MzIdentMLExport {
     /**
      * The processing preferences.
      */
-    private ProcessingPreferences processingPreferences;
+    private PSProcessingPreferences processingPreferences;
     /**
      * The spectrum counting preferences.
      */
@@ -184,7 +184,7 @@ public class MzIdentMLExport {
      * @throws ClassNotFoundException Exception thrown whenever an error
      * occurred while deserializing an object
      */
-    public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, ProcessingPreferences processingPreferences,
+    public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, PSProcessingPreferences processingPreferences,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences,
             IdentificationFeaturesGenerator identificationFeaturesGenerator,
             File outputFile, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException {

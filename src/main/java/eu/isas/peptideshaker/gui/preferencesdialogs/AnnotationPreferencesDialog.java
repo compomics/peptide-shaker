@@ -493,7 +493,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             }
         }
 
-        annotationPreferences.setAnnotationLevel(((Integer) intensitySpinner.getValue()) / 100.0);
+        annotationPreferences.setIntensityLimit(((Integer) intensitySpinner.getValue()) / 100.0);
         annotationPreferences.setFragmentIonAccuracy((Double) accuracySpinner.getValue());
         annotationPreferences.setHighResolutionAnnotation(highResolutionBox.isSelected());
 

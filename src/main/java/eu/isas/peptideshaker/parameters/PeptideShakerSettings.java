@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.parameters;
 
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
@@ -25,7 +25,7 @@ public class PeptideShakerSettings implements UrParameter {
     /**
      * The initial processing preferences.
      */
-    private ProcessingPreferences processingPreferences;
+    private PSProcessingPreferences processingPreferences;
     /**
      * The identification parameters.
      */
@@ -84,7 +84,7 @@ public class PeptideShakerSettings implements UrParameter {
             FilterPreferences filterPreferences,
             DisplayPreferences displayPreferences,
             Metrics metrics,
-            ProcessingPreferences processingPreferences,
+            PSProcessingPreferences processingPreferences,
             IdentificationFeaturesCache identificationFeaturesCache) {
         this.shotgunProtocol = shotgunProtocol;
         this.identificationParameters = identificationParameters;
@@ -174,9 +174,9 @@ public class PeptideShakerSettings implements UrParameter {
      *
      * @return the initial processing preferences
      */
-    public ProcessingPreferences getProcessingPreferences() {
+    public PSProcessingPreferences getProcessingPreferences() {
         if (processingPreferences == null) {
-            processingPreferences = new ProcessingPreferences();
+            processingPreferences = new PSProcessingPreferences();
         }
         return processingPreferences;
     }
@@ -186,7 +186,7 @@ public class PeptideShakerSettings implements UrParameter {
      *
      * @param processingPreferences the initial processing preferences
      */
-    public void setProcessingPreferences(ProcessingPreferences processingPreferences) {
+    public void setProcessingPreferences(PSProcessingPreferences processingPreferences) {
         this.processingPreferences = processingPreferences;
     }
 

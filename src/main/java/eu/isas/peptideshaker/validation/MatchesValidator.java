@@ -24,7 +24,7 @@ import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.preferences.ValidationQCPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.filtering.AssumptionFilter;
@@ -37,6 +37,7 @@ import eu.isas.peptideshaker.filtering.items.AssumptionFilterItem;
 import eu.isas.peptideshaker.filtering.items.PeptideFilterItem;
 import eu.isas.peptideshaker.filtering.items.ProteinFilterItem;
 import eu.isas.peptideshaker.parameters.PSParameter;
+import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
@@ -134,7 +135,7 @@ public class MatchesValidator {
      */
     public void validateIdentifications(Identification identification, Metrics metrics, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator, InputMap inputMap,
-            SpectrumCountingPreferences spectrumCountingPreferences, ProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
+            SpectrumCountingPreferences spectrumCountingPreferences, PSProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
         IdMatchValidationPreferences validationPreferences = identificationParameters.getIdValidationPreferences();
 
@@ -241,7 +242,7 @@ public class MatchesValidator {
     public void validateIdentifications(Identification identification, Metrics metrics, InputMap inputMap,
             WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
-            SpectrumCountingPreferences spectrumCountingPreferences, ProcessingPreferences processingPreferences)
+            SpectrumCountingPreferences spectrumCountingPreferences, PSProcessingPreferences processingPreferences)
             throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
         PSParameter psParameter = new PSParameter();
@@ -268,7 +269,7 @@ public class MatchesValidator {
 
             AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
             Double intensityLimit = annotationPreferences.getAnnotationIntensityLimit();
-            annotationPreferences.setAnnotationLevel(0);
+            annotationPreferences.setIntensityLimit(0);
 
             ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
@@ -348,7 +349,7 @@ public class MatchesValidator {
                 throw new InterruptedException("PSM validation timed out. Please contact the developers.");
             }
 
-            annotationPreferences.setAnnotationLevel(intensityLimit);
+            annotationPreferences.setIntensityLimit(intensityLimit);
         }
 
         // validate the peptides
@@ -1162,7 +1163,7 @@ public class MatchesValidator {
      * reading the FASTA file
      */
     public void attachProteinProbabilities(Identification identification, Metrics metrics, WaitingHandler waitingHandler,
-            ProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+            PSProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Attaching Protein Probabilities. Please Wait...");
 

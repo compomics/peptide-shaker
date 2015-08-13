@@ -32,10 +32,11 @@ import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import com.compomics.util.preferences.PTMScoringPreferences;
-import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.preferences.PsmScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.Duration;
+import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.protein_inference.ProteinInference;
@@ -213,7 +214,7 @@ public class PeptideShaker {
      */
     public void importFiles(WaitingHandler waitingHandler, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ProjectDetails projectDetails,
-            ProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, boolean backgroundThread) {
+            PSProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, boolean backgroundThread) {
 
         projectCreationDuration = new Duration();
         projectCreationDuration.start();
@@ -269,7 +270,7 @@ public class PeptideShaker {
      */
     public void processIdentifications(InputMap inputMap, HashMap<String, Integer> proteinCount, WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
-            ProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails)
+            PSProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails)
             throws Exception {
         
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
@@ -574,7 +575,7 @@ public class PeptideShaker {
      * @throws Exception exception thrown whenever it is attempted to attach
      * more than one identification per search engine per spectrum
      */
-    public void spectrumMapChanged(Identification identification, WaitingHandler waitingHandler, ProcessingPreferences processingPreferences,
+    public void spectrumMapChanged(Identification identification, WaitingHandler waitingHandler, PSProcessingPreferences processingPreferences,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws Exception {
         PeptideSpecificMap peptideMap = new PeptideSpecificMap();
         ProteinMap proteinMap = new ProteinMap();
@@ -605,7 +606,7 @@ public class PeptideShaker {
      * @throws Exception exception thrown whenever it is attempted to attach
      * more than one identification per search engine per spectrum
      */
-    public void peptideMapChanged(Identification identification, WaitingHandler waitingHandler, ProcessingPreferences processingPreferences,
+    public void peptideMapChanged(Identification identification, WaitingHandler waitingHandler, PSProcessingPreferences processingPreferences,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws Exception {
         ProteinMap proteinMap = new ProteinMap();
         matchesValidator.setProteinMap(proteinMap);
@@ -628,7 +629,7 @@ public class PeptideShaker {
      * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      * @throws InterruptedException thrown if an InterruptedException occurs
      */
-    public void proteinMapChanged(WaitingHandler waitingHandler, ProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public void proteinMapChanged(WaitingHandler waitingHandler, PSProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         matchesValidator.attachProteinProbabilities(identification, metrics, waitingHandler, processingPreferences);
     }

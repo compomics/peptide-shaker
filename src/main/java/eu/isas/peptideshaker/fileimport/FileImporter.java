@@ -25,8 +25,9 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
+import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.protein_inference.PeptideMapper;
@@ -143,7 +144,7 @@ public class FileImporter {
      * done in a background thread (GUI mode) or in the current thread (command
      * line mode).
      */
-    public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, ProcessingPreferences processingPreferences,
+    public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, PSProcessingPreferences processingPreferences,
             SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, boolean backgroundThread) {
 
         IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, shotgunProtocol, identificationParameters, processingPreferences, spectrumCountingPreferences, projectDetails);
@@ -283,7 +284,7 @@ public class FileImporter {
         /**
          * The processing preferences.
          */
-        private ProcessingPreferences processingPreferences;
+        private PSProcessingPreferences processingPreferences;
         /**
          * The project details
          */
@@ -371,7 +372,7 @@ public class FileImporter {
          * @param projectDetails the project details
          */
         public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, ShotgunProtocol shotgunProtocol,
-                IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences,
+                IdentificationParameters identificationParameters, PSProcessingPreferences processingPreferences,
                 SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails) {
 
             this.idFiles = new ArrayList<File>();

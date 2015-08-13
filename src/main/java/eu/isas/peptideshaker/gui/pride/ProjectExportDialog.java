@@ -1091,7 +1091,7 @@ public class ProjectExportDialog extends javax.swing.JDialog {
 
                 // make sure that all annotations are included
                 double currentIntensityLimit = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().getAnnotationIntensityLimit();
-                peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setAnnotationLevel(0.0);
+                peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(0.0);
 
                 try {
                     PrideXmlExport prideExport = new PrideXmlExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
@@ -1123,7 +1123,7 @@ public class ProjectExportDialog extends javax.swing.JDialog {
                     return;
                 } finally {
                     // reset the annotation level
-                    peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setAnnotationLevel(currentIntensityLimit);
+                    peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(currentIntensityLimit);
                 }
 
                 // close the progress dialog

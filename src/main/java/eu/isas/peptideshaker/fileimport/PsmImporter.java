@@ -36,7 +36,7 @@ import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
-import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import de.proteinms.omxparser.util.OMSSAIdfileReader;
@@ -95,7 +95,7 @@ public class PsmImporter {
     /**
      * The processing preferences.
      */
-    private ProcessingPreferences processingPreferences;
+    private PSProcessingPreferences processingPreferences;
     /**
      * The progress of the import.
      */
@@ -204,7 +204,7 @@ public class PsmImporter {
      * @param singleProteinList list of one hit wonders for this project
      * @param exceptionHandler handler for exceptions
      */
-    public PsmImporter(ObjectsCache peptideShakerCache, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences, IdfileReader fileReader, File idFile,
+    public PsmImporter(ObjectsCache peptideShakerCache, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PSProcessingPreferences processingPreferences, IdfileReader fileReader, File idFile,
             Identification identification, InputMap inputMap, HashMap<String, Integer> proteinCount, HashSet<String> singleProteinList,
             ExceptionHandler exceptionHandler) {
         this.peptideShakerCache = peptideShakerCache;

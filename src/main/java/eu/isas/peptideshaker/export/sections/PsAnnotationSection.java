@@ -98,7 +98,7 @@ public class PsAnnotationSection {
             PsAnnotationFeature annotationFeature = (PsAnnotationFeature) exportFeature;
             switch (annotationFeature) {
                 case automatic_annotation:
-                    if (annotationPreferences.useAutomaticAnnotation()) {
+                    if (annotationPreferences.isAutomaticAnnotation()) {
                         writer.write("Yes");
                     } else {
                         writer.write("No");
