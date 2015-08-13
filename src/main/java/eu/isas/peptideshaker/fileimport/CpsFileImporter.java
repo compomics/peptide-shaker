@@ -104,7 +104,6 @@ public class CpsFileImporter {
      * occurs while queying with the database.
      */
     public PeptideShakerSettings getPeptideShakerSettings(ObjectsDB objectsDB) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-
         PeptideShakerSettings peptideShakerSettings = new PeptideShakerSettings();
         peptideShakerSettings = (PeptideShakerSettings) objectsDB.retrieveObject(CpsParent.settingsTableName, peptideShakerSettings.getFamilyName(), true, false);
         return peptideShakerSettings;
