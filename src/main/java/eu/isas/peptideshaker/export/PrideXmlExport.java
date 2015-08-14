@@ -1562,12 +1562,12 @@ public class PrideXmlExport {
     private void writeCvTerm(CvTerm cvTerm) throws IOException {
 
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "cvLabel=\"" + cvTerm.getOntology() + "\" "
+                + "cvLabel=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getOntology()) + "\" "
                 + "accession=\"" + cvTerm.getAccession() + "\" "
-                + "name=\"" + cvTerm.getName() + "\"");
+                + "name=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getName()) + "\"");
 
         if (cvTerm.getValue() != null) {
-            br.write(" value=\"" + cvTerm.getValue() + "\" />" + System.getProperty("line.separator"));
+            br.write(" value=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getValue()) + "\" />" + System.getProperty("line.separator"));
         } else {
             br.write(" />" + System.getProperty("line.separator"));
         }

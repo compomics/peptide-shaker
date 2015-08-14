@@ -3618,7 +3618,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-     * /**
      * Returns the user preferences.
      *
      * @return the user preferences

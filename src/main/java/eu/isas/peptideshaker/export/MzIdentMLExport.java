@@ -1866,12 +1866,12 @@ public class MzIdentMLExport {
     private void writeCvTerm(CvTerm cvTerm) throws IOException {
 
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "cvRef=\"" + cvTerm.getOntology() + "\" "
+                + "cvRef=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getOntology()) + "\" "
                 + "accession=\"" + cvTerm.getAccession() + "\" "
-                + "name=\"" + cvTerm.getName() + "\"");
+                + "name=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getName()) + "\"");
 
         if (cvTerm.getValue() != null) {
-            br.write(" value=\"" + cvTerm.getValue() + "\"/>" + System.getProperty("line.separator"));
+            br.write(" value=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getValue()) + "\"/>" + System.getProperty("line.separator"));
         } else {
             br.write("/>" + System.getProperty("line.separator"));
         }
@@ -1883,7 +1883,7 @@ public class MzIdentMLExport {
      * @param userParamAsString the user parameter as a string
      */
     private void writeUserParam(String userParamAsString) throws IOException {
-        br.write(getCurrentTabSpace() + "<userParam name=\"" + userParamAsString + "\"/>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<userParam name=\"" + StringEscapeUtils.escapeHtml4(userParamAsString) + "\"/>" + System.getProperty("line.separator"));
     }
 
     /**
@@ -1893,6 +1893,6 @@ public class MzIdentMLExport {
      * @param value the value of the user parameter
      */
     private void writeUserParam(String name, String value) throws IOException {
-        br.write(getCurrentTabSpace() + "<userParam name=\"" + name + "\" value=\"" + value + "\" />" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<userParam name=\"" + StringEscapeUtils.escapeHtml4(name) + "\" value=\"" + StringEscapeUtils.escapeHtml4(value) + "\" />" + System.getProperty("line.separator"));
     }
 }
