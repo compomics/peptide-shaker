@@ -373,7 +373,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     /**
      * The cps parent used to manage the data.
      */
-    private CpsParent cpsParent = new CpsParent();
+    private CpsParent cpsParent = new CpsParent(PeptideShaker.getMatchesFolder());
     /**
      * True if an existing project is currently in the process of being opened.
      */
@@ -4221,7 +4221,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         // empty the matches folder
         if (databaseClosed) {
 
-            File matchFolder = PeptideShaker.getSerializationDirectory(getJarFilePath());
+            File matchFolder = PeptideShaker.getMatchesFolder();
 
             if (matchFolder.exists()) {
 
@@ -5435,7 +5435,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     updateNotesNotificationCounter();
                     openingExistingProject = true;
 
-                    cpsParent.loadCpsFile(getJarFilePath(), progressDialog);
+                    cpsParent.loadCpsFile(PeptideShaker.getMatchesFolder(), progressDialog);
 
                     // Resets the display features generator according to the new project
                     resetDisplayFeaturesGenerator();

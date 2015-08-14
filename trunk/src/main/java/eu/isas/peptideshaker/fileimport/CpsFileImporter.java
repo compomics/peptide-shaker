@@ -4,15 +4,10 @@ import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.experiment.MsExperiment;
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Sample;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.compression.TarUtils;
-import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.PTMScoringPreferences;
-import com.compomics.util.preferences.PSProcessingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.parameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.utils.CpsParent;
@@ -39,7 +34,7 @@ public class CpsFileImporter {
      * Constructor.
      *
      * @param cpsFile the cps file
-     * @param jarFilePath the path to the jar file
+     * @param dbFolder the path where to store the database
      * @param waitingHandler the waiting handler
      *
      * @throws FileNotFoundException thrown if the file to import cannot be
@@ -51,39 +46,20 @@ public class CpsFileImporter {
      * @throws org.apache.commons.compress.archivers.ArchiveException exception
      * thrown whenever an error occurred while untaring the file
      */
-    public CpsFileImporter(File cpsFile, String jarFilePath, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException, ArchiveException {
-
-        File matchFolderParent = PeptideShaker.getMatchesDirectoryParent(jarFilePath);
-        File matchFolder = PeptideShaker.getSerializationDirectory(jarFilePath);
-
-        // empty the existing files in the matches folder
-        if (matchFolder.exists()) {
-            for (File file : matchFolder.listFiles()) {
-                if (file.isDirectory()) {
-                    boolean deleted = Util.deleteDir(file);
-
-                    if (!deleted) {
-                        System.out.println("Failed to delete folder: " + file.getPath());
-                    }
-                } else {
-                    boolean deleted = file.delete();
-
-                    if (!deleted) {
-                        System.out.println("Failed to delete file: " + file.getPath());
-                    }
-                }
-            }
-        }
-
-        File experimentFile = new File(matchFolder, PeptideShaker.getDefaultExperimentFileName());
+    public CpsFileImporter(File cpsFile, File dbFolder, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException, ArchiveException {
 
         if (waitingHandler != null) {
             waitingHandler.resetSecondaryProgressCounter();
             waitingHandler.setMaxSecondaryProgressCounter(100);
         }
 
-        TarUtils.extractFile(cpsFile, matchFolderParent, waitingHandler);
+        System.out.println("Extracting");
+        System.out.println(cpsFile.getAbsolutePath());
+        System.out.println("to");
+        System.out.println(dbFolder.getAbsolutePath());
+        TarUtils.extractFile(cpsFile, dbFolder, waitingHandler);
 
+        File experimentFile = new File(dbFolder, MsExperiment.experimentObjectName);
         experiment = ExperimentIO.loadExperiment(experimentFile);
     }
 

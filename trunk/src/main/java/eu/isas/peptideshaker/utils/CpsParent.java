@@ -19,7 +19,6 @@ import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.preferences.ProteinInferencePreferences;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.fileimport.CpsFileImporter;
 import eu.isas.peptideshaker.parameters.PeptideShakerSettings;
@@ -107,6 +106,10 @@ public class CpsParent extends UserPreferencesParent {
      */
     protected IdentificationParameters identificationParameters;
     /**
+     * The folder where the database is stored.
+     */
+    protected File dbFolder;
+    /**
      * The currently loaded cps file.
      */
     protected File cpsFile = null;
@@ -114,12 +117,21 @@ public class CpsParent extends UserPreferencesParent {
      * The name of the table to use to store PeptideShaker experiment settings.
      */
     public static final String settingsTableName = "PeptideShaker_experiment_settings";
+    
+    /**
+     * Constructor.
+     * 
+     * @param dbFolder the folder where the database is stored.
+     */
+    public CpsParent(File dbFolder) {
+        this.dbFolder = dbFolder;
+    }
 
     /**
      * Loads the information from a cps file.
      *
      * @param zipFile the zip file containing the cps file
-     * @param jarFilePath the path to the jar file
+     * @param dbFolder the folder where to untar the project
      * @param waitingHandler a waiting handler displaying feedback to the user.
      * Ignored if null
      *
@@ -133,7 +145,7 @@ public class CpsParent extends UserPreferencesParent {
      * threading error occurred while saving the project
      * @throws org.apache.commons.compress.archivers.ArchiveException exception thrown whenever an error occurs while untaring the file
      */
-    public void loadCpsFromZipFile(File zipFile, String jarFilePath, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, SQLException, InterruptedException, ArchiveException {
+    public void loadCpsFromZipFile(File zipFile, File dbFolder, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, SQLException, InterruptedException, ArchiveException {
 
         String newName = PsZipUtils.getTempFolderName(zipFile.getName());
         String parentFolder = PsZipUtils.getUnzipParentFolder();
@@ -152,7 +164,7 @@ public class CpsParent extends UserPreferencesParent {
             for (File file : destinationFolder.listFiles()) {
                 if (file.getName().toLowerCase().endsWith(".cps")) {
                     cpsFile = file;
-                    loadCpsFile(jarFilePath, waitingHandler);
+                    loadCpsFile(dbFolder, waitingHandler);
                     return;
                 }
             }
@@ -162,7 +174,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Loads the information from a cps file.
      *
-     * @param jarFilePath the path to the jar file
+     * @param dbFolder the folder where to untar the project
      * @param waitingHandler a waiting handler displaying feedback to the user.
      * Ignored if null
      *
@@ -176,9 +188,9 @@ public class CpsParent extends UserPreferencesParent {
      * threading error occurred while saving the project
      * @throws org.apache.commons.compress.archivers.ArchiveException exception thrown whenever an error occurs while untaring the file
      */
-    public void loadCpsFile(String jarFilePath, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, SQLException, InterruptedException, ArchiveException {
+    public void loadCpsFile(File dbFolder, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, SQLException, InterruptedException, ArchiveException {
 
-        CpsFileImporter cpsFileImporter = new CpsFileImporter(cpsFile, jarFilePath, waitingHandler);
+        CpsFileImporter cpsFileImporter = new CpsFileImporter(cpsFile, dbFolder, waitingHandler);
 
         // close any open connection to an identification database
         if (identification != null) {
@@ -216,8 +228,7 @@ public class CpsParent extends UserPreferencesParent {
         objectsCache = new ObjectsCache();
         objectsCache.setAutomatedMemoryManagement(true);
         objectsCache.setReadOnly(false);
-        String dbFolder = PeptideShaker.getSerializationDirectory(jarFilePath).getAbsolutePath();
-        identification.restoreConnection(dbFolder, false, objectsCache);
+        identification.restoreConnection(dbFolder.getAbsolutePath(), false, objectsCache);
 
         // Get PeptideShaker settings
         PeptideShakerSettings experimentSettings = cpsFileImporter.getPeptideShakerSettings(identification.getIdentificationDB().getObjectsDB());
@@ -274,7 +285,7 @@ public class CpsParent extends UserPreferencesParent {
         CpsExporter.saveAs(cpsFile, waitingHandler, experiment, identification, shotgunProtocol, identificationParameters,
                 spectrumCountingPreferences, projectDetails, filterPreferences, metrics,
                 processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(),
-                objectsCache, emptyCache, displayPreferences, PeptideShaker.getJarFilePath());
+                objectsCache, emptyCache, displayPreferences, dbFolder);
 
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);

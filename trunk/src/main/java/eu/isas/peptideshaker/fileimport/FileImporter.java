@@ -609,7 +609,7 @@ public class FileImporter {
          * threading error occurred while establishing the connection
          */
         private void connectToIdDb(Identification identification) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-            String dbFolder = PeptideShaker.getSerializationDirectory(getJarFilePath()).getAbsolutePath();
+            String dbFolder = PeptideShaker.getMatchesFolder().getAbsolutePath();
             identification.establishConnection(dbFolder, true, peptideShaker.getCache());
         }
 
