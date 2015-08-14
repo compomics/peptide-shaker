@@ -56,6 +56,7 @@ public class ReportCLI extends CpsParent {
      * @param reportCLIInputBean the input bean
      */
     public ReportCLI(ReportCLIInputBean reportCLIInputBean) {
+        super(PeptideShaker.getMatchesFolder());
         this.reportCLIInputBean = reportCLIInputBean;
         loadEnzymes();
         loadPtms();
@@ -100,11 +101,11 @@ public class ReportCLI extends CpsParent {
         try {
             if (reportCLIInputBean.getZipFile() != null) {
                 inputFilePath = reportCLIInputBean.getZipFile().getAbsolutePath();
-                loadCpsFromZipFile(reportCLIInputBean.getZipFile(), PeptideShaker.getJarFilePath(), waitingHandler);
+                loadCpsFromZipFile(reportCLIInputBean.getZipFile(), PeptideShaker.getMatchesFolder(), waitingHandler);
             } else if (reportCLIInputBean.getCpsFile() != null) {
                 inputFilePath = reportCLIInputBean.getCpsFile().getAbsolutePath();
                 cpsFile = reportCLIInputBean.getCpsFile();
-                loadCpsFile(PeptideShaker.getJarFilePath(), waitingHandler);
+                loadCpsFile(PeptideShaker.getMatchesFolder(), waitingHandler);
             } else {
                 waitingHandler.appendReport("PeptideShaker project input missing.", true, true);
                 return 1;
@@ -348,7 +349,7 @@ public class ReportCLI extends CpsParent {
         GOFactory.getInstance().closeFiles();
         identification.close();
 
-        File matchFolder = PeptideShaker.getSerializationDirectory(PeptideShaker.getJarFilePath());
+        File matchFolder = PeptideShaker.getMatchesFolder();
 
         DerbyUtil.closeConnection();
 

@@ -93,6 +93,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * @param cliInputBean the PeptideShakerCLIInputBean
      */
     public PeptideShakerCLI(PeptideShakerCLIInputBean cliInputBean) {
+        super(PeptideShaker.getMatchesFolder());
         this.cliInputBean = cliInputBean;
         loadEnzymes();
     }
@@ -791,7 +792,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         try {
-            File matchFolder = PeptideShaker.getSerializationDirectory(PeptideShaker.getJarFilePath());
+            File matchFolder = PeptideShaker.getMatchesFolder();
             File[] tempFiles = matchFolder.listFiles();
 
             if (tempFiles != null) {

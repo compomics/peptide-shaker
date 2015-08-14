@@ -50,7 +50,7 @@ public class CpsExporter {
      * @param objectsCache the object cache
      * @param emptyCache a boolean indicating whether the object cache should be
      * emptied
-     * @param jarFilePath the path to the jar file
+     * @param dbFolder the path to the folder where the database is located
      *
      * @throws IOException thrown of IOException occurs exception thrown
      * whenever an error occurred while reading or writing a file
@@ -66,9 +66,8 @@ public class CpsExporter {
     public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, ShotgunProtocol shotgunProtocol,
             IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences,
             Metrics metrics, PSProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, ObjectsCache objectsCache, boolean emptyCache,
-            DisplayPreferences displayPreferences, String jarFilePath) throws IOException, SQLException, ArchiveException, ClassNotFoundException, InterruptedException {
+            DisplayPreferences displayPreferences, File dbFolder) throws IOException, SQLException, ArchiveException, ClassNotFoundException, InterruptedException {
 
-        File matchesFolder = PeptideShaker.getSerializationDirectory(jarFilePath);
         identificationFeaturesCache.setReadOnly(true);
 
         try {
@@ -100,13 +99,13 @@ public class CpsExporter {
             if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
                 waitingHandler.setPrimaryProgressCounterIndeterminate(true);
                 waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-                File experimentFile = new File(matchesFolder, PeptideShaker.experimentObjectName);
+                File experimentFile = new File(dbFolder, MsExperiment.experimentObjectName);
                 ExperimentIO.save(experimentFile, experiment);
             }
 
             // tar everything in the current cps file
             if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
-                TarUtils.tarFolder(matchesFolder, destinationFile, waitingHandler);
+                TarUtils.tarFolderContent(dbFolder, destinationFile, waitingHandler);
             }
 
         } finally {
@@ -114,7 +113,7 @@ public class CpsExporter {
             objectsCache.setReadOnly(false);
             identificationFeaturesCache.setReadOnly(false);
             if (!identification.isConnectionActive()) {
-                identification.restoreConnection(matchesFolder.getAbsolutePath(), false, objectsCache);
+                identification.restoreConnection(dbFolder.getAbsolutePath(), false, objectsCache);
             }
         }
     }

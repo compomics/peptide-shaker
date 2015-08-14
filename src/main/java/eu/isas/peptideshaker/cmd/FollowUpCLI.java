@@ -55,6 +55,7 @@ public class FollowUpCLI extends CpsParent {
      * @param followUpCLIInputBean the follow-up options
      */
     public FollowUpCLI(FollowUpCLIInputBean followUpCLIInputBean) {
+        super(PeptideShaker.getMatchesFolder());
         this.followUpCLIInputBean = followUpCLIInputBean;
         loadEnzymes();
         loadPtms();
@@ -99,11 +100,11 @@ public class FollowUpCLI extends CpsParent {
         try {
             if (followUpCLIInputBean.getZipFile() != null) {
                 inputFilePath = followUpCLIInputBean.getZipFile().getAbsolutePath();
-                loadCpsFromZipFile(followUpCLIInputBean.getZipFile(), PeptideShaker.getJarFilePath(), waitingHandler);
+                loadCpsFromZipFile(followUpCLIInputBean.getZipFile(), PeptideShaker.getMatchesFolder(), waitingHandler);
             } else if (followUpCLIInputBean.getCpsFile() != null) {
                 inputFilePath = followUpCLIInputBean.getCpsFile().getAbsolutePath();
                 cpsFile = followUpCLIInputBean.getCpsFile();
-                loadCpsFile(PeptideShaker.getJarFilePath(), waitingHandler);
+                loadCpsFile(PeptideShaker.getMatchesFolder(), waitingHandler);
             } else {
                 waitingHandler.appendReport("PeptideShaker project input missing.", true, true);
                 return 1;
@@ -303,7 +304,7 @@ public class FollowUpCLI extends CpsParent {
 
         DerbyUtil.closeConnection();
 
-        File matchFolder = PeptideShaker.getSerializationDirectory(PeptideShaker.getJarFilePath());
+        File matchFolder = PeptideShaker.getMatchesFolder();
         File[] tempFiles = matchFolder.listFiles();
 
         if (tempFiles != null) {

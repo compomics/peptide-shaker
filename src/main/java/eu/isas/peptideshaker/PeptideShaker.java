@@ -107,9 +107,9 @@ public class PeptideShaker {
      */
     public static final String PEPTIDESHAKER_CONFIGURATION_FILE = "PeptideShaker_configuration.txt";
     /**
-     * The location of the folder used for serialization of matches.
+     * The location of the folder used for the database.
      */
-    private static String SERIALIZATION_DIRECTORY = "matches";
+    private static String DATABASE_DIRECTORY = "matches";
     /**
      * Folder where the data files are stored by default. Should be the same as
      * in SearchGUI.
@@ -120,10 +120,6 @@ public class PeptideShaker {
      * not set.
      */
     private static String SERIALIZATION_PARENT_DIRECTORY = "resources";
-    /**
-     * The name of the serialized experiment
-     */
-    public final static String experimentObjectName = "experiment";
     /**
      * The compomics PTM factory.
      */
@@ -896,15 +892,6 @@ public class PeptideShaker {
     }
 
     /**
-     * Returns the default experiment file.
-     *
-     * @return the default experiment file
-     */
-    public static String getDefaultExperimentFileName() {
-        return PeptideShaker.experimentObjectName;
-    }
-
-    /**
      * Returns the file used for user preferences storage.
      *
      * @return the file used for user preferences storage
@@ -939,7 +926,7 @@ public class PeptideShaker {
      * @return the directory used to store the identification matches
      */
     public static String getMatchesDirectorySubPath() {
-        return SERIALIZATION_DIRECTORY;
+        return DATABASE_DIRECTORY;
     }
 
     /**
@@ -955,14 +942,12 @@ public class PeptideShaker {
     /**
      * Returns the matches directory parent. An empty string if not set.
      *
-     * @param jarFilePath the path to the jar file
-     *
      * @return the matches directory parent
      */
-    public static File getMatchesDirectoryParent(String jarFilePath) {
+    public static File getMatchesDirectoryParentFile() {
         String matchesParentDirectory = PeptideShaker.getMatchesDirectoryParent();
         if (matchesParentDirectory.equals("resources")) {
-            return new File(jarFilePath, matchesParentDirectory);
+            return new File(getJarFilePath(), matchesParentDirectory);
         } else {
             return new File(matchesParentDirectory);
         }
@@ -986,14 +971,12 @@ public class PeptideShaker {
     }
 
     /**
-     * Returns the path to the match folder according to the user path settings.
-     *
-     * @param jarFilePath the path to the jar file
+     * Returns the path to the matches folder according to the user path settings.
      *
      * @return the path to the match folder according to the user path settings
      */
-    public static File getSerializationDirectory(String jarFilePath) {
-        return new File(getMatchesDirectoryParent(jarFilePath), PeptideShaker.getMatchesDirectorySubPath());
+    public static File getMatchesFolder() {
+        return new File(getMatchesDirectoryParentFile(), PeptideShaker.getMatchesDirectorySubPath());
     }
 
     /**

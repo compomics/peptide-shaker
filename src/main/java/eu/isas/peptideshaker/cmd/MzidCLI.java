@@ -55,6 +55,7 @@ public class MzidCLI extends CpsParent {
      * @param mzidCLIInputBean the mzId creation options
      */
     public MzidCLI(MzidCLIInputBean mzidCLIInputBean) {
+        super(PeptideShaker.getMatchesFolder());
         this.mzidCLIInputBean = mzidCLIInputBean;
         loadEnzymes();
         loadPtms();
@@ -99,11 +100,11 @@ public class MzidCLI extends CpsParent {
         try {
             if (mzidCLIInputBean.getZipFile() != null) {
                 inputFilePath = mzidCLIInputBean.getZipFile().getAbsolutePath();
-                loadCpsFromZipFile(mzidCLIInputBean.getZipFile(), PeptideShaker.getJarFilePath(), waitingHandler);
+                loadCpsFromZipFile(mzidCLIInputBean.getZipFile(), PeptideShaker.getMatchesFolder(), waitingHandler);
             } else if (mzidCLIInputBean.getCpsFile() != null) {
                 inputFilePath = mzidCLIInputBean.getCpsFile().getAbsolutePath();
                 cpsFile = mzidCLIInputBean.getCpsFile();
-                loadCpsFile(PeptideShaker.getJarFilePath(), waitingHandler);
+                loadCpsFile(PeptideShaker.getMatchesFolder(), waitingHandler);
             } else {
                 waitingHandler.appendReport("PeptideShaker project input missing.", true, true);
                 return 1;
@@ -241,7 +242,7 @@ public class MzidCLI extends CpsParent {
 
         DerbyUtil.closeConnection();
 
-        File matchFolder = PeptideShaker.getSerializationDirectory(PeptideShaker.getJarFilePath());
+        File matchFolder = PeptideShaker.getMatchesFolder();
         File[] tempFiles = matchFolder.listFiles();
 
         if (tempFiles != null) {
