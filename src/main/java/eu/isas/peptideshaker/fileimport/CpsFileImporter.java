@@ -1,14 +1,12 @@
 package eu.isas.peptideshaker.fileimport;
 
 import com.compomics.software.CompomicsWrapper;
-import com.compomics.util.Util;
 import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.compression.TarUtils;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.parameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.utils.CpsParent;
 import java.io.File;
@@ -53,10 +51,6 @@ public class CpsFileImporter {
             waitingHandler.setMaxSecondaryProgressCounter(100);
         }
 
-        System.out.println("Extracting");
-        System.out.println(cpsFile.getAbsolutePath());
-        System.out.println("to");
-        System.out.println(dbFolder.getAbsolutePath());
         TarUtils.extractFile(cpsFile, dbFolder, waitingHandler);
 
         File experimentFile = new File(dbFolder, MsExperiment.experimentObjectName);
@@ -64,7 +58,7 @@ public class CpsFileImporter {
     }
 
     /**
-     * Retursn the PeptideShaker settings saved in the given database.
+     * Returns the PeptideShaker settings saved in the given database.
      *
      * @param objectsDB the database containing the settings
      *
