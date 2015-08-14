@@ -119,7 +119,7 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private PSProcessingPreferences processingPreferences = new PSProcessingPreferences();
     /**
-     * The display preferences
+     * The display preferences.
      */
     private DisplayPreferences displayPreferences = new DisplayPreferences();
     /**

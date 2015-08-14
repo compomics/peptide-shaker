@@ -3013,7 +3013,9 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
         // @TODO: improve/extend guess!
         // guess fixed/variable
-        if (pridePtmName.equalsIgnoreCase("Carbamidomethyl")
+        if (pridePtmName.equalsIgnoreCase("Carbamidomethylation")
+                || pridePtmName.equalsIgnoreCase("Carbamidomethylation of C")
+                || pridePtmName.equalsIgnoreCase("Carbamidomethyl")
                 || pridePtmName.equalsIgnoreCase("S-carboxamidomethyl-L-cysteine")
                 || pridePtmName.equalsIgnoreCase("iodoacetamide - site C")
                 || pridePtmName.equalsIgnoreCase("iodoacetamide derivatized residue")
