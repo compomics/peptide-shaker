@@ -1,48 +1,36 @@
 # `PeptideShaker` #
 
-  * [Introduction](#Introduction.md)
-  * [Read Me](#Read_Me.md)
-  * [Troubleshooting](#Troubleshooting.md)
+  * [Introduction](#introduction)
+  * [Read Me](#read-me)
+  * [Troubleshooting](#rroubleshooting)
 
   * [Bioinformatics for Proteomics Tutorial](http://compomics.com/bioinformatics-for-proteomics/)
 
-
 ---
-
 
 **PeptideShaker Publication:**
   * [Vaudel et al. Nature Biotechnol. 2015 Jan;33(1):22–24](http://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html).
   * If you use PeptideShaker as part of a publication, please include this reference.
   * For referring to the web page, please use: [http://peptide-shaker.googlecode.com](http://peptide-shaker.googlecode.com).
 
+---
+
+|   |   |   |
+| :------------------------- | :---------------: | :--: |
+| [![download](https://github.com/compomics/peptide-shaker/wiki/images/download_button.png)](http://genesis.ugent.be/maven2/eu/isas/peptideshaker/PeptideShaker/0.41.1/PeptideShaker-0.41.1.zip) | *v0.41.1 - All platforms* | [ReleaseNotes](https://github.com/compomics/peptide-shaker/wiki/ReleaseNotes) |
 
 ---
 
-
-<table border='0'>
-<blockquote><tr>
-<blockquote><td width='200'><a href='http://genesis.ugent.be/maven2/eu/isas/peptideshaker/PeptideShaker/0.41.1/PeptideShaker-0.41.1.zip'><img src='http://peptide-shaker.googlecode.com/svn/wiki/images/download_button.png' /></a></td>
-<td width='150'><i>v0.41.1 - All platforms</i></td>
-<td width='150'><i><a href='http://code.google.com/p/peptide-shaker/wiki/ReleaseNotes'>ReleaseNotes</a></i></td>
-</blockquote></tr>
-</table></blockquote>
-
-
----
-
-
-![![](http://peptide-shaker.googlecode.com/svn/wiki/images/Overview_small.png)](http://peptide-shaker.googlecode.com/svn/wiki/images/Overview.png)
-![![](http://peptide-shaker.googlecode.com/svn/wiki/images/SpectrumIDs_small.png)](http://peptide-shaker.googlecode.com/svn/wiki/images/SpectrumIDs.png)
-![![](http://peptide-shaker.googlecode.com/svn/wiki/images/3DStructure_small.png)](http://peptide-shaker.googlecode.com/svn/wiki/images/3DStructure.png)
-![![](http://peptide-shaker.googlecode.com/svn/wiki/images/GO_Enrichment_small.png)](http://peptide-shaker.googlecode.com/svn/wiki/images/GO_Enrichment.png)
-![![](http://peptide-shaker.googlecode.com/svn/wiki/images/Validation_small.png)](http://peptide-shaker.googlecode.com/svn/wiki/images/Validation.png)
-![![](http://peptide-shaker.googlecode.com/svn/wiki/images/QC_Plots_small.png)](http://peptide-shaker.googlecode.com/svn/wiki/images/QC_Plots.png)
+[![](https://github.com/compomics/peptide-shaker/wiki/images/Overview_small.png)](https://github.com/compomics/peptide-shaker/wiki/images/Overview.png)
+[![]https://github.com/compomics/peptide-shaker/wiki/images/SpectrumIDs_small.png)](https://github.com/compomics/peptide-shaker/wiki/images/SpectrumIDs.png)
+[![](https://github.com/compomics/peptide-shaker/wiki/images/3DStructure_small.png)](https://github.com/compomics/peptide-shaker/wiki/images/3DStructure.png)
+[![](https://github.com/compomics/peptide-shaker/wiki/images/GO_Enrichment_small.png)](https://github.com/compomics/peptide-shaker/wiki/images/GO_Enrichment.png)
+[![](https://github.com/compomics/peptide-shaker/wiki/images/Validation_small.png)](https://github.com/compomics/peptide-shaker/wiki/images/Validation.png)
+[![](https://github.com/compomics/peptide-shaker/wiki/images/QC_Plots_small.png)](https://github.com/compomics/peptide-shaker/wiki/images/QC_Plots.png)
 
 (Click on a figure to see the full size version)
 
-
 ---
-
 
 ## Introduction ##
 
@@ -65,31 +53,26 @@ All data can also easily be exported for follow up analysis in other tools.
 For further help see the [Bioinformatics for Proteomics Tutorial](http://compomics.com/bioinformatics-for-proteomics/).
 
 If you have any questions, suggestions or remarks, feel free to contact us via the
-[PeptideShaker Google Group](http://groups.google.com/group/peptide-shaker). For bug reports please use the [Issues list](http://code.google.com/p/peptide-shaker/issues/list).
+[PeptideShaker Google Group](http://groups.google.com/group/peptide-shaker). For bug reports please use the [issues tracker](https://github.com/compomics/peptide-shaker/issues).
 
 To start using PeptideShaker, unzip the downloaded file, and double-click the `PeptideShaker-X.Y.Z.jar file`. No additional installation required!
 
-[Go to top of page](#PeptideShaker.md)
-
+[Go to top of page](#peptideshaker)
 
 ---
-
-
 
 ## Read Me ##
 
-  * [Minimum Requirements](#Minimum_Requirements.md)
-  * [SearchGUI](#SearchGUI.md)
-  * [User Defined Modifications](#User_Defined_Modifications.md)
-  * [Database Help](#Database_Help.md)
-  * [Support Mascot Support](#Mascot_Support.md)
-  * [mzIdentML Support](#mzIdentML_Support.md)
-  * [Decoy Databases](#Decoy_Databases.md)
-  * [Converting Spectrum Data](#Converting_Spectrum_Data.md)
-
+  * [Minimum Requirements](#minimum-requirements)
+  * [SearchGUI](#searchgui)
+  * [User Defined Modifications](#user-defined-modifications)
+  * [Database Help](#database-help)
+  * [Support Mascot Support](#mascot-support)
+  * [mzIdentML Support](#mzidentml-support)
+  * [Decoy Databases](#decoy-databases)
+  * [Converting Spectrum Data](#converting-spectrum-data)
 
 ---
-
 
 ### Minimum Requirements ###
 
@@ -97,15 +80,13 @@ It should be possible to run PeptideShaker on almost any computer where Java 1.6
 
 However to get the best out of PeptideShaker a newer machine with at least 4 GB of memory is recommended. If parsing big datasets even more memory is required: the bigger the dataset the more memory you need.
 
-Note that in order to use more than 1500 MB of memory you need to install the 64 bit version of Java. See our [Java Troubleshooting](http://code.google.com/p/compomics-utilities/wiki/JavaTroubleShooting) for help.
+Note that in order to use more than 1500 MB of memory you need to install the 64 bit version of Java. See our [Java Troubleshooting](https://github.com/compomics/compomics-utilities/wiki/JavaTroubleShooting) for help.
 
 The minimum screen resolution for PeptideShaker is 1280 x 800, but it is highly recommended to use at least 1680 x 1050. Again, the bigger the better.
 
-[Go to top of page](#PeptideShaker.md)
-
+[Go to top of page](#peptideshaker)
 
 ---
-
 
 ### SearchGUI ###
 
@@ -117,31 +98,25 @@ Importing output from **SearchGUI** is especially simple in PeptideShaker as the
 
 For more information on **SearchGUI** see [http://searchgui.googlecode.com](http://searchgui.googlecode.com).
 
-[Go to top of page](#PeptideShaker.md)
-
+[Go to top of page](#peptideshaker)
 
 ---
-
 
 ### User Defined Modifications ###
 
-To add user defined modifications see [User Defined Modifications in SearchGUI](http://code.google.com/p/searchgui/#User_Defined_Modifications).
+To add user defined modifications see [User Defined Modifications in SearchGUI](https://github.com/compomics/searchgui#user-defined-modifications).
 
-[Go to top of page](#PeptideShaker.md)
-
+[Go to top of page](#peptideshaker)
 
 ---
-
 
 ### Database Help ###
 
-For help on obtaining a valid sequence database see the [Database Help](http://code.google.com/p/searchgui/wiki/DatabaseHelp).
+For help on obtaining a valid sequence database see the [Database Help](https://github.com/compomics/searchgui/wiki/DatabaseHelp).
 
-[Go to top of page](#PeptideShaker.md)
-
+[Go to top of page](#peptideshaker)
 
 ---
-
 
 ### Mascot Support ###
 
@@ -152,13 +127,11 @@ Mascot's [Automatic Decoy Search](http://www.matrixscience.com/help/decoy_help.h
 
 To combine Mascot results with your results from [SearchGUI](http://searchgui.googlecode.com) you therefore have to use the same target-decoy database as the one used in the [SearchGUI](http://searchgui.googlecode.com) search and **_not_** select the decoy option when performing the Mascot search.
 
-To get target-decoy databases that are fully compatible with PeptideShaker see the [Decoy Databases](#Decoy_Databases.md) section below.
+To get target-decoy databases that are fully compatible with PeptideShaker see the [Decoy Databases](#decoy-databases) section below.
 
-[Go to top of page](#PeptideShaker.md)
-
+[Go to top of page](#peptideshaker)
 
 ---
-
 
 ### mzIdentML Support ###
 
@@ -168,13 +141,11 @@ The following is required:
   * Spectrum file format has to be mgf.
   * Each PSM has a score or e-value as a [PSM score CV term](https://www.ebi.ac.uk/ontology-lookup/?termId=MS:1001143).
 
-If you have mzIdentML files that fulfill these criteria but do not load in PeptideShaker, please [let us know](http://code.google.com/p/peptide-shaker/issues/list).
+If you have mzIdentML files that fulfill these criteria but do not load in PeptideShaker, please [let us know](https://github.com/compomics/peptide-shaker/issues).
 
-[Go to top of page](#PeptideShaker.md)
-
+[Go to top of page](#peptideshaker)
 
 ---
-
 
 ### Decoy Databases ###
 
@@ -186,33 +157,29 @@ This means that whenever a mistake is made when searching in the combined databa
 
 Note that we only guarantee the performance of PeptideShaker when using concatenated forward and reversed sequences. _If you use other types of databases it is at your own risks!_
 
-Target-decoy database compatible with PeptideShaker can be created using [SearchGUI](#SearchGUI.md).
+Target-decoy database compatible with PeptideShaker can be created using [SearchGUI](#searchgui).
 
 _Note that PeptideShaker will load search results from searches not using decoy databases, but this is not recommended as this makes it impossible to statistically validate the identifications!_
 
-[Go to top of page](#PeptideShaker.md)
-
+[Go to top of page](#peptideshaker)
 
 ---
-
 
 ### Converting Spectrum Data ###
 
 PeptideShaker currently only supports mgf files as the input format for the spectra. To convert your raw data to mgf we recommend using [msconvert](http://proteowizard.sourceforge.net) from [ProteoWizard](http://proteowizard.sourceforge.net).
 
-[Go to top of page](#PeptideShaker.md)
-
+[Go to top of page](#peptideshaker)
 
 ---
 
-
 ## Troubleshooting ##
 
-  * **Mascot Issues** - See [Mascot Support](#Mascot_Support.md) and [Database Help](http://code.google.com/p/searchgui/wiki/DatabaseHelp).
+  * **Mascot Issues** - See [Mascot Support](#mascot-support) and [Database Help](https://github.com/compomics/searchgui/wiki/DatabaseHelp).
 
-  * **mzIdentML Issues** - See [mzIdentML Support](#mzIdentML_Support.md).
+  * **mzIdentML Issues** - See [mzIdentML Support](#mzidentml-support).
 
-  * **Database Help** - For help on how to set up a proper FASTA database, please see [Database Help](http://code.google.com/p/searchgui/wiki/DatabaseHelp). For Mascot databases see [Mascot Support](#Mascot_Support.md). Also see [Databases Decoy Databases](#Decoy.md).
+  * **Database Help** - For help on how to set up a proper FASTA database, please see [Database Help](https://github.com/compomics/searchgui/wiki/DatabaseHelp). For Mascot databases see [Mascot Support](#mascot-support). Also see [Databases Decoy Databases](#decoy).
 
   * **Does Not Start I** - Do you have Java installed? Download the latest version of Java  [here](http://java.sun.com/javase/downloads/index.jsp) and try again. (You only need the JRE version (and not the JDK version) to run PeptideShaker.)
 
@@ -230,7 +197,8 @@ PeptideShaker currently only supports mgf files as the input format for the spec
 
   * **Java 32 bit vs 64 bit** - If you have both 32 and 64 bit versions of Java installed the operating system can sometimes get confused about which version to use to run PeptideShaker. For Windows platform PeptideShaker tries to default to the 64 bit version of Java if it is installed. You can however override this option by setting your own Java Home. This is done by creating a file called `JavaHome.txt` in the `resources\conf` folder of PeptideShaker, with the path to the bin folder of the Java version to use, e.g., `C:\Program Files\Java\jdk1.6.0_29\bin\`. If the folder does not exist (or it does not contain the required files), the default Java version will be used.
 
-  * **Protein Not Found** - In order to provide the most comprehensive results, PeptideShaker needs to link the protein accession retrieved by the various search engines to the FASTA file. Various errors can result in PeptideShaker not being able to find your protein. First, verify that the accession number is indeed in your FASTA file. Then, set up an [Issue](http://code.google.com/p/peptide-shaker/issues/list) describing the problem and provide the accession not found together with its header and sequence in the FASTA file. Please, also mention the database type and version. Example for P60323 in UniProt:
+  * **Protein Not Found** - In order to provide the most comprehensive results, PeptideShaker needs to link the protein accession retrieved by the various search engines to the FASTA file. Various errors can result in PeptideShaker not being able to find your protein. First, verify that the accession number is indeed in your FASTA file. Then, set up an [issue](https://github.com/compomics/peptide-shaker/issues) describing the problem and provide the accession not found together with its header and sequence in the FASTA file. Please, also mention the database type and version. Example for P60323 in UniProt:
+
 ```
 >sw|P60323|NANO3_HUMAN Nanos homolog 3 OS=Homo sapiens GN=NANOS3 PE=2 SV=1
 MGTFDLWTDYLGLAHLVRALSGKEGPETRLSPQPEPEPMLEPDQKRSLESSPAPERLCSFCKHNGESRAIYQSHV
@@ -238,9 +206,10 @@ LKDEAGRVLCPILRDYVCPQCGATRERAHTRRFCPLTGQGYTSVYSHTTRNSAGKKLVRPDKAKTQDTGHRRGGG
 GGAGFRGAGKSEPSPSCSPSMST
 ```
 
-> Also see [Database Help](http://code.google.com/p/searchgui/wiki/DatabaseHelp), [Mascot Support](#Mascot_Support.md) and [Databases Decoy Databases](#Decoy.md).
+> Also see [Database Help](https://github.com/compomics/searchgui/wiki/DatabaseHelp), [Mascot Support](#mascot-support) and [Databases Decoy Databases](#decoy).
 
   * **Proxy Server** - Are you using a proxy server to access the Internet? Then you need to add your proxy settings to the `JavaOptions.txt` file located in the `resources\conf` folder of PeptideShaker. Add the following lines (replacing the values between the brackets and skipping the last two lines if username and password is not required):
+
 ```
 -Dhttp.proxyHost=<myproxyserver.com>
 -Dhttp.proxyPort=<proxy port>
@@ -250,9 +219,8 @@ GGAGFRGAGKSEPSPSCSPSMST
 
   * **General Error Diagnosis** - If you go to `Help` and then `Bug Report`, you will find a log of the PeptideShaker activity. This includes transcripts of any errors that the application has encountered, and can be very useful in diagnosing issues.
 
-  * **Problem Not Solved? Or Problem Not In List?** Contact the developers of PeptideShaker by setting up an [Issue](http://code.google.com/p/peptide-shaker/issues/list) describing the problem.
+  * **Problem Not Solved? Or Problem Not In List?** Contact the developers of PeptideShaker by setting up an [issue](https://github.com/compomics/peptide-shaker/issues) describing the problem.
 
-[Go to top of page](#PeptideShaker.md)
-
+[Go to top of page](#peptideshaker)
 
 ---
