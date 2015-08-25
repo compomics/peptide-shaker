@@ -162,7 +162,7 @@ public class CpsParent extends UserPreferencesParent {
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         if (!waitingHandler.isRunCanceled()) {
             for (File file : destinationFolder.listFiles()) {
-                if (file.getName().toLowerCase().endsWith(".cps")) {
+                if (file.getName().toLowerCase().endsWith(".cpsx")) {
                     cpsFile = file;
                     loadCpsFile(dbFolder, waitingHandler);
                     return;

@@ -2635,8 +2635,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                     if (mgfConversionOk) {
                         // save the search params
-                        prideSearchParameters.setParametersFile(new File(outputFolder, "pride.parameters"));
-                        SearchParameters.saveIdentificationParameters(prideSearchParameters, new File(outputFolder, "pride.parameters"));
+                        prideSearchParameters.setParametersFile(new File(outputFolder, "pride.par"));
+                        SearchParameters.saveIdentificationParameters(prideSearchParameters, new File(outputFolder, "pride.par"));
                     }
 
                     progressDialog.setRunFinished();
@@ -2667,7 +2667,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                         // display the detected search parameters to the user
                         new PrideSearchParametersDialog(PrideReshakeGUI.this,
-                                new File(outputFolder, "pride.parameters"), prideSearchParametersReport, mgfFiles, rawFiles, selectedSpecies, selectedSpeciesType, true);
+                                new File(outputFolder, "pride.par"), prideSearchParametersReport, mgfFiles, rawFiles, selectedSpecies, selectedSpeciesType, true);
                     }
 
                 } catch (Exception e) {

@@ -515,8 +515,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                                 && !nameLowerCase.endsWith("settings.xml")) {
                             identificationFiles.add(zippedFile);
                         }
-                    } else if (nameLowerCase.endsWith(".parameters")
-                            || nameLowerCase.endsWith(".properties")) {
+                    } else if (nameLowerCase.endsWith(".par")) {
                         try {
                             tempSearchParameters = SearchParameters.getIdentificationParameters(zippedFile);
                         } catch (Exception e) {

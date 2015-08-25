@@ -1392,14 +1392,12 @@ public class NewDialog extends javax.swing.JDialog {
             @Override
             public boolean accept(File myFile) {
 
-                return myFile.getName().toLowerCase().endsWith(".properties")
-                        || myFile.getName().toLowerCase().endsWith(".parameters")
-                        || myFile.isDirectory();
+                return myFile.getName().toLowerCase().endsWith(".par") || myFile.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "SearchGUI settings file (.parameters)";
+                return "SearchGUI settings file (.par)";
             }
         };
         fc.setFileFilter(filter);
@@ -1408,7 +1406,7 @@ public class NewDialog extends javax.swing.JDialog {
             File file = fc.getSelectedFile();
             String fileName = file.getName();
 
-            if (fileName.endsWith(".parameters") || fileName.endsWith(".properties")) {
+            if (fileName.endsWith(".par")) {
 
                 try {
                     SearchParameters tempParameters = SearchParameters.getIdentificationParameters(file);
@@ -1424,7 +1422,7 @@ public class NewDialog extends javax.swing.JDialog {
                 }
 
             } else {
-                JOptionPane.showMessageDialog(this, "Please select a valid search settings file (.parameters).", "File Error", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Please select a valid search settings file (.par).", "File Error", JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }//GEN-LAST:event_browseSearchSettingsButtonActionPerformed
@@ -2044,8 +2042,7 @@ public class NewDialog extends javax.swing.JDialog {
                     String name = file.getName();
                     if (name.equals(SEARCHGUI_INPUT)) {
                         inputFiles.add(file);
-                    } else if (name.toLowerCase().endsWith(".parameters")
-                            || name.toLowerCase().endsWith(".properties")) {
+                    } else if (name.toLowerCase().endsWith(".par")) {
                         if (!parameterFiles.contains(file)) {
                             parameterFiles.add(file);
                         }
@@ -2205,8 +2202,7 @@ public class NewDialog extends javax.swing.JDialog {
             } else if (lowerCaseName.endsWith("usermods.xml")) {
                 modificationFiles.add(file);
             }
-        } else if (lowerCaseName.endsWith(".parameters")
-                || lowerCaseName.endsWith(".properties")) {
+        } else if (lowerCaseName.endsWith(".par")) {
             boolean found = false;
             for (File tempFile : parameterFiles) {
                 if (tempFile.getName().equals(file.getName())) {

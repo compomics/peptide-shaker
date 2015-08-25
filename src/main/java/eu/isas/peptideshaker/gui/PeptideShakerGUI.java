@@ -149,7 +149,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     /**
      * The path to the example dataset.
      */
-    private final String EXAMPLE_DATASET_PATH = "/resources/example_dataset/HeLa Example.cps";
+    private final String EXAMPLE_DATASET_PATH = "/resources/example_dataset/HeLa Example.cpsx";
     /**
      * Convenience static string indicating that no selection was done by the
      * user.
@@ -2408,9 +2408,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         String lastSelectedFolderPath = lastSelectedFolder.getLastSelectedFolder();
 
-        String cpsFileFilterDescription = "PeptideShaker (.cps)";
+        String cpsFileFilterDescription = "PeptideShaker (.cpsx)";
         String zipFileFilterDescription = "Zipped PeptideShaker (.zip)";
-        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".cps", ".zip"},
+        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".cpsx", ".zip"},
                 new String[]{cpsFileFilterDescription, zipFileFilterDescription}, "Open PeptideShaker Project", lastSelectedFolderPath, true, false, false, 0);
 
         if (selectedFileAndFilter != null) {
@@ -2420,7 +2420,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             if (selectedFile.getName().endsWith(".zip")) {
                 importPeptideShakerZipFile(selectedFile);
-            } else if (selectedFile.getName().endsWith(".cps")) {
+            } else if (selectedFile.getName().endsWith(".cpsx")) {
                 exceptionHandler.setIgnoreExceptions(true);
                 clearData(true, true);
                 exceptionHandler.setIgnoreExceptions(false);
@@ -2430,7 +2430,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 importPeptideShakerFile(selectedFile);
                 lastSelectedFolder.setLastSelectedFolder(selectedFile.getAbsolutePath());
             } else {
-                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).", "Unsupported File.", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cpsx).", "Unsupported File.", JOptionPane.WARNING_MESSAGE);
             }
         }
     }//GEN-LAST:event_openJMenuItemActionPerformed
@@ -5361,7 +5361,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     progressDialog.setSecondaryProgressCounterIndeterminate(true);
                     if (!progressDialog.isRunCanceled()) {
                         for (File file : destinationFolder.listFiles()) {
-                            if (file.getName().toLowerCase().endsWith(".cps")) {
+                            if (file.getName().toLowerCase().endsWith(".cpsx")) {
                                 exceptionHandler.setIgnoreExceptions(true);
                                 clearData(true, true);
                                 exceptionHandler.setIgnoreExceptions(false);
@@ -6350,7 +6350,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * file
      */
     public void saveProjectAs(boolean closeWhenDone, boolean aExportToZipWhenDone) {
-        File selectedFile = getUserSelectedFile(".cps", "Compomics Peptide Shaker format (*.cps)", "Save As...", false);
+        File selectedFile = getUserSelectedFile(".cpsx", "Compomics Peptide Shaker format (*.cpsx)", "Save As...", false);
         cpsParent.setCpsFile(selectedFile);
         if (selectedFile != null) {
             saveProject(closeWhenDone, aExportToZipWhenDone);
