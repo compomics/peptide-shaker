@@ -394,7 +394,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      */
     private void databaseHelpSettingsJLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_databaseHelpSettingsJLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://code.google.com/p/searchgui/wiki/DatabaseHelp");
+        BareBonesBrowserLaunch.openURL("http://compomics.github.io/searchgui/wiki/databasehelp.html");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_databaseHelpSettingsJLabelMouseClicked
 
@@ -597,7 +597,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
                 } catch (ClassNotFoundException e) {
                     progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(finalRef, JOptionEditorPane.getJOptionEditorPane("File index of " + fastaInput + " could not be imported.<br>"
-                            + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
+                            + "Please <a href=\"https://github.com/compomics/peptide-shaker/issues\">contact the developers</a>."),
                             "FASTA Import Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     return;
@@ -655,7 +655,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
                                 + "Memory boundaries are changed in the the Welcome Dialog (Settings\n"
                                 + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit\n"
                                 + "Java Options).\n\n"
-                                + "More help can be found at our website http://peptide-shaker.googlecode.com.",
+                                + "More help can be found at our website http://compomics.github.io/projects/peptide-shaker.html.",
                                 "Out Of Memory Error",
                                 JOptionPane.ERROR_MESSAGE);
                         System.out.println("Ran out of memory!");

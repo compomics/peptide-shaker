@@ -125,7 +125,7 @@ public class FileImporter {
         this.identificationParameters = identificationParameters;
         this.metrics = metrics;
         if (waitingHandler instanceof WaitingDialog) {
-            exceptionHandler = new WaitingDialogExceptionHandler((WaitingDialog) waitingHandler, "http://code.google.com/p/peptide-shaker/issues/list");
+            exceptionHandler = new WaitingDialogExceptionHandler((WaitingDialog) waitingHandler, "https://github.com/compomics/peptide-shaker/issues");
         } else {
             exceptionHandler = new CommandLineExceptionHandler();
         }
@@ -198,7 +198,7 @@ public class FileImporter {
                 waitingHandler.appendReport("Warning: PeptideShaker cannot load your FASTA file into memory. This will slow down the processing. "
                         + "Note that using large large databases also reduces the search engine efficiency. "
                         + "Try to either (i) use a smaller database, (ii) increase the memory provided to PeptideShaker, or (iii) improve the reading speed by using an SSD disc. "
-                        + "(See also http://code.google.com/p/compomics-utilities/wiki/ProteinInference.)", true, true);
+                        + "(See also http://compomics.github.io/compomics-utilities/wiki/proteininference.html.)", true, true);
 
             }
             int cacheSize = (int) availableCachSize;
@@ -245,20 +245,20 @@ public class FileImporter {
             System.err.println("An error occurred while loading " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
-            waitingHandler.appendReport(e.getLocalizedMessage() + " Please refer to http://code.google.com/p/peptide-shaker/#Troubleshooting", true, true);
+            waitingHandler.appendReport(e.getLocalizedMessage() + " Please refer to http://compomics.github.io/projects/peptide-shaker.html#troubleshooting", true, true);
         } catch (ClassNotFoundException e) {
             System.err.println("An error occurred while loading " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
             waitingHandler.appendReport("Serialization issue while processing the FASTA file. Please delete the .fasta.cui file and retry. "
-                    + "If the error occurs again please report bug using our issue tracker: http://code.google.com/p/peptide-shaker/issues/list.", true, true);
+                    + "If the error occurs again please report bug using our issue tracker: https://github.com/compomics/peptide-shaker/issues.", true, true);
         } catch (NullPointerException e) {
             System.err.println("An error occurred while loading " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
             waitingHandler.appendReport("An error occurred when importing the sequences. "
                     + "Please check the Search Parameters. See the log file for details. "
-                    + "If the error persists please let us know using our issue tracker: http://code.google.com/p/peptide-shaker/issues/list.", true, true);
+                    + "If the error persists please let us know using our issue tracker: https://github.com/compomics/peptide-shaker/issues.", true, true);
         }
     }
 
@@ -540,7 +540,7 @@ public class FileImporter {
                             "PeptideShaker used up all the available memory and had to be stopped.<br>"
                             + "Memory boundaries are changed in the the Welcome Dialog (Settings<br>"
                             + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit<br>"
-                            + "Java Options). See also <a href=\"http://code.google.com/p/compomics-utilities/wiki/JavaTroubleShooting\">JavaTroubleShooting</a>."),
+                            + "Java Options). See also <a href=\"http://compomics.github.io/compomics-utilities/wiki/javatroubleshooting.html\">JavaTroubleShooting</a>."),
                             "Out Of Memory", JOptionPane.ERROR_MESSAGE);
                 }
 
@@ -568,7 +568,7 @@ public class FileImporter {
                 } else if (FrameExceptionHandler.getExceptionType(e).equalsIgnoreCase("Protein not found")) {
                     waitingHandler.appendReport("An error occurred while loading the identification files:", true, true);
                     waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
-                    waitingHandler.appendReport("Please see http://code.google.com/p/searchgui/wiki/DatabaseHelp.", true, true);
+                    waitingHandler.appendReport("Please see http://compomics.github.io/searchgui/wiki/databasehelp.html.", true, true);
                 } else {
                     waitingHandler.appendReport("An error occurred while loading the identification files:", true, true);
                     waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
@@ -754,7 +754,7 @@ public class FileImporter {
                         // Free at least 0.5GB for the next parser if not anymore available
                         if (!MemoryConsumptionStatus.halfGbFree() && !peptideShaker.getCache().isEmpty()) {
                             waitingHandler.appendReport("PeptideShaker is encountering memory issues! "
-                                    + "See http://peptide-shaker.googlecode.com for help.", true, true);
+                                    + "See http://compomics.github.io/projects/peptide-shaker.html for help.", true, true);
                             waitingHandler.appendReport("Reducing Memory Consumption.", true, true);
                             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                             double share = ((double) 1073741824) / (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());

@@ -298,7 +298,7 @@ public class MzIdentMLExport {
 
         br.write(getCurrentTabSpace()
                 + "<cv id=\"PRIDE\" "
-                + "uri=\"http://code.google.com/p/ebi-pride/source/browse/trunk/pride-core/schema/pride_cv.obo\" "
+                + "uri=\"http://code.google.com/p/ebi-pride/source/browse/trunk/pride-core/schema/pride_cv.obo\" " // @TODO: will disappear at some point...
                 + "fullName=\"PRIDE\"/>" + System.getProperty("line.separator"));
 
         tabCounter--;
@@ -321,7 +321,7 @@ public class MzIdentMLExport {
                 + "name=\"PeptideShaker\" "
                 + "version=\"" + peptideShakerVersion + "\" "
                 + "id=\"ID_software\" "
-                + "uri=\"http://peptide-shaker.googlecode.com\">"
+                + "uri=\"http://compomics.github.io/projects/peptide-shaker.html\">"
                 + System.getProperty("line.separator"));
         tabCounter++;
 
@@ -418,7 +418,7 @@ public class MzIdentMLExport {
         tabCounter++;
         writeCvTerm(new CvTerm("PSI-MS", "MS:1000586", "contact name", "PeptideShaker developers"));
         writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", "Proteomics Unit, Building for Basic Biology, University of Bergen, Jonas Liesvei 91, N-5009 Bergen, Norway"));
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact url", "http://peptide-shaker.googlecode.com"));
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact url", "http://compomics.github.io/projects/peptide-shaker.html"));
         writeCvTerm(new CvTerm("PSI-MS", "MS:1000589", "contact email", "peptide-shaker@googlegroups.com"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Organization>" + System.getProperty("line.separator"));

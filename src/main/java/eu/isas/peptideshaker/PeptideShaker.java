@@ -273,9 +273,9 @@ public class PeptideShaker {
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, shotgunProtocol, identificationParameters, metrics, spectrumCountingPreferences);
 
         if (!objectsCache.memoryCheck() && memoryWarning) {
-            waitingHandler.appendReport("PeptideShaker is encountering memory issues! See http://peptide-shaker.googlecode.com for help.", true, true);
+            waitingHandler.appendReport("PeptideShaker is encountering memory issues! See http://compomics.github.io/projects/peptide-shaker.html for help.", true, true);
             waitingHandler.appendReport("You can edit the memory given to the tool via the \"Edit\" > \"Java Settings\" menu.", true, true);
-            waitingHandler.appendReport("See http://peptide-shaker.googlecode.com for help.", true, true);
+            waitingHandler.appendReport("See http://compomics.github.io/projects/peptide-shaker.html for help.", true, true);
             memoryWarning = false;
         }
         if (waitingHandler.isRunCanceled()) {

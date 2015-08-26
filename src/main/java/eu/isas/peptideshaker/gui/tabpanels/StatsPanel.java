@@ -3828,7 +3828,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
                             "An identification conflict occured. If you can reproduce the error <br>"
-                            + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
+                            + "Please <a href=\"https://github.com/compomics/peptide-shaker/issues\">contact the developers</a>."),
                             "Identification Conflict", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
@@ -3878,7 +3878,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
                             "An identification conflict occured. If you can reproduce the error <br>"
-                            + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
+                            + "Please <a href=\"https://github.com/compomics/peptide-shaker/issues\">contact the developers</a>."),
                             "Identification Conflict", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }

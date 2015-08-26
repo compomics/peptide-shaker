@@ -427,7 +427,7 @@ public class GettingStartedDialog extends javax.swing.JDialog {
             setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         } else if (currentDisplayPanelIndex == displayPanels.size() - 2) {
             setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-            BareBonesBrowserLaunch.openURL("http://searchgui.googlecode.com");
+            BareBonesBrowserLaunch.openURL("http://compomics.github.io/projects/searchgui.html");
             setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_displayPanelMouseClicked

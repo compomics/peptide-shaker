@@ -312,7 +312,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     /**
      * The exception handler
      */
-    private FrameExceptionHandler exceptionHandler = new FrameExceptionHandler(this, "http://code.google.com/p/peptide-shaker/issues/list");
+    private FrameExceptionHandler exceptionHandler = new FrameExceptionHandler(this, "https://github.com/compomics/peptide-shaker/issues");
     /**
      * The spectrum annotator.
      */
@@ -3589,7 +3589,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     } else {
                         JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
                                 "Failed to create the file log file.<br>"
-                                + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
+                                + "Please <a href=\"https://github.com/compomics/peptide-shaker/issues\">contact the developers</a>."),
                                 "File Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
@@ -5600,7 +5600,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                             "PeptideShaker used up all the available memory and had to be stopped.<br>"
                             + "Memory boundaries are changed in the the Welcome Dialog (Settings<br>"
                             + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit<br>"
-                            + "Java Options). See also <a href=\"http://code.google.com/p/compomics-utilities/wiki/JavaTroubleShooting\">JavaTroubleShooting</a>."),
+                            + "Java Options). See also <a href=\"http://compomics.github.io/compomics-utilities/wiki/javatroubleshooting.html\">JavaTroubleShooting</a>."),
                             "Out Of Memory", JOptionPane.ERROR_MESSAGE);
                     progressDialog.setRunFinished();
                     error.printStackTrace();

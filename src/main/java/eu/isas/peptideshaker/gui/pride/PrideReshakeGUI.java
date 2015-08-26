@@ -1363,7 +1363,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      */
     private void aboutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://peptide-shaker.googlecode.com");
+        BareBonesBrowserLaunch.openURL("http://compomics.github.io/projects/peptide-shaker.html");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_aboutButtonActionPerformed
 
@@ -2457,14 +2457,14 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                         } catch (MalformedURLException ex) {
                             JOptionPane.showMessageDialog(PrideReshakeGUI.this, JOptionEditorPane.getJOptionEditorPane("The file could not be downloaded:<br>"
                                     + ex.getMessage() + ".<br>"
-                                    + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
+                                    + "Please <a href=\"https://github.com/compomics/peptide-shaker/issues\">contact the developers</a>."),
                                     "Download Error", JOptionPane.ERROR_MESSAGE);
                             ex.printStackTrace();
                             currentPrideDataFileUrl = null;
                         } catch (IOException ex) {
                             JOptionPane.showMessageDialog(PrideReshakeGUI.this, JOptionEditorPane.getJOptionEditorPane("The file could not be downloaded:<br>"
                                     + ex.getMessage() + ".<br>"
-                                    + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
+                                    + "Please <a href=\"https://github.com/compomics/peptide-shaker/issues\">contact the developers</a>."),
                                     "Download Error", JOptionPane.ERROR_MESSAGE);
                             ex.printStackTrace();
                             currentPrideDataFileUrl = null;

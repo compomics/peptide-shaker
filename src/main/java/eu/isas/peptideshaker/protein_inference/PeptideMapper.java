@@ -258,7 +258,7 @@ public class PeptideMapper {
                     throw new IllegalArgumentException("No protein was found for peptide of sequence " + peptide.getSequence() + ". Please verify the following:" + System.getProperty("line.separator")
                             + "- The protein sequence database must be the same or contain the database used for the search." + System.getProperty("line.separator")
                             + "- When using the 'REVERSED' tag, decoy sequences must be reversed versions of the target sequences, use the 'DECOY' tag otherwise." + System.getProperty("line.separator")
-                            + "- When using in house databases make sure that the format is recognized by search engines and PeptideShaker (more details at https://code.google.com/p/searchgui/wiki/DatabaseHelp)." + System.getProperty("line.separator"));
+                            + "- When using in house databases make sure that the format is recognized by search engines and PeptideShaker (more details at http://compomics.github.io/searchgui/wiki/databasehelp.html)." + System.getProperty("line.separator"));
                 }
             } catch (java.sql.SQLNonTransientConnectionException derbyException) {
                 throw new IllegalArgumentException("PeptideShaker could not access the FASTA index databse. Please make sure that no other instance of PeptideShaker is running. If the problem persists, restart your computer." + System.getProperty("line.separator"));

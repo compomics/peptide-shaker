@@ -1141,7 +1141,7 @@ public class ProjectExportDialog extends javax.swing.JDialog {
                             + "PRIDE XML file \'"
                             + new File(outputFolderJTextField.getText(), outputFileName + ".xml").getAbsolutePath() + "\' created.<br><br>"
                             + "Please see <a href=\"http://www.ebi.ac.uk/pride\">www.ebi.ac.uk/pride</a> for how to submit data to PRIDE.<br><br>"
-                            + "We recommend checking the file in <a href=\"http://code.google.com/p/pride-toolsuite/wiki/PRIDEInspector\">PRIDE Inspector</a> before uploading."
+                            + "We recommend checking the file in <a href=\"https://github.com/PRIDE-Toolsuite/pride-inspector\">PRIDE Inspector</a> before uploading."
                             + "</body></html>");
 
                     // handle link events 

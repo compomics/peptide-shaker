@@ -1398,7 +1398,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
             } catch (IllegalArgumentException e) {
                 JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
                         e.getLocalizedMessage() + "<br>"
-                        + "Please see the <a href=\"http://code.google.com/p/peptide-shaker/#Troubleshooting\">troubleshooting section</a>."),
+                        + "Please see the <a href=\"http://compomics.github.io/projects/peptide-shaker.html#troubleshooting\">Troubleshooting section</a>."),
                         "File Error", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }

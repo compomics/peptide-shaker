@@ -1306,7 +1306,7 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private void aboutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://peptide-shaker.googlecode.com");
+        BareBonesBrowserLaunch.openURL("http://compomics.github.io/projects/peptide-shaker.html");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_aboutButtonActionPerformed
 
@@ -1896,7 +1896,7 @@ public class NewDialog extends javax.swing.JDialog {
             }
             JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
                     "File index of " + file.getName() + " could not be imported.<br>"
-                    + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
+                    + "Please <a href=\"https://github.com/compomics/peptide-shaker/issues\">contact the developers</a>."),
                     "FASTA Import Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         } catch (StringIndexOutOfBoundsException e) {
@@ -1926,7 +1926,7 @@ public class NewDialog extends javax.swing.JDialog {
         JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
                 "We strongly recommend the use of UniProt databases. Some<br>"
                 + "features will be limited if using other databases.<br><br>"
-                + "See <a href=\"http://code.google.com/p/searchgui/wiki/DatabaseHelp\">Database Help</a> for details."),
+                + "See <a href=\"http://compomics.github.io/searchgui/wiki/databasehelp.html\">Database Help</a> for details."),
                 "Database Information", JOptionPane.WARNING_MESSAGE);
     }
 

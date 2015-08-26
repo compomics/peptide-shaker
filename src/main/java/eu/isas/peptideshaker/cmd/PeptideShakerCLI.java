@@ -820,7 +820,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         return System.getProperty("line.separator")
                 + "The PeptideShaker command line takes identification files from X!Tandem, OMSSA and Mascot and generates various types of output files." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
-                + "For further help see http://peptide-shaker.googlecode.com and http://code.google.com/p/peptide-shaker/wiki/PeptideShakerCLI." + System.getProperty("line.separator")
+                + "For further help see http://compomics.github.io/projects/peptide-shaker.html and http://compomics.github.io/peptide-shaker/wiki/peptideshakercli.html." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "Or contact the developers at https://groups.google.com/group/peptide-shaker." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
