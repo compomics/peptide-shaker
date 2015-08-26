@@ -3046,7 +3046,7 @@ public class StatsPanel extends javax.swing.JPanel {
                         modifiedMaps.put(cpt, false);
 
                         String title = PeptideSpecificMap.getKeyName(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), peptideKey);
-                        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, title + " Peptides"});
+                        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, " Peptides (" + title + ")"});
                     }
                 }
 
@@ -3098,24 +3098,24 @@ public class StatsPanel extends javax.swing.JPanel {
                             String file = psmMap.get(index).get(charge);
                             if (file != null) {
                                 if (peptideShakerGUI.getIdentification().getSpectrumFiles().size() > 1) {
-                                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "Charge " + charge + " PSMs of file " + file});
+                                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "PSMs (Charge " + charge + " of file " + file + ")"});
                                 } else {
-                                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "Charge " + charge + " PSMs"});
+                                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "PSMs (Charge " + charge + ")"});
                                 }
                             } else if (foundCharges.contains(charge)) {
                                 if (groupedCharges.containsKey(charge)) {
                                     ArrayList<Integer> groupCharges = groupedCharges.get(charge);
                                     Collections.sort(groupCharges);
-                                    String chargeTxt = "Other Charge " + charge + " and Charge ";
+                                    String chargeTxt = "PSMs (Other Charge " + charge + " and Charge ";
                                     for (int subCharge : groupCharges) {
                                         if (!chargeTxt.equals("")) {
                                             chargeTxt += ", ";
                                         }
                                         chargeTxt += subCharge;
                                     }
-                                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, chargeTxt + " PSMs"});
+                                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, chargeTxt + ")"});
                                 } else {
-                                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "Other Charge " + charge + " PSMs"});
+                                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "PSMs (Other Charge " + charge + ")"});
                                 }
                             } else {
                                 ArrayList<Integer> groupCharges = new ArrayList<Integer>();
@@ -3131,7 +3131,7 @@ public class StatsPanel extends javax.swing.JPanel {
                                     }
                                     chargeTxt += subCharge;
                                 }
-                                ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "Charge " + chargeTxt + " PSMs"});
+                                ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "PSMs (Charge " + chargeTxt + ")"});
                             }
                         }
                     }
