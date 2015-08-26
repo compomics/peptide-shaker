@@ -5574,6 +5574,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     peptideShakerGUI.displayResults();
                     allTabsJTabbedPaneStateChanged(null); // display the overview tab data
                     peptideShakerGUI.updateFrameTitle();
+                    dataSaved = true;
 
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {

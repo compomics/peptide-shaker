@@ -425,7 +425,7 @@ public class GettingStartedDialog extends javax.swing.JDialog {
             dispose();
             peptideShakerGUI.openExampleFile();
             setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        } else if (currentDisplayPanelIndex == displayPanels.size() - 2) {
+        } else if (currentDisplayPanelIndex == 1) {
             setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
             BareBonesBrowserLaunch.openURL("http://compomics.github.io/projects/searchgui.html");
             setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
