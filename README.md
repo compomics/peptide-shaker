@@ -11,7 +11,7 @@
 **PeptideShaker Publication:**
   * [Vaudel et al. Nature Biotechnol. 2015 Jan;33(1):22–24](http://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html).
   * If you use PeptideShaker as part of a publication, please include this reference.
-  * For referring to the web page, please use: [http://peptide-shaker.googlecode.com](http://peptide-shaker.googlecode.com).
+  * For referring to the web page, please use: [http://peptide-shaker.googlecode.com](http://compomics.github.io/projects/peptide-shaker.html).
 
 ---
 
@@ -88,13 +88,13 @@ The minimum screen resolution for PeptideShaker is 1280 x 800, but it is highly 
 
 ### SearchGUI ###
 
-PeptideShaker has a strong connection to the [SearchGUI](http://searchgui.googlecode.com) project.
+PeptideShaker has a strong connection to the [SearchGUI](http://compomics.github.io/projects/searchgui.html) project.
 
 **SearchGUI** is a user-friendly, lightweight and open-source graphical user interface for configuring and running proteomics identification search engines, namely  [X!Tandem](http://www.thegpm.org/tandem), [MS-GF+](https://bix-lab.ucsd.edu/pages/viewpage.action?pageId=13533355), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [MyriMatch](http://forge.fenchurch.mc.vanderbilt.edu/scm/viewvc.php/*checkout*/trunk/doc/index.html?root=myrimatch), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net) and [OMSSA](http://www.ncbi.nlm.nih.gov/pubmed/15473683).
 
 Importing output from **SearchGUI** is especially simple in PeptideShaker as the parameters and files used for the search is easily available.
 
-For more information on **SearchGUI** see [http://searchgui.googlecode.com](http://searchgui.googlecode.com).
+For more information on **SearchGUI** see [http://compomics.github.io/projects/searchgui.html](http://compomics.github.io/projects/searchgui.html).
 
 [Go to top of page](#peptideshaker)
 
@@ -123,7 +123,7 @@ Make sure that the spectra are available in the mgf format where every spectrum 
 
 Mascot's [Automatic Decoy Search](http://www.matrixscience.com/help/decoy_help.html#AUTO) is _not_ compatible with PeptideShaker. The reason for this is that Mascot uses a random decoy approach and not a reverse decoy approach. When combining results from different search engines it is important that the database and decoys used are identical, something that cannot be guaranteed when using the random approach.
 
-To combine Mascot results with your results from [SearchGUI](http://searchgui.googlecode.com) you therefore have to use the same target-decoy database as the one used in the [SearchGUI](http://searchgui.googlecode.com) search and **_not_** select the decoy option when performing the Mascot search.
+To combine Mascot results with your results from [SearchGUI](http://compomics.github.io/projects/searchgui.html) you therefore have to use the same target-decoy database as the one used in the [SearchGUI](http://compomics.github.io/projects/searchgui.html) search and **_not_** select the decoy option when performing the Mascot search.
 
 To get target-decoy databases that are fully compatible with PeptideShaker see the [Decoy Databases](#decoy-databases) section below.
 
