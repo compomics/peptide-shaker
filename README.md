@@ -11,7 +11,6 @@
 **PeptideShaker Publication:**
   * [Vaudel et al. Nature Biotechnol. 2015 Jan;33(1):22–24](http://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html).
   * If you use PeptideShaker as part of a publication, please include this reference.
-  * For referring to the web page, please use: [http://compomics.github.io/projects/peptide-shaker.html](http://compomics.github.io/projects/peptide-shaker.html).
 
 ---
 
