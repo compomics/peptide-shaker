@@ -962,7 +962,7 @@ public class NewDialog extends javax.swing.JDialog {
                         || myFile.getName().toLowerCase().endsWith(".pep.xml")
                         || myFile.getName().toLowerCase().endsWith(".dat")
                         || myFile.getName().toLowerCase().endsWith(".mzid")
-                        || myFile.getName().toLowerCase().endsWith(".csv")
+                        || myFile.getName().toLowerCase().endsWith(".ms-amanda.csv")
                         || myFile.getName().toLowerCase().endsWith(".res")
                         || myFile.getName().toLowerCase().endsWith(".tags")
                         || myFile.getName().toLowerCase().endsWith(".zip")
@@ -972,7 +972,7 @@ public class NewDialog extends javax.swing.JDialog {
 
             @Override
             public String getDescription() {
-                return "mzIdentML (.mzid), PepXML (.pep.xml), OMSSA (.omx), X!Tandem (.xml), MS Amanda (.csv), Tide (.txt), Andromeda (.res) and Mascot (.dat)"; // @TODO: add de novo formats
+                return "mzIdentML (.mzid), PepXML (.pep.xml), OMSSA (.omx), X!Tandem (.t.xml), MS Amanda (.ms-amanda.csv), Tide (.txt), Andromeda (.res) and Mascot (.dat)"; // @TODO: add de novo formats
             }
         };
 
@@ -987,7 +987,7 @@ public class NewDialog extends javax.swing.JDialog {
 
             @Override
             public String getDescription() {
-                return "compressed zip folder (.zip)";
+                return "Compressed zip folder (.zip)";
             }
         };
 
@@ -1006,7 +1006,7 @@ public class NewDialog extends javax.swing.JDialog {
             }
         };
 
-        // filter for Andromeda only
+        // filter for andromeda only
         FileFilter andromedaFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
@@ -1032,7 +1032,7 @@ public class NewDialog extends javax.swing.JDialog {
 
             @Override
             public String getDescription() {
-                return "X!Tandem (.xml)";
+                return "X!Tandem (.t.xml)";
             }
         };
 
@@ -1077,7 +1077,7 @@ public class NewDialog extends javax.swing.JDialog {
 
             @Override
             public String getDescription() {
-                return "MS Amanda (.csv)";
+                return "MS Amanda (.ms-amanda.csv)";
             }
         };
 
