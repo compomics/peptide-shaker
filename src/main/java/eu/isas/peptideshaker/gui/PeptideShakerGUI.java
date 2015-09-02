@@ -1487,7 +1487,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         });
         fileJMenu.add(saveMenuItem);
 
-        saveAsMenuItem.setMnemonic('V');
         saveAsMenuItem.setText("Save As...");
         saveAsMenuItem.setEnabled(false);
         saveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {

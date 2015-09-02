@@ -567,7 +567,6 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveAsMenuItem">
               <Properties>
-                <Property name="mnemonic" type="int" value="86"/>
                 <Property name="text" type="java.lang.String" value="Save As..."/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
