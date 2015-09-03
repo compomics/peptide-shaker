@@ -500,8 +500,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
                 }
-                for (File zippedFile : destinationFolder.listFiles()) {
-                    String nameLowerCase = zippedFile.getName().toLowerCase();
+                for (File unzippedFile : destinationFolder.listFiles()) {
+                    String nameLowerCase = unzippedFile.getName().toLowerCase();
                     if (nameLowerCase.endsWith(".dat")
                             || nameLowerCase.endsWith(".omx")
                             || nameLowerCase.endsWith(".xml")
@@ -513,11 +513,11 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                         if (!nameLowerCase.endsWith("mods.xml")
                                 && !nameLowerCase.endsWith("usermods.xml")
                                 && !nameLowerCase.endsWith("settings.xml")) {
-                            identificationFiles.add(zippedFile);
+                            identificationFiles.add(unzippedFile);
                         }
                     } else if (nameLowerCase.endsWith(".par")) {
                         try {
-                            tempSearchParameters = SearchParameters.getIdentificationParameters(zippedFile);
+                            tempSearchParameters = SearchParameters.getIdentificationParameters(unzippedFile);
                         } catch (Exception e) {
                             waitingHandler.appendReport("Error processing search parameters.", true, true);
                             e.printStackTrace();
