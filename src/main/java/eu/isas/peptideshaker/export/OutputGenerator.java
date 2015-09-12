@@ -798,8 +798,9 @@ public class OutputGenerator {
                                             if (accession || proteinDescription || surroundings || location || uniqueOnly) {
                                                 if (proteinKey == null) {
                                                     for (String parentProtein : peptide.getParentProteins(sequenceMatchingPreferences)) {
-                                                        ArrayList<String> parentProteins = new ArrayList<String>(identification.getProteinMap().get(parentProtein));
-                                                        if (parentProteins != null) {
+                                                        HashSet<String> tempParentProteins = identification.getProteinMap().get(parentProtein);
+                                                        if (tempParentProteins != null) {
+                                                        ArrayList<String> parentProteins = new ArrayList<String>(tempParentProteins);
                                                             for (String proteinKey : parentProteins) {
                                                                 if (!possibleProteins.contains(proteinKey)) {
                                                                     try {

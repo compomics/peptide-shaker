@@ -2520,6 +2520,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void barsCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barsCheckBoxMenuItemActionPerformed
+        getDisplayPreferences().setShowBars(barsCheckBoxMenuItem.isSelected());
         updateSpectrumAnnotations();
     }//GEN-LAST:event_barsCheckBoxMenuItemActionPerformed
 
@@ -2527,6 +2528,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void intensityIonTableRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_intensityIonTableRadioButtonMenuItemActionPerformed
+        getDisplayPreferences().setIntensityIonTable(intensityIonTableRadioButtonMenuItem.isSelected());
         updateSpectrumAnnotations();
     }//GEN-LAST:event_intensityIonTableRadioButtonMenuItemActionPerformed
 
@@ -2534,6 +2536,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void mzIonTableRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mzIonTableRadioButtonMenuItemActionPerformed
+        getDisplayPreferences().setIntensityIonTable(intensityIonTableRadioButtonMenuItem.isSelected());
         updateSpectrumAnnotations();
     }//GEN-LAST:event_mzIonTableRadioButtonMenuItemActionPerformed
 
@@ -3732,7 +3735,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         IdentificationParameters identificationParameters = getIdentificationParameters();
         AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
-
+        
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
             overviewPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
             overviewPanel.setAccuracySliderValue((int) ((annotationPreferences.getFragmentIonAccuracy() / searchParameters.getFragmentIonAccuracy()) * 100));

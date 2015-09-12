@@ -7,11 +7,10 @@ import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
-import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.XYPlottingDialog;
+import com.compomics.util.gui.XYPlottingDialog.PlottingDialogPlotType;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
@@ -120,6 +119,11 @@ public class GOEAPanel extends javax.swing.JPanel {
      * performed.
      */
     private boolean goMappingsLoaded = false;
+    /**
+     * The currently selected column when opening the pop up menu for the GO
+     * table.
+     */
+    private String currentGoMappingsColumn = null;
 
     /**
      * Creates a new GOEAPanel.
@@ -1350,7 +1354,10 @@ public class GOEAPanel extends javax.swing.JPanel {
         }
 
         if (evt != null && goMappingsTable.getRowCount() > 0 && evt.getButton() == MouseEvent.BUTTON3) {
+            currentGoMappingsColumn = goMappingsTable.getColumnName(goMappingsTable.columnAtPoint(evt.getPoint()));
             selectTermsJPopupMenu.show(goMappingsTable, evt.getX(), evt.getY());
+        } else {
+            currentGoMappingsColumn = null;
         }
     }//GEN-LAST:event_goMappingsTableMouseReleased
 
@@ -1806,7 +1813,7 @@ public class GOEAPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void statisticsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statisticsMenuItemActionPerformed
-        new XYPlottingDialog(peptideShakerGUI, goMappingsTable, mappingsTableToolTips,
+        new XYPlottingDialog(peptideShakerGUI, goMappingsTable, currentGoMappingsColumn, PlottingDialogPlotType.densityPlot, mappingsTableToolTips,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
     }//GEN-LAST:event_statisticsMenuItemActionPerformed
@@ -1832,12 +1839,12 @@ public class GOEAPanel extends javax.swing.JPanel {
      */
     private void proteinTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON3 && proteinTable.getRowCount() > 0) {
-
+            final MouseEvent event = evt;
             JPopupMenu popupMenu = new JPopupMenu();
             JMenuItem menuItem = new JMenuItem("Statistics (beta)");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips,
+                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTable.getColumnName(proteinTable.columnAtPoint(event.getPoint())), PlottingDialogPlotType.densityPlot, proteinTableToolTips,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
                 }

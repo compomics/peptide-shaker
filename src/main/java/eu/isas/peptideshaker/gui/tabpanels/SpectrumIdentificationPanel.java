@@ -64,6 +64,7 @@ import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
+import java.awt.event.MouseAdapter;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.Iterator;
@@ -266,6 +267,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
+            }
+        });
+        
+        spectrumTable.getTableHeader().addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                spectrumTableMouseClicked(e);
             }
         });
 
@@ -2105,12 +2114,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private void spectrumTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumTableMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON3 && spectrumTable.getRowCount() > 0) {
-
+            final MouseEvent event = evt;
             JPopupMenu popupMenu = new JPopupMenu();
             JMenuItem menuItem = new JMenuItem("Statistics (beta)");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new XYPlottingDialog(peptideShakerGUI, spectrumTable, spectrumTableToolTips,
+                    new XYPlottingDialog(peptideShakerGUI, spectrumTable, spectrumTable.getColumnName(spectrumTable.columnAtPoint(event.getPoint())), XYPlottingDialog.PlottingDialogPlotType.densityPlot, spectrumTableToolTips,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
                 }

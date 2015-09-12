@@ -2135,24 +2135,27 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private void selectedPsmsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectedPsmsTableMouseReleased
 
-        int column = selectedPsmsTable.columnAtPoint(evt.getPoint());
-        int row = selectedPsmsTable.rowAtPoint(evt.getPoint());
+        if (evt != null) {
 
-        // star/unstar a psm
-        if (column == selectedPsmsTable.getColumn("   ").getModelIndex()) {
-            try {
-                PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(false));
-                String psmKey = peptideMatch.getSpectrumMatchesKeys().get(selectedPsmsTable.convertRowIndexToModel(row));
-                PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(psmKey, new PSParameter());
-                if (!psParameter.isStarred()) {
-                    peptideShakerGUI.getStarHider().starPsm(psmKey, peptideShakerGUI.getSpectrumAnnotator());
-                } else {
-                    peptideShakerGUI.getStarHider().unStarPsm(psmKey, peptideShakerGUI.getSpectrumAnnotator());
+            int column = selectedPsmsTable.columnAtPoint(evt.getPoint());
+            int row = selectedPsmsTable.rowAtPoint(evt.getPoint());
+
+            // star/unstar a psm
+            if (column == selectedPsmsTable.getColumn("   ").getModelIndex()) {
+                try {
+                    PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(false));
+                    String psmKey = peptideMatch.getSpectrumMatchesKeys().get(selectedPsmsTable.convertRowIndexToModel(row));
+                    PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(psmKey, new PSParameter());
+                    if (!psParameter.isStarred()) {
+                        peptideShakerGUI.getStarHider().starPsm(psmKey, peptideShakerGUI.getSpectrumAnnotator());
+                    } else {
+                        peptideShakerGUI.getStarHider().unStarPsm(psmKey, peptideShakerGUI.getSpectrumAnnotator());
+                    }
+                    selectedPsmsTable.revalidate();
+                    selectedPsmsTable.repaint();
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                 }
-                selectedPsmsTable.revalidate();
-                selectedPsmsTable.repaint();
-            } catch (Exception e) {
-                peptideShakerGUI.catchException(e);
             }
         }
 
