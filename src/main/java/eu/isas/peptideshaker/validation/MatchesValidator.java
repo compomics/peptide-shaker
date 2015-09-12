@@ -332,7 +332,11 @@ public class MatchesValidator {
 
             pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
-            psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeysMap.get(spectrumFileName), parameters, false, waitingHandler);
+            spectrumKeys = null;
+            if (spectrumKeysMap != null) {
+                spectrumKeys = spectrumKeysMap.get(spectrumFileName);
+            }
+            psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false, waitingHandler);
 
             for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
                 PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, inputMap, true);
