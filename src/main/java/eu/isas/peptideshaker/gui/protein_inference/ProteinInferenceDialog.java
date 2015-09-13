@@ -1101,13 +1101,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     }
                 case 7:
                     try {
-//                        ShotgunProtocol shotgunProtocol = peptideShakerGUI.getShotgunProtocol();
-//                        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                        
-                        return peptideShakerGUI.getIdentificationFeaturesGenerator().hasEnzymaticPeptides(inspectedMatch, accessions.get(row));
-                        
-//                        return inspectedMatch.hasEnzymaticPeptide(accessions.get(row), shotgunProtocol.getEnzyme(),
-//                                identificationParameters.getSequenceMatchingPreferences()); // @TODO: store in the cache?
+                        return peptideShakerGUI.getIdentificationFeaturesGenerator().hasEnzymaticPeptides(inspectedMatch, accessions.get(row));   
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return "Database Error";

@@ -972,7 +972,7 @@ public class NewDialog extends javax.swing.JDialog {
 
             @Override
             public String getDescription() {
-                return "mzIdentML (.mzid), PepXML (.pep.xml), OMSSA (.omx), X!Tandem (.t.xml), MS Amanda (.ms-amanda.csv), Tide (.txt), Andromeda (.res) and Mascot (.dat)"; // @TODO: add de novo formats
+                return "All supported search result output formats";
             }
         };
 

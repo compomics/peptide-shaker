@@ -2001,7 +2001,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         new HelpDialog(this, getClass().getResource("/helpFiles/AboutPeptideShaker.html"),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "About PeptideShaker");
+                "About PeptideShaker " + PeptideShaker.getVersion());
     }//GEN-LAST:event_aboutJMenuItemActionPerformed
 
     /**

@@ -70,6 +70,8 @@ public class WelcomeDialog extends javax.swing.JDialog {
         if (showJavaVersionWarning) {
             lowMemoryWarningLabel.setText("<html><u>Java Version Warning!</u>");
         }
+        
+        setTitle(getTitle() + " " + PeptideShaker.getVersion());
 
         setLocationRelativeTo(null);
         setVisible(true);
