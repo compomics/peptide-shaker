@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.gui.protein_inference;
 
-import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.biology.Protein;
@@ -17,6 +16,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
+import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -135,6 +135,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         }
 
         initComponents();
+        
+        // make the tabs go from right to left
+        tabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 
         // make sure that the scroll panes are see-through
         proteinMatchJScrollPane.getViewport().setOpaque(false);
@@ -146,12 +149,12 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         PSParameter psParameter = new PSParameter();
         try {
             psParameter = (PSParameter) identification.getProteinMatchParameter(inspectedMatch, psParameter);
+            // the index should be set in the design according to the PSParameter class static fields!
+            groupClassJComboBox.setSelectedIndex(psParameter.getProteinInferenceClass());
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
-        matchInfoLbl.setText("[Score: " + Util.roundDouble(psParameter.getProteinScore(), 2)
-                + ", Confidence: " + Util.roundDouble(psParameter.getProteinConfidence(), 2) + "]");
-
+        
         // set up the table column properties
         setColumnProperies();
 
@@ -159,9 +162,6 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         ((TitledBorder) proteinMatchJPanel.getBorder()).setTitle("Candidate Proteins (" + accessions.size() + ")");
         ((TitledBorder) uniqueHitsJPanel.getBorder()).setTitle("Unique Hits (" + uniqueMatches.size() + ")");
         ((TitledBorder) relatedHitsJPanel.getBorder()).setTitle("Related Hits (" + associatedMatches.size() + ")");
-
-        // the index should be set in the design according to the PSParameter class static fields!
-        groupClassJComboBox.setSelectedIndex(psParameter.getProteinInferenceClass());
 
         // set up the protein inference graph
         drawGraph();
@@ -363,7 +363,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         // set up the table header tooltips
         candidateProteinsTableToolTips = new ArrayList<String>();
         candidateProteinsTableToolTips.add(null);
-        candidateProteinsTableToolTips.add("Currently Selected Protein Match");
+        candidateProteinsTableToolTips.add("Protein Group Representative");
         candidateProteinsTableToolTips.add("Protein Accession");
         candidateProteinsTableToolTips.add("Protein Description");
         candidateProteinsTableToolTips.add("Gene Name");
@@ -394,17 +394,18 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         backgroundPanel = new javax.swing.JPanel();
-        okButton = new javax.swing.JButton();
-        relatedHitsJPanel = new javax.swing.JPanel();
-        relatedHitsJScrollPane = new javax.swing.JScrollPane();
-        relatedHitsTable = new JTable() {
+        tabbedPane = new javax.swing.JTabbedPane();
+        detailsPanel = new javax.swing.JPanel();
+        proteinMatchJPanel = new javax.swing.JPanel();
+        proteinMatchJScrollPane = new javax.swing.JScrollPane();
+        proteinMatchTable = new JTable() {
             protected JTableHeader createDefaultTableHeader() {
                 return new JTableHeader(columnModel) {
                     public String getToolTipText(MouseEvent e) {
                         java.awt.Point p = e.getPoint();
                         int index = columnModel.getColumnIndexAtX(p.x);
                         int realIndex = columnModel.getColumn(index).getModelIndex();
-                        String tip = (String) relatedHitsTableToolTips.get(realIndex);
+                        String tip = (String) candidateProteinsTableToolTips.get(realIndex);
                         return tip;
                     }
                 };
@@ -425,77 +426,74 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 };
             }
         };
-        proteinMatchJPanel = new javax.swing.JPanel();
-        proteinMatchJScrollPane = new javax.swing.JScrollPane();
-        proteinMatchTable = new JTable() {
+        relatedHitsJPanel = new javax.swing.JPanel();
+        relatedHitsJScrollPane = new javax.swing.JScrollPane();
+        relatedHitsTable = new JTable() {
             protected JTableHeader createDefaultTableHeader() {
                 return new JTableHeader(columnModel) {
                     public String getToolTipText(MouseEvent e) {
                         java.awt.Point p = e.getPoint();
                         int index = columnModel.getColumnIndexAtX(p.x);
                         int realIndex = columnModel.getColumn(index).getModelIndex();
-                        String tip = (String) candidateProteinsTableToolTips.get(realIndex);
+                        String tip = (String) relatedHitsTableToolTips.get(realIndex);
                         return tip;
                     }
                 };
             }
         };
         groupDetalsJPanel = new javax.swing.JPanel();
-        matchInfoLbl = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         groupClassJComboBox = new javax.swing.JComboBox();
+        helpJButton = new javax.swing.JButton();
+        okButton = new javax.swing.JButton();
         graphPanel = new javax.swing.JPanel();
         graphInnerPanel = new javax.swing.JPanel();
-        helpJButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Protein Inference - Protein Level");
-        setMinimumSize(new java.awt.Dimension(1000, 500));
+        setMinimumSize(new java.awt.Dimension(800, 650));
 
-        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
+        backgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        okButton.setText("OK");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        tabbedPane.setBackground(new java.awt.Color(230, 230, 230));
+        tabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
 
-        relatedHitsJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Related Hits"));
-        relatedHitsJPanel.setOpaque(false);
+        detailsPanel.setBackground(new java.awt.Color(230, 230, 230));
+        detailsPanel.setOpaque(false);
 
-        relatedHitsTable.setModel(new AssociatedMatches());
-        relatedHitsTable.setOpaque(false);
-        relatedHitsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+        proteinMatchJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Candidate Proteins"));
+        proteinMatchJPanel.setOpaque(false);
+
+        proteinMatchTable.setModel(new MatchTable());
+        proteinMatchTable.setOpaque(false);
+        proteinMatchTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                relatedHitsTableMouseExited(evt);
+                proteinMatchTableMouseExited(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                relatedHitsTableMouseReleased(evt);
+                proteinMatchTableMouseReleased(evt);
             }
         });
-        relatedHitsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+        proteinMatchTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
-                relatedHitsTableMouseMoved(evt);
+                proteinMatchTableMouseMoved(evt);
             }
         });
-        relatedHitsJScrollPane.setViewportView(relatedHitsTable);
+        proteinMatchJScrollPane.setViewportView(proteinMatchTable);
 
-        javax.swing.GroupLayout relatedHitsJPanelLayout = new javax.swing.GroupLayout(relatedHitsJPanel);
-        relatedHitsJPanel.setLayout(relatedHitsJPanelLayout);
-        relatedHitsJPanelLayout.setHorizontalGroup(
-            relatedHitsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(relatedHitsJPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout proteinMatchJPanelLayout = new javax.swing.GroupLayout(proteinMatchJPanel);
+        proteinMatchJPanel.setLayout(proteinMatchJPanelLayout);
+        proteinMatchJPanelLayout.setHorizontalGroup(
+            proteinMatchJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(proteinMatchJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(relatedHitsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE)
+                .addComponent(proteinMatchJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 852, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        relatedHitsJPanelLayout.setVerticalGroup(
-            relatedHitsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(relatedHitsJPanelLayout.createSequentialGroup()
+        proteinMatchJPanelLayout.setVerticalGroup(
+            proteinMatchJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(proteinMatchJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(relatedHitsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
+                .addComponent(proteinMatchJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -525,110 +523,58 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             uniqueHitsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(uniqueHitsJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(uniqueHitsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE)
+                .addComponent(uniqueHitsJScrollPane)
                 .addContainerGap())
         );
         uniqueHitsJPanelLayout.setVerticalGroup(
             uniqueHitsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(uniqueHitsJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(uniqueHitsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
+                .addComponent(uniqueHitsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
                 .addGap(14, 14, 14))
         );
 
-        proteinMatchJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Candidate Proteins"));
-        proteinMatchJPanel.setOpaque(false);
+        relatedHitsJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Related Hits"));
+        relatedHitsJPanel.setOpaque(false);
 
-        proteinMatchTable.setModel(new MatchTable());
-        proteinMatchTable.setOpaque(false);
-        proteinMatchTable.addMouseListener(new java.awt.event.MouseAdapter() {
+        relatedHitsTable.setModel(new AssociatedMatches());
+        relatedHitsTable.setOpaque(false);
+        relatedHitsTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                proteinMatchTableMouseExited(evt);
+                relatedHitsTableMouseExited(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                proteinMatchTableMouseReleased(evt);
+                relatedHitsTableMouseReleased(evt);
             }
         });
-        proteinMatchTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+        relatedHitsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
-                proteinMatchTableMouseMoved(evt);
+                relatedHitsTableMouseMoved(evt);
             }
         });
-        proteinMatchJScrollPane.setViewportView(proteinMatchTable);
+        relatedHitsJScrollPane.setViewportView(relatedHitsTable);
 
-        javax.swing.GroupLayout proteinMatchJPanelLayout = new javax.swing.GroupLayout(proteinMatchJPanel);
-        proteinMatchJPanel.setLayout(proteinMatchJPanelLayout);
-        proteinMatchJPanelLayout.setHorizontalGroup(
-            proteinMatchJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(proteinMatchJPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout relatedHitsJPanelLayout = new javax.swing.GroupLayout(relatedHitsJPanel);
+        relatedHitsJPanel.setLayout(relatedHitsJPanelLayout);
+        relatedHitsJPanelLayout.setHorizontalGroup(
+            relatedHitsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(relatedHitsJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinMatchJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE)
+                .addComponent(relatedHitsJScrollPane)
                 .addContainerGap())
         );
-        proteinMatchJPanelLayout.setVerticalGroup(
-            proteinMatchJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(proteinMatchJPanelLayout.createSequentialGroup()
+        relatedHitsJPanelLayout.setVerticalGroup(
+            relatedHitsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(relatedHitsJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinMatchJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+                .addComponent(relatedHitsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        groupDetalsJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Group Details"));
+        groupDetalsJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Group Type"));
         groupDetalsJPanel.setOpaque(false);
 
-        matchInfoLbl.setText("protein match information");
-
-        jLabel2.setText("Type:");
-
         groupClassJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Single Protein", "Related Proteins", "Related and Unrelated Proteins", "Unrelated Proteins" }));
-
-        javax.swing.GroupLayout groupDetalsJPanelLayout = new javax.swing.GroupLayout(groupDetalsJPanel);
-        groupDetalsJPanel.setLayout(groupDetalsJPanelLayout);
-        groupDetalsJPanelLayout.setHorizontalGroup(
-            groupDetalsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(groupDetalsJPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2)
-                .addGap(20, 20, 20)
-                .addComponent(groupClassJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(matchInfoLbl)
-                .addContainerGap(249, Short.MAX_VALUE))
-        );
-        groupDetalsJPanelLayout.setVerticalGroup(
-            groupDetalsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(groupDetalsJPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(groupDetalsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(groupClassJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(matchInfoLbl))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        graphPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Inference Graph"));
-        graphPanel.setOpaque(false);
-
-        graphInnerPanel.setBackground(new java.awt.Color(255, 255, 255));
-        graphInnerPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        graphInnerPanel.setLayout(new javax.swing.BoxLayout(graphInnerPanel, javax.swing.BoxLayout.LINE_AXIS));
-
-        javax.swing.GroupLayout graphPanelLayout = new javax.swing.GroupLayout(graphPanel);
-        graphPanel.setLayout(graphPanelLayout);
-        graphPanelLayout.setHorizontalGroup(
-            graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(graphPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(graphInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        graphPanelLayout.setVerticalGroup(
-            graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(graphPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(graphInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
 
         helpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
         helpJButton.setToolTipText("Help");
@@ -652,12 +598,93 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             }
         });
 
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+        okButton.setText("Update");
+        okButton.setToolTipText("<html>\nUpdate the protein group type and<br>\nthe protein group representative\n</html>");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
+                okButtonActionPerformed(evt);
             }
         });
+
+        javax.swing.GroupLayout groupDetalsJPanelLayout = new javax.swing.GroupLayout(groupDetalsJPanel);
+        groupDetalsJPanel.setLayout(groupDetalsJPanelLayout);
+        groupDetalsJPanelLayout.setHorizontalGroup(
+            groupDetalsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(groupDetalsJPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(groupClassJComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(helpJButton)
+                .addGap(18, 18, 18))
+        );
+        groupDetalsJPanelLayout.setVerticalGroup(
+            groupDetalsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(groupDetalsJPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(groupDetalsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(groupClassJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(okButton)
+                    .addComponent(helpJButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout detailsPanelLayout = new javax.swing.GroupLayout(detailsPanel);
+        detailsPanel.setLayout(detailsPanelLayout);
+        detailsPanelLayout.setHorizontalGroup(
+            detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(detailsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(proteinMatchJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(uniqueHitsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(relatedHitsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(groupDetalsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        detailsPanelLayout.setVerticalGroup(
+            detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(detailsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(groupDetalsJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(proteinMatchJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(uniqueHitsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(relatedHitsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        tabbedPane.addTab("Group Details", detailsPanel);
+
+        graphPanel.setBackground(new java.awt.Color(230, 230, 230));
+        graphPanel.setOpaque(false);
+
+        graphInnerPanel.setBackground(new java.awt.Color(255, 255, 255));
+        graphInnerPanel.setLayout(new javax.swing.BoxLayout(graphInnerPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        javax.swing.GroupLayout graphPanelLayout = new javax.swing.GroupLayout(graphPanel);
+        graphPanel.setLayout(graphPanelLayout);
+        graphPanelLayout.setHorizontalGroup(
+            graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(graphPanelLayout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(graphInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 874, Short.MAX_VALUE)
+                .addGap(15, 15, 15))
+        );
+        graphPanelLayout.setVerticalGroup(
+            graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, graphPanelLayout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(graphInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+                .addGap(15, 15, 15))
+        );
+
+        tabbedPane.addTab("Protein Graph", graphPanel);
+
+        tabbedPane.setSelectedIndex(1);
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
@@ -665,43 +692,14 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(helpJButton))
-                    .addComponent(groupDetalsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(relatedHitsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(uniqueHitsJPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(proteinMatchJPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(graphPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
-                        .addGap(0, 238, Short.MAX_VALUE)
-                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton)))
+                .addComponent(tabbedPane)
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addComponent(groupDetalsJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(proteinMatchJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(uniqueHitsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(relatedHitsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(graphPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(8, 8, 8)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(helpJButton)
-                    .addComponent(okButton)
-                    .addComponent(cancelButton))
+                .addComponent(tabbedPane)
                 .addContainerGap())
         );
 
@@ -746,7 +744,6 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             }
             peptideShakerGUI.setDataSaved(false);
         }
-        this.dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
     /**
@@ -974,25 +971,14 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_relatedHitsTableMouseReleased
 
-    /**
-     * Closes the dialog.
-     *
-     * @param evt
-     */
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        this.setVisible(false);
-        this.dispose();
-    }//GEN-LAST:event_cancelButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
-    private javax.swing.JButton cancelButton;
+    private javax.swing.JPanel detailsPanel;
     private javax.swing.JPanel graphInnerPanel;
     private javax.swing.JPanel graphPanel;
     private javax.swing.JComboBox groupClassJComboBox;
     private javax.swing.JPanel groupDetalsJPanel;
     private javax.swing.JButton helpJButton;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel matchInfoLbl;
     private javax.swing.JButton okButton;
     private javax.swing.JPanel proteinMatchJPanel;
     private javax.swing.JScrollPane proteinMatchJScrollPane;
@@ -1000,6 +986,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
     private javax.swing.JPanel relatedHitsJPanel;
     private javax.swing.JScrollPane relatedHitsJScrollPane;
     private javax.swing.JTable relatedHitsTable;
+    private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JPanel uniqueHitsJPanel;
     private javax.swing.JScrollPane uniqueHitsJScrollPane;
     private javax.swing.JTable uniqueHitsTable;

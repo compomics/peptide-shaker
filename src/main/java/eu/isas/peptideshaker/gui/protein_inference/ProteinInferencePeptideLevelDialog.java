@@ -14,6 +14,7 @@ import com.compomics.util.preferences.GenePreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.parameters.PSParameter;
+import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -89,11 +90,11 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         protInferenceTypeCmb.setSelectedIndex(psParameter.getProteinInferenceClass());
 
         // insert the values
-        sequenceLabel.setText(peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true));
+        peptideSequenceLabel.setText(peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true));
 
         // set the modification tooltip
         String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey));
-        sequenceLabel.setToolTipText(tooltip);
+        peptideSequenceLabel.setToolTipText(tooltip);
 
         ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
         List<String> retainedProteins;
@@ -301,6 +302,9 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      */
     private void setUpGUI() {
 
+        // make the tabs go from right to left
+        tabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        
         protInferenceTypeCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         // make sure that the scroll panes are see-through
@@ -402,6 +406,8 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         backgroundPanel = new javax.swing.JPanel();
+        tabbedPane = new javax.swing.JTabbedPane();
+        detailsPanel = new javax.swing.JPanel();
         otherProteinsPanel = new javax.swing.JPanel();
         proteinsJScrollPane = new javax.swing.JScrollPane();
         otherProteinJTable = new JTable() {
@@ -417,11 +423,9 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             }
         };
         peptidesPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         protInferenceTypeCmb = new javax.swing.JComboBox();
-        jLabel2 = new javax.swing.JLabel();
-        sequenceLabel = new javax.swing.JLabel();
-        cancelButton = new javax.swing.JButton();
+        helpJButton = new javax.swing.JButton();
+        okButton = new javax.swing.JButton();
         retainedProteinsPanel = new javax.swing.JPanel();
         otherProteinsJScrollPane = new javax.swing.JScrollPane();
         retainedProteinJTable = new JTable() {
@@ -436,8 +440,8 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 };
             }
         };
-        okButton = new javax.swing.JButton();
-        helpJButton = new javax.swing.JButton();
+        peptideDetailsPanel = new javax.swing.JPanel();
+        peptideSequenceLabel = new javax.swing.JLabel();
         graphPanel = new javax.swing.JPanel();
         graphInnerPanel = new javax.swing.JPanel();
 
@@ -445,7 +449,11 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         setTitle("Protein Inference - Peptide Level");
         setMinimumSize(new java.awt.Dimension(1000, 700));
 
-        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
+        backgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        tabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
+
+        detailsPanel.setOpaque(false);
 
         otherProteinsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Other Proteins"));
         otherProteinsPanel.setOpaque(false);
@@ -497,28 +505,51 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             otherProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(otherProteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 725, Short.MAX_VALUE)
+                .addComponent(proteinsJScrollPane)
                 .addContainerGap())
         );
         otherProteinsPanelLayout.setVerticalGroup(
             otherProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(otherProteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                .addComponent(proteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        peptidesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide"));
+        peptidesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Group Type"));
         peptidesPanel.setOpaque(false);
-
-        jLabel1.setText("Type:");
 
         protInferenceTypeCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Unique Protein", "Related Proteins", "Related and Unrelated Proteins", "Unrelated Proteins" }));
         protInferenceTypeCmb.setMinimumSize(new java.awt.Dimension(112, 18));
 
-        jLabel2.setText("Sequence:");
+        helpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        helpJButton.setToolTipText("Help");
+        helpJButton.setBorder(null);
+        helpJButton.setBorderPainted(false);
+        helpJButton.setContentAreaFilled(false);
+        helpJButton.setFocusable(false);
+        helpJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        helpJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        helpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                helpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                helpJButtonMouseExited(evt);
+            }
+        });
+        helpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                helpJButtonActionPerformed(evt);
+            }
+        });
 
-        sequenceLabel.setText("peptide sequence");
+        okButton.setText("Update");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout peptidesPanelLayout = new javax.swing.GroupLayout(peptidesPanel);
         peptidesPanel.setLayout(peptidesPanelLayout);
@@ -526,33 +557,23 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peptidesPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(protInferenceTypeCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(sequenceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(protInferenceTypeCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(okButton)
+                .addGap(24, 24, 24)
+                .addComponent(helpJButton)
+                .addGap(18, 18, 18))
         );
         peptidesPanelLayout.setVerticalGroup(
             peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peptidesPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(protInferenceTypeCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(sequenceLabel)
-                    .addComponent(jLabel1))
+                    .addComponent(okButton)
+                    .addComponent(helpJButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
 
         retainedProteinsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Retained Proteins"));
         retainedProteinsPanel.setOpaque(false);
@@ -601,51 +622,71 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             retainedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(retainedProteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(otherProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 725, Short.MAX_VALUE)
+                .addComponent(otherProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 852, Short.MAX_VALUE)
                 .addContainerGap())
         );
         retainedProteinsPanelLayout.setVerticalGroup(
             retainedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(retainedProteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(otherProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
+                .addComponent(otherProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        okButton.setText("OK");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        peptideDetailsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide Details"));
+        peptideDetailsPanel.setOpaque(false);
 
-        helpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
-        helpJButton.setToolTipText("Help");
-        helpJButton.setBorder(null);
-        helpJButton.setBorderPainted(false);
-        helpJButton.setContentAreaFilled(false);
-        helpJButton.setFocusable(false);
-        helpJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        helpJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        helpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                helpJButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                helpJButtonMouseExited(evt);
-            }
-        });
-        helpJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                helpJButtonActionPerformed(evt);
-            }
-        });
+        peptideSequenceLabel.setText("peptideDetails");
 
-        graphPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Inference Graph"));
+        javax.swing.GroupLayout peptideDetailsPanelLayout = new javax.swing.GroupLayout(peptideDetailsPanel);
+        peptideDetailsPanel.setLayout(peptideDetailsPanelLayout);
+        peptideDetailsPanelLayout.setHorizontalGroup(
+            peptideDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(peptideDetailsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(peptideSequenceLabel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        peptideDetailsPanelLayout.setVerticalGroup(
+            peptideDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(peptideDetailsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(peptideSequenceLabel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout detailsPanelLayout = new javax.swing.GroupLayout(detailsPanel);
+        detailsPanel.setLayout(detailsPanelLayout);
+        detailsPanelLayout.setHorizontalGroup(
+            detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(detailsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(retainedProteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(peptidesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(otherProteinsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(peptideDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        detailsPanelLayout.setVerticalGroup(
+            detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(detailsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(peptideDetailsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(peptidesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(retainedProteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(otherProteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        tabbedPane.addTab("Group Details", detailsPanel);
+
         graphPanel.setOpaque(false);
 
         graphInnerPanel.setBackground(new java.awt.Color(255, 255, 255));
-        graphInnerPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
         graphInnerPanel.setLayout(new javax.swing.BoxLayout(graphInnerPanel, javax.swing.BoxLayout.LINE_AXIS));
 
         javax.swing.GroupLayout graphPanelLayout = new javax.swing.GroupLayout(graphPanel);
@@ -653,17 +694,21 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         graphPanelLayout.setHorizontalGroup(
             graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(graphPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(graphInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(15, 15, 15)
+                .addComponent(graphInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 874, Short.MAX_VALUE)
+                .addGap(15, 15, 15))
         );
         graphPanelLayout.setVerticalGroup(
             graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(graphPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(graphInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(15, 15, 15)
+                .addComponent(graphInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+                .addGap(15, 15, 15))
         );
+
+        tabbedPane.addTab("Protein Graph", graphPanel);
+
+        tabbedPane.setSelectedIndex(1);
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
@@ -671,43 +716,14 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(retainedProteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(peptidesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(otherProteinsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(helpJButton)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(graphPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(okButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton)))
+                .addComponent(tabbedPane)
                 .addContainerGap())
         );
-
-        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
-
         backgroundPanelLayout.setVerticalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addComponent(peptidesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(retainedProteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(otherProteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(graphPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(helpJButton)
-                    .addComponent(okButton)
-                    .addComponent(cancelButton))
+                .addComponent(tabbedPane)
                 .addContainerGap())
         );
 
@@ -726,16 +742,6 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    /**
-     * Closes the dialog.
-     *
-     * @param evt
-     */
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        this.setVisible(false);
-        this.dispose();
-    }//GEN-LAST:event_cancelButtonActionPerformed
 
     /**
      * Try to open the protein's web link (if available).
@@ -930,21 +936,21 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_retainedProteinJTableMouseMoved
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
-    private javax.swing.JButton cancelButton;
+    private javax.swing.JPanel detailsPanel;
     private javax.swing.JPanel graphInnerPanel;
     private javax.swing.JPanel graphPanel;
     private javax.swing.JButton helpJButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JButton okButton;
     private javax.swing.JTable otherProteinJTable;
     private javax.swing.JScrollPane otherProteinsJScrollPane;
     private javax.swing.JPanel otherProteinsPanel;
+    private javax.swing.JPanel peptideDetailsPanel;
+    private javax.swing.JLabel peptideSequenceLabel;
     private javax.swing.JPanel peptidesPanel;
     private javax.swing.JComboBox protInferenceTypeCmb;
     private javax.swing.JScrollPane proteinsJScrollPane;
     private javax.swing.JTable retainedProteinJTable;
     private javax.swing.JPanel retainedProteinsPanel;
-    private javax.swing.JLabel sequenceLabel;
+    private javax.swing.JTabbedPane tabbedPane;
     // End of variables declaration//GEN-END:variables
 }
