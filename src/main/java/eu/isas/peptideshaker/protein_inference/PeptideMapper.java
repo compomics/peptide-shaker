@@ -167,7 +167,7 @@ public class PeptideMapper {
                 }
             }
             pool.shutdown();
-            if (!pool.awaitTermination(1, TimeUnit.HOURS)) {
+            if (!pool.awaitTermination(1, TimeUnit.DAYS)) {
                 waitingHandler.appendReport("Mapping peptides timed out. Please contact the developers.", true, true);
             }
         }
@@ -219,7 +219,7 @@ public class PeptideMapper {
                 }
             }
             pool.shutdown();
-            if (!pool.awaitTermination(1, TimeUnit.HOURS)) {
+            if (!pool.awaitTermination(1, TimeUnit.DAYS)) {
                 waitingHandler.appendReport("Mapping peptides timed out. Please contact the developers.", true, true);
             }
         }
