@@ -1708,17 +1708,18 @@ public class MzIdentMLExport {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001401", "xtandem xml file", null));
                 } else if (advocateIndex == Advocate.omssa.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001400", "OMSSA xml format", null));
-                } else if (advocateIndex == Advocate.msgf.getIndex()) {
+                } else if (advocateIndex == Advocate.msgf.getIndex() || advocateIndex == Advocate.myriMatch.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002073", "mzIdentML format", null));
                 } else if (advocateIndex == Advocate.msAmanda.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002459", "MS Amanda csv format", null));
                 } else if (advocateIndex == Advocate.comet.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001421", "pepXML format", null));
-                } else if (advocateIndex == Advocate.myriMatch.getIndex() || advocateIndex == Advocate.tide.getIndex()) {
+                } else if (advocateIndex == Advocate.tide.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1000914", "tab delimited text format", null));
+                } else if (advocateIndex == Advocate.andromeda.getIndex()) {
+                    // writeCvTerm(new CvTerm("PSI-MS", "MS:???", "Andromeda res file output format.", null)); //  @TODO: create and add new cv term?
                 } else {
-                    writeUserParam("Unknown"); // @TODO: add cv term?
-                    break;
+                    // no cv term available for the given advocate...
                 }
             }
 
