@@ -66,7 +66,7 @@ public class PeptideShakerCLIInputBean {
     /**
      * The PTM localization score to use.
      */
-    private PtmScore ptmScore = null;
+    private PtmScore ptmScore = PtmScore.PhosphoRS;
     /**
      * The PTM score threshold.
      */

@@ -23,6 +23,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
+import com.compomics.util.experiment.identification.ptm.PtmScore;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
@@ -630,9 +631,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         // set the PTM scoring preferences
         PTMScoringPreferences ptmScoringPreferences = new PTMScoringPreferences();
-        if (cliInputBean.getPtmScore() != null) {
+        ptmScoringPreferences.setSelectedProbabilisticScore(cliInputBean.getPtmScore());
+        if (cliInputBean.getPtmScore() != PtmScore.None) {
             ptmScoringPreferences.setProbabilitsticScoreCalculation(true);
-            ptmScoringPreferences.setSelectedProbabilisticScore(cliInputBean.getPtmScore());
             ptmScoringPreferences.setProbabilisticScoreNeutralLosses(cliInputBean.isaScoreNeutralLosses());
             if (cliInputBean.getPtmScoreThreshold() != null) {
                 ptmScoringPreferences.setEstimateFlr(false);
@@ -908,7 +909,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         } else {
             String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id);
             File testFile = new File(filesTxt.trim());
-            File parentFolder = testFile.getParentFile();
+            File parentFolder = testFile.getParentFile(); // @TODO: should check if parent file is null!
             if (!parentFolder.exists() && !parentFolder.mkdirs()) {
                 System.out.println("\nDestination folder \'" + parentFolder.getPath() + "\' not found and cannot be created. Make sure that PeptideShaker has the right to write in the destination folder.\n");
                 return false;

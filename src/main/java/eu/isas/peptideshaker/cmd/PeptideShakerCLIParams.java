@@ -26,7 +26,7 @@ public enum PeptideShakerCLIParams {
     PROTEIN_FDR("protein_FDR", "FDR at the protein level (default 1% FDR: '1').", false),
     IDENTIFICATION_PARAMETERS("id_params", "The identification parameters file. Generated using SeachGUI or via IdentificationParametersCLI.", false),
     GUI("gui", "Use a dialog to display the progress (1: true, 0: false, default is '0').", false),
-    PTM_SCORE("ptm_score", "The PTM probabilistic score to use for PTM localization. " + PtmScore.getCommandLineOptions() + ". If no score is given, no probabilistic score will be used.", false),
+    PTM_SCORE("ptm_score", "The PTM probabilistic score to use for PTM localization (" + PtmScore.getCommandLineOptions() + ", default is '1').", false),
     PTM_THRESHOLD("ptm_threshold", "The threshold to use for the PTM scores. Automatic mode will be used if not set.", false),
     SCORE_NEUTRAL_LOSSES("score_neutral_losses", "Include neutral losses in spectrum annotation of the PTM score (1: true, 0: false, default is '0').", false),
     PROTEIN_FRACTION_MW_CONFIDENCE("protein_fraction_mw_confidence", "Minimum confidence required for a protein in the fraction MW plot (default 95%: '95.0').", false),
