@@ -1717,7 +1717,7 @@ public class MzIdentMLExport {
                 } else if (advocateIndex == Advocate.tide.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1000914", "tab delimited text format", null));
                 } else if (advocateIndex == Advocate.andromeda.getIndex()) {
-                    // writeCvTerm(new CvTerm("PSI-MS", "MS:???", "Andromeda res file output format.", null)); //  @TODO: create and add new cv term?
+                    // writeCvTerm(new CvTerm("PSI-MS", "MS:1002576", "Andromeda result file", null)); // @TODO: include when properly added to ontology and to Skyline
                 } else {
                     // no cv term available for the given advocate...
                 }
