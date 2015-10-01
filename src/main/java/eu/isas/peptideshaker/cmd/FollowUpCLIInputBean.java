@@ -15,7 +15,7 @@ import org.apache.commons.cli.CommandLine;
 public class FollowUpCLIInputBean {
 
     /**
-     * The cps file to work on.
+     * The cpsx file to work on.
      */
     private File cpsFile = null;
     /**
@@ -119,9 +119,9 @@ public class FollowUpCLIInputBean {
 
         if (aLine.hasOption(FollowUpCLIParams.CPS_FILE.id)) {
             String file = aLine.getOptionValue(FollowUpCLIParams.CPS_FILE.id);
-            if (file.toLowerCase().endsWith("cps")) {
+            if (file.toLowerCase().endsWith(".cpsx")) {
                 cpsFile = new File(file);
-            } else if (file.toLowerCase().endsWith("zip")) {
+            } else if (file.toLowerCase().endsWith(".zip")) {
                 zipFile = new File(file);
             } else {
                     throw new IllegalArgumentException("Unknown file format \'" + file + "\' for PeptideShaker project input.");

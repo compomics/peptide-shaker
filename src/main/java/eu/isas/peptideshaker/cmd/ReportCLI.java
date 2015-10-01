@@ -238,7 +238,7 @@ public class ReportCLI extends CpsParent {
      */
     private static String getHeader() {
         return System.getProperty("line.separator")
-                + "The PeptideShaker report command line takes a cps file and generates various types of reports." + System.getProperty("line.separator")
+                + "The PeptideShaker report command line takes a cpsx file and generates various types of reports." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "For further help see http://compomics.github.io/projects/peptide-shaker.html and http://compomics.github.io/peptide-shaker/wiki/peptideshakercli.html." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
