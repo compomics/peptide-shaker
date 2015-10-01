@@ -1168,6 +1168,7 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
      */
     private String convertHtmlTooltip(String tooltipAsHtml) {
         String temp = tooltipAsHtml.replaceAll(Pattern.quote("<br>"), " - ");
+        temp = temp.replaceAll(Pattern.quote("-  -"), "-");
         temp = temp.replaceAll(Pattern.quote("<html>"), "");
         temp = temp.replaceAll(Pattern.quote("</html>"), "");
         return temp;

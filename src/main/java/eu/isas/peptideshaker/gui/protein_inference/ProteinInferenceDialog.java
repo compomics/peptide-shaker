@@ -19,6 +19,8 @@ import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -135,7 +137,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         }
 
         initComponents();
-        
+
         // make the tabs go from right to left
         tabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 
@@ -154,7 +156,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
-        
+
         // set up the table column properties
         setColumnProperies();
 
@@ -184,107 +186,148 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         ArrayList<String> peptideKeys = inspectedMatch.getPeptideMatchesKeys();
 
-        for (String tempPeptideKey : peptideKeys) {
-
-            try {
-                PeptideMatch peptideMatch = identification.getPeptideMatch(tempPeptideKey);
-                String peptideNodeName = "Peptide " + tempPeptideKey;
-
-                // get the match validation level
-                PSParameter peptideMatchParameter = (PSParameter) identification.getPeptideMatchParameter(tempPeptideKey, new PSParameter());
-                String matchValidationLevel;
-                if (peptideMatchParameter != null) {
-                    matchValidationLevel = "Validation: " + peptideMatchParameter.getMatchValidationLevel();
-                } else {
-                    matchValidationLevel = "Validation: (not available)";
-                }
-
-                // get the peptide node tooltip
-                String peptideTooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, false, true);
-                peptideTooltip = "<html>" + peptideTooltip + "<br><br>" + matchValidationLevel + "</html>";
-                nodeToolTips.put(peptideNodeName, peptideTooltip);
-                
-                // add the node
-                nodes.add(peptideNodeName);
-                nodeProperties.put(peptideNodeName, "" + peptideMatchParameter.getMatchValidationLevel().getIndex());
-
-                // iterate the proteins
-                ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
-
-                for (String tempProteinAccession : possibleProteins) {
-
-                    String proteinNodeKey = "Protein " + tempProteinAccession;
-
-                    if (!nodes.contains(tempProteinAccession)) {
-
-                        // add the node
-                        nodes.add(proteinNodeKey);
-                        if (accessions.contains(tempProteinAccession)) {
-                            selectedNodes.add(proteinNodeKey);
-                        }
-
-                        // get the match validation level
-                        PSParameter proteinMatchParameter = (PSParameter) identification.getProteinMatchParameter(tempProteinAccession, new PSParameter());
-                        String nodeProperty = "";
-                        if (proteinMatchParameter != null) {
-                            nodeProperty += proteinMatchParameter.getMatchValidationLevel().getIndex();
-                            matchValidationLevel = "Validation: " + proteinMatchParameter.getMatchValidationLevel();
-                        } else {
-                            nodeProperty += -1;
-                            matchValidationLevel = "Validation: (not available)";
-                        }
-
-                        // get the protein evidence level
-                        String proteinEvidenceLevel = sequenceFactory.getHeader(tempProteinAccession).getProteinEvidence();
-                        if (proteinEvidenceLevel != null) {
-                            nodeProperty += "|" + proteinEvidenceLevel;
-                            try {
-                                Integer level = new Integer(proteinEvidenceLevel);
-                                proteinEvidenceLevel = "Evidence: " + GenePreferences.getProteinEvidencAsString(level);
-                            } catch (NumberFormatException e) {
-                                // ignore
-                            }
-                        } else {
-                            proteinEvidenceLevel = "Evidence: (not available)";
-                        }
-
-                        // add the node property
-                        nodeProperties.put(proteinNodeKey, nodeProperty);
-
-                        // add the tooltip
-                        nodeToolTips.put(proteinNodeKey, "<html>" + tempProteinAccession
-                                + "<br>" + sequenceFactory.getHeader(tempProteinAccession).getSimpleProteinDescription()
-                                + "<br><br>" + matchValidationLevel
-                                + "<br>" + proteinEvidenceLevel
-                                + "<html>");
-                        
-                        // add any new peptides for the proteins
-                        //ArrayList<String> secondaryPeptides = identification.getProteinMatch(proteinNodeKey).getPeptideMatchesKeys(); // @TODO: add more levels!
-                    }
-
-                    ArrayList<String> tempEdges = edges.get(peptideNodeName);
-                    if (tempEdges == null) {
-                        tempEdges = new ArrayList<String>();
-                    }
-                    if (!tempEdges.contains(proteinNodeKey)) {
-                        tempEdges.add(proteinNodeKey);
-
-                        Protein protein = sequenceFactory.getProtein(tempProteinAccession);
-                        Boolean enzymatic = protein.isEnzymaticPeptide(peptideMatch.getTheoreticPeptide().getSequence(),
-                                peptideShakerGUI.getIdentificationParameters().getSearchParameters().getEnzyme(),
-                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
-
-                        edgeProperties.put(peptideNodeName + "|" + proteinNodeKey, enzymatic.toString());
-                    }
-                    edges.put(peptideNodeName, tempEdges); // @TODO: not needed?
-                }
-            } catch (Exception e) {
-                e.printStackTrace(); // @TODO: better error handling!
+        try {
+            for (String tempPeptideKey : peptideKeys) {
+                addPeptide(tempPeptideKey, nodeToolTips, nodes, nodeProperties, selectedNodes, edges, edgeProperties);
             }
+        } catch (Exception e) {
+            e.printStackTrace(); // @TODO: better error handling!
         }
 
         graphInnerPanel.add(new ProteinInferenceGraphPanel(this, graphInnerPanel, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(),
                 peptideShakerGUI.getLastSelectedFolder(), nodes, edges, nodeProperties, edgeProperties, nodeToolTips, selectedNodes));
+    }
+
+    /**
+     * Add a peptide and the corresponding proteins to the graph.
+     *
+     * @param peptideKey the peptide key
+     * @param nodeToolTips the node tool tips
+     * @param nodes the nodes
+     * @param nodeProperties the node properties
+     * @param selectedNodes the selected nodes
+     * @param edges the edges
+     * @param edgeProperties the edge properties
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws IOException thrown if an IOException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     */
+    private void addPeptide(String peptideKey, HashMap<String, String> nodeToolTips, ArrayList<String> nodes, HashMap<String, String> nodeProperties,
+            ArrayList<String> selectedNodes, HashMap<String, ArrayList<String>> edges, HashMap<String, String> edgeProperties) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+        String peptideNodeName = "Peptide " + peptideKey;
+
+        if (!nodes.contains(peptideNodeName)) {
+
+            // get the match validation level
+            PSParameter peptideMatchParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter());
+            String matchValidationLevel;
+            if (peptideMatchParameter != null) {
+                matchValidationLevel = "Validation: " + peptideMatchParameter.getMatchValidationLevel();
+            } else {
+                matchValidationLevel = "Validation: (not available)";
+            }
+
+            // get the peptide node tooltip
+            String peptideTooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, false, true);
+            peptideTooltip = "<html>" + peptideTooltip + "<br><br>" + matchValidationLevel + "</html>";
+            nodeToolTips.put(peptideNodeName, peptideTooltip);
+
+            // add the node
+            nodes.add(peptideNodeName);
+            nodeProperties.put(peptideNodeName, "" + peptideMatchParameter.getMatchValidationLevel().getIndex());
+
+            // iterate the proteins
+            ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+
+            for (String tempProteinAccession : possibleProteins) {
+
+                String proteinNodeKey = "Protein " + tempProteinAccession;
+
+                if (!nodes.contains(proteinNodeKey)) {
+
+                    // add the node
+                    nodes.add(proteinNodeKey);
+                    if (accessions.contains(tempProteinAccession)) {
+                        selectedNodes.add(proteinNodeKey);
+                    }
+
+                    // get the match validation level
+                    PSParameter proteinMatchParameter = (PSParameter) identification.getProteinMatchParameter(tempProteinAccession, new PSParameter());
+                    String nodeProperty = "";
+                    if (proteinMatchParameter != null) {
+                        nodeProperty += proteinMatchParameter.getMatchValidationLevel().getIndex();
+                        matchValidationLevel = "Validation: " + proteinMatchParameter.getMatchValidationLevel();
+                    } else {
+                        nodeProperty += -1;
+                        matchValidationLevel = "Validation: (not available)";
+                    }
+
+                    // get the protein evidence level
+                    String proteinEvidenceLevel = sequenceFactory.getHeader(tempProteinAccession).getProteinEvidence();
+                    if (proteinEvidenceLevel != null) {
+                        nodeProperty += "|" + proteinEvidenceLevel;
+                        try {
+                            Integer level = new Integer(proteinEvidenceLevel);
+                            proteinEvidenceLevel = "Evidence: " + GenePreferences.getProteinEvidencAsString(level);
+                        } catch (NumberFormatException e) {
+                            // ignore
+                        }
+                    } else {
+                        proteinEvidenceLevel = "Evidence: (not available)";
+                    }
+
+                    // add the node property
+                    nodeProperties.put(proteinNodeKey, nodeProperty);
+
+                    // add the tooltip
+                    nodeToolTips.put(proteinNodeKey, "<html>" + tempProteinAccession
+                            + "<br>" + sequenceFactory.getHeader(tempProteinAccession).getSimpleProteinDescription()
+                            + "<br><br>" + matchValidationLevel
+                            + "<br>" + proteinEvidenceLevel
+                            + "<html>");
+
+                    // add any new peptides for the proteins
+                    if (identification.getProteinMatch(tempProteinAccession) != null) {
+                        ArrayList<String> secondaryPeptides = identification.getProteinMatch(tempProteinAccession).getPeptideMatchesKeys();
+                        for (String tempPeptideKey : secondaryPeptides) {
+                            addPeptide(tempPeptideKey, nodeToolTips, nodes, nodeProperties, selectedNodes, edges, edgeProperties);
+                        }
+                    } else {
+                        // @TODO: is there a faster way of doing this..?
+                        String loweCaseAccession = tempProteinAccession.toLowerCase();
+                        for (String proteinKey : peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterPreferences())) {
+                            if (!ProteinMatch.isDecoy(proteinKey)) {
+                                if (proteinKey.toLowerCase().contains(loweCaseAccession)) {
+                                    ArrayList<String> secondaryPeptides = identification.getProteinMatch(proteinKey).getPeptideMatchesKeys();
+                                    for (String tempPeptideKey : secondaryPeptides) {
+                                        addPeptide(tempPeptideKey, nodeToolTips, nodes, nodeProperties, selectedNodes, edges, edgeProperties);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                ArrayList<String> tempEdges = edges.get(peptideNodeName);
+                if (tempEdges == null) {
+                    tempEdges = new ArrayList<String>();
+                }
+                if (!tempEdges.contains(proteinNodeKey)) {
+                    tempEdges.add(proteinNodeKey);
+
+                    Protein protein = sequenceFactory.getProtein(tempProteinAccession);
+                    Boolean enzymatic = protein.isEnzymaticPeptide(peptideMatch.getTheoreticPeptide().getSequence(),
+                            peptideShakerGUI.getIdentificationParameters().getSearchParameters().getEnzyme(),
+                            peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+
+                    edgeProperties.put(peptideNodeName + "|" + proteinNodeKey, enzymatic.toString());
+                }
+                edges.put(peptideNodeName, tempEdges);
+            }
+        }
     }
 
     /**
@@ -786,6 +829,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 }
             }
+
+            // update the selection in the graph
+            // @TODO: selected the currently selected nodes in the graph
         }
     }//GEN-LAST:event_proteinMatchTableMouseReleased
 
@@ -1088,7 +1134,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     }
                 case 7:
                     try {
-                        return peptideShakerGUI.getIdentificationFeaturesGenerator().hasEnzymaticPeptides(inspectedMatch, accessions.get(row));   
+                        return peptideShakerGUI.getIdentificationFeaturesGenerator().hasEnzymaticPeptides(inspectedMatch, accessions.get(row));
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return "Database Error";
