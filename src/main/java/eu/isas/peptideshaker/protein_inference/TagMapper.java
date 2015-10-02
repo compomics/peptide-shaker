@@ -262,7 +262,7 @@ public class TagMapper {
      * @param tagMatcher the tag matcher to match the tags
      * @param key the key of the tag to match
      * @param waitingHandler waiting handler allowing the display of progress
-     * and cancelling the process
+     * and canceling the process
      * @param increaseProgress boolean indicating whether the progress bar of
      * the waiting handler should be increased
      *

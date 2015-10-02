@@ -65,13 +65,13 @@ public class CpsFileImporter {
      * @return the PeptideShaker settings
      *
      * @throws SQLException exception thrown whenever an error occurs while
-     * queying with the database.
+     * querying the database
      * @throws IOException exception thrown whenever an error occurs while
-     * queying with the database.
+     * querying the database
      * @throws ClassNotFoundException exception thrown whenever an error occurs
-     * while deserializing the settings object.
+     * while deserializing the settings object
      * @throws InterruptedException exception thrown whenever an threading issue
-     * occurs while queying with the database.
+     * occurs while querying the database.
      */
     public PeptideShakerSettings getPeptideShakerSettings(ObjectsDB objectsDB) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         PeptideShakerSettings peptideShakerSettings = new PeptideShakerSettings();
