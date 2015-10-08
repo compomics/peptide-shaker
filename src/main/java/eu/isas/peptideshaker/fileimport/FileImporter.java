@@ -835,52 +835,31 @@ public class FileImporter {
                         
                         // inform the user in case more than 75% of the hits were rejected by the filters
                         if (sharePsmsRejected > 75) {
-                            String report = "Warning: More than 75% of the PSMs were rejected by the loading filters when importing the matches.";
+                            String report = "Warning: More than 75% of the PSMs did not pass the import filters." + System.getProperty("line.separator");
                             double meanRejected = sharePsmsRejected / 4;
                             if (!allSearchEngines && noProteins > meanRejected) {
-                                report += " PeptideShaker did not manage to map your peptides to the database. Please verify your database.";
+                                report += " PeptideShaker did not manage to map your peptides to the database. Please verify your database." + System.getProperty("line.separator");
                             }
                             if (proteinIssue > meanRejected) {
                                 report += " Apparently your database contains a high degree of shared peptides between the target and decoy sequences. Please verify your database";
                                 if (software.keySet().contains(Advocate.mascot.getName())) {
                                     report += " and make sure that you use Mascot with the 'decoy' option disabled.";
                                 }
-                                report += ".";
+                                report += "." + System.getProperty("line.separator");
                             }
                             if (peptideIssue > meanRejected) {
-                                report += " Please verify that your peptide selection criteria are not too restrictive.";
+                                report += " Please verify that your peptide selection criteria are not too restrictive." + System.getProperty("line.separator");
                             }
                             if (precursorIssue > meanRejected) {
-                                report += " Please verify that your precursor selection criteria are not too restrictive.";
+                                report += " Please verify that your precursor selection criteria are not too restrictive." + System.getProperty("line.separator");
                             }
                             if (ptmIssue > meanRejected) {
-                                report += " Apparently your data contains modifications which are not recognized by PeptideShaker. Please verify the search parameters provided when creating the project.";
+                                report += " Apparently your data contains modifications which are not recognized by PeptideShaker. Please verify the search parameters provided when creating the project." + System.getProperty("line.separator");
                                 if (software.keySet().contains(Advocate.mascot.getName())) {
-                                    report += " When using Mascot alone, you need to specify the search parameters manually when creating the project. We recommend the complementary use of SearchGUI when possible.";
+                                    report += " When using Mascot alone, you need to specify the search parameters manually when creating the project. We recommend the complementary use of SearchGUI when possible." + System.getProperty("line.separator");
                                 }
                             }
                             waitingHandler.appendReport(report, true, true);
-                        }
-
-                        // Inform the user in case some peptides could not be mapped to proteins
-                        int missingProteins = psmImporter.getMissingProteins();
-                        if (missingProteins > 0) {
-                            waitingHandler.appendReport(missingProteins + " peptides could not be mapped to proteins.", true, true);
-                            boolean deNovo = false;
-                            for (String softwareName : software.keySet()) {
-                                Advocate advocate = Advocate.getAdvocate(softwareName);
-                                if (advocate.getType() == Advocate.AdvocateType.sequencing_algorithm) {
-                                    deNovo = true;
-                                    break;
-                                }
-                            }
-                            if (!deNovo) {
-                                waitingHandler.appendReport("Please verify the following:" + System.getProperty("line.separator")
-                                        + "- The protein sequence database must be the same or contain the database used for the search." + System.getProperty("line.separator")
-                                        + "- When using the 'REVERSED' tag, decoy sequences must be reversed versions of the target sequences, use the 'DECOY' tag otherwise." + System.getProperty("line.separator")
-                                        + "- When using in house databases make sure that the format is recognized by search engines and PeptideShaker (more details at http://compomics.github.io/searchgui/wiki/databasehelp.html)." + System.getProperty("line.separator")
-                                        + "The problematic spectra can be inspected in the Spectrum ID tab. In case of doubt please contact the developers.", true, true);
-                            }
                         }
                     }
                 }
