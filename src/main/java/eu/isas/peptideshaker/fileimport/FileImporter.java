@@ -27,7 +27,6 @@ import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.protein_inference.PeptideMapper;
@@ -648,16 +647,6 @@ public class FileImporter {
                 return;
             }
 
-            // Clear cache for sequencing files. TODO: make something more generic?
-            if (idFile.getName().endsWith("tags")) {
-                if (tagMapper == null) {
-                    tagMapper = new TagMapper(proteinTree, identificationParameters, exceptionHandler);
-                }
-                if (!peptideShaker.getCache().isEmpty()) {
-                    peptideShaker.getCache().reduceMemoryConsumption(0.9, waitingHandler);
-                }
-            }
-
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
             LinkedList<SpectrumMatch> idFileSpectrumMatches = null;
@@ -701,8 +690,14 @@ public class FileImporter {
 
                     if (allLoaded) {
 
-                        // Map spectrum sequencing matches on protein sequences
-                        if (tagMapper != null) {
+                        // If any Map spectrum sequencing matches on protein sequences
+                        if (tagMapper == null) {
+                            tagMapper = new TagMapper(proteinTree, identificationParameters, exceptionHandler);
+                        }
+                        if (fileReader.getTagsMap() != null && !fileReader.getTagsMap().isEmpty()) {
+                            if (!peptideShaker.getCache().isEmpty()) {
+                                peptideShaker.getCache().reduceMemoryConsumption(0.9, waitingHandler);
+                            }
                             tagMapper.mapTags(fileReader, identification, waitingHandler, processingPreferences.getnThreads());
                         }
 
@@ -833,6 +828,27 @@ public class FileImporter {
                                 }
                             }
                             waitingHandler.appendReport(report, true, true);
+                        }
+
+                        // Inform the user in case some peptides could not be mapped to proteins
+                        int missingProteins = psmImporter.getMissingProteins();
+                        if (missingProteins > 0) {
+                            waitingHandler.appendReport(missingProteins + " peptides could not be mapped to proteins.", true, true);
+                            boolean deNovo = false;
+                            for (String softwareName : software.keySet()) {
+                                Advocate advocate = Advocate.getAdvocate(softwareName);
+                                if (advocate.getType() == Advocate.AdvocateType.sequencing_algorithm) {
+                                    deNovo = true;
+                                    break;
+                                }
+                            }
+                            if (!deNovo) {
+                                waitingHandler.appendReport("Please verify the following:" + System.getProperty("line.separator")
+                                        + "- The protein sequence database must be the same or contain the database used for the search." + System.getProperty("line.separator")
+                                        + "- When using the 'REVERSED' tag, decoy sequences must be reversed versions of the target sequences, use the 'DECOY' tag otherwise." + System.getProperty("line.separator")
+                                        + "- When using in house databases make sure that the format is recognized by search engines and PeptideShaker (more details at http://compomics.github.io/searchgui/wiki/databasehelp.html)." + System.getProperty("line.separator")
+                                        + "The problematic spectra can be inspected in the Spectrum ID tab. In case of doubt please contact the developers.", true, true);
+                            }
                         }
                     }
                 }

@@ -262,7 +262,11 @@ public class TagMapper {
      * @param tagMatcher the tag matcher to match the tags
      * @param key the key of the tag to match
      * @param waitingHandler waiting handler allowing the display of progress
+<<<<<<< HEAD
+     * and cancelling the process
+=======
      * and canceling the process
+>>>>>>> 617e231a4bd9954d00582cbed0a76798fc16186c
      * @param increaseProgress boolean indicating whether the progress bar of
      * the waiting handler should be increased
      *
@@ -491,6 +495,13 @@ public class TagMapper {
                                     int aaIndex = aa - 1;
                                     aminoAcidSequence.setAaAtIndex(aaIndex, aaAtTarget.get(0));
                                 }
+<<<<<<< HEAD
+                            } else if (advocateId == Advocate.pNovo.getIndex()) {
+                                // already mapped
+                            } else if (advocateId == Advocate.novor.getIndex()) {
+                                // already mapped
+=======
+>>>>>>> 617e231a4bd9954d00582cbed0a76798fc16186c
                             } else {
                                 Advocate notImplemented = Advocate.getAdvocate(advocateId);
                                 if (notImplemented == null) {

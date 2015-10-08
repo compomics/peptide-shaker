@@ -212,7 +212,7 @@ public class PeptideShaker {
 
         projectCreationDuration = new Duration();
         projectCreationDuration.start();
-        
+
         waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")", true, true);
         waitingHandler.appendReportEndLine();
 
@@ -266,7 +266,7 @@ public class PeptideShaker {
             ExceptionHandler exceptionHandler, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
             PSProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails)
             throws Exception {
-        
+
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, shotgunProtocol, identificationParameters, metrics, spectrumCountingPreferences);
 
@@ -810,8 +810,12 @@ public class PeptideShaker {
                     psParameter.setPsmProbability(1.0);
                 }
 
-                identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
-                identification.buildPeptidesAndProteins(spectrumKey, sequenceMatchingPreferences);
+                Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+                ArrayList<String> parentProteins = peptide.getParentProteinsNoRemapping();
+                if (parentProteins != null && !parentProteins.isEmpty()) {
+                    identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
+                    identification.buildPeptidesAndProteins(spectrumKey, sequenceMatchingPreferences);
+                }
 
                 waitingHandler.increaseSecondaryProgressCounter();
                 if (waitingHandler.isRunCanceled()) {
@@ -969,7 +973,8 @@ public class PeptideShaker {
     }
 
     /**
-     * Returns the path to the matches folder according to the user path settings.
+     * Returns the path to the matches folder according to the user path
+     * settings.
      *
      * @return the path to the match folder according to the user path settings
      */

@@ -36,6 +36,7 @@ import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
+import com.compomics.util.experiment.io.identifications.idfilereaders.NovorIdfileReader;
 import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
@@ -124,6 +125,10 @@ public class PsmImporter {
      * The number of retained first hits.
      */
     private int nRetained = 0;
+    /**
+     * The number of PTMs where no protein was found.
+     */
+    private int missingProteins = 0;
     /**
      * The id file reader where the PSMs are from.
      */
@@ -587,7 +592,8 @@ public class PsmImporter {
                                                         + spectrumFileName + ".\n" + "Identification file: " + idFile.getName());
                                             }
                                             tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
-                                        } else if (fileReader instanceof DirecTagIdfileReader) {
+                                        } else if (fileReader instanceof DirecTagIdfileReader
+                                                || fileReader instanceof NovorIdfileReader) {
                                             PTM ptm = ptmFactory.getPTM(sePTM);
                                             if (ptm == PTMFactory.unknownPTM) {
                                                 throw new IllegalArgumentException("PTM not recognized spectrum " + spectrumTitle + " of file " + spectrumFileName + ".");
@@ -630,7 +636,7 @@ public class PsmImporter {
                                 if (!peptideAssumptionFilter.validatePrecursor(peptideAssumption, spectrumKey, spectrumFactory)) {
                                     filterPassed = false;
                                     precursorIssue++;
-                                } else if (!peptideAssumptionFilter.validateProteins(peptideAssumption.getPeptide(), sequenceMatchingPreferences)) {
+                                } else if (!peptideAssumptionFilter.validateProteins(peptide, sequenceMatchingPreferences)) {
                                     // Check whether there is a potential first hit which does not belong to both the target and the decoy database
                                     filterPassed = false;
                                     proteinIssue++;
@@ -638,6 +644,10 @@ public class PsmImporter {
                             } else {
                                 filterPassed = false;
                                 ptmIssue++;
+                            }
+                            ArrayList<String> accessions = peptide.getParentProteins(sequenceMatchingPreferences);
+                            if (accessions == null || accessions.isEmpty()) {
+                                missingProteins++;
                             }
                             if (filterPassed) {
                                 newAssumptions.add(assumption);
@@ -1242,6 +1252,15 @@ public class PsmImporter {
      */
     public int getPtmIssue() {
         return ptmIssue;
+    }
+    
+    /**
+     * Returns the number of PSMs where a protein was missing.
+     * 
+     * @return the number of PSMs where a protein was missing
+     */
+    public int getMissingProteins() {
+        return missingProteins;
     }
 
     /**

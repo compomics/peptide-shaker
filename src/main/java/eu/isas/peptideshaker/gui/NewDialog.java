@@ -964,9 +964,10 @@ public class NewDialog extends javax.swing.JDialog {
                         || myFile.getName().toLowerCase().endsWith(".mzid")
                         || myFile.getName().toLowerCase().endsWith(".ms-amanda.csv")
                         || myFile.getName().toLowerCase().endsWith(".res")
-                        || myFile.getName().toLowerCase().endsWith(".tags")
-                        || myFile.getName().toLowerCase().endsWith(".zip")
                         || myFile.getName().toLowerCase().endsWith(".tide-search.target.txt")
+                        || myFile.getName().toLowerCase().endsWith(".tags")
+                        || myFile.getName().toLowerCase().endsWith(".novor.csv")
+                        || myFile.getName().toLowerCase().endsWith(".zip")
                         || myFile.isDirectory();
             }
 
@@ -1111,6 +1112,21 @@ public class NewDialog extends javax.swing.JDialog {
             }
         };
 
+        // filter for novor only
+        FileFilter novorFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                return myFile.getName().toLowerCase().endsWith(".novor.csv")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Novor (.novor.csv)";
+            }
+        };
+
         // filter for mascot only
         FileFilter mascotFilter = new FileFilter() {
             @Override
@@ -1137,6 +1153,7 @@ public class NewDialog extends javax.swing.JDialog {
         fileChooser.addChoosableFileFilter(tideFilter);
         fileChooser.addChoosableFileFilter(mascotFilter);
         fileChooser.addChoosableFileFilter(direcTagFilter);
+        fileChooser.addChoosableFileFilter(novorFilter);
 
         int returnVal = fileChooser.showDialog(this, "Add");
 
