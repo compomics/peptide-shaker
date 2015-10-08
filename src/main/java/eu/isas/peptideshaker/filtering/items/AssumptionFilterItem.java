@@ -13,6 +13,8 @@ import java.util.Arrays;
  */
 public enum AssumptionFilterItem implements FilterItem {
 
+    minimalLength("Minimal length", "Minimal sequence length."),
+    maximalLength("Maximal length", "Maximal sequence length."),
     precrusorMz("Precursor m/z", "Spectrum precursor m/z."),
     precrusorRT("Precursor RT", "Spectrum precursor retention time."),
     precrusorCharge("Precursor charge", "Spectrum precursor charge according to the identification."),
@@ -84,6 +86,8 @@ public enum AssumptionFilterItem implements FilterItem {
     @Override
     public boolean isNumber() {
         switch (this) {
+            case minimalLength:
+            case maximalLength:
             case precrusorMz:
             case precrusorRT:
             case precrusorCharge:

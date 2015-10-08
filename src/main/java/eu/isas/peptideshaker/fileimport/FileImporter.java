@@ -763,21 +763,28 @@ public class FileImporter {
                         projectDetails.addIdentificationFiles(idFile);
 
                         int psmsRejected = psmImporter.getPsmsRejected();
+                        int noProteins = psmImporter.getMissingProteins();
                         int proteinIssue = psmImporter.getProteinIssue();
                         int peptideIssue = psmImporter.getPeptideIssue();
                         int precursorIssue = psmImporter.getPrecursorIssue();
                         int ptmIssue = psmImporter.getPtmIssue();
-                        int totalAssumptionsRejected = proteinIssue + peptideIssue + precursorIssue + ptmIssue;
+                        int totalAssumptionsRejected = noProteins + proteinIssue + peptideIssue + precursorIssue + ptmIssue;
 
                         double sharePsmsRejected = 100.0 * psmsRejected / numberOfMatches;
 
                         if (psmsRejected > 0) {
-                            waitingHandler.appendReport(psmsRejected + " PSMs (" + Util.roundDouble(sharePsmsRejected, 1) + "%) excluded by the import filters:", true, true);
+                            waitingHandler.appendReport(psmsRejected + " identified spectra (" + Util.roundDouble(sharePsmsRejected, 1) + "%) did not present a valid peptide.", true, true);
+                            waitingHandler.appendReport(totalAssumptionsRejected + " of the best scoring peptides were excluded by the import filters:", true, true);
 
                             String padding = "    ";
                             PeptideAssumptionFilter idFilter = identificationParameters.getPeptideAssumptionFilter();
 
-                            double share = 100 * ((double) proteinIssue) / totalAssumptionsRejected;
+                            double share = 100 * ((double) noProteins) / totalAssumptionsRejected;
+                            if (share >= 1) {
+                                waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1)
+                                        + "% peptide not matching to the database.", true, true);
+                            }
+                            share = 100 * ((double) proteinIssue) / totalAssumptionsRejected;
                             if (share >= 1) {
                                 waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1)
                                         + "% peptide mapping to both target and decoy.", true, true);
@@ -804,10 +811,35 @@ public class FileImporter {
                                 waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1) + "% unrecognized modifications.", true, true);
                             }
                         }
+                        // inform the user in case search engine results could not be mapped to the database
+                        boolean allSearchEngines = true;
+                        for (String advocateName : software.keySet()) {
+                            Advocate advocate = Advocate.getAdvocate(advocateName);
+                            if (advocate.getType() != Advocate.AdvocateType.search_engine) {
+                                allSearchEngines = false;
+                                break;
+                            }
+                        }
+                        if (allSearchEngines && noProteins > 0) {
+                            String report = "Some peptides could not be mapped to the database. Please verify the following:" + System.getProperty("line.separator");
+                            if (software.keySet().contains(Advocate.mascot.getName())) {
+                                report += "- Make sure that Mascot was not used using the 'decoy' option.";
+                            }
+                            report
+                                    += "- The protein sequence database must be the same or contain the database used for the search." + System.getProperty("line.separator")
+                                    + "- When using the 'REVERSED' tag, decoy sequences must be reversed versions of the target sequences, use the 'DECOY' tag otherwise." + System.getProperty("line.separator")
+                                    + "- When using in house databases make sure that the format is recognized by search engines and PeptideShaker (more details at http://compomics.github.io/searchgui/wiki/databasehelp.html)." + System.getProperty("line.separator")
+                                    + "The problematic spectra can be inspected in the Spectrum ID tab. In case of doubt please contact the developers.";
+                            waitingHandler.appendReport(report, true, true);
+                        }
+                        
                         // inform the user in case more than 75% of the hits were rejected by the filters
                         if (sharePsmsRejected > 75) {
                             String report = "Warning: More than 75% of the PSMs were rejected by the loading filters when importing the matches.";
                             double meanRejected = sharePsmsRejected / 4;
+                            if (!allSearchEngines && noProteins > meanRejected) {
+                                report += " PeptideShaker did not manage to map your peptides to the database. Please verify your database.";
+                            }
                             if (proteinIssue > meanRejected) {
                                 report += " Apparently your database contains a high degree of shared peptides between the target and decoy sequences. Please verify your database";
                                 if (software.keySet().contains(Advocate.mascot.getName())) {

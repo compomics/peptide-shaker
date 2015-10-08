@@ -417,7 +417,10 @@ public class PsmImporter {
     }
 
     /**
-     * Import the assumptions.
+     * Import the assumptions. Maps algorithm specific PTMs to the compomics
+     * utilities structure. Relocates aberrant modifications and removes
+     * assumptions where not all PTMs are mapped. Verifies whether there is a
+     * best match for the spectrum according to the search engine score.
      *
      * @param spectrumMatch the spectrum match to import
      * @param assumptions the assumptions to import
@@ -463,30 +466,8 @@ public class PsmImporter {
 
             HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> assumptionsForAdvocate = assumptions.get(advocateId);
 
-            // Apply the peptide filter
+            // Map PTMs
             HashSet<Double> scores = new HashSet<Double>(assumptionsForAdvocate.keySet());
-            for (Double score : scores) {
-                ArrayList<SpectrumIdentificationAssumption> oldAssumptions = assumptionsForAdvocate.get(score);
-                ArrayList<SpectrumIdentificationAssumption> newAssumptions = new ArrayList<SpectrumIdentificationAssumption>(oldAssumptions.size());
-                for (SpectrumIdentificationAssumption assumption : oldAssumptions) {
-                    if (assumption instanceof PeptideAssumption) {
-                        PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                        if (!peptideAssumptionFilter.validatePeptide(peptideAssumption.getPeptide(), sequenceMatchingPreferences)) {
-                            peptideIssue++;
-                        } else {
-                            newAssumptions.add(assumption);
-                        }
-                    }
-                }
-                if (!newAssumptions.isEmpty()) {
-                    assumptionsForAdvocate.put(score, newAssumptions);
-                } else {
-                    assumptionsForAdvocate.remove(score);
-                }
-            }
-
-            // Map PTMs, apply input filters
-            scores = new HashSet<Double>(assumptionsForAdvocate.keySet());
             for (Double eValue : scores) {
 
                 ArrayList<SpectrumIdentificationAssumption> oldAssumptions = assumptionsForAdvocate.get(eValue);
@@ -628,30 +609,7 @@ public class PsmImporter {
                                 }
                             }
                             initialPtmMapping(peptide, expectedNames, modNames, searchParameters);
-
-                            boolean filterPassed = true;
-                            if (peptideAssumptionFilter.validateModifications(peptide, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getPtmSettings())) {
-                                // Estimate the theoretic mass with the new modifications
-                                peptide.estimateTheoreticMass();
-                                if (!peptideAssumptionFilter.validatePrecursor(peptideAssumption, spectrumKey, spectrumFactory)) {
-                                    filterPassed = false;
-                                    precursorIssue++;
-                                } else if (!peptideAssumptionFilter.validateProteins(peptide, sequenceMatchingPreferences)) {
-                                    // Check whether there is a potential first hit which does not belong to both the target and the decoy database
-                                    filterPassed = false;
-                                    proteinIssue++;
-                                }
-                            } else {
-                                filterPassed = false;
-                                ptmIssue++;
-                            }
-                            ArrayList<String> accessions = peptide.getParentProteins(sequenceMatchingPreferences);
-                            if (accessions == null || accessions.isEmpty()) {
-                                missingProteins++;
-                            }
-                            if (filterPassed) {
-                                newAssumptions.add(assumption);
-                            }
+                            newAssumptions.add(assumption);
                         }
                     }
                 }
@@ -662,17 +620,49 @@ public class PsmImporter {
                 }
             }
 
-            // try to find the best peptide hit
+            // try to find the best peptide hit passing the initial filters
             PeptideAssumption firstPeptideHit = null;
+            PeptideAssumption firstPeptideHitNoProtein = null;
+            TagAssumption firstTagHit = null;
             if (!assumptionsForAdvocate.isEmpty()) {
                 ArrayList<Double> eValues = new ArrayList<Double>(assumptionsForAdvocate.keySet());
                 Collections.sort(eValues);
                 for (Double eValue : eValues) {
                     ArrayList<PeptideAssumption> firstHits = new ArrayList<PeptideAssumption>(1);
+                    ArrayList<PeptideAssumption> firstHitsNoProteins = new ArrayList<PeptideAssumption>(1);
                     for (SpectrumIdentificationAssumption assumption : assumptionsForAdvocate.get(eValue)) {
                         if (assumption instanceof PeptideAssumption) {
                             PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                            firstHits.add(peptideAssumption);
+                            Peptide peptide = peptideAssumption.getPeptide();
+                            boolean filterPassed = true;
+                            if (!peptideAssumptionFilter.validatePeptide(peptide, sequenceMatchingPreferences)) {
+                                filterPassed = false;
+                                peptideIssue++;
+                            }
+                            if (!peptideAssumptionFilter.validateModifications(peptide, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getPtmSettings())) {
+                                filterPassed = false;
+                                ptmIssue++;
+                            }
+                            if (!peptideAssumptionFilter.validatePrecursor(peptideAssumption, spectrumKey, spectrumFactory)) {
+                                filterPassed = false;
+                                precursorIssue++;
+                            }
+                            if (!peptideAssumptionFilter.validateProteins(peptide, sequenceMatchingPreferences)) {
+                                filterPassed = false;
+                                proteinIssue++;
+                            }
+                            ArrayList<String> accessions = peptide.getParentProteins(sequenceMatchingPreferences);
+                            if (accessions == null || accessions.isEmpty()) {
+                                missingProteins++;
+                                filterPassed = false;
+                                if (firstPeptideHitNoProtein != null) {
+                                    firstHitsNoProteins.add(peptideAssumption);
+                                }
+                            }
+
+                            if (filterPassed) {
+                                firstHits.add(peptideAssumption);
+                            }
                         }
                     }
                     if (!firstHits.isEmpty()) {
@@ -680,38 +670,50 @@ public class PsmImporter {
                     }
                     if (firstPeptideHit != null) {
                         inputMap.addEntry(advocateId, spectrumFileName, firstPeptideHit.getScore(), firstPeptideHit.getPeptide().isDecoy(sequenceMatchingPreferences));
-                        checkPeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHit);
+                        nRetained++;
+                        break;
+                    } else if (!firstHitsNoProteins.isEmpty()) {
+                        // See if a peptide without protein can be a best match
+                        firstPeptideHitNoProtein = BestMatchSelection.getBestHit(spectrumKey, firstHits, proteinCount, sequenceMatchingPreferences, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
+                    }
+                }
+                if (firstPeptideHit != null) {
+                    checkPeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHit);
+                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> previousAssumptions = identification.getAssumptions(spectrumKey);
+                    identification.addAssumptions(spectrumKey, assumptions, previousAssumptions == null);
+                    identification.addSpectrumMatch(spectrumMatch);
+                }
+                if (firstPeptideHit == null) {
+                    // Check if a peptide with no protein can be a good candidate
+                    if (firstPeptideHitNoProtein != null) {
+                        checkPeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHitNoProtein);
                         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> previousAssumptions = identification.getAssumptions(spectrumKey);
                         identification.addAssumptions(spectrumKey, assumptions, previousAssumptions == null);
                         identification.addSpectrumMatch(spectrumMatch);
-                        nRetained++;
-                        break;
-                    }
-                }
-            } else {
-                psmsRejected++;
-            }
-            if (firstPeptideHit == null) {
-                // Try to find the best tag hit
-                TagAssumption firstTagHit = null;
-                ArrayList<Double> eValues = new ArrayList<Double>(assumptionsForAdvocate.keySet());
-                Collections.sort(eValues);
-                for (Double eValue : eValues) {
-                    for (SpectrumIdentificationAssumption assumption : assumptionsForAdvocate.get(eValue)) {
-                        if (assumption instanceof TagAssumption) {
-                            TagAssumption tagAssumption = (TagAssumption) assumption;
-                            firstTagHit = tagAssumption;
-                            checkTagMassErrorsAndCharge(spectrumKey, tagAssumption);
-                            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> previousAssumptions = identification.getAssumptions(spectrumKey);
-                            identification.addAssumptions(spectrumKey, assumptions, previousAssumptions == null);
-                            identification.addSpectrumMatch(spectrumMatch);
-                            nRetained++;
-                            break;
+                    } else {
+                        // Try to find the best tag hit
+                        eValues = new ArrayList<Double>(assumptionsForAdvocate.keySet());
+                        Collections.sort(eValues);
+                        for (Double eValue : eValues) {
+                            for (SpectrumIdentificationAssumption assumption : assumptionsForAdvocate.get(eValue)) {
+                                if (assumption instanceof TagAssumption) {
+                                    TagAssumption tagAssumption = (TagAssumption) assumption;
+                                    firstTagHit = tagAssumption;
+                                    checkTagMassErrorsAndCharge(spectrumKey, tagAssumption);
+                                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> previousAssumptions = identification.getAssumptions(spectrumKey);
+                                    identification.addAssumptions(spectrumKey, assumptions, previousAssumptions == null);
+                                    identification.addSpectrumMatch(spectrumMatch);
+                                    break;
+                                }
+                            }
+                            if (firstTagHit != null) {
+                                break;
+                            }
                         }
                     }
-                    if (firstTagHit != null) {
-                        break;
-                    }
+                }
+                if (firstPeptideHit == null && firstPeptideHitNoProtein == null && firstTagHit == null) {
+                    psmsRejected++;
                 }
             }
         }
@@ -1253,10 +1255,10 @@ public class PsmImporter {
     public int getPtmIssue() {
         return ptmIssue;
     }
-    
+
     /**
      * Returns the number of PSMs where a protein was missing.
-     * 
+     *
      * @return the number of PSMs where a protein was missing
      */
     public int getMissingProteins() {

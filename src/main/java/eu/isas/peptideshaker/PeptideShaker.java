@@ -810,12 +810,8 @@ public class PeptideShaker {
                     psParameter.setPsmProbability(1.0);
                 }
 
-                Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                ArrayList<String> parentProteins = peptide.getParentProteinsNoRemapping();
-                if (parentProteins != null && !parentProteins.isEmpty()) {
-                    identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
-                    identification.buildPeptidesAndProteins(spectrumKey, sequenceMatchingPreferences);
-                }
+                identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
+                identification.buildPeptidesAndProteins(spectrumKey, sequenceMatchingPreferences);
 
                 waitingHandler.increaseSecondaryProgressCounter();
                 if (waitingHandler.isRunCanceled()) {

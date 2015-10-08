@@ -29,6 +29,7 @@ import com.compomics.util.preferences.ValidationQCPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.filtering.AssumptionFilter;
 import com.compomics.util.experiment.filtering.FilterItemComparator;
+import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
