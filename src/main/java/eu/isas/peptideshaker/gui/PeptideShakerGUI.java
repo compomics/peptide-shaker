@@ -61,7 +61,7 @@ import eu.isas.peptideshaker.gui.tabpanels.ProteinStructurePanel;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
 import eu.isas.peptideshaker.gui.tabpanels.QCPanel;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
-import eu.isas.peptideshaker.gui.tabpanels.StatsPanel;
+import eu.isas.peptideshaker.gui.tabpanels.ValidationPanel;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
@@ -276,7 +276,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     /**
      * The statistics panel.
      */
-    private StatsPanel statsPanel;
+    private ValidationPanel statsPanel;
     /**
      * The PTM panel.
      */
@@ -579,7 +579,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             proteinStructurePanel = new ProteinStructurePanel(this);
             proteinStructureJPanel.add(proteinStructurePanel);
             annotationPanel = new AnnotationPanel(this);
-            statsPanel = new StatsPanel(this);
+            statsPanel = new ValidationPanel(this);
 
             jumpToPanel = new JumpToPanel(this);
             jumpToPanel.setEnabled(false);
@@ -4302,7 +4302,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 goJPanel.add(goPanel);
                 return;
             case VALIDATION_TAB_INDEX:
-                statsPanel = new StatsPanel(this);
+                statsPanel = new ValidationPanel(this);
                 statsJPanel.removeAll();
                 statsJPanel.add(statsPanel);
         }
@@ -4395,7 +4395,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @return the StatsPanel
      */
-    public StatsPanel getStatsPanel() {
+    public ValidationPanel getStatsPanel() {
         return statsPanel;
     }
 

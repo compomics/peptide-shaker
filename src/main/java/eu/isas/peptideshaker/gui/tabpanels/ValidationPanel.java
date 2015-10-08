@@ -48,7 +48,7 @@ import org.jfree.ui.RectangleEdge;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class StatsPanel extends javax.swing.JPanel {
+public class ValidationPanel extends javax.swing.JPanel {
 
     /**
      * It true the tab has been initiated, i.e., the data has been displayed at
@@ -161,7 +161,7 @@ public class StatsPanel extends javax.swing.JPanel {
      *
      * @param parent the PeptideShaker parent frame.
      */
-    public StatsPanel(PeptideShakerGUI parent) {
+    public ValidationPanel(PeptideShakerGUI parent) {
 
         this.peptideShakerGUI = parent;
 
@@ -3658,6 +3658,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * Updates the FDR/FNR chart.
      */
     private void updateFDRFNRChart() {
+        
         DefaultXYDataset classicalFdrData = new DefaultXYDataset();
         double[][] classicalFdrSeries = {targetDecoySeries.getScores(), targetDecoySeries.getClassicalFDR()};
 

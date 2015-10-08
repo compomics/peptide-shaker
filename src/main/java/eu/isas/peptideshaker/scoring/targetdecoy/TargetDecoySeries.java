@@ -40,7 +40,7 @@ public class TargetDecoySeries {
      */
     private double[] probaBenefit;
     /**
-     * The amount of validated target hits.
+     * The number of validated target hits.
      */
     private double[] n;
     /**
