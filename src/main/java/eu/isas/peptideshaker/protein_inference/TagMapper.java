@@ -261,12 +261,11 @@ public class TagMapper {
      * @param spectrumMatch the spectrum match containing the tags to map
      * @param tagMatcher the tag matcher to match the tags
      * @param key the key of the tag to match
-     * @param waitingHandler waiting handler allowing the display of progress
-<<<<<<< HEAD
+     * @param waitingHandler waiting handler allowing the display of progress      <<<<<<< HEAD
      * and cancelling the process
-=======
+     * =======
      * and canceling the process
->>>>>>> 617e231a4bd9954d00582cbed0a76798fc16186c
+     * >>>>>>> 617e231a4bd9954d00582cbed0a76798fc16186c
      * @param increaseProgress boolean indicating whether the progress bar of
      * the waiting handler should be increased
      *
@@ -494,20 +493,17 @@ public class TagMapper {
                                     }
                                     int aaIndex = aa - 1;
                                     aminoAcidSequence.setAaAtIndex(aaIndex, aaAtTarget.get(0));
+                                } else if (advocateId == Advocate.pNovo.getIndex()) {
+                                    // already mapped
+                                } else if (advocateId == Advocate.novor.getIndex()) {
+                                    // already mapped
+                                } else {
+                                    Advocate notImplemented = Advocate.getAdvocate(advocateId);
+                                    if (notImplemented == null) {
+                                        throw new IllegalArgumentException("Advocate of id " + advocateId + " not recognized.");
+                                    }
+                                    throw new IllegalArgumentException("PTM mapping not implemented for " + Advocate.getAdvocate(advocateId).getName() + ".");
                                 }
-<<<<<<< HEAD
-                            } else if (advocateId == Advocate.pNovo.getIndex()) {
-                                // already mapped
-                            } else if (advocateId == Advocate.novor.getIndex()) {
-                                // already mapped
-=======
->>>>>>> 617e231a4bd9954d00582cbed0a76798fc16186c
-                            } else {
-                                Advocate notImplemented = Advocate.getAdvocate(advocateId);
-                                if (notImplemented == null) {
-                                    throw new IllegalArgumentException("Advocate of id " + advocateId + " not recognized.");
-                                }
-                                throw new IllegalArgumentException("PTM mapping not implemented for " + Advocate.getAdvocate(advocateId).getName() + ".");
                             }
                         }
                     }
