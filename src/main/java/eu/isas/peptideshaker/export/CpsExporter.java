@@ -99,12 +99,15 @@ public class CpsExporter {
             if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
                 waitingHandler.setPrimaryProgressCounterIndeterminate(true);
                 waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+            }
+            
+            if (waitingHandler == null || !waitingHandler.isRunCanceled()) {
                 File experimentFile = new File(dbFolder, MsExperiment.experimentObjectName);
                 ExperimentIO.save(experimentFile, experiment);
             }
 
             // tar everything in the current cps file
-            if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
+            if (waitingHandler == null || !waitingHandler.isRunCanceled()) {
                 TarUtils.tarFolderContent(dbFolder, destinationFile, waitingHandler);
             }
 

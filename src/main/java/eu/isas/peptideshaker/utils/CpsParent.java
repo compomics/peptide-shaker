@@ -119,6 +119,13 @@ public class CpsParent extends UserPreferencesParent {
     public static final String settingsTableName = "PeptideShaker_experiment_settings";
     
     /**
+     * Empty constructor for instantiation purposes.
+     */
+    public CpsParent() {
+        
+    }
+    
+    /**
      * Constructor.
      * 
      * @param dbFolder the folder where the database is stored.
@@ -784,6 +791,24 @@ public class CpsParent extends UserPreferencesParent {
      */
     public void setShotgunProtocol(ShotgunProtocol shotgunProtocol) {
         this.shotgunProtocol = shotgunProtocol;
+    }
+
+    /**
+     * Returns the folder where the database is stored.
+     * 
+     * @return the folder where the database is stored
+     */
+    public File getDbFolder() {
+        return dbFolder;
+    }
+
+    /**
+     * Sets the folder where the database is stored.
+     * 
+     * @param dbFolder the folder where the database is stored
+     */
+    public void setDbFolder(File dbFolder) {
+        this.dbFolder = dbFolder;
     }
 
     /**

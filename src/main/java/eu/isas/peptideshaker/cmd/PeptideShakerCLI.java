@@ -94,7 +94,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * @param cliInputBean the PeptideShakerCLIInputBean
      */
     public PeptideShakerCLI(PeptideShakerCLIInputBean cliInputBean) {
-        super(PeptideShaker.getMatchesFolder());
         this.cliInputBean = cliInputBean;
         loadEnzymes();
     }
@@ -119,6 +118,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     e.printStackTrace();
                 }
             }
+
+            setDbFolder(PeptideShaker.getMatchesFolder());
+
             try {
                 ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
                 if (!errorKeys.isEmpty()) {
