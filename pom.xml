@@ -315,7 +315,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>4.0.13</version>
+            <version>4.0.14</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -343,19 +343,19 @@
         <dependency>
             <groupId>de.proteinms.omxparser</groupId>
             <artifactId>omssa-parser</artifactId>
-            <version>1.7.0</version>
+            <version>1.7.1</version>
         </dependency>
         
         <dependency>
             <groupId>de.proteinms.xtandemparser</groupId>
             <artifactId>xtandem-parser</artifactId>
-            <version>1.8.0</version>
+            <version>1.8.1</version>
         </dependency>
         
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>mascotdatfile</artifactId>
-            <version>3.4.31</version>
+            <version>3.4.32</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.lowagie</groupId>

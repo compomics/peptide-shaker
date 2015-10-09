@@ -1,15 +1,29 @@
 package eu.isas.peptideshaker.protein_inference;
 
 import com.compomics.util.exceptions.ExceptionHandler;
+import com.compomics.util.experiment.biology.AminoAcid;
+import com.compomics.util.experiment.biology.PTM;
+import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
+import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
+import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
+import com.compomics.util.experiment.identification.matches.ModificationMatch;
+import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
+import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
+import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
+import eu.isas.peptideshaker.fileimport.PsmImporter;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -226,6 +240,16 @@ public class PeptideMapper {
     }
 
     /**
+     * Sets whether the mapping should be cancelled.
+     *
+     * @param canceled a boolean indicating whether the mapping should be
+     * cancelled.
+     */
+    public void setCanceled(boolean canceled) {
+        this.canceled = canceled;
+    }
+
+    /**
      * Indicates whether the mapping was canceled.
      *
      * @return boolean indicating whether the mapping was canceled
@@ -276,6 +300,169 @@ public class PeptideMapper {
                 canceled = true;
             }
         }
+    }
+
+    /**
+     * Creates a map of peptides which are likely to require protein mapping
+     * from a given identification file. These are best scoring peptides and
+     * peptides likely to carry protein terminal modifications. Peptides are
+     * sorted in a map indexed by their leading first amino acids. The number of
+     * amino acids depends on the key size of the protein tree.
+     *
+     * @param fileReader the file reader used to parse the identification file
+     * @param idFileSpectrumMatches the list of spectrum matches from this file
+     * @param identification the identification used to store matches
+     * @param identificationParameters the identification parameters
+     * @param waitingHandler a waiting handler to display progress and allowing cancelling the process
+     *
+     * @return a map of peptides which are likely to require protein mapping
+     *
+     * @throws SQLException exception thrown if an error occurred while
+     * accessing the protein tree
+     * @throws IOException exception thrown if an error occurred while accessing
+     * the protein tree
+     * @throws ClassNotFoundException exception thrown if an error occurred
+     * while accessing the protein tree
+     * @throws InterruptedException exception thrown if an error occurred while
+     * accessing the protein tree
+     */
+    public static HashMap<String, LinkedList<Peptide>> getPeptideMap(IdfileReader fileReader, LinkedList<SpectrumMatch> idFileSpectrumMatches, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        PeptideAssumptionFilter peptideAssumptionFilter = identificationParameters.getPeptideAssumptionFilter();
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        PtmSettings ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
+        LinkedList<Double> terminalModificationMasses = new LinkedList<Double>();
+        PTMFactory ptmFactory = PTMFactory.getInstance();
+        for (String ptmName : ptmSettings.getAllModifications()) {
+            PTM ptm = ptmFactory.getPTM(ptmName);
+            if (ptm.getType() == PTM.MODC
+                    || ptm.getType() == PTM.MODCAA
+                    || ptm.getType() == PTM.MODN
+                    || ptm.getType() == PTM.MODNAA) {
+                terminalModificationMasses.add(ptm.getMass());
+            }
+        }
+        int peptideMapKeyLength = SequenceFactory.getInstance().getDefaultProteinTree().getInitialTagSize();
+        int rankMax = 3;
+        HashMap<String, LinkedList<Peptide>> peptideMap = new HashMap<String, LinkedList<Peptide>>(7000);
+        for (SpectrumMatch spectrumMatch : idFileSpectrumMatches) {
+            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> matchAssumptions = spectrumMatch.getAssumptionsMap();
+            String spectrumKey = spectrumMatch.getKey();
+            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> rawDbAssumptions = null;
+            if (fileReader.hasDeNovoTags()) { // for now only de novo results are stored in the database at this point
+                rawDbAssumptions = identification.getRawAssumptions(spectrumKey);
+            }
+            HashSet<Integer> algorithms = new HashSet<Integer>();
+            if (matchAssumptions != null) {
+                algorithms.addAll(matchAssumptions.keySet());
+            }
+            if (rawDbAssumptions != null) {
+                algorithms.addAll(rawDbAssumptions.keySet());
+            }
+            for (Integer algorithm : algorithms) {
+                HashSet<Double> scores = new HashSet<Double>();
+                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> scoreMap1 = null;
+                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> scoreMap2 = null;
+                if (matchAssumptions != null) {
+                    scoreMap1 = matchAssumptions.get(algorithm);
+                    if (scoreMap1 != null) {
+                        scores.addAll(scoreMap1.keySet());
+                    }
+                }
+                if (rawDbAssumptions != null) {
+                    scoreMap2 = rawDbAssumptions.get(algorithm);
+                    if (scoreMap2 != null) {
+                        scores.addAll(scoreMap2.keySet());
+                    }
+                }
+                LinkedList<Double> scoresList = new LinkedList<Double>(scores);
+                Collections.sort(scoresList);
+                ArrayList<Peptide> bestScoringPeptides = new ArrayList<Peptide>(2);
+                int rank = 1;
+                ArrayList<Peptide> terminalModificationPeptides = new ArrayList<Peptide>(2);
+                for (Double score : scoresList) {
+                    if (scoreMap1 != null) {
+                        ArrayList<SpectrumIdentificationAssumption> assumptions = scoreMap1.get(score);
+                        if (assumptions != null) {
+                            for (SpectrumIdentificationAssumption assumption : assumptions) {
+                                if (assumption instanceof PeptideAssumption) {
+                                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                                    Peptide peptide = peptideAssumption.getPeptide();
+                                    boolean potentialTerminalModification = false;
+                                    if (rank > rankMax) {
+                                        potentialTerminalModification = PsmImporter.hasPotentialTerminalModification(fileReader, identificationParameters.getSearchParameters(), peptide, terminalModificationMasses);
+                                    }
+                                    if ((rank <= rankMax || potentialTerminalModification) && peptideAssumptionFilter.validatePeptide(peptide, sequenceMatchingPreferences)) {
+                                        if (rank < rankMax) {
+                                            bestScoringPeptides.add(peptide);
+                                        } else if (potentialTerminalModification) {
+                                            terminalModificationPeptides.add(peptide);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (scoreMap2 != null) {
+                        ArrayList<SpectrumIdentificationAssumption> assumptions = scoreMap2.get(score);
+                        if (assumptions != null) {
+                            for (SpectrumIdentificationAssumption assumption : assumptions) {
+                                if (assumption instanceof PeptideAssumption) {
+                                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                                    Peptide peptide = peptideAssumption.getPeptide();
+                                    boolean potentialTerminalModification = false;
+                                    if (rank > rankMax) {
+                                        potentialTerminalModification = PsmImporter.hasPotentialTerminalModification(fileReader, identificationParameters.getSearchParameters(), peptide, terminalModificationMasses);
+                                    }
+                                    if ((rank <= rankMax || potentialTerminalModification) && peptideAssumptionFilter.validatePeptide(peptide, sequenceMatchingPreferences)) {
+                                        if (rank <= rankMax) {
+                                            bestScoringPeptides.add(peptide);
+                                        } else if (potentialTerminalModification) {
+                                            terminalModificationPeptides.add(peptide);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (rank <= rankMax && !bestScoringPeptides.isEmpty()) {
+                        for (Peptide peptide : bestScoringPeptides) {
+                            String sequence = peptide.getSequence();
+                            String subSequence = sequence.substring(0, peptideMapKeyLength);
+                            subSequence = AminoAcid.getMatchingSequence(subSequence, sequenceMatchingPreferences);
+                            LinkedList<Peptide> peptidesForTag = peptideMap.get(subSequence);
+                            if (peptidesForTag == null) {
+                                peptidesForTag = new LinkedList<Peptide>();
+                                peptideMap.put(subSequence, peptidesForTag);
+                            }
+                            peptidesForTag.add(peptide);
+                        }
+                        rank++;
+                    }
+                    if (!terminalModificationPeptides.isEmpty()) {
+                        for (Peptide peptide : terminalModificationPeptides) {
+                            String sequence = peptide.getSequence();
+                            String subSequence = sequence.substring(0, peptideMapKeyLength);
+                            subSequence = AminoAcid.getMatchingSequence(subSequence, sequenceMatchingPreferences);
+                            LinkedList<Peptide> peptidesForTag = peptideMap.get(subSequence);
+                            if (peptidesForTag == null) {
+                                peptidesForTag = new LinkedList<Peptide>();
+                                peptideMap.put(subSequence, peptidesForTag);
+                            }
+                            peptidesForTag.add(peptide);
+                        }
+                        terminalModificationPeptides.clear();
+                    }
+                }
+            }
+            if (waitingHandler != null) {
+                if (waitingHandler.isRunCanceled()) {
+                    return new HashMap<String, LinkedList<Peptide>>(0);
+                }
+                waitingHandler.increaseSecondaryProgressCounter();
+            }
+        }
+        return peptideMap;
     }
 
     /**

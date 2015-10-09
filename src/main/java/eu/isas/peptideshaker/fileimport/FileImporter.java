@@ -19,6 +19,9 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.exceptions.exception_handlers.WaitingDialogExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
+import com.compomics.util.experiment.biology.AminoAcid;
+import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
@@ -26,6 +29,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PSProcessingPreferences;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -701,18 +705,25 @@ public class FileImporter {
                             tagMapper.mapTags(fileReader, identification, waitingHandler, processingPreferences.getnThreads());
                         }
 
-                        // Map the peptides on protein sequences
-                        if (peptideMapper != null) {
+                        // Batch map the peptides on protein sequences
+                        if (peptideMapper != null && !peptideMapper.isCanceled()) {
                             try {
+                                // Get map of peptides likely to need protein mapping
+                                waitingHandler.resetSecondaryProgressCounter();
+                                waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
+                                waitingHandler.appendReport("Collecting peptides to map.", true, true);
+                                HashMap<String, LinkedList<Peptide>> peptideMap = PeptideMapper.getPeptideMap(fileReader, idFileSpectrumMatches, identification, identificationParameters, waitingHandler);
                                 if (!peptideMapper.isCanceled()) {
-                                    peptideMapper.mapPeptides(fileReader.getPeptidesMap(), processingPreferences.getnThreads(), waitingHandler);
+                                    peptideMapper.mapPeptides(peptideMap, processingPreferences.getnThreads(), waitingHandler);
                                 }
                                 if (peptideMapper.isCanceled()) {
-                                    fileReader.clearPeptidesMap();
+                                    peptideMap.clear();
                                 }
                             } catch (OutOfMemoryError e) {
-                                e.printStackTrace();
-                                fileReader.clearPeptidesMap();
+                                // Skip batch mapping and empty caches
+                                ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(1, null);
+                                sequenceFactory.reduceNodeCacheSize(1);
+                                peptideMapper.setCanceled(true);
                             }
                         }
                         // empty protein caches
@@ -727,6 +738,10 @@ public class FileImporter {
                         PsmImporter psmImporter = new PsmImporter(peptideShaker.getCache(), shotgunProtocol, identificationParameters, processingPreferences, fileReader, idFile, identification,
                                 inputMap, proteinCount, singleProteinList, exceptionHandler);
                         psmImporter.importPsms(idFileSpectrumMatches, processingPreferences.getnThreads(), waitingHandler);
+                        
+                        if (waitingHandler.isRunCanceled()) {
+                            return;
+                        }
 
                         nPSMs += psmImporter.getnPSMs();
                         nSecondary += psmImporter.getnSecondary();
@@ -832,7 +847,7 @@ public class FileImporter {
                                     + "The problematic spectra can be inspected in the Spectrum ID tab. In case of doubt please contact the developers.";
                             waitingHandler.appendReport(report, true, true);
                         }
-                        
+
                         // inform the user in case more than 75% of the hits were rejected by the filters
                         if (sharePsmsRejected > 75) {
                             String report = "Warning: More than 75% of the PSMs did not pass the import filters." + System.getProperty("line.separator");

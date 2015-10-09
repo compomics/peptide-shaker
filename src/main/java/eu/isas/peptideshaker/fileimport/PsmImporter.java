@@ -286,7 +286,7 @@ public class PsmImporter {
             }
         }
         pool.shutdown();
-        if (!pool.awaitTermination(12, TimeUnit.HOURS)) {
+        if (!pool.awaitTermination(1, TimeUnit.DAYS)) {
             throw new InterruptedException("PSM import timed out. Please contact the developers.");
         }
     }
@@ -359,7 +359,10 @@ public class PsmImporter {
         String spectrumKey = spectrumMatch.getKey();
 
         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> matchAssumptions = spectrumMatch.getAssumptionsMap();
-        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> rawDbAssumptions = identification.getRawAssumptions(spectrumKey);
+        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> rawDbAssumptions = null;
+        if (fileReader.hasDeNovoTags()) { // for now only de novo results are stored in the database at this point
+            rawDbAssumptions = identification.getRawAssumptions(spectrumKey);
+        }
 
         if (matchAssumptions == null && rawDbAssumptions == null) {
             throw new IllegalArgumentException("No identification assumption found for PSM " + spectrumKey + ".");
@@ -520,20 +523,18 @@ public class PsmImporter {
                                             try {
                                                 omssaIndex = new Integer(sePTM);
                                             } catch (Exception e) {
-                                                waitingHandler.appendReport("Impossible to parse OMSSA modification index " + sePTM + ".", true, true);
+                                                throw new IllegalArgumentException("Impossible to parse OMSSA modification index " + sePTM + ".");
                                             }
-                                            if (omssaIndex != null) {
-                                                String omssaName = omssaParameters.getModificationName(omssaIndex);
-                                                if (omssaName == null) {
-                                                    if (!ignoredModifications.contains(omssaIndex)) {
-                                                        waitingHandler.appendReport("Impossible to find OMSSA modification of index "
-                                                                + omssaIndex + ". The corresponding peptides will be ignored.", true, true);
-                                                        ignoredModifications.add(omssaIndex);
-                                                    }
-                                                    omssaName = PTMFactory.unknownPTM.getName();
+                                            String omssaName = omssaParameters.getModificationName(omssaIndex);
+                                            if (omssaName == null) {
+                                                if (!ignoredModifications.contains(omssaIndex)) {
+                                                    waitingHandler.appendReport("Impossible to find OMSSA modification of index "
+                                                            + omssaIndex + ". The corresponding peptides will be ignored.", true, true);
+                                                    ignoredModifications.add(omssaIndex);
                                                 }
-                                                tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, omssaName, ptmMassTolerance, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
+                                                omssaName = PTMFactory.unknownPTM.getName();
                                             }
+                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, omssaName, ptmMassTolerance, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
                                         } else if (fileReader instanceof AndromedaIdfileReader) {
                                             AndromedaParameters andromedaParameters = (AndromedaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.andromeda.getIndex());
                                             if (!andromedaParameters.hasPtmIndexes()) {
@@ -543,20 +544,18 @@ public class PsmImporter {
                                             try {
                                                 andromedaIndex = new Integer(sePTM);
                                             } catch (Exception e) {
-                                                waitingHandler.appendReport("Impossible to parse Andromdea modification index " + sePTM + ".", true, true);
+                                                throw new IllegalArgumentException("Impossible to parse Andromdea modification index " + sePTM + ".");
                                             }
-                                            if (andromedaIndex != null) {
-                                                String andromedaName = andromedaParameters.getModificationName(andromedaIndex);
-                                                if (andromedaName == null) {
-                                                    if (!ignoredModifications.contains(andromedaIndex)) {
-                                                        waitingHandler.appendReport("Impossible to find Andromeda modification of index "
-                                                                + andromedaIndex + ". The corresponding peptides will be ignored.", true, true);
-                                                        ignoredModifications.add(andromedaIndex);
-                                                    }
-                                                    andromedaName = PTMFactory.unknownPTM.getName();
+                                            String andromedaName = andromedaParameters.getModificationName(andromedaIndex);
+                                            if (andromedaName == null) {
+                                                if (!ignoredModifications.contains(andromedaIndex)) {
+                                                    waitingHandler.appendReport("Impossible to find Andromeda modification of index "
+                                                            + andromedaIndex + ". The corresponding peptides will be ignored.", true, true);
+                                                    ignoredModifications.add(andromedaIndex);
                                                 }
-                                                tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, andromedaName, ptmMassTolerance, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
+                                                andromedaName = PTMFactory.unknownPTM.getName();
                                             }
+                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, andromedaName, ptmMassTolerance, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
                                         } else if (fileReader instanceof MascotIdfileReader
                                                 || fileReader instanceof XTandemIdfileReader
                                                 || fileReader instanceof MsAmandaIdfileReader
@@ -564,7 +563,7 @@ public class PsmImporter {
                                                 || fileReader instanceof PepxmlIdfileReader
                                                 || fileReader instanceof TideIdfileReader) {
                                             String[] parsedName = sePTM.split("@");
-                                            double seMass = 0;
+                                            Double seMass;
                                             try {
                                                 seMass = new Double(parsedName[0]);
                                             } catch (Exception e) {
@@ -638,25 +637,23 @@ public class PsmImporter {
                             if (!peptideAssumptionFilter.validatePeptide(peptide, sequenceMatchingPreferences)) {
                                 filterPassed = false;
                                 peptideIssue++;
-                            }
-                            if (!peptideAssumptionFilter.validateModifications(peptide, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getPtmSettings())) {
+                            } else if (!peptideAssumptionFilter.validateModifications(peptide, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getPtmSettings())) {
                                 filterPassed = false;
                                 ptmIssue++;
-                            }
-                            if (!peptideAssumptionFilter.validatePrecursor(peptideAssumption, spectrumKey, spectrumFactory)) {
+                            } else if (!peptideAssumptionFilter.validatePrecursor(peptideAssumption, spectrumKey, spectrumFactory)) {
                                 filterPassed = false;
                                 precursorIssue++;
-                            }
-                            if (!peptideAssumptionFilter.validateProteins(peptide, sequenceMatchingPreferences)) {
+                            } else if (!peptideAssumptionFilter.validateProteins(peptide, sequenceMatchingPreferences)) {
                                 filterPassed = false;
                                 proteinIssue++;
-                            }
-                            ArrayList<String> accessions = peptide.getParentProteins(sequenceMatchingPreferences);
-                            if (accessions == null || accessions.isEmpty()) {
-                                missingProteins++;
-                                filterPassed = false;
-                                if (firstPeptideHitNoProtein != null) {
-                                    firstHitsNoProteins.add(peptideAssumption);
+                            } else {
+                                ArrayList<String> accessions = peptide.getParentProteins(sequenceMatchingPreferences);
+                                if (accessions == null || accessions.isEmpty()) {
+                                    missingProteins++;
+                                    filterPassed = false;
+                                    if (firstPeptideHitNoProtein != null) {
+                                        firstHitsNoProteins.add(peptideAssumption);
+                                    }
                                 }
                             }
 
@@ -717,6 +714,98 @@ public class PsmImporter {
                 }
             }
         }
+    }
+
+    /**
+     * Attempts at guessing whether a peptide as parsed from the search engine
+     * results can carry a protein terminal PTM.
+     *
+     * @param fileReader the file reader used for the parsing
+     * @param searchParameters the search parameters
+     * @param peptide the peptide of interest
+     * @param terminalModificationMasses convenience list containing the masses
+     * of protein terminal PTMs
+     *
+     * @return true if the peptide can carry protein terminal PTM.
+     */
+    public static boolean hasPotentialTerminalModification(IdfileReader fileReader, SearchParameters searchParameters, Peptide peptide, LinkedList<Double> terminalModificationMasses) {
+        PTMFactory ptmFactory = PTMFactory.getInstance();
+        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+            String sePTM = modificationMatch.getTheoreticPtm();
+            if (fileReader instanceof OMSSAIdfileReader) {
+                OmssaParameters omssaParameters = (OmssaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.omssa.getIndex());
+                if (!omssaParameters.hasPtmIndexes()) {
+                    throw new IllegalArgumentException("OMSSA modification indexes not set in the search parameters.");
+                }
+                Integer omssaIndex;
+                try {
+                    omssaIndex = new Integer(sePTM);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Impossible to parse OMSSA modification index " + sePTM + ".");
+                }
+                String ptmName = omssaParameters.getModificationName(omssaIndex);
+                if (ptmName != null) {
+                    PTM ptm = ptmFactory.getPTM(ptmName);
+                    if (ptm.getType() == PTM.MODC
+                            || ptm.getType() == PTM.MODCAA
+                            || ptm.getType() == PTM.MODN
+                            || ptm.getType() == PTM.MODNAA) {
+                        return true;
+                    }
+                }
+            } else if (fileReader instanceof AndromedaIdfileReader) {
+                AndromedaParameters andromedaParameters = (AndromedaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.andromeda.getIndex());
+                if (!andromedaParameters.hasPtmIndexes()) {
+                    throw new IllegalArgumentException("Andromeda modification indexes not set in the search parameters.");
+                }
+                Integer andromedaIndex = null;
+                try {
+                    andromedaIndex = new Integer(sePTM);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Impossible to parse Andromdea modification index " + sePTM + ".");
+                }
+                String ptmName = andromedaParameters.getModificationName(andromedaIndex);
+                if (ptmName != null) {
+                    PTM ptm = ptmFactory.getPTM(ptmName);
+                    if (ptm.getType() == PTM.MODC
+                            || ptm.getType() == PTM.MODCAA
+                            || ptm.getType() == PTM.MODN
+                            || ptm.getType() == PTM.MODNAA) {
+                        return true;
+                    }
+                }
+            } else if (fileReader instanceof MascotIdfileReader
+                    || fileReader instanceof XTandemIdfileReader
+                    || fileReader instanceof MsAmandaIdfileReader
+                    || fileReader instanceof MzIdentMLIdfileReader
+                    || fileReader instanceof PepxmlIdfileReader
+                    || fileReader instanceof TideIdfileReader) {
+                String[] parsedName = sePTM.split("@");
+                Double seMass;
+                try {
+                    seMass = new Double(parsedName[0]);
+                    for (Double terminalModificationMass : terminalModificationMasses) {
+                        if (Math.abs(seMass - terminalModificationMass) < 0.1) {
+                            return true;
+                        }
+                    }
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as a modification.");
+                }
+            } else if (fileReader instanceof DirecTagIdfileReader
+                    || fileReader instanceof NovorIdfileReader) {
+                PTM ptm = ptmFactory.getPTM(sePTM);
+                if (ptm.getType() == PTM.MODC
+                        || ptm.getType() == PTM.MODCAA
+                        || ptm.getType() == PTM.MODN
+                        || ptm.getType() == PTM.MODNAA) {
+                    return true;
+                }
+            } else {
+                throw new IllegalArgumentException("PTM mapping not implemented for the parsing of " + fileReader.getClass() + ".");
+            }
+        }
+        return false;
     }
 
     /**
