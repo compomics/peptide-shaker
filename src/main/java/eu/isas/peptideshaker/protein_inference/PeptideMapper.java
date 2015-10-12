@@ -9,7 +9,6 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
-import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
@@ -313,7 +312,8 @@ public class PeptideMapper {
      * @param idFileSpectrumMatches the list of spectrum matches from this file
      * @param identification the identification used to store matches
      * @param identificationParameters the identification parameters
-     * @param waitingHandler a waiting handler to display progress and allowing cancelling the process
+     * @param waitingHandler a waiting handler to display progress and allowing
+     * canceling the process
      *
      * @return a map of peptides which are likely to require protein mapping
      *
