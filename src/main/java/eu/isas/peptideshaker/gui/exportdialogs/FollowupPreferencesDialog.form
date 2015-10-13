@@ -285,7 +285,7 @@
           <SubComponents>
             <Component class="javax.swing.JButton" name="exportProgenesisButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Export CSV"/>
+                <Property name="text" type="java.lang.String" value="Export TXT"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportProgenesisButtonActionPerformed"/>

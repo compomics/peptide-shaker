@@ -3396,7 +3396,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 });
 
                 popupMenu.add(menuItem);
-
             }
         }
 

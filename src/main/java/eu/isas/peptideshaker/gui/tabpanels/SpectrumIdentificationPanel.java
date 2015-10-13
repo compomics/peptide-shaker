@@ -3159,7 +3159,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         if (tableIndex == TableIndex.SPECTRUM_FILES || tableIndex == TableIndex.PSM_TABLES) {
 
             // get the file to send the output to
-            final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+            final File selectedFile = peptideShakerGUI.getUserSelectedFile("table_export.txt", ".txt", "Tab separated text file (.txt)", "Export...", false);
 
             if (selectedFile != null) {
                 try {

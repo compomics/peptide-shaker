@@ -3344,7 +3344,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 } else if (tableIndex == TableIndex.PDB_MATCHES || tableIndex == TableIndex.PDB_CHAINS) {
 
                     // get the file to send the output to
-                    File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+                    File selectedFile = peptideShakerGUI.getUserSelectedFile("pdb_details.txt", ".txt", "Tab separated text file (.txt)", "Export...", false);
 
                     if (selectedFile != null) {
                         BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));

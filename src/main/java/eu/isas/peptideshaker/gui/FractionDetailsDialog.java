@@ -547,7 +547,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
     private void importFractionRangesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importFractionRangesButtonActionPerformed
 
         // get the file to get the fraction ranges from
-        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Import...", true);
+        final File selectedFile = peptideShakerGUI.getUserSelectedFile(null, ".txt", "Tab separated text file (.txt)", "Import...", true);
 
         if (selectedFile != null) {
 

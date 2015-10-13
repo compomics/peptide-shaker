@@ -227,7 +227,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         progenesisPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Label Free Quantification"));
         progenesisPanel.setOpaque(false);
 
-        exportProgenesisButton.setText("Export CSV");
+        exportProgenesisButton.setText("Export TXT");
         exportProgenesisButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportProgenesisButtonActionPerformed(evt);
@@ -533,9 +533,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         final File finalOutputFile;
 
         if (psmSelectionComboBox.getSelectedIndex() == 4) {
-            finalOutputFile = peptideShakerGUI.getUserSelectedFile(".xls", "Excel Workbook (*.xls)", "Select Destination File", false);
+            finalOutputFile = peptideShakerGUI.getUserSelectedFile("progenesis_psm_export.xls", ".xls", "Excel Workbook (*.xls)", "Select Destination File", false);
         } else {
-            finalOutputFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab Separated Text File (*.txt)", "Select Destination File", false);
+            finalOutputFile = peptideShakerGUI.getUserSelectedFile("progenesis_psm_export.txt", ".txt", "Tab Separated Text File (*.txt)", "Select Destination File", false);
         }
 
         if (finalOutputFile != null) {
@@ -867,7 +867,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      */
     private void exportSwath() {
 
-        final File finalOutputFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab Separated Text Fil) (*.txt)", "Select Destination File", false);
+        final File finalOutputFile = peptideShakerGUI.getUserSelectedFile("swath_export.txt", ".txt", "Tab Separated Text Fil) (*.txt)", "Select Destination File", false);
 
         if (finalOutputFile != null) {
 
@@ -933,9 +933,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         // get the file to send the output to
         final File selectedFile;
         if (accessionsOnly) {
-            selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Supported formats: text format (.txt)", "Select Destination File", false);
+            selectedFile = peptideShakerGUI.getUserSelectedFile("proteins.txt", ".txt", "Supported formats: text format (.txt)", "Select Destination File", false);
         } else {
-            selectedFile = peptideShakerGUI.getUserSelectedFile(".fasta", "Supported formats: FASTA format (.fasta)", "Select Destination File", false);
+            selectedFile = peptideShakerGUI.getUserSelectedFile("proteins.fasta", ".fasta", "Supported formats: FASTA format (.fasta)", "Select Destination File", false);
         }
         final boolean finalAccessionsOnly = accessionsOnly;
 

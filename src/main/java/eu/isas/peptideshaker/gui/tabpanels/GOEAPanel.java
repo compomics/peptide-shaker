@@ -1645,7 +1645,7 @@ public class GOEAPanel extends javax.swing.JPanel {
             // protein table
 
             // get the file to send the output to
-            final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+            final File selectedFile = peptideShakerGUI.getUserSelectedFile("proteins.txt", ".txt", "Tab separated text file (.txt)", "Export...", false);
 
             if (selectedFile != null) {
 

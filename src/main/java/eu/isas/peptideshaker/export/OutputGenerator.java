@@ -183,7 +183,7 @@ public class OutputGenerator {
         final JDialog parentDialog = aParentDialog;
 
         // get the file to send the output to
-        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+        final File selectedFile = peptideShakerGUI.getUserSelectedFile("protein_export.txt", ".txt", "Tab separated text file (.txt)", "Export...", false);
 
         if (selectedFile != null) {
 
@@ -632,7 +632,7 @@ public class OutputGenerator {
         final boolean enzymatic = aEnzymatic;
 
         // get the file to send the output to
-        File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+        File selectedFile = peptideShakerGUI.getUserSelectedFile("peptide_export.txt", ".txt", "Tab separated text file (.txt)", "Export...", false);
 
         if (selectedFile != null) {
 
@@ -1140,7 +1140,7 @@ public class OutputGenerator {
         final boolean includeHidden = aIncludeHidden;
 
         // get the file to send the output to
-        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+        final File selectedFile = peptideShakerGUI.getUserSelectedFile("psm_export.txt", ".txt", "Tab separated text file (.txt)", "Export...", false);
 
         if (selectedFile != null) {
 
@@ -2184,7 +2184,7 @@ public class OutputGenerator {
         final boolean includeHeader = aIncludeHeader;
 
         // get the file to send the output to
-        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+        final File selectedFile = peptideShakerGUI.getUserSelectedFile("assumptions_export.txt", ".txt", "Tab separated text file (.txt)", "Export...", false);
 
         if (selectedFile != null) {
 
@@ -2536,7 +2536,7 @@ public class OutputGenerator {
         final JDialog parentDialog = aParentDialog;
 
         // get the file to send the output to
-        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+        final File selectedFile = peptideShakerGUI.getUserSelectedFile("fractions_export.txt", ".txt", "Tab separated text file (.txt)", "Export...", false);
 
         if (selectedFile != null) {
 

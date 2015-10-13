@@ -147,7 +147,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
         String excelFileFilterDescription = "Excel Workbook (.xls)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
         FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".txt", ".xls"},
-                new String[]{textFileFilterDescription, excelFileFilterDescription}, "Export Report", lastSelectedFolderPath, false, true, false, 0);
+                new String[]{textFileFilterDescription, excelFileFilterDescription}, "Export Report", lastSelectedFolderPath, "certificate_of_analysis", false, true, false, 0);
 
         if (selectedFileAndFilter != null) {
 

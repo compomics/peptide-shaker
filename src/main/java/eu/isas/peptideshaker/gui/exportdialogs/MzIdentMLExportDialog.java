@@ -540,7 +540,8 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         }
 
         FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".mzid", ".mzid"},
-                new String[]{mzid_v1_1_FileFilterDescription, mzid_v1_2_FileFilterDescription}, "Select Export File", folder, false, true, false, defaultFilterIndex);
+                new String[]{mzid_v1_1_FileFilterDescription, mzid_v1_2_FileFilterDescription}, "Select Export File", 
+                folder, peptideShakerGUI.getExperiment().getReference(), false, true, false, defaultFilterIndex);
 
         if (selectedFileAndFilter != null) {
             String path = selectedFileAndFilter.getFile().getAbsolutePath();

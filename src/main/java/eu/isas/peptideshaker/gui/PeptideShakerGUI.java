@@ -2410,7 +2410,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         String cpsFileFilterDescription = "PeptideShaker (.cpsx)";
         String zipFileFilterDescription = "Zipped PeptideShaker (.zip)";
         FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".cpsx", ".zip"},
-                new String[]{cpsFileFilterDescription, zipFileFilterDescription}, "Open PeptideShaker Project", lastSelectedFolderPath, true, false, false, 0);
+                new String[]{cpsFileFilterDescription, zipFileFilterDescription}, "Open PeptideShaker Project", lastSelectedFolderPath, null, true, false, false, 0);
 
         if (selectedFileAndFilter != null) {
 
@@ -5715,7 +5715,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         if (!selectedSpectra.isEmpty()) {
 
-            File selectedFile = getUserSelectedFile(".mgf", "Mascot Generic Format (*.mgf)", "Save As...", false);
+            File selectedFile = getUserSelectedFile("selected_spectra.mgf", ".mgf", "Mascot Generic Format (*.mgf)", "Save As...", false);
 
             if (selectedFile != null) {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile));
@@ -5765,7 +5765,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         if (selectedAssumptions != null && !selectedAssumptions.isEmpty()) {
 
-            File selectedFile = getUserSelectedFile(".txt", "Text (*.txt)", "Save As...", false);
+            File selectedFile = getUserSelectedFile("annotated_spectra.txt", ".txt", "Text (*.txt)", "Save As...", false);
 
             if (selectedFile != null) {
 
@@ -6346,14 +6346,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-     * Save the project to the currentPSFile location.
+     * Save the project to a new location.
      *
      * @param closeWhenDone if true, PeptideShaker closes when done saving
      * @param aExportToZipWhenDone if true, the project is also saved as a zip
      * file
      */
     public void saveProjectAs(boolean closeWhenDone, boolean aExportToZipWhenDone) {
-        File selectedFile = getUserSelectedFile(".cpsx", "Compomics Peptide Shaker format (*.cpsx)", "Save As...", false);
+        File selectedFile = getUserSelectedFile(cpsParent.getExperiment().getReference() + ".cpsx", ".cpsx", "Compomics Peptide Shaker format (*.cpsx)", "Save As...", false);
         cpsParent.setCpsFile(selectedFile);
         if (selectedFile != null) {
             saveProject(closeWhenDone, aExportToZipWhenDone);
@@ -6363,6 +6363,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     /**
      * Returns the file selected by the user, or null if no file was selected.
      *
+     * @param aSuggestedFileName the suggested file name, can be null
      * @param aFileEnding the file type, e.g., .txt
      * @param aFileFormatDescription the file format description, e.g., (Mascot
      * Generic Format) *.mgf
@@ -6372,9 +6373,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @return the file selected by the user, or null if no file or folder was
      * selected
      */
-    public File getUserSelectedFile(String aFileEnding, String aFileFormatDescription, String aDialogTitle, boolean openDialog) {
+    public File getUserSelectedFile(String aSuggestedFileName, String aFileEnding, String aFileFormatDescription, String aDialogTitle, boolean openDialog) {
 
-        File selectedFile = Util.getUserSelectedFile(this, aFileEnding, aFileFormatDescription, aDialogTitle, lastSelectedFolder.getLastSelectedFolder(), openDialog);
+        File selectedFile = Util.getUserSelectedFile(this, aFileEnding, aFileFormatDescription, aDialogTitle, lastSelectedFolder.getLastSelectedFolder(), aSuggestedFileName, openDialog);
 
         if (selectedFile != null) {
             if (selectedFile.isDirectory()) {
@@ -6596,7 +6597,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             if (cpsParent.getCpsFile() != null) {
 
                 // select the output folder
-                File selectedFile = getUserSelectedFile(".zip", "Compressed file format (*.zip)", "Export As Zip...", false);
+                String suggestedFileName = cpsParent.getCpsFile().getName();
+                suggestedFileName = suggestedFileName.substring(0, suggestedFileName.lastIndexOf(".")) + ".zip";
+                File selectedFile = getUserSelectedFile(suggestedFileName, ".zip", "Compressed file format (*.zip)", "Export As Zip...", false);
 
                 if (selectedFile != null) {
 

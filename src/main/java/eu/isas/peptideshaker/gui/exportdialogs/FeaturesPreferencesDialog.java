@@ -2005,7 +2005,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      */
     private void updateReportsList() {
         exportSchemesNames = new ArrayList<String>();
-        exportSchemesNames.addAll(exportFactory.getDefaultExportSchemesNames());
+        exportSchemesNames.addAll(PSExportFactory.getDefaultExportSchemesNames());
         exportSchemesNames.addAll(exportFactory.getUserSchemesNames());
     }
 
@@ -2014,11 +2014,12 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      */
     private void writeSelectedReport() {
 
+        final String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
         String textFileFilterDescription = "Tab separated text file (.txt)";
         String excelFileFilterDescription = "Excel Workbook (.xls)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
         FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".xls", ".txt"},
-                new String[]{excelFileFilterDescription, textFileFilterDescription}, "Export Report", lastSelectedFolderPath, false, true, false, 0);
+                new String[]{excelFileFilterDescription, textFileFilterDescription}, "Export Report", lastSelectedFolderPath, schemeName, false, true, false, 0);
 
         if (selectedFileAndFilter != null) {
 
@@ -2053,7 +2054,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     try {
-                        String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
                         ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
                         progressDialog.setTitle("Exporting. Please Wait...");
                         PSExportFactory.writeExport(exportScheme, selectedFile, exportFormat, peptideShakerGUI.getExperiment().getReference(),
@@ -2103,11 +2103,12 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      */
     private void writeDocumentationOfSelectedReport() {
 
+        final String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
         String textFileFilterDescription = "Tab separated text file (.txt)";
         String excelFileFilterDescription = "Excel Workbook (.xls)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
         FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".txt", ".xls"},
-                new String[]{textFileFilterDescription, excelFileFilterDescription}, "Export Report", lastSelectedFolderPath, false, true, false, 0);
+                new String[]{textFileFilterDescription, excelFileFilterDescription}, "Export Report", lastSelectedFolderPath, schemeName + "_documentation", false, true, false, 0);
 
         if (selectedFileAndFilter != null) {
 
@@ -2139,7 +2140,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
                     boolean error = false;
                     try {
-                        String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
                         ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
                         PSExportFactory.writeDocumentation(exportScheme, exportFormat, selectedFile);
                     } catch (Exception e) {
