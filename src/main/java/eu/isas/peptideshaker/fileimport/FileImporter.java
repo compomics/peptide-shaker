@@ -853,7 +853,7 @@ public class FileImporter {
                             String report = "Warning: More than 75% of the PSMs did not pass the import filters." + System.getProperty("line.separator");
                             double meanRejected = sharePsmsRejected / 4;
                             if (!allSearchEngines && noProteins > meanRejected) {
-                                report += " PeptideShaker did not manage to map your peptides to the database. Please verify your database." + System.getProperty("line.separator");
+                                report += " PeptideShaker did not manage to map most peptides to the database. Please verify your database." + System.getProperty("line.separator");
                             }
                             if (proteinIssue > meanRejected) {
                                 report += " Apparently your database contains a high degree of shared peptides between the target and decoy sequences. Please verify your database";

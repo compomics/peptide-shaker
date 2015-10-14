@@ -966,6 +966,7 @@ public class NewDialog extends javax.swing.JDialog {
                         || myFile.getName().toLowerCase().endsWith(".res")
                         || myFile.getName().toLowerCase().endsWith(".tide-search.target.txt")
                         || myFile.getName().toLowerCase().endsWith(".tags")
+                        || myFile.getName().toLowerCase().endsWith(".pnovo.txt")
                         || myFile.getName().toLowerCase().endsWith(".novor.csv")
                         || myFile.getName().toLowerCase().endsWith(".zip")
                         || myFile.isDirectory();
@@ -1113,6 +1114,21 @@ public class NewDialog extends javax.swing.JDialog {
         };
 
         // filter for novor only
+        FileFilter pNovoFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                return myFile.getName().toLowerCase().endsWith(".pnovo.txt")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "pNovo+ (.pnovo.txt)";
+            }
+        };
+
+        // filter for novor only
         FileFilter novorFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
@@ -1154,6 +1170,7 @@ public class NewDialog extends javax.swing.JDialog {
         fileChooser.addChoosableFileFilter(mascotFilter);
         fileChooser.addChoosableFileFilter(direcTagFilter);
         fileChooser.addChoosableFileFilter(novorFilter);
+        fileChooser.addChoosableFileFilter(pNovoFilter);
 
         int returnVal = fileChooser.showDialog(this, "Add");
 
@@ -2211,6 +2228,7 @@ public class NewDialog extends javax.swing.JDialog {
                 || lowerCaseName.endsWith(".mzid")
                 || lowerCaseName.endsWith(".csv")
                 || lowerCaseName.endsWith(".tags")
+                || lowerCaseName.endsWith(".pnovo.txt")
                 || lowerCaseName.endsWith(".tide-search.target.txt")) {
             if (!lowerCaseName.endsWith("mods.xml")
                     && !lowerCaseName.endsWith("usermods.xml")
