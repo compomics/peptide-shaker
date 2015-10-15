@@ -261,7 +261,7 @@ public class TagMapper {
      * @param spectrumMatch the spectrum match containing the tags to map
      * @param tagMatcher the tag matcher to match the tags
      * @param key the key of the tag to match
-     * @param waitingHandler waiting handler allowing the display of progress      <<<<<<< HEAD
+     * @param waitingHandler waiting handler allowing the display of progress null     <<<<<<< HEAD
      * and cancelling the process
      * =======
      * and canceling the process
@@ -478,32 +478,16 @@ public class TagMapper {
                                     throw new IllegalArgumentException("PepNovo+ PTM " + pepnovoPtmName + " not recognized.");
                                 }
                                 modificationMatch.setTheoreticPtm(utilitiesPtmName);
-                            } else if (advocateId == Advocate.direcTag.getIndex()) {
-                                Integer directagIndex = new Integer(modificationMatch.getTheoreticPtm());
-                                String utilitiesPtmName = modificationProfile.getVariableModifications().get(directagIndex);
-                                if (utilitiesPtmName == null) {
-                                    throw new IllegalArgumentException("DirecTag PTM " + directagIndex + " not recognized.");
+                            } else if (advocateId == Advocate.direcTag.getIndex() 
+                                    || advocateId == Advocate.pNovo.getIndex()
+                                    || advocateId == Advocate.novor.getIndex()) {
+                                // already mapped
+                            } else {
+                                Advocate notImplemented = Advocate.getAdvocate(advocateId);
+                                if (notImplemented == null) {
+                                    throw new IllegalArgumentException("Advocate of id " + advocateId + " not recognized.");
                                 }
-                                modificationMatch.setTheoreticPtm(utilitiesPtmName);
-                                PTM ptm = ptmFactory.getPTM(utilitiesPtmName);
-                                if (ptm.getPattern() != null) {
-                                    ArrayList<Character> aaAtTarget = ptm.getPattern().getAminoAcidsAtTarget();
-                                    if (aaAtTarget.size() > 1) {
-                                        throw new IllegalArgumentException("More than one amino acid can be targeted by the modification " + ptm + ", tag duplication required.");
-                                    }
-                                    int aaIndex = aa - 1;
-                                    aminoAcidSequence.setAaAtIndex(aaIndex, aaAtTarget.get(0));
-                                } else if (advocateId == Advocate.pNovo.getIndex()) {
-                                    // already mapped
-                                } else if (advocateId == Advocate.novor.getIndex()) {
-                                    // already mapped
-                                } else {
-                                    Advocate notImplemented = Advocate.getAdvocate(advocateId);
-                                    if (notImplemented == null) {
-                                        throw new IllegalArgumentException("Advocate of id " + advocateId + " not recognized.");
-                                    }
-                                    throw new IllegalArgumentException("PTM mapping not implemented for " + Advocate.getAdvocate(advocateId).getName() + ".");
-                                }
+                                throw new IllegalArgumentException("PTM mapping not implemented for " + Advocate.getAdvocate(advocateId).getName() + ".");
                             }
                         }
                     }
