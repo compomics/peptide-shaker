@@ -193,7 +193,6 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addGroup(basicAnnotationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(accessionNumberLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(basicAnnotationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(basicAnnotationJPanelLayout.createSequentialGroup()
                         .addGap(14, 14, 14)
@@ -665,7 +664,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
-        nextProtLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("neXProt - human protein knowledgebase"));
+        nextProtLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("neXtProt - human protein knowledgebase"));
         nextProtLinkJPanel.setOpaque(false);
 
         nextProtLabel.setText("High-quality human protein information and annotation.");
