@@ -303,9 +303,9 @@ public class PsPeptideSection {
             case psms:
                 return peptideMatch.getSpectrumCount() + "";
             case variable_ptms:
-                return getPeptideModificationsAsString(peptideMatch.getTheoreticPeptide(), true);
+                return Peptide.getPeptideModificationsAsString(peptideMatch.getTheoreticPeptide(), true);
             case fixed_ptms:
-                return getPeptideModificationsAsString(peptideMatch.getTheoreticPeptide(), false);
+                return Peptide.getPeptideModificationsAsString(peptideMatch.getTheoreticPeptide(), false);
             case score:
                 return psParameter.getPeptideScore() + "";
             case raw_score:
@@ -490,58 +490,6 @@ public class PsPeptideSection {
             default:
                 return "Not implemented";
         }
-    }
-
-    /**
-     * Returns the peptide modifications as a string.
-     *
-     * @param peptide the peptide
-     * @param variablePtms if true, only variable PTMs are shown, false return
-     * only the fixed PTMs
-     *
-     * @return the peptide modifications as a string
-     */
-    public static String getPeptideModificationsAsString(Peptide peptide, boolean variablePtms) {
-
-        StringBuilder result = new StringBuilder();
-
-        HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
-        if (peptide.isModified()) {
-            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                if ((variablePtms && modificationMatch.isVariable()) || (!variablePtms && !modificationMatch.isVariable())) {
-                    if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                        modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
-                    }
-                    modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
-                }
-            }
-        }
-
-        boolean first = true, first2;
-        ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
-
-        Collections.sort(mods);
-        for (String mod : mods) {
-            if (first) {
-                first = false;
-            } else {
-                result.append(", ");
-            }
-            first2 = true;
-            result.append(mod);
-            result.append(" (");
-            for (int aa : modMap.get(mod)) {
-                if (first2) {
-                    first2 = false;
-                } else {
-                    result.append(", ");
-                }
-                result.append(aa);
-            }
-            result.append(")");
-        }
-
-        return result.toString();
     }
 
     /**
