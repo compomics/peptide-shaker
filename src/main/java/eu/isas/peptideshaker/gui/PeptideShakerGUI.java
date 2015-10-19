@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.gui.parameters.identification_parameters.AnnotationSettingsDialog;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
@@ -2010,7 +2011,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void annotationPreferencesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationPreferencesMenuActionPerformed
-        new AnnotationPreferencesDialog(this);
+        AnnotationSettingsDialog annotationSettingsDialog = new AnnotationSettingsDialog(this, getIdentificationParameters().getAnnotationPreferences(), getNeutralLosses(), getReporterIons());
+        if (!annotationSettingsDialog.isCanceled()) {
+            AnnotationSettings newAnnotationSettings = annotationSettingsDialog.getAnnotationSettings();
+            if (!newAnnotationSettings.isSameAs(newAnnotationSettings)) {
+                getIdentificationParameters().setAnnotationSettings(newAnnotationSettings);
+                updateSpectrumAnnotations();
+                setDataSaved(false);
+            }
+        }
     }//GEN-LAST:event_annotationPreferencesMenuActionPerformed
 
     /**
