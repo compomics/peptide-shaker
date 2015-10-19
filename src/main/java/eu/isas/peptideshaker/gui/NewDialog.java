@@ -21,7 +21,6 @@ import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.protein_sequences_manager.gui.SequenceDbDetailsDialog;
-import com.compomics.util.gui.searchsettings.SearchSettingsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.messages.FeedBack;
@@ -30,9 +29,10 @@ import com.compomics.util.experiment.identification.filtering.PeptideAssumptionF
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
+import com.compomics.util.gui.parameters.ProcessingPreferencesDialog;
+import com.compomics.util.gui.parameters.identification_parameters.MatchesImportFiltersDialog;
+import com.compomics.util.gui.parameters.identification_parameters.SearchSettingsDialog;
 import eu.isas.peptideshaker.PeptideShaker;
-import com.compomics.util.preferences.gui.ImportSettingsDialog;
-import com.compomics.util.preferences.gui.ProcessingPreferencesDialog;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.preferences.ProteinInferencePreferences;
@@ -1226,8 +1226,8 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editImportFilterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editImportFilterButtonActionPerformed
-        ImportSettingsDialog importSettingsDialog = new ImportSettingsDialog(this, identificationParameters.getPeptideAssumptionFilter(), true);
-        PeptideAssumptionFilter newFilter = importSettingsDialog.getFilter();
+        MatchesImportFiltersDialog matchesImportFiltersDialog = new MatchesImportFiltersDialog(this, identificationParameters.getPeptideAssumptionFilter(), true);
+        PeptideAssumptionFilter newFilter = matchesImportFiltersDialog.getFilter();
         if (newFilter != null) {
             importFilterTxt.setText("User Defined");
             identificationParameters.setIdFilter(newFilter);

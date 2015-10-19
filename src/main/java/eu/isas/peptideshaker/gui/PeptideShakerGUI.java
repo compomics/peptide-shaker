@@ -9,8 +9,7 @@ import com.compomics.util.gui.error_handlers.notification.NotificationDialogPare
 import com.compomics.util.gui.gene_mapping.SpeciesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FollowupPreferencesDialog;
-import com.compomics.util.preferences.gui.ImportSettingsDialog;
-import com.compomics.util.preferences.gui.ProcessingPreferencesDialog;
+import com.compomics.util.gui.parameters.ProcessingPreferencesDialog;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.software.ToolFactory;
@@ -49,7 +48,7 @@ import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
-import com.compomics.util.gui.searchsettings.SearchSettingsDialog;
+import com.compomics.util.gui.parameters.identification_parameters.SearchSettingsDialog;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
@@ -89,8 +88,9 @@ import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
 import com.compomics.util.preferences.ValidationQCPreferences;
-import com.compomics.util.preferences.gui.ValidationQCPreferencesDialog;
-import com.compomics.util.preferences.gui.ValidationQCPreferencesDialogParent;
+import com.compomics.util.gui.parameters.ValidationQCPreferencesDialog;
+import com.compomics.util.gui.parameters.ValidationQCPreferencesDialogParent;
+import com.compomics.util.gui.parameters.identification_parameters.MatchesImportFiltersDialog;
 import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.filtering.AssumptionFilter;
 import eu.isas.peptideshaker.filtering.MatchFilter;
@@ -2440,7 +2440,36 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void preferencesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_preferencesMenuItemActionPerformed
-        new PreferencesDialog(this, true);
+
+        PreferencesDialog preferencesDialog = new PreferencesDialog(this, getSpectrumCountingPreferences(), getDisplayPreferences());
+
+        if (!preferencesDialog.isCanceled()) {
+
+            // See if the spectrum counting preferences need to be updated
+            SpectrumCountingPreferences newSpectrumCountingPreferences = preferencesDialog.getSpectrumCountingPreferences();
+            if (!newSpectrumCountingPreferences.isSameAs(getSpectrumCountingPreferences())) {
+                setSpectrumCountingPreferences(newSpectrumCountingPreferences);
+                getIdentificationFeaturesGenerator().clearSpectrumCounting();
+                setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
+                setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
+                setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
+                updateTabbedPanes();
+                setDataSaved(false);
+                // @TODO: update the metrics if necessary
+            }
+
+            // See if the display preferences need to be updated
+            DisplayPreferences newDisplayPreferences = preferencesDialog.getDisplayPreferences();
+            // @TODO: uncomment the code below when the display prefrences have been set
+//            if (!newDisplayPreferences.isSameAs(getDisplayPreferences())) {
+//                setDisplayPreferences(newDisplayPreferences);
+//                //@TODO: update the display
+//            }
+            if (newDisplayPreferences.getnAASurroundingPeptides() != getDisplayPreferences().getnAASurroundingPeptides()) {
+                getDisplayPreferences().setnAASurroundingPeptides(newDisplayPreferences.getnAASurroundingPeptides());
+                updateSurroundingAminoAcids();
+            }
+        }
     }//GEN-LAST:event_preferencesMenuItemActionPerformed
 
     /**
@@ -2648,8 +2677,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void importFilterMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importFilterMenuActionPerformed
         IdentificationParameters identificationParameters = getIdentificationParameters();
-        ImportSettingsDialog importSettingsDialog = new ImportSettingsDialog(this, identificationParameters.getPeptideAssumptionFilter(), true);
-        PeptideAssumptionFilter newFilter = importSettingsDialog.getFilter();
+        MatchesImportFiltersDialog matchesImportFiltersDialog = new MatchesImportFiltersDialog(this, identificationParameters.getPeptideAssumptionFilter(), true);
+        PeptideAssumptionFilter newFilter = matchesImportFiltersDialog.getFilter();
         if (newFilter != null) {
             identificationParameters.setIdFilter(newFilter);
         }
@@ -3735,7 +3764,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         IdentificationParameters identificationParameters = getIdentificationParameters();
         AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        
+
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
             overviewPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
             overviewPanel.setAccuracySliderValue((int) ((annotationPreferences.getFragmentIonAccuracy() / searchParameters.getFragmentIonAccuracy()) * 100));
@@ -6971,9 +7000,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @return true if a new version is to be downloaded
      */
-    public boolean checkForNewVersion() {
+    public
+            boolean checkForNewVersion() {
         try {
-            File jarFile = new File(PeptideShakerGUI.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            File jarFile = new File(PeptideShakerGUI.class
+                    .getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
             MavenJarFile oldMavenJarFile = new MavenJarFile(jarFile.toURI());
             URL jarRepository = new URL("http", "genesis.ugent.be", new StringBuilder().append("/maven2/").toString());
 

@@ -565,7 +565,7 @@ public class PSExportFactory implements ExportFactory {
 
         // molecular weight and spectrum counting
         sectionContent.add(PsProteinFeature.mw);
-        sectionContent.add(PsProteinFeature.spectrum_counting_normalized);
+        sectionContent.add(PsProteinFeature.spectrum_counting);
 
         // variable_ptms
         sectionContent.add(PsProteinFeature.confident_modification_sites);
@@ -575,7 +575,6 @@ public class PSExportFactory implements ExportFactory {
 
         // protein scores
         sectionContent.add(PsProteinFeature.confidence);
-        sectionContent.add(PsProteinFeature.decoy);
         sectionContent.add(PsProteinFeature.validated);
 
         exportFeatures.put(PsProteinFeature.type, sectionContent);
@@ -608,7 +607,6 @@ public class PSExportFactory implements ExportFactory {
 
         // peptide scores
         sectionContent.add(PsPeptideFeature.confidence);
-        sectionContent.add(PsPeptideFeature.decoy);
         sectionContent.add(PsPeptideFeature.validated);
 
         exportFeatures.put(PsPeptideFeature.type, sectionContent);
@@ -648,7 +646,6 @@ public class PSExportFactory implements ExportFactory {
 
         // psm scores
         sectionContent.add(PsPsmFeature.confidence);
-        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.decoy);
         sectionContent.add(PsPsmFeature.validated);
 
         exportFeatures.put(PsPsmFeature.type, sectionContent);
@@ -693,7 +690,6 @@ public class PSExportFactory implements ExportFactory {
 
         // protein scores
         sectionContent.add(PsProteinFeature.confidence);
-        sectionContent.add(PsProteinFeature.decoy);
         sectionContent.add(PsProteinFeature.validated);
 
         exportFeatures.put(PsProteinFeature.type, sectionContent);
@@ -732,7 +728,6 @@ public class PSExportFactory implements ExportFactory {
 
         // peptide scores
         sectionContent.add(PsPeptideFeature.confidence);
-        sectionContent.add(PsPeptideFeature.decoy);
         sectionContent.add(PsPeptideFeature.validated);
 
         exportFeatures.put(PsPeptideFeature.type, sectionContent);
@@ -776,7 +771,6 @@ public class PSExportFactory implements ExportFactory {
 
         // psm scores
         sectionContent.add(PsPsmFeature.confidence);
-        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.decoy);
         sectionContent.add(PsPsmFeature.validated);
 
         exportFeatures.put(PsPsmFeature.type, sectionContent);

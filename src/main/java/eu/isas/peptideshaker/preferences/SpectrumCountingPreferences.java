@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.preferences;
 import com.compomics.util.experiment.units.MetricsPrefix;
 import com.compomics.util.experiment.units.StandardUnit;
 import com.compomics.util.experiment.units.UnitOfMeasurement;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.io.Serializable;
 
 /**
@@ -43,8 +44,15 @@ public class SpectrumCountingPreferences implements Serializable {
     private SpectralCountingMethod selectedMethod;
     /**
      * If true, only validated hits are counted.
+     *
+     * @deprecated use matchValidationLevel
      */
     private boolean validatedHits;
+    /**
+     * The minimal match validation level to consider as indexed in the
+     * MatchValidationLevel enum.
+     */
+    private Integer matchValidationLevel;
 
     /**
      * Default constructor.
@@ -52,7 +60,7 @@ public class SpectrumCountingPreferences implements Serializable {
     public SpectrumCountingPreferences() {
         // Set default preferences
         selectedMethod = SpectralCountingMethod.NSAF;
-        validatedHits = true;
+        matchValidationLevel = MatchValidationLevel.doubtful.getIndex();
     }
 
     /**
@@ -63,10 +71,10 @@ public class SpectrumCountingPreferences implements Serializable {
      */
     public SpectrumCountingPreferences(SpectrumCountingPreferences otherSpectrumCountingPreferences) {
         this.selectedMethod = otherSpectrumCountingPreferences.getSelectedMethod();
-        this.validatedHits = otherSpectrumCountingPreferences.isValidatedHits();
         this.normalize = otherSpectrumCountingPreferences.getNormalize();
         this.referenceMass = otherSpectrumCountingPreferences.getReferenceMass();
         this.unit = otherSpectrumCountingPreferences.getUnit();
+
     }
 
     /**
@@ -90,6 +98,8 @@ public class SpectrumCountingPreferences implements Serializable {
     /**
      * Returns true if only validated hits are to be counted.
      *
+     * @deprecated use the matchValidationLevel
+     *
      * @return true if only validated hits are to be counted
      */
     public boolean isValidatedHits() {
@@ -99,10 +109,39 @@ public class SpectrumCountingPreferences implements Serializable {
     /**
      * Set if only validated hits are to be counted.
      *
+     * @deprecated use the matchValidationLevel
+     *
      * @param validatedHits if the only validated hits are to be counted
      */
     public void setValidatedHits(boolean validatedHits) {
         this.validatedHits = validatedHits;
+    }
+
+    /**
+     * Returns the lowest validation level considered as an integer as indexed
+     * in the MatchValidationLevel enum.
+     *
+     * @return the lowest validation level considered
+     */
+    public Integer getMatchValidationLevel() {
+        if (matchValidationLevel == null) { // Backward compatibility
+            if (validatedHits) {
+                matchValidationLevel = MatchValidationLevel.doubtful.getIndex();
+            } else {
+                matchValidationLevel = MatchValidationLevel.not_validated.getIndex();
+            }
+        }
+        return matchValidationLevel;
+    }
+
+    /**
+     * Sets the lowest validation level to consider as an integer as indexed in
+     * the MatchValidationLevel enum.
+     *
+     * @param matchValidationLevel the lowest validation level to consider
+     */
+    public void setMatchValidationLevel(Integer matchValidationLevel) {
+        this.matchValidationLevel = matchValidationLevel;
     }
 
     /**
@@ -114,8 +153,25 @@ public class SpectrumCountingPreferences implements Serializable {
      * preferences is the same as this one
      */
     public boolean isSameAs(SpectrumCountingPreferences anotherSpectrumCountingPreferences) {
+        if (!getNormalize() && anotherSpectrumCountingPreferences.getNormalize()
+                || getNormalize() && !anotherSpectrumCountingPreferences.getNormalize()) {
+            return false;
+        }
+        if (getNormalize() && anotherSpectrumCountingPreferences.getNormalize()) {
+            if (!getUnit().isSameAs(anotherSpectrumCountingPreferences.getUnit())) {
+                return false;
+            }
+            if (getReferenceMass() != null && anotherSpectrumCountingPreferences.getReferenceMass() == null
+                    || getReferenceMass() == null && anotherSpectrumCountingPreferences.getReferenceMass() != null) {
+                return false;
+            }
+            if (getReferenceMass() != null && anotherSpectrumCountingPreferences.getReferenceMass() != null
+                    && !getReferenceMass().equals(anotherSpectrumCountingPreferences.getReferenceMass())) {
+                return false;
+            }
+        }
         return anotherSpectrumCountingPreferences.getSelectedMethod() == selectedMethod
-                && anotherSpectrumCountingPreferences.isValidatedHits() == validatedHits;
+                && anotherSpectrumCountingPreferences.getMatchValidationLevel().equals(getMatchValidationLevel());
     }
 
     /**

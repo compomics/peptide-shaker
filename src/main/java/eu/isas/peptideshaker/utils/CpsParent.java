@@ -117,17 +117,17 @@ public class CpsParent extends UserPreferencesParent {
      * The name of the table to use to store PeptideShaker experiment settings.
      */
     public static final String settingsTableName = "PeptideShaker_experiment_settings";
-    
+
     /**
      * Empty constructor for instantiation purposes.
      */
     public CpsParent() {
-        
+
     }
-    
+
     /**
      * Constructor.
-     * 
+     *
      * @param dbFolder the folder where the database is stored.
      */
     public CpsParent(File dbFolder) {
@@ -150,7 +150,8 @@ public class CpsParent extends UserPreferencesParent {
      * error occurred while deserializing an object
      * @throws java.lang.InterruptedException exception thrown whenever a
      * threading error occurred while saving the project
-     * @throws org.apache.commons.compress.archivers.ArchiveException exception thrown whenever an error occurs while untaring the file
+     * @throws org.apache.commons.compress.archivers.ArchiveException exception
+     * thrown whenever an error occurs while untaring the file
      */
     public void loadCpsFromZipFile(File zipFile, File dbFolder, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, SQLException, InterruptedException, ArchiveException {
 
@@ -193,7 +194,8 @@ public class CpsParent extends UserPreferencesParent {
      * error occurred while deserializing an object
      * @throws java.lang.InterruptedException exception thrown whenever a
      * threading error occurred while saving the project
-     * @throws org.apache.commons.compress.archivers.ArchiveException exception thrown whenever an error occurs while untaring the file
+     * @throws org.apache.commons.compress.archivers.ArchiveException exception
+     * thrown whenever an error occurs while untaring the file
      */
     public void loadCpsFile(File dbFolder, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, SQLException, InterruptedException, ArchiveException {
 
@@ -251,7 +253,7 @@ public class CpsParent extends UserPreferencesParent {
         filterPreferences = experimentSettings.getFilterPreferences();
         displayPreferences = experimentSettings.getDisplayPreferences();
         shotgunProtocol = experimentSettings.getShotgunProtocol();
-        
+
         // Set up caches
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, shotgunProtocol, identificationParameters, metrics, spectrumCountingPreferences);
         IdentificationFeaturesCache identificationFeaturesCache = experimentSettings.getIdentificationFeaturesCache();
@@ -264,7 +266,7 @@ public class CpsParent extends UserPreferencesParent {
             waitingHandler.setRunFinished();
             return;
         }
-        
+
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);
         saveUserPreferences();
@@ -487,10 +489,10 @@ public class CpsParent extends UserPreferencesParent {
         }
         return genePreferences.loadGeneMappings(jarFilePath, updateEqualVersion, waitingHandler);
     }
-    
+
     /**
      * Returns the objects database used for this project.
-     * 
+     *
      * @return the objects database used for this project
      */
     public ObjectsDB getObjectsDB() {
@@ -640,6 +642,9 @@ public class CpsParent extends UserPreferencesParent {
      */
     public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences) {
         this.spectrumCountingPreferences = spectrumCountingPreferences;
+        if (identificationFeaturesGenerator != null) {
+            identificationFeaturesGenerator.setSpectrumCountingPreferences(spectrumCountingPreferences);
+        }
     }
 
     /**
@@ -795,7 +800,7 @@ public class CpsParent extends UserPreferencesParent {
 
     /**
      * Returns the folder where the database is stored.
-     * 
+     *
      * @return the folder where the database is stored
      */
     public File getDbFolder() {
@@ -804,7 +809,7 @@ public class CpsParent extends UserPreferencesParent {
 
     /**
      * Sets the folder where the database is stored.
-     * 
+     *
      * @param dbFolder the folder where the database is stored
      */
     public void setDbFolder(File dbFolder) {

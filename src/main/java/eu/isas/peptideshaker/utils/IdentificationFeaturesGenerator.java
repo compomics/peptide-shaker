@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.utils;
 
-import com.compomics.util.experiment.Constants;
 import com.compomics.util.experiment.units.MetricsPrefix;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
@@ -22,6 +21,8 @@ import com.compomics.util.experiment.identification.matches_iterators.PsmIterato
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
+import com.compomics.util.experiment.units.StandardUnit;
+import com.compomics.util.experiment.units.UnitOfMeasurement;
 import com.compomics.util.math.statistics.Distribution;
 import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import com.compomics.util.waiting.WaitingHandler;
@@ -832,7 +833,7 @@ public class IdentificationFeaturesGenerator {
      */
     public Double getNormalizedSpectrumCounting(String proteinMatchKey)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
-        return getNormalizedSpectrumCounting(proteinMatchKey, spectrumCountingPreferences, metrics, spectrumCountingPreferences.getUnit().getMetricsPrefix(), spectrumCountingPreferences.getSelectedMethod());
+        return getNormalizedSpectrumCounting(proteinMatchKey, metrics, spectrumCountingPreferences.getUnit(), spectrumCountingPreferences.getReferenceMass(), spectrumCountingPreferences.getSelectedMethod());
     }
 
     /**
@@ -861,7 +862,7 @@ public class IdentificationFeaturesGenerator {
      */
     public Double getNormalizedSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences spectrumCountingPreferences, Metrics metrics)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
-        return getNormalizedSpectrumCounting(proteinMatchKey, spectrumCountingPreferences, metrics, spectrumCountingPreferences.getUnit().getMetricsPrefix(), spectrumCountingPreferences.getSelectedMethod());
+        return getNormalizedSpectrumCounting(proteinMatchKey, metrics, spectrumCountingPreferences.getUnit(), spectrumCountingPreferences.getReferenceMass(), spectrumCountingPreferences.getSelectedMethod());
     }
 
     /**
@@ -869,10 +870,8 @@ public class IdentificationFeaturesGenerator {
      * using the preference settings normalized to the injected protein amount.
      *
      * @param proteinMatchKey the key of the protein match of interest
-     * @param spectrumCountingPreferences the spectrum counting preferences
-     * @param metrics the metrics on the dataset
+     * @param unit the unit to use for the normalization
      * @param method the method to use
-     * @param metricsPrefix the metrics prefix to use
      *
      * @return the corresponding spectrum counting metric normalized in the
      * metricsprefix of mol
@@ -889,19 +888,69 @@ public class IdentificationFeaturesGenerator {
      * threading error occurred while interacting with a database (from the
      * protein tree or identification)
      */
-    public Double getNormalizedSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences spectrumCountingPreferences, Metrics metrics, MetricsPrefix metricsPrefix, SpectrumCountingPreferences.SpectralCountingMethod method)
+    public Double getNormalizedSpectrumCounting(String proteinMatchKey, UnitOfMeasurement unit, SpectrumCountingPreferences.SpectralCountingMethod method)
+            throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+        return getNormalizedSpectrumCounting(proteinMatchKey, metrics, unit, spectrumCountingPreferences.getReferenceMass(), method);
+    }
+
+    /**
+     * Returns the spectrum counting metric of the protein match of interest
+     * using the preference settings normalized to the injected protein amount.
+     *
+     * @param proteinMatchKey the key of the protein match of interest
+     * @param metrics the metrics on the dataset
+     * @param unit the unit to use for the normalization
+     * @param method the method to use
+     * @param referenceMass the reference mass if abundance normalization is
+     * chosen
+     *
+     * @return the corresponding spectrum counting metric normalized in the
+     * metricsprefix of mol
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
+     */
+    public Double getNormalizedSpectrumCounting(String proteinMatchKey, Metrics metrics, UnitOfMeasurement unit, Double referenceMass, SpectrumCountingPreferences.SpectralCountingMethod method)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         Double spectrumCounting = getSpectrumCounting(proteinMatchKey, method);
         if (spectrumCountingPreferences.getNormalize()) {
-            spectrumCounting *= 1000000; // 10^6 offset
-            Double referenceMass = spectrumCountingPreferences.getReferenceMass();
-            Double result = referenceMass * spectrumCounting;
-            Double totalCounting = metrics.getTotalSpectrumCountingMass();
-            result /= totalCounting;
-            int unitCorrection = 6 + 3 + 9 - 4 + metricsPrefix.POWER; // offset + kDa to Da + kg to u + Avogadro.AMU exponents + metrics POWER
-            double constants = Constants.AVOGADRO_NO_EXP * Constants.AMU_NO_EXP * Math.pow(10, unitCorrection);
-            result /= constants;
-            return result;
+            String unitFullName = unit.getFullName();
+            StandardUnit standardUnit = StandardUnit.getStandardUnit(unitFullName);
+            if (standardUnit == null) {
+                throw new UnsupportedOperationException("Unit " + unitFullName + " not supported.");
+            }
+            switch (standardUnit) {
+                case mol:
+                    if (referenceMass == null) {
+                        throw new IllegalArgumentException("Reference mass missing for abundance normalization.");
+                    }
+                    MetricsPrefix metricsPrefix = unit.getMetricsPrefix();
+                    int unitCorrection = 9 + metricsPrefix.POWER; // kg to u for ref mass + metrics.POWER
+                    Double result = spectrumCounting * Math.pow(10, -unitCorrection);
+                    result *= referenceMass;
+                    Double totalCounting = metrics.getTotalSpectrumCountingMass();
+                    result /= totalCounting;
+                    return result;
+                case percentage:
+                    totalCounting = metrics.getTotalSpectrumCounting();
+                    result = 100 * spectrumCounting / totalCounting;
+                    return result;
+                case ppm:
+                    totalCounting = metrics.getTotalSpectrumCounting();
+                    result = 1000000 * spectrumCounting / totalCounting;
+                    return result;
+                default:
+                    throw new UnsupportedOperationException("Unit " + unitFullName + " not supported.");
+            }
         } else {
             return spectrumCounting;
         }
@@ -1038,7 +1087,6 @@ public class IdentificationFeaturesGenerator {
             SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength, SequenceMatchingPreferences sequenceMatchingPreferences)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
-        PSParameter pSParameter = new PSParameter();
         ProteinMatch testMatch, proteinMatch = identification.getProteinMatch(proteinMatchKey);
 
         if (spectrumCountingPreferences.getSelectedMethod() == SpectralCountingMethod.NSAF) {
@@ -1057,7 +1105,7 @@ public class IdentificationFeaturesGenerator {
                 PeptideMatch peptideMatch = peptideMatchesIterator.next();
                 String peptideKey = peptideMatch.getKey();
                 psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                if (!spectrumCountingPreferences.isValidatedHits() || psParameter.getMatchValidationLevel().isValidated()) {
+                if (psParameter.getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel()) {
                     String peptideSequence = Peptide.getSequence(peptideKey);
                     ArrayList<String> possibleProteinMatches = new ArrayList<String>();
 
@@ -1089,9 +1137,10 @@ public class IdentificationFeaturesGenerator {
 
                     double ratio = 1.0 / peptideOccurrence;
 
+                    identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatchesKeys(), psParameter, null, false);
                     for (String spectrumMatchKey : peptideMatch.getSpectrumMatchesKeys()) {
-                        pSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumMatchKey, pSParameter);
-                        if (!spectrumCountingPreferences.isValidatedHits() || pSParameter.getMatchValidationLevel().isValidated()) {
+                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumMatchKey, psParameter);
+                        if (psParameter.getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel()) {
                             result += ratio;
                         }
                     }
@@ -1114,21 +1163,16 @@ public class IdentificationFeaturesGenerator {
         } else {
 
             // emPAI
-            double result;
+            double result = 0;
+            
+            PSParameter psParameter = new PSParameter();
 
-            if (spectrumCountingPreferences.isValidatedHits()) {
-
-                result = 0;
-
-                identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), pSParameter, null, false);
-                for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-                    pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
-                    if (pSParameter.getMatchValidationLevel().isValidated()) {
-                        result++;
-                    }
+            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null, false);
+            for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
+                psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+                if (psParameter.getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel()) {
+                    result++;
                 }
-            } else {
-                result = proteinMatch.getPeptideCount();
             }
 
             Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
@@ -3061,5 +3105,14 @@ public class IdentificationFeaturesGenerator {
      */
     public Metrics getMetrics() {
         return metrics;
+    }
+
+    /**
+     * Sets the spectrum couting preferences.
+     *
+     * @param spectrumCountingPreferences the spectrum counting preferences
+     */
+    public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences) {
+        this.spectrumCountingPreferences = spectrumCountingPreferences;
     }
 }

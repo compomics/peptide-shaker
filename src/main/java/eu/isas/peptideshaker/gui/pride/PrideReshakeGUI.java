@@ -12,7 +12,7 @@ import com.compomics.util.experiment.massspectrometry.proteowizard.MsFormat;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
-import com.compomics.util.gui.searchsettings.EnzymeSelectionDialog;
+import com.compomics.util.gui.parameters.identification_parameters.EnzymeSelectionDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.preferences.LastSelectedFolder;

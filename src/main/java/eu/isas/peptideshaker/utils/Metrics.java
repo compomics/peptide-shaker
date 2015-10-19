@@ -118,6 +118,10 @@ public class Metrics implements Serializable {
      */
     private HashMap<String, ArrayList<String>> orderedSpectrumKeys;
     /**
+     * The sum of all spectrum counting indexes.
+     */
+    private Double totalSpectrumCounting = null;
+    /**
      * The sum of all spectrum counting masses.
      */
     private Double totalSpectrumCountingMass = null;
@@ -610,6 +614,24 @@ public class Metrics implements Serializable {
      */
     public void setTotalSpectrumCountingMass(double totalSpectrumCountingMass) {
         this.totalSpectrumCountingMass = totalSpectrumCountingMass;
+    }
+
+    /**
+     * Returns the total spectrum counting.
+     * 
+     * @return the total spectrum counting
+     */
+    public Double getTotalSpectrumCounting() {
+        return totalSpectrumCounting;
+    }
+
+    /**
+     * Sets the total spectrum counting.
+     * 
+     * @param totalSpectrumCountingIndexes the total spectrum counting
+     */
+    public void setTotalSpectrumCounting(Double totalSpectrumCountingIndexes) {
+        this.totalSpectrumCounting = totalSpectrumCountingIndexes;
     }
 
 }

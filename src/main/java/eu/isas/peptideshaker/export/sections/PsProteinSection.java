@@ -10,6 +10,9 @@ import com.compomics.util.experiment.identification.protein_sequences.SequenceFa
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.personalization.UrParameter;
+import com.compomics.util.experiment.units.MetricsPrefix;
+import com.compomics.util.experiment.units.StandardUnit;
+import com.compomics.util.experiment.units.UnitOfMeasurement;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
@@ -446,22 +449,26 @@ public class PsProteinSection {
                 return -10 * FastMath.log10(psParameter.getProteinProbabilityScore()) + "";
             case raw_score:
                 return psParameter.getProteinProbabilityScore() + "";
-            case spectrum_counting_normalized:
+            case spectrum_counting:
                 return identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey) + "";
             case spectrum_counting_nsaf:
-                try {
                     return identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
                             SpectrumCountingPreferences.SpectralCountingMethod.NSAF) + "";
-                } catch (Exception e) {
-                    return "error: " + e.getLocalizedMessage();
-                }
             case spectrum_counting_empai:
-                try {
                     return identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
                             SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) + "";
-                } catch (Exception e) {
-                    return "error: " + e.getLocalizedMessage();
-                }
+            case spectrum_counting_empai_percent:
+                return identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, new UnitOfMeasurement(StandardUnit.percentage), SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) + "";
+            case spectrum_counting_nsaf_percent:
+                return identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, new UnitOfMeasurement(StandardUnit.percentage), SpectrumCountingPreferences.SpectralCountingMethod.NSAF) + "";
+            case spectrum_counting_empai_ppm:
+                return identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, new UnitOfMeasurement(StandardUnit.ppm), SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) + "";
+            case spectrum_counting_nsaf_ppm:
+                return identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, new UnitOfMeasurement(StandardUnit.ppm), SpectrumCountingPreferences.SpectralCountingMethod.NSAF) + "";
+            case spectrum_counting_empai_fmol:
+                return identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, new UnitOfMeasurement(StandardUnit.mol, MetricsPrefix.femto), SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) + "";
+            case spectrum_counting_nsaf_fmol:
+                return identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, new UnitOfMeasurement(StandardUnit.mol, MetricsPrefix.femto), SpectrumCountingPreferences.SpectralCountingMethod.NSAF) + "";
             case starred:
                 if (psParameter.isStarred()) {
                     return 1 + "";

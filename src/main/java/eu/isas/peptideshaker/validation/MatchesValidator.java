@@ -401,7 +401,7 @@ public class MatchesValidator {
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, false, null, waitingHandler);
         ArrayList<ProteinValidatorRunnable> proteinRunnables = new ArrayList<ProteinValidatorRunnable>(processingPreferences.getnThreads());
         for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
-            ProteinValidatorRunnable runnable = new ProteinValidatorRunnable(proteinMatchesIterator, identification, identificationFeaturesGenerator, metrics, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, validationQCPreferences);
+            ProteinValidatorRunnable runnable = new ProteinValidatorRunnable(proteinMatchesIterator, identification, identificationFeaturesGenerator, metrics, shotgunProtocol, identificationParameters, spectrumCountingPreferences, waitingHandler, exceptionHandler);
             pool.submit(runnable);
             proteinRunnables.add(runnable);
         }
@@ -413,6 +413,12 @@ public class MatchesValidator {
         if (!pool.awaitTermination(7, TimeUnit.DAYS)) {
             throw new InterruptedException("PSM validation timed out. Please contact the developers.");
         }
+
+        double totalSpectrumCounting = 0;
+        for (ProteinValidatorRunnable runnable : proteinRunnables) {
+            totalSpectrumCounting += runnable.getTotalSpectrumCounting();
+        }
+        metrics.setTotalSpectrumCounting(totalSpectrumCounting);
 
         double totalSpectrumCountingMass = 0;
         for (ProteinValidatorRunnable runnable : proteinRunnables) {
@@ -1730,6 +1736,10 @@ public class MatchesValidator {
          */
         private IdentificationParameters identificationParameters;
         /**
+         * The spectrum counting preferences.
+         */
+        private SpectrumCountingPreferences spectrumCountingPreferences;
+        /**
          * The waiting handler.
          */
         private WaitingHandler waitingHandler;
@@ -1743,9 +1753,14 @@ public class MatchesValidator {
         private ValidationQCPreferences validationQCPreferences;
         /**
          * The total spectrum counting mass contribution of the proteins
-         * validated.
+         * according to the validation level specified in the preferences.
          */
         private double totalSpectrumCountingMass = 0;
+        /**
+         * The total spectrum counting contribution of the proteins according to
+         * the validation level specified in the preferences.
+         */
+        private double totalSpectrumCounting = 0;
         /**
          * The object used to store metrics on the project.
          */
@@ -1762,13 +1777,13 @@ public class MatchesValidator {
          * @param metrics the object used to store metrics on the project
          * @param shotgunProtocol information on the experimental protocol
          * @param identificationParameters the identification parameters
+         * @param spectrumCountingPreferences the spectrum counting preferences
          * @param waitingHandler a waiting handler to display progress and allow
          * canceling the process
          * @param exceptionHandler handler for exceptions
-         * @param validationQCPreferences the validation QC preferences
          */
         public ProteinValidatorRunnable(ProteinMatchesIterator proteinMatchesIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, Metrics metrics, ShotgunProtocol shotgunProtocol,
-                IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, ValidationQCPreferences validationQCPreferences) {
+                IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
             this.proteinMatchesIterator = proteinMatchesIterator;
             this.identification = identification;
             this.identificationFeaturesGenerator = identificationFeaturesGenerator;
@@ -1777,7 +1792,8 @@ public class MatchesValidator {
             this.identificationParameters = identificationParameters;
             this.waitingHandler = waitingHandler;
             this.exceptionHandler = exceptionHandler;
-            this.validationQCPreferences = validationQCPreferences;
+            this.validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+            this.spectrumCountingPreferences = spectrumCountingPreferences;
         }
 
         @Override
@@ -1811,12 +1827,15 @@ public class MatchesValidator {
                         PSParameter psParameter = new PSParameter();
                         psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
 
-                        if (!proteinMatch.isDecoy() && psParameter.getMatchValidationLevel().isValidated()) {
+                        if (!proteinMatch.isDecoy() && psParameter.getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel()) {
                             double tempSpectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
+                            increaseSpectrumCounting(tempSpectrumCounting);
                             double molecularWeight = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
                             double massContribution = molecularWeight * tempSpectrumCounting;
                             increaseSpectrumCountingMass(massContribution);
+                        }
                             // Load the coverage in cache
+                        if (!proteinMatch.isDecoy() && psParameter.getMatchValidationLevel().isValidated()) {
                             identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                         }
 
@@ -1910,12 +1929,21 @@ public class MatchesValidator {
         }
 
         /**
-         * Increases the mass contribution due to a protein.
+         * Increases the mass contribution of a protein.
          *
-         * @param massContribution the mass contribution
+         * @param massContribution the mass contribution of a protein
          */
         private synchronized void increaseSpectrumCountingMass(Double massContribution) {
             totalSpectrumCountingMass += massContribution;
+        }
+
+        /**
+         * Increases the spectrum counting contribution of a protein.
+         *
+         * @param spectrumCounting the spectrum counting contribution of a protein
+         */
+        private synchronized void increaseSpectrumCounting(Double spectrumCounting) {
+            totalSpectrumCounting += spectrumCounting;
         }
 
         /**
@@ -1954,6 +1982,15 @@ public class MatchesValidator {
          */
         public double getTotalSpectrumCountingMass() {
             return totalSpectrumCountingMass;
+        }
+
+        /**
+         * Returns the spectrum counting contribution of the proteins iterated by this runnable.
+         *
+         * @return the spectrum counting contribution of the proteins iterated by this runnable
+         */
+        public double getTotalSpectrumCounting() {
+            return totalSpectrumCounting;
         }
 
     }

@@ -1,15 +1,11 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import com.compomics.util.gui.error_handlers.HelpDialog;
-import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import com.compomics.util.preferences.PTMScoringPreferences;
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.gui.preferencesdialogs.preferences_dialogs.DisplayPreferencesDialog;
+import eu.isas.peptideshaker.gui.preferencesdialogs.preferences_dialogs.SpectrumCountingSettingsDialog;
+import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import java.awt.Toolkit;
-import javax.swing.JOptionPane;
-import javax.swing.JSpinner.NumberEditor;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 /**
  * A dialog where the user can edit the PeptideShaker preferences.
@@ -20,94 +16,84 @@ import javax.swing.SwingConstants;
 public class PreferencesDialog extends javax.swing.JDialog {
 
     /**
-     * Instance of the main GUI class.
+     * The parent frame.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private java.awt.Frame parentFrame;
     /**
      * The spectrum counting preferences.
      */
     private SpectrumCountingPreferences spectrumCountingPreferences;
     /**
-     * The PTM scoring preferences.
+     * The display preferences
      */
-    private PTMScoringPreferences ptmScoringPreferences;
+    private DisplayPreferences displayPreferences;
+    /**
+     * Boolean indicating whether the user canceled the edition of preferences.
+     */
+    private boolean canceled = false;
 
     /**
      * Creates a new PreferencesDialog.
      *
-     * @param peptideShakerGUI the PeptideShakerGUI parent
-     * @param modal if the dialog is to be modal or not
+     * @param parentFrame the parent frame
+     * @param spectrumCountingPreferences the spectrum counting preferences
+     * @param displayPreferences the display preferences
      */
-    public PreferencesDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
-        super(peptideShakerGUI, modal);
+    public PreferencesDialog(java.awt.Frame parentFrame, SpectrumCountingPreferences spectrumCountingPreferences, DisplayPreferences displayPreferences) {
+        
+        super(parentFrame, true);
         initComponents();
 
-        this.peptideShakerGUI = peptideShakerGUI;
-        this.spectrumCountingPreferences = peptideShakerGUI.getSpectrumCountingPreferences();
-        this.ptmScoringPreferences = peptideShakerGUI.getIdentificationParameters().getPtmScoringPreferences();
+        this.parentFrame = parentFrame;
+        this.spectrumCountingPreferences = spectrumCountingPreferences;
+        this.displayPreferences = displayPreferences;
 
-        // centrally align the spinner  
-        ((NumberEditor) nAASpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
-
-        // set the values
-        nAASpinner.setValue(peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides());
-        methodCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        probabilitsticScoreCalculationCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        neutralLossesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        insertSpectrumCountingPreferences();
-        insertPTMScoringPreferences();
-
-        setLocationRelativeTo(peptideShakerGUI);
+        setLocationRelativeTo(parentFrame);
         setVisible(true);
     }
 
     /**
-     * Update the GUI based on the spectrum counting preferences.
-     */
-    private void insertSpectrumCountingPreferences() {
-        if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingPreferences.SpectralCountingMethod.NSAF) {
-            methodCmb.setSelectedIndex(0);
-        } else {
-            methodCmb.setSelectedIndex(1);
-        }
-        if (spectrumCountingPreferences.isValidatedHits()) {
-            validatedCheck.setSelected(true);
-        } else {
-            validatedCheck.setSelected(false);
-        }
-    }
-
-    /**
-     * Updates the GUI based on the PTM scoring preferences.
-     */
-    private void insertPTMScoringPreferences() {
-        if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
-            probabilitsticScoreCalculationCmb.setSelectedIndex(0);
-        } else {
-            probabilitsticScoreCalculationCmb.setSelectedIndex(1);
-        }
-        if (ptmScoringPreferences.isProbabilisticScoreNeutralLosses()) {
-            neutralLossesCmb.setSelectedIndex(0);
-        } else {
-            neutralLossesCmb.setSelectedIndex(1);
-        }
-        flrThresholdTxt.setText(ptmScoringPreferences.getFlrThreshold() + "");
-    }
-
-    /**
-     * Verifies the input of the user.
+     * Set up the GUI.
      *
-     * @return a boolean indicating whether the input can be parsed
+     * @param editable boolean indicating whether the settings can be edited
      */
-    public boolean validateInput() {
-        try {
-            new Double(flrThresholdTxt.getText());
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Please verify the input for A-score threshold.",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        return true;
+    private void setUpGui() {
+
+    }
+
+    /**
+     * Fills the GUI with the given settings.
+     */
+    private void populateGUI() {
+
+    }
+
+    /**
+     * Returns the display preferences.
+     *
+     * @return the display preferences
+     */
+    public DisplayPreferences getDisplayPreferences() {
+        return displayPreferences;
+    }
+
+    /**
+     * Returns the spectrum counting preferences.
+     *
+     * @return the spectrum counting preferences
+     */
+    public SpectrumCountingPreferences getSpectrumCountingPreferences() {
+        return spectrumCountingPreferences;
+    }
+
+    /**
+     * Returns whether the user canceled the edition of the preferences.
+     *
+     * @return a boolean indicating whether the user canceled the edition of the
+     * preferences.
+     */
+    public boolean isCanceled() {
+        return canceled;
     }
 
     /**
@@ -120,149 +106,20 @@ public class PreferencesDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         backgroundPanel = new javax.swing.JPanel();
-        optionsPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        methodCmb = new javax.swing.JComboBox();
-        validatedCheck = new javax.swing.JCheckBox();
-        optionsPanel = new javax.swing.JPanel();
-        surroundingAminoAcidsLabel = new javax.swing.JLabel();
-        nAASpinner = new javax.swing.JSpinner();
-        preferencesPanel = new javax.swing.JPanel();
-        flrLabel = new javax.swing.JLabel();
-        flrThresholdTxt = new javax.swing.JTextField();
-        neutralLossesLabel = new javax.swing.JLabel();
-        neutralLossesCmb = new javax.swing.JComboBox();
-        probalisticScoreCalculationLabel = new javax.swing.JLabel();
-        probabilitsticScoreCalculationCmb = new javax.swing.JComboBox();
         helpJButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
+        preferencesPanel = new javax.swing.JPanel();
+        spectrumCountingPreferencesLbl = new javax.swing.JLabel();
+        editSpectrumCountingButton = new javax.swing.JButton();
+        editDisplayPreferencesButton = new javax.swing.JButton();
+        surroundingAminoAcidsLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Preferences");
         setResizable(false);
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
-
-        optionsPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("MS2 Quantification"));
-        optionsPanel1.setOpaque(false);
-
-        jLabel1.setText("Quantification Method");
-
-        methodCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "NSAF+", "emPAI" }));
-
-        validatedCheck.setText("validated");
-        validatedCheck.setToolTipText("Count only the validated hits");
-        validatedCheck.setIconTextGap(10);
-        validatedCheck.setOpaque(false);
-
-        javax.swing.GroupLayout optionsPanel1Layout = new javax.swing.GroupLayout(optionsPanel1);
-        optionsPanel1.setLayout(optionsPanel1Layout);
-        optionsPanel1Layout.setHorizontalGroup(
-            optionsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(optionsPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(methodCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(validatedCheck, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(39, Short.MAX_VALUE))
-        );
-        optionsPanel1Layout.setVerticalGroup(
-            optionsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(optionsPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(optionsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel1)
-                    .addComponent(methodCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(validatedCheck))
-                .addContainerGap(13, Short.MAX_VALUE))
-        );
-
-        optionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide Sequence"));
-        optionsPanel.setOpaque(false);
-
-        surroundingAminoAcidsLabel.setText("Surrounding Amino Acids");
-
-        nAASpinner.setModel(new javax.swing.SpinnerNumberModel(2, 0, 5, 1));
-
-        javax.swing.GroupLayout optionsPanelLayout = new javax.swing.GroupLayout(optionsPanel);
-        optionsPanel.setLayout(optionsPanelLayout);
-        optionsPanelLayout.setHorizontalGroup(
-            optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(optionsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(surroundingAminoAcidsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(nAASpinner)
-                .addContainerGap())
-        );
-        optionsPanelLayout.setVerticalGroup(
-            optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(optionsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(surroundingAminoAcidsLabel)
-                    .addComponent(nAASpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(14, Short.MAX_VALUE))
-        );
-
-        preferencesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PTM Scoring"));
-        preferencesPanel.setOpaque(false);
-
-        flrLabel.setText("False Localization Rate");
-
-        flrThresholdTxt.setEditable(false);
-        flrThresholdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        flrThresholdTxt.setText("50");
-
-        neutralLossesLabel.setText("Neutral Losses Accounted");
-
-        neutralLossesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Yes", "No" }));
-
-        probalisticScoreCalculationLabel.setText("Probabilitstic Score");
-
-        probabilitsticScoreCalculationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Yes", "No" }));
-
-        javax.swing.GroupLayout preferencesPanelLayout = new javax.swing.GroupLayout(preferencesPanel);
-        preferencesPanel.setLayout(preferencesPanelLayout);
-        preferencesPanelLayout.setHorizontalGroup(
-            preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(preferencesPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(preferencesPanelLayout.createSequentialGroup()
-                        .addComponent(flrLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(neutralLossesCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(flrThresholdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
-                            .addComponent(probabilitsticScoreCalculationCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(preferencesPanelLayout.createSequentialGroup()
-                        .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(neutralLossesLabel)
-                            .addComponent(probalisticScoreCalculationLabel))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        preferencesPanelLayout.setVerticalGroup(
-            preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(preferencesPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(probalisticScoreCalculationLabel)
-                    .addComponent(probabilitsticScoreCalculationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(9, 9, 9)
-                .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(flrLabel)
-                    .addComponent(flrThresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(neutralLossesLabel)
-                    .addComponent(neutralLossesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
 
         helpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
         helpJButton.setToolTipText("Help");
@@ -297,6 +154,58 @@ public class PreferencesDialog extends javax.swing.JDialog {
             }
         });
 
+        preferencesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Project Preferences"));
+        preferencesPanel.setOpaque(false);
+
+        spectrumCountingPreferencesLbl.setText("Spectrum Counting Preferences");
+
+        editSpectrumCountingButton.setText("Edit");
+        editSpectrumCountingButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editSpectrumCountingButtonActionPerformed(evt);
+            }
+        });
+
+        editDisplayPreferencesButton.setText("Edit");
+        editDisplayPreferencesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editDisplayPreferencesButtonActionPerformed(evt);
+            }
+        });
+
+        surroundingAminoAcidsLabel.setText("Display Preferences");
+
+        javax.swing.GroupLayout preferencesPanelLayout = new javax.swing.GroupLayout(preferencesPanel);
+        preferencesPanel.setLayout(preferencesPanelLayout);
+        preferencesPanelLayout.setHorizontalGroup(
+            preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(preferencesPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(preferencesPanelLayout.createSequentialGroup()
+                        .addComponent(spectrumCountingPreferencesLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
+                        .addComponent(editSpectrumCountingButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, preferencesPanelLayout.createSequentialGroup()
+                        .addComponent(surroundingAminoAcidsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(editDisplayPreferencesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        preferencesPanelLayout.setVerticalGroup(
+            preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(preferencesPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(spectrumCountingPreferencesLbl)
+                    .addComponent(editSpectrumCountingButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(surroundingAminoAcidsLabel)
+                    .addComponent(editDisplayPreferencesButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -304,7 +213,6 @@ public class PreferencesDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(optionsPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(helpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -312,7 +220,6 @@ public class PreferencesDialog extends javax.swing.JDialog {
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton))
-                    .addComponent(optionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(preferencesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -320,12 +227,8 @@ public class PreferencesDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(optionsPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(optionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(preferencesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(cancelButton)
@@ -354,83 +257,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-
-        if (validateInput()) {
-
-            // ptm thresholds
-            boolean ptmScoreThresholdChanged = false;
-
-
-            // delta score threshold
-            PTMScoringPreferences currentPtmScoringPreferences = peptideShakerGUI.getIdentificationParameters().getPtmScoringPreferences();
-            if (currentPtmScoringPreferences.getFlrThreshold() != new Double(flrThresholdTxt.getText())) {
-                currentPtmScoringPreferences.setFlrThreshold(new Double(flrThresholdTxt.getText()));
-                ptmScoreThresholdChanged = true;
-            }
-
-            if (currentPtmScoringPreferences.isProbabilitsticScoreCalculation()&& probabilitsticScoreCalculationCmb.getSelectedIndex() != 0
-                    || !currentPtmScoringPreferences.isProbabilitsticScoreCalculation() && probabilitsticScoreCalculationCmb.getSelectedIndex() != 1) {
-                currentPtmScoringPreferences.setProbabilitsticScoreCalculation(probabilitsticScoreCalculationCmb.getSelectedIndex() == 0);
-                ptmScoreThresholdChanged = true;
-            }
-
-            if (currentPtmScoringPreferences.isProbabilisticScoreNeutralLosses()&& neutralLossesCmb.getSelectedIndex() != 0
-                    || !currentPtmScoringPreferences.isProbabilisticScoreNeutralLosses() && neutralLossesCmb.getSelectedIndex() != 1) {
-                currentPtmScoringPreferences.setProbabilisticScoreNeutralLosses(neutralLossesCmb.getSelectedIndex() == 0);
-                ptmScoreThresholdChanged = true;
-            }
-
-
-            // spectrum counting
-            boolean spectrumCountingMethodChanged = false;
-
-            if (methodCmb.getSelectedIndex() == 0 && spectrumCountingPreferences.getSelectedMethod() != SpectrumCountingPreferences.SpectralCountingMethod.NSAF) {
-                spectrumCountingPreferences.setSelectedMethod(SpectrumCountingPreferences.SpectralCountingMethod.NSAF);
-                spectrumCountingMethodChanged = true;
-            } else if (methodCmb.getSelectedIndex() == 1 && spectrumCountingPreferences.getSelectedMethod() != SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) {
-                spectrumCountingPreferences.setSelectedMethod(SpectrumCountingPreferences.SpectralCountingMethod.EMPAI);
-                spectrumCountingMethodChanged = true;
-            }
-
-            if (spectrumCountingPreferences.isValidatedHits() != validatedCheck.isSelected()) {
-                spectrumCountingPreferences.setValidatedHits(validatedCheck.isSelected());
-                spectrumCountingMethodChanged = true;
-            }
-
-
-            // surrounding amino acids
-            boolean numberOfSurroundingAminoAcidsChanged = false;
-
-            int selection = (Integer) nAASpinner.getValue();
-            if (selection != peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides()) {
-                peptideShakerGUI.getDisplayPreferences().setnAASurroundingPeptides(selection);
-                numberOfSurroundingAminoAcidsChanged = true;
-            }
-
-
-            // update the ptm score threshold
-            if (ptmScoreThresholdChanged) {
-                //@TODO: update interface where needed?
-            }
-
-            // update the number of surrounding amino acids
-            if (numberOfSurroundingAminoAcidsChanged) {
-                peptideShakerGUI.updateSurroundingAminoAcids();
-            }
-
-            // update the spectrum counting method
-            if (spectrumCountingMethodChanged) {
-                peptideShakerGUI.setSpectrumCountingPreferences(spectrumCountingPreferences);
-                peptideShakerGUI.getIdentificationFeaturesGenerator().clearSpectrumCounting();
-                peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
-                peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
-                peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
-                peptideShakerGUI.updateTabbedPanes();
-            }
-
-            peptideShakerGUI.setDataSaved(false);
-            dispose();
-        }
+        dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
     /**
@@ -439,6 +266,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        canceled = true;
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
@@ -467,30 +295,36 @@ public class PreferencesDialog extends javax.swing.JDialog {
      */
     private void helpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PreferencesDialog.html"),
+        new HelpDialog(parentFrame, getClass().getResource("/helpFiles/PreferencesDialog.html"),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_helpJButtonActionPerformed
+
+    private void editSpectrumCountingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSpectrumCountingButtonActionPerformed
+        SpectrumCountingSettingsDialog spectrumCountingPreferencesDialog = new SpectrumCountingSettingsDialog(parentFrame, spectrumCountingPreferences);
+        if (!spectrumCountingPreferencesDialog.isCanceled()) {
+            spectrumCountingPreferences = spectrumCountingPreferencesDialog.getSpectrumCountingPreferences();
+        }
+    }//GEN-LAST:event_editSpectrumCountingButtonActionPerformed
+
+    private void editDisplayPreferencesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editDisplayPreferencesButtonActionPerformed
+        DisplayPreferencesDialog displayPreferencesDialog = new DisplayPreferencesDialog(parentFrame, displayPreferences);
+        if (!displayPreferencesDialog.isCanceled()) {
+            displayPreferences = displayPreferencesDialog.getDisplayPreferences();
+        }
+    }//GEN-LAST:event_editDisplayPreferencesButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JLabel flrLabel;
-    private javax.swing.JTextField flrThresholdTxt;
+    private javax.swing.JButton editDisplayPreferencesButton;
+    private javax.swing.JButton editSpectrumCountingButton;
     private javax.swing.JButton helpJButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JComboBox methodCmb;
-    private javax.swing.JSpinner nAASpinner;
-    private javax.swing.JComboBox neutralLossesCmb;
-    private javax.swing.JLabel neutralLossesLabel;
     private javax.swing.JButton okButton;
-    private javax.swing.JPanel optionsPanel;
-    private javax.swing.JPanel optionsPanel1;
     private javax.swing.JPanel preferencesPanel;
-    private javax.swing.JComboBox probabilitsticScoreCalculationCmb;
-    private javax.swing.JLabel probalisticScoreCalculationLabel;
+    private javax.swing.JLabel spectrumCountingPreferencesLbl;
     private javax.swing.JLabel surroundingAminoAcidsLabel;
-    private javax.swing.JCheckBox validatedCheck;
     // End of variables declaration//GEN-END:variables
 }
