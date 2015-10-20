@@ -1226,7 +1226,7 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editImportFilterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editImportFilterButtonActionPerformed
-        MatchesImportFiltersDialog matchesImportFiltersDialog = new MatchesImportFiltersDialog(this, identificationParameters.getPeptideAssumptionFilter(), true);
+        MatchesImportFiltersDialog matchesImportFiltersDialog = new MatchesImportFiltersDialog(peptideShakerGUI, identificationParameters.getPeptideAssumptionFilter(), true);
         PeptideAssumptionFilter newFilter = matchesImportFiltersDialog.getFilter();
         if (newFilter != null) {
             importFilterTxt.setText("User Defined");

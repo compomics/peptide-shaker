@@ -905,7 +905,7 @@ public class IdentificationFeaturesGenerator {
      * chosen
      *
      * @return the corresponding spectrum counting metric normalized in the
-     * metricsprefix of mol
+     * metrics prefix of mol
      *
      * @throws java.sql.SQLException exception thrown whenever an error occurred
      * while interacting with a database (from the protein tree or
