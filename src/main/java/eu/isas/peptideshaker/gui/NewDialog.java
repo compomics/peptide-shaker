@@ -29,7 +29,7 @@ import com.compomics.util.experiment.identification.filtering.PeptideAssumptionF
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
-import com.compomics.util.gui.parameters.ProcessingPreferencesDialog;
+import com.compomics.util.gui.parameters.OldProcessingPreferencesDialog;
 import com.compomics.util.gui.parameters.identification_parameters.MatchesImportFiltersDialog;
 import com.compomics.util.gui.parameters.identification_parameters.SearchSettingsDialog;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -1276,7 +1276,7 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editPreferencesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editPreferencesButtonActionPerformed
-        ProcessingPreferencesDialog processingPreferencesDialog = new ProcessingPreferencesDialog(this, true, identificationParameters, processingPreferences);
+        OldProcessingPreferencesDialog processingPreferencesDialog = new OldProcessingPreferencesDialog(this, true, identificationParameters, processingPreferences);
 
         if (!processingPreferencesDialog.isCanceled()) {
             IdMatchValidationPreferences idMatchValidationPreferences = identificationParameters.getIdValidationPreferences();

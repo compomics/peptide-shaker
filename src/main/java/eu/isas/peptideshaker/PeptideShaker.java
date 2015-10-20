@@ -27,6 +27,7 @@ import com.compomics.util.memory.MemoryConsumptionStatus;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.messages.FeedBack;
+import com.compomics.util.preferences.FractionSettings;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
@@ -438,7 +439,7 @@ public class PeptideShaker {
         }
 
         waitingHandler.appendReport("Saving protein probabilities.", true, true);
-        matchesValidator.attachProteinProbabilities(identification, metrics, waitingHandler, processingPreferences);
+        matchesValidator.attachProteinProbabilities(identification, metrics, waitingHandler, identificationParameters.getFractionSettings());
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -582,7 +583,7 @@ public class PeptideShaker {
         matchesValidator.attachPeptideProbabilities(identification, waitingHandler);
         matchesValidator.fillProteinMap(identification, waitingHandler);
         proteinMap.estimateProbabilities(waitingHandler);
-        matchesValidator.attachProteinProbabilities(identification, metrics, waitingHandler, processingPreferences);
+        matchesValidator.attachProteinProbabilities(identification, metrics, waitingHandler, identificationParameters.getFractionSettings());
         ProteinInference proteinInference = new ProteinInference();
         proteinInference.retainBestScoringGroups(identification, metrics, proteinMap, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, waitingHandler);
     }
@@ -593,21 +594,20 @@ public class PeptideShaker {
      * @param identification the identification object containing the
      * identification matches
      * @param waitingHandler the waiting handler
-     * @param processingPreferences the processing preferences
      * @param shotgunProtocol information on the protocol
      * @param identificationParameters the identification parameters
      *
      * @throws Exception exception thrown whenever it is attempted to attach
      * more than one identification per search engine per spectrum
      */
-    public void peptideMapChanged(Identification identification, WaitingHandler waitingHandler, PSProcessingPreferences processingPreferences,
+    public void peptideMapChanged(Identification identification, WaitingHandler waitingHandler,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws Exception {
         ProteinMap proteinMap = new ProteinMap();
         matchesValidator.setProteinMap(proteinMap);
         matchesValidator.attachPeptideProbabilities(identification, waitingHandler);
         matchesValidator.fillProteinMap(identification, waitingHandler);
         proteinMap.estimateProbabilities(waitingHandler);
-        matchesValidator.attachProteinProbabilities(identification, metrics, waitingHandler, processingPreferences);
+        matchesValidator.attachProteinProbabilities(identification, metrics, waitingHandler, identificationParameters.getFractionSettings());
         ProteinInference proteinInference = new ProteinInference();
         proteinInference.retainBestScoringGroups(identification, metrics, proteinMap, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, waitingHandler);
     }
@@ -616,16 +616,16 @@ public class PeptideShaker {
      * Processes the identifications if a change occurred in the protein map.
      *
      * @param waitingHandler the waiting handler
-     * @param processingPreferences the processing preferences
+     * @param fractionSettings the fraction settings
      *
      * @throws SQLException thrown if an SQLException occurs
      * @throws IOException thrown if an IOException occurs
      * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      * @throws InterruptedException thrown if an InterruptedException occurs
      */
-    public void proteinMapChanged(WaitingHandler waitingHandler, PSProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public void proteinMapChanged(WaitingHandler waitingHandler, FractionSettings fractionSettings) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        matchesValidator.attachProteinProbabilities(identification, metrics, waitingHandler, processingPreferences);
+        matchesValidator.attachProteinProbabilities(identification, metrics, waitingHandler, fractionSettings);
     }
 
     /**

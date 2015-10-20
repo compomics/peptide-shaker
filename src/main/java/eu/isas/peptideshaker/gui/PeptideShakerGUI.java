@@ -10,7 +10,7 @@ import com.compomics.util.gui.error_handlers.notification.NotificationDialogPare
 import com.compomics.util.gui.gene_mapping.SpeciesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FollowupPreferencesDialog;
-import com.compomics.util.gui.parameters.ProcessingPreferencesDialog;
+import com.compomics.util.gui.parameters.OldProcessingPreferencesDialog;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.software.ToolFactory;
@@ -2836,7 +2836,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void processingParametersMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processingParametersMenuItemActionPerformed
-        new ProcessingPreferencesDialog(this, false, getIdentificationParameters(), getProcessingPreferences());
+        new OldProcessingPreferencesDialog(this, false, getIdentificationParameters(), getProcessingPreferences());
     }//GEN-LAST:event_processingParametersMenuItemActionPerformed
 
     /**

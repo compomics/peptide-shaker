@@ -31,6 +31,7 @@ import eu.isas.peptideshaker.filtering.AssumptionFilter;
 import com.compomics.util.experiment.filtering.FilterItemComparator;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
+import com.compomics.util.preferences.FractionSettings;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
@@ -1158,7 +1159,7 @@ public class MatchesValidator {
      * validate
      * @param metrics if provided fraction information
      * @param waitingHandler the handler displaying feedback to the user
-     * @param processingPreferences the processing preferences
+     * @param fractionSettings the fraction settings
      *
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the matches database
@@ -1172,7 +1173,7 @@ public class MatchesValidator {
      * reading the FASTA file
      */
     public void attachProteinProbabilities(Identification identification, Metrics metrics, WaitingHandler waitingHandler,
-            PSProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+            FractionSettings fractionSettings) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Attaching Protein Probabilities. Please Wait...");
 
@@ -1208,7 +1209,7 @@ public class MatchesValidator {
                 }
 
                 // set the fraction molecular weights
-                if (!proteinMatch.isDecoy() && psParameter.getFractionConfidence(fraction) > processingPreferences.getProteinConfidenceMwPlots()) {
+                if (!proteinMatch.isDecoy() && psParameter.getFractionConfidence(fraction) > fractionSettings.getProteinConfidenceMwPlots()) {
                     if (fractionMW.containsKey(fraction)) {
                         fractionMW.get(fraction).add(proteinMW);
                     } else {
