@@ -29,7 +29,6 @@ import com.compomics.util.preferences.ValidationQCPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.filtering.AssumptionFilter;
 import com.compomics.util.experiment.filtering.FilterItemComparator;
-import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
 import com.compomics.util.preferences.FractionSettings;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
