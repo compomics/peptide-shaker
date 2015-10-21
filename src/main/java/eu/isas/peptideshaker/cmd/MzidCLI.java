@@ -55,7 +55,6 @@ public class MzidCLI extends CpsParent {
      * @param mzidCLIInputBean the mzId creation options
      */
     public MzidCLI(MzidCLIInputBean mzidCLIInputBean) {
-        super(PeptideShaker.getMatchesFolder());
         this.mzidCLIInputBean = mzidCLIInputBean;
         loadEnzymes();
         loadPtms();
@@ -80,6 +79,9 @@ public class MzidCLI extends CpsParent {
                 e.printStackTrace();
             }
         }
+
+        setDbFolder(PeptideShaker.getMatchesFolder());
+
         try {
             ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
             if (!errorKeys.isEmpty()) {
@@ -187,7 +189,7 @@ public class MzidCLI extends CpsParent {
         // make sure that all annotations are included
         double currentIntensityLimit = this.getIdentificationParameters().getAnnotationPreferences().getAnnotationIntensityLimit();
         this.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(0.0);
-        
+
         try {
             CLIMethods.exportMzId(mzidCLIInputBean, this, waitingHandler);
         } catch (Exception e) {

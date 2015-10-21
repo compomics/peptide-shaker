@@ -56,7 +56,6 @@ public class ReportCLI extends CpsParent {
      * @param reportCLIInputBean the input bean
      */
     public ReportCLI(ReportCLIInputBean reportCLIInputBean) {
-        super(PeptideShaker.getMatchesFolder());
         this.reportCLIInputBean = reportCLIInputBean;
         loadEnzymes();
         loadPtms();
@@ -81,6 +80,9 @@ public class ReportCLI extends CpsParent {
                 e.printStackTrace();
             }
         }
+
+        setDbFolder(PeptideShaker.getMatchesFolder());
+
         try {
             ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
             if (!errorKeys.isEmpty()) {

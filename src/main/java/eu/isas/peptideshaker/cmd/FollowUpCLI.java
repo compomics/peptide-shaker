@@ -55,7 +55,6 @@ public class FollowUpCLI extends CpsParent {
      * @param followUpCLIInputBean the follow-up options
      */
     public FollowUpCLI(FollowUpCLIInputBean followUpCLIInputBean) {
-        super(PeptideShaker.getMatchesFolder());
         this.followUpCLIInputBean = followUpCLIInputBean;
         loadEnzymes();
         loadPtms();
@@ -80,6 +79,9 @@ public class FollowUpCLI extends CpsParent {
                 e.printStackTrace();
             }
         }
+
+        setDbFolder(PeptideShaker.getMatchesFolder());
+
         try {
             ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
             if (!errorKeys.isEmpty()) {
