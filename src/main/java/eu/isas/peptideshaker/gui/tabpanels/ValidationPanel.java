@@ -17,7 +17,6 @@ import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -249,9 +248,6 @@ public class ValidationPanel extends javax.swing.JPanel {
         fdrCombo1.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         thresholdTypeCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
-        // make the tabs in the spectrum tabbed pane go from right to left
-        optimizationTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-
         formComponentResized(null);
     }
 
@@ -277,23 +273,23 @@ public class ValidationPanel extends javax.swing.JPanel {
         groupSelectionScrollPaneScrollPane = new javax.swing.JScrollPane();
         groupSelectionTable = new javax.swing.JTable();
         idSummaryJPanel = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        totalTpLabel = new javax.swing.JLabel();
         nTotalTxt = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
+        validatedHitsLabel = new javax.swing.JLabel();
         nValidatedTxt = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
+        fpLabel = new javax.swing.JLabel();
+        tpLabel = new javax.swing.JLabel();
         nTPlTxt = new javax.swing.JTextField();
         nFPTxt = new javax.swing.JTextField();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel36 = new javax.swing.JLabel();
+        fdrLabel = new javax.swing.JLabel();
+        fnrLabel = new javax.swing.JLabel();
         fdrTxt = new javax.swing.JTextField();
         fnrTxt = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel20 = new javax.swing.JLabel();
+        datasetPropertiesLabel = new javax.swing.JLabel();
+        resolutionLabel = new javax.swing.JLabel();
         nMaxTxt = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel23 = new javax.swing.JLabel();
+        validationResultsLabel = new javax.swing.JLabel();
+        confidenceLabel = new javax.swing.JLabel();
         confidenceTxt = new javax.swing.JTextField();
         totalTPHelpJButton = new javax.swing.JButton();
         validatedHitsHelpJButton = new javax.swing.JButton();
@@ -304,66 +300,38 @@ public class ValidationPanel extends javax.swing.JPanel {
         fdrHelpJButton = new javax.swing.JButton();
         fnrHelpJButton = new javax.swing.JButton();
         optimizationJPanel = new javax.swing.JPanel();
-        optimizationTabbedPane = new javax.swing.JTabbedPane();
-        estimatorOptimizationTab = new javax.swing.JPanel();
-        estimatorsPlotSplitPane = new javax.swing.JSplitPane();
-        pepPanel = new javax.swing.JPanel();
-        jLabel30 = new javax.swing.JLabel();
-        jLabel27 = new javax.swing.JLabel();
-        sensitivitySlider1 = new javax.swing.JSlider();
-        pepPlotLayeredPane = new javax.swing.JLayeredPane();
-        pepChartPanel = new javax.swing.JPanel();
-        pepPlotHelpJButton = new javax.swing.JButton();
-        pepPlotExportJButton = new javax.swing.JButton();
-        fdrsPanel = new javax.swing.JPanel();
-        jLabel34 = new javax.swing.JLabel();
-        sensitivitySlider2 = new javax.swing.JSlider();
-        jLabel35 = new javax.swing.JLabel();
-        fdrsPlotLayeredPane = new javax.swing.JLayeredPane();
-        fdrsChartPanel = new javax.swing.JPanel();
-        fdrsPlotHelpJButton = new javax.swing.JButton();
-        fdrPlotExportJButton = new javax.swing.JButton();
         thresholdOptimizationTab = new javax.swing.JPanel();
         leftPlotSplitPane = new javax.swing.JSplitPane();
         confidencePanel = new javax.swing.JPanel();
-        jLabel25 = new javax.swing.JLabel();
-        confidenceSlider = new javax.swing.JSlider();
-        jLabel26 = new javax.swing.JLabel();
         confidencePlotLayeredPane = new javax.swing.JLayeredPane();
         confidenceChartPanel = new javax.swing.JPanel();
         confidencePlotHelpJButton = new javax.swing.JButton();
         confidencePlotExportJButton = new javax.swing.JButton();
         rightPlotSplitPane = new javax.swing.JSplitPane();
         fdrFnrPanel = new javax.swing.JPanel();
-        jLabel28 = new javax.swing.JLabel();
-        fdrSlider1 = new javax.swing.JSlider();
-        jLabel29 = new javax.swing.JLabel();
         fdrPlotLayeredPane = new javax.swing.JLayeredPane();
         fdrFnrChartPanel = new javax.swing.JPanel();
         fdrFnrPlotHelpJButton = new javax.swing.JButton();
         fdrFnrPlotExportJButton = new javax.swing.JButton();
         costBenefitPanel = new javax.swing.JPanel();
-        jLabel32 = new javax.swing.JLabel();
-        fdrSlider2 = new javax.swing.JSlider();
-        jLabel33 = new javax.swing.JLabel();
         costBenefitPlotLayeredPane = new javax.swing.JLayeredPane();
         costBenefitChartPanel = new javax.swing.JPanel();
         costBenefitPlotHelpJButton = new javax.swing.JButton();
         costBenefitPlotExportJButton = new javax.swing.JButton();
         parametersJPanel = new javax.swing.JPanel();
         thresholdInput = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
+        thresholdOptimizationLabel = new javax.swing.JLabel();
         validateButton = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel22 = new javax.swing.JLabel();
+        advancedSettingsLabel = new javax.swing.JLabel();
+        pepBinSizeLabel = new javax.swing.JLabel();
         windowTxt = new javax.swing.JTextField();
         applyButton = new javax.swing.JButton();
         fdrCombo1 = new javax.swing.JComboBox();
         thresholdTypeCmb = new javax.swing.JComboBox();
-        jLabel8 = new javax.swing.JLabel();
+        thresholdLabel = new javax.swing.JLabel();
         thresholdHelpJButton = new javax.swing.JButton();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
+        thresholdTypeLabel = new javax.swing.JLabel();
+        fdrMetricLabel = new javax.swing.JLabel();
         estimatorHelpJButton = new javax.swing.JButton();
         thresholdResetJButton = new javax.swing.JButton();
 
@@ -468,27 +436,27 @@ public class ValidationPanel extends javax.swing.JPanel {
         idSummaryJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Identification Summary"));
         idSummaryJPanel.setOpaque(false);
 
-        jLabel2.setText("Total TP");
-        jLabel2.setToolTipText("Total number of true positives");
+        totalTpLabel.setText("Total TP");
+        totalTpLabel.setToolTipText("Total number of true positives");
 
         nTotalTxt.setEditable(false);
         nTotalTxt.setBackground(new java.awt.Color(245, 245, 245));
         nTotalTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nTotalTxt.setToolTipText("Total number of true positives");
 
-        jLabel1.setText("# Validated Hits");
-        jLabel1.setToolTipText("Number of validated hits");
+        validatedHitsLabel.setText("# Validated Hits");
+        validatedHitsLabel.setToolTipText("Number of validated hits");
 
         nValidatedTxt.setEditable(false);
         nValidatedTxt.setBackground(new java.awt.Color(245, 245, 245));
         nValidatedTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nValidatedTxt.setToolTipText("Number of validated hits");
 
-        jLabel3.setText("# FP");
-        jLabel3.setToolTipText("Number of false positives");
+        fpLabel.setText("# FP");
+        fpLabel.setToolTipText("Number of false positives");
 
-        jLabel10.setText("# TP");
-        jLabel10.setToolTipText("Number of true positives");
+        tpLabel.setText("# TP");
+        tpLabel.setToolTipText("Number of true positives");
 
         nTPlTxt.setEditable(false);
         nTPlTxt.setBackground(new java.awt.Color(245, 245, 245));
@@ -500,11 +468,11 @@ public class ValidationPanel extends javax.swing.JPanel {
         nFPTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nFPTxt.setToolTipText("Number of false positives");
 
-        jLabel13.setText("FDR");
-        jLabel13.setToolTipText("False Discovery Rate");
+        fdrLabel.setText("FDR");
+        fdrLabel.setToolTipText("False Discovery Rate");
 
-        jLabel36.setText("FNR");
-        jLabel36.setToolTipText("False Negative Rate");
+        fnrLabel.setText("FNR");
+        fnrLabel.setToolTipText("False Negative Rate");
 
         fdrTxt.setEditable(false);
         fdrTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -514,22 +482,22 @@ public class ValidationPanel extends javax.swing.JPanel {
         fnrTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         fnrTxt.setToolTipText("False Negative Rate");
 
-        jLabel6.setFont(jLabel6.getFont().deriveFont((jLabel6.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel6.setText("Dataset Properties");
+        datasetPropertiesLabel.setFont(datasetPropertiesLabel.getFont().deriveFont((datasetPropertiesLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        datasetPropertiesLabel.setText("Dataset Properties");
 
-        jLabel20.setText("Resolution");
-        jLabel20.setToolTipText("Confidence estimation resolution");
+        resolutionLabel.setText("Resolution");
+        resolutionLabel.setToolTipText("Confidence estimation resolution");
 
         nMaxTxt.setEditable(false);
         nMaxTxt.setBackground(new java.awt.Color(245, 245, 245));
         nMaxTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nMaxTxt.setToolTipText("Confidence estimation resolution");
 
-        jLabel7.setFont(jLabel7.getFont().deriveFont((jLabel7.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel7.setText("Validation Results");
+        validationResultsLabel.setFont(validationResultsLabel.getFont().deriveFont((validationResultsLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        validationResultsLabel.setText("Validation Results");
 
-        jLabel23.setText("Confidence");
-        jLabel23.setToolTipText("Minimum Confidence");
+        confidenceLabel.setText("Confidence");
+        confidenceLabel.setToolTipText("Minimum Confidence");
 
         confidenceTxt.setEditable(false);
         confidenceTxt.setBackground(new java.awt.Color(245, 245, 245));
@@ -703,15 +671,15 @@ public class ValidationPanel extends javax.swing.JPanel {
             .addGroup(idSummaryJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel7)
+                    .addComponent(datasetPropertiesLabel)
+                    .addComponent(validationResultsLabel)
                     .addGroup(idSummaryJPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel10))
+                            .addComponent(totalTpLabel)
+                            .addComponent(validatedHitsLabel)
+                            .addComponent(fpLabel)
+                            .addComponent(tpLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -727,10 +695,10 @@ public class ValidationPanel extends javax.swing.JPanel {
                             .addComponent(truePositivesHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(27, 27, 27)
                         .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel23)
-                            .addComponent(jLabel20)
-                            .addComponent(jLabel13)
-                            .addComponent(jLabel36))
+                            .addComponent(confidenceLabel)
+                            .addComponent(resolutionLabel)
+                            .addComponent(fdrLabel)
+                            .addComponent(fnrLabel))
                         .addGap(9, 9, 9)
                         .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(idSummaryJPanelLayout.createSequentialGroup()
@@ -755,39 +723,39 @@ public class ValidationPanel extends javax.swing.JPanel {
             idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(idSummaryJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel6)
+                .addComponent(datasetPropertiesLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel2)
+                    .addComponent(totalTpLabel)
                     .addComponent(nTotalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(totalTPHelpJButton)
-                    .addComponent(jLabel20)
+                    .addComponent(resolutionLabel)
                     .addComponent(nMaxTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(nMaxHelpJButton))
                 .addGap(18, 18, 18)
-                .addComponent(jLabel7)
+                .addComponent(validationResultsLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel1)
+                    .addComponent(validatedHitsLabel)
                     .addComponent(nValidatedTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(validatedHitsHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel23)
+                    .addComponent(confidenceLabel)
                     .addComponent(confidenceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(confidenceHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel3)
+                    .addComponent(fpLabel)
                     .addComponent(nFPTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(falsePositivesHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13)
+                    .addComponent(fdrLabel)
                     .addComponent(fdrTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(fdrHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel10)
+                    .addComponent(tpLabel)
                     .addComponent(nTPlTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(truePositivesHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel36)
+                    .addComponent(fnrLabel)
                     .addComponent(fnrTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(fnrHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(27, Short.MAX_VALUE))
@@ -795,239 +763,8 @@ public class ValidationPanel extends javax.swing.JPanel {
 
         idSummaryJPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {confidenceHelpJButton, confidenceTxt, falsePositivesHelpJButton, fdrHelpJButton, fdrTxt, fnrHelpJButton, fnrTxt, nFPTxt, nTPlTxt, nValidatedTxt, truePositivesHelpJButton, validatedHitsHelpJButton});
 
-        optimizationJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Optimization"));
+        optimizationJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Validation Plots"));
         optimizationJPanel.setOpaque(false);
-
-        optimizationTabbedPane.setBackground(new java.awt.Color(255, 255, 255));
-        optimizationTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
-
-        estimatorOptimizationTab.setBackground(new java.awt.Color(255, 255, 255));
-
-        estimatorsPlotSplitPane.setBorder(null);
-        estimatorsPlotSplitPane.setDividerLocation(estimatorsPlotSplitPane.getWidth() / 2);
-        estimatorsPlotSplitPane.setDividerSize(0);
-        estimatorsPlotSplitPane.setResizeWeight(0.5);
-        estimatorsPlotSplitPane.setOpaque(false);
-
-        pepPanel.setOpaque(false);
-
-        jLabel30.setText("Sensitivity");
-
-        jLabel27.setText("Robustness");
-
-        sensitivitySlider1.setToolTipText("" + sensitivitySlider1.getValue());
-        sensitivitySlider1.setEnabled(false);
-        sensitivitySlider1.setOpaque(false);
-        sensitivitySlider1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                sensitivitySlider1MouseReleased(evt);
-            }
-        });
-        sensitivitySlider1.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                sensitivitySlider1MouseDragged(evt);
-            }
-        });
-
-        pepChartPanel.setOpaque(false);
-        pepChartPanel.setLayout(new javax.swing.BoxLayout(pepChartPanel, javax.swing.BoxLayout.LINE_AXIS));
-        pepPlotLayeredPane.add(pepChartPanel);
-        pepChartPanel.setBounds(0, 90, 587, 168);
-
-        pepPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
-        pepPlotHelpJButton.setToolTipText("Help");
-        pepPlotHelpJButton.setBorder(null);
-        pepPlotHelpJButton.setBorderPainted(false);
-        pepPlotHelpJButton.setContentAreaFilled(false);
-        pepPlotHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
-        pepPlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                pepPlotHelpJButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                pepPlotHelpJButtonMouseExited(evt);
-            }
-        });
-        pepPlotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pepPlotHelpJButtonActionPerformed(evt);
-            }
-        });
-        pepPlotLayeredPane.add(pepPlotHelpJButton);
-        pepPlotHelpJButton.setBounds(577, 10, 10, 25);
-        pepPlotLayeredPane.setLayer(pepPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
-
-        pepPlotExportJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        pepPlotExportJButton.setToolTipText("Export");
-        pepPlotExportJButton.setBorder(null);
-        pepPlotExportJButton.setBorderPainted(false);
-        pepPlotExportJButton.setContentAreaFilled(false);
-        pepPlotExportJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        pepPlotExportJButton.setEnabled(false);
-        pepPlotExportJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
-        pepPlotExportJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                pepPlotExportJButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                pepPlotExportJButtonMouseExited(evt);
-            }
-        });
-        pepPlotExportJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pepPlotExportJButtonActionPerformed(evt);
-            }
-        });
-        pepPlotLayeredPane.add(pepPlotExportJButton);
-        pepPlotExportJButton.setBounds(550, 10, 10, 25);
-        pepPlotLayeredPane.setLayer(pepPlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
-
-        javax.swing.GroupLayout pepPanelLayout = new javax.swing.GroupLayout(pepPanel);
-        pepPanel.setLayout(pepPanelLayout);
-        pepPanelLayout.setHorizontalGroup(
-            pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pepPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(pepPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 585, Short.MAX_VALUE)
-                    .addGroup(pepPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel30)
-                        .addGap(18, 18, 18)
-                        .addComponent(sensitivitySlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel27)))
-                .addContainerGap())
-        );
-        pepPanelLayout.setVerticalGroup(
-            pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pepPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pepPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel30)
-                    .addComponent(sensitivitySlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel27))
-                .addContainerGap())
-        );
-
-        estimatorsPlotSplitPane.setLeftComponent(pepPanel);
-
-        fdrsPanel.setOpaque(false);
-
-        jLabel34.setText("Sensitivity");
-
-        sensitivitySlider2.setEnabled(false);
-        sensitivitySlider2.setOpaque(false);
-        sensitivitySlider2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                sensitivitySlider2MouseReleased(evt);
-            }
-        });
-        sensitivitySlider2.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                sensitivitySlider2MouseDragged(evt);
-            }
-        });
-
-        jLabel35.setText("Robustness");
-
-        fdrsChartPanel.setOpaque(false);
-        fdrsChartPanel.setLayout(new javax.swing.BoxLayout(fdrsChartPanel, javax.swing.BoxLayout.LINE_AXIS));
-        fdrsPlotLayeredPane.add(fdrsChartPanel);
-        fdrsChartPanel.setBounds(0, 80, 588, 173);
-
-        fdrsPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
-        fdrsPlotHelpJButton.setToolTipText("Help");
-        fdrsPlotHelpJButton.setBorder(null);
-        fdrsPlotHelpJButton.setBorderPainted(false);
-        fdrsPlotHelpJButton.setContentAreaFilled(false);
-        fdrsPlotHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
-        fdrsPlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                fdrsPlotHelpJButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                fdrsPlotHelpJButtonMouseExited(evt);
-            }
-        });
-        fdrsPlotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fdrsPlotHelpJButtonActionPerformed(evt);
-            }
-        });
-        fdrsPlotLayeredPane.add(fdrsPlotHelpJButton);
-        fdrsPlotHelpJButton.setBounds(570, 10, 10, 25);
-        fdrsPlotLayeredPane.setLayer(fdrsPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
-
-        fdrPlotExportJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        fdrPlotExportJButton.setToolTipText("Export");
-        fdrPlotExportJButton.setBorder(null);
-        fdrPlotExportJButton.setBorderPainted(false);
-        fdrPlotExportJButton.setContentAreaFilled(false);
-        fdrPlotExportJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        fdrPlotExportJButton.setEnabled(false);
-        fdrPlotExportJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
-        fdrPlotExportJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                fdrPlotExportJButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                fdrPlotExportJButtonMouseExited(evt);
-            }
-        });
-        fdrPlotExportJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fdrPlotExportJButtonActionPerformed(evt);
-            }
-        });
-        fdrsPlotLayeredPane.add(fdrPlotExportJButton);
-        fdrPlotExportJButton.setBounds(550, 10, 10, 25);
-        fdrsPlotLayeredPane.setLayer(fdrPlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
-
-        javax.swing.GroupLayout fdrsPanelLayout = new javax.swing.GroupLayout(fdrsPanel);
-        fdrsPanel.setLayout(fdrsPanelLayout);
-        fdrsPanelLayout.setHorizontalGroup(
-            fdrsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(fdrsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(fdrsPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
-                    .addGroup(fdrsPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel34)
-                        .addGap(18, 18, 18)
-                        .addComponent(sensitivitySlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel35)))
-                .addContainerGap())
-        );
-        fdrsPanelLayout.setVerticalGroup(
-            fdrsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(fdrsPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(fdrsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(sensitivitySlider2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel35)
-                    .addComponent(jLabel34))
-                .addContainerGap())
-        );
-
-        estimatorsPlotSplitPane.setRightComponent(fdrsPanel);
-
-        javax.swing.GroupLayout estimatorOptimizationTabLayout = new javax.swing.GroupLayout(estimatorOptimizationTab);
-        estimatorOptimizationTab.setLayout(estimatorOptimizationTabLayout);
-        estimatorOptimizationTabLayout.setHorizontalGroup(
-            estimatorOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(estimatorsPlotSplitPane)
-        );
-        estimatorOptimizationTabLayout.setVerticalGroup(
-            estimatorOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(estimatorsPlotSplitPane)
-        );
-
-        optimizationTabbedPane.addTab("Estimators", estimatorOptimizationTab);
 
         thresholdOptimizationTab.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1038,24 +775,6 @@ public class ValidationPanel extends javax.swing.JPanel {
         leftPlotSplitPane.setOpaque(false);
 
         confidencePanel.setOpaque(false);
-
-        jLabel25.setText("Quantity");
-
-        confidenceSlider.setToolTipText("Confidence Threshold");
-        confidenceSlider.setEnabled(false);
-        confidenceSlider.setOpaque(false);
-        confidenceSlider.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                confidenceSliderMouseReleased(evt);
-            }
-        });
-        confidenceSlider.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                confidenceSliderMouseDragged(evt);
-            }
-        });
-
-        jLabel26.setText("Quality");
 
         confidenceChartPanel.setOpaque(false);
         confidenceChartPanel.setLayout(new javax.swing.BoxLayout(confidenceChartPanel, javax.swing.BoxLayout.LINE_AXIS));
@@ -1116,27 +835,14 @@ public class ValidationPanel extends javax.swing.JPanel {
             confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(confidencePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(confidencePlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
-                    .addGroup(confidencePanelLayout.createSequentialGroup()
-                        .addComponent(jLabel25)
-                        .addGap(18, 18, 18)
-                        .addComponent(confidenceSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel26)))
+                .addComponent(confidencePlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
                 .addContainerGap())
         );
         confidencePanelLayout.setVerticalGroup(
             confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, confidencePanelLayout.createSequentialGroup()
+            .addGroup(confidencePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(confidencePlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(confidenceSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel25)))
+                .addComponent(confidencePlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1149,24 +855,6 @@ public class ValidationPanel extends javax.swing.JPanel {
         rightPlotSplitPane.setOpaque(false);
 
         fdrFnrPanel.setOpaque(false);
-
-        jLabel28.setText("Quality");
-
-        fdrSlider1.setToolTipText("FDR Threshold");
-        fdrSlider1.setEnabled(false);
-        fdrSlider1.setOpaque(false);
-        fdrSlider1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                fdrSlider1MouseReleased(evt);
-            }
-        });
-        fdrSlider1.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                fdrSlider1MouseDragged(evt);
-            }
-        });
-
-        jLabel29.setText("Quantity");
 
         fdrFnrChartPanel.setOpaque(false);
         fdrFnrChartPanel.setLayout(new javax.swing.BoxLayout(fdrFnrChartPanel, javax.swing.BoxLayout.LINE_AXIS));
@@ -1227,51 +915,20 @@ public class ValidationPanel extends javax.swing.JPanel {
             fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrFnrPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(fdrPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE)
-                    .addGroup(fdrFnrPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel28)
-                        .addGap(18, 18, 18)
-                        .addComponent(fdrSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel29)))
+                .addComponent(fdrPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
                 .addContainerGap())
         );
         fdrFnrPanelLayout.setVerticalGroup(
             fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrFnrPanelLayout.createSequentialGroup()
+            .addGroup(fdrFnrPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fdrPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(fdrSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel29)
-                        .addComponent(jLabel28)))
+                .addComponent(fdrPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         rightPlotSplitPane.setLeftComponent(fdrFnrPanel);
 
         costBenefitPanel.setOpaque(false);
-
-        jLabel32.setText("Quality");
-
-        fdrSlider2.setToolTipText("FDR Threshold");
-        fdrSlider2.setEnabled(false);
-        fdrSlider2.setOpaque(false);
-        fdrSlider2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                fdrSlider2MouseReleased(evt);
-            }
-        });
-        fdrSlider2.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                fdrSlider2MouseDragged(evt);
-            }
-        });
-
-        jLabel33.setText("Quantity");
 
         costBenefitChartPanel.setOpaque(false);
         costBenefitChartPanel.setLayout(new javax.swing.BoxLayout(costBenefitChartPanel, javax.swing.BoxLayout.LINE_AXIS));
@@ -1332,26 +989,14 @@ public class ValidationPanel extends javax.swing.JPanel {
             costBenefitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, costBenefitPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(costBenefitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(costBenefitPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
-                    .addGroup(costBenefitPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel32)
-                        .addGap(18, 18, 18)
-                        .addComponent(fdrSlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel33)))
+                .addComponent(costBenefitPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
                 .addContainerGap())
         );
         costBenefitPanelLayout.setVerticalGroup(
             costBenefitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, costBenefitPanelLayout.createSequentialGroup()
+            .addGroup(costBenefitPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(costBenefitPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(costBenefitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel32)
-                    .addComponent(fdrSlider2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel33))
+                .addComponent(costBenefitPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1370,23 +1015,20 @@ public class ValidationPanel extends javax.swing.JPanel {
             .addComponent(leftPlotSplitPane)
         );
 
-        optimizationTabbedPane.addTab("Thresholds", thresholdOptimizationTab);
-
-        optimizationTabbedPane.setSelectedIndex(1);
-
         javax.swing.GroupLayout optimizationJPanelLayout = new javax.swing.GroupLayout(optimizationJPanel);
         optimizationJPanel.setLayout(optimizationJPanelLayout);
         optimizationJPanelLayout.setHorizontalGroup(
             optimizationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(optimizationJPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(optimizationTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(12, 12, 12)
+                .addComponent(thresholdOptimizationTab, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(13, 13, 13))
         );
         optimizationJPanelLayout.setVerticalGroup(
             optimizationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optimizationJPanelLayout.createSequentialGroup()
-                .addComponent(optimizationTabbedPane)
+            .addGroup(optimizationJPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(thresholdOptimizationTab, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1406,8 +1048,8 @@ public class ValidationPanel extends javax.swing.JPanel {
             }
         });
 
-        jLabel4.setFont(jLabel4.getFont().deriveFont((jLabel4.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel4.setText("Threshold Optimization");
+        thresholdOptimizationLabel.setFont(thresholdOptimizationLabel.getFont().deriveFont((thresholdOptimizationLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        thresholdOptimizationLabel.setText("Threshold Optimization");
 
         validateButton.setBackground(new java.awt.Color(0, 153, 0));
         validateButton.setForeground(new java.awt.Color(255, 255, 255));
@@ -1420,11 +1062,11 @@ public class ValidationPanel extends javax.swing.JPanel {
             }
         });
 
-        jLabel5.setFont(jLabel5.getFont().deriveFont((jLabel5.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel5.setText("Estimator Optimization");
+        advancedSettingsLabel.setFont(advancedSettingsLabel.getFont().deriveFont((advancedSettingsLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        advancedSettingsLabel.setText("Advanced Settings");
 
-        jLabel22.setText("PEP bin size");
-        jLabel22.setToolTipText("Posterior Error Probability window");
+        pepBinSizeLabel.setText("PEP Bin Size");
+        pepBinSizeLabel.setToolTipText("Posterior Error Probability window");
 
         windowTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         windowTxt.setToolTipText("Posterior Error Probability estimation bin size");
@@ -1450,7 +1092,7 @@ public class ValidationPanel extends javax.swing.JPanel {
             }
         });
 
-        fdrCombo1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Classical", "Probabilistic" }));
+        fdrCombo1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Decoy", "PEP" }));
         fdrCombo1.setToolTipText("Estimator type");
         fdrCombo1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1466,8 +1108,8 @@ public class ValidationPanel extends javax.swing.JPanel {
             }
         });
 
-        jLabel8.setText("Threshold (%)");
-        jLabel8.setToolTipText("Threshold in percent");
+        thresholdLabel.setText("Threshold (%)");
+        thresholdLabel.setToolTipText("Threshold in percent");
 
         thresholdHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         thresholdHelpJButton.setToolTipText("Help");
@@ -1489,9 +1131,9 @@ public class ValidationPanel extends javax.swing.JPanel {
             }
         });
 
-        jLabel9.setText("Type");
+        thresholdTypeLabel.setText("Type");
 
-        jLabel11.setText("FDR Type");
+        fdrMetricLabel.setText("FDR Metric");
 
         estimatorHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         estimatorHelpJButton.setToolTipText("Help");
@@ -1540,10 +1182,10 @@ public class ValidationPanel extends javax.swing.JPanel {
             .addGroup(parametersJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
+                    .addComponent(advancedSettingsLabel)
                     .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addGroup(parametersJPanelLayout.createSequentialGroup()
-                            .addComponent(jLabel4)
+                            .addComponent(thresholdOptimizationLabel)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(thresholdResetJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(parametersJPanelLayout.createSequentialGroup()
@@ -1551,8 +1193,8 @@ public class ValidationPanel extends javax.swing.JPanel {
                             .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addGroup(parametersJPanelLayout.createSequentialGroup()
                                     .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel8)
-                                        .addComponent(jLabel9))
+                                        .addComponent(thresholdLabel)
+                                        .addComponent(thresholdTypeLabel))
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                     .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(parametersJPanelLayout.createSequentialGroup()
@@ -1564,8 +1206,8 @@ public class ValidationPanel extends javax.swing.JPanel {
                                     .addComponent(thresholdHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(parametersJPanelLayout.createSequentialGroup()
                                     .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel22)
-                                        .addComponent(jLabel11))
+                                        .addComponent(pepBinSizeLabel)
+                                        .addComponent(fdrMetricLabel))
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(parametersJPanelLayout.createSequentialGroup()
@@ -1585,24 +1227,24 @@ public class ValidationPanel extends javax.swing.JPanel {
             .addGroup(parametersJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
+                    .addComponent(thresholdOptimizationLabel)
                     .addComponent(thresholdResetJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
+                    .addComponent(thresholdTypeLabel)
                     .addComponent(thresholdTypeCmb))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(thresholdInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel8))
+                        .addComponent(thresholdLabel))
                     .addComponent(validateButton)
                     .addComponent(thresholdHelpJButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel5)
+                .addComponent(advancedSettingsLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11)
+                    .addComponent(fdrMetricLabel)
                     .addComponent(fdrCombo1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1610,7 +1252,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                         .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(applyButton)
                             .addComponent(windowTxt)
-                            .addComponent(jLabel22))
+                            .addComponent(pepBinSizeLabel))
                         .addGap(13, 13, 13))
                     .addGroup(parametersJPanelLayout.createSequentialGroup()
                         .addComponent(estimatorHelpJButton)
@@ -1665,90 +1307,6 @@ public class ValidationPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Please verify the given threshold.", "Threshold Error", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_thresholdInputActionPerformed
-
-    /**
-     * Updates the plots.
-     *
-     * @param evt
-     */
-    private void fdrCombo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrCombo1ActionPerformed
-
-        if (currentTargetDecoyMap != null) {
-            TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
-
-            if (fdrCombo1.getSelectedIndex() == 0) {
-                currentResults.setClassicalEstimators(true);
-            } else {
-                currentResults.setClassicalEstimators(false);
-            }
-
-            applyButton.setEnabled(true);
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-            int thresholdType = thresholdTypeCmb.getSelectedIndex();
-            double lastThreshold = new Double(thresholdInput.getText());
-            updateResults(thresholdType, lastThreshold);
-            updateDisplayedComponents();
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        }
-    }//GEN-LAST:event_fdrCombo1ActionPerformed
-
-    /**
-     * Updates the plots.
-     *
-     * @param evt
-     */
-    private void confidenceSliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confidenceSliderMouseReleased
-        int selectedGroup = groupSelectionTable.getSelectedRow();
-        lastThresholds.put(selectedGroup, new Double(confidenceSlider.getValue()));
-        lastThresholdTypes.put(selectedGroup, 0);
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        int thresholdType = thresholdTypeCmb.getSelectedIndex();
-        double lastThreshold = new Double(thresholdInput.getText());
-        updateResults(thresholdType, lastThreshold);
-        updateDisplayedComponents();
-        validateButton.setEnabled(true);
-        dataValidated = false;
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_confidenceSliderMouseReleased
-
-    /**
-     * Updates the plots.
-     *
-     * @param evt
-     */
-    private void confidenceSliderMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confidenceSliderMouseDragged
-        thresholdTypeCmb.setSelectedIndex(0);
-        thresholdInput.setText(confidenceSlider.getValue() + "");
-    }//GEN-LAST:event_confidenceSliderMouseDragged
-
-    /**
-     * Updates the plots.
-     *
-     * @param evt
-     */
-    private void fdrSlider1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrSlider1MouseDragged
-        thresholdTypeCmb.setSelectedIndex(1);
-        thresholdInput.setText(fdrSlider1.getValue() + "");
-    }//GEN-LAST:event_fdrSlider1MouseDragged
-
-    /**
-     * Updates the plots.
-     *
-     * @param evt
-     */
-    private void fdrSlider1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrSlider1MouseReleased
-        int selectedGroup = groupSelectionTable.getSelectedRow();
-        lastThresholds.put(selectedGroup, new Double(fdrSlider1.getValue()));
-        lastThresholdTypes.put(selectedGroup, 1);
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        int thresholdType = thresholdTypeCmb.getSelectedIndex();
-        double lastThreshold = new Double(thresholdInput.getText());
-        updateResults(thresholdType, lastThreshold);
-        updateDisplayedComponents();
-        validateButton.setEnabled(true);
-        dataValidated = false;
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_fdrSlider1MouseReleased
 
     /**
      * Updates the plots.
@@ -1810,28 +1368,6 @@ public class ValidationPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_windowTxtActionPerformed
 
     /**
-     * Updates the plots.
-     *
-     * @param evt
-     */
-    private void sensitivitySlider1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sensitivitySlider1MouseDragged
-        if (currentTargetDecoyMap != null) {
-            Double newWindow = Math.pow(10, sensitivitySlider1.getValue() / 50.0 - 1) * currentTargetDecoyMap.getnMax();
-            windowTxt.setText(newWindow.intValue() + "");
-            sensitivitySlider2.setValue(sensitivitySlider1.getValue());
-        }
-    }//GEN-LAST:event_sensitivitySlider1MouseDragged
-
-    /**
-     * Updates the plots.
-     *
-     * @param evt
-     */
-    private void sensitivitySlider1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sensitivitySlider1MouseReleased
-        windowTxtActionPerformed(null);
-    }//GEN-LAST:event_sensitivitySlider1MouseReleased
-
-    /**
      * Apply the validations/optimizations.
      *
      * @param evt
@@ -1877,13 +1413,11 @@ public class ValidationPanel extends javax.swing.JPanel {
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
 
         leftPlotSplitPane.setDividerLocation(leftPlotSplitPane.getWidth() / 3);
-        estimatorsPlotSplitPane.setDividerLocation(estimatorsPlotSplitPane.getWidth() / 2);
         rightPlotSplitPane.setDividerLocation(rightPlotSplitPane.getWidth() / 2);
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 leftPlotSplitPane.setDividerLocation(leftPlotSplitPane.getWidth() / 3);
-                estimatorsPlotSplitPane.setDividerLocation(estimatorsPlotSplitPane.getWidth() / 2);
             }
         });
 
@@ -1955,42 +1489,6 @@ public class ValidationPanel extends javax.swing.JPanel {
                 costBenefitPlotLayeredPane.getComponent(2).setBounds(0, 0, costBenefitPlotLayeredPane.getWidth(), costBenefitPlotLayeredPane.getHeight());
                 costBenefitPlotLayeredPane.revalidate();
                 costBenefitPlotLayeredPane.repaint();
-
-                // move the icons
-                pepPlotLayeredPane.getComponent(0).setBounds(
-                        pepPlotLayeredPane.getWidth() - pepPlotLayeredPane.getComponent(0).getWidth() - 10,
-                        pepPlotLayeredPane.getComponent(0).getHeight() / 2 - 12,
-                        pepPlotLayeredPane.getComponent(0).getWidth(),
-                        pepPlotLayeredPane.getComponent(0).getHeight());
-
-                pepPlotLayeredPane.getComponent(1).setBounds(
-                        pepPlotLayeredPane.getWidth() - pepPlotLayeredPane.getComponent(1).getWidth() - 20,
-                        pepPlotLayeredPane.getComponent(1).getHeight() / 2 - 12,
-                        pepPlotLayeredPane.getComponent(1).getWidth(),
-                        pepPlotLayeredPane.getComponent(1).getHeight());
-
-                // resize the plot area
-                pepPlotLayeredPane.getComponent(2).setBounds(0, 0, pepPlotLayeredPane.getWidth(), pepPlotLayeredPane.getHeight());
-                pepPlotLayeredPane.revalidate();
-                pepPlotLayeredPane.repaint();
-
-                // move the icons
-                fdrsPlotLayeredPane.getComponent(0).setBounds(
-                        fdrsPlotLayeredPane.getWidth() - fdrsPlotLayeredPane.getComponent(0).getWidth() - 10,
-                        fdrsPlotLayeredPane.getComponent(0).getHeight() / 2 - 12,
-                        fdrsPlotLayeredPane.getComponent(0).getWidth(),
-                        fdrsPlotLayeredPane.getComponent(0).getHeight());
-
-                fdrsPlotLayeredPane.getComponent(1).setBounds(
-                        fdrsPlotLayeredPane.getWidth() - fdrsPlotLayeredPane.getComponent(0).getWidth() - 20,
-                        fdrsPlotLayeredPane.getComponent(1).getHeight() / 2 - 12,
-                        fdrsPlotLayeredPane.getComponent(1).getWidth(),
-                        fdrsPlotLayeredPane.getComponent(1).getHeight());
-
-                // resize the plot area
-                fdrsPlotLayeredPane.getComponent(2).setBounds(0, 0, fdrsPlotLayeredPane.getWidth(), fdrsPlotLayeredPane.getHeight());
-                fdrsPlotLayeredPane.revalidate();
-                fdrsPlotLayeredPane.repaint();
             }
         });
     }//GEN-LAST:event_formComponentResized
@@ -2075,45 +1573,6 @@ public class ValidationPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_validateButtonActionPerformed
 
     /**
-     * Updates the plots.
-     *
-     * @param evt
-     */
-    private void fdrSlider2MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrSlider2MouseReleased
-        fdrSlider1.setValue(fdrSlider2.getValue());
-        fdrSlider1MouseReleased(null);
-    }//GEN-LAST:event_fdrSlider2MouseReleased
-
-    /**
-     * Updates the plots.
-     *
-     * @param evt
-     */
-    private void fdrSlider2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrSlider2MouseDragged
-        fdrSlider1.setValue(fdrSlider2.getValue());
-        fdrSlider1MouseDragged(null);
-    }//GEN-LAST:event_fdrSlider2MouseDragged
-
-    /**
-     * Updates the plots.
-     *
-     * @param evt
-     */
-    private void sensitivitySlider2MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sensitivitySlider2MouseReleased
-        sensitivitySlider1MouseReleased(null);
-    }//GEN-LAST:event_sensitivitySlider2MouseReleased
-
-    /**
-     * Updates the plots.
-     *
-     * @param evt
-     */
-    private void sensitivitySlider2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sensitivitySlider2MouseDragged
-        sensitivitySlider1.setValue(sensitivitySlider2.getValue());
-        sensitivitySlider1MouseDragged(null);
-    }//GEN-LAST:event_sensitivitySlider2MouseDragged
-
-    /**
      * Opens a help dialog.
      *
      * @param evt
@@ -2186,70 +1645,6 @@ public class ValidationPanel extends javax.swing.JPanel {
     private void confidencePlotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confidencePlotHelpJButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_confidencePlotHelpJButtonMouseExited
-
-    /**
-     * Change the cursor to a hand cursor.
-     *
-     * @param evt
-     */
-    private void pepPlotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pepPlotHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_pepPlotHelpJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    private void pepPlotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pepPlotHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_pepPlotHelpJButtonMouseExited
-
-    /**
-     * Opens a help dialog.
-     *
-     * @param evt
-     */
-    private void pepPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pepPlotHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#PEP_plot",
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_pepPlotHelpJButtonActionPerformed
-
-    /**
-     * Change the cursor to a hand cursor.
-     *
-     * @param evt
-     */
-    private void fdrsPlotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrsPlotHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_fdrsPlotHelpJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    private void fdrsPlotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrsPlotHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_fdrsPlotHelpJButtonMouseExited
-
-    /**
-     * Opens a help dialog.
-     *
-     * @param evt
-     */
-    private void fdrsPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrsPlotHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#FDR_plot",
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_fdrsPlotHelpJButtonActionPerformed
 
     /**
      * Change the cursor to a hand cursor.
@@ -2449,60 +1844,6 @@ public class ValidationPanel extends javax.swing.JPanel {
             groupSelectionChanged();
         }
     }//GEN-LAST:event_groupSelectionTableKeyReleased
-
-    /**
-     * Change the cursor to a hand cursor.
-     *
-     * @param evt
-     */
-    private void pepPlotExportJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pepPlotExportJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_pepPlotExportJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    private void pepPlotExportJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pepPlotExportJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_pepPlotExportJButtonMouseExited
-
-    /**
-     * Export the plot to figure format.
-     *
-     * @param evt
-     */
-    private void pepPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pepPlotExportJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, pepChartPanel, peptideShakerGUI.getLastSelectedFolder());
-    }//GEN-LAST:event_pepPlotExportJButtonActionPerformed
-
-    /**
-     * Change the cursor to a hand cursor.
-     *
-     * @param evt
-     */
-    private void fdrPlotExportJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrPlotExportJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_fdrPlotExportJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    private void fdrPlotExportJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrPlotExportJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_fdrPlotExportJButtonMouseExited
-
-    /**
-     * Export the plot to figure format.
-     *
-     * @param evt
-     */
-    private void fdrPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrPlotExportJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, fdrsChartPanel, peptideShakerGUI.getLastSelectedFolder());
-    }//GEN-LAST:event_fdrPlotExportJButtonActionPerformed
 
     /**
      * Change the cursor to a hand cursor.
@@ -2877,24 +2218,50 @@ public class ValidationPanel extends javax.swing.JPanel {
         resetAllThresholds();
     }//GEN-LAST:event_thresholdResetJButtonActionPerformed
 
+    /**
+     * Updates the plots.
+     *
+     * @param evt
+     */
+    private void fdrCombo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrCombo1ActionPerformed
+
+        if (currentTargetDecoyMap != null) {
+            TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
+
+            if (fdrCombo1.getSelectedIndex() == 0) {
+                currentResults.setClassicalEstimators(true);
+            } else {
+                currentResults.setClassicalEstimators(false);
+            }
+
+            applyButton.setEnabled(true);
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+            int thresholdType = thresholdTypeCmb.getSelectedIndex();
+            double lastThreshold = new Double(thresholdInput.getText());
+            updateResults(thresholdType, lastThreshold);
+            updateDisplayedComponents();
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }//GEN-LAST:event_fdrCombo1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel advancedSettingsLabel;
     private javax.swing.JButton applyButton;
     private javax.swing.JPanel confidenceChartPanel;
     private javax.swing.JButton confidenceHelpJButton;
+    private javax.swing.JLabel confidenceLabel;
     private javax.swing.JPanel confidencePanel;
     private javax.swing.JButton confidencePlotExportJButton;
     private javax.swing.JButton confidencePlotHelpJButton;
     private javax.swing.JLayeredPane confidencePlotLayeredPane;
-    private javax.swing.JSlider confidenceSlider;
     private javax.swing.JTextField confidenceTxt;
     private javax.swing.JPanel costBenefitChartPanel;
     private javax.swing.JPanel costBenefitPanel;
     private javax.swing.JButton costBenefitPlotExportJButton;
     private javax.swing.JButton costBenefitPlotHelpJButton;
     private javax.swing.JLayeredPane costBenefitPlotLayeredPane;
+    private javax.swing.JLabel datasetPropertiesLabel;
     private javax.swing.JButton estimatorHelpJButton;
-    private javax.swing.JPanel estimatorOptimizationTab;
-    private javax.swing.JSplitPane estimatorsPlotSplitPane;
     private javax.swing.JButton falsePositivesHelpJButton;
     private javax.swing.JComboBox fdrCombo1;
     private javax.swing.JPanel fdrFnrChartPanel;
@@ -2902,49 +2269,20 @@ public class ValidationPanel extends javax.swing.JPanel {
     private javax.swing.JButton fdrFnrPlotExportJButton;
     private javax.swing.JButton fdrFnrPlotHelpJButton;
     private javax.swing.JButton fdrHelpJButton;
-    private javax.swing.JButton fdrPlotExportJButton;
+    private javax.swing.JLabel fdrLabel;
+    private javax.swing.JLabel fdrMetricLabel;
     private javax.swing.JLayeredPane fdrPlotLayeredPane;
-    private javax.swing.JSlider fdrSlider1;
-    private javax.swing.JSlider fdrSlider2;
     private javax.swing.JTextField fdrTxt;
-    private javax.swing.JPanel fdrsChartPanel;
-    private javax.swing.JPanel fdrsPanel;
-    private javax.swing.JButton fdrsPlotHelpJButton;
-    private javax.swing.JLayeredPane fdrsPlotLayeredPane;
     private javax.swing.JButton fnrHelpJButton;
+    private javax.swing.JLabel fnrLabel;
     private javax.swing.JTextField fnrTxt;
+    private javax.swing.JLabel fpLabel;
     private javax.swing.JPanel groupListJPanel;
     private javax.swing.JButton groupSelectionHelpJButton;
     private javax.swing.JLayeredPane groupSelectionLayeredPane;
     private javax.swing.JScrollPane groupSelectionScrollPaneScrollPane;
     private javax.swing.JTable groupSelectionTable;
     private javax.swing.JPanel idSummaryJPanel;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel22;
-    private javax.swing.JLabel jLabel23;
-    private javax.swing.JLabel jLabel25;
-    private javax.swing.JLabel jLabel26;
-    private javax.swing.JLabel jLabel27;
-    private javax.swing.JLabel jLabel28;
-    private javax.swing.JLabel jLabel29;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel30;
-    private javax.swing.JLabel jLabel32;
-    private javax.swing.JLabel jLabel33;
-    private javax.swing.JLabel jLabel34;
-    private javax.swing.JLabel jLabel35;
-    private javax.swing.JLabel jLabel36;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JSplitPane leftPlotSplitPane;
     private javax.swing.JTextField nFPTxt;
     private javax.swing.JButton nMaxHelpJButton;
@@ -2953,25 +2291,26 @@ public class ValidationPanel extends javax.swing.JPanel {
     private javax.swing.JTextField nTotalTxt;
     private javax.swing.JTextField nValidatedTxt;
     private javax.swing.JPanel optimizationJPanel;
-    private javax.swing.JTabbedPane optimizationTabbedPane;
     private javax.swing.JPanel parametersJPanel;
-    private javax.swing.JPanel pepChartPanel;
-    private javax.swing.JPanel pepPanel;
-    private javax.swing.JButton pepPlotExportJButton;
-    private javax.swing.JButton pepPlotHelpJButton;
-    private javax.swing.JLayeredPane pepPlotLayeredPane;
+    private javax.swing.JLabel pepBinSizeLabel;
+    private javax.swing.JLabel resolutionLabel;
     private javax.swing.JSplitPane rightPlotSplitPane;
-    private javax.swing.JSlider sensitivitySlider1;
-    private javax.swing.JSlider sensitivitySlider2;
     private javax.swing.JButton thresholdHelpJButton;
     private javax.swing.JTextField thresholdInput;
+    private javax.swing.JLabel thresholdLabel;
+    private javax.swing.JLabel thresholdOptimizationLabel;
     private javax.swing.JPanel thresholdOptimizationTab;
     private javax.swing.JButton thresholdResetJButton;
     private javax.swing.JComboBox thresholdTypeCmb;
+    private javax.swing.JLabel thresholdTypeLabel;
     private javax.swing.JButton totalTPHelpJButton;
+    private javax.swing.JLabel totalTpLabel;
+    private javax.swing.JLabel tpLabel;
     private javax.swing.JButton truePositivesHelpJButton;
     private javax.swing.JButton validateButton;
     private javax.swing.JButton validatedHitsHelpJButton;
+    private javax.swing.JLabel validatedHitsLabel;
+    private javax.swing.JLabel validationResultsLabel;
     private javax.swing.JTextField windowTxt;
     // End of variables declaration//GEN-END:variables
 
@@ -3002,11 +2341,6 @@ public class ValidationPanel extends javax.swing.JPanel {
             public void run() {
 
                 groupSelectionTable.setEnabled(true);
-                confidenceSlider.setEnabled(true);
-                fdrSlider1.setEnabled(true);
-                fdrSlider2.setEnabled(true);
-                sensitivitySlider1.setEnabled(true);
-                sensitivitySlider2.setEnabled(true);
 
                 // empty the group table
                 DefaultTableModel dm = (DefaultTableModel) groupSelectionTable.getModel();
@@ -3147,8 +2481,6 @@ public class ValidationPanel extends javax.swing.JPanel {
                     groupSelectionChanged();
 
                     // enable the contextual export options
-                    pepPlotExportJButton.setEnabled(true);
-                    fdrPlotExportJButton.setEnabled(true);
                     confidencePlotExportJButton.setEnabled(true);
                     fdrFnrPlotExportJButton.setEnabled(true);
                     costBenefitPlotExportJButton.setEnabled(true);
@@ -3315,12 +2647,7 @@ public class ValidationPanel extends javax.swing.JPanel {
             confidenceTxt.setText(Util.roundDouble(currentResults.getConfidenceLimit(), 2) + " %");
             fdrTxt.setText(Util.roundDouble(currentResults.getFdrLimit(), 2) + " %");
             fnrTxt.setText(Util.roundDouble(currentResults.getFnrLimit(), 2) + " %");
-            confidenceSlider.setValue(currentResults.getConfidenceLimit().intValue());
-            fdrSlider1.setValue(currentResults.getFdrLimit().intValue());
-            fdrSlider2.setValue(currentResults.getFdrLimit().intValue());
             windowTxt.setText(currentTargetDecoyMap.getWindowSize() + "");
-            Double newPosition = 50 * (Math.log10(currentTargetDecoyMap.getWindowSize() / (double) currentTargetDecoyMap.getnMax()) + 1);
-            sensitivitySlider1.setValue(newPosition.intValue());
             thresholdTypeCmb.setSelectedIndex(lastThresholdTypes.get(selectedGroup));
             thresholdInput.setText(lastThresholds.get(selectedGroup) + "");
 
@@ -3375,10 +2702,6 @@ public class ValidationPanel extends javax.swing.JPanel {
 
         confidencePanel.revalidate();
         confidencePanel.repaint();
-        pepPanel.revalidate();
-        pepPanel.repaint();
-        fdrsPanel.revalidate();
-        fdrsPanel.repaint();
         fdrFnrPanel.revalidate();
         fdrFnrPanel.repaint();
         costBenefitChartPanel.revalidate();
@@ -3602,11 +2925,6 @@ public class ValidationPanel extends javax.swing.JPanel {
         pepChart.getPlot().setBackgroundPaint(Color.WHITE);
         pepChart.setBackgroundPaint(Color.WHITE);
         chartPanel.setBackground(Color.WHITE);
-
-        pepChartPanel.removeAll();
-        pepChartPanel.add(chartPanel);
-        pepChartPanel.revalidate();
-        pepChartPanel.repaint();
     }
 
     /**
@@ -3647,11 +2965,6 @@ public class ValidationPanel extends javax.swing.JPanel {
         fdrChart.getPlot().setBackgroundPaint(Color.WHITE);
         fdrChart.setBackgroundPaint(Color.WHITE);
         chartPanel.setBackground(Color.WHITE);
-
-        fdrsChartPanel.removeAll();
-        fdrsChartPanel.add(chartPanel);
-        fdrsChartPanel.revalidate();
-        fdrsChartPanel.repaint();
     }
 
     /**
