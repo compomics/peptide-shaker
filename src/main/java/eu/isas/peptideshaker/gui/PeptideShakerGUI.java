@@ -2011,7 +2011,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void annotationPreferencesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationPreferencesMenuActionPerformed
-        AnnotationSettingsDialog annotationSettingsDialog = new AnnotationSettingsDialog(this, getIdentificationParameters().getAnnotationPreferences(), getNeutralLosses(), getReporterIons());
+        AnnotationSettingsDialog annotationSettingsDialog = new AnnotationSettingsDialog(this, getIdentificationParameters().getAnnotationPreferences(), getNeutralLosses(), getReporterIons(), true);
         if (!annotationSettingsDialog.isCanceled()) {
             AnnotationSettings newAnnotationSettings = annotationSettingsDialog.getAnnotationSettings();
             if (!newAnnotationSettings.isSameAs(newAnnotationSettings)) {
@@ -3185,7 +3185,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         final IdMatchValidationPreferences idValidationPreferences = getIdentificationParameters().getIdValidationPreferences();
         final ValidationQCPreferences validationQCPreferences = idValidationPreferences.getValidationQCPreferences();
-        ValidationQCPreferencesDialog validationQCPreferencesDialog = new ValidationQCPreferencesDialog(this, this, validationQCPreferences);
+        ValidationQCPreferencesDialog validationQCPreferencesDialog = new ValidationQCPreferencesDialog(this, this, validationQCPreferences, true);
 
         if (!validationQCPreferencesDialog.isCanceled()) {
             ValidationQCPreferences newPreferences = validationQCPreferencesDialog.getValidationQCPreferences();

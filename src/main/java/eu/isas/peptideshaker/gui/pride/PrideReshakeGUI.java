@@ -2869,7 +2869,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                     // have the user select the enzyme
-                    EnzymeSelectionDialog enzymeSelectionDialog = new EnzymeSelectionDialog(this, true, enzymes.get(0));
+                    EnzymeSelectionDialog enzymeSelectionDialog = new EnzymeSelectionDialog(this, true, enzymes.get(0), true);
 
                     Enzyme selectedEnzyme = enzymeSelectionDialog.getEnzyme();
                     if (selectedEnzyme != null) {
@@ -2897,7 +2897,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                 // have the user select the enzyme
-                EnzymeSelectionDialog enzymeSelectionDialog = new EnzymeSelectionDialog(this, true, enzymesAsText);
+                EnzymeSelectionDialog enzymeSelectionDialog = new EnzymeSelectionDialog(this, true, enzymesAsText, true);
                 Enzyme selectedEnzyme = enzymeSelectionDialog.getEnzyme();
                 if (selectedEnzyme != null) {
                     prideParametersReport += selectedEnzyme.getName() + "<br>";
