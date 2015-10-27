@@ -24,6 +24,14 @@ public class TargetDecoySeries {
      */
     private double[] pep;
     /**
+     * The estimated number of true positives in the bin centered on a given score.
+     */
+    private double[] nTP;
+    /**
+     * The estimated number of false positives in the bin centered on a given score.
+     */
+    private double[] nFP;
+    /**
      * The classical FDR.
      */
     private double[] classicalFDR;
@@ -44,11 +52,11 @@ public class TargetDecoySeries {
      */
     private double[] n;
     /**
-     * The classically estimated amount of false positives.
+     * The classically estimated number of false positives.
      */
     private double[] classicalFP;
     /**
-     * The probabilistically estimated amount of false positives.
+     * The probabilistically estimated number of false positives.
      */
     private double[] probaFP;
     /**
@@ -56,7 +64,7 @@ public class TargetDecoySeries {
      */
     private boolean[] decoy;
     /**
-     * The probabilistically estimated total amount of false positives.
+     * The probabilistically estimated total number of false positives.
      */
     private double probaNTotal;
 
@@ -64,8 +72,10 @@ public class TargetDecoySeries {
      * Constructor.
      *
      * @param hitMap a map as present in target decoy maps
+     * @param nTP the true positives series
+     * @param nFP the false positives series
      */
-    public TargetDecoySeries(HashMap<Double, TargetDecoyPoint> hitMap) {
+    public TargetDecoySeries(HashMap<Double, TargetDecoyPoint> hitMap, double[] nTP, double[] nFP) {
 
         scores = new double[hitMap.size()];
         probaNTotal = 0;
@@ -116,6 +126,10 @@ public class TargetDecoySeries {
             probaBenefit[i] = 100 - probaFnrTemp;
             decoy[i] = currentPoint.nTarget == 0;
         }
+        
+        this.nTP = nTP;
+        this.nFP = nFP;
+        
     }
 
     /**
@@ -256,6 +270,24 @@ public class TargetDecoySeries {
                 targetDecoyResults.setScoreLimit(scores[0]);
             }
         }
+    }
+
+    /**
+     * Returns the number of true positives series.
+     *
+     * @return the number of true positives series
+     */
+    public double[] getNTP() {
+        return nTP;
+    }
+
+    /**
+     * Returns the number of false positives series.
+     *
+     * @return the number of false positives series
+     */
+    public double[] getNFP() {
+        return nFP;
     }
 
     /**

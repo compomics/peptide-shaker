@@ -843,7 +843,7 @@
                             <Property name="useNullLayout" type="boolean" value="true"/>
                           </Layout>
                           <SubComponents>
-                            <Container class="javax.swing.JPanel" name="fdrFnrChartPanel">
+                            <Container class="javax.swing.JPanel" name="targetDecoyChartPanel">
                               <Properties>
                                 <Property name="opaque" type="boolean" value="false"/>
                               </Properties>

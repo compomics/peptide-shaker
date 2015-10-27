@@ -95,9 +95,9 @@ public class ValidationPanel extends javax.swing.JPanel {
      */
     private XYPlot confidencePlot = new XYPlot();
     /**
-     * The FDR/FNR plot.
+     * The target/decoy plot.
      */
-    private XYPlot fdrFnrPlot = new XYPlot();
+    private XYPlot targetDecoyPlot = new XYPlot();
     /**
      * The PEP plot.
      */
@@ -227,13 +227,13 @@ public class ValidationPanel extends javax.swing.JPanel {
         fdrPlot.setRangeAxisLocation(0, AxisLocation.TOP_OR_LEFT);
         fdrPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
 
-        // Initialize FDR/FNR plot
-        NumberAxis fdrAxis = new NumberAxis("FDR - FNR [%]");
-        fdrAxis.setAutoRangeIncludesZero(true);
-        fdrFnrPlot.setDomainAxis(scoreAxis);
-        fdrFnrPlot.setRangeAxis(0, fdrAxis);
-        fdrFnrPlot.setRangeAxisLocation(0, AxisLocation.TOP_OR_LEFT);
-        fdrFnrPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
+        // Initialize target/decoy plot
+        NumberAxis targetDecoyAxis = new NumberAxis("Estimated Number of Hits");
+        targetDecoyAxis.setAutoRangeIncludesZero(true);
+        targetDecoyPlot.setDomainAxis(scoreAxis);
+        targetDecoyPlot.setRangeAxis(0, targetDecoyAxis);
+        targetDecoyPlot.setRangeAxisLocation(0, AxisLocation.TOP_OR_LEFT);
+        targetDecoyPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
 
         // Initialize cost/benefit plot
         NumberAxis benefitAxis = new NumberAxis("Benefit (1-FNR) [%]");
@@ -310,7 +310,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         rightPlotSplitPane = new javax.swing.JSplitPane();
         fdrFnrPanel = new javax.swing.JPanel();
         fdrPlotLayeredPane = new javax.swing.JLayeredPane();
-        fdrFnrChartPanel = new javax.swing.JPanel();
+        targetDecoyChartPanel = new javax.swing.JPanel();
         fdrFnrPlotHelpJButton = new javax.swing.JButton();
         fdrFnrPlotExportJButton = new javax.swing.JButton();
         costBenefitPanel = new javax.swing.JPanel();
@@ -856,10 +856,10 @@ public class ValidationPanel extends javax.swing.JPanel {
 
         fdrFnrPanel.setOpaque(false);
 
-        fdrFnrChartPanel.setOpaque(false);
-        fdrFnrChartPanel.setLayout(new javax.swing.BoxLayout(fdrFnrChartPanel, javax.swing.BoxLayout.LINE_AXIS));
-        fdrPlotLayeredPane.add(fdrFnrChartPanel);
-        fdrFnrChartPanel.setBounds(0, 3, 320, 450);
+        targetDecoyChartPanel.setOpaque(false);
+        targetDecoyChartPanel.setLayout(new javax.swing.BoxLayout(targetDecoyChartPanel, javax.swing.BoxLayout.LINE_AXIS));
+        fdrPlotLayeredPane.add(targetDecoyChartPanel);
+        targetDecoyChartPanel.setBounds(0, 3, 320, 450);
 
         fdrFnrPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         fdrFnrPlotHelpJButton.setToolTipText("Help");
@@ -1896,7 +1896,7 @@ public class ValidationPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void fdrFnrPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrFnrPlotExportJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, fdrFnrChartPanel, peptideShakerGUI.getLastSelectedFolder());
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, targetDecoyChartPanel, peptideShakerGUI.getLastSelectedFolder());
     }//GEN-LAST:event_fdrFnrPlotExportJButtonActionPerformed
 
     /**
@@ -2264,7 +2264,6 @@ public class ValidationPanel extends javax.swing.JPanel {
     private javax.swing.JButton estimatorHelpJButton;
     private javax.swing.JButton falsePositivesHelpJButton;
     private javax.swing.JComboBox fdrCombo1;
-    private javax.swing.JPanel fdrFnrChartPanel;
     private javax.swing.JPanel fdrFnrPanel;
     private javax.swing.JButton fdrFnrPlotExportJButton;
     private javax.swing.JButton fdrFnrPlotHelpJButton;
@@ -2295,6 +2294,7 @@ public class ValidationPanel extends javax.swing.JPanel {
     private javax.swing.JLabel pepBinSizeLabel;
     private javax.swing.JLabel resolutionLabel;
     private javax.swing.JSplitPane rightPlotSplitPane;
+    private javax.swing.JPanel targetDecoyChartPanel;
     private javax.swing.JButton thresholdHelpJButton;
     private javax.swing.JTextField thresholdInput;
     private javax.swing.JLabel thresholdLabel;
@@ -2717,42 +2717,8 @@ public class ValidationPanel extends javax.swing.JPanel {
 
         confidenceMarker.setValue(currentResults.getScoreLimit());
 
-        double[] score = {currentResults.getScoreLimit()};
         double[] fdr = {currentResults.getFdrLimit()};
-        double[] fnr = {currentResults.getFnrLimit()};
         double[] benefit = {100 - currentResults.getFnrLimit()};
-
-        DefaultXYDataset fdrData = new DefaultXYDataset();
-        double[][] fdrSeries = {score, fdr};
-        fdrData.addSeries("Retained FDR ", fdrSeries);
-        fdrFnrPlot.setDataset(3, fdrData);
-        fdrFnrPlot.mapDatasetToRangeAxis(3, 0);
-
-        DefaultXYDataset probaFnrData = new DefaultXYDataset();
-        double[][] probaFnrSeries = {score, fnr};
-        probaFnrData.addSeries("Retained FNR ", probaFnrSeries);
-        fdrFnrPlot.setDataset(4, probaFnrData);
-        fdrFnrPlot.mapDatasetToRangeAxis(4, 0);
-
-        XYLineAndShapeRenderer fdrRendrer = new XYLineAndShapeRenderer();
-        fdrRendrer.setSeriesShapesVisible(0, true);
-        fdrRendrer.setSeriesLinesVisible(0, false);
-        fdrRendrer.setSeriesShape(0, DefaultDrawingSupplier.createStandardSeriesShapes()[1]);
-
-        if (currentResults.isClassicalEstimators()) {
-            fdrRendrer.setSeriesPaint(0, Color.blue);
-        } else {
-            fdrRendrer.setSeriesPaint(0, Color.green);
-        }
-
-        fdrFnrPlot.setRenderer(3, fdrRendrer);
-
-        XYLineAndShapeRenderer probaFnrRendrer = new XYLineAndShapeRenderer();
-        probaFnrRendrer.setSeriesShapesVisible(0, true);
-        probaFnrRendrer.setSeriesLinesVisible(0, false);
-        probaFnrRendrer.setSeriesPaint(0, Color.RED);
-        probaFnrRendrer.setSeriesShape(0, DefaultDrawingSupplier.createStandardSeriesShapes()[2]);
-        fdrFnrPlot.setRenderer(4, probaFnrRendrer);
 
         DefaultXYDataset benefitData = new DefaultXYDataset();
         double[][] benefitSeries = {fdr, benefit};
@@ -2931,6 +2897,7 @@ public class ValidationPanel extends javax.swing.JPanel {
      * Updates the FDR estimators comparison chart.
      */
     private void updateFDRsChart() {
+        
         DefaultXYDataset fdrsData = new DefaultXYDataset();
         double[][] fdrsSeries = {targetDecoySeries.getClassicalFDR(), targetDecoySeries.getProbaFDR()};
         fdrsData.addSeries("Probabilistic FDR", fdrsSeries);
@@ -2972,76 +2939,45 @@ public class ValidationPanel extends javax.swing.JPanel {
      */
     private void updateFDRFNRChart() {
         
-        DefaultXYDataset classicalFdrData = new DefaultXYDataset();
-        double[][] classicalFdrSeries = {targetDecoySeries.getScores(), targetDecoySeries.getClassicalFDR()};
+        DefaultXYDataset tpData = new DefaultXYDataset();
+        double[][] tpSeries = {targetDecoySeries.getScores(), targetDecoySeries.getNTP()};
+        tpData.addSeries("True Positives", tpSeries);
+        targetDecoyPlot.setDataset(0, tpData);
+        targetDecoyPlot.mapDatasetToRangeAxis(0, 0);
 
-//        for (int i=0; i<classicalFdrSeries[0].length; i++) {
-//            if (classicalFdrSeries[0][i] < new Double("1E-200").doubleValue()) {
-//                classicalFdrSeries[0][i] = 0;
-//            }
-//        }
-        classicalFdrData.addSeries("Classical FDR ", classicalFdrSeries);
-        fdrFnrPlot.setDataset(0, classicalFdrData);
-        fdrFnrPlot.mapDatasetToRangeAxis(0, 0);
+        DefaultXYDataset fpData = new DefaultXYDataset();
+        double[][] fpSeries = {targetDecoySeries.getScores(), targetDecoySeries.getNFP()};
+        fpData.addSeries("False Positives", fpSeries);
+        targetDecoyPlot.setDataset(1, fpData);
+        targetDecoyPlot.mapDatasetToRangeAxis(2, 0);
 
-        DefaultXYDataset probaFdrData = new DefaultXYDataset();
-        double[][] probaFdrSeries = {targetDecoySeries.getScores(), targetDecoySeries.getProbaFDR()};
+        XYLineAndShapeRenderer tpRendrer = new XYLineAndShapeRenderer();
+        tpRendrer.setSeriesShapesVisible(0, false);
+        tpRendrer.setSeriesLinesVisible(0, true);
+        tpRendrer.setSeriesPaint(0, Color.blue);
+        tpRendrer.setSeriesStroke(0, new BasicStroke(LINE_WIDTH));
+        targetDecoyPlot.setRenderer(0, tpRendrer);
 
-//        for (int i=0; i<probaFdrSeries[0].length; i++) {
-//            if (probaFdrSeries[0][i] < new Double("1E-200").doubleValue()) {
-//                probaFdrSeries[0][i] = 0;
-//            }
-//        }
-        probaFdrData.addSeries("Probabilistic FDR ", probaFdrSeries);
-        fdrFnrPlot.setDataset(1, probaFdrData);
-        fdrFnrPlot.mapDatasetToRangeAxis(1, 0);
+        XYLineAndShapeRenderer fpRendrer = new XYLineAndShapeRenderer();
+        fpRendrer.setSeriesShapesVisible(0, false);
+        fpRendrer.setSeriesLinesVisible(0, true);
+        fpRendrer.setSeriesPaint(0, Color.RED);
+        fpRendrer.setSeriesStroke(0, new BasicStroke(LINE_WIDTH));
+        targetDecoyPlot.setRenderer(1, fpRendrer);
 
-        DefaultXYDataset probaFnrData = new DefaultXYDataset();
-        double[][] probaFnrSeries = {targetDecoySeries.getScores(), targetDecoySeries.getProbaFNR()};
-
-//        for (int i=0; i<probaFnrSeries[0].length; i++) {
-//            if (probaFnrSeries[0][i] < new Double("1E-200").doubleValue()) {
-//                probaFnrSeries[0][i] = 0;
-//            }
-//        }
-        probaFnrData.addSeries("Probabilistic FNR ", probaFnrSeries);
-        fdrFnrPlot.setDataset(2, probaFnrData);
-        fdrFnrPlot.mapDatasetToRangeAxis(2, 0);
-
-        XYLineAndShapeRenderer classicalFdrRendrer = new XYLineAndShapeRenderer();
-        classicalFdrRendrer.setSeriesShapesVisible(0, false);
-        classicalFdrRendrer.setSeriesLinesVisible(0, true);
-        classicalFdrRendrer.setSeriesPaint(0, Color.blue);
-        classicalFdrRendrer.setSeriesStroke(0, new BasicStroke(LINE_WIDTH));
-        fdrFnrPlot.setRenderer(0, classicalFdrRendrer);
-
-        XYLineAndShapeRenderer probaFdrRendrer = new XYLineAndShapeRenderer();
-        probaFdrRendrer.setSeriesShapesVisible(0, false);
-        probaFdrRendrer.setSeriesLinesVisible(0, true);
-        probaFdrRendrer.setSeriesPaint(0, Color.GREEN);
-        probaFdrRendrer.setSeriesStroke(0, new BasicStroke(LINE_WIDTH));
-        fdrFnrPlot.setRenderer(1, probaFdrRendrer);
-
-        XYLineAndShapeRenderer probaFnrRendrer = new XYLineAndShapeRenderer();
-        probaFnrRendrer.setSeriesShapesVisible(0, false);
-        probaFnrRendrer.setSeriesLinesVisible(0, true);
-        probaFnrRendrer.setSeriesPaint(0, Color.RED);
-        probaFnrRendrer.setSeriesStroke(0, new BasicStroke(LINE_WIDTH));
-        fdrFnrPlot.setRenderer(2, probaFnrRendrer);
-
-        JFreeChart fdrChart = new JFreeChart(fdrFnrPlot);
-        ChartPanel chartPanel = new ChartPanel(fdrChart);
-        fdrChart.setTitle("FDR/FNR");
+        JFreeChart targetDecoyChart = new JFreeChart(targetDecoyPlot);
+        ChartPanel chartPanel = new ChartPanel(targetDecoyChart);
+        targetDecoyChart.setTitle("Target/Decoy");
 
         // set background color
-        fdrChart.getPlot().setBackgroundPaint(Color.WHITE);
-        fdrChart.setBackgroundPaint(Color.WHITE);
+        targetDecoyChart.getPlot().setBackgroundPaint(Color.WHITE);
+        targetDecoyChart.setBackgroundPaint(Color.WHITE);
         chartPanel.setBackground(Color.WHITE);
 
-        fdrFnrChartPanel.removeAll();
-        fdrFnrChartPanel.add(chartPanel);
-        fdrFnrChartPanel.revalidate();
-        fdrFnrChartPanel.repaint();
+        targetDecoyChartPanel.removeAll();
+        targetDecoyChartPanel.add(chartPanel);
+        targetDecoyChartPanel.revalidate();
+        targetDecoyChartPanel.repaint();
     }
 
     /**
@@ -3083,9 +3019,9 @@ public class ValidationPanel extends javax.swing.JPanel {
         confidenceChartPanel.removeAll();
         confidenceChartPanel.revalidate();
         confidenceChartPanel.repaint();
-        fdrFnrChartPanel.removeAll();
-        fdrFnrChartPanel.revalidate();
-        fdrFnrChartPanel.repaint();
+        targetDecoyChartPanel.removeAll();
+        targetDecoyChartPanel.revalidate();
+        targetDecoyChartPanel.repaint();
         costBenefitChartPanel.removeAll();
         costBenefitChartPanel.revalidate();
         costBenefitChartPanel.repaint();

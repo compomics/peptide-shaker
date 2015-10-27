@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
-import com.compomics.util.Util;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -23,11 +22,19 @@ public class TargetDecoyMap implements Serializable {
      */
     private HashMap<Double, TargetDecoyPoint> hitMap = new HashMap<Double, TargetDecoyPoint>();
     /**
+     * The estimated number of true positives in the bin centered on a given score.
+     */
+    private double[] nTP;
+    /**
+     * The estimated number of false positives in the bin centered on a given score.
+     */
+    private double[] nFP;
+    /**
      * The scores imported in the map.
      */
     private ArrayList<Double> scores;
     /**
-     * The maximal amount of target hits comprised between two subsequent decoy
+     * The maximal number of target hits comprised between two subsequent decoy
      * hits.
      */
     private Integer nmax;
@@ -206,6 +213,10 @@ public class TargetDecoyMap implements Serializable {
         if (windowSize == null) {
             windowSize = nmax;
         }
+        
+        // Store the TP and FP series
+        nTP = new double[scores.size()];
+        nFP = new double[scores.size()];
 
         // estimate p
         TargetDecoyPoint tempPoint, previousPoint = hitMap.get(scores.get(0));
@@ -248,7 +259,10 @@ public class TargetDecoyMap implements Serializable {
                         break;
                     }
                 }
-                point.p = Math.max(Math.min(nDecoy / (nTargetInf + nTargetSup), 1), 0);
+                double nTarget = nTargetInf + nTargetSup;
+                nFP[cpt] = nDecoy;
+                nTP[cpt] = nTarget - nDecoy;
+                point.p = Math.max(Math.min(nDecoy / nTarget, 1), 0);
                 if (point.p >= 0.98) {
                     oneReached = true;
                 }
@@ -380,7 +394,7 @@ public class TargetDecoyMap implements Serializable {
      * @return the target decoy series
      */
     public TargetDecoySeries getTargetDecoySeries() {
-        return new TargetDecoySeries(hitMap);
+        return new TargetDecoySeries(hitMap, nTP, nFP);
     }
 
     /**
