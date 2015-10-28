@@ -1,7 +1,9 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import com.compomics.util.experiment.biology.Ion;
+import com.compomics.util.experiment.biology.IonFactory;
 import com.compomics.util.experiment.biology.NeutralLoss;
+import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.spectrum.IonLabelColorTableModel;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
@@ -46,7 +48,8 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
         super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
         iontypes = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().getIonTypes();
-        neutralLosses = peptideShakerGUI.getNeutralLosses();
+        PtmSettings ptmSettings = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings();
+        neutralLosses = IonFactory.getNeutralLosses(ptmSettings);
         initComponents();
         setUpGui();
         setLocationRelativeTo(peptideShakerGUI);

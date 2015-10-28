@@ -32,7 +32,6 @@ import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.biology.*;
 import com.compomics.util.experiment.biology.Ion.IonType;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
-import com.compomics.util.experiment.biology.ions.ReporterIon;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -2011,7 +2010,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void annotationPreferencesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationPreferencesMenuActionPerformed
-        AnnotationSettingsDialog annotationSettingsDialog = new AnnotationSettingsDialog(this, getIdentificationParameters().getAnnotationPreferences(), getNeutralLosses(), getReporterIons(), true);
+        PtmSettings ptmSettings = getIdentificationParameters().getSearchParameters().getPtmSettings();
+        ArrayList<NeutralLoss> neutralLosses = IonFactory.getNeutralLosses(ptmSettings);
+        ArrayList<Integer> reporterIons = new ArrayList<Integer>(IonFactory.getReporterIons(ptmSettings));
+        AnnotationSettingsDialog annotationSettingsDialog = new AnnotationSettingsDialog(this, getIdentificationParameters().getAnnotationPreferences(), neutralLosses, reporterIons, true);
         if (!annotationSettingsDialog.isCanceled()) {
             AnnotationSettings newAnnotationSettings = annotationSettingsDialog.getAnnotationSettings();
             if (!newAnnotationSettings.isSameAs(newAnnotationSettings)) {
@@ -3731,30 +3733,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-     * Returns the reporter ions possibly found in this project.
-     *
-     * @return the reporter ions possibly found in this project
-     */
-    public ArrayList<Integer> getReporterIons() {
-
-        SearchParameters searchParameters = getIdentificationParameters().getSearchParameters();
-        ArrayList<String> modifications = searchParameters.getPtmSettings().getAllModifications();
-        ArrayList<Integer> reporterIonsSubtypes = new ArrayList<Integer>();
-
-        for (String mod : modifications) {
-            PTM ptm = ptmFactory.getPTM(mod);
-            for (ReporterIon reporterIon : ptm.getReporterIons()) {
-                int subType = reporterIon.getSubType();
-                if (!reporterIonsSubtypes.contains(subType)) {
-                    reporterIonsSubtypes.add(subType);
-                }
-            }
-        }
-
-        return reporterIonsSubtypes;
-    }
-
-    /**
      * Returns the spectrum annotator. Warning: should not be used in different
      * threads.
      *
@@ -5068,7 +5046,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     specificAnnotationPreferences.addIonType(IonType.IMMONIUM_ION);
                 }
                 if (reporterIonsCheckMenu.isSelected()) {
-                    for (int subtype : getReporterIons()) {
+                    ArrayList<Integer> reporterIons = new ArrayList<Integer>(IonFactory.getReporterIons(getIdentificationParameters().getSearchParameters().getPtmSettings()));
+                    for (int subtype : reporterIons) {
                         specificAnnotationPreferences.addIonType(IonType.REPORTER_ION, subtype);
                     }
                 }
@@ -6254,34 +6233,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             return new ArrayList<Integer>();
         }
         return getMetrics().getFoundCharges();
-    }
-
-    /**
-     * Returns the neutral losses expected in the dataset.
-     *
-     * @return the neutral losses expected in the dataset
-     */
-    public ArrayList<NeutralLoss> getNeutralLosses() {
-        ArrayList<NeutralLoss> neutralLosses = new ArrayList<NeutralLoss>();
-        neutralLosses.addAll(IonFactory.getInstance().getDefaultNeutralLosses());
-        boolean found;
-        PTM currentPtm;
-        for (String modification : getIdentificationFeaturesGenerator().getFoundModifications()) {
-            currentPtm = ptmFactory.getPTM(modification);
-            found = false;
-            for (NeutralLoss ptmNeutralLoss : currentPtm.getNeutralLosses()) {
-                for (NeutralLoss neutralLoss : neutralLosses) {
-                    if (ptmNeutralLoss.isSameAs(neutralLoss)) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    neutralLosses.add(ptmNeutralLoss);
-                }
-            }
-        }
-        return neutralLosses;
     }
 
     /**
