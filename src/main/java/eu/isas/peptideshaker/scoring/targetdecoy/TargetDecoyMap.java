@@ -22,11 +22,17 @@ public class TargetDecoyMap implements Serializable {
      */
     private HashMap<Double, TargetDecoyPoint> hitMap = new HashMap<Double, TargetDecoyPoint>();
     /**
-     * The estimated number of true positives in the bin centered on a given score.
+     * The scores where a value has been taken for nTP and nFP.
+     */
+    private double[] scoreP;
+    /**
+     * The estimated number of true positives in the bin centered on a given
+     * score.
      */
     private double[] nTP;
     /**
-     * The estimated number of false positives in the bin centered on a given score.
+     * The estimated number of false positives in the bin centered on a given
+     * score.
      */
     private double[] nFP;
     /**
@@ -150,8 +156,8 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Estimates the metrics of the map: Nmax, NtargetOnly, minFDR. 
-     * Scores of 1 and above will be skipped for Nmax.
+     * Estimates the metrics of the map: Nmax, NtargetOnly, minFDR. Scores of 1
+     * and above will be skipped for Nmax.
      */
     private void estimateNs() {
         if (scores == null) {
@@ -189,7 +195,7 @@ public class TargetDecoyMap implements Serializable {
             targetCount += point.nTarget;
             decoyCount += point.nDecoy;
             if (targetCount > 0) {
-                Double fdr = ((double) decoyCount)/targetCount;
+                Double fdr = ((double) decoyCount) / targetCount;
                 if (fdr < minFDR) {
                     minFDR = fdr;
                 }
@@ -213,10 +219,11 @@ public class TargetDecoyMap implements Serializable {
         if (windowSize == null) {
             windowSize = nmax;
         }
-        
+
         // Store the TP and FP series
-        nTP = new double[scores.size()];
-        nFP = new double[scores.size()];
+        ArrayList<Double> scoresTemp = new ArrayList<Double>(scores.size());
+        ArrayList<Double> nTPTemp = new ArrayList<Double>(scores.size());
+        ArrayList<Double> nFPTemp = new ArrayList<Double>(scores.size());
 
         // estimate p
         TargetDecoyPoint tempPoint, previousPoint = hitMap.get(scores.get(0));
@@ -227,9 +234,19 @@ public class TargetDecoyMap implements Serializable {
         int cptInf = 0;
         int cptSup = 1;
         boolean oneReached = false;
+        boolean firstDecoy = false;
 
         for (int cpt = 0; cpt < scores.size(); cpt++) {
             TargetDecoyPoint point = hitMap.get(scores.get(cpt));
+            if (!firstDecoy && point.nDecoy > 0) {
+                firstDecoy = true;
+                double nTarget = nTargetInf + nTargetSup;
+                if (nTarget > 0) {
+                    scoresTemp.add(scores.get(cpt));
+                    nFPTemp.add(0.0);
+                    nTPTemp.add(nTarget);
+                }
+            }
             if (!oneReached) {
                 double change = 0.5 * (previousPoint.nTarget + point.nTarget);
                 nTargetInf += change;
@@ -260,8 +277,6 @@ public class TargetDecoyMap implements Serializable {
                     }
                 }
                 double nTarget = nTargetInf + nTargetSup;
-                nFP[cpt] = nDecoy;
-                nTP[cpt] = nTarget - nDecoy;
                 point.p = Math.max(Math.min(nDecoy / nTarget, 1), 0);
                 if (point.p >= 0.98) {
                     oneReached = true;
@@ -270,11 +285,26 @@ public class TargetDecoyMap implements Serializable {
                 point.p = 1;
             }
             previousPoint = point;
+            if (firstDecoy) {
+                double nTarget = nTargetInf + nTargetSup;
+                scoresTemp.add(scores.get(cpt));
+                nFPTemp.add(nDecoy);
+                nTPTemp.add(nTarget-nDecoy);
+            }
 
             waitingHandler.increaseSecondaryProgressCounter();
             if (waitingHandler.isRunCanceled()) {
                 return;
             }
+        }
+        
+        scoreP = new double[scoresTemp.size()];
+        nFP = new double[scoresTemp.size()];
+        nTP = new double[scoresTemp.size()];
+        for (int i = 0 ; i < scoresTemp.size() ; i++) {
+            scoreP[i] = scoresTemp.get(i);
+            nFP[i] = nFPTemp.get(i);
+            nTP[i] = nTPTemp.get(i);
         }
     }
 
@@ -289,10 +319,10 @@ public class TargetDecoyMap implements Serializable {
         }
         return nmax;
     }
-    
+
     /**
      * Returns the minimal FDR which can be achieved in this dataset.
-     * 
+     *
      * @return the minimal FDR which can be achieved in this dataset
      */
     public Double getMinFdr() {
@@ -365,7 +395,7 @@ public class TargetDecoyMap implements Serializable {
      * Returns a boolean indicating if a suspicious input was detected.
      *
      * @param initialFDR the minimal FDR requested for a group
-     * 
+     *
      * @return a boolean indicating if a suspicious input was detected
      */
     public boolean suspiciousInput(Double initialFDR) {
@@ -394,7 +424,7 @@ public class TargetDecoyMap implements Serializable {
      * @return the target decoy series
      */
     public TargetDecoySeries getTargetDecoySeries() {
-        return new TargetDecoySeries(hitMap, nTP, nFP);
+        return new TargetDecoySeries(hitMap, nTP, nFP, scoreP);
     }
 
     /**

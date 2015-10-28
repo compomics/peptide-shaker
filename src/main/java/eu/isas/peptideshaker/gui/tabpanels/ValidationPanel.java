@@ -2667,7 +2667,7 @@ public class ValidationPanel extends javax.swing.JPanel {
     private void updateCharts() {
 
         updatePepChart();
-        updateFDRFNRChart(); // @TODO: sometimes crashes on strange input values..?
+        updateTargteDecoyChart(); // @TODO: sometimes crashes on strange input values..?
         updateFDRsChart();
         updateConfidenceChart();
         updateCostBenefitChart();
@@ -2937,16 +2937,16 @@ public class ValidationPanel extends javax.swing.JPanel {
     /**
      * Updates the FDR/FNR chart.
      */
-    private void updateFDRFNRChart() {
+    private void updateTargteDecoyChart() {
         
         DefaultXYDataset tpData = new DefaultXYDataset();
-        double[][] tpSeries = {targetDecoySeries.getScores(), targetDecoySeries.getNTP()};
+        double[][] tpSeries = {targetDecoySeries.getScoresP(), targetDecoySeries.getNTP()};
         tpData.addSeries("True Positives", tpSeries);
         targetDecoyPlot.setDataset(0, tpData);
         targetDecoyPlot.mapDatasetToRangeAxis(0, 0);
 
         DefaultXYDataset fpData = new DefaultXYDataset();
-        double[][] fpSeries = {targetDecoySeries.getScores(), targetDecoySeries.getNFP()};
+        double[][] fpSeries = {targetDecoySeries.getScoresP(), targetDecoySeries.getNFP()};
         fpData.addSeries("False Positives", fpSeries);
         targetDecoyPlot.setDataset(1, fpData);
         targetDecoyPlot.mapDatasetToRangeAxis(2, 0);

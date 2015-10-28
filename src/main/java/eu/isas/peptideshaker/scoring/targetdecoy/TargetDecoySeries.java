@@ -24,6 +24,10 @@ public class TargetDecoySeries {
      */
     private double[] pep;
     /**
+     * The scores where a value has been taken for nTP and nFP.
+     */
+    private double[] scoresP;
+    /**
      * The estimated number of true positives in the bin centered on a given score.
      */
     private double[] nTP;
@@ -75,7 +79,7 @@ public class TargetDecoySeries {
      * @param nTP the true positives series
      * @param nFP the false positives series
      */
-    public TargetDecoySeries(HashMap<Double, TargetDecoyPoint> hitMap, double[] nTP, double[] nFP) {
+    public TargetDecoySeries(HashMap<Double, TargetDecoyPoint> hitMap, double[] nTP, double[] nFP, double[] scoresP) {
 
         scores = new double[hitMap.size()];
         probaNTotal = 0;
@@ -129,6 +133,7 @@ public class TargetDecoySeries {
         
         this.nTP = nTP;
         this.nFP = nFP;
+        this.scoresP = scoresP;
         
     }
 
@@ -270,6 +275,15 @@ public class TargetDecoySeries {
                 targetDecoyResults.setScoreLimit(scores[0]);
             }
         }
+    }
+
+    /**
+     * Returns the scores where a value has been taken for nTP and nFP.
+     *
+     * @return the scores where a value has been taken for nTP and nFP
+     */
+    public double[] getScoresP() {
+        return scoresP;
     }
 
     /**
