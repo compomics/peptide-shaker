@@ -31,7 +31,6 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Annotati
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
-import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
 import com.compomics.util.pride.CvTerm;
@@ -122,10 +121,6 @@ public class MzIdentMLExport {
      */
     private ProjectDetails projectDetails;
     /**
-     * The processing preferences.
-     */
-    private PSProcessingPreferences processingPreferences;
-    /**
      * The spectrum counting preferences.
      */
     private SpectrumCountingPreferences spectrumCountingPreferences;
@@ -169,7 +164,6 @@ public class MzIdentMLExport {
      * @param identification the identification object which can be used to
      * retrieve identification matches and parameters
      * @param projectDetails the project details
-     * @param processingPreferences the processing preferences
      * @param shotgunProtocol information on the protocol
      * @param identificationParameters the identification parameters
      * @param spectrumCountingPreferences the spectrum counting preferences
@@ -184,14 +178,13 @@ public class MzIdentMLExport {
      * @throws ClassNotFoundException Exception thrown whenever an error
      * occurred while deserializing an object
      */
-    public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, PSProcessingPreferences processingPreferences,
+    public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences,
             IdentificationFeaturesGenerator identificationFeaturesGenerator,
             File outputFile, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException {
         this.peptideShakerVersion = peptideShakerVersion;
         this.identification = identification;
         this.projectDetails = projectDetails;
-        this.processingPreferences = processingPreferences;
         this.shotgunProtocol = shotgunProtocol;
         this.identificationParameters = identificationParameters;
         this.spectrumCountingPreferences = spectrumCountingPreferences;

@@ -119,7 +119,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Project Preferences"/>
+                <TitledBorder title="Project Settings"/>
               </Border>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
@@ -132,12 +132,12 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="spectrumCountingPreferencesLbl" min="-2" pref="185" max="-2" attributes="0"/>
+                              <Component id="spectrumCountingLbl" min="-2" pref="185" max="-2" attributes="0"/>
                               <EmptySpace pref="79" max="32767" attributes="0"/>
                               <Component id="editSpectrumCountingButton" min="-2" pref="100" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="surroundingAminoAcidsLabel" min="-2" pref="150" max="-2" attributes="0"/>
+                              <Component id="displayLbl" min="-2" pref="150" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="editDisplayPreferencesButton" min="-2" pref="100" max="-2" attributes="0"/>
                           </Group>
@@ -151,12 +151,12 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="spectrumCountingPreferencesLbl" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="spectrumCountingLbl" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="editSpectrumCountingButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="surroundingAminoAcidsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="displayLbl" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="editDisplayPreferencesButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -165,9 +165,9 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="spectrumCountingPreferencesLbl">
+            <Component class="javax.swing.JLabel" name="spectrumCountingLbl">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Spectrum Counting Preferences"/>
+                <Property name="text" type="java.lang.String" value="Spectrum Counting"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="editSpectrumCountingButton">
@@ -186,9 +186,9 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editDisplayPreferencesButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="surroundingAminoAcidsLabel">
+            <Component class="javax.swing.JLabel" name="displayLbl">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Display Preferences"/>
+                <Property name="text" type="java.lang.String" value="Display"/>
               </Properties>
             </Component>
           </SubComponents>

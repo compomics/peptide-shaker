@@ -24,6 +24,8 @@ public class PeptideShakerSettings implements UrParameter {
     static final long serialVersionUID = -3531908843597367812L;
     /**
      * The initial processing preferences.
+     * 
+ * @deprecated replaced by utilities processing preferences and fraction preferences
      */
     private PSProcessingPreferences processingPreferences;
     /**
@@ -75,7 +77,6 @@ public class PeptideShakerSettings implements UrParameter {
      * @param filterPreferences The filter preferences
      * @param displayPreferences The display preferences
      * @param metrics The metrics saved when loading the files
-     * @param processingPreferences The processing preferences
      * @param identificationFeaturesCache The identification features cache
      */
     public PeptideShakerSettings(ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
@@ -84,7 +85,6 @@ public class PeptideShakerSettings implements UrParameter {
             FilterPreferences filterPreferences,
             DisplayPreferences displayPreferences,
             Metrics metrics,
-            PSProcessingPreferences processingPreferences,
             IdentificationFeaturesCache identificationFeaturesCache) {
         this.shotgunProtocol = shotgunProtocol;
         this.identificationParameters = identificationParameters;
@@ -93,7 +93,6 @@ public class PeptideShakerSettings implements UrParameter {
         this.filterPreferences = filterPreferences;
         this.displayPreferences = displayPreferences;
         this.metrics = metrics;
-        this.processingPreferences = processingPreferences;
         this.identificationFeaturesCache = identificationFeaturesCache;
     }
 
@@ -175,19 +174,7 @@ public class PeptideShakerSettings implements UrParameter {
      * @return the initial processing preferences
      */
     public PSProcessingPreferences getProcessingPreferences() {
-        if (processingPreferences == null) {
-            processingPreferences = new PSProcessingPreferences();
-        }
         return processingPreferences;
-    }
-
-    /**
-     * Sets the initial processing preferences.
-     *
-     * @param processingPreferences the initial processing preferences
-     */
-    public void setProcessingPreferences(PSProcessingPreferences processingPreferences) {
-        this.processingPreferences = processingPreferences;
     }
 
     /**

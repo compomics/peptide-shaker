@@ -19,17 +19,14 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.exceptions.exception_handlers.WaitingDialogExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.experiment.biology.AminoAcid;
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.PSProcessingPreferences;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -147,7 +144,7 @@ public class FileImporter {
      * done in a background thread (GUI mode) or in the current thread (command
      * line mode).
      */
-    public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, PSProcessingPreferences processingPreferences,
+    public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, ProcessingPreferences processingPreferences,
             SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, boolean backgroundThread) {
 
         IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, shotgunProtocol, identificationParameters, processingPreferences, spectrumCountingPreferences, projectDetails);
@@ -287,7 +284,7 @@ public class FileImporter {
         /**
          * The processing preferences.
          */
-        private PSProcessingPreferences processingPreferences;
+        private ProcessingPreferences processingPreferences;
         /**
          * The project details
          */
@@ -375,7 +372,7 @@ public class FileImporter {
          * @param projectDetails the project details
          */
         public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, ShotgunProtocol shotgunProtocol,
-                IdentificationParameters identificationParameters, PSProcessingPreferences processingPreferences,
+                IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences,
                 SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails) {
 
             this.idFiles = new ArrayList<File>();

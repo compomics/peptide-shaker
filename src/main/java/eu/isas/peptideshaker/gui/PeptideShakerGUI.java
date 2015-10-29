@@ -87,10 +87,13 @@ import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
+import com.compomics.util.gui.parameters.IdentificationParametersEditionDialog;
+import com.compomics.util.gui.parameters.ProcessingPreferencesDialog;
 import com.compomics.util.preferences.ValidationQCPreferences;
 import com.compomics.util.gui.parameters.identification_parameters.MatchesImportFiltersDialog;
 import com.compomics.util.gui.parameters.identification_parameters.ValidationQCPreferencesDialog;
 import com.compomics.util.gui.parameters.identification_parameters.ValidationQCPreferencesDialogParent;
+import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.filtering.AssumptionFilter;
 import eu.isas.peptideshaker.filtering.MatchFilter;
@@ -262,6 +265,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private UtilitiesUserPreferences utilitiesUserPreferences;
     /**
+     * The processing preferences
+     */
+    private ProcessingPreferences processingPreferences = new ProcessingPreferences();
+    /**
      * A simple progress dialog.
      */
     private ProgressDialogX progressDialog;
@@ -317,10 +324,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * The spectrum annotator.
      */
     private PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
-    /**
-     * The actually identified modifications.
-     */
-    private ArrayList<String> identifiedModifications = null;
     /**
      * The Jump To panel.
      */
@@ -823,17 +826,17 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
         exitJMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
-        searchParametersMenu = new javax.swing.JMenuItem();
-        importFilterMenu = new javax.swing.JMenuItem();
-        processingParametersMenuItem = new javax.swing.JMenuItem();
+        identificationParametersMenuItem = new javax.swing.JMenuItem();
+        preferencesMenuItem = new javax.swing.JMenuItem();
+        fractionDetailsJMenuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
+        searchParametersMenu = new javax.swing.JMenuItem();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         validationQcMenuItem = new javax.swing.JMenuItem();
-        fractionDetailsJMenuItem = new javax.swing.JMenuItem();
-        preferencesMenuItem = new javax.swing.JMenuItem();
         speciesJMenuItem = new javax.swing.JMenuItem();
         jSeparator13 = new javax.swing.JPopupMenu.Separator();
         javaOptionsJMenuItem = new javax.swing.JMenuItem();
+        processingMenuItem = new javax.swing.JRadioButtonMenuItem();
         configurationFilesSettings = new javax.swing.JMenuItem();
         privacyMenuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
@@ -1511,6 +1514,36 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         editMenu.setMnemonic('E');
         editMenu.setText("Edit");
 
+        identificationParametersMenuItem.setMnemonic('I');
+        identificationParametersMenuItem.setText("Identification Settings");
+        identificationParametersMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                identificationParametersMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(identificationParametersMenuItem);
+
+        preferencesMenuItem.setMnemonic('P');
+        preferencesMenuItem.setText("Project Settings");
+        preferencesMenuItem.setEnabled(false);
+        preferencesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                preferencesMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(preferencesMenuItem);
+
+        fractionDetailsJMenuItem.setMnemonic('R');
+        fractionDetailsJMenuItem.setText("Fraction Details");
+        fractionDetailsJMenuItem.setEnabled(false);
+        fractionDetailsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fractionDetailsJMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(fractionDetailsJMenuItem);
+        editMenu.add(jSeparator4);
+
         searchParametersMenu.setMnemonic('S');
         searchParametersMenu.setText("Search Settings");
         searchParametersMenu.addActionListener(new java.awt.event.ActionListener() {
@@ -1519,25 +1552,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             }
         });
         editMenu.add(searchParametersMenu);
-
-        importFilterMenu.setMnemonic('I');
-        importFilterMenu.setText("Import Filters");
-        importFilterMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                importFilterMenuActionPerformed(evt);
-            }
-        });
-        editMenu.add(importFilterMenu);
-
-        processingParametersMenuItem.setMnemonic('c');
-        processingParametersMenuItem.setText("Processing Preferences");
-        processingParametersMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                processingParametersMenuItemActionPerformed(evt);
-            }
-        });
-        editMenu.add(processingParametersMenuItem);
-        editMenu.add(jSeparator4);
 
         annotationPreferencesMenu.setMnemonic('A');
         annotationPreferencesMenu.setText("Spectrum Annotations");
@@ -1558,26 +1572,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         });
         editMenu.add(validationQcMenuItem);
 
-        fractionDetailsJMenuItem.setMnemonic('R');
-        fractionDetailsJMenuItem.setText("Fraction Details");
-        fractionDetailsJMenuItem.setEnabled(false);
-        fractionDetailsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fractionDetailsJMenuItemActionPerformed(evt);
-            }
-        });
-        editMenu.add(fractionDetailsJMenuItem);
-
-        preferencesMenuItem.setMnemonic('P');
-        preferencesMenuItem.setText("Preferences");
-        preferencesMenuItem.setEnabled(false);
-        preferencesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                preferencesMenuItemActionPerformed(evt);
-            }
-        });
-        editMenu.add(preferencesMenuItem);
-
         speciesJMenuItem.setMnemonic('C');
         speciesJMenuItem.setText("Species");
         speciesJMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1596,6 +1590,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             }
         });
         editMenu.add(javaOptionsJMenuItem);
+
+        processingMenuItem.setSelected(true);
+        processingMenuItem.setText("Processing Settings");
+        processingMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                processingMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(processingMenuItem);
 
         configurationFilesSettings.setMnemonic('E');
         configurationFilesSettings.setText("Resource Settings");
@@ -2089,7 +2092,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         new SearchSettingsDialog(this, searchParameters,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true, true, PeptideShaker.getConfigurationFile(), getLastSelectedFolder(), false);
+                true, true, PeptideShaker.getConfigurationFile(), getLastSelectedFolder(), getIdentificationParameters().getName(), false);
     }//GEN-LAST:event_searchParametersMenuActionPerformed
 
     /**
@@ -2452,7 +2455,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void preferencesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_preferencesMenuItemActionPerformed
 
-        PreferencesDialog preferencesDialog = new PreferencesDialog(this, getSpectrumCountingPreferences(), getDisplayPreferences());
+        ProjectSettingsDialog preferencesDialog = new ProjectSettingsDialog(this, getSpectrumCountingPreferences(), getDisplayPreferences());
 
         if (!preferencesDialog.isCanceled()) {
 
@@ -2686,14 +2689,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @param evt
      */
-    private void importFilterMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importFilterMenuActionPerformed
+    private void identificationParametersMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identificationParametersMenuItemActionPerformed
         IdentificationParameters identificationParameters = getIdentificationParameters();
-        MatchesImportFiltersDialog matchesImportFiltersDialog = new MatchesImportFiltersDialog(this, identificationParameters.getPeptideAssumptionFilter(), true);
-        PeptideAssumptionFilter newFilter = matchesImportFiltersDialog.getFilter();
-        if (newFilter != null) {
-            identificationParameters.setIdFilter(newFilter);
-        }
-    }//GEN-LAST:event_importFilterMenuActionPerformed
+        IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(this, identificationParameters, PeptideShaker.getConfigurationFile(), getNormalIcon(), getWaitingIcon(), lastSelectedFolder, this, false);
+        //@TODO: let the user edit some parameters?
+    }//GEN-LAST:event_identificationParametersMenuItemActionPerformed
 
     /**
      * Save the current project.
@@ -2831,15 +2831,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private void gettingStartedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gettingStartedMenuItemActionPerformed
         new GettingStartedDialog(this, null, false);
     }//GEN-LAST:event_gettingStartedMenuItemActionPerformed
-
-    /**
-     * Open the ProcessingPreferencesDialog.
-     *
-     * @param evt
-     */
-    private void processingParametersMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processingParametersMenuItemActionPerformed
-        new OldProcessingPreferencesDialog(this, false, getIdentificationParameters(), getProcessingPreferences());
-    }//GEN-LAST:event_processingParametersMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
@@ -3295,6 +3286,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         defaultAnnotationCheckBoxMenuItemActionPerformed(null);
     }//GEN-LAST:event_resetAnnotationMenuSelected
 
+    private void processingMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processingMenuItemActionPerformed
+        ProcessingPreferencesDialog processingPreferencesDialog = new ProcessingPreferencesDialog(this, processingPreferences, true);
+        if (!processingPreferencesDialog.isCanceled()) {
+            processingPreferences = processingPreferencesDialog.getProcessingPreferences();
+        }
+    }//GEN-LAST:event_processingMenuItemActionPerformed
+
     /**
      * Opens a dialog allowing the setting of paths.
      *
@@ -3505,8 +3503,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JCheckBoxMenuItem highResAnnotationCheckBoxMenuItem;
     private javax.swing.JMenuItem identificationFeaturesMenuItem;
+    private javax.swing.JMenuItem identificationParametersMenuItem;
     private javax.swing.JCheckBoxMenuItem immoniumIonsCheckMenu;
-    private javax.swing.JMenuItem importFilterMenu;
     private javax.swing.JRadioButtonMenuItem intensityIonTableRadioButtonMenuItem;
     private javax.swing.ButtonGroup ionTableButtonGroup;
     private javax.swing.JMenu ionsMenu;
@@ -3550,7 +3548,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JCheckBoxMenuItem precursorCheckMenu;
     private javax.swing.JMenuItem preferencesMenuItem;
     private javax.swing.JMenuItem privacyMenuItem;
-    private javax.swing.JMenuItem processingParametersMenuItem;
+    private javax.swing.JRadioButtonMenuItem processingMenuItem;
     private javax.swing.JMenu projectExportMenu;
     private javax.swing.JMenuItem projectPropertiesMenuItem;
     private javax.swing.JPanel proteinFractionsJPanel;
@@ -3941,11 +3939,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @return the initial processing preferences
      */
-    public PSProcessingPreferences getProcessingPreferences() {
-        if (cpsParent.getProcessingPreferences() == null) {
-            cpsParent.setProcessingPreferences(new PSProcessingPreferences());
+    public ProcessingPreferences getProcessingPreferences() {
+        if (processingPreferences == null) {
+            processingPreferences = new ProcessingPreferences();
         }
-        return cpsParent.getProcessingPreferences();
+        return processingPreferences;
     }
 
     /**
@@ -3953,8 +3951,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @param processingPreferences the initial processing preferences
      */
-    public void setProcessingPreferences(PSProcessingPreferences processingPreferences) {
-        cpsParent.setProcessingPreferences(new PSProcessingPreferences());
+    public void setProcessingPreferences(ProcessingPreferences processingPreferences) {
+        this.processingPreferences = processingPreferences;
     }
 
     /**
@@ -4194,8 +4192,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 catchException(e);
             }
         }
-
-        identifiedModifications = null;
 
         if (clearDatabaseFolder) {
             clearDatabaseFolder();
@@ -6194,33 +6190,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public void updateTabbedPanes() {
         repaintPanels();
         allTabsJTabbedPaneStateChanged(null);
-    }
-
-    /**
-     * Returns the variable modifications found in this project. (Consider using
-     * the search parameters instead.)
-     *
-     * @return the variable modifications found in this project
-     */
-    public ArrayList<String> getFoundVariableModifications() {
-        if (identifiedModifications == null) {
-            identifiedModifications = new ArrayList<String>();
-            for (String peptideKey : getIdentification().getPeptideIdentification()) {
-
-                boolean modified = false;
-
-                for (String modificationName : Peptide.getModificationFamily(peptideKey)) {
-                    if (!identifiedModifications.contains(modificationName)) {
-                        identifiedModifications.add(modificationName);
-                        modified = true;
-                    }
-                }
-                if (!modified && !identifiedModifications.contains(PtmPanel.NO_MODIFICATION)) {
-                    identifiedModifications.add(PtmPanel.NO_MODIFICATION);
-                }
-            }
-        }
-        return identifiedModifications;
     }
 
     /**

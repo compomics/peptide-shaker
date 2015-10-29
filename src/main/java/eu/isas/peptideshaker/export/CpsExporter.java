@@ -65,7 +65,7 @@ public class CpsExporter {
      */
     public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, ShotgunProtocol shotgunProtocol,
             IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences,
-            Metrics metrics, PSProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, ObjectsCache objectsCache, boolean emptyCache,
+            Metrics metrics, IdentificationFeaturesCache identificationFeaturesCache, ObjectsCache objectsCache, boolean emptyCache,
             DisplayPreferences displayPreferences, File dbFolder) throws IOException, SQLException, ArchiveException, ClassNotFoundException, InterruptedException {
 
         identificationFeaturesCache.setReadOnly(true);
@@ -77,7 +77,7 @@ public class CpsExporter {
 
             // set the experiment parameters
             PeptideShakerSettings peptideShakerSettings = new PeptideShakerSettings(shotgunProtocol, identificationParameters, spectrumCountingPreferences,
-                    projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences, identificationFeaturesCache);
+                    projectDetails, filterPreferences, displayPreferences, metrics, identificationFeaturesCache);
             ObjectsDB objectsDB = identification.getIdentificationDB().getObjectsDB();
             if (!objectsDB.hasTable(CpsParent.settingsTableName)) {
                 objectsDB.addTable(CpsParent.settingsTableName);

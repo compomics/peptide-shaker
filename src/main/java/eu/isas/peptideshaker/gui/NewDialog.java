@@ -25,20 +25,17 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.GenePreferences;
-import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
-import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
-import com.compomics.util.gui.parameters.OldProcessingPreferencesDialog;
-import com.compomics.util.gui.parameters.identification_parameters.MatchesImportFiltersDialog;
-import com.compomics.util.gui.parameters.identification_parameters.SearchSettingsDialog;
+import com.compomics.util.gui.parameters.IdentificationParametersSelectionDialog;
+import com.compomics.util.gui.parameters.ProcessingPreferencesDialog;
 import eu.isas.peptideshaker.PeptideShaker;
-import com.compomics.util.preferences.PTMScoringPreferences;
-import com.compomics.util.preferences.PSProcessingPreferences;
+import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.ProteinInferencePreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.protein.Header.DatabaseType;
+import eu.isas.peptideshaker.gui.preferencesdialogs.ProjectSettingsDialog;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.PsZipUtils;
@@ -52,6 +49,7 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -117,7 +115,7 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * The processing preferences.
      */
-    private PSProcessingPreferences processingPreferences = new PSProcessingPreferences();
+    private ProcessingPreferences processingPreferences;
     /**
      * The display preferences.
      */
@@ -149,8 +147,14 @@ public class NewDialog extends javax.swing.JDialog {
         super(peptideShakerGui, modal);
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = null;
-        identificationParameters = IdentificationParameters.getDefaultIdentificationParameters(new SearchParameters()); // set default ID parameters
-        identificationParameters.getSearchParameters().setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
+        
+        SearchParameters searchParameters = new SearchParameters();
+        searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
+        identificationParameters = new IdentificationParameters(searchParameters); // set default ID parameters
+        
+        processingPreferences = new ProcessingPreferences();
+            processingTxt.setText(processingPreferences.getnThreads() + " threads");
+        
         MatchesValidator.setDefaultMatchesQCFilters(identificationParameters.getIdValidationPreferences().getValidationQCPreferences());
         loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
@@ -170,7 +174,7 @@ public class NewDialog extends javax.swing.JDialog {
         super(welcomeDialog, modal);
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = welcomeDialog;
-        identificationParameters = IdentificationParameters.getDefaultIdentificationParameters(new SearchParameters()); // set default ID parameters
+        identificationParameters = new IdentificationParameters(new SearchParameters()); // set default ID parameters
         identificationParameters.getSearchParameters().setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
         MatchesValidator.setDefaultMatchesQCFilters(identificationParameters.getIdValidationPreferences().getValidationQCPreferences());
         loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
@@ -215,16 +219,15 @@ public class NewDialog extends javax.swing.JDialog {
         speciesTextField = new javax.swing.JTextField();
         editSpeciesButton = new javax.swing.JButton();
         processingParametersPanel = new javax.swing.JPanel();
-        importFilterTxt = new javax.swing.JTextField();
-        importFiltersLabel = new javax.swing.JLabel();
+        projectSettingsTxt = new javax.swing.JTextField();
+        projectSettingsLabel = new javax.swing.JLabel();
         searchParamsLabel = new javax.swing.JLabel();
-        searchTxt = new javax.swing.JTextField();
+        identificationParametersTxt = new javax.swing.JTextField();
         editSearchButton = new javax.swing.JButton();
-        editImportFilterButton = new javax.swing.JButton();
-        importFiltersLabel1 = new javax.swing.JLabel();
-        preferencesTxt = new javax.swing.JTextField();
-        editPreferencesButton = new javax.swing.JButton();
-        browseSearchSettingsButton = new javax.swing.JButton();
+        projectSettingsButton = new javax.swing.JButton();
+        processingLbl = new javax.swing.JLabel();
+        processingTxt = new javax.swing.JTextField();
+        editProcessingButton = new javax.swing.JButton();
         inputFilesPanel = new javax.swing.JPanel();
         idFilesLabel = new javax.swing.JLabel();
         idFilesTxt = new javax.swing.JTextField();
@@ -361,20 +364,20 @@ public class NewDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        processingParametersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Processing Parameters"));
+        processingParametersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Project Settings"));
         processingParametersPanel.setOpaque(false);
 
-        importFilterTxt.setEditable(false);
-        importFilterTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        importFilterTxt.setText("Default");
+        projectSettingsTxt.setEditable(false);
+        projectSettingsTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        projectSettingsTxt.setText("Default");
 
-        importFiltersLabel.setText("Import Filters");
+        projectSettingsLabel.setText("Project");
 
-        searchParamsLabel.setText("Search Settings");
+        searchParamsLabel.setText("Identification");
 
-        searchTxt.setEditable(false);
-        searchTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        searchTxt.setText("Default");
+        identificationParametersTxt.setEditable(false);
+        identificationParametersTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        identificationParametersTxt.setText("Default");
 
         editSearchButton.setText("Edit");
         editSearchButton.addActionListener(new java.awt.event.ActionListener() {
@@ -383,30 +386,23 @@ public class NewDialog extends javax.swing.JDialog {
             }
         });
 
-        editImportFilterButton.setText("Edit");
-        editImportFilterButton.addActionListener(new java.awt.event.ActionListener() {
+        projectSettingsButton.setText("Edit");
+        projectSettingsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editImportFilterButtonActionPerformed(evt);
+                projectSettingsButtonActionPerformed(evt);
             }
         });
 
-        importFiltersLabel1.setText("Preferences");
+        processingLbl.setText("Processing");
 
-        preferencesTxt.setEditable(false);
-        preferencesTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        preferencesTxt.setText("Default");
+        processingTxt.setEditable(false);
+        processingTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        processingTxt.setText("Default");
 
-        editPreferencesButton.setText("Edit");
-        editPreferencesButton.addActionListener(new java.awt.event.ActionListener() {
+        editProcessingButton.setText("Edit");
+        editProcessingButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editPreferencesButtonActionPerformed(evt);
-            }
-        });
-
-        browseSearchSettingsButton.setText("Browse");
-        browseSearchSettingsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                browseSearchSettingsButtonActionPerformed(evt);
+                editProcessingButtonActionPerformed(evt);
             }
         });
 
@@ -418,46 +414,39 @@ public class NewDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(importFiltersLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                        .addComponent(projectSettingsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
                         .addComponent(searchParamsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
-                    .addComponent(importFiltersLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(processingLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(preferencesTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
-                    .addComponent(searchTxt, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(importFilterTxt, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(processingTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
+                    .addComponent(identificationParametersTxt, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(projectSettingsTxt, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(editPreferencesButton, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
-                    .addComponent(editImportFilterButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, processingParametersPanelLayout.createSequentialGroup()
-                        .addComponent(browseSearchSettingsButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(editSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(editProcessingButton, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                    .addComponent(projectSettingsButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                    .addComponent(editSearchButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-
-        processingParametersPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {browseSearchSettingsButton, editSearchButton});
-
         processingParametersPanelLayout.setVerticalGroup(
             processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(processingParametersPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(searchParamsLabel)
-                    .addComponent(searchTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(editSearchButton)
-                    .addComponent(browseSearchSettingsButton))
+                    .addComponent(identificationParametersTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(editSearchButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(importFiltersLabel)
-                    .addComponent(importFilterTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(editImportFilterButton))
+                    .addComponent(projectSettingsLabel)
+                    .addComponent(projectSettingsTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(projectSettingsButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(importFiltersLabel1)
-                    .addComponent(preferencesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(editPreferencesButton))
+                    .addComponent(processingLbl)
+                    .addComponent(processingTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(editProcessingButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1209,14 +1198,9 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSearchButtonActionPerformed
-        SearchSettingsDialog searchSettingsDialog = new SearchSettingsDialog(peptideShakerGUI, identificationParameters.getSearchParameters(),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true, true, PeptideShaker.getConfigurationFile(), peptideShakerGUI.getLastSelectedFolder(), true);
-
-        if (!searchSettingsDialog.isCanceled()) {
-            identificationParameters.setSearchParameters(searchSettingsDialog.getSearchParameters());
-            setSearchParameters(identificationParameters.getSearchParameters());
+        IdentificationParametersSelectionDialog identificationParametersSelectionDialog = new IdentificationParametersSelectionDialog(peptideShakerGUI, this, PeptideShaker.getConfigurationFile(), peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), peptideShakerGUI.getLastSelectedFolder(), peptideShakerGUI, true);
+        if (!identificationParametersSelectionDialog.isCanceled()) {
+            setIdentificationParameters(identificationParametersSelectionDialog.getIdentificationParameters());
         }
     }//GEN-LAST:event_editSearchButtonActionPerformed
 
@@ -1225,14 +1209,14 @@ public class NewDialog extends javax.swing.JDialog {
      *
      * @param evt
      */
-    private void editImportFilterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editImportFilterButtonActionPerformed
-        MatchesImportFiltersDialog matchesImportFiltersDialog = new MatchesImportFiltersDialog(peptideShakerGUI, identificationParameters.getPeptideAssumptionFilter(), true);
-        PeptideAssumptionFilter newFilter = matchesImportFiltersDialog.getFilter();
-        if (newFilter != null) {
-            importFilterTxt.setText("User Defined");
-            identificationParameters.setIdFilter(newFilter);
+    private void projectSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectSettingsButtonActionPerformed
+
+        ProjectSettingsDialog preferencesDialog = new ProjectSettingsDialog(peptideShakerGUI, spectrumCountingPreferences, displayPreferences);
+        if (!preferencesDialog.isCanceled()) {
+
         }
-    }//GEN-LAST:event_editImportFilterButtonActionPerformed
+
+    }//GEN-LAST:event_projectSettingsButtonActionPerformed
 
     /**
      * Closes the dialog.
@@ -1275,26 +1259,13 @@ public class NewDialog extends javax.swing.JDialog {
      *
      * @param evt
      */
-    private void editPreferencesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editPreferencesButtonActionPerformed
-        OldProcessingPreferencesDialog processingPreferencesDialog = new OldProcessingPreferencesDialog(this, true, identificationParameters, processingPreferences);
-
+    private void editProcessingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editProcessingButtonActionPerformed
+        ProcessingPreferencesDialog processingPreferencesDialog = new ProcessingPreferencesDialog(this, peptideShakerGUI, processingPreferences, true);
         if (!processingPreferencesDialog.isCanceled()) {
-            IdMatchValidationPreferences idMatchValidationPreferences = identificationParameters.getIdValidationPreferences();
-            PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
-            if (idMatchValidationPreferences.getDefaultProteinFDR() != 1
-                    || idMatchValidationPreferences.getDefaultPeptideFDR() != 1
-                    || idMatchValidationPreferences.getDefaultPsmFDR() != 1
-                    || ptmScoringPreferences.getFlrThreshold() != 1
-                    || ptmScoringPreferences.isProbabilisticScoreNeutralLosses()
-                    || !ptmScoringPreferences.isEstimateFlr()) {
-                preferencesTxt.setText("User Defined");
-            } else if (!ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
-                preferencesTxt.setText("Reduced PTM Scoring");
-            } else {
-                preferencesTxt.setText("Default");
-            }
+            processingPreferences = processingPreferencesDialog.getProcessingPreferences();
+            processingTxt.setText(processingPreferences.getnThreads() + " threads");
         }
-    }//GEN-LAST:event_editPreferencesButtonActionPerformed
+    }//GEN-LAST:event_editProcessingButtonActionPerformed
 
     /**
      * Open the species selection dialog.
@@ -1405,97 +1376,40 @@ public class NewDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_spectrumFilesTxtMouseClicked
 
-    /**
-     * Opens a file chooser where the user can select the search settings file
-     * to use.
-     *
-     * @param evt
-     */
-    private void browseSearchSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseSearchSettingsButtonActionPerformed
-        // First check whether a file has already been selected.
-        // If so, start from that file's parent.
-        File startLocation = new File(peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder());
-        SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        if (searchParameters != null && searchParameters.getParametersFile() != null) {
-            startLocation = searchParameters.getParametersFile().getParentFile();
-        }
-
-        JFileChooser fc = new JFileChooser(startLocation);
-
-        FileFilter filter = new FileFilter() {
-            @Override
-            public boolean accept(File myFile) {
-
-                return myFile.getName().toLowerCase().endsWith(".par") || myFile.isDirectory();
-            }
-
-            @Override
-            public String getDescription() {
-                return "SearchGUI settings file (.par)";
-            }
-        };
-        fc.setFileFilter(filter);
-        int result = fc.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            String fileName = file.getName();
-
-            if (fileName.endsWith(".par")) {
-
-                try {
-                    SearchParameters tempParameters = SearchParameters.getIdentificationParameters(file);
-                    PeptideShaker.loadModifications(tempParameters);
-
-                    String name = Util.removeExtension(file.getName());
-                    searchTxt.setText(name);
-                    setSearchParameters(tempParameters);
-                    peptideShakerGUI.getLastSelectedFolder().setLastSelectedFolder(file.getAbsolutePath());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(null, "Error occurred while reading " + file + ". Please verify the search parameters.", "File error", JOptionPane.ERROR_MESSAGE);
-                }
-
-            } else {
-                JOptionPane.showMessageDialog(this, "Please select a valid search settings file (.par).", "File Error", JOptionPane.INFORMATION_MESSAGE);
-            }
-        }
-    }//GEN-LAST:event_browseSearchSettingsButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aboutButton;
     private javax.swing.JButton browseDbButton;
     private javax.swing.JButton browseId;
-    private javax.swing.JButton browseSearchSettingsButton;
     private javax.swing.JButton browseSpectra;
     private javax.swing.JButton clearDbButton;
     private javax.swing.JButton clearId;
     private javax.swing.JButton clearSpectra;
     private javax.swing.JLabel databaseLabel;
-    private javax.swing.JButton editImportFilterButton;
-    private javax.swing.JButton editPreferencesButton;
+    private javax.swing.JButton editProcessingButton;
     private javax.swing.JButton editSearchButton;
     private javax.swing.JButton editSpeciesButton;
     private javax.swing.JTextField fastaFileTxt;
     private javax.swing.JLabel idFilesLabel;
     private javax.swing.JTextField idFilesTxt;
-    private javax.swing.JTextField importFilterTxt;
-    private javax.swing.JLabel importFiltersLabel;
-    private javax.swing.JLabel importFiltersLabel1;
+    private javax.swing.JTextField identificationParametersTxt;
     private javax.swing.JPanel inputFilesPanel;
     private javax.swing.JButton loadButton;
     private javax.swing.JLabel peptideShakerPublicationLabel;
-    private javax.swing.JTextField preferencesTxt;
+    private javax.swing.JLabel processingLbl;
     private javax.swing.JPanel processingParametersPanel;
+    private javax.swing.JTextField processingTxt;
     private javax.swing.JPanel projectDetailsPanel;
     private javax.swing.JTextField projectNameIdTxt;
     private javax.swing.JLabel projectReferenceLabel;
+    private javax.swing.JButton projectSettingsButton;
+    private javax.swing.JLabel projectSettingsLabel;
+    private javax.swing.JTextField projectSettingsTxt;
     private javax.swing.JLabel replicateLabel;
     private javax.swing.JTextField replicateNumberIdtxt;
     private javax.swing.JPanel sampleDetailsPanel;
     private javax.swing.JTextField sampleNameIdtxt;
     private javax.swing.JLabel sampleNameLabel;
     private javax.swing.JLabel searchParamsLabel;
-    private javax.swing.JTextField searchTxt;
     private javax.swing.JLabel speciesLabel;
     private javax.swing.JTextField speciesTextField;
     private javax.swing.JLabel spectrumFilesLabel;
@@ -1673,7 +1587,7 @@ public class NewDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Imports the search parameters from a SearchGUI file.
+     * Imports the search parameters from a file.
      *
      * @param file the selected searchGUI file
      * @param dataFolders folders where to look for the FASTA file
@@ -1786,7 +1700,8 @@ public class NewDialog extends javax.swing.JDialog {
                 }
             }
 
-            setSearchParameters(tempParameters);
+            IdentificationParameters identificationParameters = new IdentificationParameters(tempParameters);
+            setIdentificationParameters(identificationParameters);
         }
     }
 
@@ -1970,22 +1885,18 @@ public class NewDialog extends javax.swing.JDialog {
      *
      * @param searchParameters new search parameters
      */
-    private void setSearchParameters(SearchParameters searchParameters) {
-        File parametersFile = searchParameters.getParametersFile();
-        identificationParameters.setParametersFromSearch(searchParameters);
-        if (parametersFile != null) {
-            String name = parametersFile.getName();
-            name = Util.removeExtension(name);
-            searchTxt.setText(name);
-            importFilterTxt.setText(name);
-            preferencesTxt.setText(name);
-        } else {
-            // @TODO: is this possible?
-            searchTxt.setText("User Defined");
+    private void setIdentificationParameters(IdentificationParameters identificationParameters) {
+        this.identificationParameters = identificationParameters;
+        identificationParametersTxt.setText(identificationParameters.getName());
+        ProteinInferencePreferences proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
+        File fastaFile = proteinInferencePreferences.getProteinSequenceDatabase();
+        if (fastaFile == null) { // Backward compatibility
+            fastaFile = identificationParameters.getSearchParameters().getFastaFile();
+            if (fastaFile != null) {
+                proteinInferencePreferences.setProteinSequenceDatabase(fastaFile);
+            }
         }
-        if (searchParameters.getFastaFile() != null) {
-            fastaFileTxt.setText(searchParameters.getFastaFile().getName());
-        }
+        fastaFileTxt.setText(fastaFile.getName());
 
         validateInput();
     }
@@ -2005,7 +1916,7 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private void loadIdInputFiles(File[] selectedFiles) {
 
-        ArrayList<File> parameterFiles = new ArrayList<File>();
+        HashMap<String, File> parameterFiles = new HashMap<String, File>();
         ArrayList<File> dataFolders = new ArrayList<File>();
         ArrayList<File> inputFiles = new ArrayList<File>();
 
@@ -2077,9 +1988,7 @@ public class NewDialog extends javax.swing.JDialog {
                     if (name.equals(SEARCHGUI_INPUT)) {
                         inputFiles.add(file);
                     } else if (name.toLowerCase().endsWith(".par")) {
-                        if (!parameterFiles.contains(file)) {
-                            parameterFiles.add(file);
-                        }
+                        parameterFiles.put(name, file);
                     }
                     if (file.getName().endsWith("usermods.xml")) {
                         modificationFiles.add(file);
@@ -2120,7 +2029,8 @@ public class NewDialog extends javax.swing.JDialog {
                     parameterFile = parameterFiles.get(0); // @TODO: can we be more clever in selecting the "right" one?
                 } else {
                     setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                    FileSelectionDialog fileSelection = new FileSelectionDialog(this, parameterFiles, "Select the wanted SearchGUI parameters file.");
+                    ArrayList<File> parameterFilesList = new ArrayList<File>(parameterFiles.values());
+                    FileSelectionDialog fileSelection = new FileSelectionDialog(this, parameterFilesList, "Select the wanted SearchGUI parameters file.");
                     if (!fileSelection.isCanceled()) {
                         parameterFile = fileSelection.getSelectedFile();
                     }
@@ -2149,13 +2059,13 @@ public class NewDialog extends javax.swing.JDialog {
      * in sub folders will be ignored.
      *
      * @param file the zip file to load
-     * @param parameterFiles list of the parameters file found
+     * @param parameterFiles a map of the parameters files found indexed by name
      * @param dataFolders list of the folders where the mgf and FASTA files
      * could possibly be
      * @param inputFiles list of the input files found
      * @return true of the zipping completed without any issues
      */
-    private boolean loadZipFile(File file, ArrayList<File> parameterFiles, ArrayList<File> dataFolders, ArrayList<File> inputFiles) {
+    private boolean loadZipFile(File file, HashMap<String, File> parameterFiles, ArrayList<File> dataFolders, ArrayList<File> inputFiles) {
 
         String newName = PsZipUtils.getTempFolderName(file.getName());
         String parentFolder = PsZipUtils.getUnzipParentFolder();
@@ -2209,10 +2119,10 @@ public class NewDialog extends javax.swing.JDialog {
      * Loads the given identification file in the file list.
      *
      * @param file the identification file to load
-     * @param parameterFiles list of parameters files found
+     * @param parameterFiles a map of the parameters files found indexed by name
      * @param inputFiles list of the input files found
      */
-    private void loadIdFile(File file, ArrayList<File> parameterFiles, ArrayList<File> inputFiles) {
+    private void loadIdFile(File file, HashMap<String, File> parameterFiles, ArrayList<File> inputFiles) {
 
         // add searchGUI_input.txt
         if (file.getName().equals(SEARCHGUI_INPUT)) {
@@ -2238,16 +2148,7 @@ public class NewDialog extends javax.swing.JDialog {
                 modificationFiles.add(file);
             }
         } else if (lowerCaseName.endsWith(".par")) {
-            boolean found = false;
-            for (File tempFile : parameterFiles) {
-                if (tempFile.getName().equals(file.getName())) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                parameterFiles.add(file);
-            }
+            parameterFiles.put(file.getName(), file);
         }
     }
 

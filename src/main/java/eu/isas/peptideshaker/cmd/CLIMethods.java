@@ -350,7 +350,7 @@ public class CLIMethods {
         projectDetails.setPrideOutputFolder(mzidCLIInputBean.getOutputFile().getAbsolutePath());
 
         MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), cpsParent.getIdentification(), cpsParent.getProjectDetails(),
-                cpsParent.getProcessingPreferences(), cpsParent.getShotgunProtocol(), cpsParent.getIdentificationParameters(),
+                cpsParent.getShotgunProtocol(), cpsParent.getIdentificationParameters(),
                 cpsParent.getSpectrumCountingPreferences(), cpsParent.getIdentificationFeaturesGenerator(),
                 mzidCLIInputBean.getOutputFile(), waitingHandler);
         mzIdentMLExport.createMzIdentMLFile(false);

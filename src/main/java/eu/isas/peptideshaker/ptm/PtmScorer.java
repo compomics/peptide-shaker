@@ -30,9 +30,9 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Annotati
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.preferences.PTMScoringPreferences;
-import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
+import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSPtmScores;
@@ -1288,7 +1288,7 @@ public class PtmScorer {
      * deserializing a match
      */
     public void scorePsmPtms(Identification identification, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, IdentificationParameters identificationParameters,
-            Metrics metrics, PSProcessingPreferences processingPreferences) throws Exception {
+            Metrics metrics, ProcessingPreferences processingPreferences) throws Exception {
 
         waitingHandler.setWaitingText("Scoring PSM PTMs. Please Wait...");
 

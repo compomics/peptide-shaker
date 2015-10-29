@@ -2635,8 +2635,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                     if (mgfConversionOk) {
                         // save the search params
-                        prideSearchParameters.setParametersFile(new File(outputFolder, "pride.par"));
-                        SearchParameters.saveIdentificationParameters(prideSearchParameters, new File(outputFolder, "pride.par"));
+                        File parametersFile = new File(outputFolder, "pride.par");
+                        SearchParameters.saveIdentificationParameters(prideSearchParameters, parametersFile);
                     }
 
                     progressDialog.setRunFinished();

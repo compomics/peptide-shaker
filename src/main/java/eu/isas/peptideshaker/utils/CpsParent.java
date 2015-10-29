@@ -14,10 +14,12 @@ import com.compomics.util.experiment.identification.protein_sequences.SequenceFa
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.io.compression.ZipUtils;
+import com.compomics.util.preferences.FractionSettings;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PSProcessingPreferences;
+import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.ProteinInferencePreferences;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.fileimport.CpsFileImporter;
@@ -29,6 +31,7 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.preferences.UserPreferences;
 import eu.isas.peptideshaker.preferences.UserPreferencesParent;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -61,10 +64,6 @@ public class CpsParent extends UserPreferencesParent {
      * The project details.
      */
     protected ProjectDetails projectDetails;
-    /**
-     * The processing preferences.
-     */
-    protected PSProcessingPreferences processingPreferences;
     /**
      * The metrics stored during processing.
      */
@@ -248,11 +247,23 @@ public class CpsParent extends UserPreferencesParent {
         if (userAdvocateMapping != null) {
             Advocate.setUserAdvocates(userAdvocateMapping);
         }
-        processingPreferences = experimentSettings.getProcessingPreferences();
         metrics = experimentSettings.getMetrics();
         filterPreferences = experimentSettings.getFilterPreferences();
         displayPreferences = experimentSettings.getDisplayPreferences();
         shotgunProtocol = experimentSettings.getShotgunProtocol();
+
+        // Backward compatibility for the fraction settings
+        FractionSettings fractionSettings = identificationParameters.getFractionSettings();
+        if (fractionSettings == null) {
+            fractionSettings = new FractionSettings();
+        }
+        PSProcessingPreferences deprecatedProcessingPreferences = experimentSettings.getProcessingPreferences();
+        if (deprecatedProcessingPreferences != null) {
+            Double fractionMw = deprecatedProcessingPreferences.getProteinConfidenceMwPlots();
+            if (fractionMw != null) {
+                fractionSettings.setProteinConfidenceMwPlots(fractionMw);
+            }
+        }
 
         // Set up caches
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, shotgunProtocol, identificationParameters, metrics, spectrumCountingPreferences);
@@ -293,7 +304,7 @@ public class CpsParent extends UserPreferencesParent {
     public void saveProject(WaitingHandler waitingHandler, boolean emptyCache) throws IOException, SQLException, ArchiveException, ClassNotFoundException, InterruptedException {
         CpsExporter.saveAs(cpsFile, waitingHandler, experiment, identification, shotgunProtocol, identificationParameters,
                 spectrumCountingPreferences, projectDetails, filterPreferences, metrics,
-                processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(),
+                identificationFeaturesGenerator.getIdentificationFeaturesCache(),
                 objectsCache, emptyCache, displayPreferences, dbFolder);
 
         loadUserPreferences();
@@ -536,15 +547,6 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Returns the processing preferences.
-     *
-     * @return the processing preferences
-     */
-    public PSProcessingPreferences getProcessingPreferences() {
-        return processingPreferences;
-    }
-
-    /**
      * Returns the metrics object.
      *
      * @return the metrics object
@@ -657,15 +659,6 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Set the processing preferences.
-     *
-     * @param processingPreferences the processing preferences
-     */
-    public void setProcessingPreferences(PSProcessingPreferences processingPreferences) {
-        this.processingPreferences = processingPreferences;
-    }
-
-    /**
      * Set the metrics.
      *
      * @param metrics the metrics
@@ -748,11 +741,10 @@ public class CpsParent extends UserPreferencesParent {
      */
     public void setDefaultPreferences() {
         SearchParameters searchParameters = new SearchParameters();
-        identificationParameters = IdentificationParameters.getDefaultIdentificationParameters(searchParameters);
+        identificationParameters = new IdentificationParameters(searchParameters);
         spectrumCountingPreferences = new SpectrumCountingPreferences();
         spectrumCountingPreferences.setSelectedMethod(SpectralCountingMethod.NSAF);
-        spectrumCountingPreferences.setValidatedHits(true);
-        processingPreferences = new PSProcessingPreferences();
+        spectrumCountingPreferences.setMatchValidationLevel(MatchValidationLevel.doubtful.getIndex());
     }
 
     /**

@@ -32,11 +32,12 @@ import com.compomics.util.gui.DummyFrame;
 import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.messages.FeedBack;
+import com.compomics.util.preferences.FractionSettings;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.PTMScoringPreferences;
-import com.compomics.util.preferences.PSProcessingPreferences;
+import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
@@ -600,7 +601,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         // set the default identification parameters
-        identificationParameters = IdentificationParameters.getDefaultIdentificationParameters(searchParameters);
+        identificationParameters = new IdentificationParameters(searchParameters);
 
         // set the filtering import settings
         PeptideAssumptionFilter idFilter = new PeptideAssumptionFilter();
@@ -619,14 +620,19 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         idMatchValidationPreferences.setDefaultPeptideFDR(cliInputBean.getPeptideFDR());
         idMatchValidationPreferences.setDefaultProteinFDR(cliInputBean.getProteinFDR());
         MatchesValidator.setDefaultMatchesQCFilters(identificationParameters.getIdValidationPreferences().getValidationQCPreferences());
+        identificationParameters.setIdValidationPreferences(idMatchValidationPreferences);
+        
+        // Set the fraction preferences
+        FractionSettings fractionSettings = new FractionSettings();
+        fractionSettings.setProteinConfidenceMwPlots(cliInputBean.getProteinConfidenceMwPlots());
+        identificationParameters.setFractionSettings(fractionSettings);
 
         // set the processing settings
-        processingPreferences = new PSProcessingPreferences();
+        ProcessingPreferences processingPreferences = new ProcessingPreferences();
         Integer nThreads = cliInputBean.getnThreads();
         if (nThreads != null) {
             processingPreferences.setnThreads(nThreads);
         }
-        processingPreferences.setProteinConfidenceMwPlots(cliInputBean.getProteinConfidenceMwPlots());
 
         // set up the shotgun protocol
         shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(searchParameters);

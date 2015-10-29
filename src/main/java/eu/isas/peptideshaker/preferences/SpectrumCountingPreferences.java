@@ -107,17 +107,6 @@ public class SpectrumCountingPreferences implements Serializable {
     }
 
     /**
-     * Set if only validated hits are to be counted.
-     *
-     * @deprecated use the matchValidationLevel
-     *
-     * @param validatedHits if the only validated hits are to be counted
-     */
-    public void setValidatedHits(boolean validatedHits) {
-        this.validatedHits = validatedHits;
-    }
-
-    /**
      * Returns the lowest validation level considered as an integer as indexed
      * in the MatchValidationLevel enum.
      *

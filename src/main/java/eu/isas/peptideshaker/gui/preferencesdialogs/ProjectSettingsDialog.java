@@ -5,6 +5,7 @@ import eu.isas.peptideshaker.gui.preferencesdialogs.preferences_dialogs.DisplayP
 import eu.isas.peptideshaker.gui.preferencesdialogs.preferences_dialogs.SpectrumCountingSettingsDialog;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import java.awt.Dialog;
 import java.awt.Toolkit;
 
 /**
@@ -13,7 +14,7 @@ import java.awt.Toolkit;
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
-public class PreferencesDialog extends javax.swing.JDialog {
+public class ProjectSettingsDialog extends javax.swing.JDialog {
 
     /**
      * The parent frame.
@@ -33,13 +34,34 @@ public class PreferencesDialog extends javax.swing.JDialog {
     private boolean canceled = false;
 
     /**
-     * Creates a new PreferencesDialog.
+     * Creates a new PreferencesDialog with a dialog as owner.
+     *
+     * @param parentFrame the parent frame
+     * @param owner the owner
+     * @param spectrumCountingPreferences the spectrum counting preferences
+     * @param displayPreferences the display preferences
+     */
+    public ProjectSettingsDialog(java.awt.Frame parentFrame, Dialog owner, SpectrumCountingPreferences spectrumCountingPreferences, DisplayPreferences displayPreferences) {
+        
+        super(owner, true);
+        initComponents();
+
+        this.parentFrame = parentFrame;
+        this.spectrumCountingPreferences = spectrumCountingPreferences;
+        this.displayPreferences = displayPreferences;
+
+        setLocationRelativeTo(owner);
+        setVisible(true);
+    }
+
+    /**
+     * Creates a new PreferencesDialog with a frame as owner.
      *
      * @param parentFrame the parent frame
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param displayPreferences the display preferences
      */
-    public PreferencesDialog(java.awt.Frame parentFrame, SpectrumCountingPreferences spectrumCountingPreferences, DisplayPreferences displayPreferences) {
+    public ProjectSettingsDialog(java.awt.Frame parentFrame, SpectrumCountingPreferences spectrumCountingPreferences, DisplayPreferences displayPreferences) {
         
         super(parentFrame, true);
         initComponents();
@@ -110,10 +132,10 @@ public class PreferencesDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         preferencesPanel = new javax.swing.JPanel();
-        spectrumCountingPreferencesLbl = new javax.swing.JLabel();
+        spectrumCountingLbl = new javax.swing.JLabel();
         editSpectrumCountingButton = new javax.swing.JButton();
         editDisplayPreferencesButton = new javax.swing.JButton();
-        surroundingAminoAcidsLabel = new javax.swing.JLabel();
+        displayLbl = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Preferences");
@@ -154,10 +176,10 @@ public class PreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        preferencesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Project Preferences"));
+        preferencesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Project Settings"));
         preferencesPanel.setOpaque(false);
 
-        spectrumCountingPreferencesLbl.setText("Spectrum Counting Preferences");
+        spectrumCountingLbl.setText("Spectrum Counting");
 
         editSpectrumCountingButton.setText("Edit");
         editSpectrumCountingButton.addActionListener(new java.awt.event.ActionListener() {
@@ -173,7 +195,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        surroundingAminoAcidsLabel.setText("Display Preferences");
+        displayLbl.setText("Display");
 
         javax.swing.GroupLayout preferencesPanelLayout = new javax.swing.GroupLayout(preferencesPanel);
         preferencesPanel.setLayout(preferencesPanelLayout);
@@ -183,11 +205,11 @@ public class PreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(preferencesPanelLayout.createSequentialGroup()
-                        .addComponent(spectrumCountingPreferencesLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(spectrumCountingLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
                         .addComponent(editSpectrumCountingButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, preferencesPanelLayout.createSequentialGroup()
-                        .addComponent(surroundingAminoAcidsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(displayLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(editDisplayPreferencesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -197,11 +219,11 @@ public class PreferencesDialog extends javax.swing.JDialog {
             .addGroup(preferencesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(spectrumCountingPreferencesLbl)
+                    .addComponent(spectrumCountingLbl)
                     .addComponent(editSpectrumCountingButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(surroundingAminoAcidsLabel)
+                    .addComponent(displayLbl)
                     .addComponent(editDisplayPreferencesButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -319,12 +341,12 @@ public class PreferencesDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JLabel displayLbl;
     private javax.swing.JButton editDisplayPreferencesButton;
     private javax.swing.JButton editSpectrumCountingButton;
     private javax.swing.JButton helpJButton;
     private javax.swing.JButton okButton;
     private javax.swing.JPanel preferencesPanel;
-    private javax.swing.JLabel spectrumCountingPreferencesLbl;
-    private javax.swing.JLabel surroundingAminoAcidsLabel;
+    private javax.swing.JLabel spectrumCountingLbl;
     // End of variables declaration//GEN-END:variables
 }
