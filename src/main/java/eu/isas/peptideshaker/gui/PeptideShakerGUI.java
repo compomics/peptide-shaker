@@ -3181,7 +3181,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         ValidationQCPreferencesDialog validationQCPreferencesDialog = new ValidationQCPreferencesDialog(this, this, validationQCPreferences, true);
 
         if (!validationQCPreferencesDialog.isCanceled()) {
+            
             ValidationQCPreferences newPreferences = validationQCPreferencesDialog.getValidationQCPreferences();
+            
             if (!newPreferences.isSameAs(validationQCPreferences)) {
 
                 idValidationPreferences.setValidationQCPreferences(newPreferences);

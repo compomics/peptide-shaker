@@ -29,10 +29,12 @@ import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.gui.parameters.IdentificationParametersSelectionDialog;
 import com.compomics.util.gui.parameters.ProcessingPreferencesDialog;
+import com.compomics.util.preferences.IdMatchValidationPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.ProteinInferencePreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
+import com.compomics.util.preferences.ValidationQCPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ProjectSettingsDialog;
@@ -147,14 +149,14 @@ public class NewDialog extends javax.swing.JDialog {
         super(peptideShakerGui, modal);
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = null;
-        
+
         SearchParameters searchParameters = new SearchParameters();
         searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
         identificationParameters = new IdentificationParameters(searchParameters); // set default ID parameters
-        
+
         processingPreferences = new ProcessingPreferences();
-            processingTxt.setText(processingPreferences.getnThreads() + " threads");
-        
+        processingTxt.setText(processingPreferences.getnThreads() + " threads");
+
         MatchesValidator.setDefaultMatchesQCFilters(identificationParameters.getIdValidationPreferences().getValidationQCPreferences());
         loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
@@ -174,8 +176,13 @@ public class NewDialog extends javax.swing.JDialog {
         super(welcomeDialog, modal);
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = welcomeDialog;
-        identificationParameters = new IdentificationParameters(new SearchParameters()); // set default ID parameters
-        identificationParameters.getSearchParameters().setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
+
+        SearchParameters searchParameters = new SearchParameters();
+        searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
+        identificationParameters = new IdentificationParameters(searchParameters); // set default ID parameters
+
+        processingPreferences = new ProcessingPreferences();
+
         MatchesValidator.setDefaultMatchesQCFilters(identificationParameters.getIdValidationPreferences().getValidationQCPreferences());
         loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
@@ -193,6 +200,7 @@ public class NewDialog extends javax.swing.JDialog {
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         fastaFileTxt.setText("");
         speciesTextField.setText("(not selected)");
+        processingTxt.setText(processingPreferences.getnThreads() + " threads");
         validateInput();
         GuiUtilities.installEscapeCloseOperation(this);
     }
@@ -1188,8 +1196,6 @@ public class NewDialog extends javax.swing.JDialog {
                 }
             }.start();
         }
-
-        validateInput();
 }//GEN-LAST:event_browseIdActionPerformed
 
     /**
@@ -1198,7 +1204,7 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSearchButtonActionPerformed
-        IdentificationParametersSelectionDialog identificationParametersSelectionDialog = new IdentificationParametersSelectionDialog(peptideShakerGUI, this, PeptideShaker.getConfigurationFile(), peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), peptideShakerGUI.getLastSelectedFolder(), peptideShakerGUI, true);
+        IdentificationParametersSelectionDialog identificationParametersSelectionDialog = new IdentificationParametersSelectionDialog(peptideShakerGUI, this, identificationParameters, PeptideShaker.getConfigurationFile(), peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), peptideShakerGUI.getLastSelectedFolder(), peptideShakerGUI, true);
         if (!identificationParametersSelectionDialog.isCanceled()) {
             setIdentificationParameters(identificationParametersSelectionDialog.getIdentificationParameters());
         }
@@ -1213,7 +1219,8 @@ public class NewDialog extends javax.swing.JDialog {
 
         ProjectSettingsDialog preferencesDialog = new ProjectSettingsDialog(peptideShakerGUI, spectrumCountingPreferences, displayPreferences);
         if (!preferencesDialog.isCanceled()) {
-
+            spectrumCountingPreferences = preferencesDialog.getSpectrumCountingPreferences();
+            displayPreferences = preferencesDialog.getDisplayPreferences();
         }
 
     }//GEN-LAST:event_projectSettingsButtonActionPerformed
@@ -1597,13 +1604,21 @@ public class NewDialog extends javax.swing.JDialog {
 
         progressDialog.setTitle("Importing Search Parameters. Please Wait...");
 
-        SearchParameters tempParameters = null;
+        SearchParameters tempParameters;
+        IdentificationParameters tempIdentificationParameters = null;
         try {
-            tempParameters = SearchParameters.getIdentificationParameters(file);
-            PeptideShaker.loadModifications(tempParameters);
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error occurred while reading " + file + ". Please verify the search paramters.", "File error", JOptionPane.ERROR_MESSAGE);
+            tempIdentificationParameters = IdentificationParameters.getIdentificationParameters(file);
+            tempParameters = tempIdentificationParameters.getSearchParameters();
+        } catch (Exception e1) {
+            try {
+                tempParameters = SearchParameters.getIdentificationParameters(file);
+                PeptideShaker.loadModifications(tempParameters);
+            } catch (Exception e2) {
+                e1.printStackTrace();
+                e2.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error occurred while reading " + file + ". Please verify the search paramters.", "File error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         }
         if (tempParameters != null) {
 
@@ -1649,7 +1664,13 @@ public class NewDialog extends javax.swing.JDialog {
                 }
             }
 
-            File fastaFile = tempParameters.getFastaFile();
+            File fastaFile = null;
+            if (tempIdentificationParameters != null) {
+                fastaFile = tempIdentificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
+            }
+            if (fastaFile == null) {
+                fastaFile = tempParameters.getFastaFile();
+            }
             if (fastaFile != null) {
                 boolean found = false;
                 if (fastaFile.exists()) {
@@ -1700,8 +1721,15 @@ public class NewDialog extends javax.swing.JDialog {
                 }
             }
 
-            IdentificationParameters identificationParameters = new IdentificationParameters(tempParameters);
-            setIdentificationParameters(identificationParameters);
+            if (tempIdentificationParameters == null) {
+                tempIdentificationParameters = new IdentificationParameters(tempParameters);
+                tempIdentificationParameters.setName(Util.removeExtension(file.getName()));
+            }
+            ValidationQCPreferences validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+            if (validationQCPreferences == null || validationQCPreferences.getPsmFilters() == null || validationQCPreferences.getPeptideFilters() == null || validationQCPreferences.getProteinFilters() == null) {
+                MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
+            }
+            setIdentificationParameters(tempIdentificationParameters);
         }
     }
 
@@ -2007,7 +2035,8 @@ public class NewDialog extends javax.swing.JDialog {
 
             File parameterFile = null;
             if (parameterFiles.size() == 1) {
-                parameterFile = parameterFiles.get(0);
+                ArrayList<String> fileNames = new ArrayList<String>(parameterFiles.keySet());
+                parameterFile = parameterFiles.get(fileNames.get(0));
             } else if (parameterFiles.size() > 1) {
 
                 boolean equalParameters = true;

@@ -10,10 +10,8 @@ import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.compression.TarUtils;
 import com.compomics.util.preferences.IdentificationParameters;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
-import com.compomics.util.preferences.PSProcessingPreferences;
 import eu.isas.peptideshaker.parameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -45,7 +43,6 @@ public class CpsExporter {
      * @param filterPreferences the filtering preferences
      * @param displayPreferences the display preferences
      * @param metrics the dataset metrics
-     * @param processingPreferences the processing preferences
      * @param identificationFeaturesCache the identification features cache
      * @param objectsCache the object cache
      * @param emptyCache a boolean indicating whether the object cache should be

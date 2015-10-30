@@ -39,6 +39,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
+import com.compomics.util.preferences.ValidationQCPreferences;
 import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
@@ -456,6 +457,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // export data from zip files, try to find the search parameter and mgf files
         ArrayList<File> identificationFiles = new ArrayList<File>();
         SearchParameters tempSearchParameters = null;
+        IdentificationParameters tempIdentificationParameters = null;
         for (File inputFile : identificationFilesInput) {
 
             File parentFile = inputFile.getParentFile();
@@ -520,11 +522,24 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                             identificationFiles.add(unzippedFile);
                         }
                     } else if (nameLowerCase.endsWith(".par")) {
+
                         try {
-                            tempSearchParameters = SearchParameters.getIdentificationParameters(unzippedFile);
-                        } catch (Exception e) {
-                            waitingHandler.appendReport("Error processing search parameters.", true, true);
-                            e.printStackTrace();
+                            tempIdentificationParameters = IdentificationParameters.getIdentificationParameters(unzippedFile);
+                            tempSearchParameters = tempIdentificationParameters.getSearchParameters();
+                        } catch (Exception e1) {
+                            try {
+                                tempSearchParameters = SearchParameters.getIdentificationParameters(unzippedFile);
+                                tempIdentificationParameters = new IdentificationParameters(tempSearchParameters);
+                                tempIdentificationParameters.setName(Util.removeExtension(unzippedFile.getName()));
+                            } catch (Exception e2) {
+                                waitingHandler.appendReport("Error processing search parameters.", true, true);
+                                e1.printStackTrace();
+                                e2.printStackTrace();
+                            }
+                        }
+                        ValidationQCPreferences validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+                        if (validationQCPreferences == null || validationQCPreferences.getPsmFilters() == null || validationQCPreferences.getPeptideFilters() == null || validationQCPreferences.getProteinFilters() == null) {
+                            MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
                         }
                     }
                 }
@@ -548,19 +563,22 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
         }
 
-        // get the search parameters
-        SearchParameters searchParameters = null;
+        // get the identification parameters
+        IdentificationParameters identificationParameters = null;
         if (cliInputBean.getSearchParameters() != null) {
-            searchParameters = cliInputBean.getSearchParameters();
+            SearchParameters searchParameters = cliInputBean.getSearchParameters();
+            tempIdentificationParameters = new IdentificationParameters(searchParameters);
+            tempIdentificationParameters.setName(Util.removeExtension("PS_CLI"));
         } else if (tempSearchParameters != null) {
-            searchParameters = tempSearchParameters;
+            identificationParameters = tempIdentificationParameters;
         }
 
-        if (searchParameters == null) {
+        if (identificationParameters == null) {
             waitingHandler.appendReport("Search parameter settings not found!", true, true);
             waitingHandler.setRunCanceled();
         }
 
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
         String error = PeptideShaker.loadModifications(searchParameters);
         if (error != null) {
             System.out.println(error);
@@ -600,9 +618,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
         }
 
-        // set the default identification parameters
-        identificationParameters = new IdentificationParameters(searchParameters);
-
         // set the filtering import settings
         PeptideAssumptionFilter idFilter = new PeptideAssumptionFilter();
         idFilter.setMinPepLength(cliInputBean.getMinPepLength());
@@ -621,7 +636,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         idMatchValidationPreferences.setDefaultProteinFDR(cliInputBean.getProteinFDR());
         MatchesValidator.setDefaultMatchesQCFilters(identificationParameters.getIdValidationPreferences().getValidationQCPreferences());
         identificationParameters.setIdValidationPreferences(idMatchValidationPreferences);
-        
+
         // Set the fraction preferences
         FractionSettings fractionSettings = new FractionSettings();
         fractionSettings.setProteinConfidenceMwPlots(cliInputBean.getProteinConfidenceMwPlots());
