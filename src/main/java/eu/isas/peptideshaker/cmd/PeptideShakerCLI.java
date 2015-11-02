@@ -456,7 +456,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         // export data from zip files, try to find the search parameter and mgf files
         ArrayList<File> identificationFiles = new ArrayList<File>();
-        SearchParameters tempSearchParameters = null;
         IdentificationParameters tempIdentificationParameters = null;
         for (File inputFile : identificationFilesInput) {
 
@@ -522,24 +521,15 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                             identificationFiles.add(unzippedFile);
                         }
                     } else if (nameLowerCase.endsWith(".par")) {
-
                         try {
                             tempIdentificationParameters = IdentificationParameters.getIdentificationParameters(unzippedFile);
-                            tempSearchParameters = tempIdentificationParameters.getSearchParameters();
-                        } catch (Exception e1) {
-                            try {
-                                tempSearchParameters = SearchParameters.getIdentificationParameters(unzippedFile);
-                                tempIdentificationParameters = new IdentificationParameters(tempSearchParameters);
-                                tempIdentificationParameters.setName(Util.removeExtension(unzippedFile.getName()));
-                            } catch (Exception e2) {
-                                waitingHandler.appendReport("Error processing search parameters.", true, true);
-                                e1.printStackTrace();
-                                e2.printStackTrace();
+                            ValidationQCPreferences validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+                            if (validationQCPreferences == null || validationQCPreferences.getPsmFilters() == null || validationQCPreferences.getPeptideFilters() == null || validationQCPreferences.getProteinFilters() == null) {
+                                MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
                             }
-                        }
-                        ValidationQCPreferences validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
-                        if (validationQCPreferences == null || validationQCPreferences.getPsmFilters() == null || validationQCPreferences.getPeptideFilters() == null || validationQCPreferences.getProteinFilters() == null) {
-                            MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
+                        } catch (Exception e) {
+                            waitingHandler.appendReport("An error occurred while parsing the parameters file " + unzippedFile.getName() + ".", true, true);
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -569,7 +559,11 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             SearchParameters searchParameters = cliInputBean.getSearchParameters();
             tempIdentificationParameters = new IdentificationParameters(searchParameters);
             tempIdentificationParameters.setName(Util.removeExtension("PS_CLI"));
-        } else if (tempSearchParameters != null) {
+            ValidationQCPreferences validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+            if (validationQCPreferences == null || validationQCPreferences.getPsmFilters() == null || validationQCPreferences.getPeptideFilters() == null || validationQCPreferences.getProteinFilters() == null) {
+                MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
+            }
+        } else if (tempIdentificationParameters != null) {
             identificationParameters = tempIdentificationParameters;
         }
 

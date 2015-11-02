@@ -1599,138 +1599,124 @@ public class NewDialog extends javax.swing.JDialog {
      * @param file the selected searchGUI file
      * @param dataFolders folders where to look for the FASTA file
      * @param progressDialog the progress dialog
+     *
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while importing the search parameters
+     * @throws java.io.FileNotFoundException exception thrown whenever an error
+     * occurred while importing the search parameters
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while importing the search parameters
      */
-    public void importSearchParameters(File file, ArrayList<File> dataFolders, ProgressDialogX progressDialog) {
+    public void importSearchParameters(File file, ArrayList<File> dataFolders, ProgressDialogX progressDialog) throws IOException, FileNotFoundException, ClassNotFoundException {
 
         progressDialog.setTitle("Importing Search Parameters. Please Wait...");
 
-        SearchParameters tempParameters;
-        IdentificationParameters tempIdentificationParameters = null;
-        try {
-            tempIdentificationParameters = IdentificationParameters.getIdentificationParameters(file);
-            tempParameters = tempIdentificationParameters.getSearchParameters();
-        } catch (Exception e1) {
-            try {
-                tempParameters = SearchParameters.getIdentificationParameters(file);
-                PeptideShaker.loadModifications(tempParameters);
-            } catch (Exception e2) {
-                e1.printStackTrace();
-                e2.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Error occurred while reading " + file + ". Please verify the search paramters.", "File error", JOptionPane.ERROR_MESSAGE);
-                return;
+        IdentificationParameters tempIdentificationParameters = IdentificationParameters.getIdentificationParameters(file);
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+
+        PtmSettings modificationProfile = searchParameters.getPtmSettings();
+
+        ArrayList<String> missing = new ArrayList<String>();
+
+        for (String name : modificationProfile.getAllNotFixedModifications()) {
+            if (!ptmFactory.containsPTM(name)) {
+                missing.add(name);
+            } else {
+                if (modificationProfile.getColor(name) == null) {
+                    modificationProfile.setColor(name, Color.lightGray);
+                }
             }
         }
-        if (tempParameters != null) {
-
-            PtmSettings modificationProfile = tempParameters.getPtmSettings();
-
-            ArrayList<String> missing = new ArrayList<String>();
-
-            for (String name : modificationProfile.getAllNotFixedModifications()) {
-                if (!ptmFactory.containsPTM(name)) {
-                    missing.add(name);
-                } else {
-                    if (modificationProfile.getColor(name) == null) {
-                        tempParameters.getPtmSettings().setColor(name, Color.lightGray);
-                    }
+        if (!missing.isEmpty()) {
+            // Might happen with old parameters files or when no parameter file is found
+            ArrayList<String> missing2 = new ArrayList<String>();
+            for (String ptmName : missing) {
+                if (!ptmFactory.containsPTM(ptmName)) {
+                    missing2.add(ptmName);
                 }
             }
-            if (!missing.isEmpty()) {
-                // Might happen with old parameters files or when no parameter file is found
-                ArrayList<String> missing2 = new ArrayList<String>();
-                for (String ptmName : missing) {
-                    if (!ptmFactory.containsPTM(ptmName)) {
-                        missing2.add(ptmName);
-                    }
-                }
-                if (!missing2.isEmpty()) {
-                    if (missing2.size() == 1) {
-                        JOptionPane.showMessageDialog(this, "The following modification is currently not recognized by PeptideShaker: "
-                                + missing2.get(0) + ".\nPlease import it by editing the search parameters.", "Modification Not Found", JOptionPane.WARNING_MESSAGE);
-                    } else {
-                        String output = "The following modifications are currently not recognized by PeptideShaker:\n";
-                        boolean first = true;
-                        for (String ptm : missing2) {
-                            if (first) {
-                                first = false;
-                            } else {
-                                output += ", ";
-                            }
-                            output += ptm;
+            if (!missing2.isEmpty()) {
+                if (missing2.size() == 1) {
+                    JOptionPane.showMessageDialog(this, "The following modification is currently not recognized by PeptideShaker: "
+                            + missing2.get(0) + ".\nPlease import it by editing the search parameters.", "Modification Not Found", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    String output = "The following modifications are currently not recognized by PeptideShaker:\n";
+                    boolean first = true;
+                    for (String ptm : missing2) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            output += ", ";
                         }
-                        output += ".\nPlease import it by editing the search parameters.";
-                        JOptionPane.showMessageDialog(this, output, "Modification Not Found", JOptionPane.WARNING_MESSAGE);
+                        output += ptm;
                     }
+                    output += ".\nPlease import it by editing the search parameters.";
+                    JOptionPane.showMessageDialog(this, output, "Modification Not Found", JOptionPane.WARNING_MESSAGE);
                 }
             }
+        }
 
-            File fastaFile = null;
-            if (tempIdentificationParameters != null) {
-                fastaFile = tempIdentificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
-            }
-            if (fastaFile == null) {
-                fastaFile = tempParameters.getFastaFile();
-            }
-            if (fastaFile != null) {
-                boolean found = false;
-                if (fastaFile.exists()) {
-                    found = true;
-                } else {
-                    // look in the database folder
-                    try {
-                        UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
-                        File dbFolder = utilitiesUserPreferences.getDbFolder();
-                        File newFile = new File(dbFolder, fastaFile.getName());
+        File fastaFile = null;
+        if (tempIdentificationParameters != null) {
+            fastaFile = tempIdentificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
+        }
+        if (fastaFile == null) {
+            fastaFile = searchParameters.getFastaFile();
+        }
+        if (fastaFile != null) {
+            boolean found = false;
+            if (fastaFile.exists()) {
+                found = true;
+            } else {
+                // look in the database folder
+                try {
+                    UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+                    File dbFolder = utilitiesUserPreferences.getDbFolder();
+                    File newFile = new File(dbFolder, fastaFile.getName());
+                    if (newFile.exists()) {
+                        fastaFile = newFile;
+                        searchParameters.setFastaFile(fastaFile);
+                        found = true;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (!found) {
+                    // look in the data folders
+                    for (File dataFolder : dataFolders) {
+                        File newFile = new File(dataFolder, fastaFile.getName());
                         if (newFile.exists()) {
                             fastaFile = newFile;
-                            tempParameters.setFastaFile(fastaFile);
+                            searchParameters.setFastaFile(fastaFile);
                             found = true;
+                            break;
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                     if (!found) {
-                        // look in the data folders
-                        for (File dataFolder : dataFolders) {
-                            File newFile = new File(dataFolder, fastaFile.getName());
-                            if (newFile.exists()) {
-                                fastaFile = newFile;
-                                tempParameters.setFastaFile(fastaFile);
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            // try to find it in the same folder as the SearchGUI.properties file
-                            File parentFolder = file.getParentFile();
-                            File newFile = new File(parentFolder, fastaFile.getName());
-                            if (newFile.exists()) {
-                                fastaFile = newFile;
-                                tempParameters.setFastaFile(fastaFile);
-                                found = true;
-                            } else {
-                                JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName()
-                                        + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
-                            }
+                        // try to find it in the same folder as the SearchGUI.properties file
+                        File parentFolder = file.getParentFile();
+                        File newFile = new File(parentFolder, fastaFile.getName());
+                        if (newFile.exists()) {
+                            fastaFile = newFile;
+                            searchParameters.setFastaFile(fastaFile);
+                            found = true;
+                        } else {
+                            JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName()
+                                    + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
                         }
                     }
                 }
-                if (found) {
-                    loadFastaFile(fastaFile, progressDialog);
-                    fastaFileTxt.setText(fastaFile.getName());
-                }
             }
-
-            if (tempIdentificationParameters == null) {
-                tempIdentificationParameters = new IdentificationParameters(tempParameters);
-                tempIdentificationParameters.setName(Util.removeExtension(file.getName()));
+            if (found) {
+                loadFastaFile(fastaFile, progressDialog);
+                fastaFileTxt.setText(fastaFile.getName());
             }
-            ValidationQCPreferences validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
-            if (validationQCPreferences == null || validationQCPreferences.getPsmFilters() == null || validationQCPreferences.getPeptideFilters() == null || validationQCPreferences.getProteinFilters() == null) {
-                MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
-            }
-            setIdentificationParameters(tempIdentificationParameters);
         }
+        ValidationQCPreferences validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+        if (validationQCPreferences == null || validationQCPreferences.getPsmFilters() == null || validationQCPreferences.getPeptideFilters() == null || validationQCPreferences.getProteinFilters() == null) {
+            MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
+        }
+        setIdentificationParameters(tempIdentificationParameters);
     }
 
     /**
@@ -2034,6 +2020,7 @@ public class NewDialog extends javax.swing.JDialog {
         if (!loadCanceled) {
 
             File parameterFile = null;
+                    ArrayList<String> names = new ArrayList<String>(parameterFiles.keySet());
             if (parameterFiles.size() == 1) {
                 ArrayList<String> fileNames = new ArrayList<String>(parameterFiles.keySet());
                 parameterFile = parameterFiles.get(fileNames.get(0));
@@ -2042,9 +2029,12 @@ public class NewDialog extends javax.swing.JDialog {
                 boolean equalParameters = true;
 
                 try {
-                    for (int i = 0; i < parameterFiles.size() && equalParameters; i++) {
-                        for (int j = 0; j < parameterFiles.size() && equalParameters; j++) {
-                            equalParameters = SearchParameters.getIdentificationParameters(parameterFiles.get(i)).equals(SearchParameters.getIdentificationParameters(parameterFiles.get(j)));
+                    IdentificationParameters identificationParameters0 = IdentificationParameters.getIdentificationParameters(parameterFiles.get(names.get(0)));
+                    for (int i = 1; i < names.size(); i++) {
+                        IdentificationParameters identificationParametersI = IdentificationParameters.getIdentificationParameters(parameterFiles.get(names.get(i)));
+                        if (!identificationParameters0.equals(identificationParametersI)) {
+                            equalParameters = false;
+                            break;
                         }
                     }
                 } catch (ClassNotFoundException e) {
@@ -2055,7 +2045,7 @@ public class NewDialog extends javax.swing.JDialog {
 
                 if (equalParameters) {
                     // all parameters are equal, just select one of them
-                    parameterFile = parameterFiles.get(0); // @TODO: can we be more clever in selecting the "right" one?
+                    parameterFile = parameterFiles.get(names.get(0));
                 } else {
                     setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     ArrayList<File> parameterFilesList = new ArrayList<File>(parameterFiles.values());
@@ -2072,7 +2062,12 @@ public class NewDialog extends javax.swing.JDialog {
             idFilesTxt.setText(idFiles.size() + " file(s) selected");
 
             if (parameterFile != null) {
-                importSearchParameters(parameterFile, dataFolders, progressDialog);
+                try {
+                    importSearchParameters(parameterFile, dataFolders, progressDialog);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Error occurred while reading " + parameterFile + ". Please verify the search paramters.", "File error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                }
             }
 
             progressDialog.setRunFinished();
