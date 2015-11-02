@@ -716,10 +716,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // set the spectrum counting prefrences
         spectrumCountingPreferences = new SpectrumCountingPreferences();
 
-        // set the annotation preferences
-        IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
-        IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
-
         // create a shaker which will perform the analysis
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
 

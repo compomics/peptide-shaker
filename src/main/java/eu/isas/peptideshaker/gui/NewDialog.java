@@ -113,7 +113,7 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * The parameters to use when loading the files.
      */
-    private IdentificationParameters identificationParameters = new IdentificationParameters();
+    private IdentificationParameters identificationParameters = null;
     /**
      * The processing preferences.
      */
@@ -150,14 +150,9 @@ public class NewDialog extends javax.swing.JDialog {
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = null;
 
-        SearchParameters searchParameters = new SearchParameters();
-        searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
-        identificationParameters = new IdentificationParameters(searchParameters); // set default ID parameters
-
         processingPreferences = new ProcessingPreferences();
         processingTxt.setText(processingPreferences.getnThreads() + " threads");
 
-        MatchesValidator.setDefaultMatchesQCFilters(identificationParameters.getIdValidationPreferences().getValidationQCPreferences());
         loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -177,13 +172,8 @@ public class NewDialog extends javax.swing.JDialog {
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = welcomeDialog;
 
-        SearchParameters searchParameters = new SearchParameters();
-        searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
-        identificationParameters = new IdentificationParameters(searchParameters); // set default ID parameters
-
         processingPreferences = new ProcessingPreferences();
 
-        MatchesValidator.setDefaultMatchesQCFilters(identificationParameters.getIdValidationPreferences().getValidationQCPreferences());
         loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -229,7 +219,7 @@ public class NewDialog extends javax.swing.JDialog {
         processingParametersPanel = new javax.swing.JPanel();
         projectSettingsTxt = new javax.swing.JTextField();
         projectSettingsLabel = new javax.swing.JLabel();
-        searchParamsLabel = new javax.swing.JLabel();
+        identificationParametersLabel = new javax.swing.JLabel();
         identificationParametersTxt = new javax.swing.JTextField();
         editSearchButton = new javax.swing.JButton();
         projectSettingsButton = new javax.swing.JButton();
@@ -381,11 +371,11 @@ public class NewDialog extends javax.swing.JDialog {
 
         projectSettingsLabel.setText("Project");
 
-        searchParamsLabel.setText("Identification");
+        identificationParametersLabel.setText("Identification");
 
         identificationParametersTxt.setEditable(false);
         identificationParametersTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        identificationParametersTxt.setText("Default");
+        identificationParametersTxt.setText("Not Set");
 
         editSearchButton.setText("Edit");
         editSearchButton.addActionListener(new java.awt.event.ActionListener() {
@@ -423,7 +413,7 @@ public class NewDialog extends javax.swing.JDialog {
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(projectSettingsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
-                        .addComponent(searchParamsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
+                        .addComponent(identificationParametersLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
                     .addComponent(processingLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -442,7 +432,7 @@ public class NewDialog extends javax.swing.JDialog {
             .addGroup(processingParametersPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(searchParamsLabel)
+                    .addComponent(identificationParametersLabel)
                     .addComponent(identificationParametersTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(editSearchButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1204,9 +1194,10 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSearchButtonActionPerformed
-        IdentificationParametersSelectionDialog identificationParametersSelectionDialog = new IdentificationParametersSelectionDialog(peptideShakerGUI, this, identificationParameters, PeptideShaker.getConfigurationFile(), peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), peptideShakerGUI.getLastSelectedFolder(), peptideShakerGUI, true);
+        IdentificationParametersSelectionDialog identificationParametersSelectionDialog = new IdentificationParametersSelectionDialog(peptideShakerGUI, this, identificationParameters, IdentificationParametersSelectionDialog.StartupMode.advanced, PeptideShaker.getConfigurationFile(), peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), peptideShakerGUI.getLastSelectedFolder(), peptideShakerGUI, true);
         if (!identificationParametersSelectionDialog.isCanceled()) {
             setIdentificationParameters(identificationParametersSelectionDialog.getIdentificationParameters());
+            validateInput();
         }
     }//GEN-LAST:event_editSearchButtonActionPerformed
 
@@ -1398,6 +1389,7 @@ public class NewDialog extends javax.swing.JDialog {
     private javax.swing.JTextField fastaFileTxt;
     private javax.swing.JLabel idFilesLabel;
     private javax.swing.JTextField idFilesTxt;
+    private javax.swing.JLabel identificationParametersLabel;
     private javax.swing.JTextField identificationParametersTxt;
     private javax.swing.JPanel inputFilesPanel;
     private javax.swing.JButton loadButton;
@@ -1416,7 +1408,6 @@ public class NewDialog extends javax.swing.JDialog {
     private javax.swing.JPanel sampleDetailsPanel;
     private javax.swing.JTextField sampleNameIdtxt;
     private javax.swing.JLabel sampleNameLabel;
-    private javax.swing.JLabel searchParamsLabel;
     private javax.swing.JLabel speciesLabel;
     private javax.swing.JTextField speciesTextField;
     private javax.swing.JLabel spectrumFilesLabel;
@@ -1493,6 +1484,7 @@ public class NewDialog extends javax.swing.JDialog {
         }
 
         if (fastaFileTxt.getText() != null && fastaFileTxt.getText().length() > 0
+                && identificationParameters != null
                 && identificationParameters.getProteinInferencePreferences() != null
                 && identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase() != null
                 && identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().exists()) {
@@ -1509,6 +1501,16 @@ public class NewDialog extends javax.swing.JDialog {
                 fastaFileTxt.setToolTipText("Please select the database file used");
             }
             allValid = false;
+        }
+        
+        if (identificationParameters != null) {
+            identificationParametersLabel.setForeground(Color.BLACK);
+            identificationParametersLabel.setToolTipText(null);
+            identificationParametersTxt.setToolTipText(null);
+        } else {
+            identificationParametersLabel.setForeground(Color.RED);
+            identificationParametersLabel.setToolTipText("Please set the identification parameters");
+            identificationParametersTxt.setToolTipText("Please set the identification parameters");
         }
 
         // enable/disable the Create! button
@@ -2020,7 +2022,7 @@ public class NewDialog extends javax.swing.JDialog {
         if (!loadCanceled) {
 
             File parameterFile = null;
-                    ArrayList<String> names = new ArrayList<String>(parameterFiles.keySet());
+            ArrayList<String> names = new ArrayList<String>(parameterFiles.keySet());
             if (parameterFiles.size() == 1) {
                 ArrayList<String> fileNames = new ArrayList<String>(parameterFiles.keySet());
                 parameterFile = parameterFiles.get(fileNames.get(0));
@@ -2180,13 +2182,15 @@ public class NewDialog extends javax.swing.JDialog {
      * Imports the gene mapping.
      */
     private void loadGeneMappings() {
-        GenePreferences genePreferences = identificationParameters.getGenePreferences();
-        if (genePreferences == null) {
-            genePreferences = new GenePreferences();
-            identificationParameters.setGenePreferences(genePreferences);
-        }
-        if (!genePreferences.loadGeneMappings(PeptideShaker.getJarFilePath(), progressDialog)) {
-            JOptionPane.showMessageDialog(this, "Unable to load the gene/GO mapping file.", "File Error", JOptionPane.ERROR_MESSAGE);
+        if (identificationParameters != null) {
+            GenePreferences genePreferences = identificationParameters.getGenePreferences();
+            if (genePreferences == null) {
+                genePreferences = new GenePreferences();
+                identificationParameters.setGenePreferences(genePreferences);
+            }
+            if (!genePreferences.loadGeneMappings(PeptideShaker.getJarFilePath(), progressDialog)) {
+                JOptionPane.showMessageDialog(this, "Unable to load the gene/GO mapping file.", "File Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }

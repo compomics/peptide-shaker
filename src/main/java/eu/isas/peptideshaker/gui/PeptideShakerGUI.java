@@ -609,9 +609,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             loadEnzymes();
             resetPtmFactory();
 
-            IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
-            IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
-
             setLocationRelativeTo(null);
 
             if (cpsFile != null) {
@@ -3692,8 +3689,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public void setDefaultPreferences() {
         cpsParent.setDefaultPreferences();
         updateAnnotationMenu();
-        IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
-        IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
     }
 
     /**
