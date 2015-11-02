@@ -1614,7 +1614,7 @@ public class NewDialog extends javax.swing.JDialog {
         progressDialog.setTitle("Importing Search Parameters. Please Wait...");
 
         IdentificationParameters tempIdentificationParameters = IdentificationParameters.getIdentificationParameters(file);
-        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+        SearchParameters searchParameters = tempIdentificationParameters.getSearchParameters();
 
         PtmSettings modificationProfile = searchParameters.getPtmSettings();
 

@@ -9,6 +9,7 @@ import com.compomics.util.preferences.LastSelectedFolder;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.MzIdentMLExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.io.*;
@@ -54,6 +55,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
      * @param modal if the dialog is to be modal or not
      */
     public MzIdentMLExportDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
+        
         super(peptideShakerGUI, modal);
         this.peptideShakerGUI = peptideShakerGUI;
 
@@ -645,7 +647,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 try {
                     MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
                             peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
-                            finalOutputFile, progressDialog);
+                            finalOutputFile, progressDialog, MatchValidationLevel.none, MatchValidationLevel.none, MatchValidationLevel.none);
                     mzIdentMLExport.createMzIdentMLFile(mzIdentML_v1_2);
 
                     // validate the mzidentml file

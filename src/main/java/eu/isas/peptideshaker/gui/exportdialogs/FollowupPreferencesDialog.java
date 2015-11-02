@@ -70,7 +70,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         proteinExportCmb2.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         psmSelectionComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         graphDatabaseFormat.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        psmSelectionComboBoxSwath.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        skylineExportCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         this.setLocationRelativeTo(peptideShakerGUI);
 
@@ -113,9 +113,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         graphDatabasesLabel = new javax.swing.JLabel();
         graphDatabaseFormat = new javax.swing.JComboBox();
         graphDatabasetButton = new javax.swing.JButton();
-        swathPanel = new javax.swing.JPanel();
-        swathButton = new javax.swing.JButton();
-        psmSelectionComboBoxSwath = new javax.swing.JComboBox();
+        skylinePanel = new javax.swing.JPanel();
+        skylineExportButton = new javax.swing.JButton();
+        skylineExportCmb = new javax.swing.JComboBox();
         swathExportLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -372,41 +372,41 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        swathPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("SWATH Library (beta)"));
-        swathPanel.setOpaque(false);
+        skylinePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Skyline Export (beta)"));
+        skylinePanel.setOpaque(false);
 
-        swathButton.setText("Export as TXT");
-        swathButton.addActionListener(new java.awt.event.ActionListener() {
+        skylineExportButton.setText("Export as mzid");
+        skylineExportButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                swathButtonActionPerformed(evt);
+                skylineExportButtonActionPerformed(evt);
             }
         });
 
-        psmSelectionComboBoxSwath.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Validated PSMs of Validated Peptides of Validated Proteins", "Validated PSMs of Validated Peptides", "Validated PSMs", "Validated PSMs Containing Confidently Localized PTMs" }));
+        skylineExportCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Validated PSMs of Validated Peptides of Validated Proteins", "Validated PSMs of Validated Peptides", "Validated PSMs", "Validated PSMs Containing Confidently Localized PTMs" }));
 
-        swathExportLabel.setText("Text Export");
+        swathExportLabel.setText("mzIdentML Format");
         swathExportLabel.setToolTipText("Click for Progenesis LC-MS export help");
 
-        javax.swing.GroupLayout swathPanelLayout = new javax.swing.GroupLayout(swathPanel);
-        swathPanel.setLayout(swathPanelLayout);
-        swathPanelLayout.setHorizontalGroup(
-            swathPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, swathPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout skylinePanelLayout = new javax.swing.GroupLayout(skylinePanel);
+        skylinePanel.setLayout(skylinePanelLayout);
+        skylinePanelLayout.setHorizontalGroup(
+            skylinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, skylinePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(swathExportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(psmSelectionComboBoxSwath, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(skylineExportCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(swathButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(skylineExportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        swathPanelLayout.setVerticalGroup(
-            swathPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(swathPanelLayout.createSequentialGroup()
+        skylinePanelLayout.setVerticalGroup(
+            skylinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(skylinePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(swathPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(psmSelectionComboBoxSwath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(swathButton)
+                .addGroup(skylinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(skylineExportCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(skylineExportButton)
                     .addComponent(swathExportLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -423,7 +423,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(proteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(spectraPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(graphDatabasesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(swathPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(skylinePanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -440,7 +440,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(inclusionListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(swathPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(skylinePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -858,69 +858,15 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      *
      * @param evt
      */
-    private void swathButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_swathButtonActionPerformed
-        exportSwath();
-    }//GEN-LAST:event_swathButtonActionPerformed
+    private void skylineExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skylineExportButtonActionPerformed
+        skylineExport();
+    }//GEN-LAST:event_skylineExportButtonActionPerformed
 
     /**
-     * Exports a text file containing the information to create a swath library.
+     * Creates an mzIdentML file for Skyline.
      */
-    private void exportSwath() {
-
-        final File finalOutputFile = peptideShakerGUI.getUserSelectedFile("swath_export.txt", ".txt", "Tab Separated Text Fil) (*.txt)", "Select Destination File", false);
-
-        if (finalOutputFile != null) {
-
-            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
-            progressDialog.setPrimaryProgressCounterIndeterminate(true);
-            progressDialog.setTitle("Exporting PSMs. Please Wait...");
-
-            final int userChoice = psmSelectionComboBoxSwath.getSelectedIndex();
-            ArrayList<String> ptms = new ArrayList<String>();
-            if (userChoice == 3) {
-                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings().getAllNotFixedModifications(), true);
-                if (ptmChooser.isCanceled()) {
-                    return;
-                }
-                ptms = ptmChooser.getSelectedItems();
-            }
-            final ArrayList<String> ptmSelection = ptms;
-
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        progressDialog.setVisible(true);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore
-                    }
-                }
-            }, "ProgressDialog").start();
-
-            new Thread("ProgenesisPsmThread") {
-                @Override
-                public void run() {
-                    try {
-                        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                        SwathExport.writeSwathExport(finalOutputFile, peptideShakerGUI.getIdentification(), SwathExport.ExportType.getTypeFromIndex(userChoice),
-                                progressDialog, ptmSelection, identificationParameters.getAnnotationPreferences(), identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-
-                        boolean processCancelled = progressDialog.isRunCanceled();
-                        progressDialog.setRunFinished();
-
-                        if (!processCancelled) {
-                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Results exported to \'"
-                                    + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
-                        }
-                    } catch (Exception e) {
-                        progressDialog.setRunFinished();
-                        peptideShakerGUI.catchException(e);
-                    }
-                }
-            }.start();
-        }
+    private void skylineExport() {
+        new MzIdentMLExportDialog(peptideShakerGUI, true);
     }
 
     /**
@@ -1125,14 +1071,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox proteinExportCmb2;
     private javax.swing.JPanel proteinsPanel;
     private javax.swing.JComboBox psmSelectionComboBox;
-    private javax.swing.JComboBox psmSelectionComboBoxSwath;
     private javax.swing.JButton recalibrateMgfButton;
     private javax.swing.JLabel recalibrateSpectraLabel;
+    private javax.swing.JButton skylineExportButton;
+    private javax.swing.JComboBox skylineExportCmb;
+    private javax.swing.JPanel skylinePanel;
     private javax.swing.JPanel spectraPanel;
     private javax.swing.JComboBox spectrumRecalibrationCmb;
     private javax.swing.JComboBox spectrumValidationCmb;
-    private javax.swing.JButton swathButton;
     private javax.swing.JLabel swathExportLabel;
-    private javax.swing.JPanel swathPanel;
     // End of variables declaration//GEN-END:variables
 }

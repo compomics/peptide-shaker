@@ -53,7 +53,7 @@
                       <Component id="proteinsPanel" alignment="0" max="32767" attributes="3"/>
                       <Component id="spectraPanel" alignment="0" max="32767" attributes="3"/>
                       <Component id="graphDatabasesPanel" alignment="0" max="32767" attributes="3"/>
-                      <Component id="swathPanel" alignment="1" max="32767" attributes="1"/>
+                      <Component id="skylinePanel" alignment="1" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -73,7 +73,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="inclusionListPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="swathPanel" min="-2" max="-2" attributes="0"/>
+                  <Component id="skylinePanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -477,11 +477,11 @@
             </Component>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="swathPanel">
+        <Container class="javax.swing.JPanel" name="skylinePanel">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="SWATH Library (beta)"/>
+                <TitledBorder title="Skyline Export (beta)"/>
               </Border>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
@@ -494,9 +494,9 @@
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="swathExportLabel" min="-2" pref="160" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="psmSelectionComboBoxSwath" max="32767" attributes="0"/>
+                      <Component id="skylineExportCmb" max="32767" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="swathButton" min="-2" pref="180" max="-2" attributes="0"/>
+                      <Component id="skylineExportButton" min="-2" pref="180" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -506,8 +506,8 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="psmSelectionComboBoxSwath" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="swathButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="skylineExportCmb" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="skylineExportButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="swathExportLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -516,15 +516,15 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JButton" name="swathButton">
+            <Component class="javax.swing.JButton" name="skylineExportButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Export as TXT"/>
+                <Property name="text" type="java.lang.String" value="Export as mzid"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="swathButtonActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="skylineExportButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JComboBox" name="psmSelectionComboBoxSwath">
+            <Component class="javax.swing.JComboBox" name="skylineExportCmb">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="4">
@@ -538,7 +538,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="swathExportLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Text Export"/>
+                <Property name="text" type="java.lang.String" value="mzIdentML Format"/>
                 <Property name="toolTipText" type="java.lang.String" value="Click for Progenesis LC-MS export help"/>
               </Properties>
             </Component>

@@ -42,6 +42,7 @@ import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.maps.ProteinMap;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
@@ -156,6 +157,18 @@ public class MzIdentMLExport {
      * Map of PTM indexes: PTM mass to index.
      */
     private HashMap<Double, Integer> ptmIndexMap = new HashMap<Double, Integer>();
+    /**
+     * The match validation level a protein must have to be included in the export.
+     */
+    private MatchValidationLevel proteinMatchValidationLevel;
+    /**
+     * The match validation level a peptide must have to be included in the export
+     */
+    private MatchValidationLevel peptideMatchValidationLevel;
+    /**
+     * The match validation level a psm must have to be included in the export
+     */
+    private MatchValidationLevel psmMatchValidationLevel;
 
     /**
      * Constructor.
@@ -180,8 +193,38 @@ public class MzIdentMLExport {
      */
     public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences,
-            IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            File outputFile, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException {
+            IdentificationFeaturesGenerator identificationFeaturesGenerator, File outputFile, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException {
+        this(peptideShakerVersion, identification, projectDetails, shotgunProtocol, identificationParameters, spectrumCountingPreferences, identificationFeaturesGenerator, outputFile, waitingHandler, MatchValidationLevel.none, MatchValidationLevel.none, MatchValidationLevel.none);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param peptideShakerVersion the PeptideShaker version
+     * @param identification the identification object which can be used to
+     * retrieve identification matches and parameters
+     * @param projectDetails the project details
+     * @param shotgunProtocol information on the protocol
+     * @param identificationParameters the identification parameters
+     * @param spectrumCountingPreferences the spectrum counting preferences
+     * @param identificationFeaturesGenerator the identification features
+     * generator
+     * @param outputFile Output file
+     * @param waitingHandler waiting handler used to display progress to the
+     * user and interrupt the process
+     * @param proteinMatchValidationLevel the match validation level a protein must have to be included in the export
+     * @param peptideMatchValidationLevel the match validation level a peptide must have to be included in the export
+     * @param psmMatchValidationLevel the match validation level a psm must have to be included in the export
+     *
+     * @throws IOException Exception thrown whenever an error occurred while
+     * reading/writing a file
+     * @throws ClassNotFoundException Exception thrown whenever an error
+     * occurred while deserializing an object
+     */
+    public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator, File outputFile, WaitingHandler waitingHandler, 
+            MatchValidationLevel proteinMatchValidationLevel, MatchValidationLevel peptideMatchValidationLevel, MatchValidationLevel psmMatchValidationLevel) throws IOException, ClassNotFoundException {
         this.peptideShakerVersion = peptideShakerVersion;
         this.identification = identification;
         this.projectDetails = projectDetails;
@@ -190,6 +233,9 @@ public class MzIdentMLExport {
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.waitingHandler = waitingHandler;
+        this.proteinMatchValidationLevel = proteinMatchValidationLevel;
+        this.peptideMatchValidationLevel = peptideMatchValidationLevel;
+        this.psmMatchValidationLevel = psmMatchValidationLevel;
         PrideObjectsFactory prideObjectsFactory = PrideObjectsFactory.getInstance(); // @TODO: should be renamed!!!
         ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
         this.peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
