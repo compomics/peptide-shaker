@@ -2939,35 +2939,31 @@ public class PtmPanel extends javax.swing.JPanel {
 
         popupMenu.add(menuItem);
 
-        if ((selectedPsmsTable.getSelectedRow() != -1 && relatedPsmsTable.getSelectedRow() == -1)
-                || (selectedPsmsTable.getSelectedRow() == -1 && relatedPsmsTable.getSelectedRow() != -1)) {
-
-            menuItem = new JMenuItem("Spectrum as MGF");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    try {
-                        peptideShakerGUI.exportSelectedSpectraAsMgf();
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
+        menuItem = new JMenuItem("Spectrum as MGF");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                try {
+                    peptideShakerGUI.exportSelectedSpectraAsMgf();
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                 }
-            });
+            }
+        });
 
-            popupMenu.add(menuItem);
+        popupMenu.add(menuItem);
 
-            menuItem = new JMenuItem("Spectrum Annotation");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    try {
-                        peptideShakerGUI.exportAnnotatedSpectrum();
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
+        menuItem = new JMenuItem("Spectrum Annotation");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                try {
+                    peptideShakerGUI.exportAnnotatedSpectrum();
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                 }
-            });
+            }
+        });
 
-            popupMenu.add(menuItem);
-        }
+        popupMenu.add(menuItem);
 
         int index = spectrumTabbedPane.getSelectedIndex();
 

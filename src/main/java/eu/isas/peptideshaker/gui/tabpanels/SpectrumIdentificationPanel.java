@@ -64,6 +64,7 @@ import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -192,6 +193,22 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * The current spectrum panel for the selected PSM.
      */
     private SpectrumPanel spectrum;
+    /**
+     * Number of PSMs plot.
+     */
+    ChartPanel numberPsmsPlot;
+    /**
+     * Number of unique PSMs plot.
+     */
+    ChartPanel uniquePsmsPlot;
+    /**
+     * Number of unassigned PSMs plot.
+     */
+    ChartPanel unassignedPsmsPlot;
+    /**
+     * ID rate plot.
+     */
+    ChartPanel idRatePlot;
 
     /**
      * Create a new SpectrumIdentificationPanel.
@@ -269,7 +286,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
             }
         });
-        
+
         spectrumTable.getTableHeader().addMouseListener(new MouseAdapter() {
 
             @Override
@@ -510,6 +527,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumSelectionDialog = new javax.swing.JDialog();
         backgroundPanel = new javax.swing.JPanel();
         fileNamesCmb = new javax.swing.JComboBox();
+        idPlotsPopupMenu = new javax.swing.JPopupMenu();
+        numberPsmsPlotMenuItem = new javax.swing.JMenuItem();
+        uniquePsmsMenuItem = new javax.swing.JMenuItem();
+        unassignedPlotMenuItem = new javax.swing.JMenuItem();
+        idRateMenuItem = new javax.swing.JMenuItem();
         spectrumSelectionPsmSplitPane = new javax.swing.JSplitPane();
         spectrumSelectionJPanel = new javax.swing.JPanel();
         spectrumSelectionLayeredPane = new javax.swing.JLayeredPane();
@@ -633,6 +655,38 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             spectrumSelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
+
+        numberPsmsPlotMenuItem.setText("#PSMs Plot");
+        numberPsmsPlotMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                numberPsmsPlotMenuItemActionPerformed(evt);
+            }
+        });
+        idPlotsPopupMenu.add(numberPsmsPlotMenuItem);
+
+        uniquePsmsMenuItem.setText("#Unique PSMs Plot");
+        uniquePsmsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                uniquePsmsMenuItemActionPerformed(evt);
+            }
+        });
+        idPlotsPopupMenu.add(uniquePsmsMenuItem);
+
+        unassignedPlotMenuItem.setText("#Unassinged PSMs Plot");
+        unassignedPlotMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                unassignedPlotMenuItemActionPerformed(evt);
+            }
+        });
+        idPlotsPopupMenu.add(unassignedPlotMenuItem);
+
+        idRateMenuItem.setText("ID Rate Plot");
+        idRateMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                idRateMenuItemActionPerformed(evt);
+            }
+        });
+        idPlotsPopupMenu.add(idRateMenuItem);
 
         setBackground(new java.awt.Color(255, 255, 255));
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -1274,14 +1328,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         exportIdPerformancePerformanceJButton.setEnabled(false);
         exportIdPerformancePerformanceJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportIdPerformancePerformanceJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                exportIdPerformancePerformanceJButtonMouseReleased(evt);
-            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 exportIdPerformancePerformanceJButtonMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 exportIdPerformancePerformanceJButtonMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                exportIdPerformancePerformanceJButtonMouseReleased(evt);
             }
         });
         idSoftwareJLayeredPane.add(exportIdPerformancePerformanceJButton);
@@ -1931,23 +1985,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_exportSpectrumJButtonMouseExited
 
     /**
-     * Export the table contents.
+     * Show the sequence coverage export options.
      *
      * @param evt
      */
     private void exportIdPerformancePerformanceJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportIdPerformancePerformanceJButtonMouseReleased
-        JPopupMenu popupMenu = new JPopupMenu();
-
-        JMenuItem menuItem = new JMenuItem("Plots");
-        menuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, overviewPlotsPanel, peptideShakerGUI.getLastSelectedFolder());
-            }
-        });
-
-        popupMenu.add(menuItem);
-
-        popupMenu.show(exportIdPerformancePerformanceJButton, evt.getX(), evt.getY());
+        idPlotsPopupMenu.show(exportIdPerformancePerformanceJButton, evt.getX(), evt.getY());
     }//GEN-LAST:event_exportIdPerformancePerformanceJButtonMouseReleased
 
     /**
@@ -1969,46 +2012,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             });
 
             popupMenu.add(menuItem);
-            menuItem = new JMenuItem("Spectrum Annotation");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    try {
-                        peptideShakerGUI.exportAnnotatedSpectrum();
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
-                }
-            });
-
-            popupMenu.add(menuItem);
         }
 
-        if (searchResultsTable.getSelectedRowCount() == 1) {
-            menuItem = new JMenuItem("Spectrum as MGF");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    try {
-                        peptideShakerGUI.exportSelectedSpectraAsMgf();
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
-                }
-            });
-
-            popupMenu.add(menuItem);
-            menuItem = new JMenuItem("Spectrum Annotation");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    try {
-                        peptideShakerGUI.exportAnnotatedSpectrum();
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
-                }
-            });
-
-            popupMenu.add(menuItem);
-        } else if (searchResultsTable.getSelectedRowCount() > 2) {
+        if (searchResultsTable.getSelectedRowCount() > 2) {
             menuItem = new JMenuItem("Bubble Plot");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2017,19 +2023,33 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             });
 
             popupMenu.add(menuItem);
-            menuItem = new JMenuItem("Spectrum Annotation");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    try {
-                        peptideShakerGUI.exportAnnotatedSpectrum();
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
-                }
-            });
-
-            popupMenu.add(menuItem);
         }
+
+        menuItem = new JMenuItem("Spectrum as MGF");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                try {
+                    peptideShakerGUI.exportSelectedSpectraAsMgf();
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                }
+            }
+        });
+
+        popupMenu.add(menuItem);
+
+        menuItem = new JMenuItem("Spectrum Annotation");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                try {
+                    peptideShakerGUI.exportAnnotatedSpectrum();
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                }
+            }
+        });
+
+        popupMenu.add(menuItem);
 
         popupMenu.show(exportSpectrumJButton, evt.getX(), evt.getY());
     }//GEN-LAST:event_exportSpectrumJButtonMouseReleased
@@ -2220,6 +2240,50 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_spectrumSelectionPanelMouseMoved
 
+    /**
+     * Export the number of PMS plot.
+     *
+     * @param evt
+     */
+    private void numberPsmsPlotMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numberPsmsPlotMenuItemActionPerformed
+        ChartPanel tempChartPanel = new ChartPanel(numberPsmsPlot.getChart());
+        tempChartPanel.setBounds(new Rectangle(numberPsmsPlot.getBounds().width * 2, numberPsmsPlot.getBounds().height * 2));
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, tempChartPanel, peptideShakerGUI.getLastSelectedFolder());
+    }//GEN-LAST:event_numberPsmsPlotMenuItemActionPerformed
+
+    /**
+     * Export the unique PMS plot.
+     *
+     * @param evt
+     */
+    private void uniquePsmsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uniquePsmsMenuItemActionPerformed
+        ChartPanel tempChartPanel = new ChartPanel(uniquePsmsPlot.getChart());
+        tempChartPanel.setBounds(new Rectangle(uniquePsmsPlot.getBounds().width * 2, uniquePsmsPlot.getBounds().height * 2));
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, tempChartPanel, peptideShakerGUI.getLastSelectedFolder());
+    }//GEN-LAST:event_uniquePsmsMenuItemActionPerformed
+
+    /**
+     * Export the unassigned PMS plot.
+     *
+     * @param evt
+     */
+    private void unassignedPlotMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unassignedPlotMenuItemActionPerformed
+        ChartPanel tempChartPanel = new ChartPanel(unassignedPsmsPlot.getChart());
+        tempChartPanel.setBounds(new Rectangle(unassignedPsmsPlot.getBounds().width * 2, unassignedPsmsPlot.getBounds().height * 2));
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, tempChartPanel, peptideShakerGUI.getLastSelectedFolder());
+    }//GEN-LAST:event_unassignedPlotMenuItemActionPerformed
+
+    /**
+     * Export the ID Rate plot.
+     *
+     * @param evt
+     */
+    private void idRateMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idRateMenuItemActionPerformed
+        ChartPanel tempChartPanel = new ChartPanel(idRatePlot.getChart());
+        tempChartPanel.setBounds(new Rectangle(idRatePlot.getBounds().width * 2, idRatePlot.getBounds().height * 2));
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, tempChartPanel, peptideShakerGUI.getLastSelectedFolder());
+    }//GEN-LAST:event_idRateMenuItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JPanel backgroundPanel;
@@ -2233,6 +2297,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private javax.swing.JButton exportSpectrumJButton;
     private javax.swing.JButton exportSpectrumSelectionJButton;
     private javax.swing.JComboBox fileNamesCmb;
+    private javax.swing.JPopupMenu idPlotsPopupMenu;
+    private javax.swing.JMenuItem idRateMenuItem;
     private javax.swing.JPanel idResultsPanel;
     private javax.swing.JScrollPane idResultsTableJScrollPane;
     private javax.swing.JButton idSoftwareHelpJButton;
@@ -2240,6 +2306,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private javax.swing.JPanel idSoftwareJPanel;
     private javax.swing.JPanel idSoftwarePanel;
     private javax.swing.JSlider intensitySlider;
+    private javax.swing.JMenuItem numberPsmsPlotMenuItem;
     private javax.swing.JPanel overviewPlotsPanel;
     private javax.swing.JScrollPane peptideShakerJScrollPane;
     private javax.swing.JTable peptideShakerJTable;
@@ -2269,6 +2336,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private javax.swing.JSplitPane spectrumSelectionPsmSplitPane;
     private javax.swing.JTable spectrumTable;
     private javax.swing.JScrollPane spectrumTableJScrollPane;
+    private javax.swing.JMenuItem unassignedPlotMenuItem;
+    private javax.swing.JMenuItem uniquePsmsMenuItem;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -3883,10 +3952,16 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 overviewPlotsPanel.removeAll();
 
                 // create the number of psms plot
-                createPlot(totalAdvocateId, "#PSMs", false);
+                numberPsmsPlot = createPlot(totalAdvocateId, "#PSMs", false);
+
+                // add the plot to the chart
+                overviewPlotsPanel.add(numberPsmsPlot);
 
                 // create the number of unique psms plot
-                createPlot(uniqueAdvocateId, "#Unique PSMs", false);
+                uniquePsmsPlot = createPlot(uniqueAdvocateId, "#Unique PSMs", false);
+
+                // add the plot to the chart
+                overviewPlotsPanel.add(uniquePsmsPlot);
 
                 // create the number of unassigned plot
                 HashMap<Integer, Double> unassignedAdvocate = new HashMap<Integer, Double>();
@@ -3896,7 +3971,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     }
                 }
                 unassignedAdvocate.put(Advocate.peptideShaker.getIndex(), totalNumberOfSpectra - totalAdvocateId.get(Advocate.peptideShaker.getIndex()));
-                createPlot(unassignedAdvocate, "#Unassigned", false);
+                unassignedPsmsPlot = createPlot(unassignedAdvocate, "#Unassigned", false);
+
+                // add the plot to the chart
+                overviewPlotsPanel.add(unassignedPsmsPlot);
 
                 // create the id rate plot
                 HashMap<Integer, Double> idRateAdvocate = new HashMap<Integer, Double>();
@@ -3906,7 +3984,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     }
                 }
                 idRateAdvocate.put(Advocate.peptideShaker.getIndex(), ((double) totalAdvocateId.get(Advocate.peptideShaker.getIndex()) / totalNumberOfSpectra) * 100);
-                createPlot(idRateAdvocate, "ID Rate (%)", true);
+                idRatePlot = createPlot(idRateAdvocate, "ID Rate (%)", true);
+
+                // add the plot to the chart
+                overviewPlotsPanel.add(idRatePlot);
 
                 overviewPlotsPanel.revalidate();
                 overviewPlotsPanel.repaint();
@@ -3921,8 +4002,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * @param xAxisLabel the xAxis label
      * @param roundDecimals if true, the decimals in the labels are rounded to
      * one decimal
+     *
+     * @return the created chart
      */
-    private void createPlot(HashMap<Integer, Double> data, String xAxisLabel, boolean roundDecimals) {
+    private ChartPanel createPlot(HashMap<Integer, Double> data, String xAxisLabel, boolean roundDecimals) {
 
         DefaultCategoryDataset psmDataset = new DefaultCategoryDataset();
         for (Integer tempAdvocate : advocatesUsed) {
@@ -3961,8 +4044,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         renderer.setBaseItemLabelsVisible(true);
         plot.setRenderer(renderer);
 
-        // add the plot to the chart
-        overviewPlotsPanel.add(chartPanel);
+        return chartPanel;
     }
 
     /**

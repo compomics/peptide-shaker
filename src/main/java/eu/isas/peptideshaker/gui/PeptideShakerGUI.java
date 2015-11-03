@@ -10,7 +10,6 @@ import com.compomics.util.gui.error_handlers.notification.NotificationDialogPare
 import com.compomics.util.gui.gene_mapping.SpeciesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FollowupPreferencesDialog;
-import com.compomics.util.gui.parameters.OldProcessingPreferencesDialog;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.software.ToolFactory;
@@ -51,7 +50,6 @@ import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.parameters.identification_parameters.SearchSettingsDialog;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import eu.isas.peptideshaker.PeptideShaker;
-import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.*;
 import eu.isas.peptideshaker.gui.tabpanels.AnnotationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.GOEAPanel;
@@ -70,7 +68,6 @@ import eu.isas.peptideshaker.preferences.UserPreferences;
 import eu.isas.peptideshaker.PeptideShakerWrapper;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
-import com.compomics.util.preferences.PSProcessingPreferences;
 import eu.isas.peptideshaker.gui.pride.ProjectExportDialog;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import com.compomics.util.preferences.GenePreferences;
@@ -90,7 +87,6 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Specific
 import com.compomics.util.gui.parameters.IdentificationParametersEditionDialog;
 import com.compomics.util.gui.parameters.ProcessingPreferencesDialog;
 import com.compomics.util.preferences.ValidationQCPreferences;
-import com.compomics.util.gui.parameters.identification_parameters.MatchesImportFiltersDialog;
 import com.compomics.util.gui.parameters.identification_parameters.ValidationQCPreferencesDialog;
 import com.compomics.util.gui.parameters.identification_parameters.ValidationQCPreferencesDialogParent;
 import com.compomics.util.preferences.ProcessingPreferences;
@@ -5785,6 +5781,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                 String separator = "\t";
                 BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile));
+
                 try {
                     for (String spectrumKey : selectedAssumptions.keySet()) {
                         MSnSpectrum spectrum = getSpectrum(spectrumKey);

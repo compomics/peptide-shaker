@@ -546,6 +546,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         coverageShowPossiblePeptidesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         coveragePeptideTypesButtonGroup = new javax.swing.ButtonGroup();
+        sequenceCoverageExportPopupMenu = new javax.swing.JPopupMenu();
+        sequenceCoveragePlotExportMenuItem = new javax.swing.JMenuItem();
+        sequenceCoverageSequenceExportMenuItem = new javax.swing.JMenuItem();
         backgroundLayeredPane = new javax.swing.JLayeredPane();
         overviewJPanel = new javax.swing.JPanel();
         overviewJSplitPane = new javax.swing.JSplitPane();
@@ -718,6 +721,22 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             }
         });
         sequenceCoverageJPopupMenu.add(coverageShowPossiblePeptidesJCheckBoxMenuItem);
+
+        sequenceCoveragePlotExportMenuItem.setText("Sequence Coverage Plot");
+        sequenceCoveragePlotExportMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sequenceCoveragePlotExportMenuItemActionPerformed(evt);
+            }
+        });
+        sequenceCoverageExportPopupMenu.add(sequenceCoveragePlotExportMenuItem);
+
+        sequenceCoverageSequenceExportMenuItem.setText("Protein Sequence");
+        sequenceCoverageSequenceExportMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sequenceCoverageSequenceExportMenuItemActionPerformed(evt);
+            }
+        });
+        sequenceCoverageExportPopupMenu.add(sequenceCoverageSequenceExportMenuItem);
 
         setBackground(new java.awt.Color(255, 255, 255));
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -963,7 +982,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         sequenceCoverageLayeredPane.setLayer(sequenceCoveragetHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportSequenceCoverageContextJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportSequenceCoverageContextJButton.setToolTipText("Copy to Clipboard");
+        exportSequenceCoverageContextJButton.setToolTipText("Export");
         exportSequenceCoverageContextJButton.setBorder(null);
         exportSequenceCoverageContextJButton.setBorderPainted(false);
         exportSequenceCoverageContextJButton.setContentAreaFilled(false);
@@ -977,10 +996,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 exportSequenceCoverageContextJButtonMouseExited(evt);
             }
-        });
-        exportSequenceCoverageContextJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportSequenceCoverageContextJButtonActionPerformed(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                exportSequenceCoverageContextJButtonMouseReleased(evt);
             }
         });
         sequenceCoverageLayeredPane.add(exportSequenceCoverageContextJButton);
@@ -2981,32 +2998,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }//GEN-LAST:event_exportSequenceCoverageContextJButtonMouseExited
 
     /**
-     * Export the table contents.
-     *
-     * @param evt
-     */
-    private void exportSequenceCoverageContextJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSequenceCoverageContextJButtonActionPerformed
-        try {
-            if (proteinTable.getSelectedRow() != -1) {
-
-                SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
-                String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
-                Protein protein = sequenceFactory.getProtein(proteinKey);
-
-                String clipboardString = protein.getSequence();
-                StringSelection stringSelection = new StringSelection(clipboardString);
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                clipboard.setContents(stringSelection, peptideShakerGUI);
-
-                JOptionPane.showMessageDialog(peptideShakerGUI, "Protein sequence copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-            e.printStackTrace();
-        }
-    }//GEN-LAST:event_exportSequenceCoverageContextJButtonActionPerformed
-
-    /**
      * Update the display panels options.
      *
      * @param evt
@@ -3320,7 +3311,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             popupMenu.add(menuItem);
         } else if (index == 2) { // spectrum
-            JMenuItem menuItem = new JMenuItem("Spectrum");
+            JMenuItem menuItem = new JMenuItem("Spectrum Plot");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     peptideShakerGUI.exportSpectrumAsFigure();
@@ -3330,15 +3321,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             popupMenu.add(menuItem);
 
             if (psmTable.getSelectedRowCount() == 1) {
-
-                menuItem = new JMenuItem("Spectrum & Plots");
-                menuItem.addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, spectrumSplitPane, peptideShakerGUI.getLastSelectedFolder());
-                    }
-                });
-
-                popupMenu.add(menuItem);
 
                 popupMenu.add(new JSeparator());
 
@@ -3383,6 +3365,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 });
 
                 popupMenu.add(menuItem);
+                
+                popupMenu.add(new JSeparator());
 
                 menuItem = new JMenuItem("Spectrum Annotation");
                 menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -3589,6 +3573,50 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_psmTableMouseExited
 
+    /**
+     * Export the sequence coverage plot.
+     * 
+     * @param evt 
+     */
+    private void sequenceCoveragePlotExportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequenceCoveragePlotExportMenuItemActionPerformed
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, coverageChart, peptideShakerGUI.getLastSelectedFolder());
+    }//GEN-LAST:event_sequenceCoveragePlotExportMenuItemActionPerformed
+
+    /**
+     * Export the protein sequence in the coverage plot.
+     * 
+     * @param evt 
+     */
+    private void sequenceCoverageSequenceExportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequenceCoverageSequenceExportMenuItemActionPerformed
+        try {
+            if (proteinTable.getSelectedRow() != -1) {
+
+                SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+                String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
+                Protein protein = sequenceFactory.getProtein(proteinKey);
+
+                String clipboardString = protein.getSequence();
+                StringSelection stringSelection = new StringSelection(clipboardString);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(stringSelection, peptideShakerGUI);
+
+                JOptionPane.showMessageDialog(peptideShakerGUI, "Protein sequence copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_sequenceCoverageSequenceExportMenuItemActionPerformed
+
+    /**
+     * Show the sequence coverage export options.
+     *
+     * @param evt
+     */
+    private void exportSequenceCoverageContextJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSequenceCoverageContextJButtonMouseReleased
+        sequenceCoverageExportPopupMenu.show(exportSequenceCoverageContextJButton, evt.getX(), evt.getY());
+    }//GEN-LAST:event_exportSequenceCoverageContextJButtonMouseReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JLayeredPane backgroundLayeredPane;
@@ -3649,11 +3677,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     private javax.swing.JPanel secondarySpectrumPlotsJPanel;
     private javax.swing.JMenuItem selectAllMenuItem;
     private javax.swing.JPopupMenu selectJPopupMenu;
+    private javax.swing.JPopupMenu sequenceCoverageExportPopupMenu;
     private javax.swing.JPanel sequenceCoverageInnerPanel;
     private javax.swing.JPanel sequenceCoverageJPanel;
     private javax.swing.JPopupMenu sequenceCoverageJPopupMenu;
     private javax.swing.JLayeredPane sequenceCoverageLayeredPane;
     private javax.swing.JButton sequenceCoverageOptionsJButton;
+    private javax.swing.JMenuItem sequenceCoveragePlotExportMenuItem;
+    private javax.swing.JMenuItem sequenceCoverageSequenceExportMenuItem;
     private javax.swing.JPanel sequenceCoverageTitledPanel;
     private javax.swing.JButton sequenceCoveragetHelpJButton;
     private javax.swing.JPanel sequencePtmsPanel;

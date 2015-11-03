@@ -81,6 +81,30 @@
     </Container>
     <Component class="javax.swing.ButtonGroup" name="coveragePeptideTypesButtonGroup">
     </Component>
+    <Container class="javax.swing.JPopupMenu" name="sequenceCoverageExportPopupMenu">
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+        <Property name="useNullLayout" type="boolean" value="true"/>
+      </Layout>
+      <SubComponents>
+        <MenuItem class="javax.swing.JMenuItem" name="sequenceCoveragePlotExportMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Sequence Coverage Plot"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sequenceCoveragePlotExportMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="sequenceCoverageSequenceExportMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Protein Sequence"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sequenceCoverageSequenceExportMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+      </SubComponents>
+    </Container>
   </NonVisualComponents>
   <Properties>
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -562,7 +586,7 @@
                                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                                   <Image iconType="3" name="/icons/export_no_frame_grey.png"/>
                                 </Property>
-                                <Property name="toolTipText" type="java.lang.String" value="Copy to Clipboard"/>
+                                <Property name="toolTipText" type="java.lang.String" value="Export"/>
                                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                                   <Border info="null"/>
                                 </Property>
@@ -579,7 +603,7 @@
                               <Events>
                                 <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportSequenceCoverageContextJButtonMouseEntered"/>
                                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportSequenceCoverageContextJButtonMouseExited"/>
-                                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportSequenceCoverageContextJButtonActionPerformed"/>
+                                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportSequenceCoverageContextJButtonMouseReleased"/>
                               </Events>
                               <AuxValues>
                                 <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
