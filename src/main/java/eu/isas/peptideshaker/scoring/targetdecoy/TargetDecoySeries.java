@@ -28,11 +28,13 @@ public class TargetDecoySeries {
      */
     private double[] scoresP;
     /**
-     * The estimated number of true positives in the bin centered on a given score.
+     * The estimated number of true positives in the bin centered on a given
+     * score.
      */
     private double[] nTP;
     /**
-     * The estimated number of false positives in the bin centered on a given score.
+     * The estimated number of false positives in the bin centered on a given
+     * score.
      */
     private double[] nFP;
     /**
@@ -78,6 +80,7 @@ public class TargetDecoySeries {
      * @param hitMap a map as present in target decoy maps
      * @param nTP the true positives series
      * @param nFP the false positives series
+     * @param scoresP the scores
      */
     public TargetDecoySeries(HashMap<Double, TargetDecoyPoint> hitMap, double[] nTP, double[] nFP, double[] scoresP) {
 
@@ -130,11 +133,10 @@ public class TargetDecoySeries {
             probaBenefit[i] = 100 - probaFnrTemp;
             decoy[i] = currentPoint.nTarget == 0;
         }
-        
+
         this.nTP = nTP;
         this.nFP = nFP;
         this.scoresP = scoresP;
-        
     }
 
     /**
