@@ -35,10 +35,13 @@ import org.jfree.chart.block.BlockFrame;
 import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.DefaultXYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
 
 /**
@@ -99,15 +102,7 @@ public class ValidationPanel extends javax.swing.JPanel {
      */
     private XYPlot targetDecoyPlot = new XYPlot();
     /**
-     * The PEP plot.
-     */
-    private XYPlot pepPlot = new XYPlot();
-    /**
-     * The FDR/FNR plot.
-     */
-    private XYPlot fdrPlot = new XYPlot();
-    /**
-     * The Benefit/cost plot.
+     * The benefit/cost plot.
      */
     private XYPlot costBenefitPlot = new XYPlot();
     /**
@@ -139,13 +134,9 @@ public class ValidationPanel extends javax.swing.JPanel {
      */
     private LogAxis scoreAxis;
     /**
-     * The classical FDR axis in the FDRs plot
+     * The score log axis.
      */
-    private NumberAxis classicalAxis;
-    /**
-     * The probabilistic FDR axis in the FDRs plot
-     */
-    private NumberAxis probaAxis;
+    private LogAxis scoreAxisTargetDecoy;
     /**
      * The highlighting to use for FNR.
      */
@@ -206,34 +197,15 @@ public class ValidationPanel extends javax.swing.JPanel {
         confidenceMarker.setStroke(new BasicStroke(LINE_WIDTH));
         confidencePlot.addDomainMarker(confidenceMarker);
 
-        // Initialize PEP plot
-        NumberAxis pepAxis = new NumberAxis("PEP [%]");
-        pepAxis.setAutoRangeIncludesZero(true);
-        pepPlot.setDomainAxis(scoreAxis);
-        pepPlot.setRangeAxis(0, pepAxis);
-        pepPlot.setRangeAxisLocation(0, AxisLocation.TOP_OR_LEFT);
-        pepPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
-        confidenceMarker.setPaint(Color.red);
-        confidenceMarker.setStroke(new BasicStroke(LINE_WIDTH));
-        pepPlot.addDomainMarker(confidenceMarker);
-
-        // Initialize FDRs plot
-        classicalAxis = new NumberAxis("Classical FDR [%]");
-        probaAxis = new NumberAxis("Probabilistic FDR [%]");
-        classicalAxis.setAutoRangeIncludesZero(true);
-        probaAxis.setAutoRangeIncludesZero(true);
-        fdrPlot.setDomainAxis(classicalAxis);
-        fdrPlot.setRangeAxis(0, probaAxis);
-        fdrPlot.setRangeAxisLocation(0, AxisLocation.TOP_OR_LEFT);
-        fdrPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
-
         // Initialize target/decoy plot
-        NumberAxis targetDecoyAxis = new NumberAxis("Estimated Number of Hits");
+        scoreAxisTargetDecoy = new LogAxis("Probabilistic Score");
+        NumberAxis targetDecoyAxis = new NumberAxis("Frequency");
         targetDecoyAxis.setAutoRangeIncludesZero(true);
-        targetDecoyPlot.setDomainAxis(scoreAxis);
+        targetDecoyPlot.setDomainAxis(scoreAxisTargetDecoy);
         targetDecoyPlot.setRangeAxis(0, targetDecoyAxis);
         targetDecoyPlot.setRangeAxisLocation(0, AxisLocation.TOP_OR_LEFT);
         targetDecoyPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
+        targetDecoyPlot.addDomainMarker(confidenceMarker);
 
         // Initialize cost/benefit plot
         NumberAxis benefitAxis = new NumberAxis("Benefit (1-FNR) [%]");
@@ -2666,18 +2638,14 @@ public class ValidationPanel extends javax.swing.JPanel {
      */
     private void updateCharts() {
 
-        updatePepChart();
         updateTargteDecoyChart(); // @TODO: sometimes crashes on strange input values..?
-        updateFDRsChart();
         updateConfidenceChart();
         updateCostBenefitChart();
         setMarkers();
 
         // find the smallest x-axis value used
         double[] scores = targetDecoySeries.getScores();
-        double[] pep = targetDecoySeries.getPEP();
         double minScore = scores[0];
-        double maxFDR = targetDecoySeries.getClassicalFDR()[pep.length - 1];
 
         for (double score : scores) {
             if (score > 0) {
@@ -2685,20 +2653,12 @@ public class ValidationPanel extends javax.swing.JPanel {
                 break;
             }
         }
-        for (int index = pep.length - 1; index >= 0; index--) {
-            if (pep[index] < 100) {
-                maxFDR = Math.max(targetDecoySeries.getClassicalFDR()[index], targetDecoySeries.getProbaFDR()[index]);
-                break;
-            }
-        }
 
-        // set the lower range for the log axis and max for the fdr axis
+        // set the lower range for the log axis
         if (minScore > 0) {
             scoreAxis.setSmallestValue(minScore);
+            scoreAxisTargetDecoy.setSmallestValue(minScore);
         }
-
-        classicalAxis.setRange(0, maxFDR);
-        probaAxis.setRange(0, maxFDR);
 
         confidencePanel.revalidate();
         confidencePanel.repaint();
@@ -2866,106 +2826,42 @@ public class ValidationPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Updates the PEP chart.
-     */
-    private void updatePepChart() {
-
-        DefaultXYDataset pepData = new DefaultXYDataset();
-        double[][] pepSeries = {targetDecoySeries.getScores(), targetDecoySeries.getPEP()};
-        pepData.addSeries("PEP", pepSeries);
-        pepPlot.setDataset(0, pepData);
-        pepPlot.mapDatasetToRangeAxis(0, 0);
-
-        XYLineAndShapeRenderer pepRendrer = new XYLineAndShapeRenderer();
-        pepRendrer.setSeriesShapesVisible(0, false);
-        pepRendrer.setSeriesLinesVisible(0, true);
-        pepRendrer.setSeriesPaint(0, Color.blue);
-        pepRendrer.setSeriesStroke(0, new BasicStroke(LINE_WIDTH));
-        pepPlot.setRenderer(0, pepRendrer);
-
-        JFreeChart pepChart = new JFreeChart(pepPlot);
-        ChartPanel chartPanel = new ChartPanel(pepChart);
-        pepChart.setTitle("PEP Estimation");
-
-        // set background color
-        pepChart.getPlot().setBackgroundPaint(Color.WHITE);
-        pepChart.setBackgroundPaint(Color.WHITE);
-        chartPanel.setBackground(Color.WHITE);
-    }
-
-    /**
-     * Updates the FDR estimators comparison chart.
-     */
-    private void updateFDRsChart() {
-        
-        DefaultXYDataset fdrsData = new DefaultXYDataset();
-        double[][] fdrsSeries = {targetDecoySeries.getClassicalFDR(), targetDecoySeries.getProbaFDR()};
-        fdrsData.addSeries("Probabilistic FDR", fdrsSeries);
-        fdrPlot.setDataset(0, fdrsData);
-        fdrPlot.mapDatasetToRangeAxis(0, 0);
-
-        DefaultXYDataset refData = new DefaultXYDataset();
-        double[][] refSeries = {targetDecoySeries.getClassicalFDR(), targetDecoySeries.getClassicalFDR()};
-        refData.addSeries("x=y", refSeries);
-        fdrPlot.setDataset(1, refData);
-        fdrPlot.mapDatasetToRangeAxis(1, 0);
-
-        XYLineAndShapeRenderer fdrsRendrer = new XYLineAndShapeRenderer();
-        fdrsRendrer.setSeriesShapesVisible(0, false);
-        fdrsRendrer.setSeriesLinesVisible(0, true);
-        fdrsRendrer.setSeriesPaint(0, Color.blue);
-        fdrsRendrer.setSeriesStroke(0, new BasicStroke(LINE_WIDTH));
-        fdrPlot.setRenderer(0, fdrsRendrer);
-
-        XYLineAndShapeRenderer refRendrer = new XYLineAndShapeRenderer();
-        refRendrer.setSeriesShapesVisible(0, false);
-        refRendrer.setSeriesLinesVisible(0, true);
-        refRendrer.setSeriesPaint(0, Color.black);
-        refRendrer.setSeriesStroke(0, new BasicStroke(LINE_WIDTH));
-        fdrPlot.setRenderer(1, refRendrer);
-
-        JFreeChart fdrChart = new JFreeChart(fdrPlot);
-        ChartPanel chartPanel = new ChartPanel(fdrChart);
-        fdrChart.setTitle("FDR Estimation");
-
-        // set background color
-        fdrChart.getPlot().setBackgroundPaint(Color.WHITE);
-        fdrChart.setBackgroundPaint(Color.WHITE);
-        chartPanel.setBackground(Color.WHITE);
-    }
-
-    /**
-     * Updates the FDR/FNR chart.
+     * Updates the Target/Decoy chart.
      */
     private void updateTargteDecoyChart() {
-        
-        DefaultXYDataset tpData = new DefaultXYDataset();
-        double[][] tpSeries = {targetDecoySeries.getScoresP(), targetDecoySeries.getNTP()};
-        tpData.addSeries("True Positives", tpSeries);
-        targetDecoyPlot.setDataset(0, tpData);
+
+        XYSeriesCollection targetDecoyDataset = new XYSeriesCollection();
+        XYSeries targetSeries = new XYSeries("True Positives");
+        XYSeries decoySeries = new XYSeries("False Positives");
+
+        // get the data
+        for (int i = 0; i < targetDecoySeries.getScoresP().length; i++) {
+            double tempScore = targetDecoySeries.getScoresP()[i];
+            targetSeries.add(tempScore, targetDecoySeries.getNTP()[i]);
+            decoySeries.add(tempScore, targetDecoySeries.getNFP()[i]);
+        }
+
+        // add the datasets
+        targetDecoyDataset.addSeries(targetSeries);
+        targetDecoyDataset.addSeries(decoySeries);
+        targetDecoyPlot.setDataset(0, targetDecoyDataset);
         targetDecoyPlot.mapDatasetToRangeAxis(0, 0);
 
-        DefaultXYDataset fpData = new DefaultXYDataset();
-        double[][] fpSeries = {targetDecoySeries.getScoresP(), targetDecoySeries.getNFP()};
-        fpData.addSeries("False Positives", fpSeries);
-        targetDecoyPlot.setDataset(1, fpData);
-        targetDecoyPlot.mapDatasetToRangeAxis(2, 0);
-
-        XYLineAndShapeRenderer tpRendrer = new XYLineAndShapeRenderer();
-        tpRendrer.setSeriesShapesVisible(0, false);
-        tpRendrer.setSeriesLinesVisible(0, true);
-        tpRendrer.setSeriesPaint(0, Color.blue);
-        tpRendrer.setSeriesStroke(0, new BasicStroke(LINE_WIDTH));
-        targetDecoyPlot.setRenderer(0, tpRendrer);
-
-        XYLineAndShapeRenderer fpRendrer = new XYLineAndShapeRenderer();
-        fpRendrer.setSeriesShapesVisible(0, false);
-        fpRendrer.setSeriesLinesVisible(0, true);
-        fpRendrer.setSeriesPaint(0, Color.RED);
-        fpRendrer.setSeriesStroke(0, new BasicStroke(LINE_WIDTH));
-        targetDecoyPlot.setRenderer(1, fpRendrer);
-
+        // create the chart
         JFreeChart targetDecoyChart = new JFreeChart(targetDecoyPlot);
+
+        // set the renderer
+        XYAreaRenderer renderer = new XYAreaRenderer();
+        renderer.setOutline(true);
+        renderer.setSeriesPaint(0, new Color(110, 196, 97, 225));
+        renderer.setSeriesFillPaint(0, new Color(110, 196, 97, 225));
+        renderer.setSeriesOutlinePaint(0, new Color(110, 196, 97, 225).darker().darker());
+        renderer.setSeriesPaint(1, new Color(255, 0, 0));
+        renderer.setSeriesFillPaint(1, new Color(255, 0, 0));
+        renderer.setSeriesOutlinePaint(1, new Color(255, 0, 0).darker().darker());
+        targetDecoyPlot.setRenderer(renderer);
+
+        // set the chart title
         ChartPanel chartPanel = new ChartPanel(targetDecoyChart);
         targetDecoyChart.setTitle("Target/Decoy");
 
