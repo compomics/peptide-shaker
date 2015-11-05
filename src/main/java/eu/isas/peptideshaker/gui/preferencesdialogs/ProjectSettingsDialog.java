@@ -25,7 +25,7 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
      */
     private SpectrumCountingPreferences spectrumCountingPreferences;
     /**
-     * The display preferences
+     * The display preferences.
      */
     private DisplayPreferences displayPreferences;
     /**
@@ -129,13 +129,13 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
 
         backgroundPanel = new javax.swing.JPanel();
         helpJButton = new javax.swing.JButton();
-        okButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
         preferencesPanel = new javax.swing.JPanel();
         spectrumCountingLbl = new javax.swing.JLabel();
         editSpectrumCountingButton = new javax.swing.JButton();
         editDisplayPreferencesButton = new javax.swing.JButton();
         displayLbl = new javax.swing.JLabel();
+        okButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Preferences");
@@ -159,20 +159,6 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
         helpJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 helpJButtonActionPerformed(evt);
-            }
-        });
-
-        okButton.setText("OK");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
-
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
             }
         });
 
@@ -204,14 +190,12 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
             .addGroup(preferencesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(preferencesPanelLayout.createSequentialGroup()
-                        .addComponent(spectrumCountingLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
-                        .addComponent(editSpectrumCountingButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, preferencesPanelLayout.createSequentialGroup()
-                        .addComponent(displayLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(editDisplayPreferencesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(spectrumCountingLbl)
+                    .addComponent(displayLbl))
+                .addGap(18, 18, 18)
+                .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(editSpectrumCountingButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                    .addComponent(editDisplayPreferencesButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         preferencesPanelLayout.setVerticalGroup(
@@ -221,12 +205,26 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(spectrumCountingLbl)
                     .addComponent(editSpectrumCountingButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(displayLbl)
-                    .addComponent(editDisplayPreferencesButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(editDisplayPreferencesButton)
+                    .addComponent(displayLbl))
+                .addContainerGap())
         );
+
+        okButton.setText("OK");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
+
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
@@ -235,14 +233,14 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(preferencesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(helpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton))
-                    .addComponent(preferencesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(cancelButton)))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -250,13 +248,12 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(preferencesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(cancelButton)
-                        .addComponent(okButton))
-                    .addComponent(helpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(helpJButton)
+                    .addComponent(okButton)
+                    .addComponent(cancelButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -324,6 +321,11 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_helpJButtonActionPerformed
 
+    /**
+     * Edit the spectrum counting settings.
+     * 
+     * @param evt 
+     */
     private void editSpectrumCountingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSpectrumCountingButtonActionPerformed
         SpectrumCountingSettingsDialog spectrumCountingPreferencesDialog = new SpectrumCountingSettingsDialog(parentFrame, spectrumCountingPreferences);
         if (!spectrumCountingPreferencesDialog.isCanceled()) {
@@ -331,6 +333,11 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_editSpectrumCountingButtonActionPerformed
 
+    /**
+     * Edit the display preferences.
+     * 
+     * @param evt 
+     */
     private void editDisplayPreferencesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editDisplayPreferencesButtonActionPerformed
         DisplayPreferencesDialog displayPreferencesDialog = new DisplayPreferencesDialog(parentFrame, displayPreferences);
         if (!displayPreferencesDialog.isCanceled()) {
