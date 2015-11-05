@@ -185,16 +185,7 @@ public class PSParameter implements UrParameter {
      * @return the peptide score
      */
     public double getPeptideScore() {
-        double score;
-        if (peptideProbabilityScore < FastMath.pow(10, -100)) {
-            score = 100;
-        } else {
-            score = -10 * FastMath.log10(peptideProbabilityScore);
-        }
-        if (score <= 0) {
-            score = 0;
-        }
-        return score;
+        return getScore(peptideProbabilityScore);
     }
 
     /**
@@ -256,16 +247,7 @@ public class PSParameter implements UrParameter {
      * @return the protein score
      */
     public double getProteinScore() {
-        double score;
-        if (proteinProbabilityScore < FastMath.pow(10, -100)) {
-            score = 100;
-        } else {
-            score = -10 * FastMath.log10(proteinProbabilityScore);
-        }
-        if (score <= 0) {
-            score = 0;
-        }
-        return score;
+        return getScore(proteinProbabilityScore);
     }
 
     /**
@@ -423,13 +405,7 @@ public class PSParameter implements UrParameter {
      * @return the PSM score
      */
     public double getPsmScore() {
-        double score;
-        if (psmProbabilityScore < FastMath.pow(10, -100)) {
-            score = 100;
-        } else {
-            score = -10 * FastMath.log10(psmProbabilityScore);
-        }
-        return score;
+        return getScore(psmProbabilityScore);
     }
 
     /**
@@ -874,6 +850,26 @@ public class PSParameter implements UrParameter {
             return null;
         }
         return intermediateScores.get(scoreId);
+    }
+    
+    /**
+     * Returns a score from a raw score where the score = -10*log(rawScore). The maximum score is 100 and raw scores smaller or equal to zero have a score of 100.
+     * 
+     * @param rawScore the raw score
+     * 
+     * @return the score
+     */
+    public static Double getScore(Double rawScore) {
+        double score;
+        if (rawScore <= 0) {
+            score = 100;
+        } else {
+            score = -10 * FastMath.log10(rawScore);
+            if (score > 100) {
+                score = 100;
+            }
+        }
+        return score;
     }
 
     @Override

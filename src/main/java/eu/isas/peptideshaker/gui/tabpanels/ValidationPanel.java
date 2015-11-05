@@ -132,11 +132,11 @@ public class ValidationPanel extends javax.swing.JPanel {
     /**
      * The score log axis.
      */
-    private LogAxis scoreAxis;
+    private NumberAxis scoreAxis;
     /**
      * The score log axis.
      */
-    private LogAxis scoreAxisTargetDecoy;
+    private NumberAxis scoreAxisTargetDecoy;
     /**
      * The highlighting to use for FNR.
      */
@@ -186,7 +186,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         }
 
         // Initialize confidence plot
-        scoreAxis = new LogAxis("Probabilistic Score");
+        scoreAxis = new NumberAxis("Probabilistic Score");
         NumberAxis confidenceAxis = new NumberAxis("Confidence [%]");
         confidenceAxis.setAutoRangeIncludesZero(true);
         confidencePlot.setDomainAxis(scoreAxis);
@@ -198,7 +198,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         confidencePlot.addDomainMarker(confidenceMarker);
 
         // Initialize target/decoy plot
-        scoreAxisTargetDecoy = new LogAxis("Probabilistic Score");
+        scoreAxisTargetDecoy = new NumberAxis("Probabilistic Score");
         NumberAxis targetDecoyAxis = new NumberAxis("Frequency");
         targetDecoyAxis.setAutoRangeIncludesZero(true);
         targetDecoyPlot.setDomainAxis(scoreAxisTargetDecoy);
@@ -2638,8 +2638,8 @@ public class ValidationPanel extends javax.swing.JPanel {
      */
     private void updateCharts() {
 
-        updateTargteDecoyChart(); // @TODO: sometimes crashes on strange input values..?
         updateConfidenceChart();
+        updateTargteDecoyChart();
         updateCostBenefitChart();
         setMarkers();
 
@@ -2656,8 +2656,8 @@ public class ValidationPanel extends javax.swing.JPanel {
 
         // set the lower range for the log axis
         if (minScore > 0) {
-            scoreAxis.setSmallestValue(minScore);
-            scoreAxisTargetDecoy.setSmallestValue(minScore);
+//            scoreAxis.setSmallestValue(minScore);
+//            scoreAxisTargetDecoy.setSmallestValue(minScore);
         }
 
         confidencePanel.revalidate();
@@ -2702,8 +2702,8 @@ public class ValidationPanel extends javax.swing.JPanel {
         DefaultXYDataset confidenceData = new DefaultXYDataset();
 
         // get the x and y values for the plot
-        double[] scores = targetDecoySeries.getScores();
-        double[] confidences = targetDecoySeries.getConfidence();
+        double[] scores = targetDecoySeries.getScoresLog();
+        double[] confidences = targetDecoySeries.getConfidenceLog();
 
         // test for valid values
         boolean enoughData = scores.length > 2;
@@ -2781,7 +2781,7 @@ public class ValidationPanel extends javax.swing.JPanel {
             confidencePlot.setRenderer(1, confidenceRendrer);
 
             JFreeChart confidenceChart = new JFreeChart(confidencePlot);
-            ChartPanel chartPanel = new ChartPanel(confidenceChart); // @TODO: breaks in bad data...
+            ChartPanel chartPanel = new ChartPanel(confidenceChart);
             confidenceChart.setTitle("Confidence");
 
             // remove the temp 'Area' dataset from the legend
