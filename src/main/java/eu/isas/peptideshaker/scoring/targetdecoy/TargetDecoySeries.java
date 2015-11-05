@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
+import eu.isas.peptideshaker.parameters.PSParameter;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -12,13 +13,21 @@ import java.util.HashMap;
 public class TargetDecoySeries {
 
     /**
-     * The implemented probabilistic score.
+     * The probabilistic score.
      */
     private double[] scores;
+    /**
+     * The log transformed probabilistic score.
+     */
+    private double[] scoresLog;
     /**
      * The confidence.
      */
     private double[] confidence;
+    /**
+     * The confidence corresponding to the log score.
+     */
+    private double[] confidenceLog;
     /**
      * The pep.
      */
@@ -85,6 +94,7 @@ public class TargetDecoySeries {
     public TargetDecoySeries(HashMap<Double, TargetDecoyPoint> hitMap, double[] nTP, double[] nFP, double[] scoresP) {
 
         scores = new double[hitMap.size()];
+        scoresLog = new double[scores.length];
         probaNTotal = 0;
         int cpt = 0;
         TargetDecoyPoint currentPoint;
@@ -92,13 +102,16 @@ public class TargetDecoySeries {
         for (double score : hitMap.keySet()) {
             currentPoint = hitMap.get(score);
             scores[cpt] = score;
+            scoresLog[cpt] = PSParameter.getScore(score);
             probaNTotal += (1 - currentPoint.p) * currentPoint.nTarget;
             cpt++;
         }
 
         Arrays.sort(scores);
+        Arrays.sort(scoresLog);
 
         confidence = new double[scores.length];
+        confidenceLog = new double[scores.length];
         classicalFDR = new double[scores.length];
         probaFDR = new double[scores.length];
         probaFNR = new double[scores.length];
@@ -123,7 +136,10 @@ public class TargetDecoySeries {
             probaTP += currentPoint.nTarget * (1 - currentPoint.p);
             probaFnrTemp = 100 * (probaNTotal - probaTP) / probaNTotal;
             pep[i] = 100 * currentPoint.p;
-            confidence[i] = 100 * (1 - currentPoint.p);
+            double confidenceAtI = 100 * (1 - currentPoint.p);
+            confidence[i] = confidenceAtI;
+            int iInvert = scores.length - i - 1;
+            confidenceLog[iInvert] = confidenceAtI;
             n[i] = nTemp;
             classicalFP[i] = classicalFPTemp;
             probaFP[i] = probaFPTemp;
@@ -325,6 +341,15 @@ public class TargetDecoySeries {
     }
 
     /**
+     * Returns the confidence log series.
+     *
+     * @return the confidence log series
+     */
+    public double[] getConfidenceLog() {
+        return confidenceLog;
+    }
+
+    /**
      * Returns the probabilistic benefit series.
      *
      * @return the probabilistic benefit series
@@ -358,6 +383,15 @@ public class TargetDecoySeries {
      */
     public double[] getScores() {
         return scores;
+    }
+
+    /**
+     * Returns the log score series.
+     *
+     * @return the log score series
+     */
+    public double[] getScoresLog() {
+        return scoresLog;
     }
 
     /**

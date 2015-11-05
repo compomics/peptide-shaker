@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
 import com.compomics.util.waiting.WaitingHandler;
+import eu.isas.peptideshaker.parameters.PSParameter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -287,9 +288,11 @@ public class TargetDecoyMap implements Serializable {
             previousPoint = point;
             if (firstDecoy) {
                 double nTarget = nTargetInf + nTargetSup;
-                scoresTemp.add(scores.get(cpt));
+                Double rawScore = scores.get(cpt);
+                Double score = PSParameter.getScore(rawScore);
+                scoresTemp.add(score);
                 nFPTemp.add(nDecoy);
-                nTPTemp.add(nTarget-nDecoy);
+                nTPTemp.add(nTarget - nDecoy);
             }
 
             waitingHandler.increaseSecondaryProgressCounter();
@@ -297,11 +300,11 @@ public class TargetDecoyMap implements Serializable {
                 return;
             }
         }
-        
+
         scoreP = new double[scoresTemp.size()];
         nFP = new double[scoresTemp.size()];
         nTP = new double[scoresTemp.size()];
-        for (int i = 0 ; i < scoresTemp.size() ; i++) {
+        for (int i = 0; i < scoresTemp.size(); i++) {
             scoreP[i] = scoresTemp.get(i);
             nFP[i] = nFPTemp.get(i);
             nTP[i] = nTPTemp.get(i);
