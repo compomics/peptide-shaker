@@ -33,10 +33,6 @@ public class TargetDecoySeries {
      */
     private double[] pep;
     /**
-     * The scores where a value has been taken for nTP and nFP.
-     */
-    private double[] scoresP;
-    /**
      * The estimated number of true positives in the bin centered on a given
      * score.
      */
@@ -87,11 +83,10 @@ public class TargetDecoySeries {
      * Constructor.
      *
      * @param hitMap a map as present in target decoy maps
-     * @param nTP the true positives series
-     * @param nFP the false positives series
-     * @param scoresP the scores
+     * @param nTPMap the true positives map
+     * @param nFPMap the false positives map
      */
-    public TargetDecoySeries(HashMap<Double, TargetDecoyPoint> hitMap, double[] nTP, double[] nFP, double[] scoresP) {
+    public TargetDecoySeries(HashMap<Double, TargetDecoyPoint> hitMap, HashMap<Double, Double> nTPMap, HashMap<Double, Double> nFPMap) {
 
         scores = new double[hitMap.size()];
         scoresLog = new double[scores.length];
@@ -120,6 +115,8 @@ public class TargetDecoySeries {
         classicalFP = new double[scores.length];
         probaBenefit = new double[scores.length];
         pep = new double[scores.length];
+        nFP = new double[scores.length];
+        nTP = new double[scores.length];
         decoy = new boolean[scores.length];
 
         double nTemp = 0;
@@ -129,7 +126,8 @@ public class TargetDecoySeries {
         double probaFnrTemp;
 
         for (int i = 0; i < scores.length; i++) {
-            currentPoint = hitMap.get(scores[i]);
+            double score = scores[i];
+            currentPoint = hitMap.get(score);
             nTemp += currentPoint.nTarget;
             classicalFPTemp += currentPoint.nDecoy;
             probaFPTemp += currentPoint.nTarget * (currentPoint.p);
@@ -140,6 +138,10 @@ public class TargetDecoySeries {
             confidence[i] = confidenceAtI;
             int iInvert = scores.length - i - 1;
             confidenceLog[iInvert] = confidenceAtI;
+            Double tp = nTPMap.get(score);
+            Double fp = nFPMap.get(score);
+            nTP[iInvert] = tp;
+            nFP[iInvert] = fp;
             n[i] = nTemp;
             classicalFP[i] = classicalFPTemp;
             probaFP[i] = probaFPTemp;
@@ -149,10 +151,6 @@ public class TargetDecoySeries {
             probaBenefit[i] = 100 - probaFnrTemp;
             decoy[i] = currentPoint.nTarget == 0;
         }
-
-        this.nTP = nTP;
-        this.nFP = nFP;
-        this.scoresP = scoresP;
     }
 
     /**
@@ -293,15 +291,6 @@ public class TargetDecoySeries {
                 targetDecoyResults.setScoreLimit(scores[0]);
             }
         }
-    }
-
-    /**
-     * Returns the scores where a value has been taken for nTP and nFP.
-     *
-     * @return the scores where a value has been taken for nTP and nFP
-     */
-    public double[] getScoresP() {
-        return scoresP;
     }
 
     /**

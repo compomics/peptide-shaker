@@ -23,19 +23,15 @@ public class TargetDecoyMap implements Serializable {
      */
     private HashMap<Double, TargetDecoyPoint> hitMap = new HashMap<Double, TargetDecoyPoint>();
     /**
-     * The scores where a value has been taken for nTP and nFP.
-     */
-    private double[] scoreP;
-    /**
      * The estimated number of true positives in the bin centered on a given
      * score.
      */
-    private double[] nTP;
+    private HashMap<Double, Double> nTP;
     /**
      * The estimated number of false positives in the bin centered on a given
      * score.
      */
-    private double[] nFP;
+    private HashMap<Double, Double> nFP;
     /**
      * The scores imported in the map.
      */
@@ -222,9 +218,8 @@ public class TargetDecoyMap implements Serializable {
         }
 
         // Store the TP and FP series
-        ArrayList<Double> scoresTemp = new ArrayList<Double>(scores.size());
-        ArrayList<Double> nTPTemp = new ArrayList<Double>(scores.size());
-        ArrayList<Double> nFPTemp = new ArrayList<Double>(scores.size());
+        nTP = new HashMap<Double, Double>(scores.size());
+        nFP = new HashMap<Double, Double>(scores.size());
 
         // estimate p
         TargetDecoyPoint tempPoint, previousPoint = hitMap.get(scores.get(0));
@@ -235,19 +230,12 @@ public class TargetDecoyMap implements Serializable {
         int cptInf = 0;
         int cptSup = 1;
         boolean oneReached = false;
-        boolean firstDecoy = false;
+        double totalFP = 0.0;
+        double totalTP = 0.0;
 
         for (int cpt = 0; cpt < scores.size(); cpt++) {
-            TargetDecoyPoint point = hitMap.get(scores.get(cpt));
-            if (!firstDecoy && point.nDecoy > 0) {
-                firstDecoy = true;
-                double nTarget = nTargetInf + nTargetSup;
-                if (nTarget > 0) {
-                    scoresTemp.add(scores.get(cpt));
-                    nFPTemp.add(0.0);
-                    nTPTemp.add(nTarget);
-                }
-            }
+            Double currentScore = scores.get(cpt);
+            TargetDecoyPoint point = hitMap.get(currentScore);
             if (!oneReached) {
                 double change = 0.5 * (previousPoint.nTarget + point.nTarget);
                 nTargetInf += change;
@@ -286,29 +274,27 @@ public class TargetDecoyMap implements Serializable {
                 point.p = 1;
             }
             previousPoint = point;
-            if (firstDecoy) {
-                double nTarget = nTargetInf + nTargetSup;
-                Double rawScore = scores.get(cpt);
-                Double score = PSParameter.getScore(rawScore);
-                scoresTemp.add(score);
-                nFPTemp.add(nDecoy);
-                nTPTemp.add(nTarget - nDecoy);
-            }
+
+            Double nTp = nTargetInf + nTargetSup - nDecoy;
+            nFP.put(currentScore, nDecoy);
+            nTP.put(currentScore, nTp);
+            totalFP += nDecoy;
+            totalFP += nTp;
 
             waitingHandler.increaseSecondaryProgressCounter();
             if (waitingHandler.isRunCanceled()) {
                 return;
             }
         }
-
-        scoreP = new double[scoresTemp.size()];
-        nFP = new double[scoresTemp.size()];
-        nTP = new double[scoresTemp.size()];
-        for (int i = 0; i < scoresTemp.size(); i++) {
-            scoreP[i] = scoresTemp.get(i);
-            nFP[i] = nFPTemp.get(i);
-            nTP[i] = nTPTemp.get(i);
-        }
+        
+//        for (Double score : scores) {
+//            Double value = nTP.get(score);
+//            value *= 100.0/totalTP;
+//            nTP.put(score, value);
+//            value = nFP.get(score);
+//            value *= 100.0/totalFP;
+//            nFP.put(score, value);
+//        }
     }
 
     /**
@@ -427,7 +413,7 @@ public class TargetDecoyMap implements Serializable {
      * @return the target decoy series
      */
     public TargetDecoySeries getTargetDecoySeries() {
-        return new TargetDecoySeries(hitMap, nTP, nFP, scoreP);
+        return new TargetDecoySeries(hitMap, nTP, nFP);
     }
 
     /**

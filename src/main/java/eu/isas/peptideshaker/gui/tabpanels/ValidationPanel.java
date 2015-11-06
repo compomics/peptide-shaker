@@ -134,10 +134,6 @@ public class ValidationPanel extends javax.swing.JPanel {
      */
     private NumberAxis scoreAxis;
     /**
-     * The score log axis.
-     */
-    private NumberAxis scoreAxisTargetDecoy;
-    /**
      * The highlighting to use for FNR.
      */
     private Color fnrHighlightColor = new Color(0, 255, 0, 15);
@@ -186,7 +182,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         }
 
         // Initialize confidence plot
-        scoreAxis = new NumberAxis("Probabilistic Score");
+        scoreAxis = new NumberAxis("Score");
         NumberAxis confidenceAxis = new NumberAxis("Confidence [%]");
         confidenceAxis.setAutoRangeIncludesZero(true);
         confidencePlot.setDomainAxis(scoreAxis);
@@ -198,18 +194,17 @@ public class ValidationPanel extends javax.swing.JPanel {
         confidencePlot.addDomainMarker(confidenceMarker);
 
         // Initialize target/decoy plot
-        scoreAxisTargetDecoy = new NumberAxis("Probabilistic Score");
         NumberAxis targetDecoyAxis = new NumberAxis("Frequency");
         targetDecoyAxis.setAutoRangeIncludesZero(true);
-        targetDecoyPlot.setDomainAxis(scoreAxisTargetDecoy);
+        targetDecoyPlot.setDomainAxis(scoreAxis);
         targetDecoyPlot.setRangeAxis(0, targetDecoyAxis);
         targetDecoyPlot.setRangeAxisLocation(0, AxisLocation.TOP_OR_LEFT);
         targetDecoyPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
         targetDecoyPlot.addDomainMarker(confidenceMarker);
 
         // Initialize cost/benefit plot
-        NumberAxis benefitAxis = new NumberAxis("Benefit (1-FNR) [%]");
-        NumberAxis costAxis = new NumberAxis("Cost (FDR) [%]");
+        NumberAxis benefitAxis = new NumberAxis("Coverage (1-FNR) [%]");
+        NumberAxis costAxis = new NumberAxis("False Discovery Rate (FDR) [%]");
         benefitAxis.setAutoRangeIncludesZero(true);
         costAxis.setAutoRangeIncludesZero(true);
         costBenefitPlot.setDomainAxis(costAxis);
@@ -2675,14 +2670,14 @@ public class ValidationPanel extends javax.swing.JPanel {
 
         TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
 
-        confidenceMarker.setValue(currentResults.getScoreLimit());
+        confidenceMarker.setValue(currentResults.getLogScoreLimit());
 
         double[] fdr = {currentResults.getFdrLimit()};
         double[] benefit = {100 - currentResults.getFnrLimit()};
 
         DefaultXYDataset benefitData = new DefaultXYDataset();
         double[][] benefitSeries = {fdr, benefit};
-        benefitData.addSeries("Retained Cost/Benefit", benefitSeries);
+        benefitData.addSeries("Threshold", benefitSeries);
         costBenefitPlot.setDataset(1, benefitData);
         costBenefitPlot.mapDatasetToRangeAxis(1, 0);
 
@@ -2835,8 +2830,9 @@ public class ValidationPanel extends javax.swing.JPanel {
         XYSeries decoySeries = new XYSeries("False Positives");
 
         // get the data
-        for (int i = 0; i < targetDecoySeries.getScoresP().length; i++) {
-            double tempScore = targetDecoySeries.getScoresP()[i];
+        double[] scores = targetDecoySeries.getScoresLog();
+        for (int i = 0; i < scores.length; i++) {
+            double tempScore = scores[i];
             targetSeries.add(tempScore, targetDecoySeries.getNTP()[i]);
             decoySeries.add(tempScore, targetDecoySeries.getNFP()[i]);
         }
@@ -2882,7 +2878,7 @@ public class ValidationPanel extends javax.swing.JPanel {
     private void updateCostBenefitChart() {
         DefaultXYDataset benefitData = new DefaultXYDataset();
         double[][] benefitSeries = {targetDecoySeries.getProbaFDR(), targetDecoySeries.getProbaBenefit()};
-        benefitData.addSeries("Benefit", benefitSeries);
+        benefitData.addSeries("Possible Coverage", benefitSeries);
         costBenefitPlot.setDataset(0, benefitData);
         costBenefitPlot.mapDatasetToRangeAxis(0, 0);
 

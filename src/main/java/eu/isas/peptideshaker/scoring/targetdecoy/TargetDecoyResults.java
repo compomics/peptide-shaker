@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
+import eu.isas.peptideshaker.parameters.PSParameter;
 import java.io.Serializable;
 
 /**
@@ -51,6 +52,10 @@ public class TargetDecoyResults implements Serializable {
      * The corresponding score limit.
      */
     private double scoreLimit;
+    /**
+     * The corresponding log score limit.
+     */
+    private double logScoreLimit;
     /**
      * A boolean indicating that everything was validated.
      */
@@ -234,6 +239,15 @@ public class TargetDecoyResults implements Serializable {
      */
     public double getScoreLimit() {
         return scoreLimit;
+    }
+
+    /**
+     * Returns the score limit obtained with the current validation settings.
+     *
+     * @return the score limit obtained with the current validation settings
+     */
+    public double getLogScoreLimit() {
+        return PSParameter.getScore(scoreLimit);
     }
 
     /**
