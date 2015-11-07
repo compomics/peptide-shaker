@@ -829,7 +829,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         speciesJMenuItem = new javax.swing.JMenuItem();
         jSeparator13 = new javax.swing.JPopupMenu.Separator();
         javaOptionsJMenuItem = new javax.swing.JMenuItem();
-        processingMenuItem = new javax.swing.JRadioButtonMenuItem();
+        processingMenuItem = new javax.swing.JMenuItem();
         configurationFilesSettings = new javax.swing.JMenuItem();
         privacyMenuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
@@ -1584,7 +1584,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         });
         editMenu.add(javaOptionsJMenuItem);
 
-        processingMenuItem.setSelected(true);
         processingMenuItem.setText("Processing Settings");
         processingMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -3281,6 +3280,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         defaultAnnotationCheckBoxMenuItemActionPerformed(null);
     }//GEN-LAST:event_resetAnnotationMenuSelected
 
+    /**
+     * Open the ProcessingPreferencesDialog.
+     * 
+     * @param evt 
+     */
     private void processingMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processingMenuItemActionPerformed
         ProcessingPreferencesDialog processingPreferencesDialog = new ProcessingPreferencesDialog(this, processingPreferences, true);
         if (!processingPreferencesDialog.isCanceled()) {
@@ -3396,7 +3400,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             identificationFeaturesMenuItem.setEnabled(true);
             followUpAnalysisMenuItem.setEnabled(true);
             projectPropertiesMenuItem.setEnabled(true);
-            fractionDetailsJMenuItem.setEnabled(true);
             preferencesMenuItem.setEnabled(true);
             findJMenuItem.setEnabled(true);
             starHideJMenuItem.setEnabled(true);
@@ -3423,6 +3426,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             // disable the fractions tab if only one mgf file
             allTabsJTabbedPane.setEnabledAt(2, getIdentification().getSpectrumFiles().size() > 1);
+            fractionDetailsJMenuItem.setEnabled(getIdentification().getSpectrumFiles().size() > 1);
 
         } catch (Exception e) {
 
@@ -3543,7 +3547,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JCheckBoxMenuItem precursorCheckMenu;
     private javax.swing.JMenuItem preferencesMenuItem;
     private javax.swing.JMenuItem privacyMenuItem;
-    private javax.swing.JRadioButtonMenuItem processingMenuItem;
+    private javax.swing.JMenuItem processingMenuItem;
     private javax.swing.JMenu projectExportMenu;
     private javax.swing.JMenuItem projectPropertiesMenuItem;
     private javax.swing.JPanel proteinFractionsJPanel;

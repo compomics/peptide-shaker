@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
 /**
+ * SpectrumCountingSettingsDialog.
  *
  * @author Marc Vaudel
  */
@@ -237,13 +238,19 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Spectrum Counting Settings");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
         quantificationOptionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("MS2 Quantification Options"));
         quantificationOptionsPanel.setOpaque(false);
 
-        jLabel1.setText("Quantification Method:");
+        jLabel1.setText("Quantification Method");
 
         methodCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "NSAF+", "emPAI" }));
         methodCmb.addActionListener(new java.awt.event.ActionListener() {
@@ -252,7 +259,7 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
             }
         });
 
-        validationLevelLbl.setText("Spectra Considered:");
+        validationLevelLbl.setText("Spectra Considered");
 
         validationLevelCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All", "Validated", "Confident" }));
 
@@ -263,12 +270,14 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
             .addGroup(quantificationOptionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(quantificationOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(validationLevelLbl))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 119, Short.MAX_VALUE)
-                .addGroup(quantificationOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(validationLevelCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(methodCmb, 0, 100, Short.MAX_VALUE))
+                    .addGroup(quantificationOptionsPanelLayout.createSequentialGroup()
+                        .addComponent(validationLevelLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(validationLevelCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(quantificationOptionsPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(methodCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         quantificationOptionsPanelLayout.setVerticalGroup(
@@ -278,7 +287,7 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
                 .addGroup(quantificationOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(methodCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(quantificationOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(validationLevelLbl)
                     .addComponent(validationLevelCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -288,7 +297,7 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
         normalizationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Normalization"));
         normalizationPanel.setOpaque(false);
 
-        jLabel2.setText("Normalization Method:");
+        jLabel2.setText("Normalization Method");
 
         normalizationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None", "Abundance", "Relative" }));
         normalizationCmb.addActionListener(new java.awt.event.ActionListener() {
@@ -297,17 +306,11 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
             }
         });
 
-        referenceLbl.setText("Protein Amount [µg]:");
+        referenceLbl.setText("Protein Amount [µg]");
 
-        referenceTxt.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        referenceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
-        unitLbl.setText("Unit:");
-
-        unitCmb.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                unitCmbActionPerformed(evt);
-            }
-        });
+        unitLbl.setText("Unit");
 
         javax.swing.GroupLayout normalizationPanelLayout = new javax.swing.GroupLayout(normalizationPanel);
         normalizationPanel.setLayout(normalizationPanelLayout);
@@ -316,14 +319,18 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
             .addGroup(normalizationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(normalizationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(referenceLbl)
-                    .addComponent(unitLbl))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(normalizationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(referenceTxt)
-                    .addComponent(normalizationCmb, 0, 100, Short.MAX_VALUE)
-                    .addComponent(unitCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(normalizationPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(normalizationCmb, 0, 143, Short.MAX_VALUE))
+                    .addGroup(normalizationPanelLayout.createSequentialGroup()
+                        .addComponent(referenceLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(referenceTxt))
+                    .addGroup(normalizationPanelLayout.createSequentialGroup()
+                        .addComponent(unitLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(unitCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         normalizationPanelLayout.setVerticalGroup(
@@ -333,11 +340,11 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
                 .addGroup(normalizationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(normalizationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(normalizationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(unitLbl)
                     .addComponent(unitCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(normalizationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(referenceLbl)
                     .addComponent(referenceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -365,27 +372,27 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(quantificationOptionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(normalizationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton)))
+                        .addComponent(cancelButton))
+                    .addComponent(normalizationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(quantificationOptionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(quantificationOptionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(normalizationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(quantificationOptionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(normalizationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -402,6 +409,11 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Enable/disable the unit options.
+     * 
+     * @param evt 
+     */
     private void normalizationCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_normalizationCmbActionPerformed
         if (normalizationCmb.getSelectedIndex() == 0) {
             unitCmb.setEnabled(false);
@@ -417,30 +429,48 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_normalizationCmbActionPerformed
 
+    /**
+     * Cancel the dialog.
+     * 
+     * @param evt 
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         canceled = true;
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    /**
+     * Change the method.
+     * 
+     * @param evt 
+     */
     private void methodCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_methodCmbActionPerformed
-
         if (methodCmb.getSelectedIndex() == 1) {
-            validationLevelLbl.setText("Peptides Considered:");
+            validationLevelLbl.setText("Peptides Considered");
         } else {
-            validationLevelLbl.setText("Spectra Considered:");
+            validationLevelLbl.setText("Spectra Considered");
         }
     }//GEN-LAST:event_methodCmbActionPerformed
 
+    /**
+     * Close the dialog.
+     * 
+     * @param evt 
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
             dispose();
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
-    private void unitCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unitCmbActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_unitCmbActionPerformed
-
+    /**
+     * Cancel the dialog.
+     * 
+     * @param evt 
+     */
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        canceled = true;
+    }//GEN-LAST:event_formWindowClosing
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;

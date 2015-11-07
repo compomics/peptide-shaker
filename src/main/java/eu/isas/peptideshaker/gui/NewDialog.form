@@ -33,7 +33,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="sampleDetailsPanel" max="32767" attributes="0"/>
+          <Component id="sampleDetailsPanel" min="-2" max="-2" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -124,28 +124,19 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" alignment="0" groupAlignment="1" attributes="0">
-                              <Component id="projectReferenceLabel" min="-2" pref="130" max="-2" attributes="0"/>
-                              <Component id="sampleNameLabel" min="-2" pref="130" max="-2" attributes="1"/>
-                          </Group>
-                          <Component id="speciesLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="projectReferenceLabel" min="-2" pref="130" max="-2" attributes="0"/>
+                          <Component id="sampleNameLabel" min="-2" pref="130" max="-2" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="projectNameIdTxt" max="32767" attributes="2"/>
+                          <Component id="projectNameIdTxt" pref="520" max="32767" attributes="2"/>
                           <Component id="sampleNameIdtxt" max="32767" attributes="2"/>
-                          <Component id="speciesTextField" alignment="0" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="replicateLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                              <Component id="replicateNumberIdtxt" min="-2" pref="66" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="editSpeciesButton" min="-2" pref="145" max="-2" attributes="0"/>
-                      </Group>
+                      <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                      <Component id="replicateLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                      <Component id="replicateNumberIdtxt" min="-2" pref="66" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -164,12 +155,6 @@
                           <Component id="replicateNumberIdtxt" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="replicateLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="sampleNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="speciesTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="editSpeciesButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="speciesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -227,28 +212,6 @@
               </Properties>
               <Events>
                 <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="sampleNameIdtxtKeyReleased"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JLabel" name="speciesLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Species"/>
-                <Property name="toolTipText" type="java.lang.String" value="Set the species to get gene and GO annotations"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JTextField" name="speciesTextField">
-              <Properties>
-                <Property name="editable" type="boolean" value="false"/>
-                <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="toolTipText" type="java.lang.String" value="Set the species to get gene annotations"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JButton" name="editSpeciesButton">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Edit"/>
-                <Property name="toolTipText" type="java.lang.String" value="Set the species"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editSpeciesButtonActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
@@ -339,7 +302,7 @@
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
                 <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="Not Set"/>
+                <Property name="text" type="java.lang.String" value="Default"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="editSearchButton">

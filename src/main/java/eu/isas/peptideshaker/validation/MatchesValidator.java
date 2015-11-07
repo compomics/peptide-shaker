@@ -958,9 +958,6 @@ public class MatchesValidator {
 
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
             String peptideKey = peptideMatch.getKey();
-            if (peptideKey.equals("SIQFVDWCPTGFK")) {
-                int debug = 1;
-            }
 
             for (String modification : Peptide.getModificationFamily(peptideKey)) {
                 if (!foundModifications.contains(modification)) {
@@ -2042,6 +2039,5 @@ public class MatchesValidator {
         public double getTotalSpectrumCounting() {
             return totalSpectrumCounting;
         }
-
     }
 }
