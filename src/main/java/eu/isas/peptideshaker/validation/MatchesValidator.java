@@ -53,6 +53,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -152,10 +153,10 @@ public class MatchesValidator {
         ArrayList<TargetDecoyMap> psmMaps = psmMap.getTargetDecoyMaps(),
                 inputMaps = inputMap.getTargetDecoyMaps();
 
-        int max = peptideMap.getKeys().size() + psmMaps.size() + inputMap.getNalgorithms();
+        int totalProgress = peptideMap.getKeys().size() + psmMaps.size() + inputMap.getNalgorithms();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.resetSecondaryProgressCounter();
-        waitingHandler.setMaxSecondaryProgressCounter(max);
+        waitingHandler.setMaxSecondaryProgressCounter(totalProgress);
 
         for (String mapKey : peptideMap.getKeys()) {
             if (waitingHandler.isRunCanceled()) {
@@ -944,18 +945,22 @@ public class MatchesValidator {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getPeptideIdentification().size() * 2);
 
-        ArrayList<String> foundModifications = new ArrayList<String>();
+        HashSet<String> foundModifications = new HashSet<String>();
         HashMap<String, ArrayList<String>> fractionPsmMatches = new HashMap<String, ArrayList<String>>();
 
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(null, false, parameters, waitingHandler);
+        int nFractions = identification.getSpectrumFiles().size();
 
         while (peptideMatchesIterator.hasNext()) {
 
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
             String peptideKey = peptideMatch.getKey();
+            if (peptideKey.equals("SIQFVDWCPTGFK")) {
+                int debug = 1;
+            }
 
             for (String modification : Peptide.getModificationFamily(peptideKey)) {
                 if (!foundModifications.contains(modification)) {
@@ -964,38 +969,61 @@ public class MatchesValidator {
             }
 
             double probaScore = 1;
-            HashMap<String, Double> fractionScores = new HashMap<String, Double>();
+            HashMap<String, Double> fractionScores = new HashMap<String, Double>(nFractions);
 
-            // get the fraction scores
+            // get the global and fraction level peptide scores
             for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
+
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 probaScore = probaScore * psParameter.getPsmProbability();
-                String fraction = Spectrum.getSpectrumFile(spectrumKey);
 
-                if (!fractionScores.containsKey(fraction)) {
-                    fractionScores.put(fraction, 1.0);
-                }
+                if (nFractions > 1) {
+                    String fraction = Spectrum.getSpectrumFile(spectrumKey);
 
-                fractionScores.put(fraction, fractionScores.get(fraction) * psParameter.getPsmProbability());
+                    Double fractionScore = fractionScores.get(fraction);
+                    boolean change = false;
+                    if (fractionScore == null) {
+                        fractionScore = 1.0;
+                        change = true;
+                    }
+                    Double tempScore = psParameter.getPsmProbability();
+                    if (tempScore != 1.0) {
+                        fractionScore *= tempScore;
+                        change = true;
+                    }
+                    if (change) {
+                        fractionScores.put(fraction, fractionScore);
+                    }
 
-                if (!fractionPsmMatches.containsKey(fraction + "_" + peptideKey)) {
-                    ArrayList<String> spectrumMatches = new ArrayList<String>(1);
+                    String fractionKey = fraction + "_" + peptideKey;
+                    ArrayList<String> spectrumMatches = fractionPsmMatches.get(fractionKey);
+                    if (spectrumMatches == null) {
+                        spectrumMatches = new ArrayList<String>(1);
+                        fractionPsmMatches.put(fractionKey, spectrumMatches);
+                    }
                     spectrumMatches.add(spectrumKey);
-                    fractionPsmMatches.put(fraction + "_" + peptideKey, spectrumMatches);
-                } else {
-                    fractionPsmMatches.get(fraction + "_" + peptideKey).add(spectrumKey);
                 }
+            }
+            if (nFractions == 1) {
+                String spectrumFile = identification.getSpectrumFiles().get(0);
+                fractionScores.put(spectrumFile, probaScore);
+                String fractionKey = spectrumFile + "_" + peptideKey;
+                fractionPsmMatches.put(fractionKey, new ArrayList<String>(peptideMatch.getSpectrumMatchesKeys()));
             }
 
             psParameter = new PSParameter();
-            psParameter.setPeptideProbabilityScore(probaScore);
-            psParameter.setSpecificMapKey(peptideMap.getKey(peptideMatch));
 
             // set the fraction scores
             for (String fractionName : fractionScores.keySet()) {
                 psParameter.setFractionScore(fractionName, fractionScores.get(fractionName));
             }
 
+            // Set the global score and grouping key
+            psParameter.setPeptideProbabilityScore(probaScore);
+            String peptideValidationGroup = "";
+            if (identificationParameters.getIdValidationPreferences().getSeparatePeptides()) {
+                psParameter.setSpecificMapKey(peptideValidationGroup);
+            }
             identification.addPeptideMatchParameter(peptideKey, psParameter);
             peptideMap.addPoint(psParameter.getPeptideProbabilityScore(), peptideMatch, identificationParameters.getSequenceMatchingPreferences());
 
@@ -1012,7 +1040,7 @@ public class MatchesValidator {
             // set the fraction psm matches
             metrics.setFractionPsmMatches(fractionPsmMatches);
             // set the ptms
-            metrics.setFoundModifications(foundModifications);
+            metrics.setFoundModifications(new ArrayList<String>(foundModifications));
         }
     }
 
@@ -1094,15 +1122,16 @@ public class MatchesValidator {
 
         waitingHandler.setWaitingText("Filling Protein Map. Please Wait...");
 
-        int max = identification.getProteinIdentification().size();
+        int totalProgress = identification.getProteinIdentification().size();
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressCounter(max);
+        waitingHandler.setMaxSecondaryProgressCounter(totalProgress);
 
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(null, true, parameters, false, null, waitingHandler);
+        int nFractions = identification.getSpectrumFiles().size();
 
         while (proteinMatchesIterator.hasNext()) {
 
@@ -1114,35 +1143,53 @@ public class MatchesValidator {
                 return;
             }
 
-            HashMap<String, Double> fractionScores = new HashMap<String, Double>();
+            HashMap<String, Double> fractionScores = new HashMap<String, Double>(nFractions);
             double probaScore = 1;
 
             if (proteinMatch == null) {
                 throw new IllegalArgumentException("Protein match " + proteinKey + " not found.");
             }
 
-            // get the fraction scores
+            // get the global and fraction level scores
             for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
 
                 psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                 probaScore = probaScore * psParameter.getPeptideProbability();
 
-                for (String fraction : psParameter.getFractions()) {
-                    if (!fractionScores.containsKey(fraction)) {
-                        fractionScores.put(fraction, 1.0);
-                    }
+                if (nFractions > 1) {
+                    for (String fraction : psParameter.getFractions()) {
 
-                    fractionScores.put(fraction, fractionScores.get(fraction) * psParameter.getFractionPEP(fraction));
+                        Double fractionScore = fractionScores.get(fraction);
+                        boolean change = false;
+                        if (fractionScore == null) {
+                            fractionScore = 1.0;
+                            change = true;
+                        }
+                        Double peptideScore = psParameter.getFractionPEP(fraction);
+                        if (peptideScore != 1.0) {
+                            fractionScore *= peptideScore;
+                            change = true;
+                        }
+                        if (change) {
+                            fractionScores.put(fraction, fractionScore);
+                        }
+                    }
                 }
+            }
+            if (nFractions == 1) {
+                String spectrumFile = identification.getSpectrumFiles().get(0);
+                fractionScores.put(spectrumFile, probaScore);
             }
 
             psParameter = new PSParameter();
-            psParameter.setProteinProbabilityScore(probaScore);
 
             // set the fraction scores
             for (String fractionName : fractionScores.keySet()) {
                 psParameter.setFractionScore(fractionName, fractionScores.get(fractionName));
             }
+            
+            // Set the global score
+            psParameter.setProteinProbabilityScore(probaScore);
 
             identification.addProteinMatchParameter(proteinKey, psParameter);
             proteinMap.addPoint(psParameter.getProteinProbabilityScore(), proteinMatch.isDecoy());
@@ -1209,13 +1256,12 @@ public class MatchesValidator {
 
                 // set the fraction molecular weights
                 if (!proteinMatch.isDecoy() && psParameter.getFractionConfidence(fraction) > fractionSettings.getProteinConfidenceMwPlots()) {
-                    if (fractionMW.containsKey(fraction)) {
-                        fractionMW.get(fraction).add(proteinMW);
-                    } else {
-                        ArrayList<Double> mw = new ArrayList<Double>();
-                        mw.add(proteinMW);
+                    ArrayList<Double> mw = fractionMW.get(fraction);
+                    if (mw == null) {
+                        mw = new ArrayList<Double>(1);
                         fractionMW.put(fraction, mw);
                     }
+                    mw.add(proteinMW);
                 }
             }
 
@@ -1621,8 +1667,9 @@ public class MatchesValidator {
 
                             ArrayList<Double> precursorIntensities = new ArrayList<Double>();
 
-                            if (metrics.getFractionPsmMatches().get(fractionName + "_" + peptideKey) != null) {
-                                ArrayList<String> spectrumKeys = metrics.getFractionPsmMatches().get(fractionName + "_" + peptideKey);
+                            String peptideFractionKey = fractionName + "_" + peptideKey;
+                            if (metrics.getFractionPsmMatches().get(peptideFractionKey) != null) {
+                                ArrayList<String> spectrumKeys = metrics.getFractionPsmMatches().get(peptideFractionKey);
 
                                 for (String spectrumKey : spectrumKeys) {
 
@@ -1834,7 +1881,7 @@ public class MatchesValidator {
                             double massContribution = molecularWeight * tempSpectrumCounting;
                             increaseSpectrumCountingMass(massContribution);
                         }
-                            // Load the coverage in cache
+                        // Load the coverage in cache
                         if (!proteinMatch.isDecoy() && psParameter.getMatchValidationLevel().isValidated()) {
                             identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                         }
@@ -1940,7 +1987,8 @@ public class MatchesValidator {
         /**
          * Increases the spectrum counting contribution of a protein.
          *
-         * @param spectrumCounting the spectrum counting contribution of a protein
+         * @param spectrumCounting the spectrum counting contribution of a
+         * protein
          */
         private synchronized void increaseSpectrumCounting(Double spectrumCounting) {
             totalSpectrumCounting += spectrumCounting;
@@ -1985,9 +2033,11 @@ public class MatchesValidator {
         }
 
         /**
-         * Returns the spectrum counting contribution of the proteins iterated by this runnable.
+         * Returns the spectrum counting contribution of the proteins iterated
+         * by this runnable.
          *
-         * @return the spectrum counting contribution of the proteins iterated by this runnable
+         * @return the spectrum counting contribution of the proteins iterated
+         * by this runnable
          */
         public double getTotalSpectrumCounting() {
             return totalSpectrumCounting;

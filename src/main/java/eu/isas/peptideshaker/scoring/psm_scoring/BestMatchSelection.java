@@ -22,6 +22,7 @@ import com.compomics.util.experiment.identification.identification_parameters.Se
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
+import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
@@ -117,6 +118,7 @@ public class BestMatchSelection {
         SequenceMatchingPreferences ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
+        IdMatchValidationPreferences idMatchValidationPreferences = identificationParameters.getIdValidationPreferences();
 
         PeptideAssumptionFilter idFilter = identificationParameters.getPeptideAssumptionFilter();
 
@@ -508,7 +510,11 @@ public class BestMatchSelection {
                         psParameter.setDeltaPEP(matchParameter.getDeltaPEP());
 
                         matchesValidator.getPsmMap().addPoint(psParameter.getPsmProbabilityScore(), spectrumMatch, sequenceMatchingPreferences);
-                        psParameter.setSpecificMapKey(spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value + "");
+                        String validationMapKey = "";
+                        if (idMatchValidationPreferences.getSeparatePsms()) {
+                            validationMapKey += psAssumption.getIdentificationCharge().value;
+                        }
+                        psParameter.setSpecificMapKey(validationMapKey);
                         identification.addSpectrumMatchParameter(spectrumKey, psParameter);
                         identification.updateSpectrumMatch(spectrumMatch);
                     }
