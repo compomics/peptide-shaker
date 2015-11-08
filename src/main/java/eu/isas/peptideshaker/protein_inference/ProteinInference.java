@@ -461,6 +461,9 @@ public class ProteinInference {
             identification.removeProteinMatch(proteinKey);
             waitingHandler.increaseSecondaryProgressCounter();
         }
+        
+        clearCache();
+        ProteinMatch.clearCache();
 
         int nSolved = toRemove.size();
         int nGroups = 0;
@@ -919,5 +922,13 @@ public class ProteinInference {
             }
         }
         return result;
+    }
+    
+    /**
+     * Clears the cache.
+     */
+    private void clearCache() {
+        proteinGroupCache.clear();
+        sizeOfProteinsInCache = 10;
     }
 }
