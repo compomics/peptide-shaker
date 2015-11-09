@@ -10,7 +10,7 @@
    (Replace X.Y.Z with the PeptideShaker version number.)
 
    For help with runnng PeptideShaker please see:
-   http://code.google.com/p/peptide-shaker/#Troubleshooting
+   http://compomics.github.io/projects/peptide-shaker.html#troubleshooting
 
 
    ========================
@@ -18,7 +18,7 @@
    ========================
 
    For updated information about PeptideShaker please visit:
-   http://peptide-shaker.googlecode.com
+   http://compomics.github.io/projects/peptide-shaker.html
 
 
    =========
