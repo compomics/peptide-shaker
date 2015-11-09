@@ -103,18 +103,23 @@ public class PsmPTMMap implements Serializable {
      * @param conflict boolean indicating whether the two scores are conflicting
      */
     public void addPoint(double ptmMass, double probabilityScore, SpectrumMatch spectrumMatch, boolean conflict) {
-        if (!psmMaps.containsKey(ptmMass)) {
-            psmMaps.put(ptmMass, new HashMap<Integer, TargetDecoyMap>());
-            grouping.put(ptmMass, new HashMap<Integer, Integer>());
+        HashMap<Integer, TargetDecoyMap> psmMap = psmMaps.get(ptmMass);
+        HashMap<Integer, Integer> psmGrouping = grouping.get(ptmMass);
+        if (psmMap == null) {
+            psmMap = new HashMap<Integer, TargetDecoyMap>(4);
+            psmMaps.put(ptmMass, psmMap);
+        }
+        if (psmGrouping == null) {
+            psmGrouping = new HashMap<Integer, Integer>(4);
+            grouping.put(ptmMass, psmGrouping);
         }
         int key = getKey(spectrumMatch);
-        if (!psmMaps.get(ptmMass).containsKey(key)) {
-            psmMaps.get(ptmMass).put(key, new TargetDecoyMap());
+        TargetDecoyMap targetDecoyMap = psmMap.get(key);
+        if (targetDecoyMap == null) {
+            targetDecoyMap = new TargetDecoyMap();
+            psmMap.put(key, targetDecoyMap);
         }
-        psmMaps.get(ptmMass).get(key).put(probabilityScore, false);
-        if (conflict) {
-            psmMaps.get(ptmMass).get(key).put(probabilityScore, true);
-        }
+        targetDecoyMap.put(probabilityScore, conflict);
     }
 
     /**

@@ -27,8 +27,6 @@ import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javax.swing.RowFilter;
-import javax.swing.RowFilter.ComparisonType;
 import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -222,7 +220,7 @@ public class AssumptionFilter extends MatchFilter {
                 return filterItemComparator.passes(input, mzError.toString());
             case precrusorMzErrorStat:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
-                mzError = Math.abs(peptideAssumption.getDeltaMass(precursor.getMz(), identificationParameters.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                mzError = peptideAssumption.getDeltaMass(precursor.getMz(), identificationParameters.getSearchParameters().isPrecursorAccuracyTypePpm());
                 NonSymmetricalNormalDistribution precDeviationDistribution = identificationFeaturesGenerator.getMassErrorDistribution(Spectrum.getSpectrumFile(spectrumKey));
                 MathContext mathContext = new MathContext(10, RoundingMode.HALF_DOWN);
                 BigDecimal p;
