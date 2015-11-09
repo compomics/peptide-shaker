@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
+import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.massspectrometry.Precursor;
@@ -207,10 +208,11 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                             }
                         }
                         Precursor precursor = SpectrumFactory.getInstance().getPrecursor(psmKey);
+                        SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
                         if (spectrumMatch.getBestPeptideAssumption() != null) {
-                            return Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()));
+                            return Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
                         } else if (spectrumMatch.getBestTagAssumption() != null) {
-                            return Math.abs(spectrumMatch.getBestTagAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()));
+                            return Math.abs(spectrumMatch.getBestTagAssumption().getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
                         } else {
                             throw new IllegalArgumentException("No best assumption found for spectrum " + psmKey + ".");
                         }

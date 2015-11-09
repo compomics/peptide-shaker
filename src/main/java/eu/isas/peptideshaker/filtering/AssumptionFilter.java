@@ -5,6 +5,7 @@ import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -212,15 +213,18 @@ public class AssumptionFilter extends MatchFilter {
                 return filterItemComparator.passes(input, charge.toString());
             case precrusorMzErrorDa:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
-                Double mzError = Math.abs(peptideAssumption.getDeltaMass(precursor.getMz(), false));
+                SearchParameters searchParameters = identificationParameters.getSearchParameters();
+                Double mzError = Math.abs(peptideAssumption.getDeltaMass(precursor.getMz(), false, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
                 return filterItemComparator.passes(input, mzError.toString());
             case precrusorMzErrorPpm:
+                searchParameters = identificationParameters.getSearchParameters();
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
-                mzError = Math.abs(peptideAssumption.getDeltaMass(precursor.getMz(), true));
+                mzError = Math.abs(peptideAssumption.getDeltaMass(precursor.getMz(), true, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
                 return filterItemComparator.passes(input, mzError.toString());
             case precrusorMzErrorStat:
+                searchParameters = identificationParameters.getSearchParameters();
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
-                mzError = peptideAssumption.getDeltaMass(precursor.getMz(), identificationParameters.getSearchParameters().isPrecursorAccuracyTypePpm());
+                mzError = peptideAssumption.getDeltaMass(precursor.getMz(), identificationParameters.getSearchParameters().isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection());
                 NonSymmetricalNormalDistribution precDeviationDistribution = identificationFeaturesGenerator.getMassErrorDistribution(Spectrum.getSpectrumFile(spectrumKey));
                 MathContext mathContext = new MathContext(10, RoundingMode.HALF_DOWN);
                 BigDecimal p;

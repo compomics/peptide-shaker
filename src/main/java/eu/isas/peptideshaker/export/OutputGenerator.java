@@ -22,6 +22,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
+import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -800,7 +801,7 @@ public class OutputGenerator {
                                                     for (String parentProtein : peptide.getParentProteins(sequenceMatchingPreferences)) {
                                                         HashSet<String> tempParentProteins = identification.getProteinMap().get(parentProtein);
                                                         if (tempParentProteins != null) {
-                                                        ArrayList<String> parentProteins = new ArrayList<String>(tempParentProteins);
+                                                            ArrayList<String> parentProteins = new ArrayList<String>(tempParentProteins);
                                                             for (String proteinKey : parentProteins) {
                                                                 if (!possibleProteins.contains(proteinKey)) {
                                                                     try {
@@ -1509,13 +1510,14 @@ public class OutputGenerator {
                                                 }
                                                 if (precursor) {
                                                     Precursor prec = spectrumFactory.getPrecursor(spectrumMatch.getKey());
+                                                    SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
                                                     writer.write(prec.getMz() + SEPARATOR);
                                                     writer.write(prec.getPossibleChargesAsString() + SEPARATOR);
                                                     writer.write(bestAssumption.getIdentificationCharge().value + SEPARATOR);
                                                     writer.write(prec.getRt() + SEPARATOR);
                                                     writer.write(bestAssumption.getPeptide().getMass() + SEPARATOR);
-                                                    writer.write(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
-                                                    writer.write(bestAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
+                                                    writer.write(bestAssumption.getDeltaMass(prec.getMz(), searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()) + SEPARATOR);
+                                                    writer.write(bestAssumption.getIsotopeNumber(prec.getMz(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()) + SEPARATOR);
                                                 }
                                                 if (score) {
                                                     writer.write(psParameter.getPsmScore() + SEPARATOR);
@@ -1882,8 +1884,9 @@ public class OutputGenerator {
                                 writer.write(bestAssumption.getIdentificationCharge().value + SEPARATOR);
                                 writer.write(prec.getRt() + SEPARATOR);
                                 writer.write(bestAssumption.getPeptide().getMass() + SEPARATOR);
-                                writer.write(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
-                                writer.write(bestAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
+                                SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
+                                writer.write(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()) + SEPARATOR);
+                                writer.write(bestAssumption.getIsotopeNumber(prec.getMz(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()) + SEPARATOR);
                                 writer.write(psParameter.getPsmConfidence() + SEPARATOR);
                                 MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
                                 writer.write(matchValidationLevel.toString());
@@ -2404,9 +2407,10 @@ public class OutputGenerator {
                                                         writer.write(peptideAssumption.getIdentificationCharge().value + SEPARATOR);
                                                         writer.write(prec.getRt() + SEPARATOR);
                                                         writer.write(peptideAssumption.getPeptide().getMass() + SEPARATOR);
+                                                        SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
                                                         writer.write(peptideAssumption.getDeltaMass(prec.getMz(),
-                                                                peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
-                                                        writer.write(peptideAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
+                                                                peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()) + SEPARATOR);
+                                                        writer.write(peptideAssumption.getIsotopeNumber(prec.getMz(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()) + SEPARATOR);
                                                     }
                                                     if (scores) {
                                                         for (Integer advocateIndex : peptideShakerGUI.getProjectDetails().getIdentificationAlgorithms()) {

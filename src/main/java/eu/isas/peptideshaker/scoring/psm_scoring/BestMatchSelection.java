@@ -179,7 +179,7 @@ public class BestMatchSelection {
                                     boolean filterPassed1 = true;
                                     if (!peptideAssumptionFilter.validatePeptide(peptide1, sequenceMatchingPreferences)
                                             || !peptideAssumptionFilter.validateModifications(peptide1, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getPtmSettings())
-                                            || !peptideAssumptionFilter.validatePrecursor(peptideAssumption1, spectrumKey, spectrumFactory)
+                                            || !peptideAssumptionFilter.validatePrecursor(peptideAssumption1, spectrumKey, spectrumFactory, searchParameters)
                                             || !peptideAssumptionFilter.validateProteins(peptide1, sequenceMatchingPreferences)) {
                                         filterPassed1 = false;
                                     } else {
@@ -301,13 +301,13 @@ public class BestMatchSelection {
                                                 HashMap<String, PeptideAssumption> assumptionMap = coverageMap.get(-1.0);
                                                 if (assumptionMap != null) {
                                                     for (PeptideAssumption tempAssumption : assumptionMap.values()) { // There should be only one
-                                                        double massError = Math.abs(tempAssumption.getDeltaMass(spectrum.getPrecursor().getMz(), shotgunProtocol.isMs1ResolutionPpm()));
+                                                        double massError = Math.abs(tempAssumption.getDeltaMass(spectrum.getPrecursor().getMz(), searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
                                                         coverageMap.put(massError, assumptionMap);
                                                     }
                                                     coverageMap.remove(-1.0);
                                                 }
 
-                                                double massError = Math.abs(peptideAssumption1.getDeltaMass(spectrum.getPrecursor().getMz(), shotgunProtocol.isMs1ResolutionPpm()));
+                                                double massError = Math.abs(peptideAssumption1.getDeltaMass(spectrum.getPrecursor().getMz(), searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
                                                 assumptionMap = coverageMap.get(massError);
                                                 if (assumptionMap == null) {
                                                     assumptionMap = new HashMap<String, PeptideAssumption>(1);
@@ -663,8 +663,9 @@ public class BestMatchSelection {
             minMassError = identificationParameters.getSearchParameters().getPrecursorAccuracy();
         }
 
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
         for (PeptideAssumption peptideAssumption : firstHits) {
-            double massError = Math.abs(peptideAssumption.getDeltaMass(spectrum.getPrecursor().getMz(), shotgunProtocol.isMs1ResolutionPpm()));
+            double massError = Math.abs(peptideAssumption.getDeltaMass(spectrum.getPrecursor().getMz(), searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
             if (massError < minMassError) {
                 minMassError = massError;
                 bestPeptideAssumptions.clear();

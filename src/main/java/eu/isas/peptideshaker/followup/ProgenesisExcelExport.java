@@ -17,6 +17,7 @@ import com.compomics.util.experiment.identification.matches_iterators.PsmIterato
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
@@ -81,29 +82,24 @@ public class ProgenesisExcelExport {
      */
     private int currentRow = 0;
     /**
-     * The current enzyme.
+     * The identification parameters.
      */
-    private Enzyme enzyme;
-    /**
-     * The sequence matching preferences.
-     */
-    private SequenceMatchingPreferences sequenceMatchingPreferences;
+    private IdentificationParameters identificationParameters;
+    
 
     /**
      * Constructor.
      *
      * @param waitingHandler the waiting handler
      * @param proteinKeys the protein keys to export
-     * @param enzyme the enzyme used, needed for the missed cleavages
-     * @param sequenceMatchingPreferences the sequence matching preferences
      * @param identification the identifications
      * @param outputFile the file to export to
+     * @param identificationParameters the identification parameters
      */
-    public ProgenesisExcelExport(WaitingHandler waitingHandler, ArrayList<String> proteinKeys, Enzyme enzyme,
-            SequenceMatchingPreferences sequenceMatchingPreferences, Identification identification, File outputFile) {
+    public ProgenesisExcelExport(WaitingHandler waitingHandler, ArrayList<String> proteinKeys, Identification identification, File outputFile, IdentificationParameters identificationParameters) {
         this.waitingHandler = waitingHandler;
         this.proteinKeys = proteinKeys;
-        this.enzyme = enzyme;
+        this.identificationParameters = identificationParameters;
         this.identification = identification;
         this.outputFile = outputFile;
     }
@@ -238,7 +234,7 @@ public class ProgenesisExcelExport {
     private void insertPeptideData(PeptideMatch peptideMatch) throws Exception {
 
         Peptide peptide = peptideMatch.getTheoreticPeptide();
-        ArrayList<String> proteinAccessions = peptide.getParentProteins(sequenceMatchingPreferences);
+        ArrayList<String> proteinAccessions = peptide.getParentProteins(identificationParameters.getSequenceMatchingPreferences());
         StringBuilder proteinAccessionsAsString = new StringBuilder();
         for (String proteinAccession : proteinAccessions) {
             if (proteinAccessionsAsString.length() > 0) {
@@ -361,7 +357,7 @@ public class ProgenesisExcelExport {
                 Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
 
                 cell = rowHead.createCell(column++);
-                cell.setCellValue(peptideAssumption.getDeltaMass(precursor.getMz(), true)); // mass error in ppm
+                cell.setCellValue(peptideAssumption.getDeltaMass(precursor.getMz(), true, identificationParameters.getSearchParameters().getMinIsotopicCorrection(), identificationParameters.getSearchParameters().getMaxIsotopicCorrection())); // mass error in ppm
                 cell.setCellStyle(peptideRowCellStyle);
                 cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 
@@ -377,7 +373,7 @@ public class ProgenesisExcelExport {
                 cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 
                 cell = rowHead.createCell(column++);
-                cell.setCellValue(peptide.getNMissedCleavages(enzyme)); // number of missed cleavages
+                cell.setCellValue(peptide.getNMissedCleavages(identificationParameters.getSearchParameters().getEnzyme())); // number of missed cleavages
                 cell.setCellStyle(peptideRowCellStyle);
                 cell.setCellType(Cell.CELL_TYPE_NUMERIC);
             }

@@ -640,7 +640,7 @@ public class PsmImporter {
                             } else if (!peptideAssumptionFilter.validateModifications(peptide, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getPtmSettings())) {
                                 filterPassed = false;
                                 ptmIssue++;
-                            } else if (!peptideAssumptionFilter.validatePrecursor(peptideAssumption, spectrumKey, spectrumFactory)) {
+                            } else if (!peptideAssumptionFilter.validatePrecursor(peptideAssumption, spectrumKey, spectrumFactory, searchParameters)) {
                                 filterPassed = false;
                                 precursorIssue++;
                             } else if (!peptideAssumptionFilter.validateProteins(peptide, sequenceMatchingPreferences)) {
@@ -1132,14 +1132,16 @@ public class PsmImporter {
     private synchronized void checkPeptidesMassErrorsAndCharges(String spectrumKey, PeptideAssumption peptideAssumption)
             throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException {
 
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+        
         double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
-        double error = Math.abs(peptideAssumption.getDeltaMass(precursorMz, true));
+        double error = Math.abs(peptideAssumption.getDeltaMass(precursorMz, true, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
 
         if (error > maxPeptideErrorPpm) {
             maxPeptideErrorPpm = error;
         }
 
-        error = Math.abs(peptideAssumption.getDeltaMass(precursorMz, false));
+        error = Math.abs(peptideAssumption.getDeltaMass(precursorMz, false, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
 
         if (error > maxPeptideErrorDa) {
             maxPeptideErrorDa = error;
@@ -1181,14 +1183,16 @@ public class PsmImporter {
      */
     private synchronized void checkTagMassErrorsAndCharge(String spectrumKey, TagAssumption tagAssumption) throws MzMLUnmarshallerException, IOException {
 
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+        
         double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
-        double error = Math.abs(tagAssumption.getDeltaMass(precursorMz, true));
+        double error = Math.abs(tagAssumption.getDeltaMass(precursorMz, true, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
 
         if (error > maxTagErrorPpm) {
             maxTagErrorPpm = error;
         }
 
-        error = Math.abs(tagAssumption.getDeltaMass(precursorMz, false));
+        error = Math.abs(tagAssumption.getDeltaMass(precursorMz, false, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
 
         if (error > maxTagErrorDa) {
             maxTagErrorDa = error;

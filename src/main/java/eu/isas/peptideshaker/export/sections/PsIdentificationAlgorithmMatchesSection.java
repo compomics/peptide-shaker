@@ -451,7 +451,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                 return peptideAssumption.getIdentificationCharge().toString();
             case isotope:
                 Precursor precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
-                return peptideAssumption.getIsotopeNumber(precursor.getMz()) + "";
+                return peptideAssumption.getIsotopeNumber(precursor.getMz(), identificationParameters.getSearchParameters().getMinIsotopicCorrection(), identificationParameters.getSearchParameters().getMaxIsotopicCorrection()) + "";
             case mz:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getMz() + "";
@@ -476,10 +476,10 @@ public class PsIdentificationAlgorithmMatchesSection {
                 return coverage + "";
             case mz_error_ppm:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
-                return peptideAssumption.getDeltaMass(precursor.getMz(), true) + "";
+                return peptideAssumption.getDeltaMass(precursor.getMz(), true, identificationParameters.getSearchParameters().getMinIsotopicCorrection(), identificationParameters.getSearchParameters().getMaxIsotopicCorrection()) + "";
             case mz_error_da:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
-                return peptideAssumption.getDeltaMass(precursor.getMz(), false) + "";
+                return peptideAssumption.getDeltaMass(precursor.getMz(), false, identificationParameters.getSearchParameters().getMinIsotopicCorrection(), identificationParameters.getSearchParameters().getMaxIsotopicCorrection()) + "";
             case rt:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getRt() + "";
@@ -877,7 +877,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                 return tagAssumption.getIdentificationCharge().toString();
             case isotope:
                 Precursor precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
-                return tagAssumption.getIsotopeNumber(precursor.getMz()) + "";
+                return tagAssumption.getIsotopeNumber(precursor.getMz(), identificationParameters.getSearchParameters().getMinIsotopicCorrection(), identificationParameters.getSearchParameters().getMaxIsotopicCorrection()) + "";
             case mz:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getMz() + "";
@@ -889,7 +889,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                 return spectrum.getMaxIntensity() + "";
             case mz_error_ppm:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
-                return tagAssumption.getDeltaMass(precursor.getMz(), true) + "";
+                return tagAssumption.getDeltaMass(precursor.getMz(), true, identificationParameters.getSearchParameters().getMinIsotopicCorrection(), identificationParameters.getSearchParameters().getMaxIsotopicCorrection()) + "";
             case rt:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getRt() + "";

@@ -1496,7 +1496,8 @@ public class MatchesValidator {
 
                             if (psParameter.getMatchValidationLevel().isValidated()) {
                                 double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
-                                double precursorMzError = peptideAssumption.getDeltaMass(precursorMz, shotgunProtocol.isMs1ResolutionPpm());
+                    SearchParameters searchParameters = identificationParameters.getSearchParameters();
+                                double precursorMzError = peptideAssumption.getDeltaMass(precursorMz, searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection());
                                 threadPrecursorMzDeviations.add(precursorMzError);
                             }
 

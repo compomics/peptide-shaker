@@ -754,12 +754,13 @@ public class PrideXmlExport {
                     || ionMatch.ion.getType() == IonType.IMMONIUM_ION
                     || ionMatch.ion.getType() == IonType.PRECURSOR_ION
                     || ionMatch.ion.getType() == IonType.REPORTER_ION) {
+                SearchParameters searchParameters = identificationParameters.getSearchParameters();
                 br.write(getCurrentTabSpace() + "<FragmentIon>" + System.getProperty("line.separator"));
                 tabCounter++;
                 writeCvTerm(fragmentIonTerm);
                 writeCvTerm(ionMatch.getMZPrideCvTerm());
                 writeCvTerm(ionMatch.getIntensityPrideCvTerm());
-                writeCvTerm(ionMatch.getIonMassErrorPrideCvTerm());
+                writeCvTerm(ionMatch.getIonMassErrorPrideCvTerm(searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
                 writeCvTerm(ionMatch.getChargePrideCvTerm());
                 tabCounter--;
                 br.write(getCurrentTabSpace() + "</FragmentIon>" + System.getProperty("line.separator"));

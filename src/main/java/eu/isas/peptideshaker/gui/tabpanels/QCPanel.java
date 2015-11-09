@@ -19,6 +19,7 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
+import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSParameter;
@@ -1940,9 +1941,10 @@ public class QCPanel extends javax.swing.JPanel {
                         if (!psmParameter.isHidden() && spectrumMatch.getBestPeptideAssumption() != null) {
 
                             Precursor precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
+                        SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
                             double value = spectrumMatch.getBestPeptideAssumption().getDeltaMass(
                                     precursor.getMz(),
-                                    peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm());
+                                    searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection());
                             if (value > maxValue) {
                                 maxValue = value;
                             }

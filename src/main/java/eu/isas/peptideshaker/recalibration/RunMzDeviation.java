@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.recalibration;
 
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -321,7 +322,8 @@ public class RunMzDeviation {
 
                 if (bestPeptideAssumption != null) {
 
-                    double error = bestPeptideAssumption.getDeltaMass(precursorMz, false);
+                    SearchParameters searchParameters = identificationParameters.getSearchParameters();
+                    double error = bestPeptideAssumption.getDeltaMass(precursorMz, false, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection());
                     precursorRawMap.get(precursorRT).get(precursorMz).add(error);
 
                     MSnSpectrum currentSpectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
