@@ -11,6 +11,7 @@ import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.preferences.ValidationQCPreferences;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
@@ -328,6 +329,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     private void populateGUI(TargetDecoyMap targetDecoyMap, String targetDecoyCategory)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
+        ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+
         // Validation level
         validationLevelJComboBox.setSelectedItem(psParameter.getMatchValidationLevel().getName());
 
@@ -341,9 +344,9 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         }
         int nTarget = sequenceFactory.getNTargetSequences();
         nTargetLbl.setText(nTarget + " target sequences");
-        if (nTarget < 10000) { // @TODO: make the threshold editable by the user!
+        if (nTarget < 10000) {
             nTargetLbl.setForeground(Color.red);
-        } else if (nTarget > 100000) { // @TODO: make the threshold editable by the user!
+        } else if (nTarget > 100000) {
             nTargetLbl.setForeground(orange);
         } else {
             nTargetLbl.setForeground(green);
@@ -357,8 +360,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             matchesBeforeFirstDecoyLbl.setText(nTargetOnly + " matches before the first decoy hit");
 
             TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-            double fdrLimit = targetDecoyResults.getFdrLimit();
-            double nTargetLimit = 100.0 / fdrLimit;
+            double desiredThreshold = targetDecoyResults.getUserInput();
+            double nTargetLimit = 100.0 / desiredThreshold;
             if (nTargetOnly < nTargetLimit) {
                 matchesBeforeFirstDecoyLbl.setForeground(Color.red);
             } else {
@@ -369,15 +372,15 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             double resolution = targetDecoyMap.getResolution();
             confidenceResolutionLbl.setText("PEP/Confidence resolution of " + Util.roundDouble(resolution, 2) + "%");
 
-            double resolutionLimit = fdrLimit;
-            if (resolution > 5 * resolutionLimit) {
+            double minResolution = desiredThreshold;
+            if (resolution > 10 * minResolution) {
                 confidenceResolutionLbl.setForeground(Color.red);
-            } else if (resolution > resolutionLimit) {
+            } else if (resolution > minResolution) {
                 confidenceResolutionLbl.setForeground(orange);
             } else {
                 confidenceResolutionLbl.setForeground(green);
             }
-            recommendedResolutionLbl.setText("Recommended: resolution < " + Util.roundDouble(resolutionLimit, 2) + "%");
+            recommendedResolutionLbl.setText("Recommended: resolution < " + Util.roundDouble(minResolution, 2) + "%");
         } else {
             matchesBeforeFirstDecoyLbl.setText("No decoy");
             matchesBeforeFirstDecoyLbl.setForeground(Color.gray);
@@ -429,8 +432,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             confidenceLbl.setText("Confidence: " + Util.roundDouble(confidence, 2) + "%");
             double validationThreshold = targetDecoyResults.getConfidenceLimit();
             confidenceThresholdLbl.setText("Expected Confidence: " + Util.roundDouble(validationThreshold, 2) + "%");
-            double resolution = targetDecoyMap.getResolution();
-            double confidenceThreshold = validationThreshold + resolution;
+            double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
+            double confidenceThreshold = validationThreshold + margin;
             if (confidenceThreshold > 100) {
                 confidenceThreshold = 100;
             }

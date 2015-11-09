@@ -779,8 +779,8 @@ public class MatchesValidator {
 
             if (targetDecoyMap != null) {
                 TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                double fdrLimit = targetDecoyResults.getFdrLimit();
-                nTargetLimit = 100.0 / fdrLimit;
+                double desiredThreshold = targetDecoyResults.getUserInput();
+                nTargetLimit = 100.0 / desiredThreshold;
                 seThreshold = targetDecoyResults.getScoreLimit();
                 double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
                 confidenceThreshold = targetDecoyResults.getConfidenceLimit() + margin;
@@ -870,8 +870,8 @@ public class MatchesValidator {
 
             if (targetDecoyMap != null) {
                 TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                double fdrLimit = targetDecoyResults.getFdrLimit();
-                nTargetLimit = 100.0 / fdrLimit;
+                double desiredThreshold = targetDecoyResults.getUserInput();
+                nTargetLimit = 100.0 / desiredThreshold;
                 seThreshold = targetDecoyResults.getScoreLimit();
                 double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
                 confidenceThreshold = targetDecoyResults.getConfidenceLimit() + margin;
@@ -1846,8 +1846,8 @@ public class MatchesValidator {
 
                 TargetDecoyMap targetDecoyMap = proteinMap.getTargetDecoyMap();
                 TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                double fdrLimit = targetDecoyResults.getFdrLimit();
-                double nTargetLimit = 100.0 / fdrLimit;
+                double desiredThreshold = targetDecoyResults.getUserInput();
+                double nTargetLimit = 100.0 / desiredThreshold;
                 double proteinThreshold = targetDecoyResults.getScoreLimit();
                 double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
                 double proteinConfidentThreshold = targetDecoyResults.getConfidenceLimit() + margin;

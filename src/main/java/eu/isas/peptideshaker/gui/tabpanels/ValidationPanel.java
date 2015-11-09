@@ -254,7 +254,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         fnrTxt = new javax.swing.JTextField();
         datasetPropertiesLabel = new javax.swing.JLabel();
         resolutionLabel = new javax.swing.JLabel();
-        nMaxTxt = new javax.swing.JTextField();
+        resolutionTxt = new javax.swing.JTextField();
         validationResultsLabel = new javax.swing.JLabel();
         confidenceLabel = new javax.swing.JLabel();
         confidenceTxt = new javax.swing.JTextField();
@@ -455,10 +455,10 @@ public class ValidationPanel extends javax.swing.JPanel {
         resolutionLabel.setText("Resolution");
         resolutionLabel.setToolTipText("Confidence estimation resolution");
 
-        nMaxTxt.setEditable(false);
-        nMaxTxt.setBackground(new java.awt.Color(245, 245, 245));
-        nMaxTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        nMaxTxt.setToolTipText("Confidence estimation resolution");
+        resolutionTxt.setEditable(false);
+        resolutionTxt.setBackground(new java.awt.Color(245, 245, 245));
+        resolutionTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        resolutionTxt.setToolTipText("Confidence estimation resolution");
 
         validationResultsLabel.setFont(validationResultsLabel.getFont().deriveFont((validationResultsLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
         validationResultsLabel.setText("Validation Results");
@@ -678,7 +678,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                                 .addComponent(fdrHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(idSummaryJPanelLayout.createSequentialGroup()
                                 .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(nMaxTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(resolutionTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(confidenceTxt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -697,7 +697,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                     .addComponent(nTotalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(totalTPHelpJButton)
                     .addComponent(resolutionLabel)
-                    .addComponent(nMaxTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(resolutionTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(nMaxHelpJButton))
                 .addGap(18, 18, 18)
                 .addComponent(validationResultsLabel)
@@ -2252,7 +2252,6 @@ public class ValidationPanel extends javax.swing.JPanel {
     private javax.swing.JSplitPane leftPlotSplitPane;
     private javax.swing.JTextField nFPTxt;
     private javax.swing.JButton nMaxHelpJButton;
-    private javax.swing.JTextField nMaxTxt;
     private javax.swing.JTextField nTPlTxt;
     private javax.swing.JTextField nTotalTxt;
     private javax.swing.JTextField nValidatedTxt;
@@ -2260,6 +2259,7 @@ public class ValidationPanel extends javax.swing.JPanel {
     private javax.swing.JPanel parametersJPanel;
     private javax.swing.JLabel pepBinSizeLabel;
     private javax.swing.JLabel resolutionLabel;
+    private javax.swing.JTextField resolutionTxt;
     private javax.swing.JSplitPane rightPlotSplitPane;
     private javax.swing.JPanel targetDecoyChartPanel;
     private javax.swing.JButton thresholdHelpJButton;
@@ -2561,12 +2561,8 @@ public class ValidationPanel extends javax.swing.JPanel {
 
         applyButton.setEnabled(modifiedMaps.get(selectedGroup));
         pepWindowApplied = !modifiedMaps.get(selectedGroup);
-        double pmin = 0;
-        if (currentTargetDecoyMap.getnMax() != 0) {
-            pmin = 100.0 / currentTargetDecoyMap.getnMax();
-        }
-
-        nMaxTxt.setText(Util.roundDouble(pmin, 2) + " %");
+        double pmin = currentTargetDecoyMap.getResolution();
+        resolutionTxt.setText(Util.roundDouble(pmin, 2) + " %");
         targetDecoySeries = currentTargetDecoyMap.getTargetDecoySeries();
         updateDisplayedComponents();
     }
@@ -2931,7 +2927,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         confidenceTxt.setText("");
         fdrTxt.setText("");
         fnrTxt.setText("");
-        nMaxTxt.setText("");
+        resolutionTxt.setText("");
         clearCharts();
     }
 

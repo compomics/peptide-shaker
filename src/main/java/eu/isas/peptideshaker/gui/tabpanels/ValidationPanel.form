@@ -228,7 +228,7 @@
                               </Group>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                      <Component id="nMaxTxt" min="-2" pref="90" max="-2" attributes="3"/>
+                                      <Component id="resolutionTxt" min="-2" pref="90" max="-2" attributes="3"/>
                                       <Component id="confidenceTxt" alignment="0" min="-2" pref="90" max="-2" attributes="3"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
@@ -255,7 +255,7 @@
                       <Component id="nTotalTxt" alignment="2" min="-2" max="-2" attributes="1"/>
                       <Component id="totalTPHelpJButton" alignment="2" min="-2" max="-2" attributes="1"/>
                       <Component id="resolutionLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="nMaxTxt" alignment="2" min="-2" max="-2" attributes="1"/>
+                      <Component id="resolutionTxt" alignment="2" min="-2" max="-2" attributes="1"/>
                       <Component id="nMaxHelpJButton" alignment="2" min="-2" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
@@ -399,7 +399,7 @@
             <Property name="toolTipText" type="java.lang.String" value="Confidence estimation resolution"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="nMaxTxt">
+        <Component class="javax.swing.JTextField" name="resolutionTxt">
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
