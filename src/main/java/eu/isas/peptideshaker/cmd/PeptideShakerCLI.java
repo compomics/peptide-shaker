@@ -23,6 +23,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
+import com.compomics.util.experiment.identification.parameters_cli.IdentificationParametersInputBean;
 import com.compomics.util.experiment.identification.ptm.PtmScore;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
@@ -431,9 +432,12 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * Creates the PeptideShaker project based on the identification files
      * provided in the command line input
      *
-     * @throws IOException thrown if an exception occurs
+     * @throws FileNotFoundException if a FileNotFoundException occurs
+     * @throws IOException if an IOException occurs
+     * @throws ClassNotFoundException if aClassNotFoundException
+     * ClassNotFoundException occurs
      */
-    public void createProject() throws IOException {
+    public void createProject() throws IOException, FileNotFoundException, ClassNotFoundException {
 
         // define new project references
         experiment = new MsExperiment(cliInputBean.getiExperimentID());
@@ -554,24 +558,20 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         // get the identification parameters
-        IdentificationParameters identificationParameters = null;
-        if (cliInputBean.getSearchParameters() != null) {
-            SearchParameters searchParameters = cliInputBean.getSearchParameters();
-            tempIdentificationParameters = new IdentificationParameters(searchParameters);
-            tempIdentificationParameters.setName(Util.removeExtension("PS_CLI"));
-            ValidationQCPreferences validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
-            if (validationQCPreferences == null || validationQCPreferences.getPsmFilters() == null || validationQCPreferences.getPeptideFilters() == null || validationQCPreferences.getProteinFilters() == null) {
-                MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
-            }
-        } else if (tempIdentificationParameters != null) {
-            identificationParameters = tempIdentificationParameters;
+        IdentificationParametersInputBean identificationParametersInputBean = cliInputBean.getIdentificationParametersInputBean();
+        if (tempIdentificationParameters != null && identificationParametersInputBean.getInputFile() == null) {
+            identificationParametersInputBean.setIdentificationParameters(tempIdentificationParameters);
+            identificationParametersInputBean.updateIdentificationParameters();
         }
-
+        identificationParameters = identificationParametersInputBean.getIdentificationParameters();
+        ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+        if (validationQCPreferences == null || validationQCPreferences.getPsmFilters() == null || validationQCPreferences.getPeptideFilters() == null || validationQCPreferences.getProteinFilters() == null) {
+            MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
+        }
         if (identificationParameters == null) {
-            waitingHandler.appendReport("Search parameter settings not found!", true, true);
+            waitingHandler.appendReport("Identification parameters not found!", true, true);
             waitingHandler.setRunCanceled();
         }
-
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         String error = PeptideShaker.loadModifications(searchParameters);
         if (error != null) {
@@ -612,30 +612,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
         }
 
-        // set the filtering import settings
-        PeptideAssumptionFilter idFilter = new PeptideAssumptionFilter();
-        idFilter.setMinPepLength(cliInputBean.getMinPepLength());
-        idFilter.setMaxPepLength(cliInputBean.getMaxPepLength());
-        if (cliInputBean.getMaxMzDeviation() != null) {
-            idFilter.setMaxMzDeviation(cliInputBean.getMaxMzDeviation());
-        }
-        idFilter.setIsPpm(cliInputBean.isMaxMassDeviationPpm());
-        idFilter.setRemoveUnknownPTMs(cliInputBean.excludeUnknownPTMs());
-        identificationParameters.setIdFilter(idFilter);
-
-        // set the validation preferences
-        IdMatchValidationPreferences idMatchValidationPreferences = new IdMatchValidationPreferences();
-        idMatchValidationPreferences.setDefaultPsmFDR(cliInputBean.getPsmFDR());
-        idMatchValidationPreferences.setDefaultPeptideFDR(cliInputBean.getPeptideFDR());
-        idMatchValidationPreferences.setDefaultProteinFDR(cliInputBean.getProteinFDR());
-        MatchesValidator.setDefaultMatchesQCFilters(identificationParameters.getIdValidationPreferences().getValidationQCPreferences());
-        identificationParameters.setIdValidationPreferences(idMatchValidationPreferences);
-
-        // Set the fraction preferences
-        FractionSettings fractionSettings = new FractionSettings();
-        fractionSettings.setProteinConfidenceMwPlots(cliInputBean.getProteinConfidenceMwPlots());
-        identificationParameters.setFractionSettings(fractionSettings);
-
         // set the processing settings
         ProcessingPreferences processingPreferences = new ProcessingPreferences();
         Integer nThreads = cliInputBean.getnThreads();
@@ -646,46 +622,24 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // set up the shotgun protocol
         shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(searchParameters);
 
-        // set the PTM scoring preferences
-        PTMScoringPreferences ptmScoringPreferences = new PTMScoringPreferences();
-        ptmScoringPreferences.setSelectedProbabilisticScore(cliInputBean.getPtmScore());
-        if (cliInputBean.getPtmScore() != PtmScore.None) {
-            ptmScoringPreferences.setProbabilitsticScoreCalculation(true);
-            ptmScoringPreferences.setProbabilisticScoreNeutralLosses(cliInputBean.isaScoreNeutralLosses());
-            if (cliInputBean.getPtmScoreThreshold() != null) {
-                ptmScoringPreferences.setEstimateFlr(false);
-                ptmScoringPreferences.setProbabilisticScoreThreshold(cliInputBean.getPtmScoreThreshold());
-            } else {
-                ptmScoringPreferences.setEstimateFlr(true);
-            }
-        } else {
-            ptmScoringPreferences.setProbabilitsticScoreCalculation(false);
-        }
-        identificationParameters.setPtmScoringPreferences(ptmScoringPreferences);
-
-        // set the gene preferences
-        if (cliInputBean.getSpecies() != null) {
-
-            GenePreferences genePreferences = new GenePreferences();
-            identificationParameters.setGenePreferences(genePreferences);
+        // download the gene preferences if missing
+        GenePreferences genePreferences = identificationParameters.getGenePreferences();
+        String selectedSpecies = genePreferences.getCurrentSpecies();
+        String selectedSpeciesType = genePreferences.getCurrentSpeciesType();
+        if (selectedSpecies != null) {
 
             genePreferences.loadGeneMappings(PeptideShaker.getJarFilePath(), waitingHandler);
-
-            genePreferences.setCurrentSpecies(cliInputBean.getSpecies());
-            genePreferences.setCurrentSpeciesType(cliInputBean.getSpeciesType());
 
             // try to download gene and go information
             GeneFactory geneFactory = GeneFactory.getInstance();
 
-            String currentEnsemblSpeciesType = cliInputBean.getSpeciesType().toLowerCase();
-            if (currentEnsemblSpeciesType.equalsIgnoreCase("Vertebrates")) {
-                currentEnsemblSpeciesType = "ensembl";
+            if (selectedSpeciesType.equalsIgnoreCase("Vertebrates")) {
+                selectedSpeciesType = "ensembl";
             }
 
-            Integer latestEnsemblVersion = geneFactory.getCurrentEnsemblVersion(currentEnsemblSpeciesType);
+            Integer latestEnsemblVersion = geneFactory.getCurrentEnsemblVersion(selectedSpeciesType);
 
-            String selectedSpecies = cliInputBean.getSpecies();
-            String selectedDb = genePreferences.getEnsemblDatabaseName(cliInputBean.getSpeciesType(), selectedSpecies);
+            String selectedDb = genePreferences.getEnsemblDatabaseName(selectedSpeciesType, selectedSpecies);
             String currentEnsemblVersionAsString = genePreferences.getEnsemblVersion(selectedDb);
 
             boolean downloadNewMappings;
@@ -708,8 +662,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
             // download mappings if needed
             if (downloadNewMappings) {
-                genePreferences.clearOldMappings(cliInputBean.getSpeciesType(), selectedSpecies, true);
-                genePreferences.downloadMappings(waitingHandler, cliInputBean.getSpeciesType(), selectedSpecies, true);
+                genePreferences.clearOldMappings(selectedSpeciesType, selectedSpecies, true);
+                genePreferences.downloadMappings(waitingHandler, selectedSpeciesType, selectedSpecies, true);
             }
         }
 
@@ -925,83 +879,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             File parentFolder = testFile.getParentFile(); // @TODO: should check if parent file is null!
             if (!parentFolder.exists() && !parentFolder.mkdirs()) {
                 System.out.println("\nDestination folder \'" + parentFolder.getPath() + "\' not found and cannot be created. Make sure that PeptideShaker has the right to write in the destination folder.\n");
-                return false;
-            }
-        }
-
-        if (aLine.hasOption(PeptideShakerCLIParams.PSM_FDR.id)) {
-            String input = aLine.getOptionValue(PeptideShakerCLIParams.PSM_FDR.id).trim();
-            try {
-                Double.parseDouble(input);
-            } catch (Exception e) {
-                System.out.println("\nCould not parse \'" + input + "\' as PSM FDR threshold.\n");
-                return false;
-            }
-        }
-
-        if (aLine.hasOption(PeptideShakerCLIParams.PTM_SCORE.id)) {
-            String input = aLine.getOptionValue(PeptideShakerCLIParams.PTM_SCORE.id).trim();
-            try {
-                Integer.parseInt(input);
-            } catch (Exception e) {
-                System.out.println("\nCould not parse \'" + input + "\' as integer.\n");
-                return false;
-            }
-        }
-
-        if (aLine.hasOption(PeptideShakerCLIParams.SCORE_NEUTRAL_LOSSES.id)) {
-            String input = aLine.getOptionValue(PeptideShakerCLIParams.SCORE_NEUTRAL_LOSSES.id).trim();
-            try {
-                Integer.parseInt(input);
-            } catch (Exception e) {
-                System.out.println("\nCould not parse \'" + input + "\' as integer.\n");
-                return false;
-            }
-        }
-
-        if (aLine.hasOption(PeptideShakerCLIParams.PTM_THRESHOLD.id)) {
-            String input = aLine.getOptionValue(PeptideShakerCLIParams.PTM_THRESHOLD.id).trim();
-            try {
-                Double.parseDouble(input);
-            } catch (Exception e) {
-                System.out.println("\nCould not parse \'" + input + "\' as peptide PTM score threshold.\n");
-                return false;
-            }
-        }
-
-        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDE_FDR.id)) {
-            String input = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDE_FDR.id).trim();
-            try {
-                Double.parseDouble(input);
-            } catch (Exception e) {
-                System.out.println("\nCould not parse \'" + input + "\' as peptide FDR threshold.\n");
-                return false;
-            }
-        }
-
-        if (aLine.hasOption(PeptideShakerCLIParams.PROTEIN_FDR.id)) {
-            String input = aLine.getOptionValue(PeptideShakerCLIParams.PROTEIN_FDR.id).trim();
-            try {
-                Double.parseDouble(input);
-            } catch (Exception e) {
-                System.out.println("\nCould not parse \'" + input + "\' as protein FDR threshold.\n");
-                return false;
-            }
-        }
-
-        if (aLine.hasOption(PeptideShakerCLIParams.IDENTIFICATION_PARAMETERS.id)) {
-
-            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_PARAMETERS.id).trim();
-            File testFile = new File(filesTxt);
-            if (testFile.exists()) {
-                try {
-                    SearchParameters.getIdentificationParameters(testFile);
-                } catch (Exception e) {
-                    System.out.println("\nAn error occurred while parsing \'" + filesTxt + "\'.\n");
-                    e.printStackTrace();
-                }
-            } else {
-                System.out.println("\nSearch parameters file \'" + filesTxt + "\' not found.\n");
                 return false;
             }
         }
