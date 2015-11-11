@@ -5,6 +5,7 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.identification.identification_parameters.IdentificationParametersFactory;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.io.identifications.MzIdentMLIdfileSearchParametersConverter;
 import com.compomics.util.experiment.massspectrometry.Charge;
@@ -17,6 +18,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.preferences.LastSelectedFolder;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
+import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.WelcomeDialog;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
@@ -211,6 +213,10 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      * The Reshake setup dialog.
      */
     private PrideReshakeSetupDialog prideReshakeSetupDialog;
+    /**
+     * The identification parameters factory.
+     */
+    private IdentificationParametersFactory identificationParametersFactory = IdentificationParametersFactory.getInstance();
 
     /**
      * Creates a new PrideReShakeGUI frame.
@@ -702,7 +708,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         });
 
         projectHelpLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        projectHelpLabel.setText("Select a projects to see the project details. For more details click the Accession links.");
+        projectHelpLabel.setText("Select a project to see the project details. For more details click the Accession links.");
 
         browsePublicDataLabel.setText("<html><a href=\"dummy\">Browse Public Data</a></html>  ");
         browsePublicDataLabel.setToolTipText("Browse all public data");
@@ -919,7 +925,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         filesTableScrollPane.setViewportView(filesTable);
 
         filesHelpLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        filesHelpLabel.setText("When you have found the wanted files click Reshake PRIDE Data to start re-analyzing. Supported formats: peak lists, raw data and PRIDE XML.");
+        filesHelpLabel.setText("When you have found the wanted assays click Reshake PRIDE Data to start re-analyzing. Supported formats: peak lists, raw data and PRIDE XML.");
 
         reshakableCheckBox.setSelected(true);
         reshakableCheckBox.setText("Reshakeable Files Only");
@@ -954,7 +960,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             .addGroup(filesPanelLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(filesHelpLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 130, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 116, Short.MAX_VALUE)
                 .addComponent(downloadAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(reshakableCheckBox)
@@ -2635,7 +2641,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                     if (mgfConversionOk) {
                         // save the search params
-                        File parametersFile = new File(outputFolder, "pride.par");
+                        File parametersFile = new File(outputFolder, getIdentificationSettingsFileName(prideSearchParameters) + ".par");
                         SearchParameters.saveIdentificationParameters(prideSearchParameters, parametersFile);
                     }
 
@@ -2667,7 +2673,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                         // display the detected search parameters to the user
                         new PrideSearchParametersDialog(PrideReshakeGUI.this,
-                                new File(outputFolder, "pride.par"), prideSearchParametersReport, mgfFiles, rawFiles, selectedSpecies, selectedSpeciesType, true);
+                                new File(outputFolder, getIdentificationSettingsFileName(prideSearchParameters) + ".par"), prideSearchParametersReport, mgfFiles, rawFiles, selectedSpecies, selectedSpeciesType, true);
                     }
 
                 } catch (Exception e) {
@@ -2684,6 +2690,29 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         }.start();
     }
 
+    /**
+     * Returns the name to use for the identification settings file.
+     * 
+     * @param prideSearchParameters the search parameters
+     * @return the name to use for the identification settings file
+     */
+    private String getIdentificationSettingsFileName(SearchParameters prideSearchParameters) {
+        
+        String name = getCurrentPxAccession();
+        int counter = 2;
+        String currentName = name;
+        
+        IdentificationParameters newParameters = new IdentificationParameters(prideSearchParameters);
+        newParameters.setName(currentName);
+        
+        while (identificationParametersFactory.getParametersList().contains(currentName) 
+                && !identificationParametersFactory.getIdentificationParameters(currentName).equals(newParameters)) {
+            currentName = name + "_" + counter++;
+        }
+        
+        return currentName;
+    }
+    
     /**
      * Get the search parameters from the PRIDE project. Returns the PRIDE
      * search parameters as a string.
@@ -3307,6 +3336,27 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      */
     public JTable getFilesTable() {
         return filesTable;
+    }
+    
+    /**
+     * Returns the current PX accession number. Null if no project is selected.
+     * 
+     * @return the current PX accession number
+     */
+    public String getCurrentPxAccession() {
+        int selectedRow = projectsTable.getSelectedRow();
+        
+        if (selectedRow != -1) {
+            String projectAccession = (String) projectsTable.getValueAt(selectedRow, 1);
+            
+            if (password == null) {
+                projectAccession = projectAccession.substring(projectAccession.lastIndexOf("\">") + 2, projectAccession.lastIndexOf("</font"));
+            }
+            
+            return projectAccession;
+        }
+        
+        return null;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
