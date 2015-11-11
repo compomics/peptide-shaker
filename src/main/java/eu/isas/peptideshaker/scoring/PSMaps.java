@@ -51,7 +51,7 @@ public class PSMaps implements UrParameter {
      *
      * @param proteinMap the protein map
      * @param PsmSpecificMap the PSM map
-     * @param PeptideSpecificMap The peptide map
+     * @param PeptideSpecificMap the peptide map
      * @param inputMap the target decoy map of all search engine scores
      * @param psmPTMMap the PSM level PTM scoring map
      */

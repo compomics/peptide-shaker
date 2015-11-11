@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import javax.swing.RowFilter;
 import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -517,7 +516,7 @@ public abstract class MatchFilter implements Serializable, Filter {
                 }
             }
         }
-        return false;
+        return true;
     }
     
     /**

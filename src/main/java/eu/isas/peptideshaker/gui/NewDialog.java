@@ -13,6 +13,7 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
+import com.compomics.util.experiment.identification.identification_parameters.IdentificationParametersFactory;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.gui.GuiUtilities;
@@ -25,8 +26,9 @@ import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
-import com.compomics.util.gui.parameters.IdentificationParametersSelectionDialog;
+import com.compomics.util.gui.parameters.IdentificationParametersEditionDialog;
 import com.compomics.util.gui.parameters.ProcessingPreferencesDialog;
+import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.ProteinInferencePreferences;
@@ -50,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * A dialog for selecting the files to load.
@@ -135,6 +138,10 @@ public class NewDialog extends javax.swing.JDialog {
      * The project details.
      */
     private ProjectDetails projectDetails = new ProjectDetails();
+    /**
+     * The identification parameters factory.
+     */
+    private IdentificationParametersFactory identificationParametersFactory = IdentificationParametersFactory.getInstance();
 
     /**
      * Creates a new open dialog.
@@ -183,10 +190,22 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private void setUpGui() {
         initComponents();
+        settingsComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         idFilesTxt.setText(idFiles.size() + " file(s) selected");
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         fastaFileTxt.setText("");
         processingTxt.setText(processingPreferences.getnThreads() + " threads");
+        
+        // set the search parameters
+        Vector parameterList = new Vector();
+        parameterList.add("-- Select --");
+
+        for (String tempParameters : identificationParametersFactory.getParametersList()) {
+            parameterList.add(tempParameters);
+        }
+
+        settingsComboBox.setModel(new javax.swing.DefaultComboBoxModel(parameterList));
+        
         validateInput();
         GuiUtilities.installEscapeCloseOperation(this);
     }
@@ -213,12 +232,13 @@ public class NewDialog extends javax.swing.JDialog {
         projectSettingsTxt = new javax.swing.JTextField();
         projectSettingsLabel = new javax.swing.JLabel();
         identificationParametersLabel = new javax.swing.JLabel();
-        identificationParametersTxt = new javax.swing.JTextField();
-        editSearchButton = new javax.swing.JButton();
+        editSettingsButton = new javax.swing.JButton();
         projectSettingsButton = new javax.swing.JButton();
         processingLbl = new javax.swing.JLabel();
         processingTxt = new javax.swing.JTextField();
         editProcessingButton = new javax.swing.JButton();
+        addSettingsButton = new javax.swing.JButton();
+        settingsComboBox = new javax.swing.JComboBox();
         inputFilesPanel = new javax.swing.JPanel();
         idFilesLabel = new javax.swing.JLabel();
         idFilesTxt = new javax.swing.JTextField();
@@ -340,14 +360,11 @@ public class NewDialog extends javax.swing.JDialog {
 
         identificationParametersLabel.setText("Identification");
 
-        identificationParametersTxt.setEditable(false);
-        identificationParametersTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        identificationParametersTxt.setText("Default");
-
-        editSearchButton.setText("Edit");
-        editSearchButton.addActionListener(new java.awt.event.ActionListener() {
+        editSettingsButton.setText("Edit");
+        editSettingsButton.setEnabled(false);
+        editSettingsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editSearchButtonActionPerformed(evt);
+                editSettingsButtonActionPerformed(evt);
             }
         });
 
@@ -371,6 +388,20 @@ public class NewDialog extends javax.swing.JDialog {
             }
         });
 
+        addSettingsButton.setText("Add");
+        addSettingsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addSettingsButtonActionPerformed(evt);
+            }
+        });
+
+        settingsComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Select --" }));
+        settingsComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                settingsComboBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout processingParametersPanelLayout = new javax.swing.GroupLayout(processingParametersPanel);
         processingParametersPanel.setLayout(processingParametersPanelLayout);
         processingParametersPanelLayout.setHorizontalGroup(
@@ -378,20 +409,26 @@ public class NewDialog extends javax.swing.JDialog {
             .addGroup(processingParametersPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(projectSettingsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
-                        .addComponent(identificationParametersLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
-                    .addComponent(processingLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(processingTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
-                    .addComponent(identificationParametersTxt, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(projectSettingsTxt, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addGroup(processingParametersPanelLayout.createSequentialGroup()
+                        .addComponent(processingLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(processingTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
+                            .addComponent(projectSettingsTxt, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addGroup(processingParametersPanelLayout.createSequentialGroup()
+                        .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(projectSettingsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                            .addComponent(identificationParametersLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(settingsComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(editProcessingButton, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
-                    .addComponent(projectSettingsButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
-                    .addComponent(editSearchButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(editProcessingButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(projectSettingsButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(processingParametersPanelLayout.createSequentialGroup()
+                        .addComponent(addSettingsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(editSettingsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         processingParametersPanelLayout.setVerticalGroup(
@@ -400,8 +437,9 @@ public class NewDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(identificationParametersLabel)
-                    .addComponent(identificationParametersTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(editSearchButton))
+                    .addComponent(editSettingsButton)
+                    .addComponent(addSettingsButton)
+                    .addComponent(settingsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(projectSettingsLabel)
@@ -789,7 +827,7 @@ public class NewDialog extends javax.swing.JDialog {
     private void browseDbButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseDbButtonActionPerformed
 
         if (identificationParameters == null) {
-            editSearchButtonActionPerformed(null);
+            editSettingsButtonActionPerformed(null);
         } else {
 
             SequenceDbDetailsDialog sequenceDbDetailsDialog = new SequenceDbDetailsDialog(peptideShakerGUI, peptideShakerGUI.getLastSelectedFolder(), true,
@@ -1156,20 +1194,19 @@ public class NewDialog extends javax.swing.JDialog {
 }//GEN-LAST:event_browseIdActionPerformed
 
     /**
-     * Open the SearchSettingsDialog dialog.
+     * Open the IdentificationParametersEditionDialog.
      *
      * @param evt
      */
-    private void editSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSearchButtonActionPerformed
-        IdentificationParametersSelectionDialog identificationParametersSelectionDialog = new IdentificationParametersSelectionDialog(
-                peptideShakerGUI, this, identificationParameters, IdentificationParametersSelectionDialog.StartupMode.advanced, 
-                PeptideShaker.getConfigurationFile(), peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), 
-                peptideShakerGUI.getLastSelectedFolder(), peptideShakerGUI, true);
-        if (!identificationParametersSelectionDialog.isCanceled()) {
-            setIdentificationParameters(identificationParametersSelectionDialog.getIdentificationParameters());
-            validateInput();
+    private void editSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSettingsButtonActionPerformed
+        IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(
+                this, peptideShakerGUI, identificationParameters, PeptideShaker.getConfigurationFile(), Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), peptideShakerGUI.getLastSelectedFolder(), null, true);
+
+        if (!identificationParametersEditionDialog.isCanceled()) {
+            setIdentificationParameters(identificationParametersEditionDialog.getIdentificationParameters());
         }
-    }//GEN-LAST:event_editSearchButtonActionPerformed
+    }//GEN-LAST:event_editSettingsButtonActionPerformed
 
     /**
      * Open the ImportSettingsDialog.
@@ -1325,8 +1362,48 @@ public class NewDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_spectrumFilesTxtMouseClicked
 
+    /**
+     * Load search settings from a file.
+     *
+     * @param evt the action event
+     */
+    private void addSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSettingsButtonActionPerformed
+        IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(
+                this, peptideShakerGUI, null, PeptideShaker.getConfigurationFile(), Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), peptideShakerGUI.getLastSelectedFolder(), null, true);
+
+        if (!identificationParametersEditionDialog.isCanceled()) {
+            setIdentificationParameters(identificationParametersEditionDialog.getIdentificationParameters());
+        }
+    }//GEN-LAST:event_addSettingsButtonActionPerformed
+
+    /**
+     * Enable/disable the Edit button for the settings.
+     *
+     * @param evt
+     */
+    private void settingsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsComboBoxActionPerformed
+        editSettingsButton.setEnabled(settingsComboBox.getSelectedIndex() != 0);
+
+        if (settingsComboBox.getSelectedIndex() != 0) {
+            File identificationParametersFile = IdentificationParametersFactory.getIdentificationParametersFile((String) settingsComboBox.getSelectedItem());
+            try {
+                identificationParameters = IdentificationParameters.getIdentificationParameters(identificationParametersFile);
+                //enableSearchEnginePanel(true);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null,
+                        "Failed to import search parameters from: " + identificationParametersFile.getAbsolutePath() + ".", "Search Parameters",
+                        JOptionPane.WARNING_MESSAGE);
+                e.printStackTrace();
+            }
+        } else {
+            //enableSearchEnginePanel(false);
+        }
+    }//GEN-LAST:event_settingsComboBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aboutButton;
+    private javax.swing.JButton addSettingsButton;
     private javax.swing.JButton browseDbButton;
     private javax.swing.JButton browseId;
     private javax.swing.JButton browseSpectra;
@@ -1335,12 +1412,11 @@ public class NewDialog extends javax.swing.JDialog {
     private javax.swing.JButton clearSpectra;
     private javax.swing.JLabel databaseLabel;
     private javax.swing.JButton editProcessingButton;
-    private javax.swing.JButton editSearchButton;
+    private javax.swing.JButton editSettingsButton;
     private javax.swing.JTextField fastaFileTxt;
     private javax.swing.JLabel idFilesLabel;
     private javax.swing.JTextField idFilesTxt;
     private javax.swing.JLabel identificationParametersLabel;
-    private javax.swing.JTextField identificationParametersTxt;
     private javax.swing.JPanel inputFilesPanel;
     private javax.swing.JButton loadButton;
     private javax.swing.JLabel peptideShakerPublicationLabel;
@@ -1358,6 +1434,7 @@ public class NewDialog extends javax.swing.JDialog {
     private javax.swing.JPanel sampleDetailsPanel;
     private javax.swing.JTextField sampleNameIdtxt;
     private javax.swing.JLabel sampleNameLabel;
+    private javax.swing.JComboBox settingsComboBox;
     private javax.swing.JLabel spectrumFilesLabel;
     private javax.swing.JTextField spectrumFilesTxt;
     // End of variables declaration//GEN-END:variables
@@ -1454,11 +1531,11 @@ public class NewDialog extends javax.swing.JDialog {
         if (identificationParameters != null) {
             identificationParametersLabel.setForeground(Color.BLACK);
             identificationParametersLabel.setToolTipText(null);
-            identificationParametersTxt.setToolTipText(null);
+            settingsComboBox.setToolTipText(null);
         } else {
             identificationParametersLabel.setForeground(Color.RED);
             identificationParametersLabel.setToolTipText("Please set the identification parameters");
-            identificationParametersTxt.setToolTipText("Please set the identification parameters");
+            settingsComboBox.setToolTipText("Please set the identification parameters");
         }
 
         // enable/disable the Create! button
@@ -1666,6 +1743,13 @@ public class NewDialog extends javax.swing.JDialog {
         if (validationQCPreferences == null || validationQCPreferences.getPsmFilters() == null || validationQCPreferences.getPeptideFilters() == null || validationQCPreferences.getProteinFilters() == null) {
             MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
         }
+        
+        if (!identificationParametersFactory.getParametersList().contains(tempIdentificationParameters.getName())) {
+            identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
+        } else {
+            // @TODO: what to do here..?
+        }
+        
         setIdentificationParameters(tempIdentificationParameters);
     }
 
@@ -1851,7 +1935,17 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private void setIdentificationParameters(IdentificationParameters identificationParameters) {
         this.identificationParameters = identificationParameters;
-        identificationParametersTxt.setText(identificationParameters.getName());
+        
+        Vector parameterList = new Vector();
+        parameterList.add("-- Select --");
+
+        for (String tempParameters : identificationParametersFactory.getParametersList()) {
+            parameterList.add(tempParameters);
+        }
+
+        settingsComboBox.setModel(new javax.swing.DefaultComboBoxModel(parameterList));
+        settingsComboBox.setSelectedItem(identificationParameters.getName());
+        
         ProteinInferencePreferences proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
         File fastaFile = proteinInferencePreferences.getProteinSequenceDatabase();
         if (fastaFile == null) { // Backward compatibility
@@ -2015,7 +2109,7 @@ public class NewDialog extends javax.swing.JDialog {
                 try {
                     importSearchParameters(parameterFile, dataFolders, progressDialog);
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, "Error occurred while reading " + parameterFile + ". Please verify the search paramters.", "File error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error occurred while reading " + parameterFile + ". Please verify the search parameters.", "File error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
             }

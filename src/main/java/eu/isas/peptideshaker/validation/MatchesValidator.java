@@ -1470,7 +1470,7 @@ public class MatchesValidator {
 
                         updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey, applyQCFilters);
 
-                        // Update assumption validation level
+                        // update assumption validation level
                         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
                         for (HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> algorithmMap : assumptions.values()) {
                             for (ArrayList<SpectrumIdentificationAssumption> scoreList : algorithmMap.values()) {
@@ -1486,7 +1486,7 @@ public class MatchesValidator {
                             }
                         }
 
-                        // Update search engine agreement
+                        // update search engine agreement
                         PSParameter psParameter = new PSParameter();
                         psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
@@ -1496,7 +1496,7 @@ public class MatchesValidator {
 
                             if (psParameter.getMatchValidationLevel().isValidated()) {
                                 double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
-                    SearchParameters searchParameters = identificationParameters.getSearchParameters();
+                                SearchParameters searchParameters = identificationParameters.getSearchParameters();
                                 double precursorMzError = peptideAssumption.getDeltaMass(precursorMz, searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection());
                                 threadPrecursorMzDeviations.add(precursorMzError);
                             }

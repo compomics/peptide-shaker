@@ -232,23 +232,32 @@
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="projectSettingsLabel" alignment="0" pref="130" max="32767" attributes="1"/>
-                              <Component id="identificationParametersLabel" alignment="0" pref="130" max="32767" attributes="1"/>
+                          <Group type="102" attributes="0">
+                              <Component id="processingLbl" min="-2" pref="131" max="-2" attributes="1"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="processingTxt" pref="519" max="32767" attributes="3"/>
+                                  <Component id="projectSettingsTxt" alignment="1" max="32767" attributes="3"/>
+                              </Group>
                           </Group>
-                          <Component id="processingLbl" min="-2" pref="131" max="-2" attributes="1"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="processingTxt" pref="519" max="32767" attributes="3"/>
-                          <Component id="identificationParametersTxt" alignment="1" max="32767" attributes="1"/>
-                          <Component id="projectSettingsTxt" alignment="1" max="32767" attributes="3"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="projectSettingsLabel" alignment="0" pref="130" max="32767" attributes="1"/>
+                                  <Component id="identificationParametersLabel" alignment="0" pref="130" max="32767" attributes="1"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="settingsComboBox" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="editProcessingButton" pref="145" max="32767" attributes="1"/>
-                          <Component id="projectSettingsButton" alignment="1" pref="145" max="32767" attributes="1"/>
-                          <Component id="editSearchButton" alignment="1" max="32767" attributes="1"/>
+                          <Component id="editProcessingButton" max="32767" attributes="1"/>
+                          <Component id="projectSettingsButton" alignment="1" max="32767" attributes="1"/>
+                          <Group type="102" attributes="0">
+                              <Component id="addSettingsButton" min="-2" pref="69" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Component id="editSettingsButton" min="-2" pref="70" max="-2" attributes="1"/>
+                          </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -260,8 +269,9 @@
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="identificationParametersLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="identificationParametersTxt" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="editSearchButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="editSettingsButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="addSettingsButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="settingsComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -298,19 +308,13 @@
                 <Property name="text" type="java.lang.String" value="Identification"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="identificationParametersTxt">
-              <Properties>
-                <Property name="editable" type="boolean" value="false"/>
-                <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="Default"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JButton" name="editSearchButton">
+            <Component class="javax.swing.JButton" name="editSettingsButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Edit"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editSearchButtonActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editSettingsButtonActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JButton" name="projectSettingsButton">
@@ -340,6 +344,29 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editProcessingButtonActionPerformed"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="addSettingsButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Add"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addSettingsButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="settingsComboBox">
+              <Properties>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="1">
+                    <StringItem index="0" value="-- Select --"/>
+                  </StringArray>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="settingsComboBoxActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>
