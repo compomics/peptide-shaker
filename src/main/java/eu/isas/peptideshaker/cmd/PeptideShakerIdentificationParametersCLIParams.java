@@ -19,7 +19,7 @@ public class PeptideShakerIdentificationParametersCLIParams {
      */
     public static void createOptionsCLI(Options aOptions) {
         for (IdentificationParametersCLIParams identificationParametersCLIParams : IdentificationParametersCLIParams.values()) {
-        aOptions.addOption(identificationParametersCLIParams.id, true, identificationParametersCLIParams.description);
+            aOptions.addOption(identificationParametersCLIParams.id, true, identificationParametersCLIParams.description);
         }
         //@TODO: Add QC filters?
     }
