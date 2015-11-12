@@ -50,7 +50,7 @@ All data can also easily be exported for follow up analysis in other tools.
 For further help see the [Bioinformatics for Proteomics Tutorial](http://compomics.com/bioinformatics-for-proteomics/).
 
 If you have any questions, suggestions or remarks, feel free to contact us via the
-[PeptideShaker Google Group](http://groups.google.com/group/peptide-shaker). For bug reports please use the [issues tracker](https://github.com/compomics/peptide-shaker/issues).
+[PeptideShaker Google Group](http://groups.google.com/group/peptide-shaker). For specific bug reports or issues please use the [issues tracker](https://github.com/compomics/peptide-shaker/issues).
 
 To start using PeptideShaker, unzip the downloaded file, and double-click the `PeptideShaker-X.Y.Z.jar file`. No additional installation required!
 
