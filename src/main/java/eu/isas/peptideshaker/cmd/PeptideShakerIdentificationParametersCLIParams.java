@@ -19,7 +19,7 @@ public class PeptideShakerIdentificationParametersCLIParams {
      */
     public static void createOptionsCLI(Options aOptions) {
         for (IdentificationParametersCLIParams identificationParametersCLIParams : IdentificationParametersCLIParams.values()) {
-            aOptions.addOption(identificationParametersCLIParams.id, true, identificationParametersCLIParams.description);
+            aOptions.addOption(identificationParametersCLIParams.id, identificationParametersCLIParams.hasArgument, identificationParametersCLIParams.description);
         }
         //@TODO: Add QC filters?
     }
@@ -35,8 +35,8 @@ public class PeptideShakerIdentificationParametersCLIParams {
         String formatter = "%-25s";
 
         output += "Parameters Files:\n\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.OUT.id) + IdentificationParametersCLIParams.OUT.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.id) + IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.OUT.id) + IdentificationParametersCLIParams.OUT.description + " Mandatory option.\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.id) + IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.description + " Optional parameter.\n";
         output += getParametersOptionsAsString();
         return output;
     }
