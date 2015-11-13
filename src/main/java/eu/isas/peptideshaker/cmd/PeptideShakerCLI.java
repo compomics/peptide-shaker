@@ -528,7 +528,13 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                         try {
                             tempIdentificationParameters = IdentificationParameters.getIdentificationParameters(unzippedFile);
                             ValidationQCPreferences validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
-                            if (validationQCPreferences == null || validationQCPreferences.getPsmFilters() == null || validationQCPreferences.getPeptideFilters() == null || validationQCPreferences.getProteinFilters() == null) {
+                            if (validationQCPreferences == null 
+                || validationQCPreferences.getPsmFilters() == null 
+                || validationQCPreferences.getPeptideFilters() == null 
+                || validationQCPreferences.getProteinFilters() == null
+                || validationQCPreferences.getPsmFilters().isEmpty()
+                && validationQCPreferences.getPeptideFilters().isEmpty() 
+                && validationQCPreferences.getProteinFilters().isEmpty()) {
                                 MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
                             }
                         } catch (Exception e) {
@@ -565,7 +571,13 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
         identificationParameters = identificationParametersInputBean.getIdentificationParameters();
         ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
-        if (validationQCPreferences == null || validationQCPreferences.getPsmFilters() == null || validationQCPreferences.getPeptideFilters() == null || validationQCPreferences.getProteinFilters() == null) {
+        if (validationQCPreferences == null 
+                || validationQCPreferences.getPsmFilters() == null 
+                || validationQCPreferences.getPeptideFilters() == null 
+                || validationQCPreferences.getProteinFilters() == null
+                || validationQCPreferences.getPsmFilters().isEmpty()
+                && validationQCPreferences.getPeptideFilters().isEmpty() 
+                && validationQCPreferences.getProteinFilters().isEmpty()) {
             MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
         }
         if (identificationParameters == null) {

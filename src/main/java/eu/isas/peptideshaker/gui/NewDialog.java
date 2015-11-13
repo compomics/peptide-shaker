@@ -1979,7 +1979,13 @@ public class NewDialog extends javax.swing.JDialog {
 
         try {
             ValidationQCPreferences validationQCPreferences = newIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
-            if (validationQCPreferences == null || validationQCPreferences.getPsmFilters() == null || validationQCPreferences.getPeptideFilters() == null || validationQCPreferences.getProteinFilters() == null) {
+            if (validationQCPreferences == null 
+                || validationQCPreferences.getPsmFilters() == null 
+                || validationQCPreferences.getPeptideFilters() == null 
+                || validationQCPreferences.getProteinFilters() == null
+                || validationQCPreferences.getPsmFilters().isEmpty()
+                && validationQCPreferences.getPeptideFilters().isEmpty() 
+                && validationQCPreferences.getProteinFilters().isEmpty()) {
                 MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
                 identificationParametersFactory.addIdentificationParameters(newIdentificationParameters);
             }
