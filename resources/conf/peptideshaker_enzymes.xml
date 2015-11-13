@@ -249,5 +249,24 @@
 		<semiSpecific> yes </semiSpecific>
 		<wholeProtein> no </wholeProtein>
 	</enzyme>
+	<enzyme>
+		<id> 25 </id>
+		<name> LysargiNase </name>
+		<aminoAcidBefore>  </aminoAcidBefore>
+		<restrictionBefore>  </restrictionBefore>
+		<aminoAcidAfter> RK </aminoAcidAfter>
+		<restrictionAfter>  </restrictionAfter>
+		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
+	</enzyme>
+	<enzyme>
+		<id> 26 </id>
+		<name> Semi-LysargiNase </name>
+		<aminoAcidBefore>  </aminoAcidBefore>
+		<restrictionBefore>  </restrictionBefore>
+		<aminoAcidAfter> RK </aminoAcidAfter>
+		<restrictionAfter>  </restrictionAfter>
+		<semiSpecific> yes </semiSpecific>
+		<wholeProtein> no </wholeProtein>
+	</enzyme>
 </xml>
-

@@ -155,7 +155,7 @@ public class NewDialog extends javax.swing.JDialog {
         this.welcomeDialog = null;
 
         processingPreferences = new ProcessingPreferences();
-        processingTxt.setText(processingPreferences.getnThreads() + " threads");
+        processingTxt.setText(processingPreferences.getnThreads() + " cores");
 
         loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
@@ -194,7 +194,7 @@ public class NewDialog extends javax.swing.JDialog {
         idFilesTxt.setText(idFiles.size() + " file(s) selected");
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         fastaFileTxt.setText("");
-        processingTxt.setText(processingPreferences.getnThreads() + " threads");
+        processingTxt.setText(processingPreferences.getnThreads() + " cores");
         
         // set the search parameters
         Vector parameterList = new Vector();
@@ -507,7 +507,7 @@ public class NewDialog extends javax.swing.JDialog {
         });
 
         databaseLabel.setForeground(new java.awt.Color(255, 0, 0));
-        databaseLabel.setText("Database File (FASTA)*");
+        databaseLabel.setText("Database File*");
 
         fastaFileTxt.setEditable(false);
         fastaFileTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -1201,7 +1201,7 @@ public class NewDialog extends javax.swing.JDialog {
     private void editSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSettingsButtonActionPerformed
         IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(
                 this, peptideShakerGUI, identificationParameters, PeptideShaker.getConfigurationFile(), Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), peptideShakerGUI.getLastSelectedFolder(), null, true);
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), peptideShakerGUI.getLastSelectedFolder(), peptideShakerGUI, true);
 
         if (!identificationParametersEditionDialog.isCanceled()) {
             setIdentificationParameters(identificationParametersEditionDialog.getIdentificationParameters());
@@ -1214,13 +1214,11 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void projectSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectSettingsButtonActionPerformed
-
         ProjectSettingsDialog preferencesDialog = new ProjectSettingsDialog(peptideShakerGUI, spectrumCountingPreferences, displayPreferences);
         if (!preferencesDialog.isCanceled()) {
             spectrumCountingPreferences = preferencesDialog.getSpectrumCountingPreferences();
             displayPreferences = preferencesDialog.getDisplayPreferences();
         }
-
     }//GEN-LAST:event_projectSettingsButtonActionPerformed
 
     /**
@@ -1268,7 +1266,7 @@ public class NewDialog extends javax.swing.JDialog {
         ProcessingPreferencesDialog processingPreferencesDialog = new ProcessingPreferencesDialog(this, peptideShakerGUI, processingPreferences, true);
         if (!processingPreferencesDialog.isCanceled()) {
             processingPreferences = processingPreferencesDialog.getProcessingPreferences();
-            processingTxt.setText(processingPreferences.getnThreads() + " threads");
+            processingTxt.setText(processingPreferences.getnThreads() + " cores");
         }
     }//GEN-LAST:event_editProcessingButtonActionPerformed
 
@@ -1389,16 +1387,16 @@ public class NewDialog extends javax.swing.JDialog {
             File identificationParametersFile = IdentificationParametersFactory.getIdentificationParametersFile((String) settingsComboBox.getSelectedItem());
             try {
                 identificationParameters = IdentificationParameters.getIdentificationParameters(identificationParametersFile);
-                //enableSearchEnginePanel(true);
+                setIdentificationParameters(identificationParameters);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null,
                         "Failed to import search parameters from: " + identificationParametersFile.getAbsolutePath() + ".", "Search Parameters",
                         JOptionPane.WARNING_MESSAGE);
                 e.printStackTrace();
             }
-        } else {
-            //enableSearchEnginePanel(false);
         }
+        
+        validateInput();
     }//GEN-LAST:event_settingsComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1527,8 +1525,8 @@ public class NewDialog extends javax.swing.JDialog {
             }
             allValid = false;
         }
-        
-        if (identificationParameters != null) {
+
+        if (identificationParameters != null && settingsComboBox.getSelectedIndex() != 0) {
             identificationParametersLabel.setForeground(Color.BLACK);
             identificationParametersLabel.setToolTipText(null);
             settingsComboBox.setToolTipText(null);
@@ -1536,6 +1534,7 @@ public class NewDialog extends javax.swing.JDialog {
             identificationParametersLabel.setForeground(Color.RED);
             identificationParametersLabel.setToolTipText("Please set the identification parameters");
             settingsComboBox.setToolTipText("Please set the identification parameters");
+            allValid = false;
         }
 
         // enable/disable the Create! button
@@ -1739,18 +1738,55 @@ public class NewDialog extends javax.swing.JDialog {
                 fastaFileTxt.setText(fastaFile.getName());
             }
         }
+        
+        boolean matchesValidationAdded;
         ValidationQCPreferences validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
         if (validationQCPreferences == null || validationQCPreferences.getPsmFilters() == null || validationQCPreferences.getPeptideFilters() == null || validationQCPreferences.getProteinFilters() == null) {
             MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
+            matchesValidationAdded = true;
+        } else {
+            matchesValidationAdded = false;
         }
-        
+
         if (!identificationParametersFactory.getParametersList().contains(tempIdentificationParameters.getName())) {
             identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
         } else {
-            // @TODO: what to do here..?
+            boolean matchesValidationChanged = identificationParametersFactory.getIdentificationParameters(tempIdentificationParameters.getName()).getIdValidationPreferences().equals(tempIdentificationParameters.getIdValidationPreferences());
+            boolean otherSettingsChanged = !identificationParametersFactory.getIdentificationParameters(tempIdentificationParameters.getName()).equalsExceptValidationPreferences(tempIdentificationParameters);
+            
+            if (otherSettingsChanged || matchesValidationChanged && !matchesValidationAdded) {
+                int value = JOptionPane.showConfirmDialog(this, "A settings file with the same name already exists. Overwrite file?", "Overwrite File?", JOptionPane.YES_NO_OPTION);
+                if (value == JOptionPane.YES_OPTION) {
+                    identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
+                } else {
+                    tempIdentificationParameters.setName(getIdentificationSettingsFileName(tempIdentificationParameters));
+                    identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
+                }
+            } else if (matchesValidationAdded) {
+                identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
+            }
         }
         
         setIdentificationParameters(tempIdentificationParameters);
+    }
+    
+    /**
+     * Returns the name to use for the identification settings file.
+     *
+     * @return the name to use for the identification settings file
+     */
+    private String getIdentificationSettingsFileName(IdentificationParameters tempIdentificationParameters) {
+
+        String name = tempIdentificationParameters.getName();
+        int counter = 2;
+        String currentName = name;
+
+        while (identificationParametersFactory.getParametersList().contains(currentName)
+                && !identificationParametersFactory.getIdentificationParameters(currentName).equals(tempIdentificationParameters)) {
+            currentName = name + "_" + counter++;
+        }
+
+        return currentName;
     }
 
     /**
@@ -1931,30 +1967,47 @@ public class NewDialog extends javax.swing.JDialog {
      * Sets the search parameters in the identification parameters and updates
      * the GUI.
      *
-     * @param searchParameters new search parameters
+     * @param newIdentificationParameters the new identification parameters
      */
-    private void setIdentificationParameters(IdentificationParameters identificationParameters) {
-        this.identificationParameters = identificationParameters;
-        
-        Vector parameterList = new Vector();
-        parameterList.add("-- Select --");
+    private void setIdentificationParameters(IdentificationParameters newIdentificationParameters) {
 
-        for (String tempParameters : identificationParametersFactory.getParametersList()) {
-            parameterList.add(tempParameters);
-        }
-
-        settingsComboBox.setModel(new javax.swing.DefaultComboBoxModel(parameterList));
-        settingsComboBox.setSelectedItem(identificationParameters.getName());
-        
-        ProteinInferencePreferences proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
-        File fastaFile = proteinInferencePreferences.getProteinSequenceDatabase();
-        if (fastaFile == null) { // Backward compatibility
-            fastaFile = identificationParameters.getSearchParameters().getFastaFile();
-            if (fastaFile != null) {
-                proteinInferencePreferences.setProteinSequenceDatabase(fastaFile);
+        try {
+            ValidationQCPreferences validationQCPreferences = newIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+            if (validationQCPreferences == null || validationQCPreferences.getPsmFilters() == null || validationQCPreferences.getPeptideFilters() == null || validationQCPreferences.getProteinFilters() == null) {
+                MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
+                identificationParametersFactory.addIdentificationParameters(newIdentificationParameters);
             }
+
+            this.identificationParameters = newIdentificationParameters;
+
+            Vector parameterList = new Vector();
+            parameterList.add("-- Select --");
+
+            for (String tempParameters : identificationParametersFactory.getParametersList()) {
+                parameterList.add(tempParameters);
+            }
+
+            settingsComboBox.setModel(new javax.swing.DefaultComboBoxModel(parameterList));
+            settingsComboBox.setSelectedItem(identificationParameters.getName());
+
+            ProteinInferencePreferences proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
+            File fastaFile = proteinInferencePreferences.getProteinSequenceDatabase();
+            if (fastaFile == null) { // Backward compatibility
+                fastaFile = identificationParameters.getSearchParameters().getFastaFile();
+                if (fastaFile != null) {
+                    proteinInferencePreferences.setProteinSequenceDatabase(fastaFile);
+                }
+            }
+            fastaFileTxt.setText(fastaFile.getName());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,
+                    "Failed to import identification parameters from: " + newIdentificationParameters.getName() + ".", "Identification Parameters",
+                    JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+
+            // set the search settings to default
+            this.identificationParameters = null;
         }
-        fastaFileTxt.setText(fastaFile.getName());
 
         validateInput();
     }

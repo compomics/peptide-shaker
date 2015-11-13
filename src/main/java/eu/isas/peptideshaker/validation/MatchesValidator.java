@@ -1370,7 +1370,6 @@ public class MatchesValidator {
         proteinFilter.setFilterItem(ProteinFilterItem.nConfidentPSMs.name, FilterItemComparator.higherOrEqual, 2);
         proteinFilters.add(proteinFilter);
         validationQCPreferences.setProteinFilters(proteinFilters);
-
     }
 
     /**
