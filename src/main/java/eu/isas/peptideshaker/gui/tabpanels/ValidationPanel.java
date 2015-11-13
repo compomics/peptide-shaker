@@ -29,9 +29,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.LegendItemSource;
 import org.jfree.chart.axis.AxisLocation;
-import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.block.BlockFrame;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
@@ -2674,15 +2674,16 @@ public class ValidationPanel extends javax.swing.JPanel {
         DefaultXYDataset benefitData = new DefaultXYDataset();
         double[][] benefitSeries = {fdr, benefit};
         benefitData.addSeries("Threshold", benefitSeries);
-        costBenefitPlot.setDataset(1, benefitData);
-        costBenefitPlot.mapDatasetToRangeAxis(1, 0);
+        costBenefitPlot.setDataset(0, benefitData);
+        costBenefitPlot.mapDatasetToRangeAxis(0, 0);
 
         XYLineAndShapeRenderer benefitRendrer = new XYLineAndShapeRenderer();
         benefitRendrer.setSeriesShapesVisible(0, true);
         benefitRendrer.setSeriesLinesVisible(0, false);
-        benefitRendrer.setSeriesPaint(0, Color.blue);
+        benefitRendrer.setSeriesPaint(0, Color.RED);
         benefitRendrer.setSeriesShape(0, DefaultDrawingSupplier.createStandardSeriesShapes()[1]);
-        costBenefitPlot.setRenderer(1, benefitRendrer);
+        benefitRendrer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        costBenefitPlot.setRenderer(0, benefitRendrer);
     }
 
     /**
@@ -2714,19 +2715,27 @@ public class ValidationPanel extends javax.swing.JPanel {
             double confidenceValue = confidenceMarker.getValue();
 
             int index = 0;
+            double minorShift = 0.0000000001;
 
             // add all the values up to the red line
             while (index < scores.length && scores[index] < confidenceValue) {
-                confidenceSeries[0][index] = scores[index];
+
+                double currentScore = scores[index];
+                if (index > 0) {
+                    double previousScore = scores[index - 1];
+                    if (Double.compare(previousScore, currentScore) == 0) {
+                        currentScore += minorShift; // avoid that two consecutive x-values are identical as the XYDifferenceRenderer does not like this
+                    }
+                }
+
+                confidenceSeries[0][index] = currentScore;
                 confidenceSeries[1][index] = confidences[index];
-                tempSeries[0][index] = scores[index];
-                tempSeries[1][index] = 100;
+                tempSeries[0][index] = currentScore;
+                tempSeries[1][index] = 0;
                 index++;
             }
 
             if (index < scores.length) {
-
-                double minorShift = 0.0000000001;
 
                 // add the special cases surrounding the red line
                 confidenceSeries[0][index] = confidenceValue - minorShift;
@@ -2737,23 +2746,28 @@ public class ValidationPanel extends javax.swing.JPanel {
                 confidenceSeries[1][index + 2] = confidences[index];
 
                 tempSeries[0][index] = confidenceValue - minorShift;
-                tempSeries[1][index] = 100;
+                tempSeries[1][index] = 0;
                 index++;
                 tempSeries[0][index] = confidenceValue;
                 tempSeries[1][index] = 50;
                 index++;
                 tempSeries[0][index] = confidenceValue + minorShift;
-                tempSeries[1][index] = 0;
+                tempSeries[1][index] = 100;
                 index++;
 
                 // add the values after the red line
                 while (index < scores.length + 2) {
 
-                    confidenceSeries[0][index] = scores[index - 2];
-                    confidenceSeries[1][index] = confidences[index - 2];
+                    double currentScore = scores[index - 2];
+                    double previousScore = scores[index - 3];
+                    if (Double.compare(previousScore, currentScore) == 0) {
+                        currentScore += minorShift; // avoid that two consecutive x-values are identical as the XYDifferenceRenderer does not like this
+                    }
 
-                    tempSeries[0][index] = scores[index - 2];
-                    tempSeries[1][index] = 0;
+                    confidenceSeries[0][index] = currentScore;
+                    confidenceSeries[1][index] = confidences[index - 2];
+                    tempSeries[0][index] = currentScore;
+                    tempSeries[1][index] = 100;
                     index++;
                 }
             }
@@ -2763,14 +2777,15 @@ public class ValidationPanel extends javax.swing.JPanel {
             confidenceData.addSeries("Area", tempSeries);
             confidencePlot.setDataset(0, confidenceData);
 
-            // setup the renderer
+            // set up the renderer
             XYDifferenceRenderer confidenceRendrer = new XYDifferenceRenderer(fnrHighlightColor, fdrHighlightColor, false);
             confidenceRendrer.setSeriesPaint(0, Color.blue);
             confidenceRendrer.setSeriesStroke(0, new BasicStroke(LINE_WIDTH));
             confidenceRendrer.setSeriesStroke(1, new BasicStroke(0));
-            confidencePlot.setRenderer(0, confidenceRendrer);
-            confidencePlot.setRenderer(1, confidenceRendrer);
+            confidenceRendrer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+            confidencePlot.setRenderer(confidenceRendrer);
 
+            // set up the chart
             JFreeChart confidenceChart = new JFreeChart(confidencePlot);
             ChartPanel chartPanel = new ChartPanel(confidenceChart);
             confidenceChart.setTitle("Confidence");
@@ -2851,11 +2866,12 @@ public class ValidationPanel extends javax.swing.JPanel {
         renderer.setSeriesPaint(1, new Color(255, 0, 0));
         renderer.setSeriesFillPaint(1, new Color(255, 0, 0));
         renderer.setSeriesOutlinePaint(1, new Color(255, 0, 0).darker().darker());
+        renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
         targetDecoyPlot.setRenderer(renderer);
 
         // set the chart title
         ChartPanel chartPanel = new ChartPanel(targetDecoyChart);
-        targetDecoyChart.setTitle("Target/Decoy");
+        targetDecoyChart.setTitle("Target vs. Decoy");
 
         // set background color
         targetDecoyChart.getPlot().setBackgroundPaint(Color.WHITE);
@@ -2875,19 +2891,20 @@ public class ValidationPanel extends javax.swing.JPanel {
         DefaultXYDataset benefitData = new DefaultXYDataset();
         double[][] benefitSeries = {targetDecoySeries.getProbaFDR(), targetDecoySeries.getProbaBenefit()};
         benefitData.addSeries("Possible Coverage", benefitSeries);
-        costBenefitPlot.setDataset(0, benefitData);
-        costBenefitPlot.mapDatasetToRangeAxis(0, 0);
+        costBenefitPlot.setDataset(1, benefitData);
+        costBenefitPlot.mapDatasetToRangeAxis(1, 0);
 
         XYLineAndShapeRenderer benefitRendrer = new XYLineAndShapeRenderer();
         benefitRendrer.setSeriesShapesVisible(0, false);
         benefitRendrer.setSeriesLinesVisible(0, true);
         benefitRendrer.setSeriesPaint(0, Color.blue);
         benefitRendrer.setSeriesStroke(0, new BasicStroke(LINE_WIDTH));
-        costBenefitPlot.setRenderer(0, benefitRendrer);
+        benefitRendrer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        costBenefitPlot.setRenderer(1, benefitRendrer);
 
         JFreeChart benefitCostChart = new JFreeChart(costBenefitPlot);
         ChartPanel chartPanel = new ChartPanel(benefitCostChart);
-        benefitCostChart.setTitle("Cost/Benefit");
+        benefitCostChart.setTitle("Coverage");
 
         // set background color
         benefitCostChart.getPlot().setBackgroundPaint(Color.WHITE);
