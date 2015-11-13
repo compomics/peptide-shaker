@@ -1741,7 +1741,13 @@ public class NewDialog extends javax.swing.JDialog {
         
         boolean matchesValidationAdded;
         ValidationQCPreferences validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
-        if (validationQCPreferences == null || validationQCPreferences.getPsmFilters() == null || validationQCPreferences.getPeptideFilters() == null || validationQCPreferences.getProteinFilters() == null) {
+        if (validationQCPreferences == null 
+                || validationQCPreferences.getPsmFilters() == null 
+                || validationQCPreferences.getPeptideFilters() == null 
+                || validationQCPreferences.getProteinFilters() == null
+                || validationQCPreferences.getPsmFilters().isEmpty()
+                && validationQCPreferences.getPeptideFilters().isEmpty() 
+                && validationQCPreferences.getProteinFilters().isEmpty()) {
             MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
             matchesValidationAdded = true;
         } else {
