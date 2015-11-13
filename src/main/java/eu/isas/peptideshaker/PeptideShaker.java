@@ -324,7 +324,7 @@ public class PeptideShaker {
         BestMatchSelection bestMatchSelection = new BestMatchSelection(identification, proteinCount, matchesValidator, metrics);
         bestMatchSelection.selectBestHitAndFillPsmMap(inputMap, waitingHandler, shotgunProtocol, identificationParameters);
         IdMatchValidationPreferences idMatchValidationPreferences = identificationParameters.getIdValidationPreferences();
-        if (idMatchValidationPreferences.getGroupSmallSubgroups()) {
+        if (idMatchValidationPreferences.getMergeSmallSubgroups()) {
             matchesValidator.getPsmMap().clean(idMatchValidationPreferences.getDefaultPsmFDR() / 100);
         }
         waitingHandler.increasePrimaryProgressCounter();
@@ -360,7 +360,7 @@ public class PeptideShaker {
         if (ptmScoringPreferences.isEstimateFlr()) {
             waitingHandler.appendReport("Thresholding PTM localizations.", true, true);
             PsmPTMMap psmPTMMap = ptmScorer.getPsmPTMMap();
-            if (idMatchValidationPreferences.getGroupSmallSubgroups()) {
+            if (idMatchValidationPreferences.getMergeSmallSubgroups()) {
                 psmPTMMap.clean(ptmScoringPreferences.getFlrThreshold() / 100);
             }
             psmPTMMap.estimateProbabilities(waitingHandler);
@@ -398,7 +398,7 @@ public class PeptideShaker {
 
         waitingHandler.appendReport("Generating peptide map.", true, true); // slow?
         matchesValidator.fillPeptideMaps(identification, metrics, waitingHandler, identificationParameters);
-        if (idMatchValidationPreferences.getGroupSmallSubgroups()) {
+        if (idMatchValidationPreferences.getMergeSmallSubgroups()) {
             matchesValidator.getPeptideMap().clean(identificationParameters.getIdValidationPreferences().getDefaultPeptideFDR() / 100);
         }
         if (waitingHandler.isRunCanceled()) {
