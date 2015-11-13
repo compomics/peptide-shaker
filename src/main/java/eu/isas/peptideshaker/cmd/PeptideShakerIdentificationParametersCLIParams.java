@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.util.experiment.identification.search_parameters_cli.IdentificationParametersCLIParams;
+import com.compomics.util.experiment.identification.parameters_cli.IdentificationParametersCLIParams;
 import org.apache.commons.cli.Options;
 
 /**
@@ -18,23 +18,10 @@ public class PeptideShakerIdentificationParametersCLIParams {
      * @param aOptions the options object where the options will be added
      */
     public static void createOptionsCLI(Options aOptions) {
-        aOptions.addOption(IdentificationParametersCLIParams.OUTPUT.id, true, IdentificationParametersCLIParams.OUTPUT.description);
-        aOptions.addOption(IdentificationParametersCLIParams.MODS.id, false, IdentificationParametersCLIParams.MODS.description);
-        aOptions.addOption(IdentificationParametersCLIParams.PREC_PPM.id, true, IdentificationParametersCLIParams.PREC_PPM.description);
-        aOptions.addOption(IdentificationParametersCLIParams.PREC_TOL.id, true, IdentificationParametersCLIParams.PREC_TOL.description);
-        aOptions.addOption(IdentificationParametersCLIParams.FRAG_TOL.id, true, IdentificationParametersCLIParams.FRAG_TOL.description);
-        aOptions.addOption(IdentificationParametersCLIParams.ENZYME.id, true, IdentificationParametersCLIParams.ENZYME.description);
-        aOptions.addOption(IdentificationParametersCLIParams.FIXED_MODS.id, true, IdentificationParametersCLIParams.FIXED_MODS.description);
-        aOptions.addOption(IdentificationParametersCLIParams.VARIABLE_MODS.id, true, IdentificationParametersCLIParams.VARIABLE_MODS.description);
-        aOptions.addOption(IdentificationParametersCLIParams.MIN_CHARGE.id, true, IdentificationParametersCLIParams.MIN_CHARGE.description);
-        aOptions.addOption(IdentificationParametersCLIParams.MAX_CHARGE.id, true, IdentificationParametersCLIParams.MAX_CHARGE.description);
-        aOptions.addOption(IdentificationParametersCLIParams.MC.id, true, IdentificationParametersCLIParams.MC.description);
-        aOptions.addOption(IdentificationParametersCLIParams.FI.id, true, IdentificationParametersCLIParams.FI.description);
-        aOptions.addOption(IdentificationParametersCLIParams.RI.id, true, IdentificationParametersCLIParams.RI.description);
-        aOptions.addOption(IdentificationParametersCLIParams.DB.id, true, IdentificationParametersCLIParams.DB.description);
-        aOptions.addOption(IdentificationParametersCLIParams.USAGE.id, false, IdentificationParametersCLIParams.USAGE.description);
-        aOptions.addOption(IdentificationParametersCLIParams.USAGE_2.id, false, IdentificationParametersCLIParams.USAGE_2.description);
-        aOptions.addOption(IdentificationParametersCLIParams.USAGE_3.id, false, IdentificationParametersCLIParams.USAGE_3.description);
+        for (IdentificationParametersCLIParams identificationParametersCLIParams : IdentificationParametersCLIParams.values()) {
+            aOptions.addOption(identificationParametersCLIParams.id, identificationParametersCLIParams.hasArgument, identificationParametersCLIParams.description);
+        }
+        //@TODO: Add QC filters?
     }
 
     /**
@@ -47,10 +34,27 @@ public class PeptideShakerIdentificationParametersCLIParams {
         String output = "";
         String formatter = "%-25s";
 
-        output += "Mandatory parameters:\n\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.OUTPUT.id) + IdentificationParametersCLIParams.OUTPUT.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.PREC_PPM.id) + IdentificationParametersCLIParams.PREC_PPM.description + "\n";
+        output += "Parameters Files:\n\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.OUT.id) + IdentificationParametersCLIParams.OUT.description + " Mandatory option.\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.id) + IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.description + " Optional parameter.\n";
+        output += getParametersOptionsAsString();
+        return output;
+    }
+
+    /**
+     * Returns the options as a string.
+     *
+     * @return the options as a string
+     */
+    public static String getParametersOptionsAsString() {
+
+        String output = "";
+        String formatter = "%-25s";
+
+        output += "Spectrum Matching:\n\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.DB.id) + IdentificationParametersCLIParams.DB.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.PREC_TOL.id) + IdentificationParametersCLIParams.PREC_TOL.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.PREC_PPM.id) + IdentificationParametersCLIParams.PREC_PPM.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.FRAG_TOL.id) + IdentificationParametersCLIParams.FRAG_TOL.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.ENZYME.id) + IdentificationParametersCLIParams.ENZYME.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.FIXED_MODS.id) + IdentificationParametersCLIParams.FIXED_MODS.description + "\n";
@@ -60,7 +64,49 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MC.id) + IdentificationParametersCLIParams.MC.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.FI.id) + IdentificationParametersCLIParams.FI.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.RI.id) + IdentificationParametersCLIParams.RI.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.DB.id) + IdentificationParametersCLIParams.DB.description + "\n";
+
+        output += "\n\nGene Annotation:\n\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SPECIES_TYPE.id) + IdentificationParametersCLIParams.SPECIES_TYPE.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SPECIES.id) + IdentificationParametersCLIParams.SPECIES.description + "\n";
+
+        output += "\n\nSpectrum Annotation:\n\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.ANNOTATION_LEVEL.id) + IdentificationParametersCLIParams.ANNOTATION_LEVEL.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.ANNOTATION_MZ_TOLERANCE.id) + IdentificationParametersCLIParams.ANNOTATION_MZ_TOLERANCE.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.ANNOTATION_HIGH_RESOLUTION.id) + IdentificationParametersCLIParams.ANNOTATION_HIGH_RESOLUTION.description + "\n";
+
+        output += "\n\nSequence Matching:\n\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SEQUENCE_MATCHING_TYPE.id) + IdentificationParametersCLIParams.SEQUENCE_MATCHING_TYPE.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SEQUENCE_MATCHING_X.id) + IdentificationParametersCLIParams.SEQUENCE_MATCHING_X.description + "\n";
+
+        output += "\n\nImport Filters:\n\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.IMPORT_PEPTIDE_LENGTH_MIN.id) + IdentificationParametersCLIParams.IMPORT_PEPTIDE_LENGTH_MIN.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.IMPORT_PEPTIDE_LENGTH_MAX.id) + IdentificationParametersCLIParams.IMPORT_PEPTIDE_LENGTH_MAX.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.IMPORT_PRECURSOR_MZ.id) + IdentificationParametersCLIParams.IMPORT_PRECURSOR_MZ.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.IMPORT_PRECURSOR_MZ_PPM.id) + IdentificationParametersCLIParams.IMPORT_PRECURSOR_MZ_PPM.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.EXCLUDE_UNKNOWN_PTMs.id) + IdentificationParametersCLIParams.EXCLUDE_UNKNOWN_PTMs.description + "\n";
+
+        output += "\n\nPTM Localization:\n\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.PTM_SCORE.id) + IdentificationParametersCLIParams.PTM_SCORE.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.PTM_THRESHOLD.id) + IdentificationParametersCLIParams.PTM_THRESHOLD.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SCORE_NEUTRAL_LOSSES.id) + IdentificationParametersCLIParams.SCORE_NEUTRAL_LOSSES.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.PTM_SEQUENCE_MATCHING_TYPE.id) + IdentificationParametersCLIParams.PTM_SEQUENCE_MATCHING_TYPE.description + "\n";
+
+        output += "\n\nProtein Inference:\n\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.DB_PI.id) + IdentificationParametersCLIParams.DB_PI.description + "\n";
+
+        output += "\n\nValidation Levels:\n\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.PSM_FDR.id) + IdentificationParametersCLIParams.PSM_FDR.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.PEPTIDE_FDR.id) + IdentificationParametersCLIParams.PEPTIDE_FDR.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.PROTEIN_FDR.id) + IdentificationParametersCLIParams.PROTEIN_FDR.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SEPARATE_PSMs.id) + IdentificationParametersCLIParams.SEPARATE_PSMs.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SEPARATE_PEPTIDES.id) + IdentificationParametersCLIParams.SEPARATE_PEPTIDES.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MERGE_SUBGROUPS.id) + IdentificationParametersCLIParams.MERGE_SUBGROUPS.description + "\n";
+
+        output += "\n\nFraction Analysis:\n\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.PROTEIN_FRACTION_MW_CONFIDENCE.id) + IdentificationParametersCLIParams.PROTEIN_FRACTION_MW_CONFIDENCE.description + "\n";
+
+//        output += "\n\nQuality Control:\n\n";
+//        output += "-" + String.format(formatter, IdentificationParametersCLIParams.ANNOTATION_LEVEL.id) + IdentificationParametersCLIParams.ANNOTATION_LEVEL.description + "\n";
 
         output += "\n\nHelp:\n\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MODS.id) + IdentificationParametersCLIParams.MODS.description + "\n";
