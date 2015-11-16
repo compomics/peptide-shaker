@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.protein_sequences.FastaIndex;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
@@ -118,20 +119,11 @@ public class PeptideShakerMethods {
 
         FastaIndex fastaIndex = sequenceFactory.getCurrentFastaIndex();
 
-        ArrayList<String> species = fastaIndex.getSpecies();
+        HashMap<String, Integer> species = fastaIndex.getSpecies();
         if (species == null || species.isEmpty()) {
             text += "[add species]";
         } else {
-            for (int i = 0; i < species.size(); i++) {
-                if (i > 0) {
-                    if (i == species.size() - 1) {
-                        text += " and ";
-                    } else {
-                        text += ", ";
-                    }
-                }
-                text += species;
-            }
+            text += SpeciesFactory.getSpeciesDescription(species);
         }
         text += " complement of the ";
 
