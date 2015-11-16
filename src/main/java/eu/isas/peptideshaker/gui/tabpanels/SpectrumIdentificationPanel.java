@@ -2854,10 +2854,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     ArrayList<String> sequences = new ArrayList<String>(algorithmMap.keySet());
                     Collections.sort(sequences);
                     for (String sequence : sequences) {
-                        currentAssumptionsList.addAll(algorithmMap.get(sequence));
+                        ArrayList<SpectrumIdentificationAssumption> tempAssumptions = algorithmMap.get(sequence);
+                        for (SpectrumIdentificationAssumption tempAssumption : tempAssumptions) {
+                            if (peptideShakerGUI.getIdentificationParameters().getPeptideAssumptionFilter().validatePeptide(
+                                    ((PeptideAssumption) tempAssumption).getPeptide(), peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                                currentAssumptionsList.add(tempAssumption);
+                            }
+                        }
                     }
                 }
             }
+
             confidences = new ArrayList<Double>(tagAssumptionsMap.keySet());
             Collections.sort(confidences, Collections.reverseOrder());
             for (Double confidence : confidences) {
@@ -2869,7 +2876,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     ArrayList<String> sequences = new ArrayList<String>(algorithmMap.keySet());
                     Collections.sort(sequences);
                     for (String sequence : sequences) {
-                        currentAssumptionsList.addAll(algorithmMap.get(sequence));
+                        currentAssumptionsList.addAll(algorithmMap.get(sequence)); // @TODO: filter the tags as well?
                     }
                 }
             }
