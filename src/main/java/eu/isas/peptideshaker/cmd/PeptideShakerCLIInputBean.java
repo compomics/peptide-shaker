@@ -1,9 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CommandLineUtils;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.parameters_cli.IdentificationParametersInputBean;
-import com.compomics.util.experiment.identification.ptm.PtmScore;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.File;
@@ -60,6 +58,10 @@ public class PeptideShakerCLIInputBean {
      * The identification parameters options.
      */
     private IdentificationParametersInputBean identificationParametersInputBean;
+    /**
+     * The identification parameters file.
+     */
+    private File identificationParametersFile;
     /**
      * The follow up options .
      */
@@ -375,11 +377,20 @@ public class PeptideShakerCLIInputBean {
 
     /**
      * Returns the identification parameters provided by the user.
-     * 
+     *
      * @return the identification parameters provided by the user
      */
     public IdentificationParametersInputBean getIdentificationParametersInputBean() {
         return identificationParametersInputBean;
+    }
+
+    /**
+     * Returns the identification parameters file.
+     *
+     * @return the identification parameters file
+     */
+    public File getIdentificationParametersFile() {
+        return identificationParametersFile;
     }
     
     /**
@@ -389,5 +400,73 @@ public class PeptideShakerCLIInputBean {
      */
     public Integer getnThreads() {
         return nThreads;
+    }
+    
+    /**
+     * Verifies the command line start parameters.
+     *
+     * @return true if the startup was valid
+     */
+    public static boolean isValidStartup(CommandLine aLine) throws IOException {
+
+        if (aLine.getOptions().length == 0) {
+            return false;
+        }
+
+        if (!aLine.hasOption(PeptideShakerCLIParams.EXPERIMENT.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.EXPERIMENT.id)).equals("")) {
+            System.out.println("\nExperiment name not specified.\n");
+            return false;
+        }
+
+        if (!aLine.hasOption(PeptideShakerCLIParams.SAMPLE.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.SAMPLE.id)).equals("")) {
+            System.out.println("\nSample name not specified.\n");
+            return false;
+        }
+
+        if (!aLine.hasOption(PeptideShakerCLIParams.REPLICATE.id) || aLine.getOptionValue(PeptideShakerCLIParams.REPLICATE.id) == null) {
+            System.out.println("\nReplicate number not specified.\n");
+            return false;
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.SPECTRUM_FILES.id)) {
+            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SPECTRUM_FILES.id);
+            ArrayList<File> idFiles = PeptideShakerCLIInputBean.getSpectrumFiles(filesTxt);
+            if (idFiles.isEmpty()) {
+                System.out.println("\nNo spectrum file found for command line input " + filesTxt + ".\n");
+                return false;
+            }
+        }
+
+        if (!aLine.hasOption(PeptideShakerCLIParams.IDENTIFICATION_FILES.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id)).equals("")) {
+            System.out.println("\nIdentification files not specified.\n");
+            return false;
+        } else {
+            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id);
+            ArrayList<File> idFiles = PeptideShakerCLIInputBean.getIdentificationFiles(filesTxt);
+            if (idFiles.isEmpty()) {
+                System.out.println("\nNo identification file found.\n");
+                return false;
+            }
+        }
+
+        if (!aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id)).equals("")) {
+            System.out.println("\nOutput file not specified.\n");
+            return false;
+        } else {
+            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id);
+            File testFile = new File(filesTxt.trim());
+            File parentFolder = testFile.getParentFile(); // @TODO: should check if parent file is null!
+            if (!parentFolder.exists() && !parentFolder.mkdirs()) {
+                System.out.println("\nDestination folder \'" + parentFolder.getPath() + "\' not found and cannot be created. Make sure that PeptideShaker has the right to write in the destination folder.\n");
+                return false;
+            }
+        }
+        
+//        // Check the identification parameters
+//        if (!IdentificationParametersInputBean.isValidStartup(aLine, false)) { // @TODO: ok to add?
+//            return false;
+//        }
+
+        return true;
     }
 }
