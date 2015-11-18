@@ -1,8 +1,9 @@
 package eu.isas.peptideshaker.gui.protein_inference;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.annotation.gene.GeneFactory;
+import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -12,6 +13,7 @@ import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.preferences.GenePreferences;
+import com.compomics.util.protein.Header;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.parameters.PSParameter;
@@ -69,13 +71,13 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The gene factory.
-     */
-    private GeneFactory geneFactory = GeneFactory.getInstance();
-    /**
      * The PeptideShaker parent frame.
      */
     private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * The gene maps
+     */
+    private GeneMaps geneMaps;
     /**
      * The candidate protein table column header tooltips.
      */
@@ -101,13 +103,16 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * Creates new form ProteinInferenceDialog.
      *
      * @param peptideShakerGUI the PeptideShakerGUI parent
+     * @param geneMaps the gene maps
      * @param inspectedMatch the inspected match
      * @param identification the identifications
      */
-    public ProteinInferenceDialog(PeptideShakerGUI peptideShakerGUI, String inspectedMatch, Identification identification) {
+    public ProteinInferenceDialog(PeptideShakerGUI peptideShakerGUI, GeneMaps geneMaps, String inspectedMatch, Identification identification) {
         super(peptideShakerGUI, true);
+        
         this.identification = identification;
         this.peptideShakerGUI = peptideShakerGUI;
+        this.geneMaps = geneMaps;
 
         try {
             this.inspectedMatch = identification.getProteinMatch(inspectedMatch);
@@ -271,7 +276,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                         nodeProperty += "|" + proteinEvidenceLevel;
                         try {
                             Integer level = new Integer(proteinEvidenceLevel);
-                            proteinEvidenceLevel = "Evidence: " + GenePreferences.getProteinEvidencAsString(level);
+                            proteinEvidenceLevel = "Evidence: " + Header.getProteinEvidencAsString(level);
                         } catch (NumberFormatException e) {
                             // ignore
                         }
@@ -1110,7 +1115,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 5:
                     try {
                         String geneName = sequenceFactory.getHeader(accessions.get(row)).getGeneName();
-                        String chromosomeNumber = geneFactory.getChromosomeForGeneName(geneName);
+                        String chromosomeNumber = geneMaps.getChromosome(geneName);
                         return new Chromosome(chromosomeNumber);
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
@@ -1122,7 +1127,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                         if (proteinEvidenceLevel != null) {
                             try {
                                 Integer level = new Integer(proteinEvidenceLevel);
-                                proteinEvidenceLevel = GenePreferences.getProteinEvidencAsString(level);
+                                proteinEvidenceLevel = Header.getProteinEvidencAsString(level);
                             } catch (NumberFormatException e) {
                                 // ignore
                             }

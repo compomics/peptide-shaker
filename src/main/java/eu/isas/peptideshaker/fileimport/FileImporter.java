@@ -20,11 +20,14 @@ import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.exceptions.exception_handlers.WaitingDialogExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.genes.GeneFactory;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.memory.MemoryConsumptionStatus;
+import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
@@ -261,6 +264,18 @@ public class FileImporter {
                     + "If the error persists please let us know using our issue tracker: https://github.com/compomics/peptide-shaker/issues.", true, true);
         }
     }
+    
+    /**
+     * Imports the gene information for this project.
+     * 
+     * @throws IOException exception thrown whenever an error occurred while reading or writing a file
+     */
+    public void importGenes() throws IOException {
+        GeneFactory geneFactory = GeneFactory.getInstance();
+        GenePreferences genePreferences = identificationParameters.getGenePreferences();
+        GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, waitingHandler);
+        peptideShaker.setGeneMaps(geneMaps);
+    }
 
     /**
      * Worker which loads identification from a file and processes them while
@@ -430,6 +445,14 @@ public class FileImporter {
 
             try {
                 importSequences(waitingHandler, exceptionHandler, identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase());
+
+                if (waitingHandler.isRunCanceled()) {
+                    return 1;
+                }
+                
+                waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+                waitingHandler.appendReport("Importing Gene Mappings.", true, true);
+                importGenes();
 
                 if (waitingHandler.isRunCanceled()) {
                     return 1;

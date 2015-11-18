@@ -7,7 +7,7 @@ import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssu
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import eu.isas.peptideshaker.gui.filtering.FiltersDialog;
 import com.compomics.util.gui.error_handlers.notification.NotificationDialogParent;
-import com.compomics.util.gui.gene_mapping.SpeciesDialog;
+import com.compomics.util.gui.genes.SpeciesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FollowupPreferencesDialog;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
@@ -26,8 +26,8 @@ import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
-import com.compomics.util.experiment.annotation.gene.GeneFactory;
-import com.compomics.util.experiment.annotation.go.GOFactory;
+import com.compomics.util.experiment.biology.genes.GeneFactory;
+import com.compomics.util.experiment.biology.genes.go.GoMapping;
 import com.compomics.util.experiment.biology.*;
 import com.compomics.util.experiment.biology.Ion.IonType;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
@@ -77,6 +77,7 @@ import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.software.settings.gui.PathSettingsDialog;
 import com.compomics.util.FileAndFileFilter;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.TagSpectrumAnnotator;
@@ -249,14 +250,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
     /**
-     * The gene factory.
-     */
-    private GeneFactory geneFactory;
-    /**
-     * The GO factory.
-     */
-    private GOFactory goFactory;
-    /**
      * The utilities user preferences.
      */
     private UtilitiesUserPreferences utilitiesUserPreferences;
@@ -413,6 +406,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         // turn off the derby log file
         DerbyUtil.disableDerbyLog();
 
+        // Create the gene mappping folder if not set
+        GeneFactory geneFactory = GeneFactory.getInstance();
+        try {
+            geneFactory.initialize(PeptideShaker.getJarFilePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "An error occurred while loading the gene mappings.", "Gene Mapping File Error", JOptionPane.ERROR_MESSAGE);
+        }
+
         // see if a cps or url is to be opened
         File cpsFile = null;
         boolean cps = false;
@@ -499,8 +501,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         }
 
         ptmFactory = PTMFactory.getInstance();
-        geneFactory = GeneFactory.getInstance();
-        goFactory = GOFactory.getInstance();
 
         // load the user preferences
         loadUserPreferences();
@@ -510,8 +510,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         if (!getJarFilePath().equalsIgnoreCase(".") && utilitiesUserPreferences.isAutoUpdate()) {
             newVersion = checkForNewVersion();
         }
-
-        boolean firstRun = new File(getJarFilePath() + "/resources/conf/firstRun").exists();
 
         if (!newVersion) {
 
@@ -601,7 +599,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             this.setExtendedState(MAXIMIZED_BOTH);
 
-            loadGeneMappings(firstRun);
             loadEnzymes();
             resetPtmFactory();
 
@@ -1948,11 +1945,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             } else if (value == JOptionPane.CANCEL_OPTION || value == JOptionPane.CLOSED_OPTION) {
                 // do nothing
             } else { // no option
-                clearData(true, false);
+                clearData(true);
                 new NewDialog(this, true);
             }
         } else {
-            clearData(true, false);
+            clearData(true);
             new NewDialog(this, true);
         }
     }//GEN-LAST:event_newJMenuItemActionPerformed
@@ -2427,7 +2424,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 importPeptideShakerZipFile(selectedFile);
             } else if (selectedFile.getName().endsWith(".cpsx")) {
                 exceptionHandler.setIgnoreExceptions(true);
-                clearData(true, true);
+                clearData(true);
                 exceptionHandler.setIgnoreExceptions(false);
                 clearPreferences();
                 getUserPreferences().addRecentProject(selectedFile);
@@ -3038,18 +3035,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void speciesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speciesJMenuItemActionPerformed
-        GenePreferences genePreferences = getIdentificationParameters().getGenePreferences();
-        String oldSpecies = genePreferences.getCurrentSpecies();
-        new SpeciesDialog(this, genePreferences, true, getWaitingIcon(), getNormalIcon());
-        String newSpecies = genePreferences.getCurrentSpecies();
+        new SpeciesDialog(this, true, getWaitingIcon(), getNormalIcon());
 
-        if (oldSpecies == null || !oldSpecies.equals(newSpecies)) {
-            clearGeneMappings(); // clear the old mappings
-            if (newSpecies != null) {
-                loadGeneMappings(false); // load the new mappings
-            }
-            updateGeneDisplay(); // display the new mappings
-        }
     }//GEN-LAST:event_speciesJMenuItemActionPerformed
 
     /**
@@ -3173,9 +3160,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         ValidationQCPreferencesDialog validationQCPreferencesDialog = new ValidationQCPreferencesDialog(this, this, validationQCPreferences, true);
 
         if (!validationQCPreferencesDialog.isCanceled()) {
-            
+
             ValidationQCPreferences newPreferences = validationQCPreferencesDialog.getValidationQCPreferences();
-            
+
             if (!newPreferences.isSameAs(validationQCPreferences)) {
 
                 idValidationPreferences.setValidationQCPreferences(newPreferences);
@@ -3218,7 +3205,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                             pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
 
                             MatchesValidator matchesValidator = new MatchesValidator(pSMaps.getPsmSpecificMap(), pSMaps.getPeptideSpecificMap(), pSMaps.getProteinMap());
-                            matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), pSMaps.getInputMap(), progressDialog, exceptionHandler,
+                            matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), peptideShakerGUI.getGeneMaps(), pSMaps.getInputMap(), progressDialog, exceptionHandler,
                                     peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(),
                                     peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getProcessingPreferences());
 
@@ -3282,8 +3269,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
     /**
      * Open the ProcessingPreferencesDialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void processingMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processingMenuItemActionPerformed
         ProcessingPreferencesDialog processingPreferencesDialog = new ProcessingPreferencesDialog(this, processingPreferences, true);
@@ -3344,18 +3331,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Not able to load the enzyme file.", "Wrong enzyme file.", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * Imports the gene mapping.
-     *
-     * @param updateEqualVersion if true, the version is updated with equal
-     * version numbers, false, only update if the new version is newer
-     */
-    private void loadGeneMappings(boolean updateEqualVersion) {
-        if (!cpsParent.loadGeneMappings(PeptideShaker.getJarFilePath(), updateEqualVersion, progressDialog)) {
-            JOptionPane.showMessageDialog(this, "Unable to load the gene/GO mapping file.", "File Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -3906,7 +3881,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         cpsParent.setIdentificationParameters(identificationParameters);
         SearchParameters newSearchParameters = identificationParameters.getSearchParameters();
         PeptideShaker.loadModifications(newSearchParameters);
-        loadGeneMappings(false);
         setSelectedItems();
         backgroundPanel.revalidate();
         backgroundPanel.repaint();
@@ -4121,10 +4095,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @param clearDatabaseFolder decides if the database folder is to be
      * cleared or not
-     * @param clearGeneAndGoFactories decides if the gene and GO factories are
-     * to be cleared or not
      */
-    public void clearData(boolean clearDatabaseFolder, boolean clearGeneAndGoFactories) {
+    public void clearData(boolean clearDatabaseFolder) {
 
         // reset the preferences
         selectedProteinKey = NO_SELECTION;
@@ -4147,21 +4119,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             catchException(e);
         }
 
-        if (clearGeneAndGoFactories) {
-            try {
-                goFactory.closeFiles();
-            } catch (Exception e) {
-                e.printStackTrace();
-                catchException(e);
-            }
-            try {
-                geneFactory.closeFiles();
-            } catch (Exception e) {
-                e.printStackTrace();
-                catchException(e);
-            }
-        }
-
         try {
             spectrumFactory.clearFactory();
         } catch (Exception e) {
@@ -4173,21 +4130,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         } catch (Exception e) {
             e.printStackTrace();
             catchException(e);
-        }
-
-        if (clearGeneAndGoFactories) {
-            try {
-                goFactory.clearFactory();
-            } catch (Exception e) {
-                e.printStackTrace();
-                catchException(e);
-            }
-            try {
-                geneFactory.clearFactory();
-            } catch (Exception e) {
-                e.printStackTrace();
-                catchException(e);
-            }
         }
 
         if (clearDatabaseFolder) {
@@ -4264,7 +4206,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         loadEnzymes();
         resetPtmFactory();
         setDefaultPreferences();
-        loadGeneMappings(false);
     }
 
     /**
@@ -4764,7 +4705,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     if (!progressDialog.isRunCanceled()) {
                         spectrumFactory.closeFiles();
                         sequenceFactory.closeFile();
-                        GOFactory.getInstance().closeFiles();
                         cpsParent.saveUserPreferences();
                         TempFilesManager.deleteTempFolders();
                     }
@@ -4779,7 +4719,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     finalRef.setVisible(false);
 
                     // clear the data and database folder
-                    clearData(true, true);
+                    clearData(true);
 
                     // close the jvm
                     System.exit(0);
@@ -4837,9 +4777,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 try {
                     spectrumFactory.closeFiles();
                     sequenceFactory.closeFile();
-                    goFactory.closeFiles();
                     cpsParent.saveUserPreferences();
-                    PeptideShakerGUI.this.clearData(true, true);
+                    PeptideShakerGUI.this.clearData(true);
                     TempFilesManager.deleteTempFolders();
                     UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
                 } catch (Exception e) {
@@ -5177,7 +5116,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                             JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
                             temp.getUserPreferences().removeRecentProject(filePath);
                         } else {
-                            clearData(true, true);
+                            clearData(true);
                             clearPreferences();
                             importPeptideShakerFile(new File(filePath));
                             cpsParent.getUserPreferences().addRecentProject(filePath);
@@ -5228,7 +5167,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         tempWelcomeDialog.dispose();
                         setVisible(true);
 
-                        clearData(true, true);
+                        clearData(true);
                         clearPreferences();
 
                         importPeptideShakerFile(new File(filePath));
@@ -5375,7 +5314,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         for (File file : destinationFolder.listFiles()) {
                             if (file.getName().toLowerCase().endsWith(".cpsx")) {
                                 exceptionHandler.setIgnoreExceptions(true);
-                                clearData(true, true);
+                                clearData(true);
                                 exceptionHandler.setIgnoreExceptions(false);
                                 clearPreferences();
                                 getUserPreferences().addRecentProject(file);
@@ -5452,12 +5391,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     // Resets the display features generator according to the new project
                     resetDisplayFeaturesGenerator();
 
-                    progressDialog.setTitle("Loading Gene Mappings. Please Wait...");
-                    loadGeneMappings(false); // have to load the new gene mappings
-
-                    // @TODO: check if the used gene mapping files are available and download if not?
                     if (progressDialog.isRunCanceled()) {
-                        clearData(true, true);
+                        clearData(true);
                         clearPreferences();
                         progressDialog.setRunFinished();
                         openingExistingProject = false;
@@ -5479,7 +5414,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                 "An error occurred while reading:\n" + fastaFile.getAbsolutePath() + "."
                                 + "\n\nOpen canceled.",
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
-                        clearData(true, true);
+                        clearData(true);
                         clearPreferences();
                         progressDialog.setRunFinished();
                         openingExistingProject = false;
@@ -5487,7 +5422,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     }
 
                     if (progressDialog.isRunCanceled()) {
-                        clearData(true, true);
+                        clearData(true);
                         clearPreferences();
                         progressDialog.setRunFinished();
                         openingExistingProject = false;
@@ -5563,7 +5498,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                     JOptionPane.showMessageDialog(peptideShakerGUI,
                                             spectrumFileName + " was not found in the given folder.",
                                             "File Input Error", JOptionPane.ERROR_MESSAGE);
-                                    clearData(true, true);
+                                    clearData(true);
                                     clearPreferences();
                                     progressDialog.setRunFinished();
                                     openingExistingProject = false;
@@ -5573,7 +5508,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         }
 
                         if (progressDialog.isRunCanceled()) {
-                            clearData(true, true);
+                            clearData(true);
                             clearPreferences();
                             progressDialog.setRunFinished();
                             openingExistingProject = false;
@@ -6274,6 +6209,24 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
+     * Returns the gene maps.
+     *
+     * @return the gene maps
+     */
+    public GeneMaps getGeneMaps() {
+        return cpsParent.getGeneMaps();
+    }
+
+    /**
+     * Sets the gene maps.
+     *
+     * @param geneMaps the gene maps
+     */
+    public void setGeneMaps(GeneMaps geneMaps) {
+        cpsParent.setGeneMaps(geneMaps);
+    }
+
+    /**
      * Sets the objects cache in use
      *
      * @param objectsCache the objects cache
@@ -6509,7 +6462,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             if (!new File(filePath).exists()) {
                 JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                clearData(true, true);
+                clearData(true);
                 clearPreferences();
 
                 importPeptideShakerFile(new File(filePath));
@@ -6729,73 +6682,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public void clearGeneMappings() {
         goPanel.clearOldResults();
         dataSaved = false;
-    }
-
-    /**
-     * Update the gene mapping results.
-     */
-    public void updateGeneDisplay() {
-
-        dataSaved = false;
-
-        if (getSelectedTab() == PeptideShakerGUI.GO_ANALYSIS_TAB_INDEX) {
-            goPanel.displayResults();
-        } else {
-            setUpdated(PeptideShakerGUI.GO_ANALYSIS_TAB_INDEX, false);
-
-            GenePreferences genePreferences = getIdentificationParameters().getGenePreferences();
-            String selectedSpecies = genePreferences.getCurrentSpecies();
-            String currentSpeciesType = genePreferences.getCurrentSpeciesType();
-
-            if (currentSpeciesType != null) {
-
-                String speciesDatabase = genePreferences.getEnsemblDatabaseName(currentSpeciesType, selectedSpecies);
-
-                if (speciesDatabase != null) {
-
-                    final File goMappingsFile = new File(GenePreferences.getGeneMappingFolder(), speciesDatabase + GenePreferences.GO_MAPPING_FILE_SUFFIX);
-
-                    if (goMappingsFile.exists()) {
-
-                        progressDialog = new ProgressDialogX(this,
-                                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                                true);
-                        progressDialog.setTitle("Getting Gene Mapping Files. Please Wait...");
-                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
-
-                        new Thread(new Runnable() {
-                            public void run() {
-                                try {
-                                    progressDialog.setVisible(true);
-                                } catch (IndexOutOfBoundsException e) {
-                                    // ignore
-                                }
-                            }
-                        }, "ProgressDialog").start();
-
-                        new Thread("GoThread") {
-                            @Override
-                            public void run() {
-                                try {
-                                    // redraw any tables with chromosome mappings
-                                    ((SelfUpdatingTableModel) overviewPanel.getProteinTable().getModel()).fireTableDataChanged();
-                                    ((SelfUpdatingTableModel) proteinStructurePanel.getProteinTable().getModel()).fireTableDataChanged();
-                                    progressDialog.setRunFinished();
-                                } catch (Exception e) {
-                                    progressDialog.setRunFinished();
-                                    catchException(e);
-                                }
-                            }
-                        }.start();
-                    } else {
-                        // redraw any tables with chromosome mappings
-                        ((SelfUpdatingTableModel) overviewPanel.getProteinTable().getModel()).fireTableDataChanged();
-                        ((SelfUpdatingTableModel) proteinStructurePanel.getProteinTable().getModel()).fireTableDataChanged();
-                    }
-                }
-            }
-        }
     }
 
     @Override

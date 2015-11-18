@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.validation;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
@@ -111,6 +112,7 @@ public class MatchesValidator {
      * validate
      * @param metrics if provided, metrics on fractions will be saved while
      * iterating the matches
+     * @param geneMaps the gene maps
      * @param waitingHandler a waiting handler displaying progress to the user
      * and allowing canceling the process
      * @param exceptionHandler handler for exceptions
@@ -133,7 +135,7 @@ public class MatchesValidator {
      * @throws ClassNotFoundException exception thrown whenever an error
      * occurred while deserializing an object from the database.
      */
-    public void validateIdentifications(Identification identification, Metrics metrics, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler,
+    public void validateIdentifications(Identification identification, Metrics metrics, GeneMaps geneMaps, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator, InputMap inputMap,
             SpectrumCountingPreferences spectrumCountingPreferences, ProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
@@ -203,7 +205,7 @@ public class MatchesValidator {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
-        validateIdentifications(identification, metrics, inputMap, waitingHandler, exceptionHandler,
+        validateIdentifications(identification, metrics, geneMaps, inputMap, waitingHandler, exceptionHandler,
                 identificationFeaturesGenerator, shotgunProtocol, identificationParameters, spectrumCountingPreferences, processingPreferences);
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -217,6 +219,7 @@ public class MatchesValidator {
      * validate
      * @param metrics if provided, metrics on fractions will be saved while
      * iterating the matches
+     * @param geneMaps the gene maps
      * @param inputMap the target decoy map of all search engine scores
      * @param waitingHandler a waiting handler displaying progress to the user
      * and allowing canceling the process
@@ -239,7 +242,7 @@ public class MatchesValidator {
      * @throws ClassNotFoundException exception thrown whenever an error
      * occurred while deserializing an object from the database.
      */
-    public void validateIdentifications(Identification identification, Metrics metrics, InputMap inputMap,
+    public void validateIdentifications(Identification identification, Metrics metrics, GeneMaps geneMaps, InputMap inputMap,
             WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
             SpectrumCountingPreferences spectrumCountingPreferences, ProcessingPreferences processingPreferences)
@@ -281,7 +284,7 @@ public class MatchesValidator {
 
             ArrayList<PsmValidatorRunnable> psmRunnables = new ArrayList<PsmValidatorRunnable>(processingPreferences.getnThreads());
             for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
-                PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, inputMap, false);
+                PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, inputMap, false);
                 pool.submit(runnable);
                 psmRunnables.add(runnable);
             }
@@ -341,7 +344,7 @@ public class MatchesValidator {
             psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false, waitingHandler);
 
             for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
-                PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, inputMap, true);
+                PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, inputMap, true);
                 pool.submit(runnable);
             }
             if (waitingHandler != null && waitingHandler.isRunCanceled()) {
@@ -363,7 +366,7 @@ public class MatchesValidator {
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters, waitingHandler);
 
         for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
-            PeptideValidatorRunnable runnable = new PeptideValidatorRunnable(peptideMatchesIterator, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, metrics);
+            PeptideValidatorRunnable runnable = new PeptideValidatorRunnable(peptideMatchesIterator, identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, metrics);
             pool.submit(runnable);
             peptideRunnables.add(runnable);
         }
@@ -402,7 +405,7 @@ public class MatchesValidator {
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, false, null, waitingHandler);
         ArrayList<ProteinValidatorRunnable> proteinRunnables = new ArrayList<ProteinValidatorRunnable>(processingPreferences.getnThreads());
         for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
-            ProteinValidatorRunnable runnable = new ProteinValidatorRunnable(proteinMatchesIterator, identification, identificationFeaturesGenerator, metrics, shotgunProtocol, identificationParameters, spectrumCountingPreferences, waitingHandler, exceptionHandler);
+            ProteinValidatorRunnable runnable = new ProteinValidatorRunnable(proteinMatchesIterator, identification, identificationFeaturesGenerator, geneMaps, metrics, shotgunProtocol, identificationParameters, spectrumCountingPreferences, waitingHandler, exceptionHandler);
             pool.submit(runnable);
             proteinRunnables.add(runnable);
         }
@@ -433,6 +436,7 @@ public class MatchesValidator {
      * manually validated nothing will be changed.
      *
      * @param identification the identification object
+     * @param geneMaps the gene maps
      * @param proteinMap the protein level target/decoy scoring map
      * @param identificationFeaturesGenerator the identification features
      * generator
@@ -453,7 +457,7 @@ public class MatchesValidator {
      * @throws org.apache.commons.math.MathException Exception thrown whenever
      * an error occurred while doing statistics on a distribution
      */
-    public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+    public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ProteinMap proteinMap, String proteinKey)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
@@ -471,7 +475,7 @@ public class MatchesValidator {
         }
 
         boolean noValidated = proteinMap.getTargetDecoyMap().getTargetDecoyResults().noValidated();
-        updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters,
+        updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters,
                 targetDecoyMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
     }
 
@@ -481,6 +485,7 @@ public class MatchesValidator {
      *
      * @param identification the identification object
      * @param targetDecoyMap the protein level target/decoy map
+     * @param geneMaps the gene maps
      * @param scoreThreshold the validation score doubtfulThreshold
      * @param confidenceThreshold the confidence doubtfulThreshold after which a
      * match should be considered as confident
@@ -507,7 +512,7 @@ public class MatchesValidator {
      * @throws org.apache.commons.math.MathException Exception thrown whenever
      * an error occurred while doing statistics on a distribution
      */
-    public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+    public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, TargetDecoyMap targetDecoyMap, double scoreThreshold, double nTargetLimit,
             double confidenceThreshold, boolean noValidated,
             String proteinKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
@@ -526,7 +531,7 @@ public class MatchesValidator {
                     boolean filtersPassed = true;
                     for (Filter filter : validationQCPreferences.getProteinFilters()) {
                         ProteinFilter proteinFilter = (ProteinFilter) filter;
-                        boolean validation = proteinFilter.isValidated(proteinKey, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, null);
+                        boolean validation = proteinFilter.isValidated(proteinKey, identification, geneMaps, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, null);
                         psParameter.setQcResult(filter.getName(), validation);
                         if (!validation) {
                             filtersPassed = false;
@@ -562,6 +567,7 @@ public class MatchesValidator {
      * @param peptideMap the peptide level target/decoy scoring map
      * @param identificationFeaturesGenerator the identification features
      * generator
+     * @param geneMaps the gene maps
      * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
      * @param peptideKey the key of the peptide match of interest
@@ -579,7 +585,7 @@ public class MatchesValidator {
      * @throws org.apache.commons.math.MathException Exception thrown whenever
      * an error occurred while doing statistics on a distribution
      */
-    public static void updatePeptideMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+    public static void updatePeptideMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpecificMap peptideMap, String peptideKey)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
@@ -605,7 +611,7 @@ public class MatchesValidator {
                 boolean filtersPassed = true;
                 for (Filter filter : validationQCPreferences.getPeptideFilters()) {
                     PeptideFilter peptideFilter = (PeptideFilter) filter;
-                    boolean validation = peptideFilter.isValidated(peptideKey, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, null);
+                    boolean validation = peptideFilter.isValidated(peptideKey, identification, geneMaps, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, null);
                     psParameter.setQcResult(filter.getName(), validation);
                     if (!validation) {
                         filtersPassed = false;
@@ -637,6 +643,7 @@ public class MatchesValidator {
      * manually validated nothing will be changed.
      *
      * @param identification the identification object
+     * @param geneMaps the gene maps
      * @param psmMap the PSM level target/decoy scoring map
      * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
@@ -659,7 +666,7 @@ public class MatchesValidator {
      * @throws org.apache.commons.math.MathException Exception thrown whenever
      * an error occurred while doing statistics on a distribution
      */
-    public static void updateSpectrumMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+    public static void updateSpectrumMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator,
             PsmSpecificMap psmMap, String spectrumKey, boolean applyQCFilters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
@@ -701,7 +708,7 @@ public class MatchesValidator {
 
                     for (Filter filter : validationQCPreferences.getPsmFilters()) {
                         PsmFilter psmFilter = (PsmFilter) filter;
-                        boolean validated = psmFilter.isValidated(spectrumKey, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
+                        boolean validated = psmFilter.isValidated(spectrumKey, identification, geneMaps, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
                         psParameter.setQcResult(psmFilter.getName(), validated);
                         if (!validated) {
                             filtersPassed = false;
@@ -1388,6 +1395,10 @@ public class MatchesValidator {
          */
         private Identification identification;
         /**
+         * The gene maps.
+         */
+        private GeneMaps geneMaps;
+        /**
          * The identification features generator used to estimate, store and
          * retrieve identification features.
          */
@@ -1435,6 +1446,7 @@ public class MatchesValidator {
          * @param identificationFeaturesGenerator the identification features
          * generator used to estimate, store and retrieve identification
          * features
+         * @param geneMaps the gene maps
          * @param shotgunProtocol information on the experimental protocol
          * @param identificationParameters the identification parameters
          * @param waitingHandler a waiting handler to display progress and allow
@@ -1445,11 +1457,12 @@ public class MatchesValidator {
          * @param applyQCFilters boolean indicating whether quality control
          * filters should be used
          */
-        public PsmValidatorRunnable(PsmIterator psmIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ShotgunProtocol shotgunProtocol,
+        public PsmValidatorRunnable(PsmIterator psmIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps, ShotgunProtocol shotgunProtocol,
                 IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, InputMap inputMap, boolean applyQCFilters) {
             this.psmIterator = psmIterator;
             this.identification = identification;
             this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+            this.geneMaps = geneMaps;
             this.shotgunProtocol = shotgunProtocol;
             this.identificationParameters = identificationParameters;
             this.waitingHandler = waitingHandler;
@@ -1467,7 +1480,7 @@ public class MatchesValidator {
 
                         String spectrumKey = spectrumMatch.getKey();
 
-                        updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey, applyQCFilters);
+                        updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey, applyQCFilters);
 
                         // update assumption validation level
                         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
@@ -1570,6 +1583,10 @@ public class MatchesValidator {
          */
         private Identification identification;
         /**
+         * The gene maps.
+         */
+        private GeneMaps geneMaps;
+        /**
          * The identification features generator used to estimate, store and
          * retrieve identification features.
          */
@@ -1611,6 +1628,7 @@ public class MatchesValidator {
          * @param identificationFeaturesGenerator the identification features
          * generator used to estimate, store and retrieve identification
          * features
+         * @param geneMaps the gene maps
          * @param shotgunProtocol information on the experimental protocol
          * @param identificationParameters the identification parameters
          * @param waitingHandler a waiting handler to display progress and allow
@@ -1622,11 +1640,12 @@ public class MatchesValidator {
          * of validated peptides per fraction
          * @param metrics the object used to store metrics on the project
          */
-        public PeptideValidatorRunnable(PeptideMatchesIterator peptideMatchesIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ShotgunProtocol shotgunProtocol,
+        public PeptideValidatorRunnable(PeptideMatchesIterator peptideMatchesIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps, ShotgunProtocol shotgunProtocol,
                 IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, Metrics metrics) {
             this.peptideMatchesIterator = peptideMatchesIterator;
             this.identification = identification;
             this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+            this.geneMaps = geneMaps;
             this.shotgunProtocol = shotgunProtocol;
             this.identificationParameters = identificationParameters;
             this.waitingHandler = waitingHandler;
@@ -1645,7 +1664,7 @@ public class MatchesValidator {
 
                         String peptideKey = peptideMatch.getKey();
 
-                        updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideMap, peptideKey);
+                        updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, peptideMap, peptideKey);
 
                         // set the fraction details
                         PSParameter psParameter = new PSParameter();
@@ -1767,6 +1786,10 @@ public class MatchesValidator {
          */
         private Identification identification;
         /**
+         * The gene maps.
+         */
+        private GeneMaps geneMaps;
+        /**
          * The identification features generator used. to estimate, store and
          * retrieve identification features
          */
@@ -1818,6 +1841,7 @@ public class MatchesValidator {
          * @param identificationFeaturesGenerator the identification features
          * generator used to estimate, store and retrieve identification
          * features
+         * @param geneMaps the gene maps
          * @param metrics the object used to store metrics on the project
          * @param shotgunProtocol information on the experimental protocol
          * @param identificationParameters the identification parameters
@@ -1826,11 +1850,12 @@ public class MatchesValidator {
          * canceling the process
          * @param exceptionHandler handler for exceptions
          */
-        public ProteinValidatorRunnable(ProteinMatchesIterator proteinMatchesIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, Metrics metrics, ShotgunProtocol shotgunProtocol,
+        public ProteinValidatorRunnable(ProteinMatchesIterator proteinMatchesIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps, Metrics metrics, ShotgunProtocol shotgunProtocol,
                 IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
             this.proteinMatchesIterator = proteinMatchesIterator;
             this.identification = identification;
             this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+            this.geneMaps = geneMaps;
             this.metrics = metrics;
             this.shotgunProtocol = shotgunProtocol;
             this.identificationParameters = identificationParameters;
@@ -1864,7 +1889,7 @@ public class MatchesValidator {
                     if (proteinMatch != null) {
 
                         String proteinKey = proteinMatch.getKey();
-                        updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters,
+                        updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters,
                                 targetDecoyMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
 
                         // set the fraction details

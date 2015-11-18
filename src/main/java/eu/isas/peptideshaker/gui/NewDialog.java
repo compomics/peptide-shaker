@@ -157,7 +157,6 @@ public class NewDialog extends javax.swing.JDialog {
         processingPreferences = new ProcessingPreferences();
         processingTxt.setText(processingPreferences.getnThreads() + " cores");
 
-        loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         this.setLocationRelativeTo(peptideShakerGui);
@@ -178,7 +177,6 @@ public class NewDialog extends javax.swing.JDialog {
 
         processingPreferences = new ProcessingPreferences();
 
-        loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         this.setLocationRelativeTo(welcomeDialog);
@@ -778,6 +776,7 @@ public class NewDialog extends javax.swing.JDialog {
 
                 peptideShakerGUI.setProject(experiment, sample, replicateNumber);
                 peptideShakerGUI.setMetrics(peptideShaker.getMetrics());
+                peptideShakerGUI.setGeneMaps(peptideShaker.getGeneMaps());
                 peptideShakerGUI.setIdentificationFeaturesGenerator(peptideShaker.getIdentificationFeaturesGenerator());
                 peptideShakerGUI.setCache(peptideShaker.getCache());
                 peptideShakerGUI.displayResults();
@@ -2282,22 +2281,6 @@ public class NewDialog extends javax.swing.JDialog {
             }
         } else if (lowerCaseName.endsWith(".par")) {
             parameterFiles.put(file.getName(), file);
-        }
-    }
-
-    /**
-     * Imports the gene mapping.
-     */
-    private void loadGeneMappings() {
-        if (identificationParameters != null) {
-            GenePreferences genePreferences = identificationParameters.getGenePreferences();
-            if (genePreferences == null) {
-                genePreferences = new GenePreferences();
-                identificationParameters.setGenePreferences(genePreferences);
-            }
-            if (!genePreferences.loadGeneMappings(PeptideShaker.getJarFilePath(), progressDialog)) {
-                JOptionPane.showMessageDialog(this, "Unable to load the gene/GO mapping file.", "File Error", JOptionPane.ERROR_MESSAGE);
-            }
         }
     }
 }

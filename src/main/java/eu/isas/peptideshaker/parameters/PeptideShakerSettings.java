@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.parameters;
 
 import com.compomics.util.experiment.ShotgunProtocol;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.IdentificationParameters;
@@ -53,6 +54,10 @@ public class PeptideShakerSettings implements UrParameter {
      */
     private Metrics metrics;
     /**
+     * The gene maps.
+     */
+    protected GeneMaps geneMaps;
+    /**
      * The identification features generator with features in cache.
      */
     private IdentificationFeaturesCache identificationFeaturesCache;
@@ -77,6 +82,7 @@ public class PeptideShakerSettings implements UrParameter {
      * @param filterPreferences The filter preferences
      * @param displayPreferences The display preferences
      * @param metrics The metrics saved when loading the files
+     * @param geneMaps The gene maps
      * @param identificationFeaturesCache The identification features cache
      */
     public PeptideShakerSettings(ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
@@ -85,6 +91,7 @@ public class PeptideShakerSettings implements UrParameter {
             FilterPreferences filterPreferences,
             DisplayPreferences displayPreferences,
             Metrics metrics,
+            GeneMaps geneMaps,
             IdentificationFeaturesCache identificationFeaturesCache) {
         this.shotgunProtocol = shotgunProtocol;
         this.identificationParameters = identificationParameters;
@@ -92,6 +99,7 @@ public class PeptideShakerSettings implements UrParameter {
         this.projectDetails = projectDetails;
         this.filterPreferences = filterPreferences;
         this.displayPreferences = displayPreferences;
+        this.geneMaps = geneMaps;
         this.metrics = metrics;
         this.identificationFeaturesCache = identificationFeaturesCache;
     }
@@ -187,6 +195,18 @@ public class PeptideShakerSettings implements UrParameter {
             metrics = new Metrics();
         }
         return metrics;
+    }
+    
+    /**
+     * Returns the gene maps.
+     *
+     * @return the gene maps
+     */
+    public GeneMaps getGeneMaps() {
+        if (geneMaps == null) {
+            geneMaps = new GeneMaps();
+        }
+        return geneMaps;
     }
 
     /**

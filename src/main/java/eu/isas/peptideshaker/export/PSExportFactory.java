@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.ShotgunProtocol;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.io.export.ExportScheme;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.experiment.identification.Identification;
@@ -234,6 +235,7 @@ public class PSExportFactory implements ExportFactory {
      * Peptide and PSM sections)
      * @param identificationFeaturesGenerator the identification features
      * generator (mandatory for the Protein, Peptide and PSM sections)
+     * @param geneMaps the gene maps
      * @param proteinKeys the protein keys to export (mandatory for the Protein
      * section)
      * @param peptideKeys the peptide keys to export (mandatory for the Peptide
@@ -251,7 +253,6 @@ public class PSExportFactory implements ExportFactory {
      * @param waitingHandler the waiting handler
      *
      * @throws IOException thrown if an IOException occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException occurs
      * @throws SQLException thrown if an SQLException occurs
      * @throws ClassNotFoundException thrown if an ClassNotFoundException occurs
      * @throws InterruptedException thrown if an InterruptedException occurs
@@ -259,11 +260,11 @@ public class PSExportFactory implements ExportFactory {
      * @throws org.apache.commons.math.MathException thrown if an MathException occurs
      */
     public static void writeExport(ExportScheme exportScheme, File destinationFile, ExportFormat exportFormat, String experiment, String sample, int replicateNumber,
-            ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
             ArrayList<String> proteinKeys, ArrayList<String> peptideKeys, ArrayList<String> psmKeys,
             String proteinMatchKey, int nSurroundingAA, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
             SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
-            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
+            throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         ExportWriter exportWriter = ExportWriter.getExportWriter(exportFormat, destinationFile, exportScheme.getSeparator(), exportScheme.getSeparationLines());
         if (exportWriter instanceof ExcelWriter) {
@@ -294,7 +295,7 @@ public class PSExportFactory implements ExportFactory {
                 section.writeSection(experiment, sample, replicateNumber, projectDetails, waitingHandler);
             } else if (sectionName.equals(PsProteinFeature.type)) {
                 PsProteinSection section = new PsProteinSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, psmKeys, nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
+                section.writeSection(identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, psmKeys, nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
             } else if (sectionName.equals(PsPsmFeature.type)) {
                 PsPsmSection section = new PsPsmSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
                 section.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, psmKeys, "", exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);

@@ -2005,7 +2005,7 @@ public class PtmPanel extends javax.swing.JPanel {
                             progressDialog.setRunFinished();
                             try {
                                 String peptideKey = getSelectedPeptide(false);
-                                new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, null);
+                                new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, null, peptideShakerGUI.getGeneMaps());
                             } catch (Exception e) {
                                 peptideShakerGUI.catchException(e);
                             }
@@ -2097,7 +2097,7 @@ public class PtmPanel extends javax.swing.JPanel {
                             try {
                                 String peptideKey = getSelectedPeptide(true);
                                 progressDialog.setRunFinished();
-                                new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, null);
+                                new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, null, peptideShakerGUI.getGeneMaps());
                             } catch (Exception e) {
                                 peptideShakerGUI.catchException(e);
                             }

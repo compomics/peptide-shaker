@@ -2,9 +2,10 @@ package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.Util;
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.experiment.annotation.gene.GeneFactory;
-import com.compomics.util.experiment.annotation.go.GOFactory;
+import com.compomics.util.experiment.biology.genes.GeneFactory;
+import com.compomics.util.experiment.biology.genes.go.GoMapping;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.util.FastMath;
@@ -102,6 +104,7 @@ public class PsProteinSection {
      * @param identification the identification of the project
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
+     * @param geneMaps the gene maps
      * @param shotgunProtocol information on the shotgun protocol
      * @param identificationParameters the identification parameters
      * @param keys the keys of the protein matches to output. if null all
@@ -125,7 +128,7 @@ public class PsProteinSection {
      * @throws org.apache.commons.math.MathException exception thrown whenever
      * an error is encountered while calculating the observable coverage
      */
-    public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+    public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys,
             int nSurroundingAas, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
@@ -187,7 +190,7 @@ public class PsProteinSection {
                             first = false;
                         }
                         PsProteinFeature tempProteinFeatures = (PsProteinFeature) exportFeature;
-                        writer.write(getFeature(identificationFeaturesGenerator, shotgunProtocol, identificationParameters, keys, nSurroundingAas, proteinKey, proteinMatch, psParameter, tempProteinFeatures, waitingHandler));
+                        writer.write(getFeature(identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, keys, nSurroundingAas, proteinKey, proteinMatch, psParameter, tempProteinFeatures, waitingHandler));
                     }
                     writer.newLine();
                     if (peptideSection != null) {
@@ -212,6 +215,7 @@ public class PsProteinSection {
      *
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
+     * @param geneMaps the gene maps
      * @param shotgunProtocol information on the shotgun protocol
      * @param identificationParameters the identification parameters
      * @param keys the keys of the protein matches to output. if null all
@@ -240,7 +244,7 @@ public class PsProteinSection {
      * @throws org.apache.commons.math.MathException exception thrown whenever
      * an error is encountered while calculating the observable coverage
      */
-    public static String getFeature(IdentificationFeaturesGenerator identificationFeaturesGenerator,
+    public static String getFeature(IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAas, String proteinKey, ProteinMatch proteinMatch, PSParameter psParameter, PsProteinFeature tempProteinFeatures, WaitingHandler waitingHandler)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
@@ -251,10 +255,9 @@ public class PsProteinSection {
                 return SequenceFactory.getInstance().getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription();
             case ensembl_gene_id:
                 if (!proteinMatch.isDecoy()) {
-                    GeneFactory geneFactory = GeneFactory.getInstance();
-                    String geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
+                    String geneName = geneMaps.getGeneNameForProtein(proteinMatch.getMainMatch());
                     if (geneName != null) {
-                        String ensemblId = geneFactory.getGeneEnsemblId(geneName);
+                        String ensemblId = geneMaps.getEnsemblId(geneName);
                         if (ensemblId != null) {
                             return ensemblId;
                         }
@@ -263,8 +266,7 @@ public class PsProteinSection {
                 return "";
             case gene_name:
                 if (!proteinMatch.isDecoy()) {
-                    GeneFactory geneFactory = GeneFactory.getInstance();
-                    String geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
+                    String geneName = geneMaps.getGeneNameForProtein(proteinMatch.getMainMatch());
                     if (geneName != null) {
                         return geneName;
                     }
@@ -272,10 +274,9 @@ public class PsProteinSection {
                 return "";
             case chromosome:
                 if (!proteinMatch.isDecoy()) {
-                    GeneFactory geneFactory = GeneFactory.getInstance();
-                    String geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
+                    String geneName = geneMaps.getGeneNameForProtein(proteinMatch.getMainMatch());
                     if (geneName != null) {
-                        String chromosome = geneFactory.getChromosomeForGeneName(geneName);
+                        String chromosome = geneMaps.getChromosome(geneName);
                         if (chromosome != null) {
                             return chromosome;
                         }
@@ -285,7 +286,7 @@ public class PsProteinSection {
             case go_accession:
                 StringBuilder result = new StringBuilder();
                 if (!proteinMatch.isDecoy()) {
-                    ArrayList<String> goTermaccessions = GOFactory.getInstance().getProteinGoAccessions(proteinKey);
+                    HashSet<String> goTermaccessions = geneMaps.getGoTermsForProtein(proteinKey);
                     if (goTermaccessions != null) {
                         for (String accession : goTermaccessions) {
                             if (result.length() > 0) {
@@ -299,7 +300,7 @@ public class PsProteinSection {
             case go_description:
                 result = new StringBuilder();
                 if (!proteinMatch.isDecoy()) {
-                    ArrayList<String> goTermDescriptions = GOFactory.getInstance().getProteinGoDescriptions(proteinKey);
+                    HashSet<String> goTermDescriptions = geneMaps.getGoNamesForProtein(proteinKey);
                     if (goTermDescriptions != null) {
                         boolean first = true;
                         for (String description : goTermDescriptions) {

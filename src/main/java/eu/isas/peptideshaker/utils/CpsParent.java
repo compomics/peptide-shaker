@@ -6,6 +6,7 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Sample;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
@@ -16,10 +17,8 @@ import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.preferences.FractionSettings;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PSProcessingPreferences;
-import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.ProteinInferencePreferences;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.fileimport.CpsFileImporter;
@@ -68,6 +67,10 @@ public class CpsParent extends UserPreferencesParent {
      * The metrics stored during processing.
      */
     protected Metrics metrics;
+    /**
+     * The gene maps.
+     */
+    protected GeneMaps geneMaps;
     /**
      * The MS experiment class.
      */
@@ -248,6 +251,7 @@ public class CpsParent extends UserPreferencesParent {
             Advocate.setUserAdvocates(userAdvocateMapping);
         }
         metrics = experimentSettings.getMetrics();
+        geneMaps = experimentSettings.getGeneMaps();
         filterPreferences = experimentSettings.getFilterPreferences();
         displayPreferences = experimentSettings.getDisplayPreferences();
         shotgunProtocol = experimentSettings.getShotgunProtocol();
@@ -303,7 +307,7 @@ public class CpsParent extends UserPreferencesParent {
      */
     public void saveProject(WaitingHandler waitingHandler, boolean emptyCache) throws IOException, SQLException, ArchiveException, ClassNotFoundException, InterruptedException {
         CpsExporter.saveAs(cpsFile, waitingHandler, experiment, identification, shotgunProtocol, identificationParameters,
-                spectrumCountingPreferences, projectDetails, filterPreferences, metrics,
+                spectrumCountingPreferences, projectDetails, filterPreferences, metrics, geneMaps,
                 identificationFeaturesGenerator.getIdentificationFeaturesCache(),
                 objectsCache, emptyCache, displayPreferences, dbFolder);
 
@@ -470,38 +474,6 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Imports the gene mapping.
-     *
-     * @param waitingHandler the waiting handler
-     * @param jarFilePath the path to the jar file
-     *
-     * @return a boolean indicating whether the loading was successful
-     */
-    public boolean loadGeneMappings(String jarFilePath, WaitingHandler waitingHandler) {
-        return loadGeneMappings(jarFilePath, false, waitingHandler);
-    }
-
-    /**
-     * Imports the gene mapping.
-     *
-     * @param waitingHandler the waiting handler
-     * @param updateEqualVersion if true, the version is updated with equal
-     * version numbers, false, only update if the new version is newer
-     * @param jarFilePath the path to the jar file
-     *
-     * @return a boolean indicating whether the loading was successful
-     */
-    public boolean loadGeneMappings(String jarFilePath, boolean updateEqualVersion, WaitingHandler waitingHandler) {
-        GenePreferences genePreferences;
-        if (identificationParameters == null) {
-            genePreferences = new GenePreferences();
-        } else {
-            genePreferences = identificationParameters.getGenePreferences();
-        }
-        return genePreferences.loadGeneMappings(jarFilePath, updateEqualVersion, waitingHandler);
-    }
-
-    /**
      * Returns the objects database used for this project.
      *
      * @return the objects database used for this project
@@ -553,6 +525,15 @@ public class CpsParent extends UserPreferencesParent {
      */
     public Metrics getMetrics() {
         return metrics;
+    }
+    
+    /**
+     * Returns the gene maps.
+     *
+     * @return the gene maps
+     */
+    public GeneMaps getGeneMaps() {
+        return geneMaps;
     }
 
     /**
@@ -628,7 +609,7 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Set the identification feature generator.
+     * Sets the identification feature generator.
      *
      * @param identificationFeaturesGenerator the identification feature
      * generator
@@ -638,7 +619,7 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Set the spectrum counting preferences.
+     * Sets the spectrum counting preferences.
      *
      * @param spectrumCountingPreferences the spectrum counting preferences
      */
@@ -650,7 +631,7 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Set the project details.
+     * Sets the project details.
      *
      * @param projectDetails the project details
      */
@@ -659,7 +640,7 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Set the metrics.
+     * Sets the metrics.
      *
      * @param metrics the metrics
      */
@@ -668,7 +649,16 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Set the objects cache.
+     * Sets the gene maps.
+     *
+     * @param geneMaps the gene maps
+     */
+    public void setGeneMaps(GeneMaps geneMaps) {
+        this.geneMaps = geneMaps;
+    }
+
+    /**
+     * Sets the objects cache.
      *
      * @param objectsCache the objects cache
      */
@@ -677,7 +667,7 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Set the filter preferences.
+     * Sets the filter preferences.
      *
      * @param filterPreferences the filter preferences
      */
@@ -686,7 +676,7 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Set the display preferences.
+     * Sets the display preferences.
      *
      * @param displayPreferences the display preferences
      */
@@ -695,7 +685,7 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Set the cps file.
+     * Sets the cps file.
      *
      * @param cpsFile the cps file
      */
@@ -713,7 +703,7 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Set the identification object.
+     * Sets the identification object.
      *
      * @param identification the identification object
      */
@@ -737,7 +727,7 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Set the default preferences.
+     * Sets the default preferences.
      */
     public void setDefaultPreferences() {
         SearchParameters searchParameters = new SearchParameters();

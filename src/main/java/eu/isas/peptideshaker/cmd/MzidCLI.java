@@ -183,8 +183,6 @@ public class MzidCLI extends CpsParent {
             return 1;
         }
 
-        loadGeneMappings(PeptideShaker.getJarFilePath(), waitingHandler);
-
         // export mzid file
         // make sure that all annotations are included
         double currentIntensityLimit = this.getIdentificationParameters().getAnnotationPreferences().getAnnotationIntensityLimit();
