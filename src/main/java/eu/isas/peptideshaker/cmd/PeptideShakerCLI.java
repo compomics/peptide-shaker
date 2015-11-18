@@ -11,8 +11,6 @@ import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.genes.go.GoMapping;
 import com.compomics.util.experiment.biology.EnzymeFactory;
-import com.compomics.util.experiment.biology.IonFactory;
-import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
@@ -22,9 +20,7 @@ import com.compomics.util.experiment.identification.protein_sequences.SequenceFa
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import eu.isas.peptideshaker.PeptideShaker;
-import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.experiment.identification.parameters_cli.IdentificationParametersInputBean;
-import com.compomics.util.experiment.identification.ptm.PtmScore;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
@@ -33,11 +29,8 @@ import com.compomics.util.gui.DummyFrame;
 import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.messages.FeedBack;
-import com.compomics.util.preferences.FractionSettings;
-import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.preferences.ValidationQCPreferences;
@@ -790,69 +783,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     }
 
     /**
-     * Verifies the command line start parameters.
-     *
-     * @return true if the startup was valid
-     */
-    private static boolean isValidStartup(CommandLine aLine) throws IOException {
-
-        if (aLine.getOptions().length == 0) {
-            return false;
-        }
-
-        if (!aLine.hasOption(PeptideShakerCLIParams.EXPERIMENT.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.EXPERIMENT.id)).equals("")) {
-            System.out.println("\nExperiment name not specified.\n");
-            return false;
-        }
-
-        if (!aLine.hasOption(PeptideShakerCLIParams.SAMPLE.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.SAMPLE.id)).equals("")) {
-            System.out.println("\nSample name not specified.\n");
-            return false;
-        }
-
-        if (!aLine.hasOption(PeptideShakerCLIParams.REPLICATE.id) || aLine.getOptionValue(PeptideShakerCLIParams.REPLICATE.id) == null) {
-            System.out.println("\nReplicate number not specified.\n");
-            return false;
-        }
-
-        if (aLine.hasOption(PeptideShakerCLIParams.SPECTRUM_FILES.id)) {
-            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SPECTRUM_FILES.id);
-            ArrayList<File> idFiles = PeptideShakerCLIInputBean.getSpectrumFiles(filesTxt);
-            if (idFiles.isEmpty()) {
-                System.out.println("\nNo spectrum file found for command line input " + filesTxt + ".\n");
-                return false;
-            }
-        }
-
-        if (!aLine.hasOption(PeptideShakerCLIParams.IDENTIFICATION_FILES.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id)).equals("")) {
-            System.out.println("\nIdentification files not specified.\n");
-            return false;
-        } else {
-            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id);
-            ArrayList<File> idFiles = PeptideShakerCLIInputBean.getIdentificationFiles(filesTxt);
-            if (idFiles.isEmpty()) {
-                System.out.println("\nNo identification file found.\n");
-                return false;
-            }
-        }
-
-        if (!aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id)).equals("")) {
-            System.out.println("\nOutput file not specified.\n");
-            return false;
-        } else {
-            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id);
-            File testFile = new File(filesTxt.trim());
-            File parentFolder = testFile.getParentFile(); // @TODO: should check if parent file is null!
-            if (!parentFolder.exists() && !parentFolder.mkdirs()) {
-                System.out.println("\nDestination folder \'" + parentFolder.getPath() + "\' not found and cannot be created. Make sure that PeptideShaker has the right to write in the destination folder.\n");
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Starts the launcher by calling the launch method. Use this as the main
      * class in the jar file.
      *
@@ -866,7 +796,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             BasicParser parser = new BasicParser();
             CommandLine line = parser.parse(lOptions, args);
 
-            if (!isValidStartup(line)) {
+            if (!PeptideShakerCLIInputBean.isValidStartup(line)) {
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
                 lPrintWriter.print(System.getProperty("line.separator") + "==============================" + System.getProperty("line.separator"));
                 lPrintWriter.print("PeptideShaker - Command Line" + System.getProperty("line.separator"));

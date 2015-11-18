@@ -645,7 +645,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="validationQcMenuItem">
               <Properties>
                 <Property name="mnemonic" type="int" value="86"/>
-                <Property name="text" type="java.lang.String" value="Validation Filters (beta)"/>
+                <Property name="text" type="java.lang.String" value="Validation Filters"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>

@@ -1849,6 +1849,71 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void idSoftwareHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idSoftwareHelpJButtonActionPerformed
+
+        // temp testing code, to be removed...
+//        try {
+//
+//            PSParameter psmProbabilities = new PSParameter();
+//            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+//            parameters.add(new PSParameter());
+//            
+//            HashMap<String, Integer> allIds = new HashMap<String, Integer>();
+//            
+//            int counter = 0;
+//
+//            // iterate the spectrum files
+//            for (String spectrumFileName : identification.getSpectrumFiles()) {
+//
+//                PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, true, null);
+//
+//                while (psmIterator.hasNext()) {
+//                    
+//                    System.out.println(++counter);
+//
+//                    SpectrumMatch spectrumMatch = psmIterator.next();
+//                    String spectrumKey = spectrumMatch.getKey();
+//                    
+//                    
+//                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+//                    
+//                    ArrayList<String> tempAdvocates = new ArrayList<String>();
+//                    
+//                    for (Integer key : assumptions.keySet()) {
+//                        tempAdvocates.add(Advocate.getAdvocate(key).getName());
+//                    }
+//                    
+//                    Collections.sort(tempAdvocates);
+//  
+//                    String mapKey = "";
+//                    for (String tempKey : tempAdvocates) {
+//                        if (!mapKey.isEmpty()) {
+//                            mapKey += ", ";
+//                        }
+//                        mapKey += tempKey;
+//                    }
+//                    
+//                    Integer oldResult = allIds.get(mapKey);
+//                    
+//                    if (oldResult == null) {
+//                        allIds.put(mapKey, 1);
+//                    } else {
+//                        allIds.put(mapKey, oldResult + 1);
+//                    }
+//                }
+//            }
+//            
+//            
+//            for (String key : allIds.keySet()) {
+//                System.out.println(key + "\t" + allIds.get(key));
+//            }
+//            
+//            
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+
+
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"), "#IdSoftwarePerformance",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
@@ -2373,7 +2438,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     advocatesUsed = new ArrayList<Integer>(inputMap.getInputAlgorithmsSorted());
                     ArrayList<String> spectrumFileNames = identification.getSpectrumFiles();
                     numberOfValidatedPsmsMap = new HashMap<String, Integer>();
-                    for (String fileName : spectrumFileNames) {
+                    for (String fileName : spectrumFileNames) { // @TODO: number is too high!!!
                         numberOfValidatedPsmsMap.put(fileName, inputMap.getAdvocateContribution(Advocate.peptideShaker.getIndex(), fileName)); // @TODO: should be the same as psm count in the validation tab!
                     }
                     updateOverviewPlots(inputMap, pSMaps.getPsmSpecificMap());
@@ -2729,7 +2794,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
             try {
-
                 // add assumptions to the table
                 populateIdResultsTable(getSelectedSpectrumKey());
 
@@ -2784,8 +2848,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         currentAssumptionsList = new ArrayList<SpectrumIdentificationAssumption>(8);
         searchResultsTablePeptideTooltips = new ArrayList<String>(8);
+
         if (identification.matchExists(spectrumKey)) {
-            // Sort assumptions by tag or peptide -> confidence -> search engine -> peptide sequence
+
+            // sort assumptions by tag or peptide -> confidence -> search engine -> peptide sequence
             HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
             HashMap<Double, HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>>> peptideAssumptionsMap = new HashMap<Double, HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>>>();
             HashMap<Double, HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>>> tagAssumptionsMap = new HashMap<Double, HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>>>();
@@ -3797,6 +3863,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
 
             try {
+                if (currentAssumptionsList == null || currentAssumptionsList.isEmpty()) {
+                    return null;
+                }
+
                 SpectrumIdentificationAssumption spectrumIdentificationAssumption = currentAssumptionsList.get(row);
                 switch (columnIndex) {
                     case 0:
@@ -3911,7 +3981,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
             double nTP = 0;
             double totalTP = 0;
-            for (TargetDecoyMap targetDecoyMap : psmSpecificMap.getTargetDecoyMaps()) {
+            for (TargetDecoyMap targetDecoyMap : psmSpecificMap.getTargetDecoyMaps()) { // @TODO: not correct!!
                 TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
                 nTP += targetDecoyResults.getnTP();
                 totalTP += targetDecoyResults.getnTPTotal();
@@ -3945,7 +4015,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
             //@TODO: any value for PeptideShaker here?
         }
-        updateOverviewPlots(searchEngineTP, searchEngineUniqueContribution, totalNumberOfSpectra); //@TODO: make new plots
+        updateOverviewPlots(searchEngineTP, searchEngineUniqueContribution, totalNumberOfSpectra);
     }
 
     /**

@@ -1327,9 +1327,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 newsButtonMouseExited(evt);
             }
         });
+        backgroundLayeredPane.setLayer(newsButton, javax.swing.JLayeredPane.MODAL_LAYER);
         backgroundLayeredPane.add(newsButton);
         newsButton.setBounds(1205, 825, 70, 20);
-        backgroundLayeredPane.setLayer(newsButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
         notesButton.setBackground(new java.awt.Color(204, 204, 204));
         notesButton.setFont(notesButton.getFont().deriveFont(notesButton.getFont().getStyle() | java.awt.Font.BOLD));
@@ -1350,9 +1350,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 notesButtonMouseReleased(evt);
             }
         });
+        backgroundLayeredPane.setLayer(notesButton, javax.swing.JLayeredPane.MODAL_LAYER);
         backgroundLayeredPane.add(notesButton);
         notesButton.setBounds(1205, 775, 70, 20);
-        backgroundLayeredPane.setLayer(notesButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
         tipsButton.setBackground(new java.awt.Color(204, 204, 204));
         tipsButton.setFont(tipsButton.getFont().deriveFont(tipsButton.getFont().getStyle() | java.awt.Font.BOLD));
@@ -1372,9 +1372,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 tipsButtonMouseReleased(evt);
             }
         });
+        backgroundLayeredPane.setLayer(tipsButton, javax.swing.JLayeredPane.MODAL_LAYER);
         backgroundLayeredPane.add(tipsButton);
         tipsButton.setBounds(1205, 800, 70, 20);
-        backgroundLayeredPane.setLayer(tipsButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
@@ -1553,7 +1553,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         editMenu.add(annotationPreferencesMenu);
 
         validationQcMenuItem.setMnemonic('V');
-        validationQcMenuItem.setText("Validation Filters (beta)");
+        validationQcMenuItem.setText("Validation Filters");
         validationQcMenuItem.setEnabled(false);
         validationQcMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2680,8 +2680,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void identificationParametersMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identificationParametersMenuItemActionPerformed
         IdentificationParameters identificationParameters = getIdentificationParameters();
-        IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(this, identificationParameters, PeptideShaker.getConfigurationFile(), getNormalIcon(), getWaitingIcon(), lastSelectedFolder, this, false);
-        //@TODO: let the user edit some parameters?
+        IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(
+                this, identificationParameters, PeptideShaker.getConfigurationFile(), getNormalIcon(), getWaitingIcon(), lastSelectedFolder, this, false);
     }//GEN-LAST:event_identificationParametersMenuItemActionPerformed
 
     /**

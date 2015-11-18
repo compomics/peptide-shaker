@@ -367,7 +367,8 @@ public class PsmImporter {
         if (matchAssumptions == null && rawDbAssumptions == null) {
             throw new IllegalArgumentException("No identification assumption found for PSM " + spectrumKey + ".");
         } else if (matchAssumptions != null && rawDbAssumptions != null) {
-            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> combinedAssumptions = new HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>>(Math.max(matchAssumptions.size(), rawDbAssumptions.size()));
+            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> combinedAssumptions = 
+                    new HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>>(Math.max(matchAssumptions.size(), rawDbAssumptions.size()));
             for (Integer algorithm : matchAssumptions.keySet()) {
                 HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> algorithmMap = matchAssumptions.get(algorithm);
                 HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> combinedAlgorithmMap = combinedAssumptions.get(algorithm);

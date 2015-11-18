@@ -714,7 +714,7 @@ public class FileImporter {
 
                     if (allLoaded) {
 
-                        // If any Map spectrum sequencing matches on protein sequences
+                        // if any map spectrum sequencing matches on protein sequences
                         if (tagMapper == null) {
                             tagMapper = new TagMapper(proteinTree, identificationParameters, exceptionHandler);
                         }
