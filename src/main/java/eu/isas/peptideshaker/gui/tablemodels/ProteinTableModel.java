@@ -290,7 +290,13 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         }
                         String geneName = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getGeneName();
                         String chromosomeNumber = geneMaps.getChromosome(geneName);
-                        return new Chromosome(chromosomeNumber);
+                        if (chromosomeNumber == null || chromosomeNumber.length() == 0) {
+                            return "";
+                        } else if (chromosomeNumber.length() > 2) {
+                            return "...";
+                        } else {
+                            return new Chromosome(chromosomeNumber);
+                        }
                     case 6:
                         if (isScrolling) {
                             return null;

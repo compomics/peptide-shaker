@@ -22,6 +22,8 @@ import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
+import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
+import com.compomics.util.experiment.biology.taxonomy.mappings.UniprotSpecies;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
@@ -271,10 +273,17 @@ public class FileImporter {
      * @throws IOException exception thrown whenever an error occurred while reading or writing a file
      */
     public void importGenes() throws IOException {
+        
         GeneFactory geneFactory = GeneFactory.getInstance();
         GenePreferences genePreferences = identificationParameters.getGenePreferences();
-        GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, waitingHandler);
+        
+        UniprotSpecies uniprotSpecies = new UniprotSpecies();
+        File uniprotSpeciesFile = SpeciesFactory.getSpeciesFile(PeptideShaker.getJarFilePath());
+        uniprotSpecies.loadMapping(uniprotSpeciesFile);
+        
+        GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, uniprotSpecies, waitingHandler);
         peptideShaker.setGeneMaps(geneMaps);
+        
     }
 
     /**
