@@ -405,7 +405,11 @@ public class PeptideShakerCLIInputBean {
     /**
      * Verifies the command line start parameters.
      *
+     * @param aLine the command line to validate
+     *
      * @return true if the startup was valid
+     *
+     * @throws IOException if the spectrum file(s) are not found
      */
     public static boolean isValidStartup(CommandLine aLine) throws IOException {
 
