@@ -355,6 +355,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             progressDialog.setTitle("Importing GO (1/3). Please Wait...");
                             GoMapping backgroundGoMapping = new GoMapping();
                             //@TODO: let the user choose the background GO terms
+                            
                             GoDomains goDomains = new GoDomains();
                             File goDomainsFile = GeneFactory.getGoDomainsFile();
                             goDomains.laodMappingFromFile(goDomainsFile, progressDialog);

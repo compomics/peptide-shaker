@@ -266,24 +266,25 @@ public class FileImporter {
                     + "If the error persists please let us know using our issue tracker: https://github.com/compomics/peptide-shaker/issues.", true, true);
         }
     }
-    
+
     /**
      * Imports the gene information for this project.
-     * 
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file
+     *
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file
      */
     public void importGenes() throws IOException {
-        
+
         GeneFactory geneFactory = GeneFactory.getInstance();
         GenePreferences genePreferences = identificationParameters.getGenePreferences();
-        
+
         UniprotSpecies uniprotSpecies = new UniprotSpecies();
         File uniprotSpeciesFile = SpeciesFactory.getSpeciesFile(PeptideShaker.getJarFilePath());
         uniprotSpecies.loadMapping(uniprotSpeciesFile);
-        
+
         GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, uniprotSpecies, waitingHandler);
         peptideShaker.setGeneMaps(geneMaps);
-        
+
     }
 
     /**
@@ -458,10 +459,15 @@ public class FileImporter {
                 if (waitingHandler.isRunCanceled()) {
                     return 1;
                 }
-                
-                waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-                waitingHandler.appendReport("Importing Gene Mappings.", true, true);
-                importGenes();
+
+                GenePreferences genePreferences = identificationParameters.getGenePreferences();
+                if (genePreferences.getUseGeneMapping()) {
+                    waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+                    waitingHandler.appendReport("Importing Gene Mappings.", true, true);
+                    importGenes();
+                } else {
+                    peptideShaker.setGeneMaps(new GeneMaps());
+                }
 
                 if (waitingHandler.isRunCanceled()) {
                     return 1;
@@ -767,7 +773,7 @@ public class FileImporter {
                         PsmImporter psmImporter = new PsmImporter(peptideShaker.getCache(), shotgunProtocol, identificationParameters, processingPreferences, fileReader, idFile, identification,
                                 inputMap, proteinCount, singleProteinList, exceptionHandler);
                         psmImporter.importPsms(idFileSpectrumMatches, processingPreferences.getnThreads(), waitingHandler);
-                        
+
                         if (waitingHandler.isRunCanceled()) {
                             return;
                         }
