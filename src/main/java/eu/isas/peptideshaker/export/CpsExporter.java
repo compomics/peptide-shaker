@@ -4,6 +4,7 @@ import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ShotgunProtocol;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.io.ExperimentIO;
@@ -42,7 +43,8 @@ public class CpsExporter {
      * @param projectDetails the project details
      * @param filterPreferences the filtering preferences
      * @param displayPreferences the display preferences
-     * @param metrics the dataset metrics
+     * @param metrics the dataset
+     * @param geneMaps the gene maps
      * @param identificationFeaturesCache the identification features cache
      * @param objectsCache the object cache
      * @param emptyCache a boolean indicating whether the object cache should be
@@ -62,7 +64,7 @@ public class CpsExporter {
      */
     public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, ShotgunProtocol shotgunProtocol,
             IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences,
-            Metrics metrics, IdentificationFeaturesCache identificationFeaturesCache, ObjectsCache objectsCache, boolean emptyCache,
+            Metrics metrics, GeneMaps geneMaps, IdentificationFeaturesCache identificationFeaturesCache, ObjectsCache objectsCache, boolean emptyCache,
             DisplayPreferences displayPreferences, File dbFolder) throws IOException, SQLException, ArchiveException, ClassNotFoundException, InterruptedException {
 
         identificationFeaturesCache.setReadOnly(true);
@@ -74,7 +76,7 @@ public class CpsExporter {
 
             // set the experiment parameters
             PeptideShakerSettings peptideShakerSettings = new PeptideShakerSettings(shotgunProtocol, identificationParameters, spectrumCountingPreferences,
-                    projectDetails, filterPreferences, displayPreferences, metrics, identificationFeaturesCache);
+                    projectDetails, filterPreferences, displayPreferences, metrics, geneMaps, identificationFeaturesCache);
             ObjectsDB objectsDB = identification.getIdentificationDB().getObjectsDB();
             if (!objectsDB.hasTable(CpsParent.settingsTableName)) {
                 objectsDB.addTable(CpsParent.settingsTableName);
@@ -97,7 +99,7 @@ public class CpsExporter {
                 waitingHandler.setPrimaryProgressCounterIndeterminate(true);
                 waitingHandler.setSecondaryProgressCounterIndeterminate(true);
             }
-            
+
             if (waitingHandler == null || !waitingHandler.isRunCanceled()) {
                 File experimentFile = new File(dbFolder, MsExperiment.experimentObjectName);
                 ExperimentIO.save(experimentFile, experiment);

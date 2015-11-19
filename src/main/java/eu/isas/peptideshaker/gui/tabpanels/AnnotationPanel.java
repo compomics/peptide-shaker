@@ -1,7 +1,8 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.annotation.gene.GeneFactory;
+import com.compomics.util.experiment.biology.genes.GeneFactory;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.export.OutputGenerator;
@@ -29,10 +30,6 @@ public class AnnotationPanel extends javax.swing.JPanel {
      * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-    /**
-     * The gene factory.
-     */
-    private GeneFactory geneFactory = GeneFactory.getInstance();
 
     /**
      * Creates a new AnnotationPanel.
@@ -1378,7 +1375,8 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 geneNameJTextField.setText(geneName);
 
                 if (geneName != null) {
-                    chromosomeJTextField.setText(geneFactory.getChromosomeForGeneName(geneName));
+                    GeneMaps geneMaps = peptideShakerGUI.getGeneMaps();
+                    chromosomeJTextField.setText(geneMaps.getChromosome(geneName));
                 } else {
                     chromosomeJTextField.setText(null);
                 }
@@ -1391,10 +1389,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
             } catch (InterruptedException e) {
                 JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while loading the protein information.", "File Error", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while loading the protein information.", "File Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            } catch (IllegalArgumentException e) {
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
                         e.getLocalizedMessage() + "<br>"
                         + "Please see the <a href=\"http://compomics.github.io/projects/peptide-shaker.html#troubleshooting\">Troubleshooting section</a>."),

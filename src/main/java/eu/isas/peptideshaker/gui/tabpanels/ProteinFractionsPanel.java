@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.annotation.gene.GeneFactory;
+import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
@@ -9,7 +9,7 @@ import com.compomics.util.experiment.identification.protein_sequences.SequenceFa
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
-import com.compomics.util.gui.GeneDetailsDialog;
+import com.compomics.util.gui.genes.GeneDetailsDialog;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
@@ -95,10 +95,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      * The default line width for the line plots.
      */
     private final int LINE_WIDTH = 4;
-    /**
-     * The gene factory.
-     */
-    private GeneFactory geneFactory = GeneFactory.getInstance();
 
     /**
      * Indexes for the three main data tables.
@@ -277,7 +273,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 if (proteinTable.getRowCount() > 0) {
                     ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                 } else {
-                    ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
+                    ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                     proteinTable.setModel(proteinTableModel);
                 }
 
@@ -1359,9 +1355,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                 // open the gene details dialog
                 if (column == proteinTable.getColumn("Chr").getModelIndex()
-                        && evt.getButton() == MouseEvent.BUTTON1 && geneFactory.isMappingFileOpen()) {
+                        && evt.getButton() == MouseEvent.BUTTON1) {
                     try {
-                        new GeneDetailsDialog(peptideShakerGUI, proteinKey);
+                        new GeneDetailsDialog(peptideShakerGUI, proteinKey, peptideShakerGUI.getGeneMaps());
                     } catch (Exception ex) {
                         peptideShakerGUI.catchException(ex);
                     }
@@ -1448,7 +1444,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
-        } else if (column == proteinTable.getColumn("Chr").getModelIndex() && proteinTable.getValueAt(row, column) != null && geneFactory.isMappingFileOpen()) {
+        } else if (column == proteinTable.getColumn("Chr").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else if (column == proteinTable.getColumn("Description").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             if (GuiUtilities.getPreferredWidthOfCell(proteinTable, row, column) > proteinTable.getColumn("Description").getWidth()) {

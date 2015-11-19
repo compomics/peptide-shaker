@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.annotation.gene.GeneFactory;
+import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
@@ -19,7 +19,7 @@ import com.compomics.util.experiment.identification.spectrum_annotation.spectrum
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Peak;
 import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.gui.GeneDetailsDialog;
+import com.compomics.util.gui.genes.GeneDetailsDialog;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.XYPlottingDialog;
@@ -174,10 +174,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-    /**
-     * The gene factory.
-     */
-    private GeneFactory geneFactory = GeneFactory.getInstance();
     /**
      * The sequence coverage chart.
      */
@@ -1982,7 +1978,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             }
         } else if (column == proteinTable.getColumn("PI").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        } else if (column == proteinTable.getColumn("Chr").getModelIndex() && proteinTable.getValueAt(row, column) != null && geneFactory.isMappingFileOpen()) {
+        } else if (column == proteinTable.getColumn("Chr").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else if (column == proteinTable.getColumn("").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -2052,7 +2048,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 pSMaps = (PSMaps) identification.getUrParam(pSMaps);
                 try {
                     MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(),
-                            identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), pSMaps.getPsmSpecificMap(), psmKey,
+                            identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), pSMaps.getPsmSpecificMap(), psmKey,
                             peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters());
                     if (matchValidationDialog.isValidationChanged()) {
                         updatePsmPanelTitle();
@@ -2129,9 +2125,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // open the gene details dialog
                 if (column == proteinTable.getColumn("Chr").getModelIndex() && evt != null
-                        && evt.getButton() == MouseEvent.BUTTON1 && geneFactory.isMappingFileOpen()) {
+                        && evt.getButton() == MouseEvent.BUTTON1) {
                     try {
-                        new GeneDetailsDialog(peptideShakerGUI, proteinKey);
+                        new GeneDetailsDialog(peptideShakerGUI, proteinKey, peptideShakerGUI.getGeneMaps());
                     } catch (Exception ex) {
                         peptideShakerGUI.catchException(ex);
                     }
@@ -2152,7 +2148,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // open the protein inference dialog
                 if (column == proteinTable.getColumn("PI").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
-                    new ProteinInferenceDialog(peptideShakerGUI, proteinKey, peptideShakerGUI.getIdentification());
+                    new ProteinInferenceDialog(peptideShakerGUI, peptideShakerGUI.getGeneMaps(), proteinKey, peptideShakerGUI.getIdentification());
                 }
 
                 // open the match validation level dialog
@@ -2162,7 +2158,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     pSMaps = (PSMaps) identification.getUrParam(pSMaps);
                     try {
                         MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(),
-                                identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), pSMaps.getProteinMap(), proteinKey,
+                                identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), pSMaps.getProteinMap(), proteinKey,
                                 peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters());
                         if (matchValidationDialog.isValidationChanged()) {
                             updateProteinPanelTitle();
@@ -2231,7 +2227,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 try {
                     tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
                     String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
-                    new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, proteinKey);
+                    new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, proteinKey, peptideShakerGUI.getGeneMaps());
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
@@ -2244,7 +2240,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 pSMaps = (PSMaps) identification.getUrParam(pSMaps);
                 try {
                     MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(),
-                            identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), pSMaps.getPeptideSpecificMap(), peptideKey,
+                            identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), pSMaps.getPeptideSpecificMap(), peptideKey,
                             peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters());
                     if (matchValidationDialog.isValidationChanged()) {
                         updateProteinPanelTitle();
@@ -4960,7 +4956,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     if (proteinTable.getRowCount() > 0) {
                         ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                     } else {
-                        ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
+                        ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                         proteinTable.setModel(proteinTableModel);
                     }
 

@@ -1,8 +1,9 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.annotation.gene.GeneFactory;
+import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -51,10 +52,6 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The gene factory.
-     */
-    private GeneFactory geneFactory = GeneFactory.getInstance();
-    /**
      * The identification of this project.
      */
     private Identification identification;
@@ -83,6 +80,10 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * The batch size.
      */
     private int batchSize = 20;
+    /**
+     * The gene maps.
+     */
+    private GeneMaps geneMaps;
 
     /**
      * Constructor which sets a new empty table.
@@ -97,15 +98,17 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * information
      * @param identificationFeaturesGenerator the identification features
      * generator generating the features of the identification
+     * @param geneMaps the gene maps
      * @param displayFeaturesGenerator the display features generator generating
      * the display elements
      * @param exceptionHandler an exception handler catching exceptions
      * @param proteinKeys the keys of the protein matches to display
      */
-    public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, DisplayFeaturesGenerator displayFeaturesGenerator,
+    public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps, DisplayFeaturesGenerator displayFeaturesGenerator,
             ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+        this.geneMaps = geneMaps;
         this.displayFeaturesGenerator = displayFeaturesGenerator;
         this.exceptionHandler = exceptionHandler;
         this.proteinKeys = proteinKeys;
@@ -286,8 +289,14 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             }
                         }
                         String geneName = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getGeneName();
-                        String chromosomeNumber = geneFactory.getChromosomeForGeneName(geneName);
-                        return new Chromosome(chromosomeNumber);
+                        String chromosomeNumber = geneMaps.getChromosome(geneName);
+                        if (chromosomeNumber == null || chromosomeNumber.length() == 0) {
+                            return "";
+                        } else if (chromosomeNumber.length() > 2) {
+                            return "...";
+                        } else {
+                            return new Chromosome(chromosomeNumber);
+                        }
                     case 6:
                         if (isScrolling) {
                             return null;

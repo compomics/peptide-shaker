@@ -2059,7 +2059,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         PSExportFactory.writeExport(exportScheme, selectedFile, exportFormat, peptideShakerGUI.getExperiment().getReference(),
                                 peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),
                                 peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
-                                peptideShakerGUI.getIdentificationFeaturesGenerator(), null, null, null, null,
+                                peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), null, null, null, null,
                                 peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
                                 peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(),
                                 peptideShakerGUI.getSpectrumCountingPreferences(), progressDialog);

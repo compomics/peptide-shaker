@@ -20,11 +20,16 @@ import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.exceptions.exception_handlers.WaitingDialogExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.genes.GeneFactory;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
+import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
+import com.compomics.util.experiment.biology.taxonomy.mappings.UniprotSpecies;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.memory.MemoryConsumptionStatus;
+import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
@@ -263,6 +268,26 @@ public class FileImporter {
     }
 
     /**
+     * Imports the gene information for this project.
+     *
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file
+     */
+    public void importGenes() throws IOException {
+
+        GeneFactory geneFactory = GeneFactory.getInstance();
+        GenePreferences genePreferences = identificationParameters.getGenePreferences();
+
+        UniprotSpecies uniprotSpecies = new UniprotSpecies();
+        File uniprotSpeciesFile = SpeciesFactory.getSpeciesFile(PeptideShaker.getJarFilePath());
+        uniprotSpecies.loadMapping(uniprotSpeciesFile);
+
+        GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, uniprotSpecies, waitingHandler);
+        peptideShaker.setGeneMaps(geneMaps);
+
+    }
+
+    /**
      * Worker which loads identification from a file and processes them while
      * giving feedback to the user.
      */
@@ -430,6 +455,19 @@ public class FileImporter {
 
             try {
                 importSequences(waitingHandler, exceptionHandler, identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase());
+
+                if (waitingHandler.isRunCanceled()) {
+                    return 1;
+                }
+
+                GenePreferences genePreferences = identificationParameters.getGenePreferences();
+                if (genePreferences.getUseGeneMapping()) {
+                    waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+                    waitingHandler.appendReport("Importing Gene Mappings.", true, true);
+                    importGenes();
+                } else {
+                    peptideShaker.setGeneMaps(new GeneMaps());
+                }
 
                 if (waitingHandler.isRunCanceled()) {
                     return 1;
@@ -735,7 +773,7 @@ public class FileImporter {
                         PsmImporter psmImporter = new PsmImporter(peptideShaker.getCache(), shotgunProtocol, identificationParameters, processingPreferences, fileReader, idFile, identification,
                                 inputMap, proteinCount, singleProteinList, exceptionHandler);
                         psmImporter.importPsms(idFileSpectrumMatches, processingPreferences.getnThreads(), waitingHandler);
-                        
+
                         if (waitingHandler.isRunCanceled()) {
                             return;
                         }

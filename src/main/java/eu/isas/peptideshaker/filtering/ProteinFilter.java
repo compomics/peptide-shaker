@@ -2,9 +2,10 @@ package eu.isas.peptideshaker.filtering;
 
 import com.compomics.util.experiment.filtering.FilterItemComparator;
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.experiment.annotation.gene.GeneFactory;
-import com.compomics.util.experiment.annotation.go.GOFactory;
+import com.compomics.util.experiment.biology.genes.GeneFactory;
+import com.compomics.util.experiment.biology.genes.go.GoMapping;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
@@ -21,7 +22,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javax.swing.RowFilter.ComparisonType;
 import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -91,7 +91,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     @Override
-    public boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+    public boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, String matchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
 
         ProteinFilterItem filterItem = ProteinFilterItem.getItem(itemName);
@@ -123,7 +123,7 @@ public class ProteinFilter extends MatchFilter {
                 ArrayList<String> chromosomes = new ArrayList<String>();
                 for (String accession : accessions) {
                     String geneName = SequenceFactory.getInstance().getHeader(accession).getGeneName();
-                    String chromosomeNumber = GeneFactory.getInstance().getChromosomeForGeneName(geneName);
+                    String chromosomeNumber = geneMaps.getChromosome(geneName);
                     chromosomes.add(chromosomeNumber);
                 }
                 return filterItemComparator.passes(input, chromosomes);
@@ -136,7 +136,7 @@ public class ProteinFilter extends MatchFilter {
                 }
                 return filterItemComparator.passes(input, genes);
             case GO:
-                return filterItemComparator.passes(input, GOFactory.getInstance().getProteinGoDescriptions(matchKey));
+                return filterItemComparator.passes(input, new ArrayList<String>(geneMaps.getGoNamesForProtein(matchKey)));
             case expectedCoverage:
                 Double coverage = 100 * identificationFeaturesGenerator.getObservableCoverage(matchKey);
                 return filterItemComparator.passes(input, coverage.toString());

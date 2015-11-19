@@ -66,8 +66,8 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.RI.id) + IdentificationParametersCLIParams.RI.description + "\n";
 
         output += "\n\nGene Annotation:\n\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SPECIES_TYPE.id) + IdentificationParametersCLIParams.SPECIES_TYPE.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SPECIES.id) + IdentificationParametersCLIParams.SPECIES.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.USE_GENE_MAPPING.id) + IdentificationParametersCLIParams.USE_GENE_MAPPING.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.UPDATE_GENE_MAPPING.id) + IdentificationParametersCLIParams.UPDATE_GENE_MAPPING.description + "\n";
 
         output += "\n\nSpectrum Annotation:\n\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.ANNOTATION_LEVEL.id) + IdentificationParametersCLIParams.ANNOTATION_LEVEL.description + "\n";

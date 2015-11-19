@@ -15,6 +15,7 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.*;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -127,6 +128,10 @@ public class PeptideShaker {
      * Metrics to be picked when loading the identification.
      */
     private Metrics metrics = new Metrics();
+    /**
+     * The gene maps.
+     */
+    private GeneMaps geneMaps = new GeneMaps();
     /**
      * An identification features generator which will compute figures on the
      * identification matches and keep some of them in memory.
@@ -452,7 +457,7 @@ public class PeptideShaker {
         } else {
             waitingHandler.appendReport("Validating identifications, quality control of matches.", true, true);
         }
-        matchesValidator.validateIdentifications(identification, metrics, waitingHandler, exceptionHandler, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, inputMap, spectrumCountingPreferences, processingPreferences);
+        matchesValidator.validateIdentifications(identification, metrics, geneMaps, waitingHandler, exceptionHandler, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, inputMap, spectrumCountingPreferences, processingPreferences);
         waitingHandler.increasePrimaryProgressCounter();
         metrics.clearSpectrumKeys();
         if (waitingHandler.isRunCanceled()) {
@@ -830,6 +835,24 @@ public class PeptideShaker {
      */
     public Metrics getMetrics() {
         return metrics;
+    }
+    
+    /**
+     * Returns the gene maps.
+     *
+     * @return the gene maps
+     */
+    public GeneMaps getGeneMaps() {
+        return geneMaps;
+    }
+    
+    /**
+     * Sets the gene maps.
+     * 
+     * @param geneMaps the new gene maps
+     */
+    public void setGeneMaps(GeneMaps geneMaps) {
+        this.geneMaps = geneMaps;
     }
 
     /**

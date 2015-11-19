@@ -1,11 +1,12 @@
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.experiment.annotation.gene.GeneFactory;
+import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
@@ -80,10 +81,6 @@ public class OutputGenerator {
      * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-    /**
-     * The gene factory.
-     */
-    private GeneFactory geneFactory = GeneFactory.getInstance();
     /**
      * The writer used to send the output to file.
      */
@@ -402,7 +399,8 @@ public class OutputGenerator {
                                                 writer.write(SEPARATOR);
                                             }
                                             if (chromosomeNumber) {
-                                                String chromosomeNumber = geneFactory.getChromosomeForGeneName(tempGeneName);
+                                                GeneMaps geneMaps = peptideShakerGUI.getGeneMaps();
+                                                String chromosomeNumber = geneMaps.getChromosome(tempGeneName);
                                                 if (chromosomeNumber != null && !identification.getProteinMatch(proteinKey).isDecoy()) {
                                                     writer.write(chromosomeNumber);
                                                 }

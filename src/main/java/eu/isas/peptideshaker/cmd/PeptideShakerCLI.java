@@ -8,8 +8,8 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.experiment.annotation.gene.GeneFactory;
-import com.compomics.util.experiment.annotation.go.GOFactory;
+import com.compomics.util.experiment.biology.genes.GeneFactory;
+import com.compomics.util.experiment.biology.genes.go.GoMapping;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
@@ -129,6 +129,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             } catch (Exception e) {
                 System.out.println("Unable to load the path configurations. Default paths will be used.");
             }
+            
+            // Set the gene mappings
+            GeneFactory geneFactory = GeneFactory.getInstance();
+            geneFactory.initialize(PeptideShaker.getJarFilePath());
 
             // set up the waiting handler
             if (cliInputBean.isGUI()) {
@@ -295,7 +299,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     int nSurroundingAAs = 2; //@TODO: this shall not be hard coded //peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides()
                     for (String reportType : reportCLIInputBean.getReportTypes()) {
                         try {
-                            CLIMethods.exportReport(reportCLIInputBean, reportType, experiment.getReference(), sample.getReference(), replicateNumber, projectDetails, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, nSurroundingAAs, spectrumCountingPreferences, waitingHandler);
+                            CLIMethods.exportReport(reportCLIInputBean, reportType, experiment.getReference(), sample.getReference(), replicateNumber, projectDetails, identification, geneMaps, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, nSurroundingAAs, spectrumCountingPreferences, waitingHandler);
                         } catch (Exception e) {
                             waitingHandler.appendReport("An error occurred while exporting the " + reportType + ".", true, true);
                             e.printStackTrace();
@@ -627,51 +631,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // set up the shotgun protocol
         shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(searchParameters);
 
-        // download the gene preferences if missing
-        GenePreferences genePreferences = identificationParameters.getGenePreferences();
-        String selectedSpecies = genePreferences.getCurrentSpecies();
-        String selectedSpeciesType = genePreferences.getCurrentSpeciesType();
-        if (selectedSpecies != null) {
-
-            genePreferences.loadGeneMappings(PeptideShaker.getJarFilePath(), waitingHandler);
-
-            // try to download gene and go information
-            GeneFactory geneFactory = GeneFactory.getInstance();
-
-            if (selectedSpeciesType.equalsIgnoreCase("Vertebrates")) {
-                selectedSpeciesType = "ensembl";
-            }
-
-            Integer latestEnsemblVersion = geneFactory.getCurrentEnsemblVersion(selectedSpeciesType);
-
-            String selectedDb = genePreferences.getEnsemblDatabaseName(selectedSpeciesType, selectedSpecies);
-            String currentEnsemblVersionAsString = genePreferences.getEnsemblVersion(selectedDb);
-
-            boolean downloadNewMappings;
-
-            if (currentEnsemblVersionAsString == null) {
-                if (cliInputBean.updateSpecies()) {
-                    downloadNewMappings = true;
-                } else {
-                    waitingHandler.appendReport("Species and GO mappings where not found for " + selectedSpecies + "! Download manually or use the species_update option.", true, true);
-                    waitingHandler.setRunCanceled();
-                    downloadNewMappings = false;
-                }
-            } else {
-                if (cliInputBean.updateSpecies()) {
-                    downloadNewMappings = checkForSpeciesUpdate(currentEnsemblVersionAsString, latestEnsemblVersion);
-                } else {
-                    downloadNewMappings = false;
-                }
-            }
-
-            // download mappings if needed
-            if (downloadNewMappings) {
-                genePreferences.clearOldMappings(selectedSpeciesType, selectedSpecies, true);
-                genePreferences.downloadMappings(waitingHandler, selectedSpeciesType, selectedSpecies, true);
-            }
-        }
-
         // set the spectrum counting prefrences
         spectrumCountingPreferences = new SpectrumCountingPreferences();
 
@@ -740,11 +699,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
         try {
             SequenceFactory.getInstance().clearFactory();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            GOFactory.getInstance().closeFiles();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -879,27 +833,5 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 + ", ptmFactory=" + ptmFactory
                 + ", enzymeFactory=" + enzymeFactory
                 + '}';
-    }
-
-    /**
-     * Returns true if a new species mapping is available.
-     *
-     * @param currentEnsemblVersionAsString the current version
-     * @param latestEnsemblVersion the latest version available
-     * @return true if a new species mapping is available
-     */
-    private boolean checkForSpeciesUpdate(String currentEnsemblVersionAsString, Integer latestEnsemblVersion) {
-
-        currentEnsemblVersionAsString = currentEnsemblVersionAsString.substring(currentEnsemblVersionAsString.indexOf(" ") + 1);
-        Integer currentEnsemblVersion;
-
-        try {
-            currentEnsemblVersion = new Integer(currentEnsemblVersionAsString);
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            currentEnsemblVersion = latestEnsemblVersion;
-        }
-
-        return currentEnsemblVersion < latestEnsemblVersion;
     }
 }

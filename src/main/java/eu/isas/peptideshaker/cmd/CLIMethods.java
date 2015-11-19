@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.util.experiment.ShotgunProtocol;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.io.export.ExportFormat;
@@ -256,6 +257,7 @@ public class CLIMethods {
      * @param replicateNumber the replicate number of the project
      * @param projectDetails the project details of the project
      * @param identification the identification of the project
+     * @param geneMaps the gene maps
      * @param identificationFeaturesGenerator the identification features
      * generator
      * @param shotgunProtocol information on the protocol used
@@ -280,7 +282,7 @@ public class CLIMethods {
      * protein
      */
     public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, String sample, int replicateNumber,
-            ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            ProjectDetails projectDetails, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, int nSurroundingAA, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
             InterruptedException, MzMLUnmarshallerException, MathException {
@@ -291,7 +293,7 @@ public class CLIMethods {
         File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultReportName(experiment, sample, replicateNumber, reportName));
 
         //@TODO: allow format selection
-        PSExportFactory.writeExport(exportScheme, reportFile, ExportFormat.text, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator,
+        PSExportFactory.writeExport(exportScheme, reportFile, ExportFormat.text, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator, geneMaps,
                 null, null, null, null, nSurroundingAA, shotgunProtocol, identificationParameters, spectrumCountingPreferences, waitingHandler);
     }
 
