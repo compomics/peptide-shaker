@@ -68,6 +68,7 @@ import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.HashSet;
 import java.util.Iterator;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerIconTableCellRenderer;
@@ -2568,7 +2569,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
 
-                    ArrayList<Integer> currentAdvocates = new ArrayList<Integer>();
+                    HashSet<Integer> currentAdvocates = new HashSet<Integer>();
                     psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                     if (psParameter.getMatchValidationLevel().isValidated()) {
@@ -2585,20 +2586,20 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 for (SpectrumIdentificationAssumption firstHit : advocateAssumptions.get(eValues.get(0))) {
                                     if ((firstHit instanceof PeptideAssumption) && ((PeptideAssumption) firstHit).getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(),
                                             peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
-                                        currentAdvocates.add(tempAdvocate);
+                                            currentAdvocates.add(tempAdvocate);
                                     }
                                 }
                             }
                         }
-                    }
+                        
+                        // overview plot data
+                        for (Integer tempAdvocate : advocatesUsed) {
+                            if (currentAdvocates.contains(tempAdvocate)) {
+                                totalAdvocateId.put(tempAdvocate, totalAdvocateId.get(tempAdvocate) + 1);
 
-                    // overview plot data
-                    for (Integer tempAdvocate : advocatesUsed) {
-                        if (currentAdvocates.contains(tempAdvocate)) {
-                            totalAdvocateId.put(tempAdvocate, totalAdvocateId.get(tempAdvocate) + 1);
-
-                            if (currentAdvocates.size() == 1) {
-                                uniqueAdvocateId.put(tempAdvocate, uniqueAdvocateId.get(tempAdvocate) + 1);
+                                if (currentAdvocates.size() == 1) {
+                                    uniqueAdvocateId.put(tempAdvocate, uniqueAdvocateId.get(tempAdvocate) + 1);
+                                }
                             }
                         }
                     }
@@ -2656,6 +2657,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     progressDialog.setTitle("Loading Spectrum Information for " + fileSelected + ". Please Wait..."); // @TODO: problem with progress bar??
                     identification.loadSpectrumMatchParameters(fileSelected, new PSParameter(), progressDialog, true);
                     identification.loadSpectrumMatches(fileSelected, progressDialog, true);
+                    // update the plots..?
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }

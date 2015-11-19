@@ -1184,7 +1184,7 @@ public class MatchesValidator {
             for (String fractionName : fractionScores.keySet()) {
                 psParameter.setFractionScore(fractionName, fractionScores.get(fractionName));
             }
-            
+
             // Set the global score
             psParameter.setProteinProbabilityScore(probaScore);
 
@@ -1498,39 +1498,39 @@ public class MatchesValidator {
                                 SearchParameters searchParameters = identificationParameters.getSearchParameters();
                                 double precursorMzError = peptideAssumption.getDeltaMass(precursorMz, searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection());
                                 threadPrecursorMzDeviations.add(precursorMzError);
-                            }
 
-                            if (inputMap != null) {
+                                if (inputMap != null) {
 
-                                Peptide bestPeptide = peptideAssumption.getPeptide();
-                                ArrayList<Integer> agreementAdvocates = new ArrayList<Integer>();
+                                    Peptide bestPeptide = peptideAssumption.getPeptide();
+                                    HashSet<Integer> agreementAdvocates = new HashSet<Integer>();
 
-                                for (int advocateId : assumptions.keySet()) {
-                                    HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateId);
-                                    if (advocateAssumptions != null) {
-                                        ArrayList<Double> eValues = new ArrayList<Double>(advocateAssumptions.keySet());
-                                        Collections.sort(eValues);
-                                        for (SpectrumIdentificationAssumption firstHit : advocateAssumptions.get(eValues.get(0))) {
-                                            if (firstHit instanceof PeptideAssumption) {
-                                                Peptide advocatePeptide = ((PeptideAssumption) firstHit).getPeptide();
-                                                if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, identificationParameters.getSequenceMatchingPreferences())) {
-                                                    agreementAdvocates.add(advocateId);
-                                                    break;
+                                    for (int advocateId : assumptions.keySet()) {
+                                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateId);
+                                        if (advocateAssumptions != null) {
+                                            ArrayList<Double> eValues = new ArrayList<Double>(advocateAssumptions.keySet());
+                                            Collections.sort(eValues);
+                                            for (SpectrumIdentificationAssumption firstHit : advocateAssumptions.get(eValues.get(0))) {
+                                                if (firstHit instanceof PeptideAssumption) {
+                                                    Peptide advocatePeptide = ((PeptideAssumption) firstHit).getPeptide();
+                                                    if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, identificationParameters.getSequenceMatchingPreferences())) {
+                                                        agreementAdvocates.add(advocateId);
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }
                                     }
+
+                                    boolean unique = agreementAdvocates.size() == 1;
+
+                                    String spectrumFileName = Spectrum.getSpectrumFile(spectrumKey);
+
+                                    for (int advocateId : agreementAdvocates) {
+                                        inputMap.addAdvocateContribution(advocateId, spectrumFileName, unique);
+                                    }
+
+                                    inputMap.addAdvocateContribution(Advocate.peptideShaker.getIndex(), spectrumFileName, agreementAdvocates.isEmpty());
                                 }
-
-                                boolean unique = agreementAdvocates.size() == 1;
-
-                                String spectrumFileName = Spectrum.getSpectrumFile(spectrumKey);
-
-                                for (int advocateId : agreementAdvocates) {
-                                    inputMap.addAdvocateContribution(advocateId, spectrumFileName, unique);
-                                }
-
-                                inputMap.addAdvocateContribution(Advocate.peptideShaker.getIndex(), spectrumFileName, agreementAdvocates.isEmpty());
                             }
                         }
                     }
