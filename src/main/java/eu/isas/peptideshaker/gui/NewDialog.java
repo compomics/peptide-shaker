@@ -23,7 +23,6 @@ import com.compomics.util.protein_sequences_manager.gui.SequenceDbDetailsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.messages.FeedBack;
-import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.gui.parameters.IdentificationParametersEditionDialog;
@@ -193,7 +192,7 @@ public class NewDialog extends javax.swing.JDialog {
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         fastaFileTxt.setText("");
         processingTxt.setText(processingPreferences.getnThreads() + " cores");
-        
+
         // set the search parameters
         Vector parameterList = new Vector();
         parameterList.add("-- Select --");
@@ -203,7 +202,7 @@ public class NewDialog extends javax.swing.JDialog {
         }
 
         settingsComboBox.setModel(new javax.swing.DefaultComboBoxModel(parameterList));
-        
+
         validateInput();
         GuiUtilities.installEscapeCloseOperation(this);
     }
@@ -393,6 +392,7 @@ public class NewDialog extends javax.swing.JDialog {
             }
         });
 
+        settingsComboBox.setMaximumRowCount(16);
         settingsComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Select --" }));
         settingsComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1394,7 +1394,7 @@ public class NewDialog extends javax.swing.JDialog {
                 e.printStackTrace();
             }
         }
-        
+
         validateInput();
     }//GEN-LAST:event_settingsComboBoxActionPerformed
 
@@ -1646,10 +1646,8 @@ public class NewDialog extends javax.swing.JDialog {
         for (String name : modificationProfile.getAllNotFixedModifications()) {
             if (!ptmFactory.containsPTM(name)) {
                 missing.add(name);
-            } else {
-                if (modificationProfile.getColor(name) == null) {
-                    modificationProfile.setColor(name, Color.lightGray);
-                }
+            } else if (modificationProfile.getColor(name) == null) {
+                modificationProfile.setColor(name, Color.lightGray);
             }
         }
         if (!missing.isEmpty()) {
@@ -1737,15 +1735,15 @@ public class NewDialog extends javax.swing.JDialog {
                 fastaFileTxt.setText(fastaFile.getName());
             }
         }
-        
+
         boolean matchesValidationAdded;
         ValidationQCPreferences validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
-        if (validationQCPreferences == null 
-                || validationQCPreferences.getPsmFilters() == null 
-                || validationQCPreferences.getPeptideFilters() == null 
+        if (validationQCPreferences == null
+                || validationQCPreferences.getPsmFilters() == null
+                || validationQCPreferences.getPeptideFilters() == null
                 || validationQCPreferences.getProteinFilters() == null
                 || validationQCPreferences.getPsmFilters().isEmpty()
-                && validationQCPreferences.getPeptideFilters().isEmpty() 
+                && validationQCPreferences.getPeptideFilters().isEmpty()
                 && validationQCPreferences.getProteinFilters().isEmpty()) {
             MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
             matchesValidationAdded = true;
@@ -1758,23 +1756,41 @@ public class NewDialog extends javax.swing.JDialog {
         } else {
             boolean matchesValidationChanged = identificationParametersFactory.getIdentificationParameters(tempIdentificationParameters.getName()).getIdValidationPreferences().equals(tempIdentificationParameters.getIdValidationPreferences());
             boolean otherSettingsChanged = !identificationParametersFactory.getIdentificationParameters(tempIdentificationParameters.getName()).equalsExceptValidationPreferences(tempIdentificationParameters);
-            
+
             if (otherSettingsChanged || matchesValidationChanged && !matchesValidationAdded) {
-                int value = JOptionPane.showConfirmDialog(this, "A settings file with the same name already exists. Overwrite file?", "Overwrite File?", JOptionPane.YES_NO_OPTION);
-                if (value == JOptionPane.YES_OPTION) {
-                    identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
-                } else {
-                    tempIdentificationParameters.setName(getIdentificationSettingsFileName(tempIdentificationParameters));
-                    identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
+
+                int value = JOptionPane.showOptionDialog(null,
+                        "A settings file with the name \'" + tempIdentificationParameters.getName() + "\' already exists.\n"
+                        + "What do you want to do?",
+                        "Identification Settings",
+                        JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        new String[]{"Replace File", "Use Existing File", "Keep Both Files"},
+                        "default");
+
+                switch (value) {
+                    case JOptionPane.YES_OPTION:
+                        identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
+                        break;
+                    case JOptionPane.NO_OPTION:
+                        tempIdentificationParameters = identificationParametersFactory.getIdentificationParameters(tempIdentificationParameters.getName());
+                        break;
+                    case JOptionPane.CANCEL_OPTION:
+                        tempIdentificationParameters.setName(getIdentificationSettingsFileName(tempIdentificationParameters));
+                        identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
+                        break;
+                    default:
+                        break;
                 }
             } else if (matchesValidationAdded) {
                 identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
             }
         }
-        
+
         setIdentificationParameters(tempIdentificationParameters);
     }
-    
+
     /**
      * Returns the name to use for the identification settings file.
      *
@@ -1978,13 +1994,13 @@ public class NewDialog extends javax.swing.JDialog {
 
         try {
             ValidationQCPreferences validationQCPreferences = newIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
-            if (validationQCPreferences == null 
-                || validationQCPreferences.getPsmFilters() == null 
-                || validationQCPreferences.getPeptideFilters() == null 
-                || validationQCPreferences.getProteinFilters() == null
-                || validationQCPreferences.getPsmFilters().isEmpty()
-                && validationQCPreferences.getPeptideFilters().isEmpty() 
-                && validationQCPreferences.getProteinFilters().isEmpty()) {
+            if (validationQCPreferences == null
+                    || validationQCPreferences.getPsmFilters() == null
+                    || validationQCPreferences.getPeptideFilters() == null
+                    || validationQCPreferences.getProteinFilters() == null
+                    || validationQCPreferences.getPsmFilters().isEmpty()
+                    && validationQCPreferences.getPeptideFilters().isEmpty()
+                    && validationQCPreferences.getProteinFilters().isEmpty()) {
                 MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
                 identificationParametersFactory.addIdentificationParameters(newIdentificationParameters);
             }

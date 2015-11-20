@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui.protein_inference;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
@@ -11,7 +10,6 @@ import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.protein.Header;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
@@ -159,8 +157,6 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 chromosome = null;
             }
 
-            Protein protein = sequenceFactory.getProtein(proteinAccession);
-
             if (retainedProteins.contains(proteinAccession)) {
                 ((DefaultTableModel) retainedProteinJTable.getModel()).addRow(new Object[]{
                     (++retainedCpt),
@@ -170,11 +166,18 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                     chromosome,
                     proteinEvidenceLevel,
                     peptideShakerGUI.getIdentificationFeaturesGenerator().hasEnzymaticPeptides(peptideShakerGUI.getIdentification().getProteinMatch(proteinAccession), proteinAccession)
-                    //protein.isEnzymaticPeptide(peptideMatch.getTheoreticPeptide().getSequence(), // @TODO: is not the same as the protein inference level dialog...
-                    //peptideShakerGUI.getIdentificationParameters().getSearchParameters().getEnzyme(),
-                    //peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())
                 });
             } else {
+                
+                boolean hasEnzymaticPeptides;
+                
+                ProteinMatch tempProteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinAccession);
+                if (tempProteinMatch == null) {
+                    hasEnzymaticPeptides = false; // @TOODO: use the information gathered when creating the graph via protein.isEnzymaticPeptide(..)
+                } else {
+                    hasEnzymaticPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().hasEnzymaticPeptides(peptideShakerGUI.getIdentification().getProteinMatch(proteinAccession), proteinAccession);
+                }
+                
                 ((DefaultTableModel) otherProteinJTable.getModel()).addRow(new Object[]{
                     (++possibleCpt),
                     peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(proteinAccession),
@@ -182,10 +185,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                     geneName,
                     chromosome,
                     proteinEvidenceLevel,
-                    peptideShakerGUI.getIdentificationFeaturesGenerator().hasEnzymaticPeptides(peptideShakerGUI.getIdentification().getProteinMatch(proteinAccession), proteinAccession)
-                    //protein.isEnzymaticPeptide(peptideMatch.getTheoreticPeptide().getSequence(), // @TODO: is not the same as the protein inference level dialog...
-                    //peptideShakerGUI.getIdentificationParameters().getSearchParameters().getEnzyme(),
-                    //peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())
+                    hasEnzymaticPeptides
                 });
             }
         }
