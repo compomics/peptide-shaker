@@ -406,7 +406,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                         String mainMatch = proteinMatch.getMainMatch();
                                         HashSet<String> goTerms = backgroundGoMapping.getGoAccessions(mainMatch);
-                                        if (!goTerms.isEmpty()) {
+                                        if (goTerms != null && !goTerms.isEmpty()) {
                                             totalNumberOfGoMappedProteinsInProject++;
                                             for (String goTerm : goTerms) {
                                                 Integer usage = datasetGoTermUsage.get(goTerm);
