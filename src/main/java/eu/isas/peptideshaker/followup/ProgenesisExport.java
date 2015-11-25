@@ -325,7 +325,7 @@ public class ProgenesisExport {
 
             // compound
             String spectrumTitle = Spectrum.getSpectrumTitle(spectrumMatch.getKey());
-            // Correct for the intensity tag introduced in the newest version of Progenesis
+            // correct for the intensity tag introduced in the newest version of Progenesis
             int intensityIndex = spectrumTitle.indexOf(" (intensity=");
             if (intensityIndex > -1) {
                 spectrumTitle = spectrumTitle.substring(0, intensityIndex);

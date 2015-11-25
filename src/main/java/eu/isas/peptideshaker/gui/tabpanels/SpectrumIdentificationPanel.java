@@ -340,7 +340,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         idSoftwareTooltipMap.put(AGREEMENT_WITH_MODS, "ID Software Agree");
         idSoftwareTooltipMap.put(AGREEMENT, "ID Software Agree - PTM Certainty Issues");
         idSoftwareTooltipMap.put(CONFLICT, "ID Software Disagree");
-        idSoftwareTooltipMap.put(PARTIALLY_MISSING, "First Hit(s) Missing");
+        idSoftwareTooltipMap.put(PARTIALLY_MISSING, "ID Software(s) Missing");
 
         peptideShakerJTable.getColumn("ID").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(java.awt.Color.lightGray, softwareAgreementColorMap, idSoftwareTooltipMap));
         peptideShakerJTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
@@ -589,6 +589,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 };
             }
         };
+        vallidatedPsmsCheckBox = new javax.swing.JCheckBox();
         colorLegendLabel = new javax.swing.JLabel();
         psmsHelpJButton = new javax.swing.JButton();
         exportPsmsJButton = new javax.swing.JButton();
@@ -707,14 +708,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         spectrumSelectionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum Selection"));
         spectrumSelectionPanel.setOpaque(false);
-        spectrumSelectionPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                spectrumSelectionPanelMouseReleased(evt);
-            }
-        });
         spectrumSelectionPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
                 spectrumSelectionPanelMouseMoved(evt);
+            }
+        });
+        spectrumSelectionPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                spectrumSelectionPanelMouseReleased(evt);
             }
         });
 
@@ -784,9 +785,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 spectrumSelectionOptionsJButtonMouseExited(evt);
             }
         });
+        spectrumSelectionLayeredPane.setLayer(spectrumSelectionOptionsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         spectrumSelectionLayeredPane.add(spectrumSelectionOptionsJButton);
         spectrumSelectionOptionsJButton.setBounds(1230, 0, 10, 19);
-        spectrumSelectionLayeredPane.setLayer(spectrumSelectionOptionsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         spectrumSelectionHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         spectrumSelectionHelpJButton.setToolTipText("Help");
@@ -807,9 +808,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 spectrumSelectionHelpJButtonActionPerformed(evt);
             }
         });
+        spectrumSelectionLayeredPane.setLayer(spectrumSelectionHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         spectrumSelectionLayeredPane.add(spectrumSelectionHelpJButton);
         spectrumSelectionHelpJButton.setBounds(1250, 0, 10, 19);
-        spectrumSelectionLayeredPane.setLayer(spectrumSelectionHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportSpectrumSelectionJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportSpectrumSelectionJButton.setToolTipText("Copy to File");
@@ -832,9 +833,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 exportSpectrumSelectionJButtonActionPerformed(evt);
             }
         });
+        spectrumSelectionLayeredPane.setLayer(exportSpectrumSelectionJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         spectrumSelectionLayeredPane.add(exportSpectrumSelectionJButton);
         exportSpectrumSelectionJButton.setBounds(1240, 0, 10, 19);
-        spectrumSelectionLayeredPane.setLayer(exportSpectrumSelectionJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuSpectrumSelectionBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -849,9 +850,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        spectrumSelectionLayeredPane.setLayer(contextMenuSpectrumSelectionBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
         spectrumSelectionLayeredPane.add(contextMenuSpectrumSelectionBackgroundPanel);
         contextMenuSpectrumSelectionBackgroundPanel.setBounds(1230, 0, 30, 19);
-        spectrumSelectionLayeredPane.setLayer(contextMenuSpectrumSelectionBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout spectrumSelectionJPanelLayout = new javax.swing.GroupLayout(spectrumSelectionJPanel);
         spectrumSelectionJPanel.setLayout(spectrumSelectionJPanelLayout);
@@ -931,19 +932,34 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         });
         idResultsTableJScrollPane.setViewportView(searchResultsTable);
 
+        vallidatedPsmsCheckBox.setFont(vallidatedPsmsCheckBox.getFont().deriveFont(vallidatedPsmsCheckBox.getFont().getSize()-1f));
+        vallidatedPsmsCheckBox.setText("Validated");
+        vallidatedPsmsCheckBox.setToolTipText("Show validated PSMs only");
+        vallidatedPsmsCheckBox.setIconTextGap(6);
+        vallidatedPsmsCheckBox.setOpaque(false);
+        vallidatedPsmsCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                vallidatedPsmsCheckBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout idResultsPanelLayout = new javax.swing.GroupLayout(idResultsPanel);
         idResultsPanel.setLayout(idResultsPanelLayout);
         idResultsPanelLayout.setHorizontalGroup(
             idResultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(idResultsTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 618, Short.MAX_VALUE)
             .addGroup(idResultsPanelLayout.createSequentialGroup()
                 .addComponent(spectrumIdResultsLabel)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(vallidatedPsmsCheckBox)
+                .addContainerGap())
+            .addComponent(idResultsTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         idResultsPanelLayout.setVerticalGroup(
             idResultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(idResultsPanelLayout.createSequentialGroup()
-                .addComponent(spectrumIdResultsLabel)
+                .addGroup(idResultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(spectrumIdResultsLabel)
+                    .addComponent(vallidatedPsmsCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(idResultsTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE))
         );
@@ -960,7 +976,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         .addContainerGap()
                         .addGroup(psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(idResultsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(peptideShakerJScrollPane)))
+                            .addComponent(peptideShakerJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 618, Short.MAX_VALUE)))
                     .addGroup(psmsPanelLayout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addComponent(colorLegendLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -1000,9 +1016,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 psmsHelpJButtonActionPerformed(evt);
             }
         });
+        psmsLayeredPane.setLayer(psmsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         psmsLayeredPane.add(psmsHelpJButton);
         psmsHelpJButton.setBounds(630, 0, 10, 19);
-        psmsLayeredPane.setLayer(psmsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPsmsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportPsmsJButton.setToolTipText("Copy to File");
@@ -1025,9 +1041,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 exportPsmsJButtonActionPerformed(evt);
             }
         });
+        psmsLayeredPane.setLayer(exportPsmsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         psmsLayeredPane.add(exportPsmsJButton);
         exportPsmsJButton.setBounds(620, 0, 10, 19);
-        psmsLayeredPane.setLayer(exportPsmsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuPsmsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1042,9 +1058,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        psmsLayeredPane.setLayer(contextMenuPsmsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
         psmsLayeredPane.add(contextMenuPsmsBackgroundPanel);
         contextMenuPsmsBackgroundPanel.setBounds(610, 0, 30, 19);
-        psmsLayeredPane.setLayer(contextMenuPsmsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout psmsJPanelLayout = new javax.swing.GroupLayout(psmsJPanel);
         psmsJPanel.setLayout(psmsJPanelLayout);
@@ -1208,9 +1224,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 spectrumHelpJButtonActionPerformed(evt);
             }
         });
+        spectrumLayeredPane.setLayer(spectrumHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         spectrumLayeredPane.add(spectrumHelpJButton);
         spectrumHelpJButton.setBounds(600, 0, 10, 19);
-        spectrumLayeredPane.setLayer(spectrumHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportSpectrumJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportSpectrumJButton.setToolTipText("Export");
@@ -1231,9 +1247,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 exportSpectrumJButtonMouseReleased(evt);
             }
         });
+        spectrumLayeredPane.setLayer(exportSpectrumJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         spectrumLayeredPane.add(exportSpectrumJButton);
         exportSpectrumJButton.setBounds(590, 0, 10, 19);
-        spectrumLayeredPane.setLayer(exportSpectrumJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuSpectrumBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1248,9 +1264,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        spectrumLayeredPane.setLayer(contextMenuSpectrumBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
         spectrumLayeredPane.add(contextMenuSpectrumBackgroundPanel);
         contextMenuSpectrumBackgroundPanel.setBounds(590, 0, 30, 19);
-        spectrumLayeredPane.setLayer(contextMenuSpectrumBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout spectrumJPanelLayout = new javax.swing.GroupLayout(spectrumJPanel);
         spectrumJPanel.setLayout(spectrumJPanelLayout);
@@ -1316,9 +1332,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 idSoftwareHelpJButtonActionPerformed(evt);
             }
         });
+        idSoftwareJLayeredPane.setLayer(idSoftwareHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         idSoftwareJLayeredPane.add(idSoftwareHelpJButton);
         idSoftwareHelpJButton.setBounds(1270, 0, 10, 19);
-        idSoftwareJLayeredPane.setLayer(idSoftwareHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportIdPerformancePerformanceJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportIdPerformancePerformanceJButton.setToolTipText("Copy to File");
@@ -1339,9 +1355,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 exportIdPerformancePerformanceJButtonMouseReleased(evt);
             }
         });
+        idSoftwareJLayeredPane.setLayer(exportIdPerformancePerformanceJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         idSoftwareJLayeredPane.add(exportIdPerformancePerformanceJButton);
         exportIdPerformancePerformanceJButton.setBounds(1260, 0, 10, 19);
-        idSoftwareJLayeredPane.setLayer(exportIdPerformancePerformanceJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuIdSoftwareBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1356,9 +1372,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        idSoftwareJLayeredPane.setLayer(contextMenuIdSoftwareBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
         idSoftwareJLayeredPane.add(contextMenuIdSoftwareBackgroundPanel);
         contextMenuIdSoftwareBackgroundPanel.setBounds(1260, 0, 30, 19);
-        idSoftwareJLayeredPane.setLayer(contextMenuIdSoftwareBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout idSoftwareJPanelLayout = new javax.swing.GroupLayout(idSoftwareJPanel);
         idSoftwareJPanel.setLayout(idSoftwareJPanelLayout);
@@ -1727,17 +1743,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     accuracySlider.setValue(newValue++);
                 }
             }
-        } else {
-            if (evt.getWheelRotation() > 0) { // Down
-                intensitySlider.setValue(intensitySlider.getValue() - 1);
-            } else { // Up
-                int oldValue = intensitySlider.getValue();
-                int newValue = intensitySlider.getValue() + 1;
-                intensitySlider.setValue(newValue);
+        } else if (evt.getWheelRotation() > 0) { // Down
+            intensitySlider.setValue(intensitySlider.getValue() - 1);
+        } else { // Up
+            int oldValue = intensitySlider.getValue();
+            int newValue = intensitySlider.getValue() + 1;
+            intensitySlider.setValue(newValue);
 
-                while (oldValue == intensitySlider.getValue()) {
-                    intensitySlider.setValue(newValue++);
-                }
+            while (oldValue == intensitySlider.getValue()) {
+                intensitySlider.setValue(newValue++);
             }
         }
 
@@ -1854,12 +1868,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         // temp testing code, to be removed...
 //        try {
 //
-//            PSParameter psmProbabilities = new PSParameter();
+//            PSParameter psParameter = new PSParameter();
 //            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-//            parameters.add(new PSParameter());
-//            
-//            HashMap<String, Integer> allIds = new HashMap<String, Integer>();
-//            
+//            parameters.add(psParameter);
+//
+//            HashMap<String, ArrayList<String>> allIds = new HashMap<String, ArrayList<String>>();
+//
 //            int counter = 0;
 //
 //            // iterate the spectrum files
@@ -1868,52 +1882,91 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 //                PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, true, null);
 //
 //                while (psmIterator.hasNext()) {
-//                    
-//                    System.out.println(++counter);
 //
+//                    //System.out.println(++counter);
 //                    SpectrumMatch spectrumMatch = psmIterator.next();
 //                    String spectrumKey = spectrumMatch.getKey();
-//                    
-//                    
-//                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
-//                    
-//                    ArrayList<String> tempAdvocates = new ArrayList<String>();
-//                    
-//                    for (Integer key : assumptions.keySet()) {
-//                        tempAdvocates.add(Advocate.getAdvocate(key).getName());
-//                    }
-//                    
-//                    Collections.sort(tempAdvocates);
-//  
-//                    String mapKey = "";
-//                    for (String tempKey : tempAdvocates) {
-//                        if (!mapKey.isEmpty()) {
-//                            mapKey += ", ";
+//
+//                    if (spectrumMatch.getBestPeptideAssumption() != null) {
+//
+//                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+//
+//                        if (psParameter.getMatchValidationLevel().isValidated()) {
+//
+//                            ArrayList<String> tempAdvocates = new ArrayList<String>();
+//                            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+//
+//                            for (Integer tempAdvocate : advocatesUsed) {
+//                                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(tempAdvocate);
+//                                if (advocateAssumptions != null) {
+//                                    ArrayList<Double> eValues = new ArrayList<Double>(advocateAssumptions.keySet());
+//
+//                                    for (Double eValue : eValues) {
+//
+//                                        ArrayList<SpectrumIdentificationAssumption> specificAdvocateAssumptions = advocateAssumptions.get(eValue);
+//
+//                                        for (SpectrumIdentificationAssumption specificAdvocateAssumption : specificAdvocateAssumptions) {
+//                                            if ((specificAdvocateAssumption instanceof PeptideAssumption) && ((PeptideAssumption) specificAdvocateAssumption).getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(),
+//                                                    peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+//
+//                                                // check for validated assumption
+//                                                psParameter = (PSParameter) specificAdvocateAssumption.getUrParam(psParameter);
+//
+//                                                if (psParameter.getMatchValidationLevel().isValidated()) {
+//                                                    if (!tempAdvocates.contains(Advocate.getAdvocate(tempAdvocate).getName())) {
+//                                                        tempAdvocates.add(Advocate.getAdvocate(tempAdvocate).getName());
+//                                                    }
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//
+//                            Collections.sort(tempAdvocates);
+//
+//                            String mapKey = "";
+//                            for (String tempKey : tempAdvocates) {
+//                                if (!mapKey.isEmpty()) {
+//                                    mapKey += ", ";
+//                                }
+//                                mapKey += tempKey;
+//                            }
+//
+//                            if (mapKey.isEmpty()) {
+//                                mapKey = "No SEs...";
+//                            }
+//
+//                            ArrayList<String> oldResult = allIds.get(mapKey);
+//
+//                            if (oldResult == null) {
+//                                ArrayList<String> temp = new ArrayList<String>();
+//                                temp.add(spectrumKey);
+//                                allIds.put(mapKey, temp);
+//                            } else {
+//                                oldResult.add(spectrumKey);
+//                                allIds.put(mapKey, oldResult);
+//                            }
 //                        }
-//                        mapKey += tempKey;
-//                    }
-//                    
-//                    Integer oldResult = allIds.get(mapKey);
-//                    
-//                    if (oldResult == null) {
-//                        allIds.put(mapKey, 1);
-//                    } else {
-//                        allIds.put(mapKey, oldResult + 1);
 //                    }
 //                }
 //            }
-//            
-//            
+//
 //            for (String key : allIds.keySet()) {
-//                System.out.println(key + "\t" + allIds.get(key));
+//                System.out.print(key + "\t" + allIds.get(key).size() + "\t");
+//
+//                if (allIds.get(key).size() < 15) {
+//                    for (String spectrumKey : allIds.get(key)) {
+//                        System.out.print(spectrumKey + "\t");
+//                    }
+//                }
+//
+//                System.out.println();
 //            }
-//            
-//            
+//
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-
-
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"), "#IdSoftwarePerformance",
@@ -2350,6 +2403,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, tempChartPanel, peptideShakerGUI.getLastSelectedFolder());
     }//GEN-LAST:event_idRateMenuItemActionPerformed
 
+    /**
+     * Updated the spectrum selection.
+     *
+     * @param evt
+     */
+    private void vallidatedPsmsCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vallidatedPsmsCheckBoxActionPerformed
+        spectrumSelectionChanged();
+    }//GEN-LAST:event_vallidatedPsmsCheckBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JPanel backgroundPanel;
@@ -2404,6 +2466,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane spectrumTableJScrollPane;
     private javax.swing.JMenuItem unassignedPlotMenuItem;
     private javax.swing.JMenuItem uniquePsmsMenuItem;
+    private javax.swing.JCheckBox vallidatedPsmsCheckBox;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -2586,12 +2649,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 for (SpectrumIdentificationAssumption firstHit : advocateAssumptions.get(eValues.get(0))) {
                                     if ((firstHit instanceof PeptideAssumption) && ((PeptideAssumption) firstHit).getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(),
                                             peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
-                                            currentAdvocates.add(tempAdvocate);
+                                        currentAdvocates.add(tempAdvocate);
                                     }
                                 }
                             }
                         }
-                        
+
                         // overview plot data
                         for (Integer tempAdvocate : advocatesUsed) {
                             if (currentAdvocates.contains(tempAdvocate)) {
@@ -2715,12 +2778,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         int[] selectedRows = searchResultsTable.getSelectedRows();
         ArrayList<SpectrumIdentificationAssumption> assumptions = new ArrayList<SpectrumIdentificationAssumption>();
+
         for (int i = 0; i < searchResultsTable.getSelectedRowCount(); i++) {
             assumptions.add(currentAssumptionsList.get(selectedRows[i]));
         }
+
         HashMap<String, ArrayList<SpectrumIdentificationAssumption>> result = new HashMap<String, ArrayList<SpectrumIdentificationAssumption>>(selectedRows.length);
         String spectrumKey = getSelectedSpectrumKey();
         result.put(spectrumKey, assumptions);
+
         return result;
     }
 
@@ -2926,7 +2992,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         for (SpectrumIdentificationAssumption tempAssumption : tempAssumptions) {
                             if (peptideShakerGUI.getIdentificationParameters().getPeptideAssumptionFilter().validatePeptide(
                                     ((PeptideAssumption) tempAssumption).getPeptide(), peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
-                                currentAssumptionsList.add(tempAssumption);
+                                if (vallidatedPsmsCheckBox.isSelected()) {
+                                    psParameter = (PSParameter) tempAssumption.getUrParam(psParameter);
+                                    if (psParameter.getMatchValidationLevel().isValidated()) {
+                                        currentAssumptionsList.add(tempAssumption);
+                                    }
+                                } else {
+                                    currentAssumptionsList.add(tempAssumption);
+                                }
                             }
                         }
                     }
@@ -2944,7 +3017,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     ArrayList<String> sequences = new ArrayList<String>(algorithmMap.keySet());
                     Collections.sort(sequences);
                     for (String sequence : sequences) {
-                        currentAssumptionsList.addAll(algorithmMap.get(sequence)); // @TODO: filter the tags as well?
+                        currentAssumptionsList.addAll(algorithmMap.get(sequence)); // @TODO: filter the tags as well? and respect the vallidatedPsmsCheckBox value!
                     }
                 }
             }
@@ -3399,14 +3472,18 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * @param spectrumMatch the PSM to check
      * @param assumptions map of the assumptions for this spectrum
      * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param numberOfAdvocatesUsed the total number of advocates used for the
+     * search
      *
      * @return true if all the used id software agree on the top PSM
      */
-    public static int isBestPsmEqualForAllIdSoftware(SpectrumMatch spectrumMatch, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions, SequenceMatchingPreferences sequenceMatchingPreferences) {
+    public static int isBestPsmEqualForAllIdSoftware(SpectrumMatch spectrumMatch, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions,
+            SequenceMatchingPreferences sequenceMatchingPreferences, Integer numberOfAdvocatesUsed) {
 
         HashMap<Integer, ArrayList<PeptideAssumption>> peptideAssumptions = new HashMap<Integer, ArrayList<PeptideAssumption>>();
         ArrayList<Integer> tempUsedAdvocates = new ArrayList<Integer>();
 
+        // check which advovates that have results for the given spectrum
         for (Advocate tempAdvocate : Advocate.values()) {
             int advocateIndex = tempAdvocate.getIndex();
             HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(tempAdvocate.getIndex());
@@ -3414,7 +3491,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 ArrayList<Double> eValues = new ArrayList<Double>(advocateAssumptions.keySet());
                 Collections.sort(eValues);
 
-                for (double eValue : eValues) {
+                //for (double eValue : eValues) {
+                    //for (SpectrumIdentificationAssumption assumption : advocateAssumptions.get(eValue)) {
+                    
+                    double eValue = eValues.get(0);
+                    
                     for (SpectrumIdentificationAssumption assumption : advocateAssumptions.get(eValue)) {
                         if (assumption instanceof PeptideAssumption) {
                             PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
@@ -3423,72 +3504,71 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 advocatePeptides = new ArrayList<PeptideAssumption>();
                                 peptideAssumptions.put(advocateIndex, advocatePeptides);
                             }
-                            advocatePeptides.add(peptideAssumption);
+                            advocatePeptides.add(peptideAssumption); // @TODO: only count validated assumptions..?
                         }
                         if (!tempUsedAdvocates.contains(advocateIndex)) {
                             tempUsedAdvocates.add(advocateIndex);
                         }
                     }
-                }
+                //}
             }
         }
 
         // check if all advocates are used
-        boolean allAdvocatesFound = tempUsedAdvocates.size() == peptideAssumptions.size();
+        boolean allAdvocatesFound = tempUsedAdvocates.size() == numberOfAdvocatesUsed;
 
         if (peptideAssumptions.isEmpty()) {
             return NO_ID; // no ids found
         } else if (allAdvocatesFound && peptideAssumptions.size() == 1) {
             return AGREEMENT_WITH_MODS; // only one search engine used
-        } else {
+        } else if (allAdvocatesFound) {
 
-            if (allAdvocatesFound) {
+            Iterator<Integer> iterator = peptideAssumptions.keySet().iterator();
+            int firstAdvocate = iterator.next();
+            ArrayList<PeptideAssumption> firstAssumptions = peptideAssumptions.get(firstAdvocate);
+            boolean sameSequenceAndModificationStatus = true;
+            boolean sameModifications = true;
 
-                Iterator<Integer> iterator = peptideAssumptions.keySet().iterator();
-                int firstAdvocate = iterator.next();
-                ArrayList<PeptideAssumption> firstAssumptions = peptideAssumptions.get(firstAdvocate);
-                boolean sameSequenceAndModificationStatus = true;
-                boolean sameModifications = true;
+            // iterate all the peptides and charges
+            while (iterator.hasNext() && sameSequenceAndModificationStatus && sameModifications) {
 
-                // iterate all the peptides and charges
-                while (iterator.hasNext() && sameSequenceAndModificationStatus && sameModifications) {
+                int currentAdvocate = iterator.next();
+                boolean advocateSameSequence = false, advocateSameModifications = false;
 
-                    int currentAdvocate = iterator.next();
-                    boolean advocateSameSequence = false, advocateSameModifications = false;
-                    for (PeptideAssumption firstAssumption : firstAssumptions) {
-                        // check for same same sequence, modification and charge status
-                        for (PeptideAssumption currentAssumption : peptideAssumptions.get(currentAdvocate)) {
-                            if (firstAssumption.getPeptide().isSameSequenceAndModificationStatus(currentAssumption.getPeptide(), sequenceMatchingPreferences)) {
-                                advocateSameSequence = true;
-                                if (firstAssumption.getPeptide().sameModificationsAs(currentAssumption.getPeptide())) {
-                                    advocateSameModifications = true;
-                                }
-                            }
-                            if (advocateSameSequence && advocateSameModifications) {
-                                break;
+                for (PeptideAssumption firstAssumption : firstAssumptions) {
+
+                    // check for same same sequence, modification and charge status
+                    for (PeptideAssumption currentAssumption : peptideAssumptions.get(currentAdvocate)) {
+                        if (firstAssumption.getPeptide().isSameSequenceAndModificationStatus(currentAssumption.getPeptide(), sequenceMatchingPreferences)) {
+                            advocateSameSequence = true;
+                            if (firstAssumption.getPeptide().sameModificationsAs(currentAssumption.getPeptide())) {
+                                advocateSameModifications = true;
                             }
                         }
-                    }
-                    if (!advocateSameSequence) {
-                        sameSequenceAndModificationStatus = false;
-                    }
-                    if (!advocateSameModifications) {
-                        sameModifications = false;
+                        if (advocateSameSequence && advocateSameModifications) {
+                            break;
+                        }
                     }
                 }
+                if (!advocateSameSequence) {
+                    sameSequenceAndModificationStatus = false;
+                }
+                if (!advocateSameModifications) {
+                    sameModifications = false;
+                }
+            }
 
-                if (sameSequenceAndModificationStatus) {
-                    if (sameModifications) {
-                        return AGREEMENT_WITH_MODS;
-                    } else {
-                        return AGREEMENT;
-                    }
+            if (sameSequenceAndModificationStatus) {
+                if (sameModifications) {
+                    return AGREEMENT_WITH_MODS;
                 } else {
-                    return CONFLICT;
+                    return AGREEMENT;
                 }
             } else {
-                return PARTIALLY_MISSING;
+                return CONFLICT;
             }
+        } else {
+            return PARTIALLY_MISSING;
         }
     }
 
@@ -3571,7 +3651,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         } else {
                             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                             HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
-                            idSoftwareAgreement = isBestPsmEqualForAllIdSoftware(spectrumMatch, assumptions, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                            idSoftwareAgreement = isBestPsmEqualForAllIdSoftware(spectrumMatch, assumptions, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences(), advocatesUsed.size());
                         }
                         return idSoftwareAgreement;
                     case 2:
@@ -3770,7 +3850,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         case 0:
                             return row + 1;
                         case 1:
-                            return isBestPsmEqualForAllIdSoftware(spectrumMatch, assumptions, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                            return isBestPsmEqualForAllIdSoftware(spectrumMatch, assumptions, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences(), advocatesUsed.size());
                         case 2:
                             return sequence;
                         case 3:

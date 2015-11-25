@@ -1,14 +1,12 @@
 package eu.isas.peptideshaker.scoring.maps;
 
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.filtering.AssumptionFilter;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
-import javax.swing.RowFilter;
 
 /**
  * This class contains basic information about the hits as imported from the
