@@ -14,6 +14,8 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import eu.isas.peptideshaker.scoring.PSMaps;
+import eu.isas.peptideshaker.scoring.maps.InputMap;
 import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +44,10 @@ public class PsmTableModel extends SelfUpdatingTableModel {
      * The batch size.
      */
     private int batchSize = 20;
+    /**
+     * The ID input map.
+     */
+    private InputMap inputMap;
 
     /**
      * Constructor which sets a new table.
@@ -73,6 +79,10 @@ public class PsmTableModel extends SelfUpdatingTableModel {
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
         this.psmKeys = psmKeys;
+        
+        PSMaps pSMaps = new PSMaps();
+        pSMaps = (PSMaps) identification.getUrParam(pSMaps);
+        inputMap = pSMaps.getInputMap();
     }
 
     /**
@@ -168,7 +178,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                         }
 
                         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(psmKey);
-                        return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftware(spectrumMatch, assumptions, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                        return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftware(spectrumMatch, assumptions, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences(), inputMap.getInputAlgorithmsSorted().size());
                     case 3:
                         spectrumMatch = identification.getSpectrumMatch(psmKey, useDB && !isScrolling);
                         if (spectrumMatch == null) {

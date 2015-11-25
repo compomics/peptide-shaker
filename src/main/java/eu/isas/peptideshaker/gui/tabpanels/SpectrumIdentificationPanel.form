@@ -501,7 +501,7 @@
                                           <EmptySpace min="-2" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
                                               <Component id="idResultsPanel" max="32767" attributes="0"/>
-                                              <Component id="peptideShakerJScrollPane" alignment="0" max="32767" attributes="2"/>
+                                              <Component id="peptideShakerJScrollPane" alignment="0" pref="618" max="32767" attributes="2"/>
                                           </Group>
                                       </Group>
                                       <Group type="102" attributes="0">
@@ -602,17 +602,22 @@
                           <Layout>
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="idResultsTableJScrollPane" alignment="0" pref="618" max="32767" attributes="2"/>
                                   <Group type="102" attributes="0">
                                       <Component id="spectrumIdResultsLabel" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="32767" attributes="0"/>
+                                      <Component id="vallidatedPsmsCheckBox" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                   </Group>
+                                  <Component id="idResultsTableJScrollPane" alignment="0" max="32767" attributes="2"/>
                               </Group>
                             </DimensionLayout>
                             <DimensionLayout dim="1">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
-                                      <Component id="spectrumIdResultsLabel" min="-2" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="spectrumIdResultsLabel" min="-2" max="-2" attributes="0"/>
+                                          <Component id="vallidatedPsmsCheckBox" min="-2" pref="18" max="-2" attributes="0"/>
+                                      </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="idResultsTableJScrollPane" pref="257" max="32767" attributes="2"/>
                                   </Group>
@@ -698,6 +703,22 @@
                                 </Component>
                               </SubComponents>
                             </Container>
+                            <Component class="javax.swing.JCheckBox" name="vallidatedPsmsCheckBox">
+                              <Properties>
+                                <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                                  <FontInfo relative="true">
+                                    <Font component="vallidatedPsmsCheckBox" property="font" relativeSize="true" size="-1"/>
+                                  </FontInfo>
+                                </Property>
+                                <Property name="text" type="java.lang.String" value="Validated"/>
+                                <Property name="toolTipText" type="java.lang.String" value="Show validated PSMs only"/>
+                                <Property name="iconTextGap" type="int" value="6"/>
+                                <Property name="opaque" type="boolean" value="false"/>
+                              </Properties>
+                              <Events>
+                                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="vallidatedPsmsCheckBoxActionPerformed"/>
+                              </Events>
+                            </Component>
                           </SubComponents>
                         </Container>
                         <Component class="javax.swing.JLabel" name="colorLegendLabel">
