@@ -78,6 +78,7 @@ import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.software.settings.gui.PathSettingsDialog;
 import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
+import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.TagSpectrumAnnotator;
@@ -601,6 +602,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             loadEnzymes();
             resetPtmFactory();
+
+            // Load the species mapping
+            try {
+                SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
+                speciesFactory.initiate(getJarFilePath());
+            } catch (Exception e) {
+                e.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "An error occurred while loading the species mapping.", "File Error", JOptionPane.OK_OPTION);
+            }
 
             setLocationRelativeTo(null);
 
@@ -1327,9 +1337,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 newsButtonMouseExited(evt);
             }
         });
-        backgroundLayeredPane.setLayer(newsButton, javax.swing.JLayeredPane.MODAL_LAYER);
         backgroundLayeredPane.add(newsButton);
         newsButton.setBounds(1205, 825, 70, 20);
+        backgroundLayeredPane.setLayer(newsButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
         notesButton.setBackground(new java.awt.Color(204, 204, 204));
         notesButton.setFont(notesButton.getFont().deriveFont(notesButton.getFont().getStyle() | java.awt.Font.BOLD));
@@ -1350,9 +1360,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 notesButtonMouseReleased(evt);
             }
         });
-        backgroundLayeredPane.setLayer(notesButton, javax.swing.JLayeredPane.MODAL_LAYER);
         backgroundLayeredPane.add(notesButton);
         notesButton.setBounds(1205, 775, 70, 20);
+        backgroundLayeredPane.setLayer(notesButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
         tipsButton.setBackground(new java.awt.Color(204, 204, 204));
         tipsButton.setFont(tipsButton.getFont().deriveFont(tipsButton.getFont().getStyle() | java.awt.Font.BOLD));
@@ -1372,9 +1382,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 tipsButtonMouseReleased(evt);
             }
         });
-        backgroundLayeredPane.setLayer(tipsButton, javax.swing.JLayeredPane.MODAL_LAYER);
         backgroundLayeredPane.add(tipsButton);
         tipsButton.setBounds(1205, 800, 70, 20);
+        backgroundLayeredPane.setLayer(tipsButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
@@ -3035,8 +3045,22 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void speciesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speciesJMenuItemActionPerformed
-        new SpeciesDialog(this, true, getWaitingIcon(), getNormalIcon());
 
+        Integer taxon = null;
+        IdentificationParameters identificationParameters = getIdentificationParameters();
+        GenePreferences genepreferences = identificationParameters.getGenePreferences();
+        if (genepreferences != null) {
+            taxon = genepreferences.getSelectedBackgroundSpecies();
+        }
+        SpeciesDialog speciesDialog = new SpeciesDialog(this, true, getWaitingIcon(), getNormalIcon(), taxon);
+        if (!speciesDialog.isCanceled()) {
+            if (genepreferences == null) {
+                genepreferences = new GenePreferences();
+                identificationParameters.setGenePreferences(genepreferences);
+            }
+            genepreferences.setSelectedBackgroundSpecies(speciesDialog.getSelectedSpecies());
+
+        }
     }//GEN-LAST:event_speciesJMenuItemActionPerformed
 
     /**

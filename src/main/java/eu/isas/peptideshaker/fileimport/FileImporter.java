@@ -23,7 +23,8 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
-import com.compomics.util.experiment.biology.taxonomy.mappings.UniprotSpecies;
+import com.compomics.util.experiment.biology.taxonomy.mappings.UniprotTaxonomy;
+import com.compomics.util.experiment.identification.protein_sequences.FastaIndex;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
@@ -275,14 +276,30 @@ public class FileImporter {
      */
     public void importGenes() throws IOException {
 
+        SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
         GeneFactory geneFactory = GeneFactory.getInstance();
         GenePreferences genePreferences = identificationParameters.getGenePreferences();
+        FastaIndex fastaIndex = sequenceFactory.getCurrentFastaIndex();
+        HashMap<String, Integer> speciesOccurrence = fastaIndex.getSpecies();
+        Integer occurrenceMax = null;
 
-        UniprotSpecies uniprotSpecies = new UniprotSpecies();
-        File uniprotSpeciesFile = SpeciesFactory.getSpeciesFile(PeptideShaker.getJarFilePath());
-        uniprotSpecies.loadMapping(uniprotSpeciesFile);
+        // Select the background species based on occurrence in the factory
+        for (String uniprotTaxonomy : speciesOccurrence.keySet()) {
 
-        GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, uniprotSpecies, waitingHandler);
+            if (!uniprotTaxonomy.equals(SpeciesFactory.unknown)) {
+                Integer occurrence = speciesOccurrence.get(uniprotTaxonomy);
+
+                if (occurrenceMax == null || occurrence > occurrenceMax) {
+                    occurrenceMax = occurrence;
+                    Integer taxon = speciesFactory.getUniprotTaxonomy().getId(uniprotTaxonomy);
+                    if (taxon != null) {
+                        genePreferences.setSelectedBackgroundSpecies(taxon);
+                    }
+                }
+            }
+        }
+
+        GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, waitingHandler);
         peptideShaker.setGeneMaps(geneMaps);
 
     }
