@@ -279,26 +279,6 @@ public class FileImporter {
         SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
         GeneFactory geneFactory = GeneFactory.getInstance();
         GenePreferences genePreferences = identificationParameters.getGenePreferences();
-        FastaIndex fastaIndex = sequenceFactory.getCurrentFastaIndex();
-        HashMap<String, Integer> speciesOccurrence = fastaIndex.getSpecies();
-        Integer occurrenceMax = null;
-
-        // Select the background species based on occurrence in the factory
-        for (String uniprotTaxonomy : speciesOccurrence.keySet()) {
-
-            if (!uniprotTaxonomy.equals(SpeciesFactory.unknown)) {
-                Integer occurrence = speciesOccurrence.get(uniprotTaxonomy);
-
-                if (occurrenceMax == null || occurrence > occurrenceMax) {
-                    occurrenceMax = occurrence;
-                    Integer taxon = speciesFactory.getUniprotTaxonomy().getId(uniprotTaxonomy, true);
-                    if (taxon != null) {
-                        genePreferences.setSelectedBackgroundSpecies(taxon);
-                    }
-                }
-            }
-        }
-
         GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, waitingHandler);
         peptideShaker.setGeneMaps(geneMaps);
 
