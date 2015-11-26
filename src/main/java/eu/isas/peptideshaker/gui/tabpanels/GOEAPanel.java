@@ -423,10 +423,11 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     progressDialog.increasePrimaryProgressCounter();
                                 }
 
+                                ArrayList<String> termNamesMapped = backgroundGoMapping.getSortedTermNames();
                                 int nBackgroundProteins = backgroundGoMapping.getProteinToGoMap().size();
                                 progressDialog.setTitle("Creating GO Plots (3/3). Please Wait...");
                                 progressDialog.setValue(0);
-                                progressDialog.setMaxPrimaryProgressCounter(nBackgroundProteins);
+                                progressDialog.setMaxPrimaryProgressCounter(termNamesMapped.size());
 
                                 // update the table
                                 Double maxLog2Diff = 0.0;
@@ -436,8 +437,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 // display the number of go mapped proteins
                                 goProteinCountLabel.setText("[GO Proteins: Ensembl: " + nBackgroundProteins
                                         + ", Project: " + totalNumberOfGoMappedProteinsInProject + "]");
-
-                                ArrayList<String> termNamesMapped = backgroundGoMapping.getSortedTermNames();
 
                                 boolean goDomainChanged = false;
 

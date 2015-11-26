@@ -23,7 +23,6 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
-import com.compomics.util.experiment.biology.taxonomy.mappings.UniprotTaxonomy;
 import com.compomics.util.experiment.identification.protein_sequences.FastaIndex;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -286,7 +285,7 @@ public class FileImporter {
         // Select the background species based on occurrence in the factory
         for (String uniprotTaxonomy : speciesOccurrence.keySet()) {
 
-            if (!uniprotTaxonomy.equals(SpeciesFactory.unknown)) {
+            if (!uniprotTaxonomy.equals(SpeciesFactory.UNKNOWN)) {
                 Integer occurrence = speciesOccurrence.get(uniprotTaxonomy);
 
                 if (occurrenceMax == null || occurrence > occurrenceMax) {
