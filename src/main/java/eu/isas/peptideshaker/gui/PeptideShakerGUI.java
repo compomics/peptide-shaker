@@ -27,7 +27,6 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
-import com.compomics.util.experiment.biology.genes.go.GoMapping;
 import com.compomics.util.experiment.biology.*;
 import com.compomics.util.experiment.biology.Ion.IonType;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
@@ -48,7 +47,6 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.parameters.identification_parameters.SearchSettingsDialog;
-import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.preferencesdialogs.*;
 import eu.isas.peptideshaker.gui.tabpanels.AnnotationPanel;
@@ -416,6 +414,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             JOptionPane.showMessageDialog(null, "An error occurred while loading the gene mappings.", "Gene Mapping File Error", JOptionPane.ERROR_MESSAGE);
         }
 
+        // Load the species mapping
+        try {
+            SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
+            speciesFactory.initiate(PeptideShaker.getJarFilePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "An error occurred while loading the species mapping.", "File Error", JOptionPane.OK_OPTION);
+        }
+
         // see if a cps or url is to be opened
         File cpsFile = null;
         boolean cps = false;
@@ -602,15 +609,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             loadEnzymes();
             resetPtmFactory();
-
-            // Load the species mapping
-            try {
-                SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
-                speciesFactory.initiate(getJarFilePath());
-            } catch (Exception e) {
-                e.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "An error occurred while loading the species mapping.", "File Error", JOptionPane.OK_OPTION);
-            }
 
             setLocationRelativeTo(null);
 
