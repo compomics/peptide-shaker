@@ -27,7 +27,7 @@ Need high quality graphics for your manuscript?<br><br>All plots in <b>PeptideSh
 Submit your results to PRIDE!<br><br><b>PeptideShaker</b> supports direct conversion to <a href="http://www.psidev.info/mzidentml">mzIdentML</a> via the <i>Export</i> menu.
 Label free quantification?<br><br><b>PeptideShaker</b> supports <a href="http://www.nonlinear.com/products/progenesis/lc-ms/overview/">Progenesis LC-MS</a> via the <i>Follow Up Analysis</i> option in the <i>Export</i> menu.
 Troubles identifying your proteomics data?<br><br>Check our <a href="http://compomics.com/bioinformatics-for-proteomics/">free tutorials</a>!
-Tried <i>de novo</i> sequencing?<br><br>Check out our user friendly <i>de novo</i> sequencing option: <a href="http://compomics.github.io/projects/denovogui.html">DeNovoGUI</a>!
+Tried <i>de novo</i> sequencing?<br><br>Check out our user friendly <i>de novo</i> sequencing solution: <a href="http://compomics.github.io/projects/denovogui.html">DeNovoGUI</a>!
 Surprisingly large files?<br><br>Be sure that the data is in centroided mode and not in profile mode!<br><br>More information on peak-picking available in our <a href="http://compomics.com/bioinformatics-for-proteomics/identification/">free tutorials</a>.
 Database import is slow?<br><br>The first time you work with a database <b>PeptideShaker</b> needs to index all the possible peptides.<br><br>This task is time consuming, but will be done only once for each database.
 <b>Galaxy</b> + <b>PeptideShaker</b>?<br><br>Did you know it was possible to use <a href="https://usegalaxyp.readthedocs.org/en/latest/sections/peptideshaker.html">PeptideShaker in Galaxy</a>?
@@ -59,3 +59,5 @@ Running out of disc space?<br><br>An index file is created for every protein dat
 When should I update my tool?<br><br>New versions are frequently released for a constant improvement of our tools. You will be notified if the tool can connect the internet. It is advised to always keep your tools up to date.
 How do results compare between versions?<br><br>Results cannot be compared between major releases (big number change) but between minor releases (small number change).
 What is the best music to listen to when running PeptideShaker?<br><br>Click <a href="https://www.youtube.com/watch?v=KWReDqMopt8">here</a> to enhance your shaking experience! &#9786;
+Missing gene/chromosome information? Gene and Chromosome information is downloaded automatically from the <a href="ensembl.org/biomart">Ensembl biomarts</a>. Make sure that you are using a Uniprot database, that your species is annotated in Ensembl, and that the tool has access to the internet.
+How to operate PeptideShaker from other applications?<br><br>You can run PeptideShaker <i>via</i> <a href="http://compomics.github.io/peptide-shaker/wiki/peptideshakercli.html">command line</a>. The parameters can be provided in command line or as json files.

@@ -291,7 +291,7 @@ public class FileImporter {
 
                 if (occurrenceMax == null || occurrence > occurrenceMax) {
                     occurrenceMax = occurrence;
-                    Integer taxon = speciesFactory.getUniprotTaxonomy().getId(uniprotTaxonomy);
+                    Integer taxon = speciesFactory.getUniprotTaxonomy().getId(uniprotTaxonomy, true);
                     if (taxon != null) {
                         genePreferences.setSelectedBackgroundSpecies(taxon);
                     }

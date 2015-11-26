@@ -94,10 +94,6 @@ public class MzIdentMLExport {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The PTM to mzIdentML map.
-     */
-    private PtmToPrideMap ptmToPrideMap; // @TODO: should be renamed!!!
-    /**
      * The number of decimals to use for the confidence values.
      */
     private final int CONFIDENCE_DECIMALS = 2;
@@ -236,8 +232,6 @@ public class MzIdentMLExport {
         this.proteinMatchValidationLevel = proteinMatchValidationLevel;
         this.peptideMatchValidationLevel = peptideMatchValidationLevel;
         this.psmMatchValidationLevel = psmMatchValidationLevel;
-        PrideObjectsFactory prideObjectsFactory = PrideObjectsFactory.getInstance(); // @TODO: should be renamed!!!
-        ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
         this.peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
         r = new FileWriter(outputFile);
         br = new BufferedWriter(r);

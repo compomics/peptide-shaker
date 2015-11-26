@@ -13,6 +13,7 @@ import com.compomics.util.experiment.biology.genes.go.GoMapping;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
+import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
@@ -129,10 +130,19 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             } catch (Exception e) {
                 System.out.println("Unable to load the path configurations. Default paths will be used.");
             }
-            
+
             // Set the gene mappings
             GeneFactory geneFactory = GeneFactory.getInstance();
             geneFactory.initialize(PeptideShaker.getJarFilePath());
+
+            // Load the species mapping
+            try {
+                SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
+                speciesFactory.initiate(PeptideShaker.getJarFilePath());
+            } catch (Exception e) {
+                System.out.println("An error occurred while loading the species mapping. Gene annotation might be impaired.");
+                e.printStackTrace();
+            }
 
             // set up the waiting handler
             if (cliInputBean.isGUI()) {
@@ -525,13 +535,13 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                         try {
                             tempIdentificationParameters = IdentificationParameters.getIdentificationParameters(unzippedFile);
                             ValidationQCPreferences validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
-                            if (validationQCPreferences == null 
-                || validationQCPreferences.getPsmFilters() == null 
-                || validationQCPreferences.getPeptideFilters() == null 
-                || validationQCPreferences.getProteinFilters() == null
-                || validationQCPreferences.getPsmFilters().isEmpty()
-                && validationQCPreferences.getPeptideFilters().isEmpty() 
-                && validationQCPreferences.getProteinFilters().isEmpty()) {
+                            if (validationQCPreferences == null
+                                    || validationQCPreferences.getPsmFilters() == null
+                                    || validationQCPreferences.getPeptideFilters() == null
+                                    || validationQCPreferences.getProteinFilters() == null
+                                    || validationQCPreferences.getPsmFilters().isEmpty()
+                                    && validationQCPreferences.getPeptideFilters().isEmpty()
+                                    && validationQCPreferences.getProteinFilters().isEmpty()) {
                                 MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
                             }
                         } catch (Exception e) {
@@ -568,12 +578,12 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
         identificationParameters = identificationParametersInputBean.getIdentificationParameters();
         ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
-        if (validationQCPreferences == null 
-                || validationQCPreferences.getPsmFilters() == null 
-                || validationQCPreferences.getPeptideFilters() == null 
+        if (validationQCPreferences == null
+                || validationQCPreferences.getPsmFilters() == null
+                || validationQCPreferences.getPeptideFilters() == null
                 || validationQCPreferences.getProteinFilters() == null
                 || validationQCPreferences.getPsmFilters().isEmpty()
-                && validationQCPreferences.getPeptideFilters().isEmpty() 
+                && validationQCPreferences.getPeptideFilters().isEmpty()
                 && validationQCPreferences.getProteinFilters().isEmpty()) {
             MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
         }
