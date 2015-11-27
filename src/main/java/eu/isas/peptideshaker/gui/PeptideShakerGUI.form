@@ -518,7 +518,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="reshakeMenuItem">
               <Properties>
-                <Property name="mnemonic" type="int" value="69"/>
+                <Property name="mnemonic" type="int" value="72"/>
                 <Property name="text" type="java.lang.String" value="Reshake..."/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Reanalyze PRIDE experiments.&lt;br&gt;&#xa;&lt;/html&gt;"/>
                 <Property name="enabled" type="boolean" value="false"/>
@@ -529,7 +529,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="quantifyMenuItem">
               <Properties>
-                <Property name="mnemonic" type="int" value="73"/>
+                <Property name="mnemonic" type="int" value="82"/>
                 <Property name="text" type="java.lang.String" value="Reporter Ions..."/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Quantify your proteins using reporter ions.&lt;br&gt;&#xa;(Coming soon...)&#xa;&lt;/html&gt;"/>
                 <Property name="enabled" type="boolean" value="false"/>
@@ -548,6 +548,16 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="projectPropertiesMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="projectSettingsMenuItem">
+              <Properties>
+                <Property name="mnemonic" type="int" value="73"/>
+                <Property name="text" type="java.lang.String" value="Identification Settings"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="projectSettingsMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
@@ -593,37 +603,6 @@
             <Property name="text" type="java.lang.String" value="Edit"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="identificationParametersMenuItem">
-              <Properties>
-                <Property name="mnemonic" type="int" value="73"/>
-                <Property name="text" type="java.lang.String" value="Identification Settings"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="identificationParametersMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="preferencesMenuItem">
-              <Properties>
-                <Property name="mnemonic" type="int" value="80"/>
-                <Property name="text" type="java.lang.String" value="Project Settings"/>
-                <Property name="enabled" type="boolean" value="false"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="preferencesMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="fractionDetailsJMenuItem">
-              <Properties>
-                <Property name="mnemonic" type="int" value="82"/>
-                <Property name="text" type="java.lang.String" value="Fraction Details"/>
-                <Property name="enabled" type="boolean" value="false"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fractionDetailsJMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="searchParametersMenu">
               <Properties>
                 <Property name="mnemonic" type="int" value="83"/>
@@ -654,14 +633,36 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="speciesJMenuItem">
               <Properties>
-                <Property name="mnemonic" type="int" value="67"/>
-                <Property name="text" type="java.lang.String" value="Species"/>
+                <Property name="mnemonic" type="int" value="80"/>
+                <Property name="text" type="java.lang.String" value="Species Settings"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="speciesJMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator13">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="preferencesMenuItem">
+              <Properties>
+                <Property name="mnemonic" type="int" value="79"/>
+                <Property name="text" type="java.lang.String" value="Project Settings"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="preferencesMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="fractionDetailsJMenuItem">
+              <Properties>
+                <Property name="mnemonic" type="int" value="82"/>
+                <Property name="text" type="java.lang.String" value="Fraction Details"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fractionDetailsJMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="javaOptionsJMenuItem">
               <Properties>
@@ -674,6 +675,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="processingMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="67"/>
                 <Property name="text" type="java.lang.String" value="Processing Settings"/>
               </Properties>
               <Events>
@@ -692,7 +694,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="privacyMenuItem">
               <Properties>
-                <Property name="mnemonic" type="int" value="80"/>
+                <Property name="mnemonic" type="int" value="86"/>
                 <Property name="text" type="java.lang.String" value="Privacy Settings"/>
               </Properties>
               <Events>

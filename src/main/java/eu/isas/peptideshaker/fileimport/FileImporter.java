@@ -274,13 +274,10 @@ public class FileImporter {
      * reading or writing a file
      */
     public void importGenes() throws IOException {
-
-        SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
         GeneFactory geneFactory = GeneFactory.getInstance();
         GenePreferences genePreferences = identificationParameters.getGenePreferences();
         GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, waitingHandler);
         peptideShaker.setGeneMaps(geneMaps);
-
     }
 
     /**
@@ -459,7 +456,7 @@ public class FileImporter {
                 GenePreferences genePreferences = identificationParameters.getGenePreferences();
                 if (genePreferences.getUseGeneMapping()) {
                     waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-                    waitingHandler.appendReport("Importing Gene Mappings.", true, true);
+                    waitingHandler.appendReport("Importing gene mappings.", true, true);
                     importGenes();
                 } else {
                     peptideShaker.setGeneMaps(new GeneMaps());
