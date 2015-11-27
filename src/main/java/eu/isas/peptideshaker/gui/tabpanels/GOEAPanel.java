@@ -19,7 +19,7 @@ import com.compomics.util.gui.XYPlottingDialog.PlottingDialogPlotType;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
-import com.compomics.util.gui.genes.SpeciesDialog;
+import com.compomics.util.gui.parameters.identification_parameters.GenePreferencesDialog;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -358,26 +358,23 @@ public class GOEAPanel extends javax.swing.JPanel {
                             GoMapping backgroundGoMapping = new GoMapping();
                             Integer taxon = null;
                             IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                            GenePreferences genepreferences = identificationParameters.getGenePreferences();
-                            if (genepreferences != null) {
-                                taxon = genepreferences.getSelectedBackgroundSpecies();
+                            GenePreferences genePreferences = identificationParameters.getGenePreferences();
+                            if (genePreferences != null) {
+                                taxon = genePreferences.getSelectedBackgroundSpecies();
                             }
                             if (taxon == null) {
-                                SpeciesDialog speciesDialog = new SpeciesDialog(peptideShakerGUI, true, peptideShakerGUI.getWaitingIcon(), peptideShakerGUI.getNormalIcon(), taxon);
-                                if (!speciesDialog.isCanceled()) {
-                                    if (genepreferences == null) {
-                                        genepreferences = new GenePreferences();
-                                        identificationParameters.setGenePreferences(genepreferences);
-                                    }
-                                    taxon = speciesDialog.getSelectedSpecies();
-                                    genepreferences.setSelectedBackgroundSpecies(taxon);
+                                GenePreferencesDialog genePreferencesDialog = new GenePreferencesDialog(peptideShakerGUI, genePreferences, identificationParameters.getSearchParameters(), false);
+                                if (!genePreferencesDialog.isCanceled()) {
+                                    genePreferences = genePreferencesDialog.getGenePreferences();
+                                    identificationParameters.setGenePreferences(genePreferences);
+                                    taxon = genePreferences.getSelectedBackgroundSpecies();
                                 }
                             }
                             if (taxon != null) {
                                 SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
                                 String ensemblDatasetName = speciesFactory.getEnsemblDataset(taxon);
                                 File goMappingFile = GeneFactory.getGoMappingFile(ensemblDatasetName);
-                                backgroundGoMapping.laodMappingFromFile(goMappingFile, progressDialog);
+                                backgroundGoMapping.loadMappingsFromFile(goMappingFile, progressDialog);
 
                                 GoDomains goDomains = new GoDomains();
                                 File goDomainsFile = GeneFactory.getGoDomainsFile();

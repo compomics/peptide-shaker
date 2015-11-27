@@ -7,7 +7,6 @@ import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssu
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import eu.isas.peptideshaker.gui.filtering.FiltersDialog;
 import com.compomics.util.gui.error_handlers.notification.NotificationDialogParent;
-import com.compomics.util.gui.genes.SpeciesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FollowupPreferencesDialog;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
@@ -86,6 +85,7 @@ import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
 import com.compomics.util.gui.parameters.IdentificationParametersEditionDialog;
 import com.compomics.util.gui.parameters.ProcessingPreferencesDialog;
+import com.compomics.util.gui.parameters.identification_parameters.GenePreferencesDialog;
 import com.compomics.util.preferences.ValidationQCPreferences;
 import com.compomics.util.gui.parameters.identification_parameters.ValidationQCPreferencesDialog;
 import com.compomics.util.gui.parameters.identification_parameters.ValidationQCPreferencesDialogParent;
@@ -818,21 +818,21 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         quantifyMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         projectPropertiesMenuItem = new javax.swing.JMenuItem();
+        projectSettingsMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         saveMenuItem = new javax.swing.JMenuItem();
         saveAsMenuItem = new javax.swing.JMenuItem();
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
         exitJMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
-        identificationParametersMenuItem = new javax.swing.JMenuItem();
-        preferencesMenuItem = new javax.swing.JMenuItem();
-        fractionDetailsJMenuItem = new javax.swing.JMenuItem();
-        jSeparator4 = new javax.swing.JPopupMenu.Separator();
         searchParametersMenu = new javax.swing.JMenuItem();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         validationQcMenuItem = new javax.swing.JMenuItem();
         speciesJMenuItem = new javax.swing.JMenuItem();
         jSeparator13 = new javax.swing.JPopupMenu.Separator();
+        preferencesMenuItem = new javax.swing.JMenuItem();
+        fractionDetailsJMenuItem = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JPopupMenu.Separator();
         javaOptionsJMenuItem = new javax.swing.JMenuItem();
         processingMenuItem = new javax.swing.JMenuItem();
         configurationFilesSettings = new javax.swing.JMenuItem();
@@ -1335,9 +1335,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 newsButtonMouseExited(evt);
             }
         });
+        backgroundLayeredPane.setLayer(newsButton, javax.swing.JLayeredPane.MODAL_LAYER);
         backgroundLayeredPane.add(newsButton);
         newsButton.setBounds(1205, 825, 70, 20);
-        backgroundLayeredPane.setLayer(newsButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
         notesButton.setBackground(new java.awt.Color(204, 204, 204));
         notesButton.setFont(notesButton.getFont().deriveFont(notesButton.getFont().getStyle() | java.awt.Font.BOLD));
@@ -1358,9 +1358,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 notesButtonMouseReleased(evt);
             }
         });
+        backgroundLayeredPane.setLayer(notesButton, javax.swing.JLayeredPane.MODAL_LAYER);
         backgroundLayeredPane.add(notesButton);
         notesButton.setBounds(1205, 775, 70, 20);
-        backgroundLayeredPane.setLayer(notesButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
         tipsButton.setBackground(new java.awt.Color(204, 204, 204));
         tipsButton.setFont(tipsButton.getFont().deriveFont(tipsButton.getFont().getStyle() | java.awt.Font.BOLD));
@@ -1380,9 +1380,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 tipsButtonMouseReleased(evt);
             }
         });
+        backgroundLayeredPane.setLayer(tipsButton, javax.swing.JLayeredPane.MODAL_LAYER);
         backgroundLayeredPane.add(tipsButton);
         tipsButton.setBounds(1205, 800, 70, 20);
-        backgroundLayeredPane.setLayer(tipsButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
@@ -1443,7 +1443,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         fileJMenu.add(openExampleMenuItem);
         fileJMenu.add(jSeparator8);
 
-        reshakeMenuItem.setMnemonic('E');
+        reshakeMenuItem.setMnemonic('H');
         reshakeMenuItem.setText("Reshake...");
         reshakeMenuItem.setToolTipText("<html>\nReanalyze PRIDE experiments.<br>\n</html>");
         reshakeMenuItem.setEnabled(false);
@@ -1454,7 +1454,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         });
         fileJMenu.add(reshakeMenuItem);
 
-        quantifyMenuItem.setMnemonic('I');
+        quantifyMenuItem.setMnemonic('R');
         quantifyMenuItem.setText("Reporter Ions...");
         quantifyMenuItem.setToolTipText("<html>\nQuantify your proteins using reporter ions.<br>\n(Coming soon...)\n</html>");
         quantifyMenuItem.setEnabled(false);
@@ -1475,6 +1475,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             }
         });
         fileJMenu.add(projectPropertiesMenuItem);
+
+        projectSettingsMenuItem.setMnemonic('I');
+        projectSettingsMenuItem.setText("Identification Settings");
+        projectSettingsMenuItem.setEnabled(false);
+        projectSettingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                projectSettingsMenuItemActionPerformed(evt);
+            }
+        });
+        fileJMenu.add(projectSettingsMenuItem);
         fileJMenu.add(jSeparator1);
 
         saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
@@ -1512,36 +1522,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         editMenu.setMnemonic('E');
         editMenu.setText("Edit");
 
-        identificationParametersMenuItem.setMnemonic('I');
-        identificationParametersMenuItem.setText("Identification Settings");
-        identificationParametersMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                identificationParametersMenuItemActionPerformed(evt);
-            }
-        });
-        editMenu.add(identificationParametersMenuItem);
-
-        preferencesMenuItem.setMnemonic('P');
-        preferencesMenuItem.setText("Project Settings");
-        preferencesMenuItem.setEnabled(false);
-        preferencesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                preferencesMenuItemActionPerformed(evt);
-            }
-        });
-        editMenu.add(preferencesMenuItem);
-
-        fractionDetailsJMenuItem.setMnemonic('R');
-        fractionDetailsJMenuItem.setText("Fraction Details");
-        fractionDetailsJMenuItem.setEnabled(false);
-        fractionDetailsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fractionDetailsJMenuItemActionPerformed(evt);
-            }
-        });
-        editMenu.add(fractionDetailsJMenuItem);
-        editMenu.add(jSeparator4);
-
         searchParametersMenu.setMnemonic('S');
         searchParametersMenu.setText("Search Settings");
         searchParametersMenu.addActionListener(new java.awt.event.ActionListener() {
@@ -1570,8 +1550,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         });
         editMenu.add(validationQcMenuItem);
 
-        speciesJMenuItem.setMnemonic('C');
-        speciesJMenuItem.setText("Species");
+        speciesJMenuItem.setMnemonic('P');
+        speciesJMenuItem.setText("Species Settings");
         speciesJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 speciesJMenuItemActionPerformed(evt);
@@ -1579,6 +1559,27 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         });
         editMenu.add(speciesJMenuItem);
         editMenu.add(jSeparator13);
+
+        preferencesMenuItem.setMnemonic('O');
+        preferencesMenuItem.setText("Project Settings");
+        preferencesMenuItem.setEnabled(false);
+        preferencesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                preferencesMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(preferencesMenuItem);
+
+        fractionDetailsJMenuItem.setMnemonic('R');
+        fractionDetailsJMenuItem.setText("Fraction Details");
+        fractionDetailsJMenuItem.setEnabled(false);
+        fractionDetailsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fractionDetailsJMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(fractionDetailsJMenuItem);
+        editMenu.add(jSeparator4);
 
         javaOptionsJMenuItem.setMnemonic('J');
         javaOptionsJMenuItem.setText("Java Settings");
@@ -1589,6 +1590,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         });
         editMenu.add(javaOptionsJMenuItem);
 
+        processingMenuItem.setMnemonic('C');
         processingMenuItem.setText("Processing Settings");
         processingMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1607,7 +1609,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         });
         editMenu.add(configurationFilesSettings);
 
-        privacyMenuItem.setMnemonic('P');
+        privacyMenuItem.setMnemonic('V');
         privacyMenuItem.setText("Privacy Settings");
         privacyMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2686,11 +2688,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @param evt
      */
-    private void identificationParametersMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identificationParametersMenuItemActionPerformed
+    private void projectSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectSettingsMenuItemActionPerformed
         IdentificationParameters identificationParameters = getIdentificationParameters();
         IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(
                 this, identificationParameters, PeptideShaker.getConfigurationFile(), getNormalIcon(), getWaitingIcon(), lastSelectedFolder, this, false);
-    }//GEN-LAST:event_identificationParametersMenuItemActionPerformed
+    }//GEN-LAST:event_projectSettingsMenuItemActionPerformed
 
     /**
      * Save the current project.
@@ -3043,21 +3045,17 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void speciesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speciesJMenuItemActionPerformed
-
-        Integer taxon = null;
         IdentificationParameters identificationParameters = getIdentificationParameters();
-        GenePreferences genepreferences = identificationParameters.getGenePreferences();
-        if (genepreferences != null) {
-            taxon = genepreferences.getSelectedBackgroundSpecies();
-        }
-        SpeciesDialog speciesDialog = new SpeciesDialog(this, true, getWaitingIcon(), getNormalIcon(), taxon);
-        if (!speciesDialog.isCanceled()) {
-            if (genepreferences == null) {
-                genepreferences = new GenePreferences();
-                identificationParameters.setGenePreferences(genepreferences);
+        GenePreferences genePreferences = identificationParameters.getGenePreferences();
+        GenePreferencesDialog genePreferencesDialog = new GenePreferencesDialog(this, genePreferences, identificationParameters.getSearchParameters(), false);
+        if (!genePreferencesDialog.isCanceled()) {
+            genePreferences = genePreferencesDialog.getGenePreferences();
+            identificationParameters.setGenePreferences(genePreferences);
+            if (allTabsJTabbedPane.getSelectedIndex() == GO_ANALYSIS_TAB_INDEX) {
+                goPanel.updateMappings();
+            } else {
+                updateNeeded.put(GO_ANALYSIS_TAB_INDEX, true);
             }
-            genepreferences.setSelectedBackgroundSpecies(speciesDialog.getSelectedSpecies());
-
         }
     }//GEN-LAST:event_speciesJMenuItemActionPerformed
 
@@ -3397,6 +3395,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             identificationFeaturesMenuItem.setEnabled(true);
             followUpAnalysisMenuItem.setEnabled(true);
             projectPropertiesMenuItem.setEnabled(true);
+            projectSettingsMenuItem.setEnabled(true);
             preferencesMenuItem.setEnabled(true);
             findJMenuItem.setEnabled(true);
             starHideJMenuItem.setEnabled(true);
@@ -3499,7 +3498,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JCheckBoxMenuItem highResAnnotationCheckBoxMenuItem;
     private javax.swing.JMenuItem identificationFeaturesMenuItem;
-    private javax.swing.JMenuItem identificationParametersMenuItem;
     private javax.swing.JCheckBoxMenuItem immoniumIonsCheckMenu;
     private javax.swing.JRadioButtonMenuItem intensityIonTableRadioButtonMenuItem;
     private javax.swing.ButtonGroup ionTableButtonGroup;
@@ -3547,6 +3545,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JMenuItem processingMenuItem;
     private javax.swing.JMenu projectExportMenu;
     private javax.swing.JMenuItem projectPropertiesMenuItem;
+    private javax.swing.JMenuItem projectSettingsMenuItem;
     private javax.swing.JPanel proteinFractionsJPanel;
     private javax.swing.JPanel proteinStructureJPanel;
     private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;

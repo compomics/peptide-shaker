@@ -9,7 +9,6 @@ import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
-import com.compomics.util.experiment.biology.genes.go.GoMapping;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
@@ -25,7 +24,6 @@ import com.compomics.util.experiment.identification.parameters_cli.Identificatio
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
-import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.gui.DummyFrame;
 import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.io.compression.ZipUtils;
@@ -601,7 +599,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         File fastaFile = searchParameters.getFastaFile();
         if (!fastaFile.exists()) {
             boolean found = false;
-            // look in the database folder {
+            // look in the database folder
             try {
                 UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
                 File dbFolder = utilitiesUserPreferences.getDbFolder();
