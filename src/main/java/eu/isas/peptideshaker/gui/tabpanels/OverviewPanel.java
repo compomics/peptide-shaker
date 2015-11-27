@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
@@ -1978,7 +1977,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             }
         } else if (column == proteinTable.getColumn("PI").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        } else if (column == proteinTable.getColumn("Chr").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
+        } else if (column == proteinTable.getColumn("Chr").getModelIndex() && proteinTable.getValueAt(row, column) != null) { // @TODO: check of the gene maps exist...
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else if (column == proteinTable.getColumn("").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -2124,8 +2123,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 }
 
                 // open the gene details dialog
-                if (column == proteinTable.getColumn("Chr").getModelIndex() && evt != null
-                        && evt.getButton() == MouseEvent.BUTTON1) {
+                if (column == proteinTable.getColumn("Chr").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) { // @TODO: check if the gene maps exist...
                     try {
                         new GeneDetailsDialog(peptideShakerGUI, proteinKey, peptideShakerGUI.getGeneMaps());
                     } catch (Exception ex) {

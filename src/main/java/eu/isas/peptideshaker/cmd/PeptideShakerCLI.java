@@ -667,6 +667,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
             // metrics saved while processing the data
             metrics = peptideShaker.getMetrics();
+            
+            // Gene maps
+            geneMaps = peptideShaker.getGeneMaps();
 
             // the identification feature generator
             identificationFeaturesGenerator = peptideShaker.getIdentificationFeaturesGenerator();

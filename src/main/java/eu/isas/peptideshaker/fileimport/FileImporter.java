@@ -23,7 +23,6 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
-import com.compomics.util.experiment.identification.protein_sequences.FastaIndex;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
@@ -274,6 +273,7 @@ public class FileImporter {
      * reading or writing a file
      */
     public void importGenes() throws IOException {
+
         GeneFactory geneFactory = GeneFactory.getInstance();
         GenePreferences genePreferences = identificationParameters.getGenePreferences();
         GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, waitingHandler);
