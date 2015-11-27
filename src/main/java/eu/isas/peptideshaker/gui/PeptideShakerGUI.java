@@ -3043,7 +3043,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void speciesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speciesJMenuItemActionPerformed
-
         Integer taxon = null;
         IdentificationParameters identificationParameters = getIdentificationParameters();
         GenePreferences genepreferences = identificationParameters.getGenePreferences();
@@ -3057,7 +3056,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 identificationParameters.setGenePreferences(genepreferences);
             }
             genepreferences.setSelectedBackgroundSpecies(speciesDialog.getSelectedSpecies());
-
         }
     }//GEN-LAST:event_speciesJMenuItemActionPerformed
 
