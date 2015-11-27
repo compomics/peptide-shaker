@@ -23,7 +23,7 @@ public class PrideWebServiceTest extends TestCase {
     /**
      * The web service URL.
      */
-    private static final String projectServiceURL = "http://www.ebi.ac.uk/pride/ws/archive/"; // "http://wwwdev.ebi.ac.uk:80/pride/ws/archive/";
+    private static final String PROJECT_SERVICE_URL = "http://www.ebi.ac.uk/pride/ws/archive/"; // "http://wwwdev.ebi.ac.uk:80/pride/ws/archive/";
     /**
      * The data format.
      */
@@ -48,12 +48,12 @@ public class PrideWebServiceTest extends TestCase {
 
             // test if the web service is online
             RestTemplate template = new RestTemplate();
-            ResponseEntity<Integer> projectCountResult = template.getForEntity(projectServiceURL + "project/count", Integer.class); // can also use project/count/?q=*
+            ResponseEntity<Integer> projectCountResult = template.getForEntity(PROJECT_SERVICE_URL + "project/count", Integer.class); // can also use project/count/?q=*
             Integer projectCount = projectCountResult.getBody();
             Assert.assertTrue(projectCount > 0);
 
             // test if the project details can be retrieved
-            ResponseEntity<ProjectDetailList> projectList = template.getForEntity(projectServiceURL
+            ResponseEntity<ProjectDetailList> projectList = template.getForEntity(PROJECT_SERVICE_URL
                     + "project/list?show=" + projectCount + "&page=1&sort=publication_date&order=desc", ProjectDetailList.class);
 
             for (ProjectDetail projectDetail : projectList.getBody().getList()) {
@@ -69,7 +69,7 @@ public class PrideWebServiceTest extends TestCase {
             }
 
             // test if the assays for the PeptideShaker example dataset can be found
-            String url = projectServiceURL + "assay/list/project/" + projectTestAccession;
+            String url = PROJECT_SERVICE_URL + "assay/list/project/" + projectTestAccession;
             ResponseEntity<AssayDetailList> assayDetailList = template.getForEntity(url, AssayDetailList.class);
 
             for (AssayDetail assayDetail : assayDetailList.getBody().getList()) {
@@ -85,7 +85,7 @@ public class PrideWebServiceTest extends TestCase {
             }
 
             // test if the files for the PeptideShaker example dataset can be found
-            url = projectServiceURL + "file/list/project/" + projectTestAccession;
+            url = PROJECT_SERVICE_URL + "file/list/project/" + projectTestAccession;
             ResponseEntity<FileDetailList> fileDetailListResult = template.getForEntity(url, FileDetailList.class);
 
             for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
@@ -101,7 +101,7 @@ public class PrideWebServiceTest extends TestCase {
             }
 
             // test if the files for the PeptideShaker example dataset assay can be found
-            url = projectServiceURL + "file/list/assay/" + assayTestAccession;
+            url = PROJECT_SERVICE_URL + "file/list/assay/" + assayTestAccession;
             fileDetailListResult = template.getForEntity(url, FileDetailList.class);
 
             for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
