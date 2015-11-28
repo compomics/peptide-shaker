@@ -12,7 +12,6 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.utils.user_choice.list_choosers.PtmChooser;
 import com.compomics.util.io.export.ExportWriter;
-import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.LastSelectedFolder;
 import eu.isas.peptideshaker.followup.ProgenesisExcelExport;
 import eu.isas.peptideshaker.followup.FastaExport;
@@ -20,7 +19,6 @@ import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.SpectrumExporter;
 import eu.isas.peptideshaker.followup.ProgenesisExport;
 import eu.isas.peptideshaker.followup.RecalibrationExporter;
-import eu.isas.peptideshaker.followup.SwathExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -382,7 +380,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        skylineExportCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Validated PSMs of Validated Peptides of Validated Proteins", "Validated PSMs of Validated Peptides", "Validated PSMs", "Validated PSMs Containing Confidently Localized PTMs" }));
+        skylineExportCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "(no filters yet supported)" }));
+        skylineExportCmb.setEnabled(false);
 
         swathExportLabel.setText("mzIdentML Format");
         swathExportLabel.setToolTipText("Click for Progenesis LC-MS export help");
@@ -852,7 +851,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_graphDatabasetButtonActionPerformed
 
     /**
-     * Exports a text file containing the information to create a swath library.
+     * Exports the identifications to Skyline.
      *
      * @param evt
      */
