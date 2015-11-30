@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.scoring.maps;
 
+import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.io.Serializable;
@@ -36,16 +37,24 @@ public class InputMap implements Serializable {
      */
     private HashMap<String, HashMap<Integer, HashMap<Integer, TargetDecoyMap>>> intermediateScores = new HashMap<String, HashMap<Integer, HashMap<Integer, TargetDecoyMap>>>();
     /**
-     * Map of the search engine contribution. Advocate Id &gt; Spectrum file name
-     * &gt; number of validated hits.
+     * Map of the search engine contribution. Advocate Id &gt; Spectrum file
+     * name &gt; number of validated hits.
      */
     private HashMap<Integer, HashMap<String, Integer>> advocateContribution;
     /**
-     * Map of the search engine contribution. Advocate Id &gt; Spectrum file name
-     * &gt; number of validated hits found by this advocate only.
+     * Map of the search engine contribution. Advocate Id &gt; Spectrum file
+     * name &gt; number of validated hits found by this advocate only.
      */
     private HashMap<Integer, HashMap<String, Integer>> advocateUniqueContribution;
-    
+    /**
+     * The PeptideShaker number of validated hits for every file.
+     */
+    private HashMap<String, Integer> fileIdRate;
+    /**
+     * PeptideShaker unique contribution.
+     */
+    private HashMap<String, Integer> peptideShakerUniqueContribution;
+
     /**
      * Returns true for multiple search engines investigations.
      *
@@ -304,6 +313,16 @@ public class InputMap implements Serializable {
         } else {
             advocateUniqueContribution.clear();
         }
+        if (fileIdRate == null) {
+            fileIdRate = new HashMap<String, Integer>();
+        } else {
+            fileIdRate.clear();
+        }
+        if (peptideShakerUniqueContribution == null) {
+            peptideShakerUniqueContribution = new HashMap<String, Integer>();
+        } else {
+            peptideShakerUniqueContribution.clear();
+        }
     }
 
     /**
@@ -342,6 +361,31 @@ public class InputMap implements Serializable {
     }
 
     /**
+     * Adds a PeptideShaker hit for the given file.
+     *
+     * @param fileName the name of the spectrum file of interest
+     * @param unique boolean indicating whether the advocate was the only
+     * advocate for the considered assumption
+     */
+    public synchronized void addPeptideShakerHit(String fileName, boolean unique) {
+
+        Integer contribution = fileIdRate.get(fileName);
+        if (contribution == null) {
+            fileIdRate.put(fileName, 1);
+        } else {
+            fileIdRate.put(fileName, contribution + 1);
+        }
+        if (unique) {
+            contribution = peptideShakerUniqueContribution.get(fileName);
+            if (contribution == null) {
+                peptideShakerUniqueContribution.put(fileName, 1);
+            } else {
+                peptideShakerUniqueContribution.put(fileName, contribution + 1);
+            }
+        }
+    }
+
+    /**
      * Returns the contribution of validated hits of the given advocate for the
      * given file.
      *
@@ -357,6 +401,24 @@ public class InputMap implements Serializable {
             if (contribution != null) {
                 return contribution;
             }
+        }
+        return 0;
+    }
+
+    /**
+     * Returns the number of validated hits for the given file.
+     *
+     * @param fileName the name of the spectrum file
+     *
+     * @return the number of validated hits supported by this advocate
+     */
+    public int getPeptideShakerHits(String fileName) {
+        if (fileIdRate == null) { // Backward compatibility fix
+            return getAdvocateContribution(Advocate.peptideShaker.getIndex(), fileName);
+        }
+        Integer contribution = fileIdRate.get(fileName);
+        if (contribution != null) {
+            return contribution;
         }
         return 0;
     }
@@ -382,6 +444,24 @@ public class InputMap implements Serializable {
     }
 
     /**
+     * Returns the number of PeptideShaker validated hits for the entire
+     * dataset.
+     *
+     * @return the number of validated hits supported by this advocate
+     */
+    public int getPeptideShakerHits() {
+
+        if (fileIdRate == null) { // Backward compatibility fix
+            return getAdvocateContribution(Advocate.peptideShaker.getIndex());
+        }
+        int contribution = 0;
+        for (int tempContribution : fileIdRate.values()) {
+            contribution += tempContribution;
+        }
+        return contribution;
+    }
+
+    /**
      * Returns the contribution of unique validated hits of the given advocate
      * for the given file.
      *
@@ -397,6 +477,25 @@ public class InputMap implements Serializable {
             if (contribution != null) {
                 return contribution;
             }
+        }
+        return 0;
+    }
+
+    /**
+     * Returns the contribution of unique validated hits from PeptideShaker for
+     * the given file.
+     *
+     * @param fileName the name of the spectrum file
+     *
+     * @return the number of validated hits uniquely supported by PeptideShaker
+     */
+    public int getPeptideShakerUniqueContribution(String fileName) {
+        if (peptideShakerUniqueContribution == null) { // Backward compatibility fix
+            return getAdvocateUniqueContribution(Advocate.peptideShaker.getIndex(), fileName);
+        }
+        Integer contribution = peptideShakerUniqueContribution.get(fileName);
+        if (contribution != null) {
+            return contribution;
         }
         return 0;
     }
@@ -419,6 +518,23 @@ public class InputMap implements Serializable {
             return contribution;
         }
         return 0;
+    }
+
+    /**
+     * Returns the contribution of unique validated hits by PeptideShaker for
+     * the entire dataset.
+     *
+     * @return the number of validated hits uniquely supported by this advocate
+     */
+    public int getPeptideShakerUniqueContribution() {
+        if (peptideShakerUniqueContribution == null) { // Backward compatibility fix
+            return getAdvocateUniqueContribution(Advocate.peptideShaker.getIndex());
+        }
+        int contribution = 0;
+        for (int tempContribution : peptideShakerUniqueContribution.values()) {
+            contribution += tempContribution;
+        }
+        return contribution;
     }
 
     /**

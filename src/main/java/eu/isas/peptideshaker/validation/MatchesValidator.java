@@ -284,7 +284,7 @@ public class MatchesValidator {
 
             ArrayList<PsmValidatorRunnable> psmRunnables = new ArrayList<PsmValidatorRunnable>(processingPreferences.getnThreads());
             for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
-                PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, inputMap, false);
+                PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, inputMap, false, true);
                 pool.submit(runnable);
                 psmRunnables.add(runnable);
             }
@@ -295,10 +295,6 @@ public class MatchesValidator {
             pool.shutdown();
             if (!pool.awaitTermination(7, TimeUnit.DAYS)) {
                 throw new InterruptedException("PSM validation timed out. Please contact the developers.");
-            }
-
-            if (inputMap != null) {
-                inputMap.resetAdvocateContributions(spectrumFileName);
             }
 
             ArrayList<Double> precursorMzDeviations = new ArrayList<Double>();
@@ -344,7 +340,7 @@ public class MatchesValidator {
             psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false, waitingHandler);
 
             for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
-                PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, inputMap, true);
+                PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, inputMap, true, false);
                 pool.submit(runnable);
             }
             if (waitingHandler != null && waitingHandler.isRunCanceled()) {
@@ -1437,6 +1433,10 @@ public class MatchesValidator {
          * If true, quality control filters will be applied to the matches.
          */
         private boolean applyQCFilters;
+        /**
+         * If true, advocate contributions will be stored in the input map.
+         */
+        private boolean storeContributions;
 
         /**
          * Constructor.
@@ -1456,9 +1456,11 @@ public class MatchesValidator {
          * will be stored in the input map
          * @param applyQCFilters boolean indicating whether quality control
          * filters should be used
+         * @param storeContributions boolean indicating whether advocate
+         * contributions should be stored.
          */
         public PsmValidatorRunnable(PsmIterator psmIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps, ShotgunProtocol shotgunProtocol,
-                IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, InputMap inputMap, boolean applyQCFilters) {
+                IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, InputMap inputMap, boolean applyQCFilters, boolean storeContributions) {
             this.psmIterator = psmIterator;
             this.identification = identification;
             this.identificationFeaturesGenerator = identificationFeaturesGenerator;
@@ -1469,6 +1471,7 @@ public class MatchesValidator {
             this.exceptionHandler = exceptionHandler;
             this.inputMap = inputMap;
             this.applyQCFilters = applyQCFilters;
+            this.storeContributions = storeContributions;
         }
 
         @Override
@@ -1506,13 +1509,13 @@ public class MatchesValidator {
 
                         if (peptideAssumption != null) {
 
-                            if (psParameter.getMatchValidationLevel().isValidated()) {
+                            if (psParameter.getMatchValidationLevel().isValidated() && !peptideAssumption.getPeptide().isDecoy(identificationParameters.getSequenceMatchingPreferences())) {
                                 double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
                                 SearchParameters searchParameters = identificationParameters.getSearchParameters();
                                 double precursorMzError = peptideAssumption.getDeltaMass(precursorMz, searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection());
                                 threadPrecursorMzDeviations.add(precursorMzError);
 
-                                if (inputMap != null) {
+                                if (inputMap != null && storeContributions) {
 
                                     Peptide bestPeptide = peptideAssumption.getPeptide();
                                     HashSet<Integer> agreementAdvocates = new HashSet<Integer>();
@@ -1542,7 +1545,7 @@ public class MatchesValidator {
                                         inputMap.addAdvocateContribution(advocateId, spectrumFileName, unique);
                                     }
 
-                                    inputMap.addAdvocateContribution(Advocate.peptideShaker.getIndex(), spectrumFileName, agreementAdvocates.isEmpty());
+                                    inputMap.addPeptideShakerHit(spectrumFileName, agreementAdvocates.isEmpty());
                                 }
                             }
                         }

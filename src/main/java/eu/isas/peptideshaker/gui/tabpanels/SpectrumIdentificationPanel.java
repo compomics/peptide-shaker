@@ -14,7 +14,6 @@ import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssu
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.TagSpectrumAnnotator;
 import com.compomics.util.experiment.identification.amino_acid_tags.TagComponent;
 import com.compomics.util.experiment.biology.MassGap;
@@ -22,7 +21,6 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.XYPlottingDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
@@ -44,7 +42,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
@@ -60,16 +57,24 @@ import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
+import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
-import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
-import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
-import java.util.HashSet;
 import java.util.Iterator;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTable;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerIconTableCellRenderer;
 import org.jfree.chart.ChartFactory;
@@ -175,6 +180,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private Identification identification;
     /**
+     * The PeptideShaker input map.
+     */
+    private InputMap inputMap;
+    /**
      * The file currently selected.
      */
     private String fileSelected = null;
@@ -186,10 +195,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * The advocates used.
      */
     private ArrayList<Integer> advocatesUsed;
-    /**
-     * The number of validated PSMs per mgf file.
-     */
-    private HashMap<String, Integer> numberOfValidatedPsmsMap;
     /**
      * The current spectrum panel for the selected PSM.
      */
@@ -1967,7 +1972,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"), "#IdSoftwarePerformance",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
@@ -2498,14 +2502,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     PSMaps pSMaps = new PSMaps();
                     pSMaps = (PSMaps) identification.getUrParam(pSMaps);
-                    eu.isas.peptideshaker.scoring.maps.InputMap inputMap = pSMaps.getInputMap();
+                    inputMap = pSMaps.getInputMap();
                     advocatesUsed = new ArrayList<Integer>(inputMap.getInputAlgorithmsSorted());
                     ArrayList<String> spectrumFileNames = identification.getSpectrumFiles();
-                    numberOfValidatedPsmsMap = new HashMap<String, Integer>();
-                    for (String fileName : spectrumFileNames) { // @TODO: number is too high!!!
-                        numberOfValidatedPsmsMap.put(fileName, inputMap.getAdvocateContribution(Advocate.peptideShaker.getIndex(), fileName)); // @TODO: should be the same as psm count in the validation tab!
-                    }
-                    updateOverviewPlots(inputMap, pSMaps.getPsmSpecificMap());
+                    updateOverviewPlots();
 
                     // update the advocates color legend
                     ArrayList<Integer> usedAdvocatedAndPeptideShaker = new ArrayList<Integer>();
@@ -2564,131 +2564,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Loads the tab content from the identification.
-     *
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws IOException thrown if an IOException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     */
-    public void loadDataFromIdentification() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-
-        progressDialog.setTitle("Updating Project Data. Please Wait...");
-
-        // see if the id software is saved
-        boolean newInformation = true;
-        if (peptideShakerGUI.getProjectDetails().hasIdentificationAlgorithms()) {
-            newInformation = false;
-        }
-
-        // get the list of id software used
-        advocatesUsed = peptideShakerGUI.getProjectDetails().getIdentificationAlgorithms();
-
-        // set the dataset to not saved
-        if (newInformation) {
-            peptideShakerGUI.setDataSaved(false);
-        }
-
-        // order the advocates to have the same order is in the overview plots
-        Collections.sort(advocatesUsed);
-
-        HashMap<Integer, Double> totalAdvocateId = new HashMap<Integer, Double>();
-        HashMap<Integer, Double> uniqueAdvocateId = new HashMap<Integer, Double>();
-
-        for (int tempAdvocate : advocatesUsed) {
-            totalAdvocateId.put(tempAdvocate, 0.0);
-            uniqueAdvocateId.put(tempAdvocate, 0.0);
-        }
-
-        int totalNumberOfSpectra = 0, totalPeptideShakerIds = 0;
-
-        int fileCounter = 1;
-        PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-        parameters.add(psParameter);
-
-        numberOfValidatedPsmsMap = new HashMap<String, Integer>();
-
-        progressDialog.setSecondaryProgressCounterIndeterminate(false);
-        progressDialog.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
-        progressDialog.setValue(0);
-
-        ArrayList<String> spectrumFiles = identification.getSpectrumFiles();
-        for (String fileName : spectrumFiles) {
-
-            int numberOfValidatedPsms = 0;
-            totalNumberOfSpectra += spectrumFactory.getNSpectra(fileName);
-
-            progressDialog.setTitle("Loading Data. Please Wait... (" + fileCounter++ + "/" + spectrumFiles.size() + ") ");
-            PsmIterator psmIterator = identification.getPsmIterator(fileName, parameters, true, progressDialog);
-
-            while (psmIterator.hasNext()) {
-                if (progressDialog.isRunCanceled()) {
-                    break;
-                }
-
-                SpectrumMatch spectrumMatch = psmIterator.next();
-                String spectrumKey = spectrumMatch.getKey();
-
-                if (spectrumMatch.getBestPeptideAssumption() != null) {
-
-                    HashSet<Integer> currentAdvocates = new HashSet<Integer>();
-                    psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-
-                    if (psParameter.getMatchValidationLevel().isValidated()) {
-
-                        totalPeptideShakerIds++;
-                        numberOfValidatedPsms++;
-
-                        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
-                        for (Integer tempAdvocate : advocatesUsed) {
-                            HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(tempAdvocate);
-                            if (advocateAssumptions != null) {
-                                ArrayList<Double> eValues = new ArrayList<Double>(advocateAssumptions.keySet());
-                                Collections.sort(eValues);
-                                for (SpectrumIdentificationAssumption firstHit : advocateAssumptions.get(eValues.get(0))) {
-                                    if ((firstHit instanceof PeptideAssumption) && ((PeptideAssumption) firstHit).getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(),
-                                            peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
-                                        currentAdvocates.add(tempAdvocate);
-                                    }
-                                }
-                            }
-                        }
-
-                        // overview plot data
-                        for (Integer tempAdvocate : advocatesUsed) {
-                            if (currentAdvocates.contains(tempAdvocate)) {
-                                totalAdvocateId.put(tempAdvocate, totalAdvocateId.get(tempAdvocate) + 1);
-
-                                if (currentAdvocates.size() == 1) {
-                                    uniqueAdvocateId.put(tempAdvocate, uniqueAdvocateId.get(tempAdvocate) + 1);
-                                }
-                            }
-                        }
-                    }
-
-                    progressDialog.increaseSecondaryProgressCounter();
-                }
-            }
-
-            numberOfValidatedPsmsMap.put(fileName, numberOfValidatedPsms);
-        }
-
-        if (!progressDialog.isRunCanceled()) {
-
-            progressDialog.setSecondaryProgressCounterIndeterminate(true);
-            progressDialog.setTitle("Updating Tables. Please Wait...");
-
-            // add the peptide shaker results
-            totalAdvocateId.put(Advocate.peptideShaker.getIndex(), (double) totalPeptideShakerIds);
-            uniqueAdvocateId.put(Advocate.peptideShaker.getIndex(), 0.0);
-
-            // update the id software performance plots
-            updateOverviewPlots(totalAdvocateId, uniqueAdvocateId, totalNumberOfSpectra);
-        }
-    }
-
-    /**
      * Method called whenever the file selection changed.
      */
     private void fileSelectionChanged() {
@@ -2726,8 +2601,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
                 progressDialog.setPrimaryProgressCounterIndeterminate(true);
                 if (!progressDialog.isRunCanceled()) {
+                    Integer nValidated = inputMap.getPeptideShakerHits(fileSelected);
                     ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle("<html>" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING_HTML + "Spectrum Selection ("
-                            + numberOfValidatedPsmsMap.get(fileSelected) + "/" + spectrumFactory.getNSpectra(fileSelected) + " - "
+                            + nValidated + "/" + spectrumFactory.getNSpectra(fileSelected) + " - "
                             + "<a href=\"dummy\">" + fileSelected + "</a>)"
                             + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING_HTML + "</html>");
                     spectrumSelectionPanel.repaint();
@@ -3492,24 +3368,23 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 Collections.sort(eValues);
 
                 //for (double eValue : eValues) {
-                    //for (SpectrumIdentificationAssumption assumption : advocateAssumptions.get(eValue)) {
-                    
-                    double eValue = eValues.get(0);
-                    
-                    for (SpectrumIdentificationAssumption assumption : advocateAssumptions.get(eValue)) {
-                        if (assumption instanceof PeptideAssumption) {
-                            PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                            ArrayList<PeptideAssumption> advocatePeptides = peptideAssumptions.get(advocateIndex);
-                            if (advocatePeptides == null) {
-                                advocatePeptides = new ArrayList<PeptideAssumption>();
-                                peptideAssumptions.put(advocateIndex, advocatePeptides);
-                            }
-                            advocatePeptides.add(peptideAssumption); // @TODO: only count validated assumptions..?
+                //for (SpectrumIdentificationAssumption assumption : advocateAssumptions.get(eValue)) {
+                double eValue = eValues.get(0);
+
+                for (SpectrumIdentificationAssumption assumption : advocateAssumptions.get(eValue)) {
+                    if (assumption instanceof PeptideAssumption) {
+                        PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                        ArrayList<PeptideAssumption> advocatePeptides = peptideAssumptions.get(advocateIndex);
+                        if (advocatePeptides == null) {
+                            advocatePeptides = new ArrayList<PeptideAssumption>();
+                            peptideAssumptions.put(advocateIndex, advocatePeptides);
                         }
-                        if (!tempUsedAdvocates.contains(advocateIndex)) {
-                            tempUsedAdvocates.add(advocateIndex);
-                        }
+                        advocatePeptides.add(peptideAssumption); // @TODO: only count validated assumptions..?
                     }
+                    if (!tempUsedAdvocates.contains(advocateIndex)) {
+                        tempUsedAdvocates.add(advocateIndex);
+                    }
+                }
                 //}
             }
         }
@@ -4021,17 +3896,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     /**
      * Updates the overview plots based on the information loaded when creating
      * the project.
-     *
-     * @param inputMap the input map
      */
-    private void updateOverviewPlots(eu.isas.peptideshaker.scoring.maps.InputMap inputMap, PsmSpecificMap psmSpecificMap) {
+    private void updateOverviewPlots() {
 
         // The selected file, null for the entire dataset
         String selectedFileName = null; //@TODO: let the user choose the file
 
-        HashMap<Integer, Double> searchEngineTP = new HashMap<Integer, Double>();
-        HashMap<Integer, Double> searchEngineFN = new HashMap<Integer, Double>();
-        HashMap<Integer, Double> searchEngineContribution = new HashMap<Integer, Double>();
+        HashMap<Integer, Double> searchEngineValidated = new HashMap<Integer, Double>();
         HashMap<Integer, Double> searchEngineUniqueContribution = new HashMap<Integer, Double>();
         int totalNumberOfSpectra = 0;
 
@@ -4040,64 +3911,29 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 totalNumberOfSpectra += spectrumFactory.getNSpectra(spectrumFile);
             }
             for (int advocateId : inputMap.getInputAlgorithmsSorted()) {
-                TargetDecoyMap targetDecoyMap = inputMap.getTargetDecoyMap(advocateId);
-                TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                double nTP;
-                if (targetDecoyResults == null) {
-                    nTP = 0;
-                } else {
-                    nTP = targetDecoyResults.getnTP();
-                }
-                searchEngineTP.put(advocateId, nTP);
-                double nFN;
-                if (targetDecoyResults == null) {
-                    nFN = 0;
-                } else {
-                    nFN = targetDecoyResults.getnTPTotal() - nTP;
-                }
-                searchEngineFN.put(advocateId, nFN);
                 double contribution = inputMap.getAdvocateContribution(advocateId);
-                searchEngineContribution.put(advocateId, contribution);
+                searchEngineValidated.put(advocateId, contribution);
                 double uniqueContribution = inputMap.getAdvocateUniqueContribution(advocateId);
                 searchEngineUniqueContribution.put(advocateId, uniqueContribution);
             }
-            double nTP = 0;
-            double totalTP = 0;
-            for (TargetDecoyMap targetDecoyMap : psmSpecificMap.getTargetDecoyMaps()) { // @TODO: not correct!!
-                TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                nTP += targetDecoyResults.getnTP();
-                totalTP += targetDecoyResults.getnTPTotal();
-            }
-            searchEngineTP.put(Advocate.peptideShaker.getIndex(), nTP);
-            double nFN = totalTP - nTP;
-            searchEngineFN.put(Advocate.peptideShaker.getIndex(), nFN);
+            double contribution = inputMap.getPeptideShakerHits();
+            searchEngineValidated.put(Advocate.peptideShaker.getIndex(), contribution);
+            double uniqueContribution = inputMap.getPeptideShakerUniqueContribution();
+            searchEngineUniqueContribution.put(Advocate.peptideShaker.getIndex(), uniqueContribution);
         } else {
             totalNumberOfSpectra = spectrumFactory.getNSpectra(selectedFileName);
             for (int advocateId : inputMap.getInputAlgorithmsSorted()) {
-                TargetDecoyMap targetDecoyMap = inputMap.getTargetDecoyMap(advocateId, selectedFileName);
-                TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                double nTP;
-                if (targetDecoyResults == null) {
-                    nTP = 0;
-                } else {
-                    nTP = targetDecoyResults.getnTP();
-                }
-                searchEngineTP.put(advocateId, nTP);
-                double nFN;
-                if (targetDecoyResults == null) {
-                    nFN = 0;
-                } else {
-                    nFN = targetDecoyResults.getnTPTotal() - nTP;
-                }
-                searchEngineFN.put(advocateId, nFN);
                 double contribution = inputMap.getAdvocateContribution(advocateId, selectedFileName);
-                searchEngineContribution.put(advocateId, contribution);
+                searchEngineValidated.put(advocateId, contribution);
                 double uniqueContribution = inputMap.getAdvocateUniqueContribution(advocateId, selectedFileName);
                 searchEngineUniqueContribution.put(advocateId, uniqueContribution);
             }
-            //@TODO: any value for PeptideShaker here?
+            double contribution = inputMap.getPeptideShakerHits(selectedFileName);
+            searchEngineValidated.put(Advocate.peptideShaker.getIndex(), contribution);
+            double uniqueContribution = inputMap.getPeptideShakerUniqueContribution(selectedFileName);
+            searchEngineUniqueContribution.put(Advocate.peptideShaker.getIndex(), uniqueContribution);
         }
-        updateOverviewPlots(searchEngineTP, searchEngineUniqueContribution, totalNumberOfSpectra);
+        updateOverviewPlots(searchEngineUniqueContribution, searchEngineUniqueContribution, totalNumberOfSpectra);
     }
 
     /**
