@@ -3933,7 +3933,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             double uniqueContribution = inputMap.getPeptideShakerUniqueContribution(selectedFileName);
             searchEngineUniqueContribution.put(Advocate.peptideShaker.getIndex(), uniqueContribution);
         }
-        updateOverviewPlots(searchEngineUniqueContribution, searchEngineUniqueContribution, totalNumberOfSpectra);
+
+        updateOverviewPlots(searchEngineValidated, searchEngineUniqueContribution, totalNumberOfSpectra);
     }
 
     /**

@@ -15,15 +15,14 @@
             <li><a href='#Validation_Parameters'>Validation_Parameters</a></li>
             <li><a href='#Confidence_Plot'>Confidence Plot</a></li>
             <li><a href='#Target_Decoy_Plot'>Target vs. Decoy Plot</a></li>
-            <li><a href='#Coverage_Plot'>Cost/Benefit Plot</a></li>
+            <li><a href='#Coverage_Plot'>Coverage Plot</a></li>
         </ul>
 
         <a name="#Introduction"></a>
         <h3>Introduction</h3>
-        The <i>Validation</i> tab gives you a complete overview of <b>PeptideShaker</b>'s scoring metrics. Every identified subgroup of the data was 
-        processed in order to provide accurate and robust confidence estimation.
+        The <i>Validation</i> tab gives you a complete overview of <b>PeptideShaker</b>'s matches validation results. Note that you can edit the settings used when creating the projects in the advanced validation settings.
         <br><br>
-        For each group you can:
+        In this tab, for each group you can:
         <ul>
             <li>Optimize the estimator's accuracy</li>
             <li>Set the threshold for the identifications</li>
@@ -35,7 +34,7 @@
         <a name="#Group_Selection"></a>
         <h3>Group Selection</h3>
         <p align="justify">
-            The standard groups inspected by <b>PeptideShaker</b> are PSMs, peptides and proteins. However, if statistical 
+            The standard groups inspected by <b>PeptideShaker</b> are PSMs, peptides and proteins. However, using the default settings, if statistical 
             significance is ensured PSMs will be separated according to their charge. Similarly, peptides can be separated 
             based on their modification status.
             <br><br>
@@ -101,15 +100,17 @@
             <li>
                 <b>False Discovery Rate (FDR)</b>: <b>PeptideShaker</b> validates the largest set of identifications with 
                 an FDR lower than the threshold. At 1% FDR, a maximum of 1% of the validated identifications will be false 
-                positives. The FDR can be estimated using the decoy or the PEP FDR metric. 
+                positives. The FDR can be estimated using the decoy or the PEP as metric for the number of false positives.
                 <br><br>
                 <i>When the confidence estimation is not accurate the PEP FDR metric should not be used! 
                     <br><br>
-                    When the PEP FDR metric is high (typically more than 10%) or the number of validated hits are small (typically less than 100) low FDR threshold 
+                    When the PEP resolution is high (typically more than 10%) or the number of validated hits are small (typically less than 100) low FDR threshold 
                     (typically 1%) should not be applied!</i>
                 <br><br>
                 For more information about the minimum acceptable FDR see 
                 <a href="http://www.ncbi.nlm.nih.gov/pubmed/21500347">Vaudel et al: Peptide identification quality control, Proteomics 2011;11(10):2105-14</a>.
+                <br><br>
+                The FDR estimation metric as well as bin size for the estimation of the confidence can be changed in this tab, but it is highly recommended to leave them to default values.
             </li>
             <br>
             <li>
@@ -121,7 +122,7 @@
         </ul>
         <br>
         <p align="justify">
-            By default the threshold is set to 1% FDR for all levels.
+            By default the threshold is set to 1% FDR for all levels. You can change this setting when creating the project in the advanced identification parameters.
         </p>
         <br><br>
         <a href="#top">More about Validation</a>
@@ -130,11 +131,10 @@
         <a name="#Confidence_Plot"></a>
         <h3>Confidence Plot</h3>
         <p align="justify">
-            This plot displays the confidence plotted against the score of the selected group's identifications. If the confidence is fluctuating, 
-            the confidence estimation might not be robust enough and should be optimized as described above.
+            This plot displays the confidence plotted against the score of the selected group's identifications.
             <br><br>
-            The red vertical line indicates the chosen threshold. The red area on the right of the threshold illustrates the amount of retained 
-            true positives. The green area on the left of the threshold illustrates the amount of potential true positives not validated, i.e., the 
+            The red vertical line indicates the chosen threshold. The red area on the right of the threshold illustrates the share of retained 
+            true positives. The green area on the left of the threshold illustrates the share of potential true positives not validated, i.e., the 
             false negatives.
             <br><br>
             Tip: It is important to verify that the confidence reaches 0, otherwise the total number of true positives will be under-estimated.
@@ -148,7 +148,7 @@
         <a name="#Target_Decoy_Plot"></a>
         <h3>Target vs. Decoy Plot</h3>
         <p align="justify">
-            This plot displays the target and decoy distributions plotted separately. (to be extended...)
+            This plot displays the distribution of true and false hits, in green and red, respectively, plotted against the identification score of the selected group. The false hit distribution is estimated using the decoy distribution, and the true hit distribution using the target minus the decoy. Note that the confidence in the left plot is the ratio of these two distributions.
         </p>
         <br><br>
         <a href="#top">More about Validation</a>
@@ -157,12 +157,11 @@
         <a name="#Coverage_Plot"></a>
         <h3>Coverage Plot</h3>
         <p align="justify">
-            This plot displays the benefit which can be expected, the proportion of retained true positives (1-FNR), plotted against the cost of 
-            the selected benefit, the proportion of false positive identifications (FDR). In other words it is a 
-            <a href="http://en.wikipedia.org/wiki/Receiver_operating_characteristic">ROC curve</a> for the selected group.
+            This plot displays the coverage which can be expected, the proportion of retained true positives (1-FNR), plotted against the FDR necessary to obtain such
+            a coverage. In other words it is a 
+            <a href="http://en.wikipedia.org/wiki/Receiver_operating_characteristic">ROC curve</a> for the selected group, or a cost benefit plot.
             <br><br>
-            A point indicates the performance at the selected threshold. If the point diverges away from the curve 
-            the confidence estimation should be <a href="#Validation_Parameters">optimized</a>.
+            A point indicates the performance at the selected threshold. Note that the point can diverge from the curve for small datasets.
         </p>
         <br><br>
         <a href="#top">More about Validation</a>
