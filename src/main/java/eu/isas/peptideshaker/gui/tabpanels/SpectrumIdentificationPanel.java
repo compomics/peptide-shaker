@@ -58,7 +58,6 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Specific
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
-import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
