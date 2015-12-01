@@ -42,7 +42,6 @@ import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import de.proteinms.omxparser.util.OMSSAIdfileReader;
 import de.proteinms.xtandemparser.parser.XTandemIdfileReader;
-import static eu.isas.peptideshaker.fileimport.FileImporter.ptmMassTolerance;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.psm_scoring.BestMatchSelection;
 import java.io.File;
@@ -57,6 +56,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
+import static eu.isas.peptideshaker.fileimport.FileImporter.PTM_MASS_TOLERANCE;
 
 /**
  * This class can be used to import PSMs from search engine results.
@@ -535,7 +535,7 @@ public class PsmImporter {
                                                 }
                                                 omssaName = PTMFactory.unknownPTM.getName();
                                             }
-                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, omssaName, ptmMassTolerance, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
+                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, omssaName, PTM_MASS_TOLERANCE, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
                                         } else if (fileReader instanceof AndromedaIdfileReader) {
                                             AndromedaParameters andromedaParameters = (AndromedaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.andromeda.getIndex());
                                             if (!andromedaParameters.hasPtmIndexes()) {
@@ -556,7 +556,7 @@ public class PsmImporter {
                                                 }
                                                 andromedaName = PTMFactory.unknownPTM.getName();
                                             }
-                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, andromedaName, ptmMassTolerance, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
+                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, andromedaName, PTM_MASS_TOLERANCE, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
                                         } else if (fileReader instanceof MascotIdfileReader
                                                 || fileReader instanceof XTandemIdfileReader
                                                 || fileReader instanceof MsAmandaIdfileReader
@@ -572,14 +572,14 @@ public class PsmImporter {
                                                         + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in spectrum file "
                                                         + spectrumFileName + ".\n" + "Identification file: " + idFile.getName());
                                             }
-                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
+                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, PTM_MASS_TOLERANCE, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
                                         } else if (fileReader instanceof DirecTagIdfileReader
                                                 || fileReader instanceof NovorIdfileReader) {
                                             PTM ptm = ptmFactory.getPTM(sePTM);
                                             if (ptm == PTMFactory.unknownPTM) {
                                                 throw new IllegalArgumentException("PTM not recognized spectrum " + spectrumTitle + " of file " + spectrumFileName + ".");
                                             }
-                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, ptm.getMass(), ptmMassTolerance, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
+                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, ptm.getMass(), PTM_MASS_TOLERANCE, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
                                         } else {
                                             throw new IllegalArgumentException("PTM mapping not implemented for the parsing of " + idFile.getName() + ".");
                                         }

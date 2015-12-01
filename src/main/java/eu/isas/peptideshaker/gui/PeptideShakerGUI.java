@@ -84,6 +84,7 @@ import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
 import com.compomics.util.gui.parameters.IdentificationParametersEditionDialog;
+import com.compomics.util.gui.parameters.IdentificationParametersOverviewDialog;
 import com.compomics.util.gui.parameters.ProcessingPreferencesDialog;
 import com.compomics.util.gui.parameters.identification_parameters.GenePreferencesDialog;
 import com.compomics.util.preferences.ValidationQCPreferences;
@@ -835,6 +836,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         javaOptionsJMenuItem = new javax.swing.JMenuItem();
         processingMenuItem = new javax.swing.JMenuItem();
+        editIdSettingsFilesMenuItem = new javax.swing.JMenuItem();
         configurationFilesSettings = new javax.swing.JMenuItem();
         privacyMenuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
@@ -1477,7 +1479,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         fileJMenu.add(projectPropertiesMenuItem);
 
         projectSettingsMenuItem.setMnemonic('I');
-        projectSettingsMenuItem.setText("Identification Settings");
+        projectSettingsMenuItem.setText("Project Settings");
         projectSettingsMenuItem.setEnabled(false);
         projectSettingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1598,6 +1600,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             }
         });
         editMenu.add(processingMenuItem);
+
+        editIdSettingsFilesMenuItem.setMnemonic('D');
+        editIdSettingsFilesMenuItem.setText("Identification Settings");
+        editIdSettingsFilesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editIdSettingsFilesMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(editIdSettingsFilesMenuItem);
 
         configurationFilesSettings.setMnemonic('E');
         configurationFilesSettings.setText("Resource Settings");
@@ -3300,6 +3311,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }//GEN-LAST:event_processingMenuItemActionPerformed
 
     /**
+     * Open the identification parameters overview dialog.
+     *
+     * @param evt
+     */
+    private void editIdSettingsFilesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editIdSettingsFilesMenuItemActionPerformed
+        new IdentificationParametersOverviewDialog(this);
+    }//GEN-LAST:event_editIdSettingsFilesMenuItemActionPerformed
+
+    /**
      * Opens a dialog allowing the setting of paths.
      *
      * @param welcomeDialog reference to the Welcome dialog, can be null
@@ -3468,6 +3488,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JRadioButtonMenuItem deNovoChargeTwoJRadioButtonMenuItem;
     private javax.swing.JMenu deNovoMenu;
     private javax.swing.JCheckBoxMenuItem defaultAnnotationCheckBoxMenuItem;
+    private javax.swing.JMenuItem editIdSettingsFilesMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JCheckBoxMenuItem errorPlotTypeCheckBoxMenuItem;
     private javax.swing.JMenuItem exitJMenuItem;

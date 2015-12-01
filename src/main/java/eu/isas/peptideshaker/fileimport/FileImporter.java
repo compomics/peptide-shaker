@@ -22,7 +22,6 @@ import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
-import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
@@ -85,7 +84,7 @@ public class FileImporter {
      * If a Mascot dat file is bigger than this size, an indexed parsing will be
      * used.
      */
-    public static final double mascotMaxSize = 400;
+    public static final double MASCOT_MAX_SIZE = 400;
     /**
      * Metrics of the dataset picked-up while loading the data.
      */
@@ -95,7 +94,7 @@ public class FileImporter {
      * expected PTMs. 0.01 by default, as far as I can remember it is the mass
      * resolution in X!Tandem result files.
      */
-    public static final double ptmMassTolerance = 0.01;
+    public static final double PTM_MASS_TOLERANCE = 0.01;
     /**
      * The protein tree used to map peptides on protein sequences.
      */
@@ -699,10 +698,21 @@ public class FileImporter {
             // set the search engine name and version for this file
             HashMap<String, ArrayList<String>> software = fileReader.getSoftwareVersions();
             projectDetails.setIdentificationAlgorithmsForFile(Util.getFileName(idFile), software);
+            
+            // check for unsupported software
+            if (!software.isEmpty()) {
+                for (String advocateName : software.keySet()) {
+                    Advocate advocate = Advocate.getAdvocate(advocateName);
+                    if (advocate == null || advocate.getType() == Advocate.AdvocateType.unknown) {
+                        waitingHandler.appendReport("Warning: " + idFile.getName() + " is from an unknown software. "
+                                + "Correct processing thus cannot be guaranteed. Please contact the developers.", true, true);
+                    }
+                }
+            }
 
             fileReader.close();
 
-            if (idFileSpectrumMatches != null) {
+            if (idFileSpectrumMatches != null && !waitingHandler.isRunCanceled()) {
 
                 if (idFileSpectrumMatches.isEmpty()) {
                     waitingHandler.appendReport("No PSM found in " + idFile.getName() + ".", true, true);
