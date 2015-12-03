@@ -269,4 +269,14 @@
 		<semiSpecific> yes </semiSpecific>
 		<wholeProtein> no </wholeProtein>
 	</enzyme>
+	<enzyme>
+		<id> 27 </id>
+		<name> Trypsin + Glu-C </name>
+		<aminoAcidBefore> RKE </aminoAcidBefore>
+		<restrictionBefore>  </restrictionBefore>
+		<aminoAcidAfter> </aminoAcidAfter>
+		<restrictionAfter>  </restrictionAfter>
+		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
+	</enzyme>
 </xml>
