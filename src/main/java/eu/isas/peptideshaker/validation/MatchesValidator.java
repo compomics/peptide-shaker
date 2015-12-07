@@ -5,7 +5,6 @@ import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.filtering.Filter;
-import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
@@ -283,10 +282,13 @@ public class MatchesValidator {
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false, waitingHandler);
 
             ArrayList<PsmValidatorRunnable> psmRunnables = new ArrayList<PsmValidatorRunnable>(processingPreferences.getnThreads());
-            for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
+            for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
                 PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, inputMap, false, true);
                 pool.submit(runnable);
                 psmRunnables.add(runnable);
+                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
+                    break;
+                }
             }
             if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                 pool.shutdownNow();
@@ -339,9 +341,12 @@ public class MatchesValidator {
             }
             psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false, waitingHandler);
 
-            for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
+            for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
                 PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, inputMap, true, false);
                 pool.submit(runnable);
+                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
+                    break;
+                }
             }
             if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                 pool.shutdownNow();
@@ -361,10 +366,13 @@ public class MatchesValidator {
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters, waitingHandler);
 
-        for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
+        for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
             PeptideValidatorRunnable runnable = new PeptideValidatorRunnable(peptideMatchesIterator, identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, metrics);
             pool.submit(runnable);
             peptideRunnables.add(runnable);
+            if (waitingHandler != null && waitingHandler.isRunCanceled()) {
+                break;
+            }
         }
         if (waitingHandler != null && waitingHandler.isRunCanceled()) {
             pool.shutdownNow();
@@ -400,10 +408,13 @@ public class MatchesValidator {
 
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, false, null, waitingHandler);
         ArrayList<ProteinValidatorRunnable> proteinRunnables = new ArrayList<ProteinValidatorRunnable>(processingPreferences.getnThreads());
-        for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
+        for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
             ProteinValidatorRunnable runnable = new ProteinValidatorRunnable(proteinMatchesIterator, identification, identificationFeaturesGenerator, geneMaps, metrics, shotgunProtocol, identificationParameters, spectrumCountingPreferences, waitingHandler, exceptionHandler);
             pool.submit(runnable);
             proteinRunnables.add(runnable);
+            if (waitingHandler != null && waitingHandler.isRunCanceled()) {
+                break;
+            }
         }
         if (waitingHandler != null && waitingHandler.isRunCanceled()) {
             pool.shutdownNow();
