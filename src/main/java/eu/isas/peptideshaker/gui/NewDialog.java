@@ -154,7 +154,6 @@ public class NewDialog extends javax.swing.JDialog {
         this.welcomeDialog = null;
 
         processingPreferences = new ProcessingPreferences();
-        processingTxt.setText(processingPreferences.getnThreads() + " cores");
 
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
