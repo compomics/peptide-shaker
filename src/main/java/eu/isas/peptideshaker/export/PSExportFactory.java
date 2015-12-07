@@ -654,6 +654,46 @@ public class PSExportFactory implements ExportFactory {
         ExportScheme psmReport = new ExportScheme("Default PSM Report", false, exportFeatures, "\t", true, true, 1, false, true, false);
 
         ///////////////////////////
+        // All PSM report
+        ///////////////////////////
+        exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
+        sectionContent = new ArrayList<ExportFeature>();
+
+        // protein accessions
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.accessions);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.sequence);
+
+        // ptms
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.fixed_ptms);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.variable_ptms);
+        sectionContent.add(PsPsmFeature.d_score);
+        sectionContent.add(PsPsmFeature.probabilistic_score);
+        sectionContent.add(PsPsmFeature.localization_confidence);
+
+        // spectrum file
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_file);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_title);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_scan_number);
+
+        // spectrum details
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.rt);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.mz);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_charge);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.identification_charge);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.theoretical_mass);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.isotope);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.mz_error_ppm);
+
+        // psm scores
+        sectionContent.add(PsPsmFeature.confidence);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.decoy);
+        sectionContent.add(PsPsmFeature.validated);
+
+        exportFeatures.put(PsPsmFeature.type, sectionContent);
+
+        ExportScheme extendedPsmReport = new ExportScheme("Extended PSM Report", false, exportFeatures, "\t", true, true, 1, false, false, true);
+
+        ///////////////////////////
         // Default protein phospho report
         ///////////////////////////
         exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
@@ -826,6 +866,7 @@ public class PSExportFactory implements ExportFactory {
         defaultSchemes.put(proteinReport.getName(), proteinReport);
         defaultSchemes.put(peptideReport.getName(), peptideReport);
         defaultSchemes.put(psmReport.getName(), psmReport);
+        defaultSchemes.put(extendedPsmReport.getName(), extendedPsmReport);
         defaultSchemes.put(proteinPhosphoReport.getName(), proteinPhosphoReport);
         defaultSchemes.put(peptidePhosphoReport.getName(), peptidePhosphoReport);
         defaultSchemes.put(psmPhosphoReport.getName(), psmPhosphoReport);

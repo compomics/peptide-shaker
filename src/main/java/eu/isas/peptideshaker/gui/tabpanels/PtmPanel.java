@@ -136,10 +136,6 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private SpectrumPanel spectrum;
     /**
-     * The current spectrum key.
-     */
-    private String currentSpectrumKey = "";
-    /**
      * Protein inference map, key: pi type, element: pi as a string.
      */
     private HashMap<Integer, String> proteinInferenceTooltipMap;
@@ -3997,8 +3993,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 peptideShakerGUI.updateAnnotationPreferences();
                 SpecificAnnotationSettings specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
                 ArrayList<IonMatch> annotations = peptideShakerGUI.getSpectrumAnnotator().getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, peptide);
-                currentSpectrumKey = spectrumMatch.getKey();
-
+                
                 // add the spectrum annotations
                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), !annotationPreferences.isHighResolutionAnnotation());
                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
@@ -4040,8 +4035,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         peptideShakerGUI.updateAnnotationPreferences();
                         specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
                         annotations = peptideShakerGUI.getSpectrumAnnotator().getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, peptide);
-                        currentSpectrumKey = spectrumMatch.getKey();
-
+                        
                         spectrum.setAnnotationsMirrored(SpectrumAnnotator.getSpectrumAnnotation(annotations));
 
                         // add de novo sequencing

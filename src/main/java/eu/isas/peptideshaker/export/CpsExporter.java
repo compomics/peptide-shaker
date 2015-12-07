@@ -21,6 +21,7 @@ import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
 import eu.isas.peptideshaker.utils.Metrics;
 import java.io.*;
 import java.sql.SQLException;
+import java.util.HashSet;
 import org.apache.commons.compress.archivers.ArchiveException;
 
 /**
@@ -107,7 +108,15 @@ public class CpsExporter {
 
             // tar everything in the current cps file
             if (waitingHandler == null || !waitingHandler.isRunCanceled()) {
-                TarUtils.tarFolderContent(dbFolder, destinationFile, waitingHandler);
+                File logFolder = new File(objectsDB.getPath(), "log");
+                HashSet<String> exceptions = new HashSet<String>(1);
+                for (File file : logFolder.listFiles()) {
+                    String fileName = file.getName();
+                    if (fileName.endsWith(".dat") && fileName.startsWith("log")) {
+                        exceptions.add(file.getAbsolutePath());
+                    }
+                }
+                TarUtils.tarFolderContent(dbFolder, destinationFile, exceptions, waitingHandler);
             }
 
         } finally {
