@@ -4919,7 +4919,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 NeutralLoss neutralLoss = neutralLosses.get(neutralLossName);
 
                 boolean selected = false;
-                for (NeutralLoss specificNeutralLoss : specificAnnotationPreferences.getNeutralLossesMap().getAccountedNeutralLosses()) {
+                for (String specificNeutralLossName : specificAnnotationPreferences.getNeutralLossesMap().getAccountedNeutralLosses()) {
+                    NeutralLoss specificNeutralLoss = NeutralLoss.getNeutralLoss(specificNeutralLossName);
                     if (neutralLoss.isSameAs(specificNeutralLoss)) {
                         selected = true;
                         break;
