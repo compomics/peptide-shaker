@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.util.experiment.identification.parameters_cli.IdentificationParametersCLIParams;
+import static eu.isas.peptideshaker.cmd.PathSettingsCLIParams.LOG;
 import org.apache.commons.cli.Options;
 
 /**
@@ -111,6 +112,9 @@ public enum PeptideShakerCLIParams {
 
         output += "\n\nOptional export parameters:\n\n";
         output += "-" + String.format(formatter, ZIP.id) + ZIP.description + "\n";
+
+        output += "\n\nOptional log folder:\n\n";
+        output += "-" + String.format(formatter, LOG.id) + LOG.description + "\n";
 
         output += "\n\nOptional temporary folder:\n\n";
         output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + PathSettingsCLIParams.ALL.description + "\n";

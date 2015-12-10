@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.software.settings.UtilitiesPathPreferences;
+import static eu.isas.peptideshaker.cmd.PeptideShakerCLI.redirectErrorStream;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import java.io.File;
 import java.io.PrintWriter;
@@ -41,6 +42,10 @@ public class PathSettingsCLI {
      * Sets the path settings according to the pathSettingsCLIInputBean.
      */
     public void setPathSettings() {
+
+        if (pathSettingsCLIInputBean.getLogFolder() != null) {
+            redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
+        }
 
         String path = pathSettingsCLIInputBean.getTempFolder();
         if (!path.equals("")) {

@@ -100,8 +100,13 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      */
     public Object call() throws Exception {
 
+        PathSettingsCLIInputBean pathSettingsCLIInputBean = cliInputBean.getPathSettingsCLIInputBean();
+
+        if (pathSettingsCLIInputBean.getLogFolder() != null) {
+            redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
+        }
+
         try {
-            PathSettingsCLIInputBean pathSettingsCLIInputBean = cliInputBean.getPathSettingsCLIInputBean();
             if (pathSettingsCLIInputBean.hasInput()) {
                 PathSettingsCLI pathSettingsCLI = new PathSettingsCLI(pathSettingsCLIInputBean);
                 pathSettingsCLI.setPathSettings();
@@ -161,7 +166,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 }
 
                 PeptideShakerGUI peptideShakerGUI = new PeptideShakerGUI(); // dummy object to get at the version and tips
-                peptideShakerGUI.setUpLogFile(false); // redirect the error stream to the PeptideShaker log file
+                if (pathSettingsCLIInputBean.getLogFolder() == null) {
+                    peptideShakerGUI.setUpLogFile(false); // redirect the error stream to the PeptideShaker log file
+                }
                 waitingHandler = new WaitingDialog(new DummyFrame("PeptideShaker " + PeptideShaker.getVersion(), "/icons/peptide-shaker.gif"),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
@@ -414,18 +421,39 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             try {
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh.mm.ss");
                 File psReportFile;
+                File logReportFile = null;
+                PathSettingsCLIInputBean pathSettingsCLIInputBean = cliInputBean.getPathSettingsCLIInputBean();
 
                 if (getCpsFile() != null) {
                     String fileName = "PeptideShaker Report " + getCpsFile().getName() + " " + df.format(new Date()) + ".html";
                     psReportFile = new File(getCpsFile().getParentFile(), fileName);
+                    if (pathSettingsCLIInputBean.getLogFolder() != null) {
+                        logReportFile = new File(pathSettingsCLIInputBean.getLogFolder(), fileName);
+                    }
                 } else {
                     String fileName = "PeptideShaker Report " + df.format(new Date()) + ".html";
                     psReportFile = new File(cliInputBean.getOutput().getParentFile(), fileName);
+                    if (pathSettingsCLIInputBean.getLogFolder() != null) {
+                        logReportFile = new File(pathSettingsCLIInputBean.getLogFolder(), fileName);
+                    }
                 }
 
                 FileWriter fw = new FileWriter(psReportFile);
-                fw.write(report);
-                fw.close();
+                try {
+                    fw.write(report);
+                } finally {
+                    fw.close();
+                }
+
+                if (logReportFile != null) {
+                    fw = new FileWriter(logReportFile);
+                    try {
+                        fw.write(report);
+                    } finally {
+                        fw.close();
+                    }
+                }
+
             } catch (IOException ex) {
                 waitingHandler.appendReport("An error occurred while saving the PeptideShaker report.", true, true);
                 ex.printStackTrace();
@@ -667,7 +695,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
             // metrics saved while processing the data
             metrics = peptideShaker.getMetrics();
-            
+
             // Gene maps
             geneMaps = peptideShaker.getGeneMaps();
 
@@ -790,6 +818,29 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
         if (pathConfigurationFile.exists()) {
             PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
+        }
+    }
+
+    /**
+     * redirects the error stream to the PeptideShaker.log of a given folder.
+     *
+     * @param logFolder the folder where to save the log
+     */
+    public static void redirectErrorStream(File logFolder) {
+
+        try {
+            logFolder.mkdirs();
+            File file = new File(logFolder, "PeptideShaker.log");
+            System.setErr(new java.io.PrintStream(new FileOutputStream(file, true)));
+
+            System.err.println(System.getProperty("line.separator") + System.getProperty("line.separator") + new Date()
+                    + ": PeptideShaker version " + PeptideShaker.getVersion() + ".");
+            System.err.println("Memory given to the Java virtual machine: " + Runtime.getRuntime().maxMemory() + ".");
+            System.err.println("Total amount of memory in the Java virtual machine: " + Runtime.getRuntime().totalMemory() + ".");
+            System.err.println("Free memory: " + Runtime.getRuntime().freeMemory() + ".");
+            System.err.println("Java version: " + System.getProperty("java.version") + ".");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

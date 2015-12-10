@@ -11,6 +11,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import eu.isas.peptideshaker.PeptideShaker;
+import static eu.isas.peptideshaker.cmd.PeptideShakerCLI.redirectErrorStream;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
 import java.io.File;
@@ -68,6 +69,11 @@ public class FollowUpCLI extends CpsParent {
     public Object call() {
 
         PathSettingsCLIInputBean pathSettingsCLIInputBean = followUpCLIInputBean.getPathSettingsCLIInputBean();
+
+        if (pathSettingsCLIInputBean.getLogFolder() != null) {
+            redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
+        }
+
         if (pathSettingsCLIInputBean.hasInput()) {
             PathSettingsCLI pathSettingsCLI = new PathSettingsCLI(pathSettingsCLIInputBean);
             pathSettingsCLI.setPathSettings();
