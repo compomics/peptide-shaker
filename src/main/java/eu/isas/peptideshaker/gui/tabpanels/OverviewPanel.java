@@ -4036,7 +4036,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                         PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
                         Peptide peptide = peptideAssumption.getPeptide();
-                        SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
+                        peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationSettings(spectrumKey, peptideAssumption));
+                        peptideShakerGUI.updateAnnotationPreferences();
+                        SpecificAnnotationSettings specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
                         peptides.add(peptide);
                         ArrayList<IonMatch> annotations = peptideShakerGUI.getSpectrumAnnotator().getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, peptide);
                         allAnnotations.add(annotations);

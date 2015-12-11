@@ -223,7 +223,7 @@
 		<id> 22 </id>
 		<name> Thermolysin, no P rule </name>
 		<aminoAcidBefore> </aminoAcidBefore>
-		<restrictionBefore> P </restrictionBefore>
+		<restrictionBefore> </restrictionBefore>
 		<aminoAcidAfter> AFILMV </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
