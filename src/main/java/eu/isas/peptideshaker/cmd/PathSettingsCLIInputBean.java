@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.settings.UtilitiesPathPreferences;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
+import java.io.File;
 import java.util.HashMap;
 import org.apache.commons.cli.CommandLine;
 
@@ -20,6 +21,10 @@ public class PathSettingsCLIInputBean {
      * The specific paths sets for every option.
      */
     private HashMap<String, String> paths = new HashMap<String, String>();
+    /**
+     * The folder where to save the logs.
+     */
+    private File logFolder = null;
 
     /**
      * Construct a FollowUpCLIInputBean from an Apache CLI instance.
@@ -27,6 +32,10 @@ public class PathSettingsCLIInputBean {
      * @param aLine the command line
      */
     public PathSettingsCLIInputBean(CommandLine aLine) {
+        
+        if (aLine.hasOption(PathSettingsCLIParams.LOG.id)) {
+            logFolder = new File(aLine.getOptionValue(PathSettingsCLIParams.LOG.id));
+        }
 
         if (aLine.hasOption(PathSettingsCLIParams.ALL.id)) {
             tempFolder = aLine.getOptionValue(PathSettingsCLIParams.ALL.id);
@@ -73,5 +82,14 @@ public class PathSettingsCLIInputBean {
      */
     public boolean hasInput() {
         return !tempFolder.equals("") || !paths.isEmpty();
+    }
+
+    /**
+     * Returns the folder where to save the log files.
+     * 
+     * @return the folder where to save the log files
+     */
+    public File getLogFolder() {
+        return logFolder;
     }
 }
