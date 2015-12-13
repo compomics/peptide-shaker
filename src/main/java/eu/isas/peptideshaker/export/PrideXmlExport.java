@@ -43,6 +43,7 @@ import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -583,7 +584,7 @@ public class PrideXmlExport {
                     br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
                     tabCounter++;
                     br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum File\" value=\"" + Spectrum.getSpectrumFile(spectrumKey) + "\" />" + System.getProperty("line.separator"));
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1000796", "Spectrum Title", "" + StringEscapeUtils.escapeHtml4(Spectrum.getSpectrumTitle(spectrumKey))));
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1000796", "Spectrum Title", "" + Spectrum.getSpectrumTitle(spectrumKey)));
                     br.write(getCurrentTabSpace() + "<userParam name=\"Protein Inference\" value=\"" + peptideProteins + "\" />" + System.getProperty("line.separator"));
                     br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence\" value=\"" + Util.roundDouble(peptideProbabilities.getPeptideConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                     confidenceThreshold = peptideTargetDecoyMap.getTargetDecoyMap(peptideTargetDecoyMap.getCorrectedKey(peptideProbabilities.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
@@ -1563,12 +1564,12 @@ public class PrideXmlExport {
     private void writeCvTerm(CvTerm cvTerm) throws IOException {
 
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "cvLabel=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getOntology()) + "\" "
+                + "cvLabel=\"" + Charset.forName("UTF-8").encode(cvTerm.getOntology()) + "\" "
                 + "accession=\"" + cvTerm.getAccession() + "\" "
-                + "name=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getName()) + "\"");
+                + "name=\"" + Charset.forName("UTF-8").encode(cvTerm.getName()) + "\"");
 
         if (cvTerm.getValue() != null) {
-            br.write(" value=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getValue()) + "\" />" + System.getProperty("line.separator"));
+            br.write(" value=\"" + Charset.forName("UTF-8").encode(cvTerm.getValue()) + "\" />" + System.getProperty("line.separator"));
         } else {
             br.write(" />" + System.getProperty("line.separator"));
         }

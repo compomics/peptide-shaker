@@ -631,7 +631,7 @@ public class NewDialog extends javax.swing.JDialog {
                         .addGap(10, 10, 10)
                         .addComponent(aboutButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(peptideShakerPublicationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 515, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(peptideShakerPublicationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 527, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(loadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(22, 22, 22))
@@ -782,7 +782,7 @@ public class NewDialog extends javax.swing.JDialog {
                 peptideShakerGUI.initiateDisplay(); // display the overview tab
                 peptideShakerGUI.getProjectDetails().setReport(waitingDialog.getReport(null));
                 this.dispose();
-                
+
             } else if (waitingDialog.isRunCanceled()) {
 
                 // close the database
@@ -1731,6 +1731,13 @@ public class NewDialog extends javax.swing.JDialog {
                 }
             }
             if (found) {
+
+                // see if the protein inference fasta file is also missing
+                File proteinInferenceSequenceDatabase = tempIdentificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
+                if (!proteinInferenceSequenceDatabase.exists() && proteinInferenceSequenceDatabase.getName().equalsIgnoreCase(fastaFile.getName())) {
+                    tempIdentificationParameters.getProteinInferencePreferences().setProteinSequenceDatabase(fastaFile);
+                }
+
                 loadFastaFile(fastaFile, progressDialog);
                 fastaFileTxt.setText(fastaFile.getName());
             }

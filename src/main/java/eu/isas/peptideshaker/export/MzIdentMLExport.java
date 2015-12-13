@@ -34,8 +34,6 @@ import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
 import com.compomics.util.pride.CvTerm;
-import com.compomics.util.pride.PrideObjectsFactory;
-import com.compomics.util.pride.PtmToPrideMap;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSParameter;
@@ -49,6 +47,7 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -57,7 +56,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import org.apache.commons.lang3.StringEscapeUtils;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -492,7 +490,7 @@ public class MzIdentMLExport {
                     + "accession=\"" + currentProtein.getAccession() + "\" searchDatabase_ref=\"" + "SearchDB_1" + "\" >" + System.getProperty("line.separator"));
             tabCounter++;
             //br.write(getCurrentTabSpace() + "<Seq>" + currentProtein.getSequence() + "</Seq>" + System.getProperty("line.separator"));
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1001088", "protein description", StringEscapeUtils.escapeHtml4(sequenceFactory.getHeader(currentProtein.getAccession()).getDescription())));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1001088", "protein description", sequenceFactory.getHeader(currentProtein.getAccession()).getDescription()));
             tabCounter--;
             br.write(getCurrentTabSpace() + "</DBSequence>" + System.getProperty("line.separator"));
 
@@ -1313,7 +1311,6 @@ public class MzIdentMLExport {
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
         String spectrumTitle = Spectrum.getSpectrumTitle(psmKey);
         String spectrumFileName = Spectrum.getSpectrumFile(psmKey);
-        String spectrumTitleHtml = StringEscapeUtils.escapeHtml4(spectrumTitle);
         String spectrumIdentificationResultItemKey = "SIR_" + psmIndex;
 
         br.write(getCurrentTabSpace() + "<SpectrumIdentificationResult "
@@ -1651,7 +1648,7 @@ public class MzIdentMLExport {
             br.write(getCurrentTabSpace() + "</SpectrumIdentificationItem>" + System.getProperty("line.separator"));
 
             // add the spectrum title
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1000796", "spectrum title", spectrumTitleHtml));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1000796", "spectrum title", spectrumTitle));
 
             // add the precursor retention time
             Precursor precursor = spectrumFactory.getPrecursor(psmKey);
@@ -1900,12 +1897,12 @@ public class MzIdentMLExport {
     private void writeCvTerm(CvTerm cvTerm) throws IOException {
 
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "cvRef=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getOntology()) + "\" "
+                + "cvRef=\"" + Charset.forName("UTF-8").encode(cvTerm.getOntology()) + "\" "
                 + "accession=\"" + cvTerm.getAccession() + "\" "
-                + "name=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getName()) + "\"");
+                + "name=\"" + Charset.forName("UTF-8").encode(cvTerm.getName()) + "\"");
 
         if (cvTerm.getValue() != null) {
-            br.write(" value=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getValue()) + "\"/>" + System.getProperty("line.separator"));
+            br.write(" value=\"" + Charset.forName("UTF-8").encode(cvTerm.getValue()) + "\"/>" + System.getProperty("line.separator"));
         } else {
             br.write("/>" + System.getProperty("line.separator"));
         }
@@ -1917,7 +1914,7 @@ public class MzIdentMLExport {
      * @param userParamAsString the user parameter as a string
      */
     private void writeUserParam(String userParamAsString) throws IOException {
-        br.write(getCurrentTabSpace() + "<userParam name=\"" + StringEscapeUtils.escapeHtml4(userParamAsString) + "\"/>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<userParam name=\"" + Charset.forName("UTF-8").encode(userParamAsString) + "\"/>" + System.getProperty("line.separator")); // @replace...
     }
 
     /**
@@ -1927,6 +1924,6 @@ public class MzIdentMLExport {
      * @param value the value of the user parameter
      */
     private void writeUserParam(String name, String value) throws IOException {
-        br.write(getCurrentTabSpace() + "<userParam name=\"" + StringEscapeUtils.escapeHtml4(name) + "\" value=\"" + StringEscapeUtils.escapeHtml4(value) + "\" />" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<userParam name=\"" + Charset.forName("UTF-8").encode(name) + "\" value=\"" + Charset.forName("UTF-8").encode(value) + "\" />" + System.getProperty("line.separator"));
     }
 }

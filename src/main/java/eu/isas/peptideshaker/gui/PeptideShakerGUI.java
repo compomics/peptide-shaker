@@ -387,6 +387,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         boolean numbusLookAndFeelSet = false;
         try {
             numbusLookAndFeelSet = UtilitiesGUIDefaults.setLookAndFeel();
+
+            // fix for the scroll bar thumb disappearing...
+            LookAndFeel lookAndFeel = UIManager.getLookAndFeel();
+            UIDefaults defaults = lookAndFeel.getDefaults();
+            defaults.put("ScrollBar.minimumThumbSize", new Dimension(30, 30));
         } catch (Exception e) {
         }
 
@@ -623,11 +628,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             } else if (zipURL != null) {
                 setVisible(true);
                 importPeptideShakerZipFromURL(zipURL, zipUrlDownloadFolder);
-            } else {
-                if (showWelcomeDialog) {
-                    // open the welcome dialog
-                    new WelcomeDialog(this, !java64bit || !memoryOk, javaVersionWarning, true);
-                }
+            } else if (showWelcomeDialog) {
+                // open the welcome dialog
+                new WelcomeDialog(this, !java64bit || !memoryOk, javaVersionWarning, true);
             }
         }
     }
@@ -6544,76 +6547,73 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 }
             }
 
-        } else {
+        } else if (cpsParent.getCpsFile() != null) {
 
-            if (cpsParent.getCpsFile() != null) {
+            // select the output folder
+            String suggestedFileName = cpsParent.getCpsFile().getName();
+            suggestedFileName = suggestedFileName.substring(0, suggestedFileName.lastIndexOf(".")) + ".zip";
+            File selectedFile = getUserSelectedFile(suggestedFileName, ".zip", "Compressed file format (*.zip)", "Export As Zip...", false);
 
-                // select the output folder
-                String suggestedFileName = cpsParent.getCpsFile().getName();
-                suggestedFileName = suggestedFileName.substring(0, suggestedFileName.lastIndexOf(".")) + ".zip";
-                File selectedFile = getUserSelectedFile(suggestedFileName, ".zip", "Compressed file format (*.zip)", "Export As Zip...", false);
+            if (selectedFile != null) {
 
-                if (selectedFile != null) {
+                final File zipFile = selectedFile;
 
-                    final File zipFile = selectedFile;
+                progressDialog = new ProgressDialogX(this,
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                        true);
+                progressDialog.setPrimaryProgressCounterIndeterminate(true);
+                progressDialog.setTitle("Exporting Project. Please Wait...");
 
-                    progressDialog = new ProgressDialogX(this,
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                            true);
-                    progressDialog.setPrimaryProgressCounterIndeterminate(true);
-                    progressDialog.setTitle("Exporting Project. Please Wait...");
+                new Thread(new Runnable() {
+                    public void run() {
 
-                    new Thread(new Runnable() {
-                        public void run() {
-
-                            try {
-                                progressDialog.setVisible(true);
-                            } catch (IndexOutOfBoundsException e) {
-                                // ignore
-                            }
+                        try {
+                            progressDialog.setVisible(true);
+                        } catch (IndexOutOfBoundsException e) {
+                            // ignore
                         }
-                    }, "ProgressDialog").start();
+                    }
+                }, "ProgressDialog").start();
 
-                    new Thread("ExportThread") {
-                        @Override
-                        public void run() {
+                new Thread("ExportThread") {
+                    @Override
+                    public void run() {
 
-                            File cpsFile = cpsParent.getCpsFile();
-                            File fastaFile = PeptideShakerGUI.this.getIdentificationParameters().getProteinInferencePreferences().getProteinSequenceDatabase();
-                            ArrayList<File> spectrumFiles = new ArrayList<File>();
-                            for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
-                                File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
-                                spectrumFiles.add(spectrumFile);
-                            }
+                        File cpsFile = cpsParent.getCpsFile();
+                        File fastaFile = PeptideShakerGUI.this.getIdentificationParameters().getProteinInferencePreferences().getProteinSequenceDatabase();
+                        ArrayList<File> spectrumFiles = new ArrayList<File>();
+                        for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
+                            File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
+                            spectrumFiles.add(spectrumFile);
+                        }
 
-                            try {
-                                ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, cpsFile, progressDialog);
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                                progressDialog.setRunFinished();
-                                JOptionPane.showMessageDialog(PeptideShakerGUI.this, "Could not zip files.", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
-                                return;
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                progressDialog.setRunFinished();
-                                JOptionPane.showMessageDialog(PeptideShakerGUI.this, "Could not zip files.", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
-                                return;
-                            }
-
-                            boolean processCancelled = progressDialog.isRunCanceled();
+                        try {
+                            ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, cpsFile, progressDialog);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
                             progressDialog.setRunFinished();
-
-                            if (!processCancelled) {
-                                // get the size (in MB) of the zip file
-                                final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
-                                double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
-                                JOptionPane.showMessageDialog(PeptideShakerGUI.this, "Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + " MB)",
-                                        "Export Sucessful", JOptionPane.INFORMATION_MESSAGE);
-                            }
+                            JOptionPane.showMessageDialog(PeptideShakerGUI.this, "Could not zip files.", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
+                            return;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            progressDialog.setRunFinished();
+                            JOptionPane.showMessageDialog(PeptideShakerGUI.this, "Could not zip files.", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
+                            return;
                         }
-                    }.start();
-                }
+
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
+
+                        if (!processCancelled) {
+                            // get the size (in MB) of the zip file
+                            final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
+                            double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
+                            JOptionPane.showMessageDialog(PeptideShakerGUI.this, "Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + " MB)",
+                                    "Export Sucessful", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    }
+                }.start();
             }
         }
     }
@@ -6856,8 +6856,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @return true if a new version is to be downloaded
      */
-    public
-            boolean checkForNewVersion() {
+    public boolean checkForNewVersion() {
         try {
             File jarFile = new File(PeptideShakerGUI.class
                     .getProtectionDomain().getCodeSource().getLocation().toURI().getPath());

@@ -55,7 +55,7 @@
                           <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
                           <Component id="aboutButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
-                          <Component id="peptideShakerPublicationLabel" min="-2" pref="515" max="-2" attributes="0"/>
+                          <Component id="peptideShakerPublicationLabel" min="-2" pref="527" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="loadButton" min="-2" pref="141" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>

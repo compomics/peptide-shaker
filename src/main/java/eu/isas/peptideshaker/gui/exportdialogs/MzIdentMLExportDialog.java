@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.gui.exportdialogs;
 
 import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.Util;
+import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.export.ExportWriter;
@@ -55,7 +56,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
      * @param modal if the dialog is to be modal or not
      */
     public MzIdentMLExportDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
-        
+
         super(peptideShakerGUI, modal);
         this.peptideShakerGUI = peptideShakerGUI;
 
@@ -542,7 +543,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         }
 
         FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".mzid", ".mzid"},
-                new String[]{mzid_v1_1_FileFilterDescription, mzid_v1_2_FileFilterDescription}, "Select Export File", 
+                new String[]{mzid_v1_1_FileFilterDescription, mzid_v1_2_FileFilterDescription}, "Select Export File",
                 folder, peptideShakerGUI.getExperiment().getReference(), false, true, false, defaultFilterIndex);
 
         if (selectedFileAndFilter != null) {
@@ -643,7 +644,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 // make sure that all annotations are included
                 double currentIntensityLimit = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().getAnnotationIntensityLimit();
                 peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(0.0);
-                
+
                 try {
                     MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
                             peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
@@ -658,7 +659,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
                         // see if any errors were found, and display them to the user
                         if (!errors.isEmpty()) {
-                            JOptionPane.showMessageDialog(null, errors, "PRIDE XML Errors", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, errors, "mzIdentML Errors", JOptionPane.ERROR_MESSAGE);
                         } else {
                             conversionCompleted = true;
                         }
@@ -682,9 +683,12 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
                 // display a conversion complete message to the user
                 if (conversionCompleted && !processCancelled) {
-                    JOptionPane.showMessageDialog(MzIdentMLExportDialog.this, "mzIdentML file \'"
-                            + new File(outputFolderJTextField.getText()).getAbsolutePath() + "\' created.",
-                            "mzIdentML File Created", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(MzIdentMLExportDialog.this, JOptionEditorPane.getJOptionEditorPane(
+                            "mzIdentML file \'" + new File(outputFolderJTextField.getText()).getAbsolutePath() + "\' created."
+                            + "<br><br>"
+                            + "Review your mzIdentML files with <a href=\"https://github.com/PRIDE-Toolsuite/pride-inspector\">PRIDE Inspector</a>.<br>"
+                            + "Publish your mzIdentML files via <a href=\"http://www.proteomexchange.org/submission\">ProteomeXchange</a>."),
+                            "File Created", JOptionPane.INFORMATION_MESSAGE);
                     dispose();
                 }
 
