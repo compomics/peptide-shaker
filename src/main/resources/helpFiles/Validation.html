@@ -12,15 +12,16 @@
             <li><a href='#Introduction'>Introduction</a></li>
             <li><a href='#Group_Selection'>Group Selection</a></li>
             <li><a href='#Identification_Summary'>Identification Summary</a></li>
-            <li><a href='#Validation_Parameters'>Validation_Parameters</a></li>
-            <li><a href='#Confidence_Plot'>Confidence Plot</a></li>
-            <li><a href='#Target_Decoy_Plot'>Target vs. Decoy Plot</a></li>
-            <li><a href='#Coverage_Plot'>Coverage Plot</a></li>
+            <li><a href='#Validation_Parameters'>Validation Parameters</a></li>
+            <li><a href='#Confidence_Plot'>Score vs. Confidence</a></li>
+            <li><a href='#Target_Decoy_Plot'>True Positives & False Positives</a></li>
+            <li><a href='#Coverage_Plot'>FDR vs. Coverage</a></li>
         </ul>
 
         <a name="#Introduction"></a>
         <h3>Introduction</h3>
-        The <i>Validation</i> tab gives you a complete overview of <b>PeptideShaker</b>'s matches validation results. Note that you can edit the settings used when creating the projects in the advanced validation settings.
+        The <i>Validation</i> tab gives you a complete overview of <b>PeptideShaker</b>'s matches validation results. 
+        Note that you can edit the settings used when creating the projects in the advanced validation settings.
         <br><br>
         In this tab, for each group you can:
         <ul>
@@ -129,7 +130,7 @@
         <br><br><br>
 
         <a name="#Confidence_Plot"></a>
-        <h3>Confidence Plot</h3>
+        <h3>Score vs. Confidence</h3>
         <p align="justify">
             This plot displays the confidence plotted against the score of the selected group's identifications.
             <br><br>
@@ -146,16 +147,18 @@
         <br><br><br>
 
         <a name="#Target_Decoy_Plot"></a>
-        <h3>Target vs. Decoy Plot</h3>
+        <h3>True Positives & False Positives</h3>
         <p align="justify">
-            This plot displays the distribution of true and false hits, in green and red, respectively, plotted against the identification score of the selected group. The false hit distribution is estimated using the decoy distribution, and the true hit distribution using the target minus the decoy. Note that the confidence in the left plot is the ratio of these two distributions.
+            This plot displays the distribution of true and false hits, in green and red, respectively, plotted against the identification score of 
+            the selected group. The false hit distribution is estimated using the decoy distribution, and the true hit distribution using the target 
+            minus the decoy. Note that the confidence in the left plot is the ratio of these two distributions.
         </p>
         <br><br>
         <a href="#top">More about Validation</a>
         <br><br><br>
 
         <a name="#Coverage_Plot"></a>
-        <h3>Coverage Plot</h3>
+        <h3>FDR vs. Coverage</h3>
         <p align="justify">
             This plot displays the coverage which can be expected, the proportion of retained true positives (1-FNR), plotted against the FDR necessary to obtain such
             a coverage. In other words it is a 

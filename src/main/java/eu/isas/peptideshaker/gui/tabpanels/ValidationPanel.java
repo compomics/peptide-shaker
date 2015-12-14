@@ -2794,7 +2794,7 @@ public class ValidationPanel extends javax.swing.JPanel {
             // set up the chart
             JFreeChart confidenceChart = new JFreeChart(confidencePlot);
             ChartPanel chartPanel = new ChartPanel(confidenceChart);
-            confidenceChart.setTitle("Confidence");
+            confidenceChart.setTitle("Score vs. Confidence");
 
             // remove the temp 'Area' dataset from the legend
             LegendItemCollection legendItemsOld = confidencePlot.getLegendItems();
@@ -2877,7 +2877,7 @@ public class ValidationPanel extends javax.swing.JPanel {
 
         // set the chart title
         ChartPanel chartPanel = new ChartPanel(targetDecoyChart);
-        targetDecoyChart.setTitle("Target vs. Decoy");
+        targetDecoyChart.setTitle("True Positives & False Positives");
 
         // set background color
         targetDecoyChart.getPlot().setBackgroundPaint(Color.WHITE);
@@ -2910,7 +2910,7 @@ public class ValidationPanel extends javax.swing.JPanel {
 
         JFreeChart benefitCostChart = new JFreeChart(costBenefitPlot);
         ChartPanel chartPanel = new ChartPanel(benefitCostChart);
-        benefitCostChart.setTitle("Coverage");
+        benefitCostChart.setTitle("FDR vs. Coverage");
 
         // set background color
         benefitCostChart.getPlot().setBackgroundPaint(Color.WHITE);
