@@ -825,8 +825,9 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
 
-                    ArrayList<String> selectedSpectrumFiles = new ArrayList<String>();
-                    String selectedSearchSettingsFile = null;
+                    ArrayList<String> selectedSpectrumFileLinks = new ArrayList<String>();
+                    ArrayList<String> selectedFileNames = new ArrayList<String>();
+                    String selectedSearchSettingsFileLink = null;
                     ArrayList<Integer> fileSizes = new ArrayList<Integer>();
 
                     for (int i = 0; i < spectrumTable.getRowCount(); i++) {
@@ -846,7 +847,14 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                             }
 
                             if (exists) {
-                                selectedSpectrumFiles.add(link);
+                                // add the file name
+                                String fileName = (String) spectrumTable.getValueAt(i, spectrumTable.getColumn("File").getModelIndex());
+                                selectedFileNames.add(fileName);
+                                
+                                // add the link to the file
+                                selectedSpectrumFileLinks.add(link);
+                                
+                                // add the file size
                                 Double fileSizeInMB = (Double) spectrumTable.getValueAt(i, spectrumTable.getColumn("Size (MB)").getModelIndex());
                                 int fileSizeInBytes;
                                 if (fileSizeInMB != null) {
@@ -872,15 +880,17 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                             String link = (String) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("Download").getModelIndex());
                             link = link.substring(link.indexOf("\"") + 1);
                             link = link.substring(0, link.indexOf("\""));
+                            
+                            String selectedSearchSettingsFileName = (String) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("File").getModelIndex());
 
-                            if (!selectedSpectrumFiles.contains(link)) {
+                            if (!selectedSpectrumFileLinks.contains(link)) {
 
                                 boolean exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
 
                                 if (!exists) {
                                     if (link.endsWith(".gz")) {
                                         link = link.substring(0, link.length() - 3);
-                                        if (!selectedSpectrumFiles.contains(link)) {
+                                        if (!selectedSpectrumFileLinks.contains(link)) {
                                             exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
                                         } else {
                                             exists = true;
@@ -889,7 +899,8 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                                 }
 
                                 if (exists) {
-                                    selectedSearchSettingsFile = link;
+                                    selectedSearchSettingsFileLink = link;
+                                    selectedFileNames.add(selectedSearchSettingsFileName);
                                     Double fileSizeInMB = (Double) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("Size (MB)").getModelIndex());
                                     int fileSizeInBytes;
                                     if (fileSizeInMB != null) {
@@ -907,22 +918,22 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                                     System.out.println("Not found: " + link + "!");
                                 }
                             } else {
-                                selectedSearchSettingsFile = link;
+                                selectedSearchSettingsFileLink = link;
                             }
                         }
                     }
 
                     boolean download = true;
 
-                    if (selectedSpectrumFiles.isEmpty()) {
+                    if (selectedSpectrumFileLinks.isEmpty()) {
                         download = false;
                     }
 
                     progressDialog.setRunFinished();
 
                     if (download) {
-                        prideReShakeGUI.downloadPrideDatasets(workingFolderTxt.getText(), selectedSpectrumFiles, selectedSearchSettingsFile,
-                                databaseSettingsTxt.getText(), speciesJTextField.getText(), fileSizes);
+                        prideReShakeGUI.downloadPrideDatasets(workingFolderTxt.getText(), selectedSpectrumFileLinks, selectedFileNames, 
+                                selectedSearchSettingsFileLink, databaseSettingsTxt.getText(), speciesJTextField.getText(), fileSizes);
                     } else {
                         JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, "No spectrum files found. Reshake canceled.", "File Error", JOptionPane.WARNING_MESSAGE);
                     }
@@ -1044,6 +1055,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 fileSizeInBytes = -1;
             }
 
+            final String fileName = (String) spectrumTable.getValueAt(row, spectrumTable.getColumn("File").getModelIndex());
             final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", lastSelectedFolder.getLastSelectedFolder(), "Download Folder", "Select", false);
 
             if (downloadFolder != null) {
@@ -1072,7 +1084,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                     @Override
                     public void run() {
                         try {
-                            File downLoadLocation = new File(downloadFolder, new File(link).getName());
+                            File downLoadLocation = new File(downloadFolder, fileName);
                             File savedFile = Util.saveUrl(downLoadLocation, link, fileSizeInBytes, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword(), progressDialog);
 
                             boolean canceled = progressDialog.isRunCanceled();
@@ -1173,7 +1185,8 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 } else {
                     fileSizeInBytes = -1;
                 }
-
+                
+                final String fileName = (String) spectrumTable.getValueAt(row, spectrumTable.getColumn("File").getModelIndex());
                 final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", lastSelectedFolder.getLastSelectedFolder(), "Download Folder", "Select", false);
 
                 if (downloadFolder != null) {
@@ -1202,7 +1215,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                         @Override
                         public void run() {
                             try {
-                                File downLoadLocation = new File(downloadFolder, new File(link).getName());
+                                File downLoadLocation = new File(downloadFolder, fileName);
                                 File savedFile = Util.saveUrl(downLoadLocation, link, fileSizeInBytes, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword(), progressDialog);
 
                                 boolean canceled = progressDialog.isRunCanceled();
