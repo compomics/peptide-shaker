@@ -23,6 +23,7 @@ import javax.swing.table.TableColumnModel;
  * Dialog to edit identification matches filters.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class FilterDialog extends javax.swing.JDialog {
 
@@ -159,6 +160,7 @@ public class FilterDialog extends javax.swing.JDialog {
         filterItemsPanel = new javax.swing.JPanel();
         filterItemsTableScrollPane = new javax.swing.JScrollPane();
         filterItemsTable = new javax.swing.JTable();
+        helpLbl = new javax.swing.JLabel();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
@@ -182,6 +184,11 @@ public class FilterDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Filter Editor (beta)");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         filterPanel.setBackground(new java.awt.Color(230, 230, 230));
 
@@ -302,6 +309,12 @@ public class FilterDialog extends javax.swing.JDialog {
         filterItemsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter Item"));
         filterItemsPanel.setOpaque(false);
 
+        filterItemsTableScrollPane.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                filterItemsTableScrollPaneMouseReleased(evt);
+            }
+        });
+
         filterItemsTable.setModel(new FilterItemsTableModel());
         filterItemsTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -310,20 +323,30 @@ public class FilterDialog extends javax.swing.JDialog {
         });
         filterItemsTableScrollPane.setViewportView(filterItemsTable);
 
+        helpLbl.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        helpLbl.setText("Right-click in the table to edit the filters.");
+
         javax.swing.GroupLayout filterItemsPanelLayout = new javax.swing.GroupLayout(filterItemsPanel);
         filterItemsPanel.setLayout(filterItemsPanelLayout);
         filterItemsPanelLayout.setHorizontalGroup(
             filterItemsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(filterItemsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filterItemsTableScrollPane)
+                .addGroup(filterItemsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(filterItemsTableScrollPane)
+                    .addGroup(filterItemsPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(helpLbl)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         filterItemsPanelLayout.setVerticalGroup(
             filterItemsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(filterItemsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filterItemsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
+                .addComponent(filterItemsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(helpLbl)
                 .addContainerGap())
         );
 
@@ -338,7 +361,7 @@ public class FilterDialog extends javax.swing.JDialog {
             filterSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(filterSettingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filterItemsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(filterItemsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(manualSelectionSplitPane))
         );
@@ -482,6 +505,24 @@ public class FilterDialog extends javax.swing.JDialog {
 
     }//GEN-LAST:event_filterItemsTableMouseReleased
 
+    /**
+     * Show the filter item pop up menu.
+     *
+     * @param evt
+     */
+    private void filterItemsTableScrollPaneMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_filterItemsTableScrollPaneMouseReleased
+        filterItemsTableMouseReleased(evt);
+    }//GEN-LAST:event_filterItemsTableScrollPaneMouseReleased
+
+    /**
+     * Cancel the dialog.
+     *
+     * @param evt
+     */
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        canceled = true;
+    }//GEN-LAST:event_formWindowClosing
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem addItemMenuItem;
     private javax.swing.JButton cancelButton;
@@ -497,6 +538,7 @@ public class FilterDialog extends javax.swing.JDialog {
     private javax.swing.JPanel filterPanel;
     private javax.swing.JPanel filterSettingsPanel;
     private javax.swing.JSplitPane filterSplitPane;
+    private javax.swing.JLabel helpLbl;
     private javax.swing.JPopupMenu itemPopupMenu;
     private javax.swing.JSplitPane manualSelectionSplitPane;
     private javax.swing.JPanel manualValidationPanel;
