@@ -1085,7 +1085,7 @@ public class NewDialog extends javax.swing.JDialog {
 
             @Override
             public String getDescription() {
-                return "Tide (.txt)";
+                return "Tide (.tide-search.target.txt)";
             }
         };
 
