@@ -221,11 +221,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         XYBarRenderer.setDefaultBarPainter(new StandardXYBarPainter());
     }
     /**
-     * If true the relative error (ppm) is used instead of the absolute error
-     * (Da).
-     */
-    private boolean useRelativeError = false;
-    /**
      * If true, the latest changes have been saved.
      */
     private boolean dataSaved = true;
@@ -772,7 +767,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         mzIonTableRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         defaultAnnotationCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        errorPlotTypeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator14 = new javax.swing.JPopupMenu.Separator();
         annotationColorsJMenuItem = new javax.swing.JMenuItem();
         splitterMenu4 = new javax.swing.JMenu();
@@ -1131,17 +1125,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             }
         });
         settingsMenu.add(defaultAnnotationCheckBoxMenuItem);
-
-        errorPlotTypeCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        errorPlotTypeCheckBoxMenuItem.setSelected(true);
-        errorPlotTypeCheckBoxMenuItem.setText("Absolute Mass Error Plot");
-        errorPlotTypeCheckBoxMenuItem.setToolTipText("Plot the mass error in Da or ppm ");
-        errorPlotTypeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                errorPlotTypeCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
-        settingsMenu.add(errorPlotTypeCheckBoxMenuItem);
         settingsMenu.add(jSeparator14);
 
         annotationColorsJMenuItem.setText("Annotation Colors");
@@ -2310,15 +2293,21 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                         // move the spectrum annotation menu bar and set the intensity slider value
                         AnnotationSettings annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
-                        if (selectedIndex == OVER_VIEW_TAB_INDEX) {
-                            overviewPanel.showSpectrumAnnotationMenu();
-                            overviewPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
-                        } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
-                            spectrumIdentificationPanel.showSpectrumAnnotationMenu();
-                            spectrumIdentificationPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
-                        } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
-                            ptmPanel.showSpectrumAnnotationMenu();
-                            ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+                        switch (selectedIndex) {
+                            case OVER_VIEW_TAB_INDEX:
+                                overviewPanel.showSpectrumAnnotationMenu();
+                                overviewPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+                                break;
+                            case SPECTRUM_ID_TAB_INDEX:
+                                spectrumIdentificationPanel.showSpectrumAnnotationMenu();
+                                spectrumIdentificationPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+                                break;
+                            case MODIFICATIONS_TAB_INDEX:
+                                ptmPanel.showSpectrumAnnotationMenu();
+                                ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+                                break;
+                            default:
+                                break;
                         }
 
                         if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == SPECTRUM_ID_TAB_INDEX || selectedIndex == MODIFICATIONS_TAB_INDEX) {
@@ -2376,17 +2365,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         close();
     }//GEN-LAST:event_formWindowClosing
-
-    /**
-     * Edit the use of relative error (ppm) or absolute error (Da) in the mass
-     * error plot.
-     *
-     * @param evt
-     */
-    private void errorPlotTypeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_errorPlotTypeCheckBoxMenuItemActionPerformed
-        useRelativeError = !errorPlotTypeCheckBoxMenuItem.isSelected();
-        overviewPanel.updateSpectrum(); // @TODO: verify that this is correct!
-    }//GEN-LAST:event_errorPlotTypeCheckBoxMenuItemActionPerformed
 
     /**
      * Turns the hiding of the scores columns on or off.
@@ -3493,7 +3471,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JCheckBoxMenuItem defaultAnnotationCheckBoxMenuItem;
     private javax.swing.JMenuItem editIdSettingsFilesMenuItem;
     private javax.swing.JMenu editMenu;
-    private javax.swing.JCheckBoxMenuItem errorPlotTypeCheckBoxMenuItem;
     private javax.swing.JMenuItem exitJMenuItem;
     private javax.swing.JMenu exportGraphicsMenu;
     private javax.swing.JMenuItem exportIntensityHistogramGraphicsJMenuItem;
@@ -4639,17 +4616,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
-    }
-
-    /**
-     * Returns true if the relative error (ppm) is used instead of the absolute
-     * error (Da).
-     *
-     * @return true if the relative error (ppm) is used instead of the absolute
-     * error (Da)
-     */
-    public boolean useRelativeError() {
-        return useRelativeError;
     }
 
     /**

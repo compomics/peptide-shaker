@@ -3131,16 +3131,20 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             spectrumPanel.repaint();
 
                             if (searchResultsTable.getSelectedRowCount() > 2) {
-                                double bubbleScale = annotationPreferences.getFragmentIonAccuracy() * 10 * peptideShakerGUI.getBubbleScale();
+                                
+                                double bubbleScale;
 
-                                if (peptideShakerGUI.useRelativeError()) {
-                                    bubbleScale = annotationPreferences.getFragmentIonAccuracy() * 10000 * peptideShakerGUI.getBubbleScale();
+                                if (peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentAccuracyType() == SearchParameters.MassAccuracyType.PPM) {
+                                    bubbleScale = annotationPreferences.getFragmentIonAccuracy() * 10 * peptideShakerGUI.getBubbleScale();
+                                } else {
+                                    bubbleScale = annotationPreferences.getFragmentIonAccuracy() * 10 * peptideShakerGUI.getBubbleScale();
                                 }
 
                                 DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
                                 MassErrorBubblePlot massErrorBubblePlot = new MassErrorBubblePlot(
                                         selectedIndexes, allAnnotations, allSpectra, annotationPreferences.getFragmentIonAccuracy(),
-                                        bubbleScale, selectedIndexes.size() == 1, displayPreferences.showBars(), peptideShakerGUI.useRelativeError());
+                                        bubbleScale, selectedIndexes.size() == 1, displayPreferences.showBars(), 
+                                        peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentAccuracyType() == SearchParameters.MassAccuracyType.PPM);
 
                                 // hide the legend if selecting more than 20 spectra // @TODO: 20 should not be hardcoded here..
                                 if (selectedIndexes.size() > 20) {

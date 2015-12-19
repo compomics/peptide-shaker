@@ -783,14 +783,25 @@ public class MzIdentMLExport {
                 br.write(getCurrentTabSpace() + "<SpecificityRules>" + System.getProperty("line.separator"));
                 tabCounter++;
 
-                if (ptmType == PTM.MODN || ptmType == PTM.MODNAA) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002057", "modification specificity protein N-term", null));
-                } else if (ptmType == PTM.MODNP || ptmType == PTM.MODNPAA) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001189", "modification specificity peptide N-term", null));
-                } else if (ptmType == PTM.MODC || ptmType == PTM.MODCAA) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002058", "modification specificity protein C-term", null));
-                } else if (ptmType == PTM.MODCP || ptmType == PTM.MODCPAA) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001190", "modification specificity peptide C-term", null));
+                switch (ptmType) {
+                    case PTM.MODN:
+                    case PTM.MODNAA:
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002057", "modification specificity protein N-term", null));
+                        break;
+                    case PTM.MODNP:
+                    case PTM.MODNPAA:
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1001189", "modification specificity peptide N-term", null));
+                        break;
+                    case PTM.MODC:
+                    case PTM.MODCAA:
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002058", "modification specificity protein C-term", null));
+                        break;
+                    case PTM.MODCP:
+                    case PTM.MODCPAA:
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1001190", "modification specificity peptide C-term", null));
+                        break;
+                    default:
+                        break;
                 }
 
                 tabCounter--;
@@ -856,12 +867,15 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<FragmentTolerance>" + System.getProperty("line.separator"));
         tabCounter++;
         String fragmentIonToleranceUnit;
+        String unitAccession;
         switch (searchParameters.getFragmentAccuracyType()) {
             case DA:
                 fragmentIonToleranceUnit = "dalton";
+                unitAccession = "UO:0000221";
                 break;
             case PPM:
                 fragmentIonToleranceUnit = "parts per million";
+                unitAccession = "UO:0000169";
                 break;
             default:
                 throw new UnsupportedOperationException("CV term not implemented for fragment accuracy in " + searchParameters.getFragmentAccuracyType() + ".");
@@ -871,7 +885,7 @@ public class MzIdentMLExport {
                 + "cvRef=\"PSI-MS\" "
                 + "unitCvRef=\"UO\" "
                 + "unitName=\"" + fragmentIonToleranceUnit + "\" "
-                + "unitAccession=\"UO:0000221\" "
+                + "unitAccession=\"" + unitAccession + "\" "
                 + "value=\"" + searchParameters.getFragmentIonAccuracy() + "\" "
                 + "name=\"search tolerance plus value\" />"
                 + System.getProperty("line.separator"));
@@ -880,7 +894,7 @@ public class MzIdentMLExport {
                 + "cvRef=\"PSI-MS\" "
                 + "unitCvRef=\"UO\" "
                 + "unitName=\"" + fragmentIonToleranceUnit + "\" "
-                + "unitAccession=\"UO:0000221\" "
+                + "unitAccession=\"" + unitAccession + "\" "
                 + "value=\"" + searchParameters.getFragmentIonAccuracy() + "\" "
                 + "name=\"search tolerance minus value\" />"
                 + System.getProperty("line.separator"));

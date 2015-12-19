@@ -2330,18 +2330,24 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             int index = spectrumJTabbedPane.getSelectedIndex();
 
-            if (index == 0) {
-                ionTableAnnotationMenuPanel.removeAll();
-                ionTableAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
-                peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, false, true, false, false);
-            } else if (index == 1) {
-                bubbleAnnotationMenuPanel.removeAll();
-                bubbleAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
-                peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, true, false, false, false);
-            } else if (index == 2) {
-                spectrumAnnotationMenuPanel.removeAll();
-                spectrumAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
-                peptideShakerGUI.updateAnnotationMenuBarVisableOptions(true, false, false, false, psmTable.getSelectedRowCount() == 1);
+            switch (index) {
+                case 0:
+                    ionTableAnnotationMenuPanel.removeAll();
+                    ionTableAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
+                    peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, false, true, false, false);
+                    break;
+                case 1:
+                    bubbleAnnotationMenuPanel.removeAll();
+                    bubbleAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
+                    peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, true, false, false, false);
+                    break;
+                case 2:
+                    spectrumAnnotationMenuPanel.removeAll();
+                    spectrumAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
+                    peptideShakerGUI.updateAnnotationMenuBarVisableOptions(true, false, false, false, psmTable.getSelectedRowCount() == 1);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -4058,15 +4064,18 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     }
                 }
 
-                double bubbleScale = annotationPreferences.getFragmentIonAccuracy() * 10 * peptideShakerGUI.getBubbleScale();
+                double bubbleScale;
 
-                if (peptideShakerGUI.useRelativeError()) {
-                    bubbleScale = annotationPreferences.getFragmentIonAccuracy() * 10000 * peptideShakerGUI.getBubbleScale();
+                if (identificationParameters.getSearchParameters().getFragmentAccuracyType() == SearchParameters.MassAccuracyType.PPM) {
+                    bubbleScale = annotationPreferences.getFragmentIonAccuracy() * 10 * peptideShakerGUI.getBubbleScale();
+                } else {
+                    bubbleScale = annotationPreferences.getFragmentIonAccuracy() * 10 * peptideShakerGUI.getBubbleScale();
                 }
 
                 MassErrorBubblePlot massErrorBubblePlot = new MassErrorBubblePlot(
                         selectedIndexes, allAnnotations, allSpectra, annotationPreferences.getFragmentIonAccuracy(),
-                        bubbleScale, selectedIndexes.size() == 1, displayPreferences.showBars(), peptideShakerGUI.useRelativeError());
+                        bubbleScale, selectedIndexes.size() == 1, displayPreferences.showBars(), 
+                        identificationParameters.getSearchParameters().getFragmentAccuracyType() == SearchParameters.MassAccuracyType.PPM);
 
                 // hide the legend if selecting more than 20 spectra // @TODO: 20 should not be hardcoded here..
                 if (selectedIndexes.size() > 20) {
@@ -4661,7 +4670,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             MassErrorPlot massErrorPlot = new MassErrorPlot(
                                     annotations, currentSpectrum,
                                     specificAnnotationPreferences.getFragmentIonAccuracy(),
-                                    peptideShakerGUI.useRelativeError());
+                                    peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentAccuracyType() == SearchParameters.MassAccuracyType.PPM);
 
                             if (massErrorPlot.getNumberOfDataPointsInPlot() > 0) {
                                 secondarySpectrumPlotsJPanel.add(massErrorPlot);

@@ -261,12 +261,8 @@ public class TagMapper {
      * @param spectrumMatch the spectrum match containing the tags to map
      * @param tagMatcher the tag matcher to match the tags
      * @param key the key of the tag to match
-     * @param waitingHandler waiting handler allowing the display of progress
-     * null null     <<<<<<< HEAD
-     * and cancelling the process
-     * =======
+     * @param waitingHandler waiting handler allowing the display of progress 
      * and canceling the process
-     * >>>>>>> 617e231a4bd9954d00582cbed0a76798fc16186c
      * @param increaseProgress boolean indicating whether the progress bar of
      * the waiting handler should be increased
      *
@@ -281,7 +277,8 @@ public class TagMapper {
      * @throws MzMLUnmarshallerException exception thrown whenever an error
      * occurred while accessing an mzML file.
      */
-    private void mapTagsForSpectrumMatch(Identification identification, SpectrumMatch spectrumMatch, TagMatcher tagMatcher, String key, WaitingHandler waitingHandler, boolean increaseProgress) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+    private void mapTagsForSpectrumMatch(Identification identification, SpectrumMatch spectrumMatch, TagMatcher tagMatcher, String key, WaitingHandler 
+            waitingHandler, boolean increaseProgress) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
 
         TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
         int keySize = key.length();

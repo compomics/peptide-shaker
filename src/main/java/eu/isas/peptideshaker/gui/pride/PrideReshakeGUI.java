@@ -2740,24 +2740,38 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000161")) { // fragment mass tolerance
                     String value = cvParam.getValue().trim();
                     if (value.contains(" ")) { // escape Da or ppm
+                        if (value.trim().toLowerCase().endsWith("da") || value.trim().toLowerCase().endsWith("dalton")) {
+                            prideSearchParameters.setFragmentAccuracyType(SearchParameters.MassAccuracyType.DA);
+                        } else if (value.trim().toLowerCase().endsWith("ppm")) {
+                            prideSearchParameters.setFragmentAccuracyType(SearchParameters.MassAccuracyType.PPM);
+                        }
                         value = value.substring(0, value.indexOf(" "));
                     }
                     value = value.trim();
                     if (value.toLowerCase().endsWith("ppm")) {
+                        prideSearchParameters.setFragmentAccuracyType(SearchParameters.MassAccuracyType.PPM);
                         value = value.substring(0, value.length() - 3);
                     } else if (value.toLowerCase().endsWith("da")) {
+                        prideSearchParameters.setFragmentAccuracyType(SearchParameters.MassAccuracyType.DA);
                         value = value.substring(0, value.length() - 2);
                     }
                     fragmentIonMassTolerance = new Double(value);
                 } else if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000078")) { // peptide mass tolerance
                     String value = cvParam.getValue().trim();
                     if (value.contains(" ")) { // escape Da or ppm
+                        if (value.trim().toLowerCase().endsWith("da") || value.trim().toLowerCase().endsWith("dalton")) {
+                            prideSearchParameters.setPrecursorAccuracyType(SearchParameters.MassAccuracyType.DA);
+                        } else if (value.trim().toLowerCase().endsWith("ppm")) {
+                            prideSearchParameters.setPrecursorAccuracyType(SearchParameters.MassAccuracyType.PPM);
+                        }
                         value = value.substring(0, value.indexOf(" "));
                     }
                     value = value.trim();
                     if (value.toLowerCase().endsWith("ppm")) {
+                        prideSearchParameters.setPrecursorAccuracyType(SearchParameters.MassAccuracyType.PPM);
                         value = value.substring(0, value.length() - 3);
                     } else if (value.toLowerCase().endsWith("da")) {
+                        prideSearchParameters.setPrecursorAccuracyType(SearchParameters.MassAccuracyType.DA);
                         value = value.substring(0, value.length() - 2);
                     }
                     peptideIonMassTolerance = new Double(value);
@@ -2868,16 +2882,16 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             prideSearchParameters.setFragmentIonAccuracy(fragmentIonMassTolerance);
             prideParametersReport += fragmentIonMassTolerance + " " + prideSearchParameters.getFragmentAccuracyType();
         } else {
-            prideParametersReport += prideSearchParameters.getFragmentIonAccuracy() + " " + prideSearchParameters.getFragmentAccuracyType();
+            prideParametersReport += prideSearchParameters.getFragmentIonAccuracy() + " " + prideSearchParameters.getFragmentAccuracyType() + " (default)";
         }
 
         // set the precursor ion accuracy
         prideParametersReport += "<br><b>Precursor Ion Mass Tolerance:</b> ";
         if (peptideIonMassTolerance != null) {
-            prideSearchParameters.setPrecursorAccuracy(peptideIonMassTolerance); // @TODO: ppm assumed?
-            prideParametersReport += peptideIonMassTolerance + " ppm";
+            prideSearchParameters.setPrecursorAccuracy(peptideIonMassTolerance);
+            prideParametersReport += peptideIonMassTolerance + " " + prideSearchParameters.getPrecursorAccuracyType();
         } else {
-            prideParametersReport += prideSearchParameters.getPrecursorAccuracy() + " ppm (default)"; // @TODO: what about accuracy in Dalton
+            prideParametersReport += prideSearchParameters.getPrecursorAccuracy() + " " + prideSearchParameters.getPrecursorAccuracyType() + " (default)";
         }
 
         // set the enzyme

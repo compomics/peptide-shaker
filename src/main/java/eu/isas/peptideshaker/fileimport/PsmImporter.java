@@ -158,6 +158,11 @@ public class PsmImporter {
      */
     private double maxTagErrorDa = 0;
     /**
+     * The amount added per amino acid residue as part of the reference mass
+     * when converting Dalton tolerances to ppm.
+     */
+    private double amountPerAminoAcidResidue = 100;
+    /**
      * List of charges found.
      */
     private HashSet<Integer> charges = new HashSet<Integer>();
@@ -836,7 +841,7 @@ public class PsmImporter {
                             ArrayList<String> filteredNamesAtSite = new ArrayList<String>(expectedNamesAtSite.size());
                             for (String ptmName : expectedNamesAtSite) {
                                 PTM ptm = ptmFactory.getPTM(ptmName);
-                                if (Math.abs(ptm.getMass() - refMass) < searchParameters.getFragmentIonAccuracyInDaltons(100.0 * peptideLength)) {
+                                if (Math.abs(ptm.getMass() - refMass) < searchParameters.getFragmentIonAccuracyInDaltons(amountPerAminoAcidResidue * peptideLength)) {
                                     filteredNamesAtSite.add(ptmName);
                                 }
                             }
@@ -878,7 +883,7 @@ public class PsmImporter {
                             ArrayList<String> filteredNamesAtSite = new ArrayList<String>(expectedNamesAtSite.size());
                             for (String ptmName : expectedNamesAtSite) {
                                 PTM ptm = ptmFactory.getPTM(ptmName);
-                                if (Math.abs(ptm.getMass() - refMass) < searchParameters.getFragmentIonAccuracyInDaltons(100.0 * peptideLength)) {
+                                if (Math.abs(ptm.getMass() - refMass) < searchParameters.getFragmentIonAccuracyInDaltons(amountPerAminoAcidResidue * peptideLength)) {
                                     filteredNamesAtSite.add(ptmName);
                                 }
                             }
@@ -928,7 +933,7 @@ public class PsmImporter {
                         ArrayList<String> modificationAtSite = siteToPtmMap.get(modSite);
                         for (String ptmName : expectedNamesAtSite) {
                             PTM ptm = ptmFactory.getPTM(ptmName);
-                            if (Math.abs(ptm.getMass() - refMass) < searchParameters.getFragmentIonAccuracyInDaltons(100.0 * peptideLength)
+                            if (Math.abs(ptm.getMass() - refMass) < searchParameters.getFragmentIonAccuracyInDaltons(amountPerAminoAcidResidue * peptideLength)
                                     && (modificationAtSite == null || !modificationAtSite.contains(ptmName))) {
                                 filteredNamesAtSite.add(ptmName);
                             }
@@ -967,7 +972,7 @@ public class PsmImporter {
                                     PTM ptm = ptmFactory.getPTM(modName);
                                     if (ptm.isNTerm() && nTermModification == null) {
                                         double massError = Math.abs(refMass - ptm.getMass());
-                                        if (massError <= searchParameters.getFragmentIonAccuracyInDaltons(100.0 * peptideLength)
+                                        if (massError <= searchParameters.getFragmentIonAccuracyInDaltons(amountPerAminoAcidResidue * peptideLength)
                                                 && (minDiff == null || massError < minDiff)) {
                                             bestPtmName = modName;
                                             minDiff = massError;
@@ -992,7 +997,7 @@ public class PsmImporter {
                                     PTM ptm = ptmFactory.getPTM(modName);
                                     if (ptm.isCTerm() && cTermModification == null) {
                                         double massError = Math.abs(refMass - ptm.getMass());
-                                        if (massError <= searchParameters.getFragmentIonAccuracyInDaltons(100.0 * peptideLength)
+                                        if (massError <= searchParameters.getFragmentIonAccuracyInDaltons(amountPerAminoAcidResidue * peptideLength)
                                                 && (minDiff == null || massError < minDiff)) {
                                             bestPtmName = modName;
                                             minDiff = massError;
@@ -1018,7 +1023,7 @@ public class PsmImporter {
                                     PTM ptm = ptmFactory.getPTM(modName);
                                     if (!ptm.isCTerm() && !ptm.isNTerm() && modNames.get(modMatch).contains(modName) && !siteToMatchMap.containsKey(modSite)) {
                                         double massError = Math.abs(refMass - ptm.getMass());
-                                        if (massError <= searchParameters.getFragmentIonAccuracyInDaltons(100.0 * peptideLength)
+                                        if (massError <= searchParameters.getFragmentIonAccuracyInDaltons(amountPerAminoAcidResidue * peptideLength)
                                                 && (minDiff == null || massError < minDiff)) {
                                             bestPtmName = modName;
                                             minDiff = massError;
