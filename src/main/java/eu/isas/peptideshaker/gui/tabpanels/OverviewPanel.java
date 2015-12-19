@@ -2484,12 +2484,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * @param evt
      */
     private void accuracySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_accuracySliderStateChanged
-        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentIonAccuracy();
+        SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
+        double accuracy = (accuracySlider.getValue() / 100.0) * searchParameters.getFragmentIonAccuracy();
         AnnotationSettings annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
         annotationPreferences.setFragmentIonAccuracy(accuracy);
         peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
-        accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
+        accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " " + searchParameters.getFragmentAccuracyType());
         updateSpectrumSliderToolTip();
     }//GEN-LAST:event_accuracySliderStateChanged
 
@@ -4984,8 +4985,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     updateProteinTableCellRenderers();
 
                     // update the slider tooltips
-                    double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentIonAccuracy();
-                    accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
+                    SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
+        double accuracy = (accuracySlider.getValue() / 100.0) * searchParameters.getFragmentIonAccuracy();
+                    accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " " + searchParameters.getFragmentAccuracyType());
                     intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
 
                     // enable the contextual export options
@@ -5765,9 +5767,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * Updates and displays the current spectrum slider tooltip.
      */
     private void updateSpectrumSliderToolTip() {
-        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentIonAccuracy();
+        SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
+        double accuracy = (accuracySlider.getValue() / 100.0) * searchParameters.getFragmentIonAccuracy();
 
-        spectrumJTabbedPane.setToolTipText("<html>Accuracy: " + Util.roundDouble(accuracy, 2) + " Da<br>"
+        spectrumJTabbedPane.setToolTipText("<html>Accuracy: " + Util.roundDouble(accuracy, 2) + " " + searchParameters.getFragmentAccuracyType() + "<br>"
                 + "Level: " + intensitySlider.getValue() + "%</html>");
 
         // show the tooltip now

@@ -261,7 +261,8 @@ public class TagMapper {
      * @param spectrumMatch the spectrum match containing the tags to map
      * @param tagMatcher the tag matcher to match the tags
      * @param key the key of the tag to match
-     * @param waitingHandler waiting handler allowing the display of progress null     <<<<<<< HEAD
+     * @param waitingHandler waiting handler allowing the display of progress
+     * null null     <<<<<<< HEAD
      * and cancelling the process
      * =======
      * and canceling the process
@@ -351,6 +352,9 @@ public class TagMapper {
                                 }
                             }
                             assumptionAtScoreToSave.add(extendedAssumption);
+                            if (searchParameters.getFragmentAccuracyType() != SearchParameters.MassAccuracyType.DA) {
+                                throw new UnsupportedOperationException("Fragment ion tolerance in " + searchParameters.getFragmentAccuracyType() + " not supported for tag mapping.");
+                            }
                             HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = proteinTree.getProteinMapping(extendedAssumption.getTag(), tagMatcher, sequenceMatchingPreferences, searchParameters.getFragmentIonAccuracy());
                             for (Peptide peptide : proteinMapping.keySet()) {
                                 String peptideKey = peptide.getKey();
@@ -478,7 +482,7 @@ public class TagMapper {
                                     throw new IllegalArgumentException("PepNovo+ PTM " + pepnovoPtmName + " not recognized.");
                                 }
                                 modificationMatch.setTheoreticPtm(utilitiesPtmName);
-                            } else if (advocateId == Advocate.direcTag.getIndex() 
+                            } else if (advocateId == Advocate.direcTag.getIndex()
                                     || advocateId == Advocate.pNovo.getIndex()
                                     || advocateId == Advocate.novor.getIndex()) {
                                 // already mapped

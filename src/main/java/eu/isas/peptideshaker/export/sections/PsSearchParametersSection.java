@@ -147,12 +147,11 @@ public class PsSearchParametersSection {
                 case fragment_tolerance:
                     writer.write(searchParameters.getFragmentIonAccuracy() + "");
                     break;
-                case precursor_accuracy_unit:
-                    if (searchParameters.isPrecursorAccuracyTypePpm()) {
-                        writer.write("ppm");
-                    } else {
-                        writer.write("Da");
-                    }
+                case precursor_tolerance_unit:
+                    writer.write(searchParameters.getPrecursorAccuracyType().toString());
+                    break;
+                case fragment_tolerance_unit:
+                    writer.write(searchParameters.getFragmentAccuracyType().toString());
                     break;
                 case precursor_tolerance:
                     writer.write(searchParameters.getPrecursorAccuracy() + "");

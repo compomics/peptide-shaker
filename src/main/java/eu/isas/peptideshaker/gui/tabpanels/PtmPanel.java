@@ -2496,11 +2496,12 @@ public class PtmPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void accuracySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_accuracySliderStateChanged
-        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentIonAccuracy();
+        SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
+        double accuracy = (accuracySlider.getValue() / 100.0) * searchParameters.getFragmentIonAccuracy();
         peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setFragmentIonAccuracy(accuracy);
         peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
-        accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
+        accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " " + searchParameters.getFragmentAccuracyType());
         updateSpectrumSliderToolTip();
     }//GEN-LAST:event_accuracySliderStateChanged
 
@@ -3358,8 +3359,9 @@ public class PtmPanel extends javax.swing.JPanel {
                     ((DefaultTableModel) ptmJTable.getModel()).addRow(new Object[]{Color.lightGray, NO_MODIFICATION});
 
                     // update the slider tooltips
-                    double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentIonAccuracy();
-                    accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
+                    SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
+                    double accuracy = (accuracySlider.getValue() / 100.0) * searchParameters.getFragmentIonAccuracy();
+                    accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " " + searchParameters.getFragmentAccuracyType());
                     intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
 
                     ((JSparklinesBarChartTableCellRenderer) selectedPsmsTable.getColumn("Charge").getCellRenderer()).setMaxValue(
@@ -3993,7 +3995,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 peptideShakerGUI.updateAnnotationPreferences();
                 SpecificAnnotationSettings specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
                 ArrayList<IonMatch> annotations = peptideShakerGUI.getSpectrumAnnotator().getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, peptide);
-                
+
                 // add the spectrum annotations
                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), !annotationPreferences.isHighResolutionAnnotation());
                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
@@ -4035,7 +4037,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         peptideShakerGUI.updateAnnotationPreferences();
                         specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
                         annotations = peptideShakerGUI.getSpectrumAnnotator().getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, peptide);
-                        
+
                         spectrum.setAnnotationsMirrored(SpectrumAnnotator.getSpectrumAnnotation(annotations));
 
                         // add de novo sequencing
@@ -4816,9 +4818,10 @@ public class PtmPanel extends javax.swing.JPanel {
      * Updates and displays the current spectrum slider tooltip.
      */
     private void updateSpectrumSliderToolTip() {
-        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentIonAccuracy();
+        SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
+        double accuracy = (accuracySlider.getValue() / 100.0) * searchParameters.getFragmentIonAccuracy();
 
-        spectrumTabbedPane.setToolTipText("<html>Accuracy: " + Util.roundDouble(accuracy, 2) + " Da<br>"
+        spectrumTabbedPane.setToolTipText("<html>Accuracy: " + Util.roundDouble(accuracy, 2) + " " + searchParameters.getFragmentAccuracyType() + "<br>"
                 + "Level: " + intensitySlider.getValue() + "%</html>");
 
         // show the tooltip now

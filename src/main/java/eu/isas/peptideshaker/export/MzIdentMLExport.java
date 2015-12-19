@@ -152,11 +152,13 @@ public class MzIdentMLExport {
      */
     private HashMap<Double, Integer> ptmIndexMap = new HashMap<Double, Integer>();
     /**
-     * The match validation level a protein must have to be included in the export.
+     * The match validation level a protein must have to be included in the
+     * export.
      */
     private MatchValidationLevel proteinMatchValidationLevel;
     /**
-     * The match validation level a peptide must have to be included in the export
+     * The match validation level a peptide must have to be included in the
+     * export
      */
     private MatchValidationLevel peptideMatchValidationLevel;
     /**
@@ -206,9 +208,12 @@ public class MzIdentMLExport {
      * @param outputFile Output file
      * @param waitingHandler waiting handler used to display progress to the
      * user and interrupt the process
-     * @param proteinMatchValidationLevel the match validation level a protein must have to be included in the export
-     * @param peptideMatchValidationLevel the match validation level a peptide must have to be included in the export
-     * @param psmMatchValidationLevel the match validation level a psm must have to be included in the export
+     * @param proteinMatchValidationLevel the match validation level a protein
+     * must have to be included in the export
+     * @param peptideMatchValidationLevel the match validation level a peptide
+     * must have to be included in the export
+     * @param psmMatchValidationLevel the match validation level a psm must have
+     * to be included in the export
      *
      * @throws IOException Exception thrown whenever an error occurred while
      * reading/writing a file
@@ -217,7 +222,7 @@ public class MzIdentMLExport {
      */
     public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences,
-            IdentificationFeaturesGenerator identificationFeaturesGenerator, File outputFile, WaitingHandler waitingHandler, 
+            IdentificationFeaturesGenerator identificationFeaturesGenerator, File outputFile, WaitingHandler waitingHandler,
             MatchValidationLevel proteinMatchValidationLevel, MatchValidationLevel peptideMatchValidationLevel, MatchValidationLevel psmMatchValidationLevel) throws IOException, ClassNotFoundException {
         this.peptideShakerVersion = peptideShakerVersion;
         this.identification = identification;
@@ -850,12 +855,22 @@ public class MzIdentMLExport {
         // fragment tolerance
         br.write(getCurrentTabSpace() + "<FragmentTolerance>" + System.getProperty("line.separator"));
         tabCounter++;
-
+        String fragmentIonToleranceUnit;
+        switch (searchParameters.getFragmentAccuracyType()) {
+            case DA:
+                fragmentIonToleranceUnit = "dalton";
+                break;
+            case PPM:
+                fragmentIonToleranceUnit = "parts per million";
+                break;
+            default:
+                throw new UnsupportedOperationException("CV term not implemented for fragment accuracy in " + searchParameters.getFragmentAccuracyType() + ".");
+        }
         br.write(getCurrentTabSpace() + "<cvParam "
                 + "accession=\"MS:1001412\" "
                 + "cvRef=\"PSI-MS\" "
                 + "unitCvRef=\"UO\" "
-                + "unitName=\"dalton\" "
+                + "unitName=\"" + fragmentIonToleranceUnit + "\" "
                 + "unitAccession=\"UO:0000221\" "
                 + "value=\"" + searchParameters.getFragmentIonAccuracy() + "\" "
                 + "name=\"search tolerance plus value\" />"
@@ -864,7 +879,7 @@ public class MzIdentMLExport {
                 + "accession=\"MS:1001413\" "
                 + "cvRef=\"PSI-MS\" "
                 + "unitCvRef=\"UO\" "
-                + "unitName=\"dalton\" "
+                + "unitName=\"" + fragmentIonToleranceUnit + "\" "
                 + "unitAccession=\"UO:0000221\" "
                 + "value=\"" + searchParameters.getFragmentIonAccuracy() + "\" "
                 + "name=\"search tolerance minus value\" />"
@@ -876,45 +891,35 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<ParentTolerance>" + System.getProperty("line.separator"));
         tabCounter++;
 
-        if (searchParameters.isPrecursorAccuracyTypePpm()) {
-            br.write(getCurrentTabSpace() + "<cvParam "
-                    + "accession=\"MS:1001412\" "
-                    + "cvRef=\"PSI-MS\" "
-                    + "unitCvRef=\"UO\" "
-                    + "unitName=\"parts per million\" "
-                    + "unitAccession=\"UO:0000169\" "
-                    + "value=\"" + searchParameters.getPrecursorAccuracy() + "\" "
-                    + "name=\"search tolerance plus value\" />"
-                    + System.getProperty("line.separator"));
-            br.write(getCurrentTabSpace() + "<cvParam "
-                    + "accession=\"MS:1001413\" "
-                    + "cvRef=\"PSI-MS\" "
-                    + "unitCvRef=\"UO\" "
-                    + "unitName=\"parts per million\" "
-                    + "unitAccession=\"UO:0000169\" "
-                    + "value=\"" + searchParameters.getPrecursorAccuracy() + "\" "
-                    + "name=\"search tolerance minus value\" />"
-                    + System.getProperty("line.separator"));
-        } else {
-            br.write(getCurrentTabSpace() + "<cvParam "
-                    + "accession=\"MS:1001412\" "
-                    + "cvRef=\"PSI-MS\" "
-                    + "unitCvRef=\"UO\" "
-                    + "unitName=\"dalton\" "
-                    + "unitAccession=\"UO:0000221\" "
-                    + "value=\"" + searchParameters.getPrecursorAccuracy() + "\" "
-                    + "name=\"search tolerance plus value\" />"
-                    + System.getProperty("line.separator"));
-            br.write(getCurrentTabSpace() + "<cvParam "
-                    + "accession=\"MS:1001413\" "
-                    + "cvRef=\"PSI-MS\" "
-                    + "unitCvRef=\"UO\" "
-                    + "unitName=\"dalton\" "
-                    + "unitAccession=\"UO:0000221\" "
-                    + "value=\"" + searchParameters.getPrecursorAccuracy() + "\" "
-                    + "name=\"search tolerance minus value\" />"
-                    + System.getProperty("line.separator"));
+        String precursorIonToleranceUnit;
+        switch (searchParameters.getPrecursorAccuracyType()) {
+            case DA:
+                precursorIonToleranceUnit = "dalton";
+                break;
+            case PPM:
+                precursorIonToleranceUnit = "parts per million";
+                break;
+            default:
+                throw new UnsupportedOperationException("CV term not implemented for precursor accuracy in " + searchParameters.getFragmentAccuracyType() + ".");
         }
+        br.write(getCurrentTabSpace() + "<cvParam "
+                + "accession=\"MS:1001412\" "
+                + "cvRef=\"PSI-MS\" "
+                + "unitCvRef=\"UO\" "
+                + "unitName=\"" + precursorIonToleranceUnit + "\" "
+                + "unitAccession=\"UO:0000169\" "
+                + "value=\"" + searchParameters.getPrecursorAccuracy() + "\" "
+                + "name=\"search tolerance plus value\" />"
+                + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<cvParam "
+                + "accession=\"MS:1001413\" "
+                + "cvRef=\"PSI-MS\" "
+                + "unitCvRef=\"UO\" "
+                + "unitName=\"" + precursorIonToleranceUnit + "\" "
+                + "unitAccession=\"UO:0000169\" "
+                + "value=\"" + searchParameters.getPrecursorAccuracy() + "\" "
+                + "name=\"search tolerance minus value\" />"
+                + System.getProperty("line.separator"));
 
         tabCounter--;
         br.write(getCurrentTabSpace() + "</ParentTolerance>" + System.getProperty("line.separator"));

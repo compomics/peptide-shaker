@@ -367,8 +367,8 @@ public class PsmImporter {
         if (matchAssumptions == null && rawDbAssumptions == null) {
             throw new IllegalArgumentException("No identification assumption found for PSM " + spectrumKey + ".");
         } else if (matchAssumptions != null && rawDbAssumptions != null) {
-            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> combinedAssumptions = 
-                    new HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>>(Math.max(matchAssumptions.size(), rawDbAssumptions.size()));
+            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> combinedAssumptions
+                    = new HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>>(Math.max(matchAssumptions.size(), rawDbAssumptions.size()));
             for (Integer algorithm : matchAssumptions.keySet()) {
                 HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> algorithmMap = matchAssumptions.get(algorithm);
                 HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> combinedAlgorithmMap = combinedAssumptions.get(algorithm);
@@ -836,7 +836,7 @@ public class PsmImporter {
                             ArrayList<String> filteredNamesAtSite = new ArrayList<String>(expectedNamesAtSite.size());
                             for (String ptmName : expectedNamesAtSite) {
                                 PTM ptm = ptmFactory.getPTM(ptmName);
-                                if (Math.abs(ptm.getMass() - refMass) < searchParameters.getFragmentIonAccuracy()) {
+                                if (Math.abs(ptm.getMass() - refMass) < searchParameters.getFragmentIonAccuracyInDaltons(100.0 * peptideLength)) {
                                     filteredNamesAtSite.add(ptmName);
                                 }
                             }
@@ -878,7 +878,7 @@ public class PsmImporter {
                             ArrayList<String> filteredNamesAtSite = new ArrayList<String>(expectedNamesAtSite.size());
                             for (String ptmName : expectedNamesAtSite) {
                                 PTM ptm = ptmFactory.getPTM(ptmName);
-                                if (Math.abs(ptm.getMass() - refMass) < searchParameters.getFragmentIonAccuracy()) {
+                                if (Math.abs(ptm.getMass() - refMass) < searchParameters.getFragmentIonAccuracyInDaltons(100.0 * peptideLength)) {
                                     filteredNamesAtSite.add(ptmName);
                                 }
                             }
@@ -928,7 +928,7 @@ public class PsmImporter {
                         ArrayList<String> modificationAtSite = siteToPtmMap.get(modSite);
                         for (String ptmName : expectedNamesAtSite) {
                             PTM ptm = ptmFactory.getPTM(ptmName);
-                            if (Math.abs(ptm.getMass() - refMass) < searchParameters.getFragmentIonAccuracy()
+                            if (Math.abs(ptm.getMass() - refMass) < searchParameters.getFragmentIonAccuracyInDaltons(100.0 * peptideLength)
                                     && (modificationAtSite == null || !modificationAtSite.contains(ptmName))) {
                                 filteredNamesAtSite.add(ptmName);
                             }
@@ -967,7 +967,7 @@ public class PsmImporter {
                                     PTM ptm = ptmFactory.getPTM(modName);
                                     if (ptm.isNTerm() && nTermModification == null) {
                                         double massError = Math.abs(refMass - ptm.getMass());
-                                        if (massError <= searchParameters.getFragmentIonAccuracy()
+                                        if (massError <= searchParameters.getFragmentIonAccuracyInDaltons(100.0 * peptideLength)
                                                 && (minDiff == null || massError < minDiff)) {
                                             bestPtmName = modName;
                                             minDiff = massError;
@@ -992,7 +992,7 @@ public class PsmImporter {
                                     PTM ptm = ptmFactory.getPTM(modName);
                                     if (ptm.isCTerm() && cTermModification == null) {
                                         double massError = Math.abs(refMass - ptm.getMass());
-                                        if (massError <= searchParameters.getFragmentIonAccuracy()
+                                        if (massError <= searchParameters.getFragmentIonAccuracyInDaltons(100.0 * peptideLength)
                                                 && (minDiff == null || massError < minDiff)) {
                                             bestPtmName = modName;
                                             minDiff = massError;
@@ -1018,7 +1018,7 @@ public class PsmImporter {
                                     PTM ptm = ptmFactory.getPTM(modName);
                                     if (!ptm.isCTerm() && !ptm.isNTerm() && modNames.get(modMatch).contains(modName) && !siteToMatchMap.containsKey(modSite)) {
                                         double massError = Math.abs(refMass - ptm.getMass());
-                                        if (massError <= searchParameters.getFragmentIonAccuracy()
+                                        if (massError <= searchParameters.getFragmentIonAccuracyInDaltons(100.0 * peptideLength)
                                                 && (minDiff == null || massError < minDiff)) {
                                             bestPtmName = modName;
                                             minDiff = massError;
@@ -1134,7 +1134,7 @@ public class PsmImporter {
             throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        
+
         double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
         double error = Math.abs(peptideAssumption.getDeltaMass(precursorMz, true, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
 
@@ -1185,7 +1185,7 @@ public class PsmImporter {
     private synchronized void checkTagMassErrorsAndCharge(String spectrumKey, TagAssumption tagAssumption) throws MzMLUnmarshallerException, IOException {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        
+
         double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
         double error = Math.abs(tagAssumption.getDeltaMass(precursorMz, true, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
 

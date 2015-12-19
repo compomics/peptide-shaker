@@ -163,14 +163,7 @@ public class PeptideShakerMethods {
     public static String getIdentificationSettings(SearchParameters searchParameters) {
         String text = "The identification settings were as follows: ";
         text += searchParameters.getEnzyme().getName() + " with a maximum of " + searchParameters.getnMissedCleavages() + " missed cleavages; ";
-        String msToleranceUnit;
-        if (searchParameters.isPrecursorAccuracyTypePpm()) {
-            msToleranceUnit = "ppm";
-        } else {
-            msToleranceUnit = "Da";
-        }
-        String msmsToleranceUnit = "Da";
-        text += searchParameters.getPrecursorAccuracy() + " " + msToleranceUnit + " as MS1 and " + searchParameters.getFragmentIonAccuracy() + " " + msmsToleranceUnit + " as MS2 tolerances; ";
+        text += searchParameters.getPrecursorAccuracy() + " " + searchParameters.getPrecursorAccuracyType() + " as MS1 and " + searchParameters.getFragmentIonAccuracy() + " " + searchParameters.getFragmentAccuracyType() + " as MS2 tolerances; ";
         PTMFactory ptmFactory = PTMFactory.getInstance();
         ArrayList<String> fixedPtmsNames = searchParameters.getPtmSettings().getFixedModifications();
         if (!fixedPtmsNames.isEmpty()) {

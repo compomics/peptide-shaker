@@ -2866,9 +2866,9 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         prideParametersReport += "<br><b>Fragment Ion Mass Tolerance:</b> ";
         if (fragmentIonMassTolerance != null) {
             prideSearchParameters.setFragmentIonAccuracy(fragmentIonMassTolerance);
-            prideParametersReport += fragmentIonMassTolerance + " Da";
+            prideParametersReport += fragmentIonMassTolerance + " " + prideSearchParameters.getFragmentAccuracyType();
         } else {
-            prideParametersReport += prideSearchParameters.getFragmentIonAccuracy() + " Da (default)"; // @TODO: what about accuracy in ppm
+            prideParametersReport += prideSearchParameters.getFragmentIonAccuracy() + " " + prideSearchParameters.getFragmentAccuracyType();
         }
 
         // set the precursor ion accuracy
