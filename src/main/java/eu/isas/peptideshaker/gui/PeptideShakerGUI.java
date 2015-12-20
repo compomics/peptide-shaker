@@ -2004,7 +2004,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }//GEN-LAST:event_aboutJMenuItemActionPerformed
 
     /**
-     * Opens the Identification Preference dialog.
+     * Opens the AnnotationSettingsDialog.
      *
      * @param evt
      */
@@ -2012,10 +2012,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         PtmSettings ptmSettings = getIdentificationParameters().getSearchParameters().getPtmSettings();
         ArrayList<NeutralLoss> neutralLosses = IonFactory.getNeutralLosses(ptmSettings);
         ArrayList<Integer> reporterIons = new ArrayList<Integer>(IonFactory.getReporterIons(ptmSettings));
-        AnnotationSettingsDialog annotationSettingsDialog = new AnnotationSettingsDialog(this, getIdentificationParameters().getAnnotationPreferences(), neutralLosses, reporterIons, true);
+        AnnotationSettingsDialog annotationSettingsDialog = new AnnotationSettingsDialog(this, getIdentificationParameters().getAnnotationPreferences(), 
+                getIdentificationParameters().getSearchParameters().getFragmentIonAccuracy(), neutralLosses, reporterIons, true);
         if (!annotationSettingsDialog.isCanceled()) {
             AnnotationSettings newAnnotationSettings = annotationSettingsDialog.getAnnotationSettings();
-            if (!newAnnotationSettings.isSameAs(newAnnotationSettings)) {
+            if (!newAnnotationSettings.isSameAs(getIdentificationParameters().getAnnotationPreferences())) {
                 getIdentificationParameters().setAnnotationSettings(newAnnotationSettings);
                 updateSpectrumAnnotations();
                 setDataSaved(false);
@@ -4954,7 +4955,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         try {
             AnnotationSettings annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
 
-            specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(specificAnnotationPreferences.getSpectrumKey(), specificAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingPreferences(), getIdentificationParameters().getPtmScoringPreferences().getSequenceMatchingPreferences());
+            specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(specificAnnotationPreferences.getSpectrumKey(), 
+                    specificAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingPreferences(), 
+                    getIdentificationParameters().getPtmScoringPreferences().getSequenceMatchingPreferences());
 
             if (!defaultAnnotationCheckBoxMenuItem.isSelected()) {
 
