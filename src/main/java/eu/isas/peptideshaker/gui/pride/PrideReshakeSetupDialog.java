@@ -199,7 +199,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             }
         }
 
-        // filter the specturm table
+        // filter the spectrum table
         List<RowFilter<Object, Object>> spectrumFileFilters = new ArrayList<RowFilter<Object, Object>>();
 
         // reshakeble filter

@@ -28,10 +28,15 @@ public class PridePrivateDataDialog extends javax.swing.JDialog {
      *
      * @param parent the parent frame
      * @param modal if the dialog is to be modal or not
+     * @param pxAccesion the PX accession to open, can be null
      */
-    public PridePrivateDataDialog(java.awt.Frame parent, boolean modal) {
+    public PridePrivateDataDialog(java.awt.Frame parent, boolean modal, String pxAccesion) {
         super(parent, modal);
         initComponents();
+        if (pxAccesion != null) {
+            accessionTextField.setText(pxAccesion);
+            userNameTextField.requestFocus();
+        }
         setLocationRelativeTo(parent);
         setVisible(true);
     }

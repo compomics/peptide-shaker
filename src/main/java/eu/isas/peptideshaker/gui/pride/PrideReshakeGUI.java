@@ -236,8 +236,29 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             if (dataTypeSelectionDialog.isPublic()) {
                 loadPublicProjects();
             } else {
-                getPrivateProjectDetails();
+                getPrivateProjectDetails(null);
             }
+        }
+    }
+
+    /**
+     * Creates a new PrideReShakeGUI frame.
+     *
+     * @param peptideShakerGUI the PeptideShakerGUI parent
+     * @param pxAccession the PX accession to display
+     * @param privateData if true, the private data login screen is displayed
+     */
+    public PrideReshakeGUI(PeptideShakerGUI peptideShakerGUI, String pxAccession, boolean privateData) {
+        this.peptideShakerGUI = peptideShakerGUI;
+        initComponents();
+        setUpGui();
+        this.setExtendedState(MAXIMIZED_BOTH);
+        setVisible(true);
+
+        if (privateData) {
+            getPrivateProjectDetails(pxAccession);
+        } else {
+            loadSpecificProject(pxAccession);
         }
     }
 
@@ -445,9 +466,11 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
     /**
      * Get the private project details from the user.
+     * 
+     * @param pxAccesion the PX accession to open, can be null
      */
-    private void getPrivateProjectDetails() {
-        PridePrivateDataDialog pridePrivateDataDialog = new PridePrivateDataDialog(this, true);
+    private void getPrivateProjectDetails(String pxAccession) {
+        PridePrivateDataDialog pridePrivateDataDialog = new PridePrivateDataDialog(this, true, pxAccession);
         if (pridePrivateDataDialog.getProjectAccession() != null) {
             userName = pridePrivateDataDialog.getUserName();
             if (userName.lastIndexOf("@") == -1) {
@@ -524,6 +547,11 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).setMinimumChartValue(2.0);
 
                 projectsTable.repaint();
+                
+                if (projectsTable.getRowCount() > 0) {
+                    projectsTable.setRowSelectionInterval(0, 0);
+                    projectsTableMouseReleased(null);
+                }
 
                 this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1448,7 +1476,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      * @param evt
      */
     private void accessPrivateDataLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_accessPrivateDataLabelMouseClicked
-        getPrivateProjectDetails();
+        getPrivateProjectDetails(null);
         clearProjectFiltersLabelMouseClicked(null);
     }//GEN-LAST:event_accessPrivateDataLabelMouseClicked
 
@@ -2089,6 +2117,182 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     }
 
     /**
+     * Open a specific PX accession.
+     * 
+     * @param pxAccession the PX accession to display
+     */
+    private void loadSpecificProject(final String pxAccession) {
+
+        progressDialog = new ProgressDialogX(this,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
+        progressDialog.setTitle("Loading PRIDE Project. Please Wait...");
+
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    progressDialog.setVisible(true);
+                } catch (IndexOutOfBoundsException e) {
+                    // ignore
+                }
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("DisplayThread") {
+            @Override
+            public void run() {
+
+                DefaultTableModel projectsTableModel = (DefaultTableModel) projectsTable.getModel();
+                projectsTableModel.getDataVector().removeAllElements();
+                projectsTableModel.fireTableDataChanged();
+
+                DefaultTableModel assayTableModel = (DefaultTableModel) assaysTable.getModel();
+                assayTableModel.getDataVector().removeAllElements();
+                assayTableModel.fireTableDataChanged();
+
+                DefaultTableModel filesTableModel = (DefaultTableModel) filesTable.getModel();
+                filesTableModel.getDataVector().removeAllElements();
+                filesTableModel.fireTableDataChanged();
+
+                double maxNumAssays = 0;
+
+                String url = PROJECT_SERVICE_URL + "project/" + pxAccession;
+                RestTemplate template = new RestTemplate();
+
+                // get the project
+                try {
+                    speciesAll = new ArrayList<String>();
+                    instrumentsAll = new ArrayList<String>();
+                    ptmsAll = new ArrayList<String>();
+                    tissuesAll = new ArrayList<String>();
+                    projectTagsAll = new ArrayList<String>();
+
+                    ResponseEntity<ProjectDetail> projectDetail = template.getForEntity(url, ProjectDetail.class);
+                    
+                    ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
+                        (projectsTable.getRowCount() + 1),
+                        "<html><a href=\"" + DisplayFeaturesGenerator.getPrideProjectArchiveLink("" + projectDetail.getBody().getAccession())
+                        + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
+                        + projectDetail.getBody().getAccession() + "</font></a><html>",
+                        projectDetail.getBody().getTitle(),
+                        setToString(projectDetail.getBody().getProjectTags(), ", "),
+                        setToString(projectDetail.getBody().getSpecies(), ", "),
+                        setToString(projectDetail.getBody().getTissues(), ", "),
+                        setToString(projectDetail.getBody().getPtmNames(), "; "),
+                        setToString(projectDetail.getBody().getInstrumentNames(), ", "),
+                        projectDetail.getBody().getNumAssays(),
+                        projectDetail.getBody().getSubmissionType(),
+                        dateFormat.format(projectDetail.getBody().getPublicationDate())
+                    });
+
+                    if (projectDetail.getBody().getNumAssays() > maxNumAssays) {
+                        maxNumAssays = projectDetail.getBody().getNumAssays();
+                    }
+
+                    for (String species : projectDetail.getBody().getSpecies()) {
+                        if (!speciesAll.contains(species)) {
+                            speciesAll.add(species);
+                        }
+                    }
+                    for (String instrument : projectDetail.getBody().getInstrumentNames()) {
+                        if (!instrumentsAll.contains(instrument)) {
+                            instrumentsAll.add(instrument);
+                        }
+                    }
+                    for (String tissue : projectDetail.getBody().getTissues()) {
+                        if (!tissuesAll.contains(tissue)) {
+                            tissuesAll.add(tissue);
+                        }
+                    }
+                    for (String ptm : projectDetail.getBody().getPtmNames()) {
+                        if (!ptmsAll.contains(ptm)) {
+                            ptmsAll.add(ptm);
+                        }
+                    }
+
+                    for (String tag : projectDetail.getBody().getProjectTags()) {
+                        if (!projectTagsAll.contains(tag)) {
+                            projectTagsAll.add(tag);
+                        }
+                    }
+
+                    ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects (" + projectsTable.getRowCount() + ")");
+                    projectsPanel.repaint();
+
+                    // sort the lists
+                    Collections.sort(speciesAll);
+                    Collections.sort(instrumentsAll);
+                    Collections.sort(tissuesAll);
+                    Collections.sort(ptmsAll);
+                    Collections.sort(projectTagsAll);
+
+                    speciesAll.add(0, "");
+                    tissuesAll.add(0, "");
+                    instrumentsAll.add(0, "");
+                    ptmsAll.add(0, "");
+                    projectTagsAll.add(0, "");
+                    
+                    if (projectsTable.getRowCount() > 0) {
+                        projectsTable.setRowSelectionInterval(0, 0);
+                        projectsTableMouseReleased(null);
+                    }
+
+                    progressDialog.setRunFinished();
+
+                } catch (HttpServerErrorException e) {
+                    System.out.println("project");
+                    e.printStackTrace();
+                    progressDialog.setRunFinished();
+                    JOptionPane.showMessageDialog(null, JOptionEditorPane.getJOptionEditorPane(
+                            "PRIDE web service access error. Cannot open:<br>"
+                            + "project " + pxAccession + "<br>"
+                            + "Please contact the <a href=\"http://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
+                            "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+                } catch (ResourceAccessException e) {
+                    JOptionPane.showMessageDialog(null, "PRIDE web service could not be reached.\n Please make sure that you are online.", "Network Error", JOptionPane.WARNING_MESSAGE);
+                } catch (HttpMessageNotReadableException e) {
+                    System.out.println(url);
+                    e.printStackTrace();
+                    progressDialog.setRunFinished();
+                    JOptionPane.showMessageDialog(null, JOptionEditorPane.getJOptionEditorPane(
+                            "PRIDE web service access error. Cannot open:<br>"
+                            + url + "<br>"
+                            + "Please contact the <a href=\"http://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
+                            "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+                } catch (Exception e) {
+                    System.out.println(url);
+                    e.printStackTrace();
+                    progressDialog.setRunFinished();
+                    JOptionPane.showMessageDialog(null, JOptionEditorPane.getJOptionEditorPane(
+                            "PRIDE web service access error. Cannot open:<br>"
+                            + url + "<br>"
+                            + "Please contact the <a href=\"http://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
+                            "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+                }
+
+                ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Project (" + pxAccession + ")");
+                projectsPanel.repaint();
+
+                ((TitledBorder) assaysPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Assays");
+                projectsPanel.repaint();
+
+                ((TitledBorder) filesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Files");
+                projectsPanel.repaint();
+
+                // update the sparklines with the max values
+                projectsTable.getColumn("#Assays").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxNumAssays, peptideShakerGUI.getSparklineColor()));
+                ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
+                ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).setLogScale(true);
+                ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).setMinimumChartValue(2.0);
+
+                projectsTable.repaint();
+            }
+        }.start();
+    }
+
+    /**
      * Insert the public PRIDE project data.
      */
     private void loadPublicProjects() {
@@ -2313,10 +2517,9 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      *
      * @param aWorkingFolder the working folder
      * @param selectedSpectrumFileLinks the selected spectrum files
-     * @param selectedFileNames the file names of the selected spectrum
-     * files
-     * @param selectedSearchSettingsFileLink the selected search settings file, can
-     * be null
+     * @param selectedFileNames the file names of the selected spectrum files
+     * @param selectedSearchSettingsFileLink the selected search settings file,
+     * can be null
      * @param database the database
      * @param aSpecies the current species
      * @param fileSizes the file sizes
@@ -3066,15 +3269,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         }
 
         return fixedPtm;
-    }
-
-    public static void main(String[] args) {
-        PrideReshakeGUI test = new PrideReshakeGUI(null);
-        try {
-            test.unzipProject();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**

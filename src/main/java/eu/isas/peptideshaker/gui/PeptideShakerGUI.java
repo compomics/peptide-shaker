@@ -100,6 +100,7 @@ import eu.isas.peptideshaker.filtering.PsmFilter;
 import eu.isas.peptideshaker.gui.exportdialogs.MethodsSectionDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.MzIdentMLExportDialog;
 import eu.isas.peptideshaker.gui.filtering.FilterDialog;
+import eu.isas.peptideshaker.gui.pride.PrideReshakeGUI;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences.PeptideShakerPathKey;
@@ -424,13 +425,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             JOptionPane.showMessageDialog(null, "An error occurred while loading the species mapping.", "File Error", JOptionPane.OK_OPTION);
         }
 
-        // see if a cps or url is to be opened
+        // see if a cps or url is to be opened, or a px accesion for reshake
         File cpsFile = null;
         boolean cps = false;
         String zipUrl = null;
         boolean url = false;
         String zipUrlDownloadFolder = null;
         boolean downloadFolder = false;
+        String pxAccession = null;
+        boolean pxAccessionProvided = false;
+        boolean pxAccessionPrivate = false;
 
         for (String arg : args) {
             if (cps) {
@@ -442,6 +446,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             } else if (downloadFolder) {
                 zipUrlDownloadFolder = arg;
                 downloadFolder = false;
+            } else if (pxAccessionProvided) {
+                pxAccession = arg;
+                pxAccessionProvided = false;
             }
 
             if (arg.equals(ToolFactory.peptideShakerFileOption)) {
@@ -450,6 +457,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 url = true;
             } else if (arg.equals(ToolFactory.peptideShakerUrlDownloadFolderOption)) {
                 downloadFolder = true;
+            } else if (arg.equals(ToolFactory.peptideShakerPxAccessionOption)) {
+                pxAccessionProvided = true;
+            } else if (arg.equals(ToolFactory.peptideShakerPxAccessionPrivateOption)) {
+                pxAccessionPrivate = true;
             }
         }
 
@@ -461,7 +472,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     JOptionPane.WARNING_MESSAGE);
         }
 
-        new PeptideShakerGUI(cpsFile, zipUrl, zipUrlDownloadFolder, true);
+        new PeptideShakerGUI(cpsFile, zipUrl, zipUrlDownloadFolder, pxAccession, pxAccessionPrivate, true);
     }
 
     /**
@@ -485,12 +496,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * Creates a new PeptideShaker frame.
      *
      * @param cpsFile the cps file to load
-     * @param zipURL the URL to a zipped cps file to download and load
-     * @param zipUrlDownloadFolder the folder to download the URL to
+     * @param zipURL the URL to a zipped cps file to download and load, can be null
+     * @param zipUrlDownloadFolder the folder to download the URL to, can be null
+     * @param pxAccession a PX accession to open in the PRIDE Reshake, can be null
+     * @param pxAccessionPrivate if true, the PX accession is private
      * @param showWelcomeDialog boolean indicating if the Welcome Dialog is to
      * be shown
      */
-    public PeptideShakerGUI(File cpsFile, String zipURL, String zipUrlDownloadFolder, boolean showWelcomeDialog) {
+    public PeptideShakerGUI(File cpsFile, String zipURL, String zipUrlDownloadFolder, String pxAccession, boolean pxAccessionPrivate, boolean showWelcomeDialog) {
 
         // set up the ErrorLog
         setUpLogFile(true);
@@ -623,6 +636,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             } else if (zipURL != null) {
                 setVisible(true);
                 importPeptideShakerZipFromURL(zipURL, zipUrlDownloadFolder);
+            } else if (pxAccession != null) { 
+                new PrideReshakeGUI(this, pxAccession, pxAccessionPrivate);
             } else if (showWelcomeDialog) {
                 // open the welcome dialog
                 new WelcomeDialog(this, !java64bit || !memoryOk, javaVersionWarning, true);
