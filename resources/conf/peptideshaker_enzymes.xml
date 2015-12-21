@@ -279,4 +279,14 @@
 		<semiSpecific> no </semiSpecific>
 		<wholeProtein> no </wholeProtein>
 	</enzyme>
+	<enzyme>
+		<id> 28 </id>
+		<name> Semi-Arg-C </name>
+		<aminoAcidBefore> R </aminoAcidBefore>
+		<restrictionBefore> </restrictionBefore>
+		<aminoAcidAfter> </aminoAcidAfter>
+		<restrictionAfter> P </restrictionAfter>
+		<semiSpecific> yes </semiSpecific>
+		<wholeProtein> no </wholeProtein>
+	</enzyme>
 </xml>
