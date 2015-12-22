@@ -91,6 +91,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     public PeptideShakerCLI(PeptideShakerCLIInputBean cliInputBean) {
         this.cliInputBean = cliInputBean;
         loadEnzymes();
+        loadSpecies();
     }
 
     /**
@@ -807,6 +808,19 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             enzymeFactory.importEnzymes(lEnzymeFile);
         } catch (Exception e) {
             System.err.println("Not able to load the enzyme file.");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Loads the species from the species file into the species factory.
+     */
+    private void loadSpecies() {
+        try {
+            SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
+            speciesFactory.initiate(PeptideShaker.getJarFilePath());
+        } catch (Exception e) {
+            System.out.println("An error occurred while loading the species.");
             e.printStackTrace();
         }
     }

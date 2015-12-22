@@ -6,6 +6,7 @@ import com.compomics.util.Util;
 import com.compomics.util.db.DerbyUtil;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
@@ -59,6 +60,7 @@ public class FollowUpCLI extends CpsParent {
         this.followUpCLIInputBean = followUpCLIInputBean;
         loadEnzymes();
         loadPtms();
+        loadSpecies();
     }
 
     /**
@@ -373,6 +375,19 @@ public class FollowUpCLI extends CpsParent {
             enzymeFactory.importEnzymes(lEnzymeFile);
         } catch (Exception e) {
             System.err.println("Not able to load the enzyme file.");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Loads the species from the species file into the species factory.
+     */
+    private void loadSpecies() {
+        try {
+            SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
+            speciesFactory.initiate(PeptideShaker.getJarFilePath());
+        } catch (Exception e) {
+            System.out.println("An error occurred while loading the species.");
             e.printStackTrace();
         }
     }
