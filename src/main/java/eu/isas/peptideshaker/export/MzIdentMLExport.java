@@ -1834,7 +1834,7 @@ public class MzIdentMLExport {
      * reading/writing a file
      */
     private void writeMzIdentMLStartTag() throws IOException {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         br.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.getProperty("line.separator"));
 
         if (mzidVersion_1_2) {

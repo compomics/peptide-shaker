@@ -6105,7 +6105,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                             String report = cpsParent.getExtendedProjectReport(null);
 
                             if (report != null) {
-                                DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh.mm.ss");
+                                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss");
                                 String fileName = "PeptideShaker Report " + cpsParent.getCpsFile().getName() + " " + df.format(new Date()) + ".html";
                                 File psReportFile = new File(cpsParent.getCpsFile().getParentFile(), fileName);
                                 FileWriter fw = new FileWriter(psReportFile);

@@ -420,7 +420,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         if (report != null) {
 
             try {
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh.mm.ss");
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss");
                 File psReportFile;
                 File logReportFile = null;
                 PathSettingsCLIInputBean pathSettingsCLIInputBean = cliInputBean.getPathSettingsCLIInputBean();
