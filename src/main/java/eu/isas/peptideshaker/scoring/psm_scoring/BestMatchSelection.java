@@ -177,7 +177,7 @@ public class BestMatchSelection {
                                 if (!identifications.contains(id)) {
 
                                     boolean filterPassed1 = true;
-                                    if (!peptideAssumptionFilter.validatePeptide(peptide1, sequenceMatchingPreferences)
+                                    if (!peptideAssumptionFilter.validatePeptide(peptide1, sequenceMatchingPreferences, searchParameters.getEnzyme())
                                             || !peptideAssumptionFilter.validateModifications(peptide1, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getPtmSettings())
                                             || !peptideAssumptionFilter.validatePrecursor(peptideAssumption1, spectrumKey, spectrumFactory, searchParameters)
                                             || !peptideAssumptionFilter.validateProteins(peptide1, sequenceMatchingPreferences)) {

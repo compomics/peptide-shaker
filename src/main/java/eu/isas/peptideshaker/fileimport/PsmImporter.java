@@ -640,7 +640,7 @@ public class PsmImporter {
                             PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                             Peptide peptide = peptideAssumption.getPeptide();
                             boolean filterPassed = true;
-                            if (!peptideAssumptionFilter.validatePeptide(peptide, sequenceMatchingPreferences)) {
+                            if (!peptideAssumptionFilter.validatePeptide(peptide, sequenceMatchingPreferences, searchParameters.getEnzyme())) {
                                 filterPassed = false;
                                 peptideIssue++;
                             } else if (!peptideAssumptionFilter.validateModifications(peptide, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getPtmSettings())) {

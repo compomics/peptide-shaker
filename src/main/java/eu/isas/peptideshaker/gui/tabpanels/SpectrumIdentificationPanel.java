@@ -2868,7 +2868,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         ArrayList<SpectrumIdentificationAssumption> tempAssumptions = algorithmMap.get(sequence);
                         for (SpectrumIdentificationAssumption tempAssumption : tempAssumptions) {
                             if (peptideShakerGUI.getIdentificationParameters().getPeptideAssumptionFilter().validatePeptide(
-                                    ((PeptideAssumption) tempAssumption).getPeptide(), peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                                    ((PeptideAssumption) tempAssumption).getPeptide(), 
+                                    peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences(),
+                                    peptideShakerGUI.getIdentificationParameters().getSearchParameters().getEnzyme())) {
                                 if (vallidatedPsmsCheckBox.isSelected()) {
                                     psParameter = (PSParameter) tempAssumption.getUrParam(psParameter);
                                     if (psParameter.getMatchValidationLevel().isValidated()) {

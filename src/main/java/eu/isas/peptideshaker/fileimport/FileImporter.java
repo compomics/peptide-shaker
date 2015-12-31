@@ -698,7 +698,7 @@ public class FileImporter {
             // set the search engine name and version for this file
             HashMap<String, ArrayList<String>> software = fileReader.getSoftwareVersions();
             projectDetails.setIdentificationAlgorithmsForFile(Util.getFileName(idFile), software);
-            
+
             // check for unsupported software
             if (!software.isEmpty()) {
                 for (String advocateName : software.keySet()) {
@@ -844,8 +844,28 @@ public class FileImporter {
                             }
                             share = 100 * ((double) peptideIssue) / totalAssumptionsRejected;
                             if (share >= 1) {
-                                waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1)
-                                        + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ".", true, true);
+                                if (identificationParameters.getPeptideAssumptionFilter().getMinMissedCleavages() != null
+                                        || identificationParameters.getPeptideAssumptionFilter().getMaxMissedCleavages() != null) {
+
+                                    Integer minMissedCleavages = idFilter.getMinMissedCleavages();
+                                    Integer maxMissedCleavages = idFilter.getMaxMissedCleavages();
+
+                                    if (minMissedCleavages == null) {
+                                        minMissedCleavages = 0;
+                                    }
+                                    if (maxMissedCleavages != null) {
+                                        waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1)
+                                                + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ",", true, true);
+                                        waitingHandler.appendReport(padding + "    or number of missed cleavage sites outside of the range [" + minMissedCleavages + "-" + maxMissedCleavages + "].", true, true);
+                                    } else {
+                                        waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1)
+                                                + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ",", true, true);
+                                        waitingHandler.appendReport(padding + "    or number of missed cleavage sites lower than " + minMissedCleavages + ".", true, true);
+                                    }
+                                } else {
+                                    waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1)
+                                            + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ".", true, true);
+                                }
                             }
                             share = 100 * ((double) precursorIssue) / totalAssumptionsRejected;
                             if (share >= 1) {
