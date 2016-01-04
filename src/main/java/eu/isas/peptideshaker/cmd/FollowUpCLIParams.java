@@ -10,6 +10,7 @@ import org.apache.commons.cli.Options;
  * Enum class specifying the Command Line Parameters for follow up analysis.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public enum FollowUpCLIParams {
 
@@ -108,14 +109,14 @@ public enum FollowUpCLIParams {
         String output = "";
         String formatter = "%-35s";
 
-        output += "Mandatory parameter:\n\n";
-        output += "-" + String.format(formatter, CPS_FILE.id) + CPS_FILE.description + "\n";
+        output += "Mandatory Parameter:\n\n";
+        output += "-" + String.format(formatter, CPS_FILE.id) + " " + CPS_FILE.description + "\n";
 
-        output += "\n\nOptional output parameters:\n";
+        output += "\n\nOptional Output Parameters:\n";
         output += getOutputOptionsAsString();
 
-        output += "\n\nOptional temporary folder:\n\n";
-        output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + PathSettingsCLIParams.ALL.description + "\n";
+        output += "\n\nOptional Temporary Folder:\n\n";
+        output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + " " + PathSettingsCLIParams.ALL.description + "\n";
 
         return output;
     }
@@ -130,39 +131,39 @@ public enum FollowUpCLIParams {
         String output = "";
         String formatter = "%-35s";
 
-        output += "\nRecalibration parameters:\n\n";
-        output += "-" + String.format(formatter, RECALIBRATION_FOLDER.id) + RECALIBRATION_FOLDER.description + "\n";
-        output += "-" + String.format(formatter, RECALIBRATION_MODE.id) + RECALIBRATION_MODE.description + "\n";
+        output += "\nRecalibration Parameters:\n\n";
+        output += "-" + String.format(formatter, RECALIBRATION_FOLDER.id) + " " + RECALIBRATION_FOLDER.description + "\n";
+        output += "-" + String.format(formatter, RECALIBRATION_MODE.id) + " " + RECALIBRATION_MODE.description + "\n";
         
-        output += "\nSpectrum export:\n\n";
-        output += "-" + String.format(formatter, SPECTRUM_FOLDER.id) + SPECTRUM_FOLDER.description + "\n";
-        output += "-" + String.format(formatter, PSM_TYPE.id) + PSM_TYPE.description + "\n";
+        output += "\nSpectrum Export:\n\n";
+        output += "-" + String.format(formatter, SPECTRUM_FOLDER.id) + " " + SPECTRUM_FOLDER.description + "\n";
+        output += "-" + String.format(formatter, PSM_TYPE.id) + " " + PSM_TYPE.description + "\n";
         
-        output += "\nProgenesis export:\n\n";
-        output += "-" + String.format(formatter, PROGENESIS_FILE.id) + PROGENESIS_FILE.description + "\n";
-        output += "-" + String.format(formatter, PROGENESIS_TYPE.id) + PROGENESIS_TYPE.description + "\n";
-        output += "-" + String.format(formatter, PROGENESIS_TARGETED_PTMS.id) + PROGENESIS_TARGETED_PTMS.description + "\n";
+        output += "\nProgenesis Export:\n\n";
+        output += "-" + String.format(formatter, PROGENESIS_FILE.id) + " " + PROGENESIS_FILE.description + "\n";
+        output += "-" + String.format(formatter, PROGENESIS_TYPE.id) + " " + PROGENESIS_TYPE.description + "\n";
+        output += "-" + String.format(formatter, PROGENESIS_TARGETED_PTMS.id) + " " + PROGENESIS_TARGETED_PTMS.description + "\n";
         
-        output += "\nAccessions export:\n\n";
-        output += "-" + String.format(formatter, ACCESSIONS_FILE.id) + ACCESSIONS_FILE.description + "\n";
-        output += "-" + String.format(formatter, ACCESSIONS_TYPE.id) + ACCESSIONS_TYPE.description + "\n";
+        output += "\nAccessions Export:\n\n";
+        output += "-" + String.format(formatter, ACCESSIONS_FILE.id) + " " + ACCESSIONS_FILE.description + "\n";
+        output += "-" + String.format(formatter, ACCESSIONS_TYPE.id) + " " + ACCESSIONS_TYPE.description + "\n";
         
-        output += "\nFASTA export:\n\n";
-        output += "-" + String.format(formatter, FASTA_FILE.id) + FASTA_FILE.description + "\n";
-        output += "-" + String.format(formatter, FASTA_TYPE.id) + FASTA_TYPE.description + "\n";
+        output += "\nFASTA Export:\n\n";
+        output += "-" + String.format(formatter, FASTA_FILE.id) + " " + FASTA_FILE.description + "\n";
+        output += "-" + String.format(formatter, FASTA_TYPE.id) + " " + FASTA_TYPE.description + "\n";
         
-        output += "\nPepnovo training files export:\n\n";
-        output += "-" + String.format(formatter, PEPNOVO_TRAINING_FOLDER.id) + PEPNOVO_TRAINING_FOLDER.description + "\n";
-        output += "-" + String.format(formatter, PEPNOVO_TRAINING_RECALIBRATION.id) + PEPNOVO_TRAINING_RECALIBRATION.description + "\n";
-        output += "-" + String.format(formatter, PEPNOVO_TRAINING_FDR.id) + PEPNOVO_TRAINING_FDR.description + "\n";
-        output += "-" + String.format(formatter, PEPNOVO_TRAINING_FNR.id) + PEPNOVO_TRAINING_FNR.description + "\n";
+        output += "\nPepNovo Training Files Export:\n\n";
+        output += "-" + String.format(formatter, PEPNOVO_TRAINING_FOLDER.id) + " " + PEPNOVO_TRAINING_FOLDER.description + "\n";
+        output += "-" + String.format(formatter, PEPNOVO_TRAINING_RECALIBRATION.id) + " " + PEPNOVO_TRAINING_RECALIBRATION.description + "\n";
+        output += "-" + String.format(formatter, PEPNOVO_TRAINING_FDR.id) + " " + PEPNOVO_TRAINING_FDR.description + "\n";
+        output += "-" + String.format(formatter, PEPNOVO_TRAINING_FNR.id) + " " + PEPNOVO_TRAINING_FNR.description + "\n";
         
-        output += "\nInclusion list generation\n\n";
-        output += "-" + String.format(formatter, INCLUSION_LIST_FILE.id) + INCLUSION_LIST_FILE.description + "\n";
-        output += "-" + String.format(formatter, INCLUSION_LIST_FORMAT.id) + INCLUSION_LIST_FORMAT.description + "\n";
-        output += "-" + String.format(formatter, INCLUSION_LIST_PEPTIDE_FILTERS.id) + INCLUSION_LIST_PEPTIDE_FILTERS.description + "\n";
-        output += "-" + String.format(formatter, INCLUSION_LIST_PROTEIN_FILTERS.id) + INCLUSION_LIST_PROTEIN_FILTERS.description + "\n";
-        output += "-" + String.format(formatter, INCLUSION_LIST_RT_WINDOW.id) + INCLUSION_LIST_RT_WINDOW.description + "\n";
+        output += "\nInclusion List Generation\n\n";
+        output += "-" + String.format(formatter, INCLUSION_LIST_FILE.id) + " " + INCLUSION_LIST_FILE.description + "\n";
+        output += "-" + String.format(formatter, INCLUSION_LIST_FORMAT.id) + " " + INCLUSION_LIST_FORMAT.description + "\n";
+        output += "-" + String.format(formatter, INCLUSION_LIST_PEPTIDE_FILTERS.id) + " " + INCLUSION_LIST_PEPTIDE_FILTERS.description + "\n";
+        output += "-" + String.format(formatter, INCLUSION_LIST_PROTEIN_FILTERS.id) + " " + INCLUSION_LIST_PROTEIN_FILTERS.description + "\n";
+        output += "-" + String.format(formatter, INCLUSION_LIST_RT_WINDOW.id) + " " + INCLUSION_LIST_RT_WINDOW.description + "\n";
         
         return output;
     }

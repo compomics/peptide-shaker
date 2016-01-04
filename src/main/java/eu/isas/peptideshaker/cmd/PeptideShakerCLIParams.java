@@ -92,32 +92,32 @@ public enum PeptideShakerCLIParams {
         String output = "";
         String formatter = "%-35s";
 
-        output += "Mandatory parameters:\n\n";
-        output += "-" + String.format(formatter, EXPERIMENT.id) + EXPERIMENT.description + "\n";
-        output += "-" + String.format(formatter, SAMPLE.id) + SAMPLE.description + "\n";
-        output += "-" + String.format(formatter, REPLICATE.id) + REPLICATE.description + "\n";
-        output += "-" + String.format(formatter, IDENTIFICATION_FILES.id) + IDENTIFICATION_FILES.description + "\n";
-        output += "-" + String.format(formatter, PEPTIDESHAKER_OUTPUT.id) + PEPTIDESHAKER_OUTPUT.description + "\n";
+        output += "Mandatory Parameters:\n\n";
+        output += "-" + String.format(formatter, EXPERIMENT.id) + " " + EXPERIMENT.description + "\n";
+        output += "-" + String.format(formatter, SAMPLE.id) + " " + SAMPLE.description + "\n";
+        output += "-" + String.format(formatter, REPLICATE.id) + " " + REPLICATE.description + "\n";
+        output += "-" + String.format(formatter, IDENTIFICATION_FILES.id) + " " + IDENTIFICATION_FILES.description + "\n";
+        output += "-" + String.format(formatter, PEPTIDESHAKER_OUTPUT.id) + " " + PEPTIDESHAKER_OUTPUT.description + "\n";
 
-        output += "\n\nOptional input parameter:\n\n";
-        output += "-" + String.format(formatter, SPECTRUM_FILES.id) + SPECTRUM_FILES.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.id) + IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.description + "\n";
+        output += "\n\nOptional Input Parameter:\n\n";
+        output += "-" + String.format(formatter, SPECTRUM_FILES.id) + " " + SPECTRUM_FILES.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.id) + " " + IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.description + "\n";
         
-        output += "\n\nOptional gene annotation parameter:\n\n";
-        output += "-" + String.format(formatter, SPECIES_UPDATE.id) + SPECIES_UPDATE.description + "\n";
+        output += "\n\nOptional Gene Annotation Parameter:\n\n";
+        output += "-" + String.format(formatter, SPECIES_UPDATE.id) + " " + SPECIES_UPDATE.description + "\n";
         
-        output += "\n\nOptional processing parameters:\n\n";
-        output += "-" + String.format(formatter, GUI.id) + GUI.description + "\n";
-        output += "-" + String.format(formatter, THREADS.id) + THREADS.description + "\n";
+        output += "\n\nOptional Processing Parameters:\n\n";
+        output += "-" + String.format(formatter, GUI.id) + " " + GUI.description + "\n";
+        output += "-" + String.format(formatter, THREADS.id) + " " + THREADS.description + "\n";
 
-        output += "\n\nOptional export parameters:\n\n";
-        output += "-" + String.format(formatter, ZIP.id) + ZIP.description + "\n";
+        output += "\n\nOptional Export Parameters:\n\n";
+        output += "-" + String.format(formatter, ZIP.id) + " " + ZIP.description + "\n";
 
-        output += "\n\nOptional log folder:\n\n";
-        output += "-" + String.format(formatter, LOG.id) + LOG.description + "\n";
+        output += "\n\nOptional Log Folder:\n\n";
+        output += "-" + String.format(formatter, LOG.id) + " " + LOG.description + "\n";
 
-        output += "\n\nOptional temporary folder:\n\n";
-        output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + PathSettingsCLIParams.ALL.description + "\n";
+        output += "\n\nOptional Temporary Folder:\n\n";
+        output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + " " + PathSettingsCLIParams.ALL.description + "\n";
 
         output += "\n\n\nFor identification parameters options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.IdentificationParametersCLI\n\n";
         output += "\n\n\nFor follow up export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.FollowUpCLI\n\n";

@@ -80,22 +80,22 @@ public enum MzidCLIParams {
         String output = "";
         String formatter = "%-35s";
 
-        output += "Mandatory parameters:\n\n";
+        output += "Mandatory Parameters:\n\n";
         for (MzidCLIParams mzidCLIParams : values()) {
             if (mzidCLIParams.mandatory) {
-                output += "-" + String.format(formatter, mzidCLIParams.id) + mzidCLIParams.description + "\n";
+                output += "-" + String.format(formatter, mzidCLIParams.id) + " " + mzidCLIParams.description + "\n";
             }
         }
 
-        output += "\n\nOptional annotation parameters:\n";
+        output += "\n\nOptional Annotation Parameters:\n";
         for (MzidCLIParams mzidCLIParams : values()) {
             if (!mzidCLIParams.mandatory) {
-                output += "-" + String.format(formatter, mzidCLIParams.id) + mzidCLIParams.description + "\n";
+                output += "-" + String.format(formatter, mzidCLIParams.id) + " " + mzidCLIParams.description + "\n";
             }
         }
 
-        output += "\n\nOptional temporary folder:\n";
-        output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + PathSettingsCLIParams.ALL.description + "\n";
+        output += "\n\nOptional Temporary Folder:\n";
+        output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + " " + PathSettingsCLIParams.ALL.description + "\n";
 
         return output;
     }
