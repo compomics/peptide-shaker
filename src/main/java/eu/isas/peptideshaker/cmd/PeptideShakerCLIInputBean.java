@@ -472,5 +472,5 @@ public class PeptideShakerCLIInputBean {
 //        }
 
         return true;
-    }
+    }    
 }

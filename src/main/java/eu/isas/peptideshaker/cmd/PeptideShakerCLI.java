@@ -8,8 +8,8 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.EnzymeFactory;
+import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
@@ -82,16 +82,22 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
 
     /**
-     * Construct a new PeptideShakerCLI runnable from a PeptideShakerCLI Bean.
-     * When initialization is successful, calling "run" will start PeptideShaker
-     * and write the output files when finished.
+     * Construct a new PeptideShakerCLI runnable. When initialization is
+     * successful and the PeptideShakerCLIInputBean is set, calling "run" will
+     * start PeptideShaker and write the output files when finished.
+     */
+    public PeptideShakerCLI() {
+        loadEnzymes();
+        loadSpecies();
+    }
+
+    /**
+     * Set the PeptideShakerCLIInputBean.
      *
      * @param cliInputBean the PeptideShakerCLIInputBean
      */
-    public PeptideShakerCLI(PeptideShakerCLIInputBean cliInputBean) {
+    public void setPeptideShakerCLIInputBean(PeptideShakerCLIInputBean cliInputBean) {
         this.cliInputBean = cliInputBean;
-        loadEnzymes();
-        loadSpecies();
     }
 
     /**
@@ -836,7 +842,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     }
 
     /**
-     * redirects the error stream to the PeptideShaker.log of a given folder.
+     * Redirects the error stream to the PeptideShaker.log of a given folder.
      *
      * @param logFolder the folder where to save the log
      */
@@ -884,8 +890,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
                 System.exit(0);
             } else {
+                PeptideShakerCLI lPeptideShakerCLI = new PeptideShakerCLI();
                 PeptideShakerCLIInputBean lCLIBean = new PeptideShakerCLIInputBean(line);
-                PeptideShakerCLI lPeptideShakerCLI = new PeptideShakerCLI(lCLIBean);
+                lPeptideShakerCLI.setPeptideShakerCLIInputBean(lCLIBean);
                 lPeptideShakerCLI.call();
             }
         } catch (OutOfMemoryError e) {
