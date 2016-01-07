@@ -47,7 +47,6 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.*;
-import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -1916,12 +1915,12 @@ public class MzIdentMLExport {
     private void writeCvTerm(CvTerm cvTerm) throws IOException {
 
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "cvRef=\"" + Charset.forName("UTF-8").encode(cvTerm.getOntology()) + "\" "
+                + "cvRef=\"" + new String(cvTerm.getOntology().getBytes("UTF-8")) + "\" "
                 + "accession=\"" + cvTerm.getAccession() + "\" "
-                + "name=\"" + Charset.forName("UTF-8").encode(cvTerm.getName()) + "\"");
+                + "name=\"" + new String(cvTerm.getName().getBytes("UTF-8")) + "\"");
 
         if (cvTerm.getValue() != null) {
-            br.write(" value=\"" + Charset.forName("UTF-8").encode(cvTerm.getValue()) + "\"/>" + System.getProperty("line.separator"));
+            br.write(" value=\"" + new String(cvTerm.getValue().getBytes("UTF-8")) + "\"/>" + System.getProperty("line.separator"));
         } else {
             br.write("/>" + System.getProperty("line.separator"));
         }
@@ -1933,7 +1932,7 @@ public class MzIdentMLExport {
      * @param userParamAsString the user parameter as a string
      */
     private void writeUserParam(String userParamAsString) throws IOException {
-        br.write(getCurrentTabSpace() + "<userParam name=\"" + Charset.forName("UTF-8").encode(userParamAsString) + "\"/>" + System.getProperty("line.separator")); // @replace...
+        br.write(getCurrentTabSpace() + "<userParam name=\"" + new String(userParamAsString.getBytes("UTF-8")) + "\"/>" + System.getProperty("line.separator")); // @replace...
     }
 
     /**
@@ -1943,6 +1942,6 @@ public class MzIdentMLExport {
      * @param value the value of the user parameter
      */
     private void writeUserParam(String name, String value) throws IOException {
-        br.write(getCurrentTabSpace() + "<userParam name=\"" + Charset.forName("UTF-8").encode(name) + "\" value=\"" + Charset.forName("UTF-8").encode(value) + "\" />" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<userParam name=\"" + new String(name.getBytes("UTF-8")) + "\" value=\"" + new String(value.getBytes("UTF-8")) + "\" />" + System.getProperty("line.separator"));
     }
 }

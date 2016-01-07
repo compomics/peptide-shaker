@@ -43,12 +43,10 @@ import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.*;
-import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import org.apache.commons.lang3.StringEscapeUtils;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -1564,12 +1562,12 @@ public class PrideXmlExport {
     private void writeCvTerm(CvTerm cvTerm) throws IOException {
 
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "cvLabel=\"" + Charset.forName("UTF-8").encode(cvTerm.getOntology()) + "\" "
+                + "cvLabel=\"" + new String(cvTerm.getOntology().getBytes("UTF-8")) + "\" "
                 + "accession=\"" + cvTerm.getAccession() + "\" "
-                + "name=\"" + Charset.forName("UTF-8").encode(cvTerm.getName()) + "\"");
+                + "name=\"" + new String(cvTerm.getName().getBytes("UTF-8")) + "\"");
 
         if (cvTerm.getValue() != null) {
-            br.write(" value=\"" + Charset.forName("UTF-8").encode(cvTerm.getValue()) + "\" />" + System.getProperty("line.separator"));
+            br.write(" value=\"" + new String(cvTerm.getValue().getBytes("UTF-8")) + "\" />" + System.getProperty("line.separator"));
         } else {
             br.write(" />" + System.getProperty("line.separator"));
         }
