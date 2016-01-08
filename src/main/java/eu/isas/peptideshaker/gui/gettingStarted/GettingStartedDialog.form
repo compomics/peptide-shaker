@@ -103,13 +103,13 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                       <Component id="backButton" min="-2" pref="93" max="-2" attributes="0"/>
-                      <EmptySpace pref="74" max="32767" attributes="0"/>
+                      <EmptySpace pref="91" max="32767" attributes="0"/>
                       <Component id="compomicsButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                       <Component id="probeButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="isasButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="89" max="-2" attributes="0"/>
                       <Component id="nextButton" min="-2" pref="96" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -118,10 +118,14 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="backButton" alignment="2" max="32767" attributes="0"/>
-                  <Component id="isasButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="nextButton" alignment="2" min="-2" pref="61" max="-2" attributes="0"/>
-                  <Component id="probeButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="compomicsButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" alignment="2" groupAlignment="2" attributes="0">
+                      <Component id="nextButton" alignment="2" min="-2" pref="61" max="-2" attributes="0"/>
+                      <Group type="103" alignment="2" groupAlignment="0" attributes="0">
+                          <Component id="isasButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="probeButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="compomicsButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
               </Group>
             </DimensionLayout>
           </Layout>

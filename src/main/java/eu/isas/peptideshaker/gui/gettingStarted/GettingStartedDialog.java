@@ -205,23 +205,25 @@ public class GettingStartedDialog extends javax.swing.JDialog {
             .addGroup(buttonsAndLinksPanelLayout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
                 .addComponent(compomicsButton)
                 .addGap(26, 26, 26)
                 .addComponent(probeButton)
                 .addGap(18, 18, 18)
                 .addComponent(isasButton)
-                .addGap(49, 49, 49)
+                .addGap(89, 89, 89)
                 .addComponent(nextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         buttonsAndLinksPanelLayout.setVerticalGroup(
             buttonsAndLinksPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(backButton, javax.swing.GroupLayout.Alignment.CENTER, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(isasButton, javax.swing.GroupLayout.Alignment.CENTER)
-            .addComponent(nextButton, javax.swing.GroupLayout.Alignment.CENTER, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(probeButton, javax.swing.GroupLayout.Alignment.CENTER)
-            .addComponent(compomicsButton, javax.swing.GroupLayout.Alignment.CENTER)
+            .addGroup(javax.swing.GroupLayout.Alignment.CENTER, buttonsAndLinksPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                .addComponent(nextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(buttonsAndLinksPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(isasButton, javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(probeButton, javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(compomicsButton, javax.swing.GroupLayout.Alignment.CENTER)))
         );
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
