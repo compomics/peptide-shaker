@@ -11,8 +11,8 @@ import java.util.Arrays;
  */
 public enum PsPeptideFeature implements ExportFeature {
 
-    accessions("Protein(s)", "Protein(s) to which this peptide can be attached.", false),
-    protein_description("Description(s)", "Description of the Protein(s) to which this peptide can be attached.", false),
+    accessions("Protein(s)", "All Protein(s) to which this peptide can map.", false),
+    protein_description("Description(s)", "Description of the protein(s) to which this peptide can map.", false),
     unique("Unique", "Indicates whether the peptide is found uniquely in the protein match of interest.", false),
     pi("PI", "The protein inference status of this peptide.", false),
     sequence("Sequence", "Sequence of the peptide.", false),

@@ -79,6 +79,20 @@ public class PtmScoring implements Serializable {
     }
 
     /**
+     * Returns a set of sites where a score is available.
+     *
+     * @return a set of sites where a score is available
+     */
+    public Set<Integer> getScoredSites() {
+        Set<Integer> dSites = getDSites();
+        Set<Integer> pSites = getProbabilisticSites();
+        Set<Integer> result = new HashSet<Integer>(dSites.size() + pSites.size());
+        result.addAll(dSites);
+        result.addAll(pSites);
+        return result;
+    }
+
+    /**
      * Sets the delta score at a given site. First amino acid is 1.
      *
      * @param site the modification site
@@ -141,9 +155,9 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns a list of sites where the probabilistic score was used.
+     * Returns a set of sites where a probabilistic score is available
      *
-     * @return a list of sites where the probabilistic score was used
+     * @return a set of sites where a probabilistic score is available
      */
     public Set<Integer> getProbabilisticSites() {
         if (probabilisticScoresAtAA == null) {
@@ -186,9 +200,9 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns a list of sites where the D-score was used.
+     * Returns a set of sites where a D-score is available
      *
-     * @return a list of sites where the D-score was used
+     * @return a set of sites where a D-score is available
      */
     public Set<Integer> getDSites() {
         if (deltaScoresAtAA == null) {

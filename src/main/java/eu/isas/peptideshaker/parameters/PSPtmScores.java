@@ -1,11 +1,8 @@
 package eu.isas.peptideshaker.parameters;
 
-import com.compomics.util.experiment.biology.PTM;
-import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -103,11 +100,11 @@ public class PSPtmScores implements UrParameter {
 
         // add the PTM to the site map
         if (mainModificationSites == null) {
-            mainModificationSites = new HashMap<Integer, ArrayList<String>>();
+            mainModificationSites = new HashMap<Integer, ArrayList<String>>(1);
         }
         ArrayList<String> ptms = mainModificationSites.get(modificationSite);
         if (ptms == null) {
-            ptms = new ArrayList<String>();
+            ptms = new ArrayList<String>(1);
             mainModificationSites.put(modificationSite, ptms);
         }
         if (!ptms.contains(ptmName)) {
@@ -115,11 +112,11 @@ public class PSPtmScores implements UrParameter {
         }
         // add the site to the PTM map
         if (confidentModificationsByPTM == null) {
-            confidentModificationsByPTM = new HashMap<String, ArrayList<Integer>>();
+            confidentModificationsByPTM = new HashMap<String, ArrayList<Integer>>(1);
         }
         ArrayList<Integer> ptmSites = confidentModificationsByPTM.get(ptmName);
         if (ptmSites == null) {
-            ptmSites = new ArrayList<Integer>();
+            ptmSites = new ArrayList<Integer>(1);
             confidentModificationsByPTM.put(ptmName, ptmSites);
         }
         if (!ptmSites.contains(modificationSite)) {
