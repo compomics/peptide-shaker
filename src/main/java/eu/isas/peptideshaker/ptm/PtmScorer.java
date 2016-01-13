@@ -86,7 +86,7 @@ public class PtmScorer {
     /**
      * The math context to use when performing the PTM localization scoring.
      */
-    public static final MathContext mathContext = new MathContext(10, RoundingMode.HALF_DOWN);
+    public static final MathContext MATH_CONTEXT = new MathContext(10, RoundingMode.HALF_DOWN);
 
     /**
      * Constructor.
@@ -312,14 +312,14 @@ public class PtmScorer {
                 HashMap<Integer, Double> scores = null;
                 if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore && nMod.get(ptmMass) == 1) {
                     scores = AScore.getAScore(peptide, modifications.get(ptmMass), spectrum, annotationPreferences, specificAnnotationPreferences,
-                            scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences, ptmSequenceMatchingPreferences, peptideSpectrumAnnotator, mathContext);
+                            scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences, ptmSequenceMatchingPreferences, peptideSpectrumAnnotator, MATH_CONTEXT);
                     if (scores == null) {
                         throw new IllegalArgumentException("An error occurred while scoring spectrum " + spectrum.getSpectrumTitle() + "of file " + spectrum.getFileName() + " with the A-score."); // Most likely a compatibility issue with utilities
                     }
                 } else if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
                     scores = PhosphoRS.getSequenceProbabilities(peptide, modifications.get(ptmMass), spectrum, annotationPreferences, specificAnnotationPreferences,
                             scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences,
-                            ptmSequenceMatchingPreferences, peptideSpectrumAnnotator, mathContext);
+                            ptmSequenceMatchingPreferences, peptideSpectrumAnnotator, MATH_CONTEXT);
                     if (scores == null) {
                         throw new IllegalArgumentException("An error occurred while scoring spectrum " + spectrum.getSpectrumTitle() + "of file " + spectrum.getFileName() + " with PhosphoRS."); // Most likely a compatibility issue with utilities
                     }
@@ -614,18 +614,14 @@ public class PtmScorer {
         PSPtmScores peptideScores = new PSPtmScores();
         PSParameter psParameter = new PSParameter();
 
-        ArrayList<ModificationMatch> newModificationMatches = null;
         HashMap<Double, Integer> variableModifications = new HashMap<Double, Integer>(peptide.getNModifications());
         HashMap<Double, HashMap<Integer, ArrayList<String>>> inferredSites = new HashMap<Double, HashMap<Integer, ArrayList<String>>>(peptide.getNModifications());
         String nTermPtmConfident = null;
         String cTermPtmConfident = null;
 
         String originalKey = peptide.getMatchingKey(sequenceMatchingPreferences);
-        if (originalKey.equals("ENKTAVVVGTITDDVR_-0.9840155826899988-ATAA-13")) {
-            int debug = 1;
-        }
+        ArrayList<ModificationMatch> newModificationMatches = new ArrayList<ModificationMatch>(originalMatches.size());
 
-        newModificationMatches = new ArrayList<ModificationMatch>(originalMatches.size());
         for (ModificationMatch modificationMatch : originalMatches) {
             if (modificationMatch.isVariable()) {
                 String modName = modificationMatch.getTheoreticPtm();
