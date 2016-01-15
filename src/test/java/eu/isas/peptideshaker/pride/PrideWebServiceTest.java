@@ -31,7 +31,7 @@ public class PrideWebServiceTest extends TestCase {
     /**
      * Test is escaped in offline mode.
      */
-    private static boolean offline = false;
+    private static boolean offline = true;
 
     /**
      * Test the PRIDE web service access.

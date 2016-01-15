@@ -190,6 +190,12 @@ public class MzidCLI extends CpsParent {
             }
             return 1;
         }
+        
+        // Load project specific PTMs
+        String error = PeptideShaker.loadModifications(getIdentificationParameters().getSearchParameters());
+        if (error != null) {
+            System.out.println(error);
+        }
 
         // export mzid file
         // make sure that all annotations are included

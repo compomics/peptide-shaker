@@ -189,6 +189,12 @@ public class ReportCLI extends CpsParent {
             }
             return 1;
         }
+        
+        // Load project specific PTMs
+        String error = PeptideShaker.loadModifications(getIdentificationParameters().getSearchParameters());
+        if (error != null) {
+            System.out.println(error);
+        }
 
         // export report(s)
         if (reportCLIInputBean.exportNeeded()) {

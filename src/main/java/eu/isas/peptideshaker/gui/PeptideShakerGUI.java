@@ -496,9 +496,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * Creates a new PeptideShaker frame.
      *
      * @param cpsFile the cps file to load
-     * @param zipURL the URL to a zipped cps file to download and load, can be null
-     * @param zipUrlDownloadFolder the folder to download the URL to, can be null
-     * @param pxAccession a PX accession to open in the PRIDE Reshake, can be null
+     * @param zipURL the URL to a zipped cps file to download and load, can be
+     * null
+     * @param zipUrlDownloadFolder the folder to download the URL to, can be
+     * null
+     * @param pxAccession a PX accession to open in the PRIDE Reshake, can be
+     * null
      * @param pxAccessionPrivate if true, the PX accession is private
      * @param showWelcomeDialog boolean indicating if the Welcome Dialog is to
      * be shown
@@ -636,7 +639,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             } else if (zipURL != null) {
                 setVisible(true);
                 importPeptideShakerZipFromURL(zipURL, zipUrlDownloadFolder);
-            } else if (pxAccession != null) { 
+            } else if (pxAccession != null) {
                 new PrideReshakeGUI(this, pxAccession, pxAccessionPrivate);
             } else if (showWelcomeDialog) {
                 // open the welcome dialog
@@ -2037,7 +2040,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         PtmSettings ptmSettings = getIdentificationParameters().getSearchParameters().getPtmSettings();
         ArrayList<NeutralLoss> neutralLosses = IonFactory.getNeutralLosses(ptmSettings);
         ArrayList<Integer> reporterIons = new ArrayList<Integer>(IonFactory.getReporterIons(ptmSettings));
-        AnnotationSettingsDialog annotationSettingsDialog = new AnnotationSettingsDialog(this, getIdentificationParameters().getAnnotationPreferences(), 
+        AnnotationSettingsDialog annotationSettingsDialog = new AnnotationSettingsDialog(this, getIdentificationParameters().getAnnotationPreferences(),
                 getIdentificationParameters().getSearchParameters().getFragmentIonAccuracy(), neutralLosses, reporterIons, true);
         if (!annotationSettingsDialog.isCanceled()) {
             AnnotationSettings newAnnotationSettings = annotationSettingsDialog.getAnnotationSettings();
@@ -3936,8 +3939,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public void setIdentificationParameters(IdentificationParameters identificationParameters) {
         cpsParent.setIdentificationParameters(identificationParameters);
-        SearchParameters newSearchParameters = identificationParameters.getSearchParameters();
-        PeptideShaker.loadModifications(newSearchParameters);
         setSelectedItems();
         backgroundPanel.revalidate();
         backgroundPanel.repaint();
@@ -4992,8 +4993,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         try {
             AnnotationSettings annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
 
-            specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(specificAnnotationPreferences.getSpectrumKey(), 
-                    specificAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingPreferences(), 
+            specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(specificAnnotationPreferences.getSpectrumKey(),
+                    specificAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingPreferences(),
                     getIdentificationParameters().getPtmScoringPreferences().getSequenceMatchingPreferences());
 
             if (!defaultAnnotationCheckBoxMenuItem.isSelected()) {
@@ -5442,6 +5443,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     openingExistingProject = true;
 
                     cpsParent.loadCpsFile(PeptideShaker.getMatchesFolder(), progressDialog);
+
+                    // Load project specific PTMs
+                    String error = PeptideShaker.loadModifications(getIdentificationParameters().getSearchParameters());
+                    if (error != null) {
+                        JOptionPane.showMessageDialog(peptideShakerGUI,
+                                error,
+                                "PTM Definition Changed", JOptionPane.WARNING_MESSAGE);
+                    }
 
                     // Resets the display features generator according to the new project
                     resetDisplayFeaturesGenerator();

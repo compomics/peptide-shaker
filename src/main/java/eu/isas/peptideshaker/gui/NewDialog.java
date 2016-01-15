@@ -9,6 +9,7 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.ShotgunProtocol;
+import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
@@ -1638,51 +1639,45 @@ public class NewDialog extends javax.swing.JDialog {
 
         IdentificationParameters tempIdentificationParameters = IdentificationParameters.getIdentificationParameters(file);
         SearchParameters searchParameters = tempIdentificationParameters.getSearchParameters();
+        String toCheck = PeptideShaker.loadModifications(searchParameters);
+        if (toCheck != null) {
+                JOptionPane.showMessageDialog(this, toCheck, "Modification Definition Changed", JOptionPane.WARNING_MESSAGE);
+        }
 
         PtmSettings modificationProfile = searchParameters.getPtmSettings();
 
         ArrayList<String> missing = new ArrayList<String>();
 
-        for (String name : modificationProfile.getAllNotFixedModifications()) {
+        for (String name : modificationProfile.getAllModifications()) {
             if (!ptmFactory.containsPTM(name)) {
                 missing.add(name);
+                PTM ptm = ptmFactory.getPTM(name);
+                ptm.getMass();
             } else if (modificationProfile.getColor(name) == null) {
                 modificationProfile.setColor(name, Color.lightGray);
             }
         }
         if (!missing.isEmpty()) {
-            // Might happen with old parameters files or when no parameter file is found
-            ArrayList<String> missing2 = new ArrayList<String>();
-            for (String ptmName : missing) {
-                if (!ptmFactory.containsPTM(ptmName)) {
-                    missing2.add(ptmName);
-                }
-            }
-            if (!missing2.isEmpty()) {
-                if (missing2.size() == 1) {
-                    JOptionPane.showMessageDialog(this, "The following modification is currently not recognized by PeptideShaker: "
-                            + missing2.get(0) + ".\nPlease import it by editing the search parameters.", "Modification Not Found", JOptionPane.WARNING_MESSAGE);
-                } else {
-                    String output = "The following modifications are currently not recognized by PeptideShaker:\n";
-                    boolean first = true;
-                    for (String ptm : missing2) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            output += ", ";
-                        }
-                        output += ptm;
+            if (missing.size() == 1) {
+                JOptionPane.showMessageDialog(this, "The following modification is currently not recognized by PeptideShaker: "
+                        + missing.get(0) + ".\nPlease import it by editing the search parameters.", "Modification Not Found", JOptionPane.WARNING_MESSAGE);
+            } else {
+                String output = "The following modifications are currently not recognized by PeptideShaker:\n";
+                boolean first = true;
+                for (String ptm : missing) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        output += ", ";
                     }
-                    output += ".\nPlease import it by editing the search parameters.";
-                    JOptionPane.showMessageDialog(this, output, "Modification Not Found", JOptionPane.WARNING_MESSAGE);
+                    output += ptm;
                 }
+                output += ".\nPlease import it by editing the search parameters.";
+                JOptionPane.showMessageDialog(this, output, "Modification Not Found", JOptionPane.WARNING_MESSAGE);
             }
         }
 
-        File fastaFile = null;
-        if (tempIdentificationParameters != null) {
-            fastaFile = tempIdentificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
-        }
+        File fastaFile = tempIdentificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
         if (fastaFile == null) {
             fastaFile = searchParameters.getFastaFile();
         }
