@@ -2868,7 +2868,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         ArrayList<SpectrumIdentificationAssumption> tempAssumptions = algorithmMap.get(sequence);
                         for (SpectrumIdentificationAssumption tempAssumption : tempAssumptions) {
                             if (peptideShakerGUI.getIdentificationParameters().getPeptideAssumptionFilter().validatePeptide(
-                                    ((PeptideAssumption) tempAssumption).getPeptide(), 
+                                    ((PeptideAssumption) tempAssumption).getPeptide(),
                                     peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences(),
                                     peptideShakerGUI.getIdentificationParameters().getSearchParameters().getEnzyme())) {
                                 if (vallidatedPsmsCheckBox.isSelected()) {
@@ -3133,7 +3133,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             spectrumPanel.repaint();
 
                             if (searchResultsTable.getSelectedRowCount() > 2) {
-                                
+
                                 double bubbleScale;
 
                                 if (peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentAccuracyType() == SearchParameters.MassAccuracyType.PPM) {
@@ -3145,7 +3145,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
                                 MassErrorBubblePlot massErrorBubblePlot = new MassErrorBubblePlot(
                                         selectedIndexes, allAnnotations, allSpectra, annotationPreferences.getFragmentIonAccuracy(),
-                                        bubbleScale, selectedIndexes.size() == 1, displayPreferences.showBars(), 
+                                        bubbleScale, selectedIndexes.size() == 1, displayPreferences.showBars(),
                                         peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentAccuracyType() == SearchParameters.MassAccuracyType.PPM);
 
                                 // hide the legend if selecting more than 20 spectra // @TODO: 20 should not be hardcoded here..
@@ -3336,7 +3336,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * Updates and displays the current spectrum slider tooltip.
      */
     private void updateSpectrumSliderToolTip() {
-                    SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
+        SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
         double accuracy = (accuracySlider.getValue() / 100.0) * searchParameters.getFragmentIonAccuracy();
 
         spectrumJPanel.setToolTipText("<html>Accuracy: " + Util.roundDouble(accuracy, 2) + " " + searchParameters.getFragmentAccuracyType() + "<br>"
@@ -3521,7 +3521,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
 
             try {
-                String spectrumTitle = spectrumFactory.getSpectrumTitles(fileSelected).get(row);
+                String spectrumTitle = spectrumFactory.getSpectrumTitles(fileSelected).get(row); // @TODO: possible IndexOutOfBoundsException if the mgf file has changed...
                 String spectrumKey = Spectrum.getSpectrumKey(fileSelected, spectrumTitle);
 
                 switch (columnIndex) {
@@ -3706,7 +3706,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
 
             try {
-
                 String spectrumKey = getSelectedSpectrumKey();
                 if (identification.matchExists(spectrumKey)) {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
@@ -3841,22 +3840,21 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     case 2:
                         return spectrumIdentificationAssumption.getRank();
                     case 3:
-                        if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
-                            SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
-                            PtmSettings modificationProfile = searchParameters.getPtmSettings();
-                            Peptide peptide = ((PeptideAssumption) spectrumIdentificationAssumption).getPeptide();
-
-                            boolean showFixed = false;
-                            for (String ptmName : peptideShakerGUI.getDisplayPreferences().getDisplayedPtms()) {
-                                if (modificationProfile.getFixedModifications().contains(ptmName)) {
-                                    showFixed = true;
-                                }
+                        SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
+                        PtmSettings modificationProfile = searchParameters.getPtmSettings();
+                        boolean showFixed = false;
+                        for (String ptmName : peptideShakerGUI.getDisplayPreferences().getDisplayedPtms()) {
+                            if (modificationProfile.getFixedModifications().contains(ptmName)) {
+                                showFixed = true;
                             }
-
+                        }
+                        if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
+                            Peptide peptide = ((PeptideAssumption) spectrumIdentificationAssumption).getPeptide();
                             return peptide.getTaggedModifiedSequence(modificationProfile, true, true, true, !showFixed);
                         } else if (spectrumIdentificationAssumption instanceof TagAssumption) {
                             TagAssumption tagAssumption = (TagAssumption) spectrumIdentificationAssumption;
-                            return tagAssumption.getTag().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), true, true, true, false, false);
+                            return tagAssumption.getTag().getTaggedModifiedSequence(
+                                    peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), true, true, true, !showFixed, false);
                         } else {
                             throw new UnsupportedOperationException("Sequence display not implemented for assumption " + spectrumIdentificationAssumption.getClass() + ".");
                         }

@@ -1390,9 +1390,10 @@ public class MzIdentMLExport {
             for (IonMatch ionMatch : matches) {
 
                 if (ionMatch.ion.getType() == IonType.PEPTIDE_FRAGMENT_ION
-                        || ionMatch.ion.getType() == IonType.IMMONIUM_ION) { // @TODO: add PRECURSOR_ION and REPORTER_ION
+                        || ionMatch.ion.getType() == IonType.IMMONIUM_ION) { // @TODO: add PRECURSOR_ION and REPORTER_ION (and RELATED_ION?)
 //                    || ionMatch.ion.getType() == IonType.PRECURSOR_ION
-//                    || ionMatch.ion.getType() == IonType.REPORTER_ION) {
+//                    || ionMatch.ion.getType() == IonType.REPORTER_ION
+//                   || ionMatch.ion.getType() == IonType.RELATED_ION) {
 
                     CvTerm fragmentIonTerm = ionMatch.ion.getPrideCvTerm(); // @TODO: replace by PSI-MS mappings... (children of MS:1001221)
                     Integer charge = ionMatch.charge.value;

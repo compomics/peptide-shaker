@@ -758,6 +758,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         otherMenu = new javax.swing.JMenu();
         precursorCheckMenu = new javax.swing.JCheckBoxMenuItem();
         immoniumIonsCheckMenu = new javax.swing.JCheckBoxMenuItem();
+        relatedIonsCheckMenu = new javax.swing.JCheckBoxMenuItem();
         reporterIonsCheckMenu = new javax.swing.JCheckBoxMenuItem();
         lossSplitter = new javax.swing.JMenu();
         lossMenu = new javax.swing.JMenu();
@@ -982,6 +983,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             }
         });
         otherMenu.add(immoniumIonsCheckMenu);
+
+        relatedIonsCheckMenu.setSelected(true);
+        relatedIonsCheckMenu.setText("Related");
+        relatedIonsCheckMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                relatedIonsCheckMenuActionPerformed(evt);
+            }
+        });
+        otherMenu.add(relatedIonsCheckMenu);
 
         reporterIonsCheckMenu.setSelected(true);
         reporterIonsCheckMenu.setText("Reporter");
@@ -3317,6 +3327,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }//GEN-LAST:event_editIdSettingsFilesMenuItemActionPerformed
 
     /**
+     * @see #updateAnnotationPreferences()
+     */
+    private void relatedIonsCheckMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_relatedIonsCheckMenuActionPerformed
+        deselectDefaultAnnotationMenuItem();
+        updateSpectrumAnnotations();
+    }//GEN-LAST:event_relatedIonsCheckMenuActionPerformed
+
+    /**
      * Opens a dialog allowing the setting of paths.
      *
      * @param welcomeDialog reference to the Welcome dialog, can be null
@@ -3573,6 +3591,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JPanel ptmJPanel;
     private javax.swing.JPanel qcJPanel;
     private javax.swing.JMenuItem quantifyMenuItem;
+    private javax.swing.JCheckBoxMenuItem relatedIonsCheckMenu;
     private javax.swing.JCheckBoxMenuItem reporterIonsCheckMenu;
     private javax.swing.JMenuItem reporterPreferencesJMenuItem;
     private javax.swing.JMenu resetAnnotationMenu;
@@ -4838,11 +4857,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         zIonCheckBoxMenuItem.setSelected(false);
         precursorCheckMenu.setSelected(false);
         immoniumIonsCheckMenu.setSelected(false);
+        relatedIonsCheckMenu.setSelected(false);
         reporterIonsCheckMenu.setSelected(false);
 
         for (Ion.IonType ionType : specificAnnotationPreferences.getIonTypes().keySet()) {
             if (ionType == IonType.IMMONIUM_ION) {
                 immoniumIonsCheckMenu.setSelected(true);
+            } else if (ionType == IonType.RELATED_ION) {
+                relatedIonsCheckMenu.setSelected(true);
             } else if (ionType == IonType.PRECURSOR_ION) {
                 precursorCheckMenu.setSelected(true);
             } else if (ionType == IonType.REPORTER_ION) {
@@ -5006,6 +5028,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 }
                 if (immoniumIonsCheckMenu.isSelected()) {
                     specificAnnotationPreferences.addIonType(IonType.IMMONIUM_ION);
+                }
+                if (relatedIonsCheckMenu.isSelected()) {
+                    specificAnnotationPreferences.addIonType(IonType.RELATED_ION);
                 }
                 if (reporterIonsCheckMenu.isSelected()) {
                     ArrayList<Integer> reporterIons = new ArrayList<Integer>(IonFactory.getReporterIons(getIdentificationParameters().getSearchParameters().getPtmSettings()));

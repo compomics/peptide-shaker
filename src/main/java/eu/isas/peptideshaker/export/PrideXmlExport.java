@@ -753,6 +753,7 @@ public class PrideXmlExport {
                     || ionMatch.ion.getType() == IonType.IMMONIUM_ION
                     || ionMatch.ion.getType() == IonType.PRECURSOR_ION
                     || ionMatch.ion.getType() == IonType.REPORTER_ION) {
+                // || ionMatch.ion.getType() == IonType.RELATED_ION // @TODO: add? need related ion cv term first
                 SearchParameters searchParameters = identificationParameters.getSearchParameters();
                 br.write(getCurrentTabSpace() + "<FragmentIon>" + System.getProperty("line.separator"));
                 tabCounter++;
