@@ -105,7 +105,7 @@ public class QCPanel extends javax.swing.JPanel {
     private enum PlotType {
 
         Protein_Validated_Peptides, Protein_MS2_QuantScores, Protein_Sequence_Coverage, Protein_Sequence_Length,
-        Peptide_Validated_PSMs, Peptide_Missed_Cleavages, Peptide_Length, Peptide_Modifications, Peptide_Modifications_Rate,
+        Peptide_Validated_PSMs, Peptide_Missed_Cleavages, Peptide_Length, Peptide_Modifications, Peptide_Modification_Efficiency, Peptide_Modification_Specificity,
         PSM_Precursor_Mass_Error, PSM_Precursor_Charge, None
     }
     /**
@@ -169,8 +169,9 @@ public class QCPanel extends javax.swing.JPanel {
         peptideValidatedPsmsJRadioButton = new javax.swing.JRadioButton();
         peptideMissedCleavagesJRadioButton = new javax.swing.JRadioButton();
         peptideLengthJRadioButton = new javax.swing.JRadioButton();
-        peptideModificationsRatesJRadioButton = new javax.swing.JRadioButton();
+        peptideModificationEfficiencyJRadioButton = new javax.swing.JRadioButton();
         peptideModificationsJRadioButton = new javax.swing.JRadioButton();
+        peptideModificationSpecificityJRadioButton = new javax.swing.JRadioButton();
         peptidesPlotLayeredPane = new javax.swing.JLayeredPane();
         peptideQCPlotPanel = new javax.swing.JPanel();
         peptidesPlotHelpJButton = new javax.swing.JButton();
@@ -233,7 +234,7 @@ public class QCPanel extends javax.swing.JPanel {
                 .addComponent(psmPrecursorMassErrorJRadioButton)
                 .addGap(18, 18, 18)
                 .addComponent(psmPrecursorChargeJRadioButton)
-                .addContainerGap(465, Short.MAX_VALUE))
+                .addContainerGap(723, Short.MAX_VALUE))
         );
         psmPlotTypePanelLayout.setVerticalGroup(
             psmPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -315,7 +316,7 @@ public class QCPanel extends javax.swing.JPanel {
             .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(psmPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(psmPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 747, Short.MAX_VALUE)
+                    .addComponent(psmPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1005, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         psmPanelLayout.setVerticalGroup(
@@ -369,13 +370,13 @@ public class QCPanel extends javax.swing.JPanel {
             }
         });
 
-        peptideButtonGroup.add(peptideModificationsRatesJRadioButton);
-        peptideModificationsRatesJRadioButton.setText("Modifications Rates");
-        peptideModificationsRatesJRadioButton.setIconTextGap(10);
-        peptideModificationsRatesJRadioButton.setOpaque(false);
-        peptideModificationsRatesJRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        peptideButtonGroup.add(peptideModificationEfficiencyJRadioButton);
+        peptideModificationEfficiencyJRadioButton.setText("Modification Efficiency");
+        peptideModificationEfficiencyJRadioButton.setIconTextGap(10);
+        peptideModificationEfficiencyJRadioButton.setOpaque(false);
+        peptideModificationEfficiencyJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                peptideModificationsRatesJRadioButtonActionPerformed(evt);
+                peptideModificationEfficiencyJRadioButtonActionPerformed(evt);
             }
         });
 
@@ -386,6 +387,16 @@ public class QCPanel extends javax.swing.JPanel {
         peptideModificationsJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 peptideModificationsJRadioButtonActionPerformed(evt);
+            }
+        });
+
+        peptideButtonGroup.add(peptideModificationSpecificityJRadioButton);
+        peptideModificationSpecificityJRadioButton.setText("Modification Specificity");
+        peptideModificationSpecificityJRadioButton.setIconTextGap(10);
+        peptideModificationSpecificityJRadioButton.setOpaque(false);
+        peptideModificationSpecificityJRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peptideModificationSpecificityJRadioButtonActionPerformed(evt);
             }
         });
 
@@ -403,8 +414,10 @@ public class QCPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(peptideModificationsJRadioButton)
                 .addGap(18, 18, 18)
-                .addComponent(peptideModificationsRatesJRadioButton)
-                .addContainerGap(92, Short.MAX_VALUE))
+                .addComponent(peptideModificationEfficiencyJRadioButton)
+                .addGap(18, 18, 18)
+                .addComponent(peptideModificationSpecificityJRadioButton)
+                .addContainerGap(181, Short.MAX_VALUE))
         );
         peptidesPlotTypePanelLayout.setVerticalGroup(
             peptidesPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -414,8 +427,9 @@ public class QCPanel extends javax.swing.JPanel {
                     .addComponent(peptideValidatedPsmsJRadioButton)
                     .addComponent(peptideMissedCleavagesJRadioButton)
                     .addComponent(peptideLengthJRadioButton)
-                    .addComponent(peptideModificationsRatesJRadioButton)
-                    .addComponent(peptideModificationsJRadioButton))
+                    .addComponent(peptideModificationEfficiencyJRadioButton)
+                    .addComponent(peptideModificationsJRadioButton)
+                    .addComponent(peptideModificationSpecificityJRadioButton))
                 .addContainerGap())
         );
 
@@ -489,7 +503,7 @@ public class QCPanel extends javax.swing.JPanel {
             .addGroup(peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(peptidePanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(peptidesPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 747, Short.MAX_VALUE)
+                    .addComponent(peptidesPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1005, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         peptidePanelLayout.setVerticalGroup(
@@ -625,7 +639,7 @@ public class QCPanel extends javax.swing.JPanel {
                 .addComponent(proteinSequenceLengthJRadioButton)
                 .addGap(18, 18, 18)
                 .addComponent(proteinSpectrumCountingScoreJRadioButton)
-                .addContainerGap(147, Short.MAX_VALUE))
+                .addContainerGap(405, Short.MAX_VALUE))
         );
         proteinPlotTypePanelLayout.setVerticalGroup(
             proteinPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -646,7 +660,7 @@ public class QCPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(proteinsPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 657, Short.MAX_VALUE)
+                    .addComponent(proteinsPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1005, Short.MAX_VALUE)
                     .addComponent(proteinPlotTypePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1081,12 +1095,12 @@ public class QCPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_tabbedPaneStateChanged
 
-    private void peptideModificationsRatesJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideModificationsRatesJRadioButtonActionPerformed
+    private void peptideModificationEfficiencyJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideModificationEfficiencyJRadioButtonActionPerformed
         if (peptideShakerGUI.getIdentification() != null) {
             updatePeptideQCPlot();
             exportPeptidesPlotJButton.setEnabled(true);
         }
-    }//GEN-LAST:event_peptideModificationsRatesJRadioButtonActionPerformed
+    }//GEN-LAST:event_peptideModificationEfficiencyJRadioButtonActionPerformed
 
     private void peptideModificationsJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideModificationsJRadioButtonActionPerformed
         if (peptideShakerGUI.getIdentification() != null) {
@@ -1095,6 +1109,13 @@ public class QCPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_peptideModificationsJRadioButtonActionPerformed
 
+    private void peptideModificationSpecificityJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideModificationSpecificityJRadioButtonActionPerformed
+        if (peptideShakerGUI.getIdentification() != null) {
+            updatePeptideQCPlot();
+            exportPeptidesPlotJButton.setEnabled(true);
+        }
+    }//GEN-LAST:event_peptideModificationSpecificityJRadioButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton exportPeptidesPlotJButton;
     private javax.swing.JButton exportProteinsPlotJButton;
@@ -1102,8 +1123,9 @@ public class QCPanel extends javax.swing.JPanel {
     private javax.swing.ButtonGroup peptideButtonGroup;
     private javax.swing.JRadioButton peptideLengthJRadioButton;
     private javax.swing.JRadioButton peptideMissedCleavagesJRadioButton;
+    private javax.swing.JRadioButton peptideModificationEfficiencyJRadioButton;
+    private javax.swing.JRadioButton peptideModificationSpecificityJRadioButton;
     private javax.swing.JRadioButton peptideModificationsJRadioButton;
-    private javax.swing.JRadioButton peptideModificationsRatesJRadioButton;
     private javax.swing.JPanel peptidePanel;
     private javax.swing.JPanel peptideQCPlotPanel;
     private javax.swing.JRadioButton peptideValidatedPsmsJRadioButton;
@@ -1390,7 +1412,8 @@ public class QCPanel extends javax.swing.JPanel {
                 || (peptideMissedCleavagesJRadioButton.isSelected() && currentPeptidePlotType != PlotType.Peptide_Missed_Cleavages)
                 || (peptideLengthJRadioButton.isSelected() && currentPeptidePlotType != PlotType.Peptide_Length)
                 || (peptideModificationsJRadioButton.isSelected() && currentPeptidePlotType != PlotType.Peptide_Modifications)
-                || (peptideModificationsRatesJRadioButton.isSelected() && currentPeptidePlotType != PlotType.Peptide_Modifications_Rate)) {
+                || (peptideModificationEfficiencyJRadioButton.isSelected() && currentPeptidePlotType != PlotType.Peptide_Modification_Efficiency)
+                || (peptideModificationSpecificityJRadioButton.isSelected() && currentPeptidePlotType != PlotType.Peptide_Modification_Specificity)) {
 
             progressDialog = new ProgressDialogX(peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -1473,9 +1496,12 @@ public class QCPanel extends javax.swing.JPanel {
                         } else if (peptideModificationsJRadioButton.isSelected()) {
                             dataset = getPeptideModificationsDataset();
                             currentPeptidePlotType = PlotType.Peptide_Modifications;
-                        } else if (peptideModificationsRatesJRadioButton.isSelected()) {
-                            dataset = getPeptideModificationsRateDataset();
-                            currentPeptidePlotType = PlotType.Peptide_Modifications_Rate;
+                        } else if (peptideModificationEfficiencyJRadioButton.isSelected()) {
+                            dataset = getPeptideModificationEfficiencyDataset();
+                            currentPeptidePlotType = PlotType.Peptide_Modification_Efficiency;
+                        } else if (peptideModificationSpecificityJRadioButton.isSelected()) {
+                            dataset = getPeptideModificationEnrichmentSpecificityDataset();
+                            currentPeptidePlotType = PlotType.Peptide_Modification_Specificity;
                         }
 
                         if (!progressDialog.isRunCanceled()) {
@@ -1484,7 +1510,8 @@ public class QCPanel extends javax.swing.JPanel {
 
                             StackedBarRenderer renderer = new StackedBarRenderer();
                             renderer.setShadowVisible(false);
-                            if (peptideModificationsRatesJRadioButton.isSelected()) {
+                            if (peptideModificationEfficiencyJRadioButton.isSelected()
+                                    || peptideModificationSpecificityJRadioButton.isSelected()) {
                                 renderer.setSeriesPaint(0, histogramColors[0]);
                                 renderer.setSeriesPaint(1, histogramColors[4]);
                             } else {
@@ -1510,9 +1537,12 @@ public class QCPanel extends javax.swing.JPanel {
                             } else if (peptideModificationsJRadioButton.isSelected()) {
                                 peptideChart.getCategoryPlot().getRangeAxis().setLabel("Peptides Carrying the PTM");
                                 peptideChart.setTitle("Peptides QC Plot - Peptide Modifications");
-                            } else if (peptideModificationsRatesJRadioButton.isSelected()) {
+                            } else if (peptideModificationEfficiencyJRadioButton.isSelected()) {
+                                peptideChart.getCategoryPlot().getRangeAxis().setLabel("Share of modified sites [%]");
+                                peptideChart.setTitle("Peptides QC Plot - Modification Efficiency");
+                            } else if (peptideModificationSpecificityJRadioButton.isSelected()) {
                                 peptideChart.getCategoryPlot().getRangeAxis().setLabel("Share of modified peptides [%]");
-                                peptideChart.setTitle("Peptides QC Plot - Peptide Modifications Rates");
+                                peptideChart.setTitle("Peptides QC Plot - Modification Specificity");
                             }
 
                             // set background color
@@ -2270,9 +2300,9 @@ public class QCPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Returns the dataset for the peptide modification rate QC plot.
+     * Returns the dataset for the peptide modification efficiency QC plot.
      *
-     * @return the dataset for the peptide modification rate QC plot
+     * @return the dataset for the peptide modification efficiency QC plot
      *
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the matches database
@@ -2283,7 +2313,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred while retrieving a match
      */
-    private DefaultCategoryDataset getPeptideModificationsRateDataset() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private DefaultCategoryDataset getPeptideModificationEfficiencyDataset() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         PTMFactory ptmFactory = PTMFactory.getInstance();
 
@@ -2371,6 +2401,110 @@ public class QCPanel extends javax.swing.JPanel {
             }
             dataset.addValue(rate, "Modified", ptmName);
             double rest = 100 - rate;
+            dataset.addValue(rest, "Not Modified", ptmName);
+        }
+
+        return dataset;
+    }
+
+    /**
+     * Returns the dataset for the peptide modification rate QC plot.
+     *
+     * @return the dataset for the peptide modification rate QC plot
+     *
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the matches database
+     * @throws IOException exception thrown whenever an error occurred while
+     * interacting with the matches database
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing a match from the database
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while retrieving a match
+     */
+    private DefaultCategoryDataset getPeptideModificationEnrichmentSpecificityDataset() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        PTMFactory ptmFactory = PTMFactory.getInstance();
+
+        Identification identification = peptideShakerGUI.getIdentification();
+        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+        PtmSettings ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        SequenceMatchingPreferences ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
+
+        ArrayList<String> ptmNames = ptmSettings.getAllNotFixedModifications();
+        HashMap<String, Integer> modifiedPeptidesMap = new HashMap<String, Integer>(ptmNames.size());
+        HashMap<String, Integer> possiblyModifiedPeptidesMap = new HashMap<String, Integer>(ptmNames.size());
+
+        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
+
+        progressDialog.setPrimaryProgressCounterIndeterminate(false);
+        progressDialog.setMaxPrimaryProgressCounter(identification.getPeptideIdentification().size());
+        progressDialog.setValue(0);
+
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, null, progressDialog);
+
+        while (peptideMatchesIterator.hasNext()) {
+
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            String peptideKey = peptideMatch.getKey();
+            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+            if (psParameter.getMatchValidationLevel().isValidated()) {
+                Peptide peptide = peptideMatch.getTheoreticPeptide();
+                for (String ptmName : ptmSettings.getAllNotFixedModifications()) {
+                    PTM ptm = ptmFactory.getPTM(ptmName);
+                    ArrayList<Integer> possibleSites = peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
+                    if (!possibleSites.isEmpty()) {
+                        Integer nPossiblePeptides = possiblyModifiedPeptidesMap.get(ptmName);
+                        if (nPossiblePeptides == null) {
+                            possiblyModifiedPeptidesMap.put(ptmName, 1);
+                        } else {
+                            possiblyModifiedPeptidesMap.put(ptmName, nPossiblePeptides + 1);
+                        }
+                        boolean modified = false;
+                        if (peptide.getModificationMatches() != null) {
+                            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                                if (modificationMatch.getTheoreticPtm().equals(ptmName)) {
+                                    modified = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (modified) {
+                            Integer nModifiedPeptides = modifiedPeptidesMap.get(ptmName);
+                            if (nModifiedPeptides == null) {
+                                modifiedPeptidesMap.put(ptmName, 1);
+                            } else {
+                                modifiedPeptidesMap.put(ptmName, nModifiedPeptides + 1);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (progressDialog.isRunCanceled()) {
+                break;
+            }
+            progressDialog.increaseSecondaryProgressCounter();
+        }
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        for (String ptmName : ptmSettings.getAllNotFixedModifications()) {
+            Integer nFound = modifiedPeptidesMap.get(ptmName);
+            if (nFound == null) {
+                nFound = 0;
+            }
+            Integer nPossible = possiblyModifiedPeptidesMap.get(ptmName);
+            Double rate = 0.0;
+            if (nPossible != null) {
+                rate = (100.0 * nFound) / nPossible;
+            }
+            dataset.addValue(rate, "Modified", ptmName);
+            double rest = 0.0;
+            if (nPossible != null) {
+                rest = 100 - rate;
+            }
             dataset.addValue(rest, "Not Modified", ptmName);
         }
 

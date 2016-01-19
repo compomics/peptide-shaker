@@ -61,3 +61,7 @@ How do results compare between versions?<br><br>Results cannot be compared betwe
 What is the best music to listen to when running PeptideShaker?<br><br>Click <a href="https://www.youtube.com/watch?v=KWReDqMopt8">here</a> to enhance your shaking experience! &#9786;
 Missing gene/chromosome information? Gene and Chromosome information is downloaded automatically from the <a href="ensembl.org/biomart">Ensembl biomarts</a>. Make sure that you are using a Uniprot database, that your species is annotated in Ensembl, and that the tool has access to the internet.
 How to operate PeptideShaker from other applications?<br><br>You can run PeptideShaker <i>via</i> <a href="http://compomics.github.io/peptide-shaker/wiki/peptideshakercli.html">command line</a>. The parameters can be provided in command line or as json files.
+Working with labeled peptides?<br><br>Search few files with variable modifications and check the labeling efficiency in the peptide <i>Modification Efficiency</i> plot of the <i>QC Tab</i>!
+<b>Fixed</b> or <b>Variable</b> modification?<br><br>Search few files all variable and check the site modification rate in the peptide <i>Modification Efficiency</i> plot of the <i>QC Tab</i>!
+Which modification to search?<br><br>Try different combinations and evaluate the results in the <i># Modification</i> plot of the <i>QC Tab</i>!
+Working with enriched peptides?<br><br>Check the labeling efficiency in the peptide <i>Modification Specificity</i> plot of the <i>QC Tab</i>!

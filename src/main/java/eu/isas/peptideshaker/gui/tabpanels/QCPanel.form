@@ -114,7 +114,7 @@
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="psmPlotLayeredPane" pref="747" max="32767" attributes="0"/>
+                              <Component id="psmPlotLayeredPane" pref="1005" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -156,7 +156,7 @@
                               <Component id="psmPrecursorMassErrorJRadioButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                               <Component id="psmPrecursorChargeJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="465" max="32767" attributes="0"/>
+                              <EmptySpace pref="723" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -315,7 +315,7 @@
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="peptidesPlotLayeredPane" pref="747" max="32767" attributes="0"/>
+                              <Component id="peptidesPlotLayeredPane" pref="1005" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -362,8 +362,10 @@
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="peptideModificationsJRadioButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="peptideModificationsRatesJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="92" max="32767" attributes="0"/>
+                              <Component id="peptideModificationEfficiencyJRadioButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="peptideModificationSpecificityJRadioButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="181" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -375,8 +377,9 @@
                                   <Component id="peptideValidatedPsmsJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="peptideMissedCleavagesJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="peptideLengthJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="peptideModificationsRatesJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="peptideModificationEfficiencyJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="peptideModificationsJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="peptideModificationSpecificityJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -424,17 +427,17 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideLengthJRadioButtonActionPerformed"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JRadioButton" name="peptideModificationsRatesJRadioButton">
+                    <Component class="javax.swing.JRadioButton" name="peptideModificationEfficiencyJRadioButton">
                       <Properties>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="peptideButtonGroup"/>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="Modifications Rates"/>
+                        <Property name="text" type="java.lang.String" value="Modification Efficiency"/>
                         <Property name="iconTextGap" type="int" value="10"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideModificationsRatesJRadioButtonActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideModificationEfficiencyJRadioButtonActionPerformed"/>
                       </Events>
                     </Component>
                     <Component class="javax.swing.JRadioButton" name="peptideModificationsJRadioButton">
@@ -448,6 +451,19 @@
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideModificationsJRadioButtonActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JRadioButton" name="peptideModificationSpecificityJRadioButton">
+                      <Properties>
+                        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                          <ComponentRef name="peptideButtonGroup"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Modification Specificity"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideModificationSpecificityJRadioButtonActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>
@@ -559,7 +575,7 @@
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="proteinsPlotLayeredPane" alignment="0" pref="657" max="32767" attributes="0"/>
+                              <Component id="proteinsPlotLayeredPane" alignment="0" pref="1005" max="32767" attributes="0"/>
                               <Component id="proteinPlotTypePanel" alignment="0" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -686,7 +702,7 @@
                               <Component id="proteinSequenceLengthJRadioButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="proteinSpectrumCountingScoreJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="147" max="32767" attributes="0"/>
+                              <EmptySpace pref="405" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
