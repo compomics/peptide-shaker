@@ -353,13 +353,17 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Component id="peptideValidatedPsmsJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="peptideMissedCleavagesJRadioButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="peptideLengthJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="362" max="32767" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="peptideModificationsJRadioButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="peptideModificationsRatesJRadioButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="92" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -371,6 +375,8 @@
                                   <Component id="peptideValidatedPsmsJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="peptideMissedCleavagesJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="peptideLengthJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="peptideModificationsRatesJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="peptideModificationsJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -384,7 +390,7 @@
                           <ComponentRef name="peptideButtonGroup"/>
                         </Property>
                         <Property name="selected" type="boolean" value="true"/>
-                        <Property name="text" type="java.lang.String" value="#Validated PSMs"/>
+                        <Property name="text" type="java.lang.String" value="# Validated PSMs"/>
                         <Property name="iconTextGap" type="int" value="10"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
@@ -416,6 +422,32 @@
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideLengthJRadioButtonActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JRadioButton" name="peptideModificationsRatesJRadioButton">
+                      <Properties>
+                        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                          <ComponentRef name="peptideButtonGroup"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Modifications Rates"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideModificationsRatesJRadioButtonActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JRadioButton" name="peptideModificationsJRadioButton">
+                      <Properties>
+                        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                          <ComponentRef name="peptideButtonGroup"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="# Modifications"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideModificationsJRadioButtonActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>
