@@ -276,9 +276,9 @@ public class QCPanel extends javax.swing.JPanel {
                 psmPlotHelpJButtonActionPerformed(evt);
             }
         });
+        psmPlotLayeredPane.setLayer(psmPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         psmPlotLayeredPane.add(psmPlotHelpJButton);
         psmPlotHelpJButton.setBounds(640, 0, 10, 25);
-        psmPlotLayeredPane.setLayer(psmPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPsmPlotJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportPsmPlotJButton.setToolTipText("Export");
@@ -301,9 +301,9 @@ public class QCPanel extends javax.swing.JPanel {
                 exportPsmPlotJButtonActionPerformed(evt);
             }
         });
+        psmPlotLayeredPane.setLayer(exportPsmPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         psmPlotLayeredPane.add(exportPsmPlotJButton);
         exportPsmPlotJButton.setBounds(630, 0, 10, 25);
-        psmPlotLayeredPane.setLayer(exportPsmPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout psmPanelLayout = new javax.swing.GroupLayout(psmPanel);
         psmPanel.setLayout(psmPanelLayout);
@@ -463,9 +463,9 @@ public class QCPanel extends javax.swing.JPanel {
                 peptidesPlotHelpJButtonActionPerformed(evt);
             }
         });
+        peptidesPlotLayeredPane.setLayer(peptidesPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         peptidesPlotLayeredPane.add(peptidesPlotHelpJButton);
         peptidesPlotHelpJButton.setBounds(640, 0, 10, 25);
-        peptidesPlotLayeredPane.setLayer(peptidesPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPeptidesPlotJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportPeptidesPlotJButton.setToolTipText("Export");
@@ -488,9 +488,9 @@ public class QCPanel extends javax.swing.JPanel {
                 exportPeptidesPlotJButtonActionPerformed(evt);
             }
         });
+        peptidesPlotLayeredPane.setLayer(exportPeptidesPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         peptidesPlotLayeredPane.add(exportPeptidesPlotJButton);
         exportPeptidesPlotJButton.setBounds(630, 0, 10, 25);
-        peptidesPlotLayeredPane.setLayer(exportPeptidesPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout peptidePanelLayout = new javax.swing.GroupLayout(peptidePanel);
         peptidePanel.setLayout(peptidePanelLayout);
@@ -553,9 +553,9 @@ public class QCPanel extends javax.swing.JPanel {
                 proteinsPlotHelpJButtonActionPerformed(evt);
             }
         });
+        proteinsPlotLayeredPane.setLayer(proteinsPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         proteinsPlotLayeredPane.add(proteinsPlotHelpJButton);
         proteinsPlotHelpJButton.setBounds(640, 0, 10, 25);
-        proteinsPlotLayeredPane.setLayer(proteinsPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportProteinsPlotJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportProteinsPlotJButton.setToolTipText("Export");
@@ -578,9 +578,9 @@ public class QCPanel extends javax.swing.JPanel {
                 exportProteinsPlotJButtonActionPerformed(evt);
             }
         });
+        proteinsPlotLayeredPane.setLayer(exportProteinsPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         proteinsPlotLayeredPane.add(exportProteinsPlotJButton);
         exportProteinsPlotJButton.setBounds(630, 0, 10, 25);
-        proteinsPlotLayeredPane.setLayer(exportProteinsPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         proteinPlotTypePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plot Type"));
         proteinPlotTypePanel.setOpaque(false);
@@ -1082,19 +1082,33 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void tabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabbedPaneStateChanged
         if (peptideShakerGUI.getIdentification() != null && peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.QC_PLOTS_TAB_INDEX) {
-            if (tabbedPane.getSelectedIndex() == 0) { // psms
-                updatePsmQCPlot();
-                exportPsmPlotJButton.setEnabled(true);
-            } else if (tabbedPane.getSelectedIndex() == 1) { // peptides
-                updatePeptideQCPlot();
-                exportPeptidesPlotJButton.setEnabled(true);
-            } else if (tabbedPane.getSelectedIndex() == 2) { // proteins
-                updateProteinQCPlot();
-                exportProteinsPlotJButton.setEnabled(true);
+            switch (tabbedPane.getSelectedIndex()) {
+                case 0:
+                    // psms
+                    updatePsmQCPlot();
+                    exportPsmPlotJButton.setEnabled(true);
+                    break;
+                case 1:
+                    // peptides
+                    updatePeptideQCPlot();
+                    exportPeptidesPlotJButton.setEnabled(true);
+                    break;
+                case 2:
+                    // proteins
+                    updateProteinQCPlot();
+                    exportProteinsPlotJButton.setEnabled(true);
+                    break;
+                default:
+                    break;
             }
         }
     }//GEN-LAST:event_tabbedPaneStateChanged
 
+    /**
+     * Display the modification efficiency plot.
+     *
+     * @param evt
+     */
     private void peptideModificationEfficiencyJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideModificationEfficiencyJRadioButtonActionPerformed
         if (peptideShakerGUI.getIdentification() != null) {
             updatePeptideQCPlot();
@@ -1102,6 +1116,11 @@ public class QCPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_peptideModificationEfficiencyJRadioButtonActionPerformed
 
+    /**
+     * Display the modifications plot.
+     *
+     * @param evt
+     */
     private void peptideModificationsJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideModificationsJRadioButtonActionPerformed
         if (peptideShakerGUI.getIdentification() != null) {
             updatePeptideQCPlot();
@@ -1109,6 +1128,11 @@ public class QCPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_peptideModificationsJRadioButtonActionPerformed
 
+    /**
+     * Display the modification specificity plot.
+     *
+     * @param evt
+     */
     private void peptideModificationSpecificityJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideModificationSpecificityJRadioButtonActionPerformed
         if (peptideShakerGUI.getIdentification() != null) {
             updatePeptideQCPlot();
@@ -1165,15 +1189,24 @@ public class QCPanel extends javax.swing.JPanel {
             currentPeptidePlotType = PlotType.None;
             currentPsmPlotType = PlotType.None;
 
-            if (tabbedPane.getSelectedIndex() == 0) { // psms
-                updatePsmQCPlot();
-                exportPsmPlotJButton.setEnabled(true);
-            } else if (tabbedPane.getSelectedIndex() == 1) { // peptides
-                updatePeptideQCPlot();
-                exportPeptidesPlotJButton.setEnabled(true);
-            } else if (tabbedPane.getSelectedIndex() == 2) { // proteins
-                updateProteinQCPlot();
-                exportProteinsPlotJButton.setEnabled(true);
+            switch (tabbedPane.getSelectedIndex()) {
+                case 0:
+                    // psms
+                    updatePsmQCPlot();
+                    exportPsmPlotJButton.setEnabled(true);
+                    break;
+                case 1:
+                    // peptides
+                    updatePeptideQCPlot();
+                    exportPeptidesPlotJButton.setEnabled(true);
+                    break;
+                case 2:
+                    // proteins
+                    updateProteinQCPlot();
+                    exportProteinsPlotJButton.setEnabled(true);
+                    break;
+                default:
+                    break;
             }
 
             peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, true);
@@ -1535,14 +1568,19 @@ public class QCPanel extends javax.swing.JPanel {
                                 peptideChart.getCategoryPlot().getDomainAxis().setLabel("Peptide Length");
                                 peptideChart.setTitle("Peptides QC Plot - Peptide Length");
                             } else if (peptideModificationsJRadioButton.isSelected()) {
-                                peptideChart.getCategoryPlot().getRangeAxis().setLabel("Peptides Carrying the PTM");
+                                peptideChart.getCategoryPlot().getRangeAxis().setLabel("#Peptides with the PTM");
                                 peptideChart.setTitle("Peptides QC Plot - Peptide Modifications");
+                                peptideChart.getCategoryPlot().getDomainAxis().setMaximumCategoryLabelLines(5);
                             } else if (peptideModificationEfficiencyJRadioButton.isSelected()) {
-                                peptideChart.getCategoryPlot().getRangeAxis().setLabel("Share of modified sites [%]");
+                                peptideChart.getCategoryPlot().getRangeAxis().setLabel("Share of Modified Sites [%]");
                                 peptideChart.setTitle("Peptides QC Plot - Modification Efficiency");
+                                peptideChart.getCategoryPlot().getRangeAxis().setRange(0, 100);
+                                peptideChart.getCategoryPlot().getDomainAxis().setMaximumCategoryLabelLines(5);
                             } else if (peptideModificationSpecificityJRadioButton.isSelected()) {
-                                peptideChart.getCategoryPlot().getRangeAxis().setLabel("Share of modified peptides [%]");
+                                peptideChart.getCategoryPlot().getRangeAxis().setLabel("Share of Modified Peptides [%]");
                                 peptideChart.setTitle("Peptides QC Plot - Modification Specificity");
+                                peptideChart.getCategoryPlot().getRangeAxis().setRange(0, 100);
+                                peptideChart.getCategoryPlot().getDomainAxis().setMaximumCategoryLabelLines(5);
                             }
 
                             // set background color
@@ -1554,8 +1592,6 @@ public class QCPanel extends javax.swing.JPanel {
                             peptideChart.getCategoryPlot().getDomainAxis().setUpperMargin(0);
                             peptideChart.getCategoryPlot().getDomainAxis().setLowerMargin(0);
 
-                            // rotate the x-axis labels to make sure that they are readable
-                            //peptideChart.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
                             // hide the outline
                             peptideChart.getPlot().setOutlineVisible(false);
 
@@ -1846,12 +1882,10 @@ public class QCPanel extends javax.swing.JPanel {
                             } else {
                                 nonValidatedValues.add(value);
                             }
+                        } else if (peptideParameter.getMatchValidationLevel().isValidated()) {
+                            validatedDecoyValues.add(value);
                         } else {
-                            if (peptideParameter.getMatchValidationLevel().isValidated()) {
-                                validatedDecoyValues.add(value);
-                            } else {
-                                nonValidatedDecoyValues.add(value);
-                            }
+                            nonValidatedDecoyValues.add(value);
                         }
                     }
 
@@ -1906,12 +1940,10 @@ public class QCPanel extends javax.swing.JPanel {
                             } else {
                                 nonValidatedValues.add(value);
                             }
+                        } else if (peptideParameter.getMatchValidationLevel().isValidated()) {
+                            validatedDecoyValues.add(value);
                         } else {
-                            if (peptideParameter.getMatchValidationLevel().isValidated()) {
-                                validatedDecoyValues.add(value);
-                            } else {
-                                nonValidatedDecoyValues.add(value);
-                            }
+                            nonValidatedDecoyValues.add(value);
                         }
                     }
 
@@ -1965,12 +1997,10 @@ public class QCPanel extends javax.swing.JPanel {
                             } else {
                                 nonValidatedValues.add(length);
                             }
+                        } else if (peptideParameter.getMatchValidationLevel().isValidated()) {
+                            validatedDecoyValues.add(length);
                         } else {
-                            if (peptideParameter.getMatchValidationLevel().isValidated()) {
-                                validatedDecoyValues.add(length);
-                            } else {
-                                nonValidatedDecoyValues.add(length);
-                            }
+                            nonValidatedDecoyValues.add(length);
                         }
                     }
 
@@ -2044,12 +2074,10 @@ public class QCPanel extends javax.swing.JPanel {
                                 } else {
                                     nonValidatedValues.add(value);
                                 }
+                            } else if (psmParameter.getMatchValidationLevel().isValidated()) {
+                                validatedDecoyValues.add(value);
                             } else {
-                                if (psmParameter.getMatchValidationLevel().isValidated()) {
-                                    validatedDecoyValues.add(value);
-                                } else {
-                                    nonValidatedDecoyValues.add(value);
-                                }
+                                nonValidatedDecoyValues.add(value);
                             }
                         }
 
@@ -2096,12 +2124,10 @@ public class QCPanel extends javax.swing.JPanel {
                                 } else {
                                     nonValidatedValues.add(value);
                                 }
+                            } else if (psmParameter.getMatchValidationLevel().isValidated()) {
+                                validatedDecoyValues.add(value);
                             } else {
-                                if (psmParameter.getMatchValidationLevel().isValidated()) {
-                                    validatedDecoyValues.add(value);
-                                } else {
-                                    nonValidatedDecoyValues.add(value);
-                                }
+                                nonValidatedDecoyValues.add(value);
                             }
                         }
 
@@ -2167,12 +2193,10 @@ public class QCPanel extends javax.swing.JPanel {
                     } else {
                         dataset.addValue(binData[i], categoryLabel, "<=" + bins.get(i) + dataType);
                     }
+                } else if (integerBins) {
+                    dataset.addValue(binData[i], categoryLabel, "" + bins.get(i).intValue() + dataType);
                 } else {
-                    if (integerBins) {
-                        dataset.addValue(binData[i], categoryLabel, "" + bins.get(i).intValue() + dataType);
-                    } else {
-                        dataset.addValue(binData[i], categoryLabel, "" + bins.get(i) + dataType);
-                    }
+                    dataset.addValue(binData[i], categoryLabel, "" + bins.get(i) + dataType);
                 }
             } else if (i == bins.size()) {
                 if (integerBins) {
@@ -2180,16 +2204,14 @@ public class QCPanel extends javax.swing.JPanel {
                 } else {
                     dataset.addValue(binData[i], categoryLabel, ">=" + bins.get(bins.size() - 1) + dataType);
                 }
-            } else {
-                if (integerBins) {
-                    if (bins.get(i).intValue() == bins.get(i - 1).intValue() + 1) {
-                        dataset.addValue(binData[i], categoryLabel, "" + bins.get(i).intValue() + dataType);
-                    } else {
-                        dataset.addValue(binData[i], categoryLabel, bins.get(i - 1).intValue() + "-" + bins.get(i).intValue() + dataType);
-                    }
+            } else if (integerBins) {
+                if (bins.get(i).intValue() == bins.get(i - 1).intValue() + 1) {
+                    dataset.addValue(binData[i], categoryLabel, "" + bins.get(i).intValue() + dataType);
                 } else {
-                    dataset.addValue(binData[i], categoryLabel, bins.get(i - 1) + "-" + bins.get(i) + dataType);
+                    dataset.addValue(binData[i], categoryLabel, bins.get(i - 1).intValue() + "-" + bins.get(i).intValue() + dataType);
                 }
+            } else {
+                dataset.addValue(binData[i], categoryLabel, bins.get(i - 1) + "-" + bins.get(i) + dataType);
             }
         }
     }
