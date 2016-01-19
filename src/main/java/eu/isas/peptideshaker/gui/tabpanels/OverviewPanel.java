@@ -205,7 +205,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         proteinTable.getTableHeader().setReorderingAllowed(false);
         peptideTable.getTableHeader().setReorderingAllowed(false);
         psmTable.getTableHeader().setReorderingAllowed(false);
-        
+
         proteinTable.getTableHeader().addMouseListener(new MouseAdapter() {
 
             @Override
@@ -2388,17 +2388,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     accuracySlider.setValue(newValue++);
                 }
             }
-        } else {
-            if (evt.getWheelRotation() > 0) { // Down
-                intensitySlider.setValue(intensitySlider.getValue() - 1);
-            } else { // Up
-                int oldValue = intensitySlider.getValue();
-                int newValue = intensitySlider.getValue() + 1;
-                intensitySlider.setValue(newValue);
+        } else if (evt.getWheelRotation() > 0) { // Down
+            intensitySlider.setValue(intensitySlider.getValue() - 1);
+        } else { // Up
+            int oldValue = intensitySlider.getValue();
+            int newValue = intensitySlider.getValue() + 1;
+            intensitySlider.setValue(newValue);
 
-                while (oldValue == intensitySlider.getValue()) {
-                    intensitySlider.setValue(newValue++);
-                }
+            while (oldValue == intensitySlider.getValue()) {
+                intensitySlider.setValue(newValue++);
             }
         }
 
@@ -3366,7 +3364,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 });
 
                 popupMenu.add(menuItem);
-                
+
                 popupMenu.add(new JSeparator());
 
                 menuItem = new JMenuItem("Spectrum Annotation");
@@ -3576,8 +3574,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
     /**
      * Export the sequence coverage plot.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void sequenceCoveragePlotExportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequenceCoveragePlotExportMenuItemActionPerformed
         new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, coverageChart, peptideShakerGUI.getLastSelectedFolder());
@@ -3585,8 +3583,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
     /**
      * Export the protein sequence in the coverage plot.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void sequenceCoverageSequenceExportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequenceCoverageSequenceExportMenuItemActionPerformed
         try {
@@ -4074,7 +4072,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 MassErrorBubblePlot massErrorBubblePlot = new MassErrorBubblePlot(
                         selectedIndexes, allAnnotations, allSpectra, annotationPreferences.getFragmentIonAccuracy(),
-                        bubbleScale, selectedIndexes.size() == 1, displayPreferences.showBars(), 
+                        bubbleScale, selectedIndexes.size() == 1, displayPreferences.showBars(),
                         identificationParameters.getSearchParameters().getFragmentAccuracyType() == SearchParameters.MassAccuracyType.PPM);
 
                 // hide the legend if selecting more than 20 spectra // @TODO: 20 should not be hardcoded here..
@@ -4415,21 +4413,16 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 int unmodifiedCounter = 0;
 
                 // get the fixed ptms
-                HashMap<Integer, String> fixedPtms = new HashMap<Integer, String>(); // @TODO: note this this only supports one fixed ptm per residue
-
-                Identification identification = peptideShakerGUI.getIdentification();
-                identification.loadPeptideMatches(peptideKeys, progressDialog, false);
+                HashMap<Integer, String> fixedPtms = new HashMap<Integer, String>(); // @TODO: note that this only supports one fixed ptm per residue
                 DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
 
-                for (String peptideKey : peptideKeys) {
-                    boolean modified = false;
-                    for (String ptmName : displayPreferences.getDisplayedPtms()) {
-                        if (Peptide.isModified(peptideKey, ptmName)) {
-                            modified = true;
-                            break;
-                        }
-                    }
-                    if (modified) {
+                // see if fixed ptms are displayed
+                if (displayPreferences.getDisplayedPtms().size() != peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings().getVariableModifications().size()) {
+
+                    Identification identification = peptideShakerGUI.getIdentification();
+                    identification.loadPeptideMatches(peptideKeys, progressDialog, false);
+
+                    for (String peptideKey : peptideKeys) {
                         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                         for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
                             if (!modMatch.isVariable()) {
@@ -4438,7 +4431,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                     ArrayList<Integer> indexes = sequenceFactory.getProtein(proteinAccession).getPeptideStart(Peptide.getSequence(peptideKey),
                                             peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                                     for (Integer index : indexes) {
-                                        fixedPtms.put(modMatch.getModificationSite() + index - 2, ptmName);
+                                        fixedPtms.put(modMatch.getModificationSite() + index - 1, ptmName);
                                     }
                                 }
                             }
@@ -4446,9 +4439,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     }
                 }
 
-                for (int aa = 0; aa < sequence.length(); aa++) {
+                for (int aa = 1; aa < sequence.length(); aa++) {
 
-                    String ptmName = fixedPtms.get(aa);
+                    String ptmName = fixedPtms.get(aa + 1);
                     for (String variablePTM : psPtmScores.getPtmsAtRepresentativeSite(aa + 1)) {
                         if (displayPreferences.isDisplayedPTM(variablePTM)) {
                             ptmName = variablePTM;
@@ -4485,7 +4478,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         }
 
                         ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
-                        annotations.add(new ResidueAnnotation(ptmName, null, false));
+                        annotations.add(new ResidueAnnotation(ptmName + " (" + aa + ")", null, false));
                         proteinTooltips.put(sparkLineDataSeriesPtm.size(), annotations);
 
                         data = new ArrayList<Double>(1);
@@ -4995,7 +4988,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     // update the slider tooltips
                     SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
-        double accuracy = (accuracySlider.getValue() / 100.0) * searchParameters.getFragmentIonAccuracy();
+                    double accuracy = (accuracySlider.getValue() / 100.0) * searchParameters.getFragmentIonAccuracy();
                     accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " " + searchParameters.getFragmentAccuracyType());
                     intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
 
