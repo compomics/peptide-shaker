@@ -746,8 +746,9 @@ public class PtmScorer {
                 }
             }
 
-            for (Integer site : psmScores.getConfidentSites()) {
-                for (String ptmName : psmScores.getConfidentModificationsAt(site)) {
+            for (Integer refSite : psmScores.getConfidentSites()) {
+                for (String ptmName : psmScores.getConfidentModificationsAt(refSite)) {
+                    int site = refSite;
                     PTM ptm = ptmFactory.getPTM(ptmName);
                     Double ptmMass = ptm.getMass();
                     Integer occurrence = variableModifications.get(ptmMass);
@@ -769,8 +770,8 @@ public class PtmScorer {
                             } else {
                                 ptmConfidentSites.add(site);
                             }
-                            peptideScores.addConfidentModificationSite(ptmName, site);
-                            ModificationMatch newMatch = new ModificationMatch(ptmName, true, site);
+                            peptideScores.addConfidentModificationSite(ptmName, refSite);
+                            ModificationMatch newMatch = new ModificationMatch(ptmName, true, refSite);
                             newMatch.setConfident(true);
                             ArrayList<ModificationMatch> newPtmMatches = newMatches.get(ptmMass);
                             if (newPtmMatches == null) {
@@ -827,8 +828,9 @@ public class PtmScorer {
                 for (int representativeSite : psmScores.getRepresentativeSites()) {
                     HashMap<Integer, ArrayList<String>> ambiguousMappingAtSite = psmScores.getAmbiguousPtmsAtRepresentativeSite(representativeSite);
                     int mappingSize = ambiguousMappingAtSite.size();
-                    for (int site : ambiguousMappingAtSite.keySet()) {
-                        for (String ptmName : ambiguousMappingAtSite.get(site)) {
+                    for (int refSite : ambiguousMappingAtSite.keySet()) {
+                        for (String ptmName : ambiguousMappingAtSite.get(refSite)) {
+                            int site = refSite;
                             PTM ptm = ptmFactory.getPTM(ptmName);
                             Double ptmMass = ptm.getMass();
                             ArrayList<Integer> ptmConfidentSites = confidentSites.get(ptmMass);
@@ -845,8 +847,8 @@ public class PtmScorer {
                                 double dScore = 0.0;
                                 PtmScoring ptmScoring = psmScores.getPtmScoring(ptmName);
                                 if (ptmScoring != null) {
-                                    probabilisticScore = ptmScoring.getProbabilisticScore(site);
-                                    dScore = ptmScoring.getDeltaScore(site);
+                                    probabilisticScore = ptmScoring.getProbabilisticScore(refSite);
+                                    dScore = ptmScoring.getDeltaScore(refSite);
                                 }
                                 HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> pScoreMap = ambiguousSites.get(probabilisticScore);
                                 if (pScoreMap == null) {
