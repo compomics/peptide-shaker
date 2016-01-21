@@ -24,7 +24,7 @@
             <br><br>
             <b>PeptideShaker</b> sorts the selected population according to the selected metric. Matches are separated into three classes:
         </p>
-        
+
         <ul>
             <li> 
                 <b>Confident:</b> the amount of validated confident matches. Note that the validation settings can be tuned in the <i>Validation</i> tab.
@@ -37,7 +37,7 @@
                 <b>Not Validated:</b> the amount of matches that did not pass the statistical validation.
             </li>
         </ul>
-        
+
         <p align="justify">
             These plots will also help you defining thresholds for downstream analysis like inclusion/exclusion lists generation, 
             quantification analysis or PTM investigations.
@@ -93,6 +93,15 @@
                 peptides below the minimum length and/or above the maximum peptide length it may be worth looking into extending the 
                 allowed peptide length range in the <i>Import Filters</i> settings found in the <i>New Project</i> dialog when opening 
                 a new project.
+            </li>
+            <li>
+                <b>Number of Modifications:</b> The number of peptides modified by the searched modifications.
+            </li>
+            <li>
+                <b>Modifications Efficiency:</b> The percentage of possible modification cites modified by the searched modifications.
+            </li>
+            <li>
+                <b>Modifications Specificity:</b> The percentage of peptides that could be targeted by the given modifications that were actually modified by the given modifications.
             </li>
         </ul>
         <br>

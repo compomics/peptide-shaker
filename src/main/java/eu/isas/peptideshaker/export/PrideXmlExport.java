@@ -47,6 +47,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import org.apache.commons.lang3.StringEscapeUtils;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -581,7 +582,7 @@ public class PrideXmlExport {
                     // additional peptide id parameters
                     br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
                     tabCounter++;
-                    br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum File\" value=\"" + Spectrum.getSpectrumFile(spectrumKey) + "\" />" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum File\" value=\"" + StringEscapeUtils.escapeHtml4(Spectrum.getSpectrumFile(spectrumKey)) + "\" />" + System.getProperty("line.separator"));
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1000796", "Spectrum Title", "" + Spectrum.getSpectrumTitle(spectrumKey)));
                     br.write(getCurrentTabSpace() + "<userParam name=\"Protein Inference\" value=\"" + peptideProteins + "\" />" + System.getProperty("line.separator"));
                     br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence\" value=\"" + Util.roundDouble(peptideProbabilities.getPeptideConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
@@ -819,7 +820,7 @@ public class PrideXmlExport {
                 br.write(getCurrentTabSpace() + "<ModLocation>" + modLocation + "</ModLocation>" + System.getProperty("line.separator"));
 
                 if (cvTerm == null) {
-                    br.write(getCurrentTabSpace() + "<ModAccession>" + cvTermName + "</ModAccession>" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<ModAccession>" + StringEscapeUtils.escapeHtml4(cvTermName) + "</ModAccession>" + System.getProperty("line.separator"));
                     br.write(getCurrentTabSpace() + "<ModDatabase>" + "PSI-MS" + "</ModDatabase>" + System.getProperty("line.separator"));
                 } else {
                     br.write(getCurrentTabSpace() + "<ModAccession>" + cvTerm.getAccession() + "</ModAccession>" + System.getProperty("line.separator"));
@@ -831,9 +832,9 @@ public class PrideXmlExport {
                 br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
                 tabCounter++;
                 if (cvTerm == null) {
-                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001460\" name=\"" + cvTermName + "\" value=\"" + ptmMass + "\" />" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001460\" name=\"" + StringEscapeUtils.escapeHtml4(cvTermName) + "\" value=\"" + ptmMass + "\" />" + System.getProperty("line.separator"));
                 } else {
-                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"UNIMOD\" accession=\"" + cvTerm.getAccession() + "\" name=\"" + cvTermName + "\" value=\"" + ptmMass + "\" />" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"UNIMOD\" accession=\"" + cvTerm.getAccession() + "\" name=\"" + StringEscapeUtils.escapeHtml4(cvTermName) + "\" value=\"" + ptmMass + "\" />" + System.getProperty("line.separator"));
                 }
                 tabCounter--;
                 br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
@@ -1124,7 +1125,7 @@ public class PrideXmlExport {
         tabCounter++;
 
         // write the instrument name
-        br.write(getCurrentTabSpace() + "<instrumentName>" + instrument.getName() + "</instrumentName>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<instrumentName>" + StringEscapeUtils.escapeHtml4(instrument.getName()) + "</instrumentName>" + System.getProperty("line.separator"));
 
         // write the source
         br.write(getCurrentTabSpace() + "<source>" + System.getProperty("line.separator"));
@@ -1170,9 +1171,9 @@ public class PrideXmlExport {
             br.write(getCurrentTabSpace() + "<contact>" + System.getProperty("line.separator"));
             tabCounter++;
 
-            br.write(getCurrentTabSpace() + "<name>" + contactGroup.getContacts().get(i).getName() + "</name>" + System.getProperty("line.separator"));
-            br.write(getCurrentTabSpace() + "<institution>" + contactGroup.getContacts().get(i).getInstitution() + "</institution>" + System.getProperty("line.separator"));
-            br.write(getCurrentTabSpace() + "<contactInfo>" + contactGroup.getContacts().get(i).getEMail() + "</contactInfo>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<name>" + StringEscapeUtils.escapeHtml4(contactGroup.getContacts().get(i).getName()) + "</name>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<institution>" + StringEscapeUtils.escapeHtml4(contactGroup.getContacts().get(i).getInstitution()) + "</institution>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<contactInfo>" + StringEscapeUtils.escapeHtml4(contactGroup.getContacts().get(i).getEMail()) + "</contactInfo>" + System.getProperty("line.separator"));
 
             tabCounter--;
             br.write(getCurrentTabSpace() + "</contact>" + System.getProperty("line.separator"));
@@ -1216,11 +1217,11 @@ public class PrideXmlExport {
 
         // Project
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000097\" name=\"Project\" "
-                + "value=\"" + experimentProject + "\" />" + System.getProperty("line.separator"));
+                + "value=\"" + StringEscapeUtils.escapeHtml4(experimentProject) + "\" />" + System.getProperty("line.separator"));
 
         // Experiment description
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000040\" name=\"Experiment description\" "
-                + "value=\"" + experimentDescription + "\" />" + System.getProperty("line.separator"));
+                + "value=\"" + StringEscapeUtils.escapeHtml4(experimentDescription) + "\" />" + System.getProperty("line.separator"));
 
         // Global peptide FDR
         //br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001364\" name=\"pep:global FDR\" value=\"" + peptideShakerGUI. + "\" />" + System.getProperty("line.separator"));  // @TODO: add global peptide FDR?
@@ -1240,7 +1241,7 @@ public class PrideXmlExport {
      * reading/writing a file
      */
     private void writeTitle() throws IOException {
-        br.write(getCurrentTabSpace() + "<Title>" + experimentTitle + "</Title>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<Title>" + StringEscapeUtils.escapeHtml4(experimentTitle) + "</Title>" + System.getProperty("line.separator"));
     }
 
     /**
@@ -1250,7 +1251,7 @@ public class PrideXmlExport {
      * reading/writing a file
      */
     private void writeShortLabel() throws IOException {
-        br.write(getCurrentTabSpace() + "<ShortLabel>" + experimentLabel + "</ShortLabel>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<ShortLabel>" + StringEscapeUtils.escapeHtml4(experimentLabel) + "</ShortLabel>" + System.getProperty("line.separator"));
     }
 
     /**
@@ -1263,7 +1264,7 @@ public class PrideXmlExport {
         br.write(getCurrentTabSpace() + "<Protocol>" + System.getProperty("line.separator"));
         tabCounter++;
 
-        br.write(getCurrentTabSpace() + "<ProtocolName>" + protocol.getName() + "</ProtocolName>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<ProtocolName>" + StringEscapeUtils.escapeHtml4(protocol.getName()) + "</ProtocolName>" + System.getProperty("line.separator"));
         br.write(getCurrentTabSpace() + "<ProtocolSteps>" + System.getProperty("line.separator"));
 
         for (int i = 0; i < protocol.getCvTerms().size(); i++) {
@@ -1299,7 +1300,7 @@ public class PrideXmlExport {
             br.write(getCurrentTabSpace() + "<Reference>" + System.getProperty("line.separator"));
             tabCounter++;
 
-            br.write(getCurrentTabSpace() + "<RefLine>" + tempReference.getReference() + "</RefLine>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<RefLine>" + StringEscapeUtils.escapeHtml4(tempReference.getReference()) + "</RefLine>" + System.getProperty("line.separator"));
 
             if (tempReference.getPmid() != null || tempReference.getDoi() != null) {
                 br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
@@ -1563,12 +1564,12 @@ public class PrideXmlExport {
     private void writeCvTerm(CvTerm cvTerm) throws IOException {
 
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "cvLabel=\"" + new String(cvTerm.getOntology().getBytes("UTF-8")) + "\" "
+                + "cvLabel=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getOntology()) + "\" "
                 + "accession=\"" + cvTerm.getAccession() + "\" "
-                + "name=\"" + new String(cvTerm.getName().getBytes("UTF-8")) + "\"");
+                + "name=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getName()) + "\"");
 
         if (cvTerm.getValue() != null) {
-            br.write(" value=\"" + new String(cvTerm.getValue().getBytes("UTF-8")) + "\" />" + System.getProperty("line.separator"));
+            br.write(" value=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getValue()) + "\" />" + System.getProperty("line.separator"));
         } else {
             br.write(" />" + System.getProperty("line.separator"));
         }
