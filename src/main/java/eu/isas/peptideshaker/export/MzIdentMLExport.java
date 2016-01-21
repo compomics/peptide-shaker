@@ -56,6 +56,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
+import org.apache.commons.lang3.StringEscapeUtils; 
 
 /**
  * The class that takes care of converting the data to mzIdentML.
@@ -157,11 +158,11 @@ public class MzIdentMLExport {
     private MatchValidationLevel proteinMatchValidationLevel;
     /**
      * The match validation level a peptide must have to be included in the
-     * export
+     * export.
      */
     private MatchValidationLevel peptideMatchValidationLevel;
     /**
-     * The match validation level a psm must have to be included in the export
+     * The match validation level a PSM must have to be included in the export.
      */
     private MatchValidationLevel psmMatchValidationLevel;
 
@@ -744,12 +745,14 @@ public class MzIdentMLExport {
         tabCounter++;
 
         // create the ptm index map
-        for (String ptm : searchParameters.getPtmSettings().getAllModifications()) {
-            PTM currentPtm = ptmFactory.getPTM(ptm);
-            Double ptmMass = currentPtm.getMass();
-            Integer index = ptmIndexMap.get(ptmMass);
-            if (index == null) {
-                ptmIndexMap.put(ptmMass, ptmIndexMap.size());
+        if (mzidVersion_1_2) {
+            for (String ptm : searchParameters.getPtmSettings().getAllModifications()) {
+                PTM currentPtm = ptmFactory.getPTM(ptm);
+                Double ptmMass = currentPtm.getMass();
+                Integer index = ptmIndexMap.get(ptmMass);
+                if (index == null) {
+                    ptmIndexMap.put(ptmMass, ptmIndexMap.size());
+                }
             }
         }
 
@@ -816,11 +819,13 @@ public class MzIdentMLExport {
             }
 
             // add modification type/index
-            Integer ptmIndex = ptmIndexMap.get(ptmMass);
-            if (ptmIndex == null) {
-                throw new IllegalArgumentException("No index found for PTM " + currentPtm.getName() + " of mass " + ptmMass + ".");
+            if (mzidVersion_1_2) {
+                Integer ptmIndex = ptmIndexMap.get(ptmMass);
+                if (ptmIndex == null) {
+                    throw new IllegalArgumentException("No index found for PTM " + currentPtm.getName() + " of mass " + ptmMass + ".");
+                }
+                writeCvTerm(new CvTerm("PSI-MS", "MS:1002504", "modification index", ptmIndex.toString()));
             }
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002504", "modification index", ptmIndex.toString()));
 
             tabCounter--;
             br.write(getCurrentTabSpace() + "</SearchModification>" + System.getProperty("line.separator"));
@@ -1916,12 +1921,12 @@ public class MzIdentMLExport {
     private void writeCvTerm(CvTerm cvTerm) throws IOException {
 
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "cvRef=\"" + new String(cvTerm.getOntology().getBytes("UTF-8")) + "\" "
+                + "cvRef=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getOntology()) + "\" "
                 + "accession=\"" + cvTerm.getAccession() + "\" "
-                + "name=\"" + new String(cvTerm.getName().getBytes("UTF-8")) + "\"");
+                + "name=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getName()) + "\"");
 
         if (cvTerm.getValue() != null) {
-            br.write(" value=\"" + new String(cvTerm.getValue().getBytes("UTF-8")) + "\"/>" + System.getProperty("line.separator"));
+            br.write(" value=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getValue()) + "\"/>" + System.getProperty("line.separator"));
         } else {
             br.write("/>" + System.getProperty("line.separator"));
         }
@@ -1933,7 +1938,7 @@ public class MzIdentMLExport {
      * @param userParamAsString the user parameter as a string
      */
     private void writeUserParam(String userParamAsString) throws IOException {
-        br.write(getCurrentTabSpace() + "<userParam name=\"" + new String(userParamAsString.getBytes("UTF-8")) + "\"/>" + System.getProperty("line.separator")); // @replace...
+        br.write(getCurrentTabSpace() + "<userParam name=\"" + StringEscapeUtils.escapeHtml4(userParamAsString) + "\"/>" + System.getProperty("line.separator")); // @replace...
     }
 
     /**
@@ -1943,6 +1948,6 @@ public class MzIdentMLExport {
      * @param value the value of the user parameter
      */
     private void writeUserParam(String name, String value) throws IOException {
-        br.write(getCurrentTabSpace() + "<userParam name=\"" + new String(name.getBytes("UTF-8")) + "\" value=\"" + new String(value.getBytes("UTF-8")) + "\" />" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<userParam name=\"" + StringEscapeUtils.escapeHtml4(name) + "\" value=\"" + StringEscapeUtils.escapeHtml4(value) + "\" />" + System.getProperty("line.separator"));
     }
 }
