@@ -4424,14 +4424,16 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     for (String peptideKey : peptideKeys) {
                         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                        for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
-                            if (!modMatch.isVariable()) {
-                                String ptmName = modMatch.getTheoreticPtm();
-                                if (displayPreferences.isDisplayedPTM(ptmName)) {
-                                    ArrayList<Integer> indexes = sequenceFactory.getProtein(proteinAccession).getPeptideStart(Peptide.getSequence(peptideKey),
-                                            peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
-                                    for (Integer index : indexes) {
-                                        fixedPtms.put(modMatch.getModificationSite() + index - 1, ptmName);
+                        if (peptideMatch.getTheoreticPeptide().getModificationMatches() != null) {
+                            for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
+                                if (!modMatch.isVariable()) {
+                                    String ptmName = modMatch.getTheoreticPtm();
+                                    if (displayPreferences.isDisplayedPTM(ptmName)) {
+                                        ArrayList<Integer> indexes = sequenceFactory.getProtein(proteinAccession).getPeptideStart(Peptide.getSequence(peptideKey),
+                                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                                        for (Integer index : indexes) {
+                                            fixedPtms.put(modMatch.getModificationSite() + index - 1, ptmName);
+                                        }
                                     }
                                 }
                             }
