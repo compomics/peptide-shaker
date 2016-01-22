@@ -616,8 +616,8 @@ public class PtmScorer {
 
         HashMap<Double, Integer> variableModifications = new HashMap<Double, Integer>(peptide.getNModifications());
         HashMap<Double, HashMap<Integer, ArrayList<String>>> inferredSites = new HashMap<Double, HashMap<Integer, ArrayList<String>>>(peptide.getNModifications());
-        String nTermPtmConfident = null;
-        String cTermPtmConfident = null;
+        PTM nTermPtmConfident = null;
+        PTM cTermPtmConfident = null;
 
         String originalKey = peptide.getMatchingKey(sequenceMatchingPreferences);
         ArrayList<ModificationMatch> newModificationMatches = new ArrayList<ModificationMatch>(originalMatches.size());
@@ -673,12 +673,12 @@ public class PtmScorer {
                         if (cTermPtmConfident != null) {
                             throw new IllegalArgumentException("Multiple PTMs on termini not supported.");
                         }
-                        cTermPtmConfident = modName;
+                        cTermPtmConfident = ptmFactory.getPTM(modName);
                     } else if (ptm.isNTerm()) {
                         if (nTermPtmConfident != null) {
                             throw new IllegalArgumentException("Multiple PTMs on termini not supported.");
                         }
-                        nTermPtmConfident = modName;
+                        nTermPtmConfident = ptmFactory.getPTM(modName);
                     } else {
                         throw new IllegalArgumentException("Terminal PTM should be of type PTM.MODAA.");
                     }
@@ -758,14 +758,22 @@ public class PtmScorer {
                             ptmConfidentSites = new ArrayList<Integer>();
                             confidentSites.put(ptmMass, ptmConfidentSites);
                         }
-                        if (ptm.getType() == PTM.MODAA && !ptmConfidentSites.contains(site)
+                        int nSitesOccupied = ptmConfidentSites.size();
+                        if (nTermPtmConfident != null && ptm.getMass() == nTermPtmConfident.getMass()) {
+                            nSitesOccupied++;
+                        }
+                        if (cTermPtmConfident != null && ptm.getMass() == cTermPtmConfident.getMass()) {
+                            nSitesOccupied++;
+                        }
+                        if (nSitesOccupied < occurrence
+                                && (ptm.getType() == PTM.MODAA && !ptmConfidentSites.contains(site)
                                 || site == 1 && nTermPtmConfident == null && ptm.isNTerm()
-                                || site == peptideSequence.length() && cTermPtmConfident == null && ptm.isCTerm()) {
+                                || site == peptideSequence.length() && cTermPtmConfident == null && ptm.isCTerm())) {
                             if (ptm.isCTerm()) {
-                                cTermPtmConfident = ptmName;
+                                cTermPtmConfident = ptm;
                                 site = site + 1;
                             } else if (ptm.isNTerm()) {
-                                nTermPtmConfident = ptmName;
+                                nTermPtmConfident = ptm;
                                 site = 0;
                             } else {
                                 ptmConfidentSites.add(site);
@@ -833,45 +841,59 @@ public class PtmScorer {
                             int site = refSite;
                             PTM ptm = ptmFactory.getPTM(ptmName);
                             Double ptmMass = ptm.getMass();
-                            ArrayList<Integer> ptmConfidentSites = confidentSites.get(ptmMass);
-                            if (ptm.getType() == PTM.MODAA && ptmConfidentSites == null
-                                    || ptm.getType() == PTM.MODAA && !ptmConfidentSites.contains(site)
-                                    || site == 1 && nTermPtmConfident == null && ptm.isNTerm()
-                                    || site == peptideSequence.length() && cTermPtmConfident == null && ptm.isCTerm()) {
-                                if (ptm.isCTerm()) {
-                                    site = site + 1;
-                                } else if (ptm.isNTerm()) {
-                                    site = 0;
+                            Integer occurrence = variableModifications.get(ptmMass);
+                            if (occurrence != null) {
+                                ArrayList<Integer> ptmConfidentSites = confidentSites.get(ptmMass);
+                                int nSitesOccupied = 0;
+                                if (ptmConfidentSites != null) {
+                                    nSitesOccupied = ptmConfidentSites.size();
                                 }
-                                double probabilisticScore = 0.0;
-                                double dScore = 0.0;
-                                PtmScoring ptmScoring = psmScores.getPtmScoring(ptmName);
-                                if (ptmScoring != null) {
-                                    probabilisticScore = ptmScoring.getProbabilisticScore(refSite);
-                                    dScore = ptmScoring.getDeltaScore(refSite);
+                                if (nTermPtmConfident != null && ptm.getMass() == nTermPtmConfident.getMass()) {
+                                    nSitesOccupied++;
                                 }
-                                HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> pScoreMap = ambiguousSites.get(probabilisticScore);
-                                if (pScoreMap == null) {
-                                    pScoreMap = new HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>(mappingSize);
-                                    ambiguousSites.put(probabilisticScore, pScoreMap);
+                                if (cTermPtmConfident != null && ptm.getMass() == cTermPtmConfident.getMass()) {
+                                    nSitesOccupied++;
                                 }
-                                HashMap<Double, HashMap<Integer, ArrayList<String>>> dScoreMap = pScoreMap.get(dScore);
-                                if (dScoreMap == null) {
-                                    dScoreMap = new HashMap<Double, HashMap<Integer, ArrayList<String>>>(mappingSize);
-                                    pScoreMap.put(dScore, dScoreMap);
-                                }
-                                HashMap<Integer, ArrayList<String>> ptmMap = dScoreMap.get(ptmMass);
-                                if (ptmMap == null) {
-                                    ptmMap = new HashMap<Integer, ArrayList<String>>(1);
-                                    dScoreMap.put(ptmMass, ptmMap);
-                                }
-                                ArrayList<String> modifications = ptmMap.get(site);
-                                if (modifications == null) {
-                                    modifications = new ArrayList<String>(1);
-                                    ptmMap.put(site, modifications);
-                                }
-                                if (!modifications.contains(ptmName)) {
-                                    modifications.add(ptmName);
+                                if (nSitesOccupied < occurrence
+                                        && (ptm.getType() == PTM.MODAA && ptmConfidentSites == null
+                                        || ptm.getType() == PTM.MODAA && !ptmConfidentSites.contains(site)
+                                        || site == 1 && nTermPtmConfident == null && ptm.isNTerm()
+                                        || site == peptideSequence.length() && cTermPtmConfident == null && ptm.isCTerm())) {
+                                    if (ptm.isCTerm()) {
+                                        site = site + 1;
+                                    } else if (ptm.isNTerm()) {
+                                        site = 0;
+                                    }
+                                    double probabilisticScore = 0.0;
+                                    double dScore = 0.0;
+                                    PtmScoring ptmScoring = psmScores.getPtmScoring(ptmName);
+                                    if (ptmScoring != null) {
+                                        probabilisticScore = ptmScoring.getProbabilisticScore(refSite);
+                                        dScore = ptmScoring.getDeltaScore(refSite);
+                                    }
+                                    HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> pScoreMap = ambiguousSites.get(probabilisticScore);
+                                    if (pScoreMap == null) {
+                                        pScoreMap = new HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>(mappingSize);
+                                        ambiguousSites.put(probabilisticScore, pScoreMap);
+                                    }
+                                    HashMap<Double, HashMap<Integer, ArrayList<String>>> dScoreMap = pScoreMap.get(dScore);
+                                    if (dScoreMap == null) {
+                                        dScoreMap = new HashMap<Double, HashMap<Integer, ArrayList<String>>>(mappingSize);
+                                        pScoreMap.put(dScore, dScoreMap);
+                                    }
+                                    HashMap<Integer, ArrayList<String>> ptmMap = dScoreMap.get(ptmMass);
+                                    if (ptmMap == null) {
+                                        ptmMap = new HashMap<Integer, ArrayList<String>>(1);
+                                        dScoreMap.put(ptmMass, ptmMap);
+                                    }
+                                    ArrayList<String> modifications = ptmMap.get(site);
+                                    if (modifications == null) {
+                                        modifications = new ArrayList<String>(1);
+                                        ptmMap.put(site, modifications);
+                                    }
+                                    if (!modifications.contains(ptmName)) {
+                                        modifications.add(ptmName);
+                                    }
                                 }
                             }
                         }
@@ -888,15 +910,13 @@ public class PtmScorer {
                     nConfident = ptmConfidentSites.size();
                 }
                 if (nTermPtmConfident != null) {
-                    PTM ptm = ptmFactory.getPTM(nTermPtmConfident);
-                    double nTermMass = ptm.getMass();
+                    double nTermMass = nTermPtmConfident.getMass();
                     if (nTermMass == ptmMass) {
                         nConfident++;
                     }
                 }
                 if (cTermPtmConfident != null) {
-                    PTM ptm = ptmFactory.getPTM(cTermPtmConfident);
-                    double nTermMass = ptm.getMass();
+                    double nTermMass = cTermPtmConfident.getMass();
                     if (nTermMass == ptmMass) {
                         nConfident++;
                     }
