@@ -298,10 +298,10 @@ public class PSExportFactory implements ExportFactory {
                 section.writeSection(identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, psmKeys, nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
             } else if (sectionName.equals(PsPsmFeature.type)) {
                 PsPsmSection section = new PsPsmSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, psmKeys, "", exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
+                section.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, psmKeys, "", nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
             } else if (sectionName.equals(PsIdentificationAlgorithmMatchesFeature.type)) {
                 PsIdentificationAlgorithmMatchesSection section = new PsIdentificationAlgorithmMatchesSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, psmKeys, "", waitingHandler);
+                section.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, psmKeys, "", nSurroundingAA, waitingHandler);
             } else if (sectionName.equals(PsPtmScoringFeature.type)) {
                 PsPtmScoringSection section = new PsPtmScoringSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
                 section.writeSection(identificationParameters.getPtmScoringPreferences(), waitingHandler);

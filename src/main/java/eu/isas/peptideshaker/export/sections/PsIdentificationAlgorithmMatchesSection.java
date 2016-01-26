@@ -112,6 +112,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @param identificationParameters the identification parameters
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
+     * @param nSurroundingAA the number of surrounding amino acids to export
      * @param waitingHandler the waiting handler
      *
      * @throws IOException exception thrown whenever an error occurred while
@@ -127,7 +128,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys,
-            String linePrefix, WaitingHandler waitingHandler) throws IOException, SQLException,
+            String linePrefix, int nSurroundingAA, WaitingHandler waitingHandler) throws IOException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
@@ -231,7 +232,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                                 if (assumption instanceof PeptideAssumption) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                     feature = getPeptideAssumptionFeature(identification, identificationFeaturesGenerator,
-                                            shotgunProtocol, identificationParameters, keys, linePrefix,
+                                            shotgunProtocol, identificationParameters, keys, linePrefix, nSurroundingAA,
                                             peptideAssumption, spectrumKey, psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
                                 } else if (assumption instanceof TagAssumption) {
                                     TagAssumption tagAssumption = (TagAssumption) assumption;
@@ -322,6 +323,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @param identificationParameters the identification parameters
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
+     * @param nSurroundingAA the number of surrounding amino acids to export
      * @param peptideAssumption the assumption for the match to inspect
      * @param spectrumKey the key of the spectrum
      * @param psParameter the PeptideShaker parameter of the match
@@ -343,7 +345,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * reading an mzML file
      */
     public static String getPeptideAssumptionFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix, int nSurroundingAA,
             PeptideAssumption peptideAssumption, String spectrumKey, PSParameter psParameter, PsIdentificationAlgorithmMatchesFeature exportFeature,
             WaitingHandler waitingHandler) throws IOException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
@@ -492,6 +494,55 @@ public class PsIdentificationAlgorithmMatchesSection {
                 return Advocate.getAdvocate(id).getName() + " (" + score + ")";
             case sequence:
                 return peptideAssumption.getPeptide().getSequence();
+            case aaBefore:
+                peptide = peptideAssumption.getPeptide();
+                accessions = peptide.getParentProteins(identificationParameters.getSequenceMatchingPreferences());
+                Collections.sort(accessions);
+                String subSequence = "";
+                for (String proteinAccession : accessions) {
+                    if (!subSequence.equals("")) {
+                        subSequence += "; ";
+                    }
+                    HashMap<Integer, String[]> surroundingAAs = SequenceFactory.getInstance().getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
+                            nSurroundingAA, identificationParameters.getSequenceMatchingPreferences());
+                    ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
+                    Collections.sort(starts);
+                    boolean first = true;
+                    for (int startAa : starts) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            subSequence += ", ";
+                        }
+                        subSequence += surroundingAAs.get(startAa)[0];
+                    }
+                }
+                return subSequence;
+            case aaAfter:
+                peptide = peptideAssumption.getPeptide();
+                accessions = peptide.getParentProteins(identificationParameters.getSequenceMatchingPreferences());
+                Collections.sort(accessions);
+                subSequence = "";
+                for (String proteinAccession : accessions) {
+                    if (!subSequence.equals("")) {
+                        subSequence += "; ";
+                    }
+                    HashMap<Integer, String[]> surroundingAAs
+                            = SequenceFactory.getInstance().getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
+                                    nSurroundingAA, identificationParameters.getSequenceMatchingPreferences());
+                    ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
+                    Collections.sort(starts);
+                    boolean first = true;
+                    for (int startAa : starts) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            subSequence += ", ";
+                        }
+                        subSequence += surroundingAAs.get(startAa)[1];
+                    }
+                }
+                return subSequence;
             case missed_cleavages:
                 String sequence = peptideAssumption.getPeptide().getSequence();
                 return Peptide.getNMissedCleavages(sequence, shotgunProtocol.getEnzyme()) + "";
