@@ -289,4 +289,14 @@
 		<semiSpecific> yes </semiSpecific>
 		<wholeProtein> no </wholeProtein>
 	</enzyme>
+	<enzyme>
+		<id> 29 </id>
+		<name> Semi-Glu-C (DE) </name>
+		<aminoAcidBefore> DE </aminoAcidBefore>
+		<restrictionBefore> </restrictionBefore>
+		<aminoAcidAfter> </aminoAcidAfter>
+		<restrictionAfter> P </restrictionAfter>
+		<semiSpecific> yes </semiSpecific>
+		<wholeProtein> no </wholeProtein>
+	</enzyme>
 </xml>
