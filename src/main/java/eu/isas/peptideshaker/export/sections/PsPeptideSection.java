@@ -189,7 +189,7 @@ public class PsPeptideSection {
                         if (waitingHandler != null) {
                             waitingHandler.setDisplayProgress(false);
                         }
-                        psmSection.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideMatch.getSpectrumMatchesKeys(), psmSectionPrefix, validatedOnly, decoys, waitingHandler);
+                        psmSection.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideMatch.getSpectrumMatchesKeys(), psmSectionPrefix, nSurroundingAA, validatedOnly, decoys, waitingHandler);
                         if (waitingHandler != null) {
                             waitingHandler.setDisplayProgress(true);
                         }
@@ -324,9 +324,9 @@ public class PsPeptideSection {
                     return "0";
                 }
             case aaBefore:
-                accessions = peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
-                Collections.sort(accessions);
                 peptide = peptideMatch.getTheoreticPeptide();
+                accessions = peptide.getParentProteins(identificationParameters.getSequenceMatchingPreferences());
+                Collections.sort(accessions);
                 String subSequence = "";
                 for (String proteinAccession : accessions) {
                     if (!subSequence.equals("")) {
@@ -348,9 +348,9 @@ public class PsPeptideSection {
                 }
                 return subSequence;
             case aaAfter:
-                accessions = peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
-                Collections.sort(accessions);
                 peptide = peptideMatch.getTheoreticPeptide();
+                accessions = peptide.getParentProteins(identificationParameters.getSequenceMatchingPreferences());
+                Collections.sort(accessions);
                 subSequence = "";
                 for (String proteinAccession : accessions) {
                     if (!subSequence.equals("")) {
