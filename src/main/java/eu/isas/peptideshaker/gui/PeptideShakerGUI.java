@@ -3459,8 +3459,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             exportProjectMenuItem.setEnabled(true);
 
             // disable the fractions tab if only one mgf file
-            allTabsJTabbedPane.setEnabledAt(2, getIdentification().getSpectrumFiles().size() > 1);
-            fractionDetailsJMenuItem.setEnabled(getIdentification().getSpectrumFiles().size() > 1);
+            boolean fractions = getIdentification().getSpectrumFiles().size() > 1;
+            allTabsJTabbedPane.setEnabledAt(PROTEIN_FRACTIONS_TAB_INDEX, fractions);
+            fractionDetailsJMenuItem.setEnabled(fractions);
+
+            // Disable the validation tab if no decoy was used
+            boolean targetDecoy = sequenceFactory.concatenatedTargetDecoy();
+            allTabsJTabbedPane.setEnabledAt(VALIDATION_TAB_INDEX, targetDecoy);
+            validatedProteinsOnlyJCheckBoxMenuItem.setEnabled(targetDecoy);
 
         } catch (Exception e) {
 
