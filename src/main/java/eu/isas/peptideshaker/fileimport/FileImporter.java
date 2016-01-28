@@ -869,15 +869,8 @@ public class FileImporter {
                             }
                             share = 100 * ((double) precursorIssue) / totalAssumptionsRejected;
                             if (share >= 1) {
-                                String unit;
-
-                                if (identificationParameters.getSearchParameters().isPrecursorAccuracyTypePpm()) {
-                                    unit = "ppm";
-                                } else {
-                                    unit = "Da";
-                                }
                                 waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1)
-                                        + "% peptide mass deviation bigger than " + idFilter.getMaxMzDeviation() + " " + unit + ".", true, true);
+                                        + "% peptide presenting high mass or isotopic deviation.", true, true);
                             }
                             share = 100 * ((double) ptmIssue) / totalAssumptionsRejected;
                             if (share >= 1) {
