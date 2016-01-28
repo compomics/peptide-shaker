@@ -118,7 +118,7 @@ public class PtmScorer {
 
         HashMap<String, ArrayList<Integer>> modificationProfiles = new HashMap<String, ArrayList<Integer>>();
         PSPtmScores ptmScores = new PSPtmScores();
-
+        
         if (spectrumMatch.getUrParam(new PSPtmScores()) != null) {
             ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
         }
@@ -621,10 +621,6 @@ public class PtmScorer {
 
         String originalKey = peptide.getMatchingKey(sequenceMatchingPreferences);
         ArrayList<ModificationMatch> newModificationMatches = new ArrayList<ModificationMatch>(originalMatches.size());
-        
-        if (originalKey.equals("KAKGDAKGDKAKVKDEPQR_-0.9840155826899988_42.0105646837-ATAA-3_42.0105646837-ATAA-3_70.04186481197999_70.04186481197999")) {
-            int debug = 1;
-        }
 
         for (ModificationMatch modificationMatch : originalMatches) {
             if (modificationMatch.isVariable()) {
@@ -933,12 +929,7 @@ public class PtmScorer {
                 }
             }
 
-            HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> representativeToSecondaryMap;
-            try {
-                representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSites, nRepresentativesMap, inferredSites);
-            } catch (Exception e) {
-                representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSites, nRepresentativesMap, inferredSites);
-            }
+            HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSites, nRepresentativesMap, inferredSites);
 
             for (Double ptmMass : representativeToSecondaryMap.keySet()) {
                 HashMap<Integer, HashMap<Integer, ArrayList<String>>> representativesAtMass = representativeToSecondaryMap.get(ptmMass);
@@ -1730,7 +1721,7 @@ public class PtmScorer {
 
                     SpectrumMatch spectrumMatch = psmIterator.next();
                     String spectrumKey = spectrumMatch.getKey();
-
+        
                     Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                     String sequence = peptide.getSequence();
                     String notConfidentKey = peptide.getMatchingKey(sequenceMatchingPreferences);
@@ -1799,7 +1790,7 @@ public class PtmScorer {
                                                     if (!siteOccupied) {
                                                         for (String ptmName : searchParameters.getPtmSettings().getAllNotFixedModifications()) {
                                                             PTM ptm = ptmFactory.getPTM(ptmName);
-                                                            if (ptm.getMass() == ptm.getMass() && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(shiftedLocalization)) { // @TODO: compare against the accuracy
+                                                            if (ptm.getMass() == ptmMass && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(shiftedLocalization)) { // @TODO: compare against the accuracy
                                                                 candidatePtm = true;
                                                                 break;
                                                             }
@@ -1838,7 +1829,7 @@ public class PtmScorer {
                                                     if (!siteOccupied) {
                                                         for (String ptmName : searchParameters.getPtmSettings().getAllNotFixedModifications()) {
                                                             PTM ptm = ptmFactory.getPTM(ptmName);
-                                                            if (ptm.getMass() == ptm.getMass() && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(shiftedLocalization)) { // @TODO: compare against the accuracy
+                                                            if (ptm.getMass() == ptmMass && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(shiftedLocalization)) { // @TODO: compare against the accuracy
                                                                 candidatePtm = true;
                                                                 break;
                                                             }
@@ -1878,7 +1869,7 @@ public class PtmScorer {
                                         String ptmCandidateName = null;
                                         for (String ptmName : searchParameters.getPtmSettings().getAllNotFixedModifications()) {
                                             PTM ptm = ptmFactory.getPTM(ptmName);
-                                            if (ptm.getMass() == ptm.getMass() && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(newLocalization)) { // @TODO: compare against the accuracy
+                                            if (ptm.getMass() == ptmMass && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(newLocalization)) { // @TODO: compare against the accuracy
                                                 ptmCandidateName = ptm.getName();
                                                 break;
                                             }
