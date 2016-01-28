@@ -299,4 +299,24 @@
 		<semiSpecific> yes </semiSpecific>
 		<wholeProtein> no </wholeProtein>
 	</enzyme>
+	<enzyme>
+		<id> 30 </id>
+		<name> Arg-N </name>
+		<aminoAcidBefore> </aminoAcidBefore>
+		<restrictionBefore> </restrictionBefore>
+		<aminoAcidAfter> R </aminoAcidAfter>
+		<restrictionAfter> </restrictionAfter>
+		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
+	</enzyme>
+	<enzyme>
+		<id> 31 </id>
+		<name> Semi-Arg-N </name>
+		<aminoAcidBefore> </aminoAcidBefore>
+		<restrictionBefore> </restrictionBefore>
+		<aminoAcidAfter> R </aminoAcidAfter>
+		<restrictionAfter> </restrictionAfter>
+		<semiSpecific> yes </semiSpecific>
+		<wholeProtein> no </wholeProtein>
+	</enzyme>
 </xml>

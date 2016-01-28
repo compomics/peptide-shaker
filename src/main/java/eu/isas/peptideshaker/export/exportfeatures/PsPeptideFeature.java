@@ -24,7 +24,7 @@ public enum PsPeptideFeature implements ExportFeature {
     variable_ptms("Variable Modifications", "The variable modifications.", false),
     fixed_ptms("Fixed Modifications", "The fixed modifications.", false),
     localization_confidence("Localization Confidence", "The confidence in PTMs localization.", false),
-    probabilistic_score("probabilistic PTM score", "The best probabilistic score (e.g. A-score or PhosphoRS) among all validated PSMs for this peptide.", false),
+    probabilistic_score("Probabilistic PTM score", "The best probabilistic score (e.g. A-score or PhosphoRS) among all validated PSMs for this peptide.", false),
     d_score("D-score", "The best D-score for variable PTM localization among all validated PSMs for this peptide.", false),
     confident_modification_sites("Confidently Localized Modification Sites", "List of the sites where a variable modification was confidently localized.", false),
     confident_modification_sites_number("#Confidently Localized Modification Sites", "Number of sites where a variable modification was confidently localized.", false),
