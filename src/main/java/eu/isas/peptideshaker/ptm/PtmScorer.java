@@ -621,6 +621,10 @@ public class PtmScorer {
 
         String originalKey = peptide.getMatchingKey(sequenceMatchingPreferences);
         ArrayList<ModificationMatch> newModificationMatches = new ArrayList<ModificationMatch>(originalMatches.size());
+        
+        if (originalKey.equals("KAKGDAKGDKAKVKDEPQR_-0.9840155826899988_42.0105646837-ATAA-3_42.0105646837-ATAA-3_70.04186481197999_70.04186481197999")) {
+            int debug = 1;
+        }
 
         for (ModificationMatch modificationMatch : originalMatches) {
             if (modificationMatch.isVariable()) {
@@ -929,7 +933,12 @@ public class PtmScorer {
                 }
             }
 
-            HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSites, nRepresentativesMap, inferredSites);
+            HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> representativeToSecondaryMap;
+            try {
+                representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSites, nRepresentativesMap, inferredSites);
+            } catch (Exception e) {
+                representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSites, nRepresentativesMap, inferredSites);
+            }
 
             for (Double ptmMass : representativeToSecondaryMap.keySet()) {
                 HashMap<Integer, HashMap<Integer, ArrayList<String>>> representativesAtMass = representativeToSecondaryMap.get(ptmMass);

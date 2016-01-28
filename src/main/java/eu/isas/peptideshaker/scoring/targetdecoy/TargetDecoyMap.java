@@ -230,8 +230,6 @@ public class TargetDecoyMap implements Serializable {
         int cptInf = 0;
         int cptSup = 1;
         boolean oneReached = false;
-        double totalFP = 0.0;
-        double totalTP = 0.0;
 
         for (int cpt = 0; cpt < scores.size(); cpt++) {
             Double currentScore = scores.get(cpt);
@@ -278,8 +276,6 @@ public class TargetDecoyMap implements Serializable {
             Double nTp = nTargetInf + nTargetSup - nDecoy;
             nFP.put(currentScore, nDecoy);
             nTP.put(currentScore, nTp);
-            totalFP += nDecoy;
-            totalFP += nTp;
 
             waitingHandler.increaseSecondaryProgressCounter();
             if (waitingHandler.isRunCanceled()) {
@@ -287,14 +283,6 @@ public class TargetDecoyMap implements Serializable {
             }
         }
         
-//        for (Double score : scores) {
-//            Double value = nTP.get(score);
-//            value *= 100.0/totalTP;
-//            nTP.put(score, value);
-//            value = nFP.get(score);
-//            value *= 100.0/totalFP;
-//            nFP.put(score, value);
-//        }
     }
 
     /**

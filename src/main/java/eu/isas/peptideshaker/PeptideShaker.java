@@ -309,16 +309,22 @@ public class PeptideShaker {
             psmScorer.scorePsms(identification, inputMap, processingPreferences, identificationParameters, waitingHandler);
         }
 
-        waitingHandler.appendReport("Computing assumptions probabilities.", true, true);
         if (sequenceFactory.concatenatedTargetDecoy()) {
-            inputMap.estimateProbabilities(waitingHandler);
+            waitingHandler.appendReport("Computing assumptions probabilities.", true, true);
+        } else {
+            waitingHandler.appendReport("Importing assumptions scores.", true, true);
         }
+        inputMap.estimateProbabilities(waitingHandler);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
 
-        waitingHandler.appendReport("Saving assumptions probabilities.", true, true);
+        if (sequenceFactory.concatenatedTargetDecoy()) {
+            waitingHandler.appendReport("Saving assumptions probabilities.", true, true);
+        } else {
+            waitingHandler.appendReport("No decoy sequences found. Impossible to estimate assumptions probabilities.", true, true);
+        }
         attachAssumptionsProbabilities(inputMap, identificationParameters.getSequenceMatchingPreferences(), waitingHandler);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
@@ -340,7 +346,11 @@ public class PeptideShaker {
             metrics.clearSpectrumKeys();
         }
 
-        waitingHandler.appendReport("Computing PSM probabilities.", true, true);
+        if (sequenceFactory.concatenatedTargetDecoy()) {
+            waitingHandler.appendReport("Computing PSM probabilities.", true, true);
+        } else {
+            waitingHandler.appendReport("No decoy sequences found. Impossible to estimate PSM probabilities.", true, true);
+        }
         matchesValidator.getPsmMap().estimateProbabilities(waitingHandler);
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -401,7 +411,7 @@ public class PeptideShaker {
             return;
         }
 
-        waitingHandler.appendReport("Generating peptide map.", true, true); // slow?
+        waitingHandler.appendReport("Generating peptide map.", true, true);
         matchesValidator.fillPeptideMaps(identification, metrics, waitingHandler, identificationParameters);
         if (idMatchValidationPreferences.getMergeSmallSubgroups()) {
             matchesValidator.getPeptideMap().clean(identificationParameters.getIdValidationPreferences().getDefaultPeptideFDR() / 100);
@@ -410,20 +420,24 @@ public class PeptideShaker {
             return;
         }
 
-        waitingHandler.appendReport("Computing peptide probabilities.", true, true); // should be fast
+        if (sequenceFactory.concatenatedTargetDecoy()) {
+            waitingHandler.appendReport("Computing peptide probabilities.", true, true);
+        } else {
+            waitingHandler.appendReport("No decoy sequences found. Impossible to estimate peptide probabilities.", true, true);
+        }
         matchesValidator.getPeptideMap().estimateProbabilities(waitingHandler);
         if (waitingHandler.isRunCanceled()) {
             return;
         }
 
-        waitingHandler.appendReport("Saving peptide probabilities.", true, true); // could be slow
+        waitingHandler.appendReport("Saving peptide probabilities.", true, true);
         matchesValidator.attachPeptideProbabilities(identification, waitingHandler);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
 
-        waitingHandler.appendReport("Generating protein map.", true, true); // could be slow
+        waitingHandler.appendReport("Generating protein map.", true, true);
         matchesValidator.fillProteinMap(identification, waitingHandler);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
@@ -437,7 +451,11 @@ public class PeptideShaker {
             return;
         }
 
-        waitingHandler.appendReport("Correcting protein probabilities.", true, true);
+        if (sequenceFactory.concatenatedTargetDecoy()) {
+            waitingHandler.appendReport("Correcting protein probabilities.", true, true);
+        } else {
+            waitingHandler.appendReport("No decoy sequences found. Impossible to estimate protein probabilities.", true, true);
+        }
         matchesValidator.getProteinMap().estimateProbabilities(waitingHandler);
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -450,12 +468,16 @@ public class PeptideShaker {
             return;
         }
 
-        if (idMatchValidationPreferences.getDefaultPsmFDR() == 1
-                && idMatchValidationPreferences.getDefaultPeptideFDR() == 1
-                && idMatchValidationPreferences.getDefaultProteinFDR() == 1) {
-            waitingHandler.appendReport("Validating identifications at 1% FDR, quality control of matches.", true, true);
+        if (sequenceFactory.concatenatedTargetDecoy()) {
+            if (idMatchValidationPreferences.getDefaultPsmFDR() == 1
+                    && idMatchValidationPreferences.getDefaultPeptideFDR() == 1
+                    && idMatchValidationPreferences.getDefaultProteinFDR() == 1) {
+                waitingHandler.appendReport("Validating identifications at 1% FDR, quality control of matches.", true, true);
+            } else {
+                waitingHandler.appendReport("Validating identifications, quality control of matches.", true, true);
+            }
         } else {
-            waitingHandler.appendReport("Validating identifications, quality control of matches.", true, true);
+            waitingHandler.appendReport("No decoy sequences found. Impossible to estimate FDRs.", true, true);
         }
         matchesValidator.validateIdentifications(identification, metrics, geneMaps, waitingHandler, exceptionHandler, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, inputMap, spectrumCountingPreferences, processingPreferences);
         waitingHandler.increasePrimaryProgressCounter();
@@ -836,7 +858,7 @@ public class PeptideShaker {
     public Metrics getMetrics() {
         return metrics;
     }
-    
+
     /**
      * Returns the gene maps.
      *
@@ -845,10 +867,10 @@ public class PeptideShaker {
     public GeneMaps getGeneMaps() {
         return geneMaps;
     }
-    
+
     /**
      * Sets the gene maps.
-     * 
+     *
      * @param geneMaps the new gene maps
      */
     public void setGeneMaps(GeneMaps geneMaps) {
