@@ -5221,7 +5221,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
 
-                    if (!new File(filePath).exists()) {
+                    File projectFile = new File(filePath);
+
+                    if (!projectFile.exists()) {
                         JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
                         temp.getUserPreferences().removeRecentProject(filePath);
                     } else {
@@ -5232,9 +5234,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         clearData(true);
                         clearPreferences();
 
-                        importPeptideShakerFile(new File(filePath));
+                        if (filePath.endsWith(".zip")) {
+                            importPeptideShakerZipFile(projectFile);
+                        } else {
+                            importPeptideShakerFile(new File(filePath));
+                        }
                         cpsParent.getUserPreferences().addRecentProject(filePath);
-                        lastSelectedFolder.setLastSelectedFolder(new File(filePath).getAbsolutePath());
+                        lastSelectedFolder.setLastSelectedFolder(filePath);
                     }
                     updateRecentProjectsList();
                 }
@@ -5379,7 +5385,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                 clearData(true);
                                 exceptionHandler.setIgnoreExceptions(false);
                                 clearPreferences();
-                                getUserPreferences().addRecentProject(file);
+                                getUserPreferences().addRecentProject(zipFile);
                                 updateRecentProjectsList();
                                 progressDialog.setRunFinished();
                                 importPeptideShakerFile(file);
