@@ -118,7 +118,7 @@ public class PtmScorer {
 
         HashMap<String, ArrayList<Integer>> modificationProfiles = new HashMap<String, ArrayList<Integer>>();
         PSPtmScores ptmScores = new PSPtmScores();
-        
+
         if (spectrumMatch.getUrParam(new PSPtmScores()) != null) {
             ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
         }
@@ -793,11 +793,13 @@ public class PtmScorer {
                             HashMap<Integer, ArrayList<String>> ptmInferredSites = inferredSites.get(ptmMass);
                             if (ptmInferredSites != null) {
                                 ArrayList<String> ptmsAtSite = ptmInferredSites.get(site);
-                                ptmsAtSite.remove(ptmName);
-                                if (ptmsAtSite.isEmpty()) {
-                                    ptmInferredSites.remove(site);
-                                    if (ptmInferredSites.isEmpty()) {
-                                        inferredSites.remove(ptmMass);
+                                if (ptmsAtSite != null) {
+                                    ptmsAtSite.remove(ptmName);
+                                    if (ptmsAtSite.isEmpty()) {
+                                        ptmInferredSites.remove(site);
+                                        if (ptmInferredSites.isEmpty()) {
+                                            inferredSites.remove(ptmMass);
+                                        }
                                     }
                                 }
                             }
@@ -1721,7 +1723,7 @@ public class PtmScorer {
 
                     SpectrumMatch spectrumMatch = psmIterator.next();
                     String spectrumKey = spectrumMatch.getKey();
-        
+
                     Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                     String sequence = peptide.getSequence();
                     String notConfidentKey = peptide.getMatchingKey(sequenceMatchingPreferences);
