@@ -5,7 +5,6 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.filtering.PsmFilter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
