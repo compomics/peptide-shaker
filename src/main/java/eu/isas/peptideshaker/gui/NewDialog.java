@@ -1387,6 +1387,15 @@ public class NewDialog extends javax.swing.JDialog {
             File identificationParametersFile = IdentificationParametersFactory.getIdentificationParametersFile((String) settingsComboBox.getSelectedItem());
             try {
                 identificationParameters = IdentificationParameters.getIdentificationParameters(identificationParametersFile);
+                
+                // load project specific PTMs
+                String error = PeptideShaker.loadModifications(identificationParameters.getSearchParameters());
+                if (error != null) {
+                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                            error,
+                            "PTM Definition Changed", JOptionPane.WARNING_MESSAGE);
+                }
+                
                 setIdentificationParameters(identificationParameters);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null,
@@ -1641,7 +1650,7 @@ public class NewDialog extends javax.swing.JDialog {
         SearchParameters searchParameters = tempIdentificationParameters.getSearchParameters();
         String toCheck = PeptideShaker.loadModifications(searchParameters);
         if (toCheck != null) {
-                JOptionPane.showMessageDialog(this, toCheck, "Modification Definition Changed", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, toCheck, "Modification Definition Changed", JOptionPane.WARNING_MESSAGE);
         }
 
         PtmSettings modificationProfile = searchParameters.getPtmSettings();

@@ -5450,7 +5450,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                     cpsParent.loadCpsFile(PeptideShaker.getMatchesFolder(), progressDialog);
 
-                    // Load project specific PTMs
+                    // load project specific PTMs
                     String error = PeptideShaker.loadModifications(getIdentificationParameters().getSearchParameters());
                     if (error != null) {
                         JOptionPane.showMessageDialog(peptideShakerGUI,
@@ -5458,7 +5458,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                 "PTM Definition Changed", JOptionPane.WARNING_MESSAGE);
                     }
 
-                    // Resets the display features generator according to the new project
+                    // resets the display features generator according to the new project
                     resetDisplayFeaturesGenerator();
 
                     if (progressDialog.isRunCanceled()) {
