@@ -92,7 +92,7 @@ public class PeptideShakerCLIInputBean {
      * @throws ClassNotFoundException thrown of ClassNotFoundException occurs
      */
     public PeptideShakerCLIInputBean(CommandLine aLine) throws FileNotFoundException, IOException, ClassNotFoundException {
-        
+
         iExperimentID = aLine.getOptionValue(PeptideShakerCLIParams.EXPERIMENT.id);
         iSampleID = aLine.getOptionValue(PeptideShakerCLIParams.SAMPLE.id);
 
@@ -392,7 +392,7 @@ public class PeptideShakerCLIInputBean {
     public File getIdentificationParametersFile() {
         return identificationParametersFile;
     }
-    
+
     /**
      * Returns the number of threads to use.
      *
@@ -401,7 +401,7 @@ public class PeptideShakerCLIInputBean {
     public Integer getnThreads() {
         return nThreads;
     }
-    
+
     /**
      * Verifies the command line start parameters.
      *
@@ -459,18 +459,20 @@ public class PeptideShakerCLIInputBean {
         } else {
             String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id);
             File testFile = new File(filesTxt.trim());
-            File parentFolder = testFile.getParentFile(); // @TODO: should check if parent file is null!
-            if (!parentFolder.exists() && !parentFolder.mkdirs()) {
+            File parentFolder = testFile.getParentFile();
+            if (parentFolder == null) {
+                System.out.println("\nDestination folder not found. Please provide the complete path to the PeptideShaker output file.\n");
+                return false;
+            } else if (!parentFolder.exists() && !parentFolder.mkdirs()) {
                 System.out.println("\nDestination folder \'" + parentFolder.getPath() + "\' not found and cannot be created. Make sure that PeptideShaker has the right to write in the destination folder.\n");
                 return false;
             }
         }
-        
+
 //        // Check the identification parameters
 //        if (!IdentificationParametersInputBean.isValidStartup(aLine, false)) { // @TODO: ok to add?
 //            return false;
 //        }
-
         return true;
-    }    
+    }
 }
