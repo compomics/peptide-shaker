@@ -194,6 +194,8 @@ PeptideShaker currently only supports mgf files as the input format for the spec
 
   * **Java 32 bit vs 64 bit** - If you have both 32 and 64 bit versions of Java installed the operating system can sometimes get confused about which version to use to run PeptideShaker. For Windows platform PeptideShaker tries to default to the 64 bit version of Java if it is installed. You can however override this option by setting your own Java Home. This is done by creating a file called `JavaHome.txt` in the `resources\conf` folder of PeptideShaker, with the path to the bin folder of the Java version to use, e.g., `C:\Program Files\Java\jdk1.6.0_29\bin\`. If the folder does not exist (or it does not contain the required files), the default Java version will be used.
 
+ * **Xlib/X11 errorrs** - When running the command lines on systems without a grahpical user interface you may get errors related to X11. If that happens try adding `-Djava.awt.headless=true` to the command line.
+
   * **Protein Not Found** - In order to provide the most comprehensive results, PeptideShaker needs to link the protein accession retrieved by the various search engines to the FASTA file. Various errors can result in PeptideShaker not being able to find your protein. First, verify that the accession number is indeed in your FASTA file. Then, set up an [issue](https://github.com/compomics/peptide-shaker/issues) describing the problem and provide the accession not found together with its header and sequence in the FASTA file. Please, also mention the database type and version. See also [Database Help](https://github.com/compomics/searchgui/wiki/DatabaseHelp), [Mascot Support](#mascot-support) and [Databases Decoy Databases](#decoy). Example for P60323 in UniProt:
 
 ```
