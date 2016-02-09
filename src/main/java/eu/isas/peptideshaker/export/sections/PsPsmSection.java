@@ -121,8 +121,9 @@ public class PsPsmSection {
      * reading an mzML file
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix, int nSurroundingAA, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
-            ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys,
+            String linePrefix, int nSurroundingAA, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
+            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -147,7 +148,6 @@ public class PsPsmSection {
         }
 
         int line = 1;
-
         int totalSize = 0;
 
         for (String spectrumFile : psmMap.keySet()) {
@@ -166,7 +166,8 @@ public class PsPsmSection {
 
         for (String spectrumFile : psmMap.keySet()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, new ArrayList<String>(psmMap.get(spectrumFile)), parameters, !identificationAlgorithmMatchesFeatures.isEmpty(), waitingHandler);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, new ArrayList<String>(
+                    psmMap.get(spectrumFile)), parameters, !identificationAlgorithmMatchesFeatures.isEmpty(), waitingHandler);
 
             while (psmIterator.hasNext()) {
 
@@ -206,10 +207,14 @@ public class PsPsmSection {
                             String feature;
                             if (peptideAssumption != null) {
                                 peptideAssumption = spectrumMatch.getBestPeptideAssumption();
-                                feature = PsIdentificationAlgorithmMatchesSection.getPeptideAssumptionFeature(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, keys, linePrefix, nSurroundingAA, peptideAssumption, spectrumMatch.getKey(), psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
+                                feature = PsIdentificationAlgorithmMatchesSection.getPeptideAssumptionFeature(identification, identificationFeaturesGenerator,
+                                        shotgunProtocol, identificationParameters, keys, linePrefix, nSurroundingAA, peptideAssumption, spectrumMatch.getKey(),
+                                        psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
                             } else if (spectrumMatch.getBestTagAssumption() != null) {
                                 TagAssumption tagAssumption = spectrumMatch.getBestTagAssumption();
-                                feature = PsIdentificationAlgorithmMatchesSection.getTagAssumptionFeature(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, keys, linePrefix, tagAssumption, spectrumMatch.getKey(), psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
+                                feature = PsIdentificationAlgorithmMatchesSection.getTagAssumptionFeature(identification, identificationFeaturesGenerator,
+                                        shotgunProtocol, identificationParameters, keys, linePrefix, tagAssumption, spectrumMatch.getKey(), psParameter,
+                                        identificationAlgorithmMatchesFeature, waitingHandler);
                             } else {
                                 throw new IllegalArgumentException("No best match found for spectrum " + spectrumMatch.getKey() + ".");
                             }
@@ -221,7 +226,8 @@ public class PsPsmSection {
                             } else {
                                 first = false;
                             }
-                            writer.write(getFeature(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, keys, linePrefix, spectrumMatch, psParameter, psmFeature, validatedOnly, decoys, waitingHandler));
+                            writer.write(getFeature(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters,
+                                    keys, linePrefix, spectrumMatch, psParameter, psmFeature, validatedOnly, decoys, waitingHandler));
                         }
                         writer.newLine();
                         if (fragmentSection != null) {
@@ -274,7 +280,9 @@ public class PsPsmSection {
      * reading an mzML file
      */
     public static String getFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix, SpectrumMatch spectrumMatch, PSParameter psParameter, PsPsmFeature psmFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix,
+            SpectrumMatch spectrumMatch, PSParameter psParameter, PsPsmFeature psmFeature, boolean validatedOnly, boolean decoys,
+            WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         switch (psmFeature) {
@@ -380,16 +388,24 @@ public class PsPsmSection {
                                         }
                                         int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
 
-                                        if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                                            result.append(site).append(": Not Scored");
-                                        } else if (ptmConfidence == PtmScoring.RANDOM) {
-                                            result.append(site).append(": Random");
-                                        } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                                            result.append(site).append(": Doubtfull");
-                                        } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                                            result.append(site).append(": Confident");
-                                        } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                                            result.append(site).append(": Very Confident");
+                                        switch (ptmConfidence) {
+                                            case PtmScoring.NOT_FOUND:
+                                                result.append(site).append(": Not Scored");
+                                                break;
+                                            case PtmScoring.RANDOM:
+                                                result.append(site).append(": Random");
+                                                break;
+                                            case PtmScoring.DOUBTFUL:
+                                                result.append(site).append(": Doubtfull");
+                                                break;
+                                            case PtmScoring.CONFIDENT:
+                                                result.append(site).append(": Confident");
+                                                break;
+                                            case PtmScoring.VERY_CONFIDENT:
+                                                result.append(site).append(": Very Confident");
+                                                break;
+                                            default:
+                                                break;
                                         }
                                     }
                                 }
@@ -411,11 +427,12 @@ public class PsPsmSection {
                             for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : assumptionsAtScore) {
                                 if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdentificationAssumption;
-                                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), identificationParameters.getSequenceMatchingPreferences())) {
+                                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(
+                                            spectrumMatch.getBestPeptideAssumption().getPeptide(), identificationParameters.getSequenceMatchingPreferences())) {
                                         double score = peptideAssumption.getScore();
                                         PeptideAssumption currentAssumption = assumptionMap.get(id);
                                         if (currentAssumption == null || score < currentAssumption.getScore()) {
-                                            assumptionMap.put(id, currentAssumption);
+                                            assumptionMap.put(id, peptideAssumption);
                                         }
                                     }
                                 }
@@ -433,7 +450,7 @@ public class PsPsmSection {
                     PeptideAssumption currentAssumption = assumptionMap.get(id);
                     Double score = currentAssumption.getRawScore();
                     if (score == null) {
-                        currentAssumption.getScore();
+                        score = currentAssumption.getScore();
                     }
                     result.append(Advocate.getAdvocate(id).getName()).append(" (").append(score).append(")");
                 }

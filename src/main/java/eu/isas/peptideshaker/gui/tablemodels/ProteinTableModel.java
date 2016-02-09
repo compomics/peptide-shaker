@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
@@ -289,13 +288,11 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             }
                         }
                         String geneName = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getGeneName();
-                        String chromosomeNumber = geneMaps.getChromosome(geneName);
-                        if (chromosomeNumber == null || chromosomeNumber.length() == 0) {
-                            return "";
-                        } else if (chromosomeNumber.length() > 2) {
-                            return "...";
+                        String chromosomeName = geneMaps.getChromosome(geneName);
+                        if (chromosomeName == null || chromosomeName.length() == 0) {
+                            return new Chromosome(null);
                         } else {
-                            return new Chromosome(chromosomeNumber);
+                            return new Chromosome(chromosomeName);
                         }
                     case 6:
                         if (isScrolling) {

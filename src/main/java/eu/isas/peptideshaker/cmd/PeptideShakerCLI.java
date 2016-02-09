@@ -31,6 +31,7 @@ import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.ProteinInferencePreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.preferences.ValidationQCPreferences;
 import eu.isas.peptideshaker.export.ProjectExport;
@@ -637,8 +638,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             // look in the database folder
             try {
                 UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
-                File dbFolder = utilitiesUserPreferences.getDbFolder();
-                File newFile = new File(dbFolder, fastaFile.getName());
+                File tempDbFolder = utilitiesUserPreferences.getDbFolder();
+                File newFile = new File(tempDbFolder, fastaFile.getName());
                 if (newFile.exists()) {
                     fastaFile = newFile;
                     searchParameters.setFastaFile(fastaFile);
@@ -660,6 +661,14 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 }
                 if (!found) {
                     waitingHandler.appendReport("FASTA file \'" + fastaFile.getName() + "\' not found.", true, true);
+                }
+            } else {
+                // see if the protein inference fasta file is also missing
+                File proteinInferenceSequenceDatabase = identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
+                if (!proteinInferenceSequenceDatabase.exists() && proteinInferenceSequenceDatabase.getName().equalsIgnoreCase(fastaFile.getName())) {
+                    identificationParameters.getProteinInferencePreferences().setProteinSequenceDatabase(fastaFile);
+                } else {
+                    waitingHandler.appendReport("FASTA file \'" + proteinInferenceSequenceDatabase.getName() + "\' not found.", true, true);
                 }
             }
         }

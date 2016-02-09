@@ -1,11 +1,8 @@
 package eu.isas.peptideshaker.scoring.maps;
 
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.io.Serializable;
-import java.util.ArrayList;
-import javax.swing.RowFilter;
 
 /**
  * This map will be used to score protein matches and solve protein inference

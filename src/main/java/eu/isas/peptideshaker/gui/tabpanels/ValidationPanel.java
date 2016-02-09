@@ -1285,7 +1285,7 @@ public class ValidationPanel extends javax.swing.JPanel {
             Integer newWindow = new Integer(windowTxt.getText());
 
             if (newWindow < 0) {
-                JOptionPane.showMessageDialog(this, "Please verify the given window size. Has to be a positive value.", "Window Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Please verify the given PEP bin size. Has to be a positive value.", "Window Error", JOptionPane.WARNING_MESSAGE);
             } else {
                 currentTargetDecoyMap.setWindowSize(newWindow);
 
@@ -1329,7 +1329,7 @@ public class ValidationPanel extends javax.swing.JPanel {
             }
         } catch (Exception e) {
             if (currentTargetDecoyMap != null) {
-                JOptionPane.showMessageDialog(this, "Please verify the given window size.", "Window Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Please verify the given PEP bin size.", "Window Error", JOptionPane.WARNING_MESSAGE);
             }
         }
     }//GEN-LAST:event_windowTxtActionPerformed
@@ -2554,7 +2554,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                 currentTargetDecoyMap = pSMaps.getPsmSpecificMap().getTargetDecoyMap(charge, psmKey.get(charge));
             }
         } else {
-            // This should not happen
+            // this should not happen...
             clearScreen();
             return;
         }
