@@ -31,7 +31,7 @@
 
 ## Introduction ##
 
-PeptideShaker is a search engine independent platform for interpretation of proteomics identification results from multiple search engines, currently supporting  [X!Tandem](http://www.thegpm.org/tandem), [MS-GF+](https://bix-lab.ucsd.edu/pages/viewpage.action?pageId=13533355), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [OMSSA](http://pubchem.ncbi.nlm.nih.gov/omssa), [MyriMatch](http://www.mc.vanderbilt.edu/root/vumc.php?site=msrc/bioinformatics&doc=27121), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net), [Mascot](http://www.matrixscience.com), [Andromeda](http://www.andromeda-search.org) and [mzIdentML](http://www.psidev.info/mzidentml). By combining the results from multiple search engines, while re-calculating PTM localization scores and redoing the protein inference, PeptideShaker attempts to give you the best possible understanding of your proteomics data!
+PeptideShaker is a search engine independent platform for interpretation of proteomics identification results from multiple search engines, currently supporting  [X!Tandem](http://www.thegpm.org/tandem), [MS-GF+](http://www.ncbi.nlm.nih.gov/pubmed/?term=25358478), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [OMSSA](http://www.ncbi.nlm.nih.gov/pubmed/15473683), [MyriMatch](http://www.ncbi.nlm.nih.gov/pubmed/?term=17269722), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net), [Mascot](http://www.matrixscience.com), [Andromeda](http://www.andromeda-search.org) and [mzIdentML](http://www.psidev.info/mzidentml). By combining the results from multiple search engines, while re-calculating PTM localization scores and redoing the protein inference, PeptideShaker attempts to give you the best possible understanding of your proteomics data!
 
 PeptideShaker currently supports nine different analysis tasks:
 
@@ -89,7 +89,7 @@ The minimum screen resolution for PeptideShaker is 1280 x 800, but it is highly 
 
 PeptideShaker has a strong connection to the [SearchGUI](http://compomics.github.io/projects/searchgui.html) project.
 
-**SearchGUI** is a user-friendly, lightweight and open-source graphical user interface for configuring and running proteomics identification search engines, namely  [X!Tandem](http://www.thegpm.org/tandem), [MS-GF+](https://bix-lab.ucsd.edu/pages/viewpage.action?pageId=13533355), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [MyriMatch](http://www.mc.vanderbilt.edu/root/vumc.php?site=msrc/bioinformatics&doc=27121), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net), [Andromeda](http://www.andromeda-search.org) and [OMSSA](http://www.ncbi.nlm.nih.gov/pubmed/15473683).
+**SearchGUI** is a user-friendly, lightweight and open-source graphical user interface for configuring and running proteomics identification search engines, namely  [X!Tandem](http://www.thegpm.org/tandem), [MS-GF+](http://www.ncbi.nlm.nih.gov/pubmed/?term=25358478), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [MyriMatch](http://www.ncbi.nlm.nih.gov/pubmed/?term=17269722), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net), [Andromeda](http://www.andromeda-search.org) and [OMSSA](http://www.ncbi.nlm.nih.gov/pubmed/15473683).
 
 Importing output from **SearchGUI** is especially simple in PeptideShaker as the parameters and files used for the search is easily available.
 
