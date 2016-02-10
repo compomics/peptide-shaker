@@ -239,6 +239,7 @@ public class PsValidationSection {
                 case protein_fdr:
                     if (indexes) {
                         writer.write(line + "");
+                        writer.addSeparator();
                     }
                     writer.write(validationFeature.getTitle());
                     writer.addSeparator();
