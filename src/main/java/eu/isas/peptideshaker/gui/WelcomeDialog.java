@@ -392,9 +392,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jSeparator1))
-                    .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(31, 31, 31)
                         .addComponent(compomicsButton)
                         .addGap(20, 20, 20)
@@ -425,7 +422,11 @@ public class WelcomeDialog extends javax.swing.JDialog {
                                 .addComponent(lowMemoryWarningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(90, 90, 90)
                                 .addComponent(recentProjectsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(26, 26, 26)))))
+                                .addGap(10, 10, 10)))))
+                .addGap(27, 27, 27))
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jSeparator1)
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
