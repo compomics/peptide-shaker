@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
@@ -113,14 +112,14 @@ public class PsValidationSection {
                             writer.write(" (" + title + ")");
                         }
                         writer.addSeparator();
-                        writer.write(validationFeature.getTitle());
+                        writer.write(validationFeature.getTitle() + " [%]");
                         writer.addSeparator();
                         double pmin = 0;
                         int nMax = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getnMax();
                         if (nMax != 0) {
                             pmin = 100.0 / nMax;
                         }
-                        writer.write(Util.roundDouble(pmin, 2) + " %");
+                        writer.write(Util.roundDouble(pmin, 2) + "");
                         writer.newLine();
                         line++;
                     }
@@ -140,10 +139,10 @@ public class PsValidationSection {
                             writer.write(" (" + title + ")");
                         }
                         writer.addSeparator();
-                        writer.write(validationFeature.getTitle());
+                        writer.write(validationFeature.getTitle() + " [%]");
                         writer.addSeparator();
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getConfidenceLimit();
-                        writer.write(Util.roundDouble(result, 2) + " %");
+                        writer.write(Util.roundDouble(result, 2) + "");
                         writer.newLine();
                         line++;
                     }
@@ -163,10 +162,10 @@ public class PsValidationSection {
                             writer.write(" (" + title + ")");
                         }
                         writer.addSeparator();
-                        writer.write(validationFeature.getTitle());
+                        writer.write(validationFeature.getTitle() + " [%]");
                         writer.addSeparator();
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getFdrLimit();
-                        writer.write(Util.roundDouble(result, 2) + " %");
+                        writer.write(Util.roundDouble(result, 2) + "");
                         writer.newLine();
                         line++;
                     }
@@ -186,10 +185,10 @@ public class PsValidationSection {
                             writer.write(" (" + title + ")");
                         }
                         writer.addSeparator();
-                        writer.write(validationFeature.getTitle());
+                        writer.write(validationFeature.getTitle() + " [%]");
                         writer.addSeparator();
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getFnrLimit();
-                        writer.write(Util.roundDouble(result, 2) + " %");
+                        writer.write(Util.roundDouble(result, 2) + "");
                         writer.newLine();
                         line++;
                     }
@@ -209,10 +208,10 @@ public class PsValidationSection {
                             writer.write(" (" + title + ")");
                         }
                         writer.addSeparator();
-                        writer.write(validationFeature.getTitle());
+                        writer.write(validationFeature.getTitle() + " [%]");
                         writer.addSeparator();
                         double result = 100 - peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getConfidenceLimit();
-                        writer.write(Util.roundDouble(result, 2) + " %");
+                        writer.write(Util.roundDouble(result, 2) + "");
                         writer.newLine();
                         line++;
                     }
@@ -270,7 +269,7 @@ public class PsValidationSection {
                     }
                     writer.write("Proteins");
                     writer.addSeparator();
-                    writer.write(validationFeature.getTitle());
+                    writer.write(validationFeature.getTitle() + " [%]");
                     writer.addSeparator();
                     ProteinMap proteinMap = psMaps.getProteinMap();
                     double pmin = 0;
@@ -278,7 +277,7 @@ public class PsValidationSection {
                     if (nMax != 0) {
                         pmin = 100.0 / nMax;
                     }
-                    writer.write(Util.roundDouble(pmin, 2) + " %");
+                    writer.write(Util.roundDouble(pmin, 2) + "");
                     writer.newLine();
                     line++;
                     break;
@@ -289,11 +288,11 @@ public class PsValidationSection {
                     }
                     writer.write("Proteins");
                     writer.addSeparator();
-                    writer.write(validationFeature.getTitle());
+                    writer.write(validationFeature.getTitle() + " [%]");
                     writer.addSeparator();
                     proteinMap = psMaps.getProteinMap();
                     double result = proteinMap.getTargetDecoyMap().getTargetDecoyResults().getConfidenceLimit();
-                    writer.write(Util.roundDouble(result, 2) + " %");
+                    writer.write(Util.roundDouble(result, 2) + "");
                     writer.newLine();
                     line++;
                     break;
@@ -304,11 +303,11 @@ public class PsValidationSection {
                     }
                     writer.write("Proteins");
                     writer.addSeparator();
-                    writer.write(validationFeature.getTitle());
+                    writer.write(validationFeature.getTitle() + " [%]");
                     writer.addSeparator();
                     proteinMap = psMaps.getProteinMap();
                     result = proteinMap.getTargetDecoyMap().getTargetDecoyResults().getFdrLimit();
-                    writer.write(Util.roundDouble(result, 2) + " %");
+                    writer.write(Util.roundDouble(result, 2) + "");
                     writer.newLine();
                     line++;
                     break;
@@ -319,11 +318,11 @@ public class PsValidationSection {
                     }
                     writer.write("Proteins");
                     writer.addSeparator();
-                    writer.write(validationFeature.getTitle());
+                    writer.write(validationFeature.getTitle() + " [%]");
                     writer.addSeparator();
                     proteinMap = psMaps.getProteinMap();
                     result = proteinMap.getTargetDecoyMap().getTargetDecoyResults().getFnrLimit();
-                    writer.write(Util.roundDouble(result, 2) + " %");
+                    writer.write(Util.roundDouble(result, 2) + "");
                     writer.newLine();
                     line++;
                     break;
@@ -334,11 +333,11 @@ public class PsValidationSection {
                     }
                     writer.write("Proteins");
                     writer.addSeparator();
-                    writer.write(validationFeature.getTitle());
+                    writer.write(validationFeature.getTitle() + " [%]");
                     writer.addSeparator();
                     proteinMap = psMaps.getProteinMap();
                     result = 100 - proteinMap.getTargetDecoyMap().getTargetDecoyResults().getConfidenceLimit();
-                    writer.write(Util.roundDouble(result, 2) + " %");
+                    writer.write(Util.roundDouble(result, 2) + "");
                     writer.newLine();
                     line++;
                     break;
@@ -402,14 +401,14 @@ public class PsValidationSection {
                                     writer.write(")");
                                 }
                                 writer.addSeparator();
-                                writer.write(validationFeature.getTitle());
+                                writer.write(validationFeature.getTitle() + " [%]");
                                 writer.addSeparator();
                                 pmin = 0;
                                 nMax = psmTargetDecoyMap.getTargetDecoyMap(charge, file).getnMax();
                                 if (nMax != 0) {
                                     pmin = 100.0 / nMax;
                                 }
-                                writer.write(Util.roundDouble(pmin, 2) + " %");
+                                writer.write(Util.roundDouble(pmin, 2) + "");
                                 writer.newLine();
                                 line++;
                             }
@@ -446,14 +445,14 @@ public class PsValidationSection {
                             writer.write(")");
                         }
                         writer.addSeparator();
-                        writer.write(validationFeature.getTitle());
+                        writer.write(validationFeature.getTitle() + " [%]");
                         writer.addSeparator();
                         pmin = 0;
                         nMax = psmTargetDecoyMap.getTargetDecoyMap(charge, null).getnMax();
                         if (nMax != 0) {
                             pmin = 100.0 / nMax;
                         }
-                        writer.write(Util.roundDouble(pmin, 2) + " %");
+                        writer.write(Util.roundDouble(pmin, 2) + "");
                         writer.newLine();
                         line++;
                     }
@@ -488,10 +487,10 @@ public class PsValidationSection {
                                     writer.write(")");
                                 }
                                 writer.addSeparator();
-                                writer.write(validationFeature.getTitle());
+                                writer.write(validationFeature.getTitle() + " [%]");
                                 writer.addSeparator();
                                 result = psmTargetDecoyMap.getTargetDecoyMap(charge, file).getTargetDecoyResults().getConfidenceLimit();
-                                writer.write(Util.roundDouble(result, 2) + " %");
+                                writer.write(Util.roundDouble(result, 2) + "");
                                 writer.newLine();
                                 line++;
                             }
@@ -528,10 +527,10 @@ public class PsValidationSection {
                             writer.write(")");
                         }
                         writer.addSeparator();
-                        writer.write(validationFeature.getTitle());
+                        writer.write(validationFeature.getTitle() + " [%]");
                         writer.addSeparator();
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge, null).getTargetDecoyResults().getConfidenceLimit();
-                        writer.write(Util.roundDouble(result, 2) + " %");
+                        writer.write(Util.roundDouble(result, 2) + "");
                         writer.newLine();
                         line++;
                     }
@@ -566,10 +565,10 @@ public class PsValidationSection {
                                     writer.write(")");
                                 }
                                 writer.addSeparator();
-                                writer.write(validationFeature.getTitle());
+                                writer.write(validationFeature.getTitle() + " [%]");
                                 writer.addSeparator();
                                 result = psmTargetDecoyMap.getTargetDecoyMap(charge, file).getTargetDecoyResults().getFdrLimit();
-                                writer.write(Util.roundDouble(result, 2) + " %");
+                                writer.write(Util.roundDouble(result, 2) + "");
                                 writer.newLine();
                                 line++;
                             }
@@ -606,10 +605,10 @@ public class PsValidationSection {
                             writer.write(")");
                         }
                         writer.addSeparator();
-                        writer.write(validationFeature.getTitle());
+                        writer.write(validationFeature.getTitle() + " [%]");
                         writer.addSeparator();
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge, null).getTargetDecoyResults().getFdrLimit();
-                        writer.write(Util.roundDouble(result, 2) + " %");
+                        writer.write(Util.roundDouble(result, 2) + "");
                         writer.newLine();
                         line++;
                     }
@@ -644,10 +643,10 @@ public class PsValidationSection {
                                     writer.write(")");
                                 }
                                 writer.addSeparator();
-                                writer.write(validationFeature.getTitle());
+                                writer.write(validationFeature.getTitle() + " [%]");
                                 writer.addSeparator();
                                 result = psmTargetDecoyMap.getTargetDecoyMap(charge, file).getTargetDecoyResults().getFnrLimit();
-                                writer.write(Util.roundDouble(result, 2) + " %");
+                                writer.write(Util.roundDouble(result, 2) + "");
                                 writer.newLine();
                                 line++;
                             }
@@ -684,10 +683,10 @@ public class PsValidationSection {
                             writer.write(")");
                         }
                         writer.addSeparator();
-                        writer.write(validationFeature.getTitle());
+                        writer.write(validationFeature.getTitle() + " [%]");
                         writer.addSeparator();
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge, null).getTargetDecoyResults().getFnrLimit();
-                        writer.write(Util.roundDouble(result, 2) + " %");
+                        writer.write(Util.roundDouble(result, 2) + "");
                         writer.newLine();
                         line++;
                     }
@@ -722,10 +721,10 @@ public class PsValidationSection {
                                     writer.write(")");
                                 }
                                 writer.addSeparator();
-                                writer.write(validationFeature.getTitle());
+                                writer.write(validationFeature.getTitle() + " [%]");
                                 writer.addSeparator();
                                 result = 100 - psmTargetDecoyMap.getTargetDecoyMap(charge, file).getTargetDecoyResults().getConfidenceLimit();
-                                writer.write(Util.roundDouble(result, 2) + " %");
+                                writer.write(Util.roundDouble(result, 2) + "");
                                 writer.newLine();
                                 line++;
                             }
@@ -762,10 +761,10 @@ public class PsValidationSection {
                             writer.write(")");
                         }
                         writer.addSeparator();
-                        writer.write(validationFeature.getTitle());
+                        writer.write(validationFeature.getTitle() + " [%]");
                         writer.addSeparator();
                         result = 100 - psmTargetDecoyMap.getTargetDecoyMap(charge, null).getTargetDecoyResults().getConfidenceLimit();
-                        writer.write(Util.roundDouble(result, 2) + " %");
+                        writer.write(Util.roundDouble(result, 2) + "");
                         writer.newLine();
                         line++;
                     }
