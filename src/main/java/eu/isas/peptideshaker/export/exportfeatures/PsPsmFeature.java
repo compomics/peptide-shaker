@@ -14,7 +14,7 @@ public enum PsPsmFeature implements ExportFeature {
     protein_groups("Protein Group(s)", "List of identified protein groups the peptide of this PSM can map to with associated validation level.", true),
     best_protein_group_validation("Protein Validation", "Best validation status among the protein groups derived from the peptide of this PSM.", true),
     localization_confidence("Localization Confidence", "The confidence in variable PTM localization.", false),
-    probabilistic_score("probabilistic PTM score", "The probabilistic score (e.g. A-score or PhosphoRS) used for variable PTM localization.", false),
+    probabilistic_score("Probabilistic PTM score", "The probabilistic score (e.g. A-score or PhosphoRS) used for variable PTM localization.", false),
     d_score("D-score", "D-score for variable PTM localization.", false),
     confident_modification_sites("Confidently Localized Modification Sites", "List of the sites where a variable modification was confidently localized.", false),
     confident_modification_sites_number("# Confidently Localized Modification Sites", "Number of sites where a variable modification was confidently localized.", false),

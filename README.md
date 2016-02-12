@@ -8,7 +8,7 @@
 
 ---
 
-**PeptideShaker Publication:**
+## PeptideShaker Publication:
   * [Vaudel et al. Nature Biotechnol. 2015 Jan;33(1):22–24](http://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html).
   * If you use PeptideShaker as part of a publication, please include this reference.
 
@@ -31,7 +31,7 @@
 
 ## Introduction ##
 
-PeptideShaker is a search engine independent platform for interpretation of proteomics identification results from multiple search engines, currently supporting  [X!Tandem](http://www.thegpm.org/tandem), [MS-GF+](https://bix-lab.ucsd.edu/pages/viewpage.action?pageId=13533355), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [OMSSA](http://pubchem.ncbi.nlm.nih.gov/omssa), [MyriMatch](http://www.mc.vanderbilt.edu/root/vumc.php?site=msrc/bioinformatics&doc=27121), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net), [Mascot](http://www.matrixscience.com), [Andromeda](http://www.andromeda-search.org) and [mzIdentML](http://www.psidev.info/mzidentml). By combining the results from multiple search engines, while re-calculating PTM localization scores and redoing the protein inference, PeptideShaker attempts to give you the best possible understanding of your proteomics data!
+PeptideShaker is a search engine independent platform for interpretation of proteomics identification results from multiple search engines, currently supporting  [X!Tandem](http://www.thegpm.org/tandem), [MS-GF+](http://www.ncbi.nlm.nih.gov/pubmed/?term=25358478), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [OMSSA](http://www.ncbi.nlm.nih.gov/pubmed/15473683), [MyriMatch](http://www.ncbi.nlm.nih.gov/pubmed/?term=17269722), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net), [Mascot](http://www.matrixscience.com), [Andromeda](http://www.coxdocs.org/doku.php?id=maxquant:andromeda:start) and [mzIdentML](http://www.psidev.info/mzidentml). By combining the results from multiple search engines, while re-calculating PTM localization scores and redoing the protein inference, PeptideShaker attempts to give you the best possible understanding of your proteomics data!
 
 PeptideShaker currently supports nine different analysis tasks:
 
@@ -89,7 +89,7 @@ The minimum screen resolution for PeptideShaker is 1280 x 800, but it is highly 
 
 PeptideShaker has a strong connection to the [SearchGUI](http://compomics.github.io/projects/searchgui.html) project.
 
-**SearchGUI** is a user-friendly, lightweight and open-source graphical user interface for configuring and running proteomics identification search engines, namely  [X!Tandem](http://www.thegpm.org/tandem), [MS-GF+](https://bix-lab.ucsd.edu/pages/viewpage.action?pageId=13533355), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [MyriMatch](http://www.mc.vanderbilt.edu/root/vumc.php?site=msrc/bioinformatics&doc=27121), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net), [Andromeda](http://www.andromeda-search.org) and [OMSSA](http://www.ncbi.nlm.nih.gov/pubmed/15473683).
+**SearchGUI** is a user-friendly, lightweight and open-source graphical user interface for configuring and running proteomics identification search engines, namely  [X!Tandem](http://www.thegpm.org/tandem), [MS-GF+](http://www.ncbi.nlm.nih.gov/pubmed/?term=25358478), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [MyriMatch](http://www.ncbi.nlm.nih.gov/pubmed/?term=17269722), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net), [Andromeda](http://www.coxdocs.org/doku.php?id=maxquant:andromeda:start) and [OMSSA](http://www.ncbi.nlm.nih.gov/pubmed/15473683).
 
 Importing output from **SearchGUI** is especially simple in PeptideShaker as the parameters and files used for the search is easily available.
 
@@ -193,6 +193,8 @@ PeptideShaker currently only supports mgf files as the input format for the spec
   * **Memory Issues II** - Using more than 2GB of memory requires the installation of 64 bit Java. 64 bit Java is downloaded from the same place as the 32 bit version: [Java](http://java.sun.com/javase/downloads/index.jsp). _Note that 64 bit Java can only be used on 64 bit operating systems!_
 
   * **Java 32 bit vs 64 bit** - If you have both 32 and 64 bit versions of Java installed the operating system can sometimes get confused about which version to use to run PeptideShaker. For Windows platform PeptideShaker tries to default to the 64 bit version of Java if it is installed. You can however override this option by setting your own Java Home. This is done by creating a file called `JavaHome.txt` in the `resources\conf` folder of PeptideShaker, with the path to the bin folder of the Java version to use, e.g., `C:\Program Files\Java\jdk1.6.0_29\bin\`. If the folder does not exist (or it does not contain the required files), the default Java version will be used.
+
+  * **Xlib/X11 errorrs** - When running the command lines on systems without a grahpical user interface you may get errors related to X11. If that happens try adding `-Djava.awt.headless=true` to the command line.
 
   * **Protein Not Found** - In order to provide the most comprehensive results, PeptideShaker needs to link the protein accession retrieved by the various search engines to the FASTA file. Various errors can result in PeptideShaker not being able to find your protein. First, verify that the accession number is indeed in your FASTA file. Then, set up an [issue](https://github.com/compomics/peptide-shaker/issues) describing the problem and provide the accession not found together with its header and sequence in the FASTA file. Please, also mention the database type and version. See also [Database Help](https://github.com/compomics/searchgui/wiki/DatabaseHelp), [Mascot Support](#mascot-support) and [Databases Decoy Databases](#decoy). Example for P60323 in UniProt:
 
