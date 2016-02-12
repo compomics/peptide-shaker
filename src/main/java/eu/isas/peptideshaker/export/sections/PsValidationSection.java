@@ -1,9 +1,12 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.Util;
+import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
+import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.export.exportfeatures.PsValidationFeature;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.scoring.maps.PeptideSpecificMap;
@@ -12,6 +15,8 @@ import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * This class outputs the validation related export features.
@@ -64,12 +69,13 @@ public class PsValidationSection {
      * Writes the desired section.
      *
      * @param psMaps the target/decoy maps of this project
+     * @param identificationParameters the identification parameters
      * @param waitingHandler the waiting handler
-     * 
+     *
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file
      */
-    public void writeSection(PSMaps psMaps, WaitingHandler waitingHandler) throws IOException {
+    public void writeSection(PSMaps psMaps, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -80,6 +86,8 @@ public class PsValidationSection {
                 writer.writeHeaderText("");
                 writer.addSeparator();
             }
+            writer.writeHeaderText("Class");
+            writer.addSeparator();
             writer.writeHeaderText("Parameter");
             writer.addSeparator();
             writer.writeHeaderText("Value");
@@ -91,6 +99,7 @@ public class PsValidationSection {
         for (PsValidationFeature validationFeature : validationFeatures) {
             switch (validationFeature) {
                 case peptide_accuracy:
+                    PtmSettings ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
                     PeptideSpecificMap peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
                     ArrayList<String> peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
@@ -98,6 +107,12 @@ public class PsValidationSection {
                             writer.write(line + "");
                             writer.addSeparator();
                         }
+                        writer.write("Peptides");
+                        if (peptideKeys.size() > 1) {
+                            String title = PeptideSpecificMap.getKeyName(ptmSettings, peptideKey);
+                            writer.write(" (" + title + ")");
+                        }
+                        writer.addSeparator();
                         writer.write(validationFeature.getTitle());
                         writer.addSeparator();
                         double pmin = 0;
@@ -111,6 +126,7 @@ public class PsValidationSection {
                     }
                     break;
                 case peptide_confidence:
+                    ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
@@ -118,6 +134,12 @@ public class PsValidationSection {
                             writer.write(line + "");
                             writer.addSeparator();
                         }
+                        writer.write("Peptides");
+                        if (peptideKeys.size() > 1) {
+                            String title = PeptideSpecificMap.getKeyName(ptmSettings, peptideKey);
+                            writer.write(" (" + title + ")");
+                        }
+                        writer.addSeparator();
                         writer.write(validationFeature.getTitle());
                         writer.addSeparator();
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getConfidenceLimit();
@@ -127,6 +149,7 @@ public class PsValidationSection {
                     }
                     break;
                 case peptide_fdr:
+                    ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
@@ -134,6 +157,12 @@ public class PsValidationSection {
                             writer.write(line + "");
                             writer.addSeparator();
                         }
+                        writer.write("Peptides");
+                        if (peptideKeys.size() > 1) {
+                            String title = PeptideSpecificMap.getKeyName(ptmSettings, peptideKey);
+                            writer.write(" (" + title + ")");
+                        }
+                        writer.addSeparator();
                         writer.write(validationFeature.getTitle());
                         writer.addSeparator();
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getFdrLimit();
@@ -143,6 +172,7 @@ public class PsValidationSection {
                     }
                     break;
                 case peptide_fnr:
+                    ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
@@ -150,6 +180,12 @@ public class PsValidationSection {
                             writer.write(line + "");
                             writer.addSeparator();
                         }
+                        writer.write("Peptides");
+                        if (peptideKeys.size() > 1) {
+                            String title = PeptideSpecificMap.getKeyName(ptmSettings, peptideKey);
+                            writer.write(" (" + title + ")");
+                        }
+                        writer.addSeparator();
                         writer.write(validationFeature.getTitle());
                         writer.addSeparator();
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getFnrLimit();
@@ -159,6 +195,7 @@ public class PsValidationSection {
                     }
                     break;
                 case peptide_pep:
+                    ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
@@ -166,6 +203,12 @@ public class PsValidationSection {
                             writer.write(line + "");
                             writer.addSeparator();
                         }
+                        writer.write("Peptides");
+                        if (peptideKeys.size() > 1) {
+                            String title = PeptideSpecificMap.getKeyName(ptmSettings, peptideKey);
+                            writer.write(" (" + title + ")");
+                        }
+                        writer.addSeparator();
                         writer.write(validationFeature.getTitle());
                         writer.addSeparator();
                         double result = 100 - peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getConfidenceLimit();
@@ -175,6 +218,7 @@ public class PsValidationSection {
                     }
                     break;
                 case total_peptide:
+                    ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
@@ -182,6 +226,12 @@ public class PsValidationSection {
                             writer.write(line + "");
                             writer.addSeparator();
                         }
+                        writer.write("Peptides");
+                        if (peptideKeys.size() > 1) {
+                            String title = PeptideSpecificMap.getKeyName(ptmSettings, peptideKey);
+                            writer.write(" (" + title + ")");
+                        }
+                        writer.addSeparator();
                         writer.write(validationFeature.getTitle());
                         writer.addSeparator();
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getnTPTotal();
@@ -191,6 +241,7 @@ public class PsValidationSection {
                     }
                     break;
                 case validated_peptide:
+                    ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
@@ -198,6 +249,12 @@ public class PsValidationSection {
                             writer.write(line + "");
                             writer.addSeparator();
                         }
+                        writer.write("Peptides");
+                        if (peptideKeys.size() > 1) {
+                            String title = PeptideSpecificMap.getKeyName(ptmSettings, peptideKey);
+                            writer.write(" (" + title + ")");
+                        }
+                        writer.addSeparator();
                         writer.write(validationFeature.getTitle());
                         writer.addSeparator();
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getN();
@@ -211,6 +268,8 @@ public class PsValidationSection {
                         writer.write(line + "");
                         writer.addSeparator();
                     }
+                    writer.write("Proteins");
+                    writer.addSeparator();
                     writer.write(validationFeature.getTitle());
                     writer.addSeparator();
                     ProteinMap proteinMap = psMaps.getProteinMap();
@@ -228,6 +287,8 @@ public class PsValidationSection {
                         writer.write(line + "");
                         writer.addSeparator();
                     }
+                    writer.write("Proteins");
+                    writer.addSeparator();
                     writer.write(validationFeature.getTitle());
                     writer.addSeparator();
                     proteinMap = psMaps.getProteinMap();
@@ -241,6 +302,8 @@ public class PsValidationSection {
                         writer.write(line + "");
                         writer.addSeparator();
                     }
+                    writer.write("Proteins");
+                    writer.addSeparator();
                     writer.write(validationFeature.getTitle());
                     writer.addSeparator();
                     proteinMap = psMaps.getProteinMap();
@@ -254,6 +317,8 @@ public class PsValidationSection {
                         writer.write(line + "");
                         writer.addSeparator();
                     }
+                    writer.write("Proteins");
+                    writer.addSeparator();
                     writer.write(validationFeature.getTitle());
                     writer.addSeparator();
                     proteinMap = psMaps.getProteinMap();
@@ -267,6 +332,8 @@ public class PsValidationSection {
                         writer.write(line + "");
                         writer.addSeparator();
                     }
+                    writer.write("Proteins");
+                    writer.addSeparator();
                     writer.write(validationFeature.getTitle());
                     writer.addSeparator();
                     proteinMap = psMaps.getProteinMap();
@@ -280,6 +347,8 @@ public class PsValidationSection {
                         writer.write(line + "");
                         writer.addSeparator();
                     }
+                    writer.write("Proteins");
+                    writer.addSeparator();
                     writer.write(validationFeature.getTitle());
                     writer.addSeparator();
                     proteinMap = psMaps.getProteinMap();
@@ -293,6 +362,8 @@ public class PsValidationSection {
                         writer.write(line + "");
                         writer.addSeparator();
                     }
+                    writer.write("Proteins");
+                    writer.addSeparator();
                     writer.write(validationFeature.getTitle());
                     writer.addSeparator();
                     proteinMap = psMaps.getProteinMap();
@@ -303,13 +374,34 @@ public class PsValidationSection {
                     break;
                 case psm_accuracy:
                     PsmSpecificMap psmTargetDecoyMap = psMaps.getPsmSpecificMap();
-                    for (int charge : psmTargetDecoyMap.getPossibleCharges()) {
-                        for (String file : psmTargetDecoyMap.getFilesAtCharge(charge)) {
+                    ArrayList<Integer> possibleCharges = psmTargetDecoyMap.getPossibleCharges();
+                    Collections.sort(possibleCharges);
+                    HashSet<Integer> foundCharges = new HashSet<Integer>(possibleCharges.size());
+                    for (int charge : possibleCharges) {
+                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCharge(charge);
+                        Collections.sort(files);
+                        for (String file : files) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
+                                foundCharges.add(charge);
                                 if (indexes) {
                                     writer.write(line + "");
                                     writer.addSeparator();
                                 }
+                                writer.write("PSMs");
+                                if (files.size() > 1 || possibleCharges.size() > 1) {
+                                    writer.write(" (");
+                                    if (possibleCharges.size() > 1) {
+                                        writer.write("Charge " + charge);
+                                        if (files.size() > 1) {
+                                            writer.write(" of file ");
+                                        }
+                                    }
+                                    if (files.size() > 1) {
+                                        writer.write(file);
+                                    }
+                                    writer.write(")");
+                                }
+                                writer.addSeparator();
                                 writer.write(validationFeature.getTitle());
                                 writer.addSeparator();
                                 pmin = 0;
@@ -323,11 +415,37 @@ public class PsValidationSection {
                             }
                         }
                     }
-                    for (int charge : psmTargetDecoyMap.getGroupedCharges()) {
+                    HashMap<Integer, ArrayList<Integer>> groupedCharges = psmTargetDecoyMap.getChargeGroupingMap();
+                    ArrayList<Integer> representativeCharges = new ArrayList<Integer>(groupedCharges.keySet());
+                    Collections.sort(representativeCharges);
+                    for (int charge : representativeCharges) {
+                        ArrayList<Integer> secondaryCharges = groupedCharges.get(charge);
                         if (indexes) {
                             writer.write(line + "");
                             writer.addSeparator();
                         }
+                        writer.write("PSMs");
+                        if (groupedCharges.size() > 1 || !foundCharges.isEmpty()) {
+                            writer.write(" (");
+                            if (foundCharges.contains(charge)) {
+                                writer.write("Other ");
+                            }
+                            writer.write("Charge " + charge);
+                            if (!secondaryCharges.isEmpty()) {
+                                writer.write(" and Charge ");
+                                StringBuilder secondaryChargesTxt = new StringBuilder();
+                                Collections.sort(secondaryCharges);
+                                for (Integer secondaryCharge : secondaryCharges) {
+                                    if (secondaryChargesTxt.length() > 0) {
+                                        secondaryChargesTxt.append(", ");
+                                    }
+                                    secondaryChargesTxt.append(secondaryCharge);
+                                }
+                                writer.write(secondaryChargesTxt.toString());
+                            }
+                            writer.write(")");
+                        }
+                        writer.addSeparator();
                         writer.write(validationFeature.getTitle());
                         writer.addSeparator();
                         pmin = 0;
@@ -342,13 +460,34 @@ public class PsValidationSection {
                     break;
                 case psm_confidence:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
-                    for (int charge : psmTargetDecoyMap.getPossibleCharges()) {
-                        for (String file : psmTargetDecoyMap.getFilesAtCharge(charge)) {
+                    possibleCharges = psmTargetDecoyMap.getPossibleCharges();
+                    Collections.sort(possibleCharges);
+                    foundCharges = new HashSet<Integer>(possibleCharges.size());
+                    for (int charge : possibleCharges) {
+                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCharge(charge);
+                        Collections.sort(files);
+                        for (String file : files) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
+                                foundCharges.add(charge);
                                 if (indexes) {
                                     writer.write(line + "");
                                     writer.addSeparator();
                                 }
+                                writer.write("PSMs");
+                                if (files.size() > 1 || possibleCharges.size() > 1) {
+                                    writer.write(" (");
+                                    if (possibleCharges.size() > 1) {
+                                        writer.write("Charge " + charge);
+                                        if (files.size() > 1) {
+                                            writer.write(" of file ");
+                                        }
+                                    }
+                                    if (files.size() > 1) {
+                                        writer.write(file);
+                                    }
+                                    writer.write(")");
+                                }
+                                writer.addSeparator();
                                 writer.write(validationFeature.getTitle());
                                 writer.addSeparator();
                                 result = psmTargetDecoyMap.getTargetDecoyMap(charge, file).getTargetDecoyResults().getConfidenceLimit();
@@ -358,11 +497,37 @@ public class PsValidationSection {
                             }
                         }
                     }
-                    for (int charge : psmTargetDecoyMap.getGroupedCharges()) {
+                    groupedCharges = psmTargetDecoyMap.getChargeGroupingMap();
+                    representativeCharges = new ArrayList<Integer>(groupedCharges.keySet());
+                    Collections.sort(representativeCharges);
+                    for (int charge : representativeCharges) {
+                        ArrayList<Integer> secondaryCharges = groupedCharges.get(charge);
                         if (indexes) {
                             writer.write(line + "");
                             writer.addSeparator();
                         }
+                        writer.write("PSMs");
+                        if (groupedCharges.size() > 1 || !foundCharges.isEmpty()) {
+                            writer.write(" (");
+                            if (foundCharges.contains(charge)) {
+                                writer.write("Other ");
+                            }
+                            writer.write("Charge " + charge);
+                            if (!secondaryCharges.isEmpty()) {
+                                writer.write(" and Charge ");
+                                StringBuilder secondaryChargesTxt = new StringBuilder();
+                                Collections.sort(secondaryCharges);
+                                for (Integer secondaryCharge : secondaryCharges) {
+                                    if (secondaryChargesTxt.length() > 0) {
+                                        secondaryChargesTxt.append(", ");
+                                    }
+                                    secondaryChargesTxt.append(secondaryCharge);
+                                }
+                                writer.write(secondaryChargesTxt.toString());
+                            }
+                            writer.write(")");
+                        }
+                        writer.addSeparator();
                         writer.write(validationFeature.getTitle());
                         writer.addSeparator();
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge, null).getTargetDecoyResults().getConfidenceLimit();
@@ -373,13 +538,34 @@ public class PsValidationSection {
                     break;
                 case psm_fdr:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
-                    for (int charge : psmTargetDecoyMap.getPossibleCharges()) {
-                        for (String file : psmTargetDecoyMap.getFilesAtCharge(charge)) {
+                    possibleCharges = psmTargetDecoyMap.getPossibleCharges();
+                    Collections.sort(possibleCharges);
+                    foundCharges = new HashSet<Integer>(possibleCharges.size());
+                    for (int charge : possibleCharges) {
+                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCharge(charge);
+                        Collections.sort(files);
+                        for (String file : files) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
+                                foundCharges.add(charge);
                                 if (indexes) {
                                     writer.write(line + "");
                                     writer.addSeparator();
                                 }
+                                writer.write("PSMs");
+                                if (files.size() > 1 || possibleCharges.size() > 1) {
+                                    writer.write(" (");
+                                    if (possibleCharges.size() > 1) {
+                                        writer.write("Charge " + charge);
+                                        if (files.size() > 1) {
+                                            writer.write(" of file ");
+                                        }
+                                    }
+                                    if (files.size() > 1) {
+                                        writer.write(file);
+                                    }
+                                    writer.write(")");
+                                }
+                                writer.addSeparator();
                                 writer.write(validationFeature.getTitle());
                                 writer.addSeparator();
                                 result = psmTargetDecoyMap.getTargetDecoyMap(charge, file).getTargetDecoyResults().getFdrLimit();
@@ -389,11 +575,37 @@ public class PsValidationSection {
                             }
                         }
                     }
-                    for (int charge : psmTargetDecoyMap.getGroupedCharges()) {
+                    groupedCharges = psmTargetDecoyMap.getChargeGroupingMap();
+                    representativeCharges = new ArrayList<Integer>(groupedCharges.keySet());
+                    Collections.sort(representativeCharges);
+                    for (int charge : representativeCharges) {
+                        ArrayList<Integer> secondaryCharges = groupedCharges.get(charge);
                         if (indexes) {
                             writer.write(line + "");
                             writer.addSeparator();
                         }
+                        writer.write("PSMs");
+                        if (groupedCharges.size() > 1 || !foundCharges.isEmpty()) {
+                            writer.write(" (");
+                            if (foundCharges.contains(charge)) {
+                                writer.write("Other ");
+                            }
+                            writer.write("Charge " + charge);
+                            if (!secondaryCharges.isEmpty()) {
+                                writer.write(" and Charge ");
+                                StringBuilder secondaryChargesTxt = new StringBuilder();
+                                Collections.sort(secondaryCharges);
+                                for (Integer secondaryCharge : secondaryCharges) {
+                                    if (secondaryChargesTxt.length() > 0) {
+                                        secondaryChargesTxt.append(", ");
+                                    }
+                                    secondaryChargesTxt.append(secondaryCharge);
+                                }
+                                writer.write(secondaryChargesTxt.toString());
+                            }
+                            writer.write(")");
+                        }
+                        writer.addSeparator();
                         writer.write(validationFeature.getTitle());
                         writer.addSeparator();
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge, null).getTargetDecoyResults().getFdrLimit();
@@ -404,13 +616,34 @@ public class PsValidationSection {
                     break;
                 case psm_fnr:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
-                    for (int charge : psmTargetDecoyMap.getPossibleCharges()) {
-                        for (String file : psmTargetDecoyMap.getFilesAtCharge(charge)) {
+                    possibleCharges = psmTargetDecoyMap.getPossibleCharges();
+                    Collections.sort(possibleCharges);
+                    foundCharges = new HashSet<Integer>(possibleCharges.size());
+                    for (int charge : possibleCharges) {
+                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCharge(charge);
+                        Collections.sort(files);
+                        for (String file : files) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
+                                foundCharges.add(charge);
                                 if (indexes) {
                                     writer.write(line + "");
                                     writer.addSeparator();
                                 }
+                                writer.write("PSMs");
+                                if (files.size() > 1 || possibleCharges.size() > 1) {
+                                    writer.write(" (");
+                                    if (possibleCharges.size() > 1) {
+                                        writer.write("Charge " + charge);
+                                        if (files.size() > 1) {
+                                            writer.write(" of file ");
+                                        }
+                                    }
+                                    if (files.size() > 1) {
+                                        writer.write(file);
+                                    }
+                                    writer.write(")");
+                                }
+                                writer.addSeparator();
                                 writer.write(validationFeature.getTitle());
                                 writer.addSeparator();
                                 result = psmTargetDecoyMap.getTargetDecoyMap(charge, file).getTargetDecoyResults().getFnrLimit();
@@ -420,11 +653,37 @@ public class PsValidationSection {
                             }
                         }
                     }
-                    for (int charge : psmTargetDecoyMap.getGroupedCharges()) {
+                    groupedCharges = psmTargetDecoyMap.getChargeGroupingMap();
+                    representativeCharges = new ArrayList<Integer>(groupedCharges.keySet());
+                    Collections.sort(representativeCharges);
+                    for (int charge : representativeCharges) {
+                        ArrayList<Integer> secondaryCharges = groupedCharges.get(charge);
                         if (indexes) {
                             writer.write(line + "");
                             writer.addSeparator();
                         }
+                        writer.write("PSMs");
+                        if (groupedCharges.size() > 1 || !foundCharges.isEmpty()) {
+                            writer.write(" (");
+                            if (foundCharges.contains(charge)) {
+                                writer.write("Other ");
+                            }
+                            writer.write("Charge " + charge);
+                            if (!secondaryCharges.isEmpty()) {
+                                writer.write(" and Charge ");
+                                StringBuilder secondaryChargesTxt = new StringBuilder();
+                                Collections.sort(secondaryCharges);
+                                for (Integer secondaryCharge : secondaryCharges) {
+                                    if (secondaryChargesTxt.length() > 0) {
+                                        secondaryChargesTxt.append(", ");
+                                    }
+                                    secondaryChargesTxt.append(secondaryCharge);
+                                }
+                                writer.write(secondaryChargesTxt.toString());
+                            }
+                            writer.write(")");
+                        }
+                        writer.addSeparator();
                         writer.write(validationFeature.getTitle());
                         writer.addSeparator();
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge, null).getTargetDecoyResults().getFnrLimit();
@@ -435,13 +694,34 @@ public class PsValidationSection {
                     break;
                 case psm_pep:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
-                    for (int charge : psmTargetDecoyMap.getPossibleCharges()) {
-                        for (String file : psmTargetDecoyMap.getFilesAtCharge(charge)) {
+                    possibleCharges = psmTargetDecoyMap.getPossibleCharges();
+                    Collections.sort(possibleCharges);
+                    foundCharges = new HashSet<Integer>(possibleCharges.size());
+                    for (int charge : possibleCharges) {
+                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCharge(charge);
+                        Collections.sort(files);
+                        for (String file : files) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
+                                foundCharges.add(charge);
                                 if (indexes) {
                                     writer.write(line + "");
                                     writer.addSeparator();
                                 }
+                                writer.write("PSMs");
+                                if (files.size() > 1 || possibleCharges.size() > 1) {
+                                    writer.write(" (");
+                                    if (possibleCharges.size() > 1) {
+                                        writer.write("Charge " + charge);
+                                        if (files.size() > 1) {
+                                            writer.write(" of file ");
+                                        }
+                                    }
+                                    if (files.size() > 1) {
+                                        writer.write(file);
+                                    }
+                                    writer.write(")");
+                                }
+                                writer.addSeparator();
                                 writer.write(validationFeature.getTitle());
                                 writer.addSeparator();
                                 result = 100 - psmTargetDecoyMap.getTargetDecoyMap(charge, file).getTargetDecoyResults().getConfidenceLimit();
@@ -451,11 +731,37 @@ public class PsValidationSection {
                             }
                         }
                     }
-                    for (int charge : psmTargetDecoyMap.getGroupedCharges()) {
+                    groupedCharges = psmTargetDecoyMap.getChargeGroupingMap();
+                    representativeCharges = new ArrayList<Integer>(groupedCharges.keySet());
+                    Collections.sort(representativeCharges);
+                    for (int charge : representativeCharges) {
+                        ArrayList<Integer> secondaryCharges = groupedCharges.get(charge);
                         if (indexes) {
                             writer.write(line + "");
                             writer.addSeparator();
                         }
+                        writer.write("PSMs");
+                        if (groupedCharges.size() > 1 || !foundCharges.isEmpty()) {
+                            writer.write(" (");
+                            if (foundCharges.contains(charge)) {
+                                writer.write("Other ");
+                            }
+                            writer.write("Charge " + charge);
+                            if (!secondaryCharges.isEmpty()) {
+                                writer.write(" and Charge ");
+                                StringBuilder secondaryChargesTxt = new StringBuilder();
+                                Collections.sort(secondaryCharges);
+                                for (Integer secondaryCharge : secondaryCharges) {
+                                    if (secondaryChargesTxt.length() > 0) {
+                                        secondaryChargesTxt.append(", ");
+                                    }
+                                    secondaryChargesTxt.append(secondaryCharge);
+                                }
+                                writer.write(secondaryChargesTxt.toString());
+                            }
+                            writer.write(")");
+                        }
+                        writer.addSeparator();
                         writer.write(validationFeature.getTitle());
                         writer.addSeparator();
                         result = 100 - psmTargetDecoyMap.getTargetDecoyMap(charge, null).getTargetDecoyResults().getConfidenceLimit();
@@ -466,13 +772,34 @@ public class PsValidationSection {
                     break;
                 case total_psm:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
-                    for (int charge : psmTargetDecoyMap.getPossibleCharges()) {
-                        for (String file : psmTargetDecoyMap.getFilesAtCharge(charge)) {
+                    possibleCharges = psmTargetDecoyMap.getPossibleCharges();
+                    Collections.sort(possibleCharges);
+                    foundCharges = new HashSet<Integer>(possibleCharges.size());
+                    for (int charge : possibleCharges) {
+                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCharge(charge);
+                        Collections.sort(files);
+                        for (String file : files) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
+                                foundCharges.add(charge);
                                 if (indexes) {
                                     writer.write(line + "");
                                     writer.addSeparator();
                                 }
+                                writer.write("PSMs");
+                                if (files.size() > 1 || possibleCharges.size() > 1) {
+                                    writer.write(" (");
+                                    if (possibleCharges.size() > 1) {
+                                        writer.write("Charge " + charge);
+                                        if (files.size() > 1) {
+                                            writer.write(" of file ");
+                                        }
+                                    }
+                                    if (files.size() > 1) {
+                                        writer.write(file);
+                                    }
+                                    writer.write(")");
+                                }
+                                writer.addSeparator();
                                 writer.write(validationFeature.getTitle());
                                 writer.addSeparator();
                                 result = psmTargetDecoyMap.getTargetDecoyMap(charge, file).getTargetDecoyResults().getnTPTotal();
@@ -482,11 +809,37 @@ public class PsValidationSection {
                             }
                         }
                     }
-                    for (int charge : psmTargetDecoyMap.getGroupedCharges()) {
+                    groupedCharges = psmTargetDecoyMap.getChargeGroupingMap();
+                    representativeCharges = new ArrayList<Integer>(groupedCharges.keySet());
+                    Collections.sort(representativeCharges);
+                    for (int charge : representativeCharges) {
+                        ArrayList<Integer> secondaryCharges = groupedCharges.get(charge);
                         if (indexes) {
                             writer.write(line + "");
                             writer.addSeparator();
                         }
+                        writer.write("PSMs");
+                        if (groupedCharges.size() > 1 || !foundCharges.isEmpty()) {
+                            writer.write(" (");
+                            if (foundCharges.contains(charge)) {
+                                writer.write("Other ");
+                            }
+                            writer.write("Charge " + charge);
+                            if (!secondaryCharges.isEmpty()) {
+                                writer.write(" and Charge ");
+                                StringBuilder secondaryChargesTxt = new StringBuilder();
+                                Collections.sort(secondaryCharges);
+                                for (Integer secondaryCharge : secondaryCharges) {
+                                    if (secondaryChargesTxt.length() > 0) {
+                                        secondaryChargesTxt.append(", ");
+                                    }
+                                    secondaryChargesTxt.append(secondaryCharge);
+                                }
+                                writer.write(secondaryChargesTxt.toString());
+                            }
+                            writer.write(")");
+                        }
+                        writer.addSeparator();
                         writer.write(validationFeature.getTitle());
                         writer.addSeparator();
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge, null).getTargetDecoyResults().getnTPTotal();
@@ -497,13 +850,34 @@ public class PsValidationSection {
                     break;
                 case validated_psm:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
-                    for (int charge : psmTargetDecoyMap.getPossibleCharges()) {
-                        for (String file : psmTargetDecoyMap.getFilesAtCharge(charge)) {
+                    possibleCharges = psmTargetDecoyMap.getPossibleCharges();
+                    Collections.sort(possibleCharges);
+                    foundCharges = new HashSet<Integer>(possibleCharges.size());
+                    for (int charge : possibleCharges) {
+                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCharge(charge);
+                        Collections.sort(files);
+                        for (String file : files) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
+                                foundCharges.add(charge);
                                 if (indexes) {
                                     writer.write(line + "");
                                     writer.addSeparator();
                                 }
+                                writer.write("PSMs");
+                                if (files.size() > 1 || possibleCharges.size() > 1) {
+                                    writer.write(" (");
+                                    if (possibleCharges.size() > 1) {
+                                        writer.write("Charge " + charge);
+                                        if (files.size() > 1) {
+                                            writer.write(" of file ");
+                                        }
+                                    }
+                                    if (files.size() > 1) {
+                                        writer.write(file);
+                                    }
+                                    writer.write(")");
+                                }
+                                writer.addSeparator();
                                 writer.write(validationFeature.getTitle());
                                 writer.addSeparator();
                                 result = psmTargetDecoyMap.getTargetDecoyMap(charge, file).getTargetDecoyResults().getN();
@@ -513,11 +887,37 @@ public class PsValidationSection {
                             }
                         }
                     }
-                    for (int charge : psmTargetDecoyMap.getGroupedCharges()) {
+                    groupedCharges = psmTargetDecoyMap.getChargeGroupingMap();
+                    representativeCharges = new ArrayList<Integer>(groupedCharges.keySet());
+                    Collections.sort(representativeCharges);
+                    for (int charge : representativeCharges) {
+                        ArrayList<Integer> secondaryCharges = groupedCharges.get(charge);
                         if (indexes) {
                             writer.write(line + "");
                             writer.addSeparator();
                         }
+                        writer.write("PSMs");
+                        if (groupedCharges.size() > 1 || !foundCharges.isEmpty()) {
+                            writer.write(" (");
+                            if (foundCharges.contains(charge)) {
+                                writer.write("Other ");
+                            }
+                            writer.write("Charge " + charge);
+                            if (!secondaryCharges.isEmpty()) {
+                                writer.write(" and Charge ");
+                                StringBuilder secondaryChargesTxt = new StringBuilder();
+                                Collections.sort(secondaryCharges);
+                                for (Integer secondaryCharge : secondaryCharges) {
+                                    if (secondaryChargesTxt.length() > 0) {
+                                        secondaryChargesTxt.append(", ");
+                                    }
+                                    secondaryChargesTxt.append(secondaryCharge);
+                                }
+                                writer.write(secondaryChargesTxt.toString());
+                            }
+                            writer.write(")");
+                        }
+                        writer.addSeparator();
                         writer.write(validationFeature.getTitle());
                         writer.addSeparator();
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge, null).getTargetDecoyResults().getN();

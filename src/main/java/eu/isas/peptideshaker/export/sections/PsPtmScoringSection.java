@@ -59,13 +59,13 @@ public class PsPtmScoringSection {
     /**
      * Writes the desired section.
      *
-     * @param ptmcoringPreferences the PTM scoring preferences of this project
+     * @param ptmScoringPreferences the PTM scoring preferences of this project
      * @param waitingHandler the waiting handler
      * 
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file
      */
-    public void writeSection(PTMScoringPreferences ptmcoringPreferences, WaitingHandler waitingHandler) throws IOException {
+    public void writeSection(PTMScoringPreferences ptmScoringPreferences, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -92,18 +92,18 @@ public class PsPtmScoringSection {
             writer.write(ptmScoringFeature.getTitle() + "");
             writer.addSeparator();
             switch (ptmScoringFeature) {
-                case aScore:
-                    if (ptmcoringPreferences.isProbabilitsticScoreCalculation()) {
-                        writer.write("Yes");
+                case probabilitstic_score:
+                    writer.write(ptmScoringPreferences.getSelectedProbabilisticScore().getName());
+                    break;
+                case threshold:
+                    if (ptmScoringPreferences.isEstimateFlr()) {
+                        writer.write("Auto");
                     } else {
-                        writer.write("No");
+                        writer.write(ptmScoringPreferences.getProbabilisticScoreThreshold() + "");
                     }
                     break;
-                case flr:
-                    writer.write(ptmcoringPreferences.getFlrThreshold() + "");
-                    break;
                 case neutral_losses:
-                    if (ptmcoringPreferences.isProbabilisticScoreNeutralLosses()) {
+                    if (ptmScoringPreferences.isProbabilisticScoreNeutralLosses()) {
                         writer.write("Yes");
                     } else {
                         writer.write("No");

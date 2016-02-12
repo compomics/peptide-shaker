@@ -2347,13 +2347,12 @@ public class ValidationPanel extends javax.swing.JPanel {
                         modifiedMaps.put(cpt, false);
 
                         String title = PeptideSpecificMap.getKeyName(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), peptideKey);
-                        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, " Peptides (" + title + ")"});
+                        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "Peptides (" + title + ")"});
                     }
                 }
 
                 PsmSpecificMap psmSpecificMap = pSMaps.getPsmSpecificMap();
-                ArrayList<Integer> foundCharges = new ArrayList<Integer>();
-                HashMap<Integer, ArrayList<Integer>> groupedCharges = new HashMap<Integer, ArrayList<Integer>>();
+                ArrayList<Integer> foundCharges = new ArrayList<Integer>(4);
                 for (Integer charge : psmSpecificMap.getPossibleCharges()) {
                     for (String file : psmSpecificMap.getFilesAtCharge(charge)) {
                         if (!psmSpecificMap.isFileGrouped(charge, file)) {
@@ -2372,6 +2371,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                         }
                     }
                 }
+                HashMap<Integer, ArrayList<Integer>> groupedCharges = new HashMap<Integer, ArrayList<Integer>>();
                 for (int charge : psmSpecificMap.getChargesFromGroupedFiles()) {
                     int correctedCharge = psmSpecificMap.getCorrectedCharge(charge);
                     if (correctedCharge == charge) {
@@ -2386,7 +2386,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                     } else {
                         ArrayList<Integer> charges = groupedCharges.get(correctedCharge);
                         if (charges == null) {
-                            charges = new ArrayList<Integer>();
+                            charges = new ArrayList<Integer>(4);
                             groupedCharges.put(correctedCharge, charges);
                         }
                         charges.add(charge);

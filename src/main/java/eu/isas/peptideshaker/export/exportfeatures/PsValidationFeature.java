@@ -11,27 +11,27 @@ import java.util.Arrays;
  */
 public enum PsValidationFeature implements ExportFeature {
 
-    validated_protein("#Validated Proteins", "The number of validated proteins.", false),
-    total_protein("Protein Total", "The estimated total number of proteins.", false),
-    protein_fdr("Protein FDR Limit", "The estimated protein False Discovery Rate (FDR).", false),
-    protein_fnr("Protein FNR Limit", "The estimated protein False Negative Rate (FNR).", false),
-    protein_confidence("Protein Confidence Limit", "The lowest confidence among validated proteins.", false),
-    protein_pep("Protein PEP Limit", "The highest Posterior Error Probability (PEP) among validated proteins.", false),
-    protein_accuracy("Protein Confidence Accuracy", "The estimated protein Posterior Error Probability (PEP) and confidence estimation accuracy.", false),
-    validated_peptide("#Validated Peptides", "The number of validated peptides. Note that peptides are grouped by modification status when statistical significance is ensured, i.e. \"Confidence accuracy\" < 1%.", false),
-    total_peptide("Peptide Total", "The estimated total number of peptides. Note that peptides are grouped by modification status when statistical significance is ensured, i.e. \"Confidence accuracy\" < 1%.", false),
-    peptide_fdr("Peptide FDR Limit", "The estimated peptide False Discovery Rate (FDR). Note that peptides are grouped by modification status when statistical significance is ensured, i.e. \"Confidence accuracy\" < 1%.", false),
-    peptide_fnr("Peptide FNR Limit", "The estimated peptide False Negative Rate (FNR). Note that peptides are grouped by modification status when statistical significance is ensured, i.e. \"Confidence accuracy\" < 1%.", false),
-    peptide_confidence("Peptide Confidence Limit", "The lowest confidence among validated peptides. Note that peptides are grouped by modification status when statistical significance is ensured, i.e. \"Confidence accuracy\" < 1%.", false),
-    peptide_pep("Peptide PEP Limit", "The highest Posterior Error Probability (PEP) among validated peptides. Note that peptides are grouped by modification status when statistical significance is ensured, i.e. \"Confidence accuracy\" < 1%.", false),
-    peptide_accuracy("Peptide Confidence Accuracy", "The estimated peptide Posterior Error Probability (PEP) and confidence estimation accuracy. Note that peptides are grouped by modification status when statistical significance is ensured based on this parameter: \"Confidence accuracy\" < 1%.", false),
-    validated_psm("#Validated PSM", "The number of validated Peptide Spectrum Matches (PSMs). Note that PSMs are grouped by identified charge when statistical significance is ensured, i.e. \"Confidence accuracy\" < 1%.", false),
-    total_psm("PSM Total", "The estimated total number of Peptide Spectrum Matches (PSMs). Note that PSMs are grouped by identified charge when statistical significance is ensured, i.e. \"Confidence accuracy\" < 1%.", false),
-    psm_fdr("PSM FDR Limit", "The estimated Peptide Spectrum Match (PSM) False Discovery Rate (FDR). Note that PSMs are grouped by identified charge when statistical significance is ensured, i.e. \"Confidence accuracy\" < 1%.", false),
-    psm_fnr("PSM FNR Limit", "The estimated Peptide Spectrum Match (PSM) False Negative Rate (FNR). Note that PSMs are grouped by identified charge when statistical significance is ensured, i.e. \"Confidence accuracy\" < 1%.", false),
-    psm_confidence("PSM Confidence Limit", "The lowest confidence among validated Peptide Spectrum Matches (PSMs). Note that PSMs are grouped by identified charge when statistical significance is ensured, i.e. \"Confidence accuracy\" < 1%.", false),
-    psm_pep("PSM PEP Limit", "The highest Posterior Error Probability (PEP) among validated Peptide Spectrum Matches (PSMs). Note that PSMs are grouped by identified charge when statistical significance is ensured, i.e. \"Confidence accuracy\" < 1%.", false),
-    psm_accuracy("PSM Confidence Accuracy", "The estimated Peptide Spectrum Match (PSM) Posterior Error Probability (PEP) and confidence estimation accuracy. Note that PSMs are grouped by identified charge when statistical significance is ensured based on this parameter: \"Confidence accuracy\" < 1%.", false);
+    validated_protein("#Validated", "The number of validated proteins.", false),
+    total_protein("Total Possible TP", "The estimated total number of true positive proteins.", false),
+    protein_fdr("FDR Limit", "The estimated protein False Discovery Rate (FDR).", false),
+    protein_fnr("FNR Limit", "The estimated protein False Negative Rate (FNR).", false),
+    protein_confidence("Confidence Limit", "The lowest confidence among validated proteins.", false),
+    protein_pep("PEP Limit", "The highest Posterior Error Probability (PEP) among validated proteins.", false),
+    protein_accuracy("Confidence Accuracy", "The estimated protein Posterior Error Probability (PEP) and confidence estimation accuracy.", false),
+    validated_peptide("#Validated", "The number of validated peptides. Note that peptides are grouped by modification status when statistical significance is ensured, see advanced validation parameters.", false),
+    total_peptide("Total Possible TP", "The estimated total number of true positive peptides. Note that peptides are grouped by modification status when statistical significance is ensured, see advanced validation parameters.", false),
+    peptide_fdr("FDR Limit", "The estimated peptide False Discovery Rate (FDR). Note that peptides are grouped by modification status when statistical significance is ensured, see advanced validation parameters.", false),
+    peptide_fnr("FNR Limit", "The estimated peptide False Negative Rate (FNR). Note that peptides are grouped by modification status when statistical significance is ensured, see advanced validation parameters.", false),
+    peptide_confidence("Confidence Limit", "The lowest confidence among validated peptides. Note that peptides are grouped by modification status when statistical significance is ensured, see advanced validation parameters.", false),
+    peptide_pep("PEP Limit", "The highest Posterior Error Probability (PEP) among validated peptides. Note that peptides are grouped by modification status when statistical significance is ensured, see advanced validation parameters.", false),
+    peptide_accuracy("Confidence Accuracy", "The estimated peptide Posterior Error Probability (PEP) and confidence estimation accuracy. Note that peptides are grouped by modification status when statistical significance is ensured, see advanced validation parameters.", false),
+    validated_psm("#Validated PSM", "The number of validated Peptide Spectrum Matches (PSMs). Note that PSMs are grouped by identified charge when statistical significance is ensured, see advanced validation parameters.", false),
+    total_psm("Total Possible TP", "The estimated total number of true positive Peptide Spectrum Matches (PSMs). Note that PSMs are grouped by identified charge when statistical significance is ensured, see advanced validation parameters.", false),
+    psm_fdr("FDR Limit", "The estimated Peptide Spectrum Match (PSM) False Discovery Rate (FDR). Note that PSMs are grouped by identified charge when statistical significance is ensured, see advanced validation parameters.", false),
+    psm_fnr("FNR Limit", "The estimated Peptide Spectrum Match (PSM) False Negative Rate (FNR). Note that PSMs are grouped by identified charge when statistical significance is ensured, see advanced validation parameters.", false),
+    psm_confidence("Confidence Limit", "The lowest confidence among validated Peptide Spectrum Matches (PSMs). Note that PSMs are grouped by identified charge when statistical significance is ensured, see advanced validation parameters.", false),
+    psm_pep("PEP Limit", "The highest Posterior Error Probability (PEP) among validated Peptide Spectrum Matches (PSMs). Note that PSMs are grouped by identified charge when statistical significance is ensured, see advanced validation parameters.", false),
+    psm_accuracy("Confidence Accuracy", "The estimated Peptide Spectrum Match (PSM) Posterior Error Probability (PEP) and confidence estimation accuracy. Note that PSMs are grouped by identified charge when statistical significance is ensured, see advanced validation parameters.", false);
 
     /**
      * The title of the feature which will be used for column heading.

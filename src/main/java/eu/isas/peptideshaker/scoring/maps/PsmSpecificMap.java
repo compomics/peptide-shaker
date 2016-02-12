@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * This map will store target decoy informations about the PSMs grouped
@@ -140,7 +141,7 @@ public class PsmSpecificMap implements Serializable {
      * @throws IllegalArgumentException thrown if an IllegalArgumentException
      * occurs
      */
-    public void addPoint(double probabilityScore, SpectrumMatch spectrumMatch, SequenceMatchingPreferences sequenceMatchingPreferences) 
+    public void addPoint(double probabilityScore, SpectrumMatch spectrumMatch, SequenceMatchingPreferences sequenceMatchingPreferences)
             throws IOException, InterruptedException, SQLException, ClassNotFoundException {
 
         int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
@@ -162,7 +163,7 @@ public class PsmSpecificMap implements Serializable {
      * This method groups the statistically non significant PSMs between files
      * and with the ones having a charge directly smaller until statistical
      * significance is reached.
-     * 
+     *
      * @param minimalFDR the minimal FDR which should be achievable
      */
     public void clean(double minimalFDR) {
@@ -293,22 +294,43 @@ public class PsmSpecificMap implements Serializable {
      *
      * @return a list of grouped charges from grouped files
      */
-    public ArrayList<Integer> getGroupedCharges() {
-        ArrayList<Integer> result = new ArrayList<Integer>();
+    public HashSet<Integer> getGroupedCharges() {
+        HashSet<Integer> result = new HashSet<Integer>();
         for (int charge : psmsMaps.keySet()) {
             Integer correctedCharge = grouping.get(charge);
             if (correctedCharge == null) {
                 correctedCharge = charge;
             }
-            if (!result.contains(correctedCharge)) {
-                result.add(correctedCharge);
+            result.add(correctedCharge);
+        }
+        return result;
+    }
+
+    /**
+     * Returns the map of grouped charges indexed by representative charge.
+     * 
+     * @return the map of grouped charges indexed by representative charge
+     */
+    public HashMap<Integer, ArrayList<Integer>> getChargeGroupingMap() {
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>(4);
+        for (Integer charge : getChargesFromGroupedFiles()) {
+            Integer correctedCharge = getCorrectedCharge(charge);
+            if (!correctedCharge.equals(charge)) {
+                ArrayList<Integer> secondaryCharges = result.get(correctedCharge);
+                if (secondaryCharges == null) {
+                    secondaryCharges = new ArrayList<Integer>(1);
+                    result.put(correctedCharge, secondaryCharges);
+                }
+                secondaryCharges.add(charge);
+            } else if (!result.containsKey(charge)) {
+                result.put(charge, new ArrayList<Integer>(1));
             }
         }
         return result;
     }
 
     /**
-     * Returns the files at the given charge charge, an empty list if not found.
+     * Returns the files at the given charge, an empty list if not found.
      *
      * @param charge the charge of interest
      *
@@ -321,7 +343,7 @@ public class PsmSpecificMap implements Serializable {
                 return new ArrayList<String>(chargeMap.keySet());
             }
         }
-        return new ArrayList<String>();
+        return new ArrayList<String>(0);
     }
 
     /**
