@@ -7,6 +7,7 @@ import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
@@ -21,14 +22,17 @@ import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatc
 import eu.isas.peptideshaker.export.exportfeatures.PsPsmFeature;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSPtmScores;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -286,6 +290,70 @@ public class PsPsmSection {
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         switch (psmFeature) {
+            case protein_groups:
+                ArrayList<String> accessions = spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
+                HashSet<String> proteinGroups = new HashSet<String>(accessions.size());
+                for (String accession : accessions) {
+                    HashSet<String> groups = identification.getProteinMap().get(accession);
+                    if (groups != null) {
+                        proteinGroups.addAll(groups);
+                    }
+                }
+                StringBuilder proteins = new StringBuilder();
+                ArrayList<String> proteinGroupsList = new ArrayList<String>(proteinGroups);
+                Collections.sort(proteinGroupsList);
+                if (proteinGroupsList.size() > 1) {
+                    identification.loadProteinMatchParameters(proteinGroupsList, psParameter, waitingHandler, false);
+                }
+                psParameter = new PSParameter();
+                for (String proteinGroup : proteinGroupsList) {
+                    if (identification.getProteinIdentification().contains(proteinGroup)) {
+                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinGroup, psParameter);
+                        if (proteins.length() > 0) {
+                            proteins.append("; ");
+                        }
+                        List<String> groupAccessions = Arrays.asList(ProteinMatch.getAccessions(proteinGroup));
+                        Collections.sort(groupAccessions);
+                        boolean first = true;
+                        for (String accession : groupAccessions) {
+                            if (first) {
+                                first = false;
+                            } else {
+                                proteins.append(", ");
+                            }
+                            proteins.append(accession);
+                        }
+                        proteins.append(" (");
+                        proteins.append(psParameter.getMatchValidationLevel().getName());
+                        proteins.append(")");
+                    }
+                }
+                return proteins.toString();
+            case best_protein_group_validation:
+                MatchValidationLevel bestProteinValidationLevel = MatchValidationLevel.none;
+                accessions = spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
+                proteinGroups = new HashSet<String>(accessions.size());
+                for (String accession : accessions) {
+                    HashSet<String> groups = identification.getProteinMap().get(accession);
+                    if (groups != null) {
+                        proteinGroups.addAll(groups);
+                    }
+                }
+                proteinGroupsList = new ArrayList<String>(proteinGroups);
+                Collections.sort(proteinGroupsList);
+                if (proteinGroupsList.size() > 1) {
+                    identification.loadProteinMatchParameters(proteinGroupsList, psParameter, waitingHandler, false);
+                }
+                psParameter = new PSParameter();
+                for (String proteinGroup : proteinGroupsList) {
+                    if (identification.getProteinIdentification().contains(proteinGroup)) {
+                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinGroup, psParameter);
+                        if (psParameter.getMatchValidationLevel().getIndex() > bestProteinValidationLevel.getIndex()) {
+                            bestProteinValidationLevel = psParameter.getMatchValidationLevel();
+                        }
+                    }
+                }
+                return bestProteinValidationLevel.getName();
             case probabilistic_score:
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
                     PSPtmScores ptmScores = new PSPtmScores();

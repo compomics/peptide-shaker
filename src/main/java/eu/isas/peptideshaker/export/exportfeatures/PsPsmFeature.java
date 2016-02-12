@@ -11,6 +11,8 @@ import java.util.Arrays;
  */
 public enum PsPsmFeature implements ExportFeature {
 
+    protein_groups("Protein Group(s)", "List of identified protein groups the peptide of this PSM can map to with associated validation level.", true),
+    best_protein_group_validation("Protein Validation", "Best validation status among the protein groups derived from the peptide of this PSM.", true),
     localization_confidence("Localization Confidence", "The confidence in variable PTM localization.", false),
     probabilistic_score("probabilistic PTM score", "The probabilistic score (e.g. A-score or PhosphoRS) used for variable PTM localization.", false),
     d_score("D-score", "D-score for variable PTM localization.", false),
@@ -25,7 +27,7 @@ public enum PsPsmFeature implements ExportFeature {
     algorithm_score("Algorithm Score", "Best score given by the identification algorithm to the hit retained by PeptideShaker independent of modification localization.", false),
     score("Score", "Score of the retained peptide as a combination of the algorithm scores (used to rank PSMs).", true),
     raw_score("Raw score", "Score before log transformation.", true),
-    confidence("Confidence", "Confidence in percent associated to the retained PSM.", false),
+    confidence("Confidence [%]", "Confidence in percent associated to the retained PSM.", false),
     validated("Validation", "Indicates the validation level of the protein group.", false),
     starred("Starred", "Indicates whether the match was starred in the interface (1: yes, 0: no).", false),
     hidden("Hidden", "Indicates whether the match was hidden in the interface (1: yes, 0: no).", false);
