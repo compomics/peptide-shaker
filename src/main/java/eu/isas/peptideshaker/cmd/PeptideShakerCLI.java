@@ -662,7 +662,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 if (!found) {
                     waitingHandler.appendReport("FASTA file \'" + fastaFile.getName() + "\' not found.", true, true);
                 }
-            } else {
+            } 
+            
+            if (found) {
                 // see if the protein inference fasta file is also missing
                 File proteinInferenceSequenceDatabase = identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
                 if (!proteinInferenceSequenceDatabase.exists() && proteinInferenceSequenceDatabase.getName().equalsIgnoreCase(fastaFile.getName())) {
