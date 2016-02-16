@@ -1387,7 +1387,7 @@ public class NewDialog extends javax.swing.JDialog {
             File identificationParametersFile = IdentificationParametersFactory.getIdentificationParametersFile((String) settingsComboBox.getSelectedItem());
             try {
                 identificationParameters = IdentificationParameters.getIdentificationParameters(identificationParametersFile);
-                
+
                 // load project specific PTMs
                 String error = PeptideShaker.loadModifications(identificationParameters.getSearchParameters());
                 if (error != null) {
@@ -1395,7 +1395,7 @@ public class NewDialog extends javax.swing.JDialog {
                             error,
                             "PTM Definition Changed", JOptionPane.WARNING_MESSAGE);
                 }
-                
+
                 setIdentificationParameters(identificationParameters);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null,
@@ -1872,6 +1872,7 @@ public class NewDialog extends javax.swing.JDialog {
         ArrayList<String> neededMgfs = getMgfFiles(inputFiles);
         ArrayList<String> names = new ArrayList<String>();
         String missing = "";
+        int nMissing = 0;
         for (File file : spectrumFiles) {
             names.add(file.getName());
         }
@@ -1897,15 +1898,21 @@ public class NewDialog extends javax.swing.JDialog {
                         }
                     }
                     if (!found) {
+                        nMissing++;
                         missing += newFile.getName() + "\n";
                     }
                 }
             }
         }
 
-        if (!missing.equals("")) {
-            JOptionPane.showMessageDialog(this, "Spectrum file(s) not found:\n" + missing
-                    + "\nPlease locate them manually.", "Spectrum File Not Found", JOptionPane.WARNING_MESSAGE);
+        if (nMissing > 0) {
+            if (nMissing < 11) {
+                JOptionPane.showMessageDialog(this, "Spectrum file(s) not found:\n" + missing
+                        + "\nPlease locate them manually.", "Spectrum File Not Found", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Spectrum files not found.\n"
+                        + "Please locate them manually.", "Spectrum File Not Found", JOptionPane.WARNING_MESSAGE);
+            }
         }
 
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
