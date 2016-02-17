@@ -87,6 +87,22 @@ public class IdentificationFeaturesCache implements Serializable {
          */
         unique_peptides,
         /**
+         * The number of validated protein groups for a peptide. Stored as a small object.
+         */
+        protein_groups_for_peptide,
+        /**
+         * The number of unique validated peptides. Stored as a small object.
+         */
+        unique_validated_peptides,
+        /**
+         * The number of unique peptides. Stored as a small object.
+         */
+        unique_peptides_group,
+        /**
+         * The number of unique validated peptides. Stored as a small object.
+         */
+        unique_validated_peptides_group,
+        /**
          * Contains if a given protein accession contains enzymatic peptides:
          * true or false. Stored as a small object.
          */

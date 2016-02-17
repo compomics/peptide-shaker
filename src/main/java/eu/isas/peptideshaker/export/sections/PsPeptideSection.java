@@ -264,14 +264,7 @@ public class PsPeptideSection {
                 }
                 return descriptions.toString();
             case protein_groups:
-                accessions = peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
-                HashSet<String> proteinGroups = new HashSet<String>(accessions.size());
-                for (String accession : accessions) {
-                    HashSet<String> groups = identification.getProteinMap().get(accession);
-                    if (groups != null) {
-                        proteinGroups.addAll(groups);
-                    }
-                }
+                HashSet<String> proteinGroups = identification.getProteinMatches(peptideMatch.getTheoreticPeptide());
                 proteins = new StringBuilder();
                 ArrayList<String> proteinGroupsList = new ArrayList<String>(proteinGroups);
                 Collections.sort(proteinGroupsList);
@@ -304,14 +297,7 @@ public class PsPeptideSection {
                 return proteins.toString();
             case best_protein_group_validation:
                 MatchValidationLevel bestProteinValidationLevel = MatchValidationLevel.none;
-                accessions = peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
-                proteinGroups = new HashSet<String>(accessions.size());
-                for (String accession : accessions) {
-                    HashSet<String> groups = identification.getProteinMap().get(accession);
-                    if (groups != null) {
-                        proteinGroups.addAll(groups);
-                    }
-                }
+                proteinGroups = identification.getProteinMatches(peptideMatch.getTheoreticPeptide());
                 proteinGroupsList = new ArrayList<String>(proteinGroups);
                 Collections.sort(proteinGroupsList);
                 if (proteinGroupsList.size() > 1) {
@@ -440,9 +426,12 @@ public class PsPeptideSection {
                     }
                 }
                 return subSequence;
-            case unique:
+            case nValidatedProteinGroups:
                 peptide = peptideMatch.getTheoreticPeptide();
-                if (identification.isUnique(peptide)) {
+                return identificationFeaturesGenerator.getNValidatedProteinGroups(peptide, waitingHandler) + "";
+            case unique_database:
+                peptide = peptideMatch.getTheoreticPeptide();
+                if (identification.isUniqueInDatabase(peptide)) {
                     return "1";
                 } else {
                     return "0";

@@ -443,6 +443,15 @@ public class PsProteinSection {
             case unique_peptides:
                 nHits = identificationFeaturesGenerator.getNUniquePeptides(proteinKey);
                 return nHits + "";
+            case unique_validated_peptides:
+                nHits = identificationFeaturesGenerator.getNUniqueValidatedPeptides(proteinKey);
+                return nHits + "";
+            case unique_peptides_group:
+                nHits = identificationFeaturesGenerator.getNUniquePeptidesGroup(proteinKey);
+                return nHits + "";
+            case unique_validated_peptides_group:
+                nHits = identificationFeaturesGenerator.getNUniqueValidatedPeptidesGroup(proteinKey);
+                return nHits + "";
             case validated_psms:
                 nHits = identificationFeaturesGenerator.getNValidatedSpectra(proteinKey);
                 return nHits + "";
@@ -453,11 +462,11 @@ public class PsProteinSection {
             case spectrum_counting:
                 return identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey) + "";
             case spectrum_counting_nsaf:
-                    return identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
-                            SpectrumCountingPreferences.SpectralCountingMethod.NSAF) + "";
+                return identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
+                        SpectrumCountingPreferences.SpectralCountingMethod.NSAF) + "";
             case spectrum_counting_empai:
-                    return identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
-                            SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) + "";
+                return identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
+                        SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) + "";
             case spectrum_counting_empai_percent:
                 return identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, new UnitOfMeasurement(StandardUnit.percentage), SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) + "";
             case spectrum_counting_nsaf_percent:

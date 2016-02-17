@@ -557,6 +557,9 @@ public class PSExportFactory implements ExportFactory {
         sectionContent.add(PsProteinFeature.peptides);
         sectionContent.add(PsProteinFeature.validated_peptides);
         sectionContent.add(PsProteinFeature.unique_peptides);
+        sectionContent.add(PsProteinFeature.unique_validated_peptides);
+        sectionContent.add(PsProteinFeature.unique_peptides_group);
+        sectionContent.add(PsProteinFeature.unique_validated_peptides_group);
         sectionContent.add(PsProteinFeature.psms);
         sectionContent.add(PsProteinFeature.validated_psms);
 
@@ -590,6 +593,11 @@ public class PSExportFactory implements ExportFactory {
 
         // accessions
         sectionContent.add(PsPeptideFeature.accessions);
+        sectionContent.add(PsPeptideFeature.unique_database);
+        
+        // Proteing Group
+        sectionContent.add(PsPeptideFeature.protein_groups);
+        sectionContent.add(PsPeptideFeature.nValidatedProteinGroups);
 
         // peptide sequence
         sectionContent.add(PsPeptideFeature.aaBefore);
@@ -712,6 +720,9 @@ public class PSExportFactory implements ExportFactory {
         sectionContent.add(PsProteinFeature.peptides);
         sectionContent.add(PsProteinFeature.validated_peptides);
         sectionContent.add(PsProteinFeature.unique_peptides);
+        sectionContent.add(PsProteinFeature.unique_validated_peptides);
+        sectionContent.add(PsProteinFeature.unique_peptides_group);
+        sectionContent.add(PsProteinFeature.unique_validated_peptides_group);
         sectionContent.add(PsProteinFeature.psms);
         sectionContent.add(PsProteinFeature.validated_psms);
 
@@ -745,6 +756,11 @@ public class PSExportFactory implements ExportFactory {
 
         // accessions
         sectionContent.add(PsPeptideFeature.accessions);
+        sectionContent.add(PsPeptideFeature.unique_database);
+        
+        // Proteing Group
+        sectionContent.add(PsPeptideFeature.protein_groups);
+        sectionContent.add(PsPeptideFeature.nValidatedProteinGroups);
 
         // peptide sequence
         sectionContent.add(PsPeptideFeature.aaBefore);

@@ -43,6 +43,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -1166,7 +1167,7 @@ public class IdentificationFeaturesGenerator {
 
             // emPAI
             double result = 0;
-            
+
             PSParameter psParameter = new PSParameter();
 
             identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null, false);
@@ -1554,8 +1555,212 @@ public class IdentificationFeaturesGenerator {
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null, false, null, null);
         while (peptideMatchesIterator.hasNext()) {
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            if (identification.isUnique(peptideMatch.getTheoreticPeptide())) {
+            if (identification.isUniqueInDatabase(peptideMatch.getTheoreticPeptide())) {
                 cpt++;
+            }
+        }
+        return cpt;
+    }
+
+    /**
+     * Returns the number of unique validated peptides for this protein match.
+     *
+     * @param proteinMatchKey the key of the match
+     *
+     * @return the number of unique peptides
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
+     */
+    public int getNUniqueValidatedPeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+        Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.unique_validated_peptides, proteinMatchKey);
+
+        if (result == null) {
+            result = estimateNUniqueValidatedPeptides(proteinMatchKey);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.unique_validated_peptides, proteinMatchKey, result);
+        }
+        return result;
+    }
+
+    /**
+     * Estimates the number of validated peptides unique to a protein match.
+     *
+     * @param proteinMatchKey the key of the protein match
+     *
+     * @return the number of peptides unique to a protein match
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
+     */
+    private int estimateNUniqueValidatedPeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        int cpt = 0;
+
+        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, false, null, null);
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            if (identification.isUniqueInDatabase(peptideMatch.getTheoreticPeptide())) {
+                String peptideKey = peptideMatch.getKey();
+                psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+                if (psParameter.getMatchValidationLevel().isValidated()) {
+                    cpt++;
+                }
+            }
+        }
+        return cpt;
+    }
+
+    /**
+     * Returns the number of peptides unique for this protein group. Note, this
+     * is independent of the validation status.
+     *
+     * @param proteinMatchKey the key of the match
+     *
+     * @return the number of unique peptides
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
+     */
+    public int getNUniquePeptidesGroup(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+        Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.unique_peptides_group, proteinMatchKey);
+
+        if (result == null) {
+            result = estimateNUniquePeptidesGroup(proteinMatchKey);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.unique_peptides_group, proteinMatchKey, result);
+        }
+        return result;
+    }
+
+    /**
+     * Estimates the number of peptides unique to a protein match.
+     *
+     * @param proteinMatchKey the key of the protein match
+     *
+     * @return the number of peptides unique to a protein match
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
+     */
+    private int estimateNUniquePeptidesGroup(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        int cpt = 0;
+
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null, false, null, null);
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            if (getNValidatedProteinGroups(peptideMatch.getTheoreticPeptide()) == 1) {
+                cpt++;
+            }
+        }
+        return cpt;
+    }
+
+    /**
+     * Returns the number of unique validated peptides for this protein match.
+     *
+     * @param proteinMatchKey the key of the match
+     *
+     * @return the number of unique peptides
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
+     */
+    public int getNUniqueValidatedPeptidesGroup(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+        Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.unique_validated_peptides_group, proteinMatchKey);
+
+        if (result == null) {
+            result = estimateNUniqueValidatedPeptidesGroup(proteinMatchKey);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.unique_validated_peptides_group, proteinMatchKey, result);
+        }
+        return result;
+    }
+
+    /**
+     * Estimates the number of validated peptides unique to a protein match.
+     *
+     * @param proteinMatchKey the key of the protein match
+     *
+     * @return the number of peptides unique to a protein match
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
+     */
+    private int estimateNUniqueValidatedPeptidesGroup(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        int cpt = 0;
+
+        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, false, null, null);
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            if (getNValidatedProteinGroups(peptideMatch.getTheoreticPeptide()) == 1) {
+                String peptideKey = peptideMatch.getKey();
+                psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+                if (psParameter.getMatchValidationLevel().isValidated()) {
+                    cpt++;
+                }
             }
         }
         return cpt;
@@ -3116,5 +3321,57 @@ public class IdentificationFeaturesGenerator {
      */
     public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences) {
         this.spectrumCountingPreferences = spectrumCountingPreferences;
+    }
+
+    /**
+     * Indicates whether a peptide is found in a single protein match.
+     *
+     * @param peptide the peptide of interest
+     *
+     * @return true if peptide is found in a single protein match
+     *
+     * @throws SQLException exception thrown whenever an error occurred while
+     * loading the object from the database
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading the object in the database
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while casting the database input in the desired match class
+     * @throws InterruptedException thrown whenever a threading issue occurred
+     * while interacting with the database
+     */
+    public int getNValidatedProteinGroups(Peptide peptide) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+        return getNValidatedProteinGroups(peptide, null);
+    }
+
+    /**
+     * Indicates whether a peptide is found in a single protein match.
+     *
+     * @param peptide the peptide of interest
+     * @param waitingHandler waiting handler allowing the canceling of the
+     * progress
+     *
+     * @return true if peptide is found in a single protein match
+     *
+     * @throws SQLException exception thrown whenever an error occurred while
+     * loading the object from the database
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading the object in the database
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while casting the database input in the desired match class
+     * @throws InterruptedException thrown whenever a threading issue occurred
+     * while interacting with the database
+     */
+    public int getNValidatedProteinGroups(Peptide peptide, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+        HashSet<String> keys = identification.getProteinMatches(peptide);
+        int nValidated = 0;
+        PSParameter psParameter = new PSParameter();
+        identification.loadProteinMatchParameters(new ArrayList<String>(keys), psParameter, null, false);
+        for (String key : keys) {
+            psParameter = (PSParameter) identification.getProteinMatchParameter(key, psParameter);
+            if (psParameter.getMatchValidationLevel().isValidated()) {
+                nValidated++;
+            }
+        }
+        return nValidated;
     }
 }
