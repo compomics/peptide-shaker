@@ -4936,15 +4936,17 @@ public class PtmPanel extends javax.swing.JPanel {
 
                                 PTM ptm = ptmFactory.getPTM(ptmName);
 
-                                if (ptm.getMass() == selectedPtm.getMass()) { // @TODO: compare against the accuracy
+                                if (ptm.getMass() == selectedPtm.getMass()) {
 
                                     PtmScoring ptmScoring = ptmScores.getPtmScoring(ptmName);
-                                    for (int site : ptmScoring.getAllPtmLocations()) {
+                                    for (int site : ptmScoring.getDSites()) {
                                         double ptmDScore = ptmScoring.getDeltaScore(site);
                                         Double tableDScore = dScores.get(site);
                                         if (tableDScore == null || tableDScore < ptmDScore) {
                                             dScores.put(site, ptmDScore);
                                         }
+                                    }
+                                    for (int site : ptmScoring.getProbabilisticSites()) {
                                         double ptmPScore = ptmScoring.getProbabilisticScore(site);
                                         Double tablePScore = pScores.get(site);
                                         if (tablePScore == null || tablePScore < ptmPScore) {
