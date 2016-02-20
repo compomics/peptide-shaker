@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
+import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
@@ -8,10 +9,13 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
+import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientConnectionException;
@@ -30,17 +34,25 @@ import no.uib.jsparklines.renderers.JSparklinesArrayListBarChartTableCellRendere
 public class PeptideTableModel extends SelfUpdatingTableModel {
 
     /**
-     * The main GUI class.
+     * The identification.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private Identification identification;
+    /**
+     * The identification features generator.
+     */
+    private IdentificationFeaturesGenerator identificationFeaturesGenerator;
+    /**
+     * The display features generator.
+     */
+    private DisplayFeaturesGenerator displayFeaturesGenerator;
+    /**
+     * The identification parameters.
+     */
+    private IdentificationParameters identificationParameters;
     /**
      * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-    /**
-     * The identification of this project.
-     */
-    private Identification identification;
     /**
      * A list of ordered peptide keys.
      */
@@ -51,16 +63,36 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      */
     private String proteinAccession;
     /**
+     * The display preferences.
+     */
+    private DisplayPreferences displayPreferences;
+    /**
+     * Indicates whether the scores should be displayed instead of the
+     * confidence
+     */
+    private boolean displayScores;
+    /**
      * The batch size.
      */
     private int batchSize = 20;
+    /**
+     * The exception handler catches exceptions.
+     */
+    private ExceptionHandler exceptionHandler;
 
     /**
      * Constructor which sets a new table.
      *
-     * @param peptideShakerGUI instance of the main GUI class
+     * @param identification the identification object containing the matches
+     * @param identificationFeaturesGenerator the identification features
+     * generator
+     * @param displayFeaturesGenerator the display features generator
+     * @param identificationParameters the identification parameters
      * @param proteinAccession the protein accession
      * @param peptideKeys the peptide keys
+     * @param displayScores boolean indicating whether the scores should be
+     * displayed instead of the confidence
+     * @param exceptionHandler handler for the exceptions
      *
      * @throws IOException thrown if an IOException occurs
      * @throws InterruptedException thrown if an InterruptedException occurs
@@ -69,27 +101,31 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      * occurs
      * @throws SQLException thrown if an SQLException occurs
      */
-    public PeptideTableModel(PeptideShakerGUI peptideShakerGUI, String proteinAccession, ArrayList<String> peptideKeys)
+    public PeptideTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters, String proteinAccession, ArrayList<String> peptideKeys, boolean displayScores, ExceptionHandler exceptionHandler)
             throws IOException, InterruptedException, ClassNotFoundException, IllegalArgumentException, SQLException {
-        this.peptideShakerGUI = peptideShakerGUI;
-        identification = peptideShakerGUI.getIdentification();
+        this.identification = identification;
+        this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+        this.displayFeaturesGenerator = displayFeaturesGenerator;
+        this.identificationParameters = identificationParameters;
         this.peptideKeys = peptideKeys;
         this.proteinAccession = proteinAccession;
+        this.displayScores = displayScores;
+        this.exceptionHandler = exceptionHandler;
     }
 
     /**
      * Update the data in the table model without having to reset the whole
      * table model. This keeps the sorting order of the table.
      *
-     * @param peptideShakerGUI instance of the main GUI class
      * @param proteinAccession the protein accession
      * @param peptideKeys the peptide keys
+     * @param displayScores boolean indicating whether the scores should be
+     * displayed instead of the confidence
      */
-    public void updateDataModel(PeptideShakerGUI peptideShakerGUI, String proteinAccession, ArrayList<String> peptideKeys) {
-        this.peptideShakerGUI = peptideShakerGUI;
-        identification = peptideShakerGUI.getIdentification();
-        this.peptideKeys = peptideKeys;
+    public void updateDataModel(String proteinAccession, ArrayList<String> peptideKeys, boolean displayScores) {
         this.proteinAccession = proteinAccession;
+        this.peptideKeys = peptideKeys;
+        this.displayScores = displayScores;
     }
 
     /**
@@ -136,7 +172,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
             case 5:
                 return "#Spectra";
             case 6:
-                if (peptideShakerGUI != null && peptideShakerGUI.getDisplayPreferences().showScores()) {
+                if (displayScores) {
                     return "Score";
                 } else {
                     return "Confidence";
@@ -196,7 +232,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                             return Peptide.getSequence(peptideKey);
                         }
                     }
-                    return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
+                    return displayFeaturesGenerator.getTaggedPeptideSequence(peptideMatch, true, true, true);
                 case 4:
                     if (isScrolling) {
                         return null;
@@ -209,9 +245,9 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                         Protein currentProtein = sequenceFactory.getProtein(proteinAccession);
                         String peptideSequence = Peptide.getSequence(peptideKey);
                         indexes = currentProtein.getPeptideStart(peptideSequence,
-                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                                identificationParameters.getSequenceMatchingPreferences());
                     } catch (IOException e) {
-                        peptideShakerGUI.catchException(e);
+                        exceptionHandler.catchException(e);
                         return "IO Exception";
                     }
                     Collections.sort(indexes);
@@ -222,14 +258,14 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     }
                     peptideMatch = identification.getPeptideMatch(peptideKey, useDB);
                     if (!useDB
-                            && (peptideMatch == null || !peptideShakerGUI.getIdentificationFeaturesGenerator().nValidatedSpectraForPeptideInCache(peptideKey))
+                            && (peptideMatch == null || !identificationFeaturesGenerator.nValidatedSpectraForPeptideInCache(peptideKey))
                             && (peptideMatch == null || !identification.peptideDetailsInCache(peptideKey))) {
                         dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
 
-                    double nConfidentSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentSpectraForPeptide(peptideKey);
-                    double nDoubtfulSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey) - nConfidentSpectra;
+                    double nConfidentSpectra = identificationFeaturesGenerator.getNConfidentSpectraForPeptide(peptideKey);
+                    double nDoubtfulSpectra = identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideKey) - nConfidentSpectra;
                     int nSpectra = peptideMatch.getSpectrumMatchesKeys().size();
 
                     ArrayList<Double> doubleValues = new ArrayList<Double>();
@@ -249,7 +285,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                         }
                     }
                     if (psParameter != null) {
-                        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+                        if (displayScores) {
                             return psParameter.getPeptideScore();
                         } else {
                             return psParameter.getPeptideConfidence();
@@ -279,7 +315,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
             // this one can be ignored i think?
             return null;
         } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
+            exceptionHandler.catchException(e);
             return null;
         }
     }
@@ -302,7 +338,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     @Override
     protected void catchException(Exception e) {
         setSelfUpdating(false);
-        peptideShakerGUI.catchException(e);
+        exceptionHandler.catchException(e);
     }
 
     @Override
@@ -329,7 +365,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     return rows.get(i);
                 }
                 String peptideKey = peptideMatch.getKey();
-                peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
+                identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideKey);
                 i++;
             }
         } catch (SQLNonTransientConnectionException e) {
