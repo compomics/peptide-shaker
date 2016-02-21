@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
+import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
@@ -9,13 +10,14 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
+import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,60 +31,74 @@ import java.util.HashMap;
 public class PsmTableModel extends SelfUpdatingTableModel {
 
     /**
-     * The main GUI class.
-     */
-    private PeptideShakerGUI peptideShakerGUI;
-    /**
      * The identification of this project.
      */
     private Identification identification;
+    /**
+     * The display features generator.
+     */
+    private DisplayFeaturesGenerator displayFeaturesGenerator;
+    /**
+     * The ID input map.
+     */
+    private InputMap inputMap;
+    /**
+     * The identification parameters.
+     */
+    private IdentificationParameters identificationParameters;
     /**
      * A list of ordered PSM keys.
      */
     private ArrayList<String> psmKeys = null;
     /**
+     * Indicates whether the scores should be displayed instead of the
+     * confidence
+     */
+    private boolean showScores = false;
+    /**
      * The batch size.
      */
     private int batchSize = 20;
     /**
-     * The ID input map.
+     * The exception handler catches exceptions.
      */
-    private InputMap inputMap;
+    private ExceptionHandler exceptionHandler;
 
     /**
      * Constructor which sets a new table.
      *
-     * @param peptideShakerGUI instance of the main GUI class
+     * @param identification the identification object containing the matches
+     * @param displayFeaturesGenerator the display features generator
+     * @param identificationParameters the identification parameters
      * @param psmKeys the PSM keys
+     * @param displayScores boolean indicating whether the scores should be
+     * displayed instead of the confidence
+     * @param exceptionHandler handler for the exceptions
      */
-    public PsmTableModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> psmKeys) {
-        setUpTableModel(peptideShakerGUI, psmKeys);
+    public PsmTableModel(Identification identification, DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters, ArrayList<String> psmKeys, boolean displayScores, ExceptionHandler exceptionHandler) {
+        this.identification = identification;
+        this.displayFeaturesGenerator = displayFeaturesGenerator;
+        this.identificationParameters = identificationParameters;
+        this.psmKeys = psmKeys;
+        this.showScores = displayScores;
+        this.exceptionHandler = exceptionHandler;
+
+        PSMaps pSMaps = new PSMaps();
+        pSMaps = (PSMaps) identification.getUrParam(pSMaps);
+        inputMap = pSMaps.getInputMap();
     }
 
     /**
      * Update the data in the table model without having to reset the whole
      * table model. This keeps the sorting order of the table.
      *
-     * @param peptideShakerGUI the PeptideShakerGUI parent
      * @param psmKeys the PSM keys
+     * @param displayScores boolean indicating whether the scores should be
+     * displayed instead of the confidence
      */
-    public void updateDataModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> psmKeys) {
-        setUpTableModel(peptideShakerGUI, psmKeys);
-    }
-
-    /**
-     * Set up the table model.
-     *
-     * @param peptideShakerGUI
-     */
-    private void setUpTableModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> psmKeys) {
-        this.peptideShakerGUI = peptideShakerGUI;
-        identification = peptideShakerGUI.getIdentification();
+    public void updateDataModel(ArrayList<String> psmKeys, boolean displayScores) {
         this.psmKeys = psmKeys;
-        
-        PSMaps pSMaps = new PSMaps();
-        pSMaps = (PSMaps) identification.getUrParam(pSMaps);
-        inputMap = pSMaps.getInputMap();
+        this.showScores = displayScores;
     }
 
     /**
@@ -129,7 +145,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
             case 5:
                 return "Mass Error";
             case 6:
-                if (peptideShakerGUI != null && peptideShakerGUI.getDisplayPreferences().showScores()) {
+                if (showScores) {
                     return "Score";
                 } else {
                     return "Confidence";
@@ -178,7 +194,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                         }
 
                         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(psmKey);
-                        return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftware(spectrumMatch, assumptions, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences(), inputMap.getInputAlgorithmsSorted().size());
+                        return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftware(spectrumMatch, assumptions, identificationParameters.getSequenceMatchingPreferences(), inputMap.getInputAlgorithmsSorted().size());
                     case 3:
                         spectrumMatch = identification.getSpectrumMatch(psmKey, useDB && !isScrolling);
                         if (spectrumMatch == null) {
@@ -189,7 +205,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                                 return DisplayPreferences.LOADING_MESSAGE;
                             }
                         }
-                        return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(spectrumMatch, true, true, true);
+                        return displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true);
                     case 4:
                         spectrumMatch = identification.getSpectrumMatch(psmKey, useDB && !isScrolling);
                         if (spectrumMatch == null) {
@@ -218,7 +234,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                             }
                         }
                         Precursor precursor = SpectrumFactory.getInstance().getPrecursor(psmKey);
-                        SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
+                        SearchParameters searchParameters = identificationParameters.getSearchParameters();
                         if (spectrumMatch.getBestPeptideAssumption() != null) {
                             return Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
                         } else if (spectrumMatch.getBestTagAssumption() != null) {
@@ -237,7 +253,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                             }
                         }
                         if (psParameter != null) {
-                            if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+                            if (showScores) {
                                 return psParameter.getPsmScore();
                             } else {
                                 return psParameter.getPsmConfidence();
@@ -267,7 +283,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                 return null;
             }
         } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
+            exceptionHandler.catchException(e);
             return "";
         }
     }
@@ -290,7 +306,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
     @Override
     protected void catchException(Exception e) {
         setSelfUpdating(false);
-        peptideShakerGUI.catchException(e);
+        exceptionHandler.catchException(e);
     }
 
     @Override

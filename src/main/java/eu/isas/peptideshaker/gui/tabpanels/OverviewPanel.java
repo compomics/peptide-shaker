@@ -4770,14 +4770,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // update the table model
                 if (psmTable.getModel() instanceof PsmTableModel) {
-                    ((PsmTableModel) psmTable.getModel()).updateDataModel(peptideShakerGUI, psmKeys);
+                    ((PsmTableModel) psmTable.getModel()).updateDataModel(psmKeys, peptideShakerGUI.getDisplayPreferences().showScores());
                     ((PsmTableModel) psmTable.getModel()).setSelfUpdating(true);
                     ((PsmTableModel) psmTable.getModel()).resetSorting(new ProgressDialogX(peptideShakerGUI,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                             true));
                 } else {
-                    PsmTableModel psmTableModel = new PsmTableModel(peptideShakerGUI, psmKeys);
+                    PsmTableModel psmTableModel = new PsmTableModel(identification, peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), psmKeys, peptideShakerGUI.getDisplayPreferences().showScores(), peptideShakerGUI.getExceptionHandler());
                     psmTable.setModel(psmTableModel);
                 }
 

@@ -11,7 +11,6 @@ import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
@@ -63,14 +62,10 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      */
     private String proteinAccession;
     /**
-     * The display preferences.
-     */
-    private DisplayPreferences displayPreferences;
-    /**
      * Indicates whether the scores should be displayed instead of the
      * confidence
      */
-    private boolean displayScores;
+    private boolean showScores = false;
     /**
      * The batch size.
      */
@@ -109,7 +104,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
         this.identificationParameters = identificationParameters;
         this.peptideKeys = peptideKeys;
         this.proteinAccession = proteinAccession;
-        this.displayScores = displayScores;
+        this.showScores = displayScores;
         this.exceptionHandler = exceptionHandler;
     }
 
@@ -125,7 +120,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     public void updateDataModel(String proteinAccession, ArrayList<String> peptideKeys, boolean displayScores) {
         this.proteinAccession = proteinAccession;
         this.peptideKeys = peptideKeys;
-        this.displayScores = displayScores;
+        this.showScores = displayScores;
     }
 
     /**
@@ -172,7 +167,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
             case 5:
                 return "#Spectra";
             case 6:
-                if (displayScores) {
+                if (showScores) {
                     return "Score";
                 } else {
                     return "Confidence";
@@ -285,7 +280,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                         }
                     }
                     if (psParameter != null) {
-                        if (displayScores) {
+                        if (showScores) {
                             return psParameter.getPeptideScore();
                         } else {
                             return psParameter.getPeptideConfidence();
