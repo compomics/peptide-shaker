@@ -551,10 +551,6 @@ public class PtmScorer {
                 }
             }
         }
-
-        if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
-            waitingHandler.increaseSecondaryProgressCounter();
-        }
     }
 
     /**
@@ -2371,6 +2367,9 @@ public class PtmScorer {
                     SpectrumMatch spectrumMatch = psmIterator.next();
                     if (spectrumMatch != null && spectrumMatch.getBestPeptideAssumption() != null) {
                         scorePTMs(identification, spectrumMatch, identificationParameters, waitingHandler, peptideSpectrumAnnotator);
+                    }
+                    if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
+                        waitingHandler.increaseSecondaryProgressCounter();
                     }
                 }
             } catch (Exception e) {
