@@ -438,12 +438,25 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                 // this one can be ignored i think?
                 return null;
             } catch (Exception e) {
-                exceptionHandler.catchException(e);
+                if (exceptionHandler != null) {
+                    exceptionHandler.catchException(e);
+                } else {
+                    throw new IllegalArgumentException("Table not instantiated.");
+                }
                 return null;
             }
         } else {
             return null;
         }
+    }
+
+    /**
+     * Indicates whether the table content was instantiated.
+     *
+     * @return a boolean indicating whether the table content was instantiated.
+     */
+    public boolean isInstantiated() {
+        return identification != null;
     }
 
     @Override

@@ -114,13 +114,13 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      *
      * @param proteinAccession the protein accession
      * @param peptideKeys the peptide keys
-     * @param displayScores boolean indicating whether the scores should be
+     * @param showScores boolean indicating whether the scores should be
      * displayed instead of the confidence
      */
-    public void updateDataModel(String proteinAccession, ArrayList<String> peptideKeys, boolean displayScores) {
+    public void updateDataModel(String proteinAccession, ArrayList<String> peptideKeys, boolean showScores) {
         this.proteinAccession = proteinAccession;
         this.peptideKeys = peptideKeys;
-        this.showScores = displayScores;
+        this.showScores = showScores;
     }
 
     /**
@@ -310,9 +310,22 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
             // this one can be ignored i think?
             return null;
         } catch (Exception e) {
-            exceptionHandler.catchException(e);
+            if (exceptionHandler != null) {
+                exceptionHandler.catchException(e);
+            } else {
+                throw new IllegalArgumentException("Table not instantiated.");
+            }
             return null;
         }
+    }
+    
+    /**
+     * Indicates whether the table content was instantiated.
+     * 
+     * @return a boolean indicating whether the table content was instantiated.
+     */
+    public boolean isInstantiated() {
+        return identification != null;
     }
 
     @Override

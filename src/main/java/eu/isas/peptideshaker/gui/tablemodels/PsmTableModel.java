@@ -283,9 +283,22 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                 return null;
             }
         } catch (Exception e) {
-            exceptionHandler.catchException(e);
+            if (exceptionHandler != null) {
+                exceptionHandler.catchException(e);
+            } else {
+                throw new IllegalArgumentException("Table not instantiated.");
+            }
             return "";
         }
+    }
+    
+    /**
+     * Indicates whether the table content was instantiated.
+     * 
+     * @return a boolean indicating whether the table content was instantiated.
+     */
+    public boolean isInstantiated() {
+        return identification != null;
     }
 
     @Override

@@ -270,7 +270,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 }
 
                 // update the table model
-                if (proteinTable.getRowCount() > 0) {
+                if (proteinTable.getModel() instanceof ProteinTableModel && ((ProteinTableModel) proteinTable.getModel()).isInstantiated()) {
                     ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                 } else {
                     ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
@@ -1362,7 +1362,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                         peptideShakerGUI.catchException(ex);
                     }
                 }
-                
+
                 // star/unstar the protein
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
                     try {
