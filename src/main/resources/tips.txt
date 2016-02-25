@@ -38,8 +38,8 @@ Special requests for the design of the spectrum?<br><br>You can change peak colo
 Want to create your own report?<br><br>Try our <i>Custom Reports</i> via <i>Identification Features</i> in the <i>Export</i> menu.
 Tired of writing <i>Materials and Methods</i>?<br><br>Check out our <i>Methods Section</i> export available in the <i>Export</i> menu.
 Need a report for your collaborators?<br><br> Try our <i>Certificate of Analysis</i> available in the <i>Custom Reports</i> via <i>Identification Features</i> in the <i>Export</i> menu.
-Reviewing a publication?<br><br>You can easily inspect <a href="http://www.proteomexchange.org/">ProteomeXchange</a> data on the <a href="http://www.ebi.ac.uk/pride/">PRIDE</a> repository using <a href="https://github.com/PRIDE-Toolsuite/pride-inspector">PRIDE Inspector</a>!
-Found an interesting paper?<br><br>You can reprocess <a href="http://www.proteomexchange.org/">ProteomeXchange</a> data on the <a href="http://www.ebi.ac.uk/pride/">PRIDE</a> repository with just a few clicks using the <i>PRIDE Reshake</i> option in the Welcome Dialog!
+Reviewing a publication?<br><br>You can easily inspect <a href="http://www.proteomexchange.org/">ProteomeXchange</a> data in the <a href="http://www.ebi.ac.uk/pride/">PRIDE</a> repository using <a href="https://github.com/PRIDE-Toolsuite/pride-inspector">PRIDE Inspector</a>!
+Found an interesting paper?<br><br>You can reprocess <a href="http://www.proteomexchange.org/">ProteomeXchange</a> data in the <a href="http://www.ebi.ac.uk/pride/">PRIDE</a> repository with just a few clicks using the <i>PRIDE Reshake</i> option in the Welcome Dialog!
 Want to search published data for new modifications?<br><br>You can reprocess data in <a href="http://www.ebi.ac.uk/pride/">PRIDE</a> with just a few clicks using the <i>Reshake</i> option in the Welcome Dialog!
 Teaching bioinformatics?<br><br>Check out our <a href="http://compomics.com/bioinformatics-for-proteomics/">free tutorials</a>!
 Want to learn more?<br><br>Check out our <a href="http://compomics.com/bioinformatics-for-proteomics/">free tutorials</a>!
