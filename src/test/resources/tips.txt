@@ -24,7 +24,7 @@ X!Tandem, MyriMatch and Comet do not support terminal modifications at specific 
 How much memory is allocated to <b>PeptideShaker</b>?<br><br>For fast processing allocate as much memory as possible to <b>PeptideShaker</b>.<br><br>This setting can be optimized in <i>Java Option</i> available in the <i>Edit</i> menu.
 Find our tools useful?<br><br>Then please cite them in your papers!<br><br><b>SearchGUI</b>: <a href="http://www.ncbi.nlm.nih.gov/pubmed/21337703">Vaudel <i>et al.</i>: Proteomics 2011;11(5):996-9</a>.<br><br><b>PeptideShaker</b>: <a href="http://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html">Vaudel <i>et al.</i>: Nature Biotechnol. 2015 Jan;33(1):22-24</a>.
 Need high quality graphics for your manuscript?<br><br>All plots in <b>PeptideShaker</b> can be exported in either high resolution or as vector graphics.<br><br>See the contextual menus in the upper right corners of each panel.
-Submit your results to PRIDE!<br><br><b>PeptideShaker</b> supports direct conversion to <a href="http://www.psidev.info/mzidentml">mzIdentML</a> via the <i>Export</i> menu.
+Share your results on <a href="http://www.proteomexchange.org/">ProteomeXchange</a> <i>via</i> the <a href="http://www.ebi.ac.uk/pride/">PRIDE</a> repository!<br><br><b>PeptideShaker</b> supports direct conversion to <a href="http://www.psidev.info/mzidentml">mzIdentML</a> via the <i>Export</i> menu.
 Label free quantification?<br><br><b>PeptideShaker</b> supports <a href="http://www.nonlinear.com/products/progenesis/lc-ms/overview/">Progenesis LC-MS</a> via the <i>Follow Up Analysis</i> option in the <i>Export</i> menu.
 Troubles identifying your proteomics data?<br><br>Check our <a href="http://compomics.com/bioinformatics-for-proteomics/">free tutorials</a>!
 Tried <i>de novo</i> sequencing?<br><br>Check out our user friendly <i>de novo</i> sequencing solution: <a href="http://compomics.github.io/projects/denovogui.html">DeNovoGUI</a>!
@@ -38,8 +38,9 @@ Special requests for the design of the spectrum?<br><br>You can change peak colo
 Want to create your own report?<br><br>Try our <i>Custom Reports</i> via <i>Identification Features</i> in the <i>Export</i> menu.
 Tired of writing <i>Materials and Methods</i>?<br><br>Check out our <i>Methods Section</i> export available in the <i>Export</i> menu.
 Need a report for your collaborators?<br><br> Try our <i>Certificate of Analysis</i> available in the <i>Custom Reports</i> via <i>Identification Features</i> in the <i>Export</i> menu.
-Reviewing a publication?<br><br>You can reprocess and inspect data from <a href="http://www.ebi.ac.uk/pride/">PRIDE</a> with just a few clicks using the <i>PRIDE Reshake</i> option in the Welcome Dialog!
-Want to search published data for new modifications?<br><br>You can reprocess and inspect data in <a href="http://www.ebi.ac.uk/pride/">PRIDE</a> with just a few clicks using the <i>Reshake</i> option in the Welcome Dialog!
+Reviewing a publication?<br><br>You can easily inspect <a href="http://www.proteomexchange.org/">ProteomeXchange</a> data in the <a href="http://www.ebi.ac.uk/pride/">PRIDE</a> repository using <a href="https://github.com/PRIDE-Toolsuite/pride-inspector">PRIDE Inspector</a>!
+Found an interesting paper?<br><br>You can reprocess <a href="http://www.proteomexchange.org/">ProteomeXchange</a> data in the <a href="http://www.ebi.ac.uk/pride/">PRIDE</a> repository with just a few clicks using the <i>PRIDE Reshake</i> option in the Welcome Dialog!
+Want to search published data for new modifications?<br><br>You can reprocess data in <a href="http://www.ebi.ac.uk/pride/">PRIDE</a> with just a few clicks using the <i>Reshake</i> option in the Welcome Dialog!
 Teaching bioinformatics?<br><br>Check out our <a href="http://compomics.com/bioinformatics-for-proteomics/">free tutorials</a>!
 Want to learn more?<br><br>Check out our <a href="http://compomics.com/bioinformatics-for-proteomics/">free tutorials</a>!
 X's in your database?<br><br>X's in protein sequences make it difficult for <b>PeptideShaker</b> to interpret your results. Peptides with more than 75% X's will be ignored.
