@@ -2043,7 +2043,9 @@ public class NewDialog extends javax.swing.JDialog {
                     proteinInferencePreferences.setProteinSequenceDatabase(fastaFile);
                 }
             }
-            fastaFileTxt.setText(fastaFile.getName());
+            if (fastaFile != null) {
+                fastaFileTxt.setText(fastaFile.getName());
+            }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
                     "Failed to import identification parameters from: " + newIdentificationParameters.getName() + ".", "Identification Parameters",

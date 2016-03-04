@@ -35,7 +35,6 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Specific
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.MatchValidationDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.gui.PtmTable;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanel;
