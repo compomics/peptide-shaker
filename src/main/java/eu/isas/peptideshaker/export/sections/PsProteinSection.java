@@ -367,7 +367,7 @@ public class PsProteinSection {
             case confident_phosphosites:
                 ArrayList<String> modifications = new ArrayList<String>();
                 for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
-                    if (ptm.contains("phospho")) {
+                    if (ptm.contains("Phospho")) {
                         modifications.add(ptm);
                     }
                 }
@@ -378,7 +378,7 @@ public class PsProteinSection {
             case confident_phosphosites_number:
                 modifications = new ArrayList<String>();
                 for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
-                    if (ptm.contains("phospho")) {
+                    if (ptm.contains("Phospho")) {
                         modifications.add(ptm);
                     }
                 }
@@ -389,7 +389,7 @@ public class PsProteinSection {
                 sequence = protein.getSequence();
                 modifications = new ArrayList<String>();
                 for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
-                    if (ptm.contains("phospho")) {
+                    if (ptm.contains("Phospho")) {
                         modifications.add(ptm);
                     }
                 }
@@ -397,7 +397,7 @@ public class PsProteinSection {
             case ambiguous_phosphosites_number:
                 modifications = new ArrayList<String>();
                 for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
-                    if (ptm.contains("phospho")) {
+                    if (ptm.contains("Phospho")) {
                         modifications.add(ptm);
                     }
                 }
