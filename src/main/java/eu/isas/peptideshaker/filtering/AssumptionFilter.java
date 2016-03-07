@@ -23,9 +23,6 @@ import eu.isas.peptideshaker.filtering.items.AssumptionFilterItem;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -227,12 +224,11 @@ public class AssumptionFilter extends MatchFilter {
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 mzError = peptideAssumption.getDeltaMass(precursor.getMz(), identificationParameters.getSearchParameters().isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection());
                 NonSymmetricalNormalDistribution precDeviationDistribution = identificationFeaturesGenerator.getMassErrorDistribution(Spectrum.getSpectrumFile(spectrumKey));
-                MathContext mathContext = new MathContext(10, RoundingMode.HALF_DOWN);
-                BigDecimal p;
+                Double p;
                 if (mzError > precDeviationDistribution.getMean()) {
-                    p = precDeviationDistribution.getDescendingCumulativeProbabilityAt(mzError, mathContext);
+                    p = precDeviationDistribution.getDescendingCumulativeProbabilityAt(mzError);
                 } else {
-                    p = precDeviationDistribution.getCumulativeProbabilityAt(mzError, mathContext);
+                    p = precDeviationDistribution.getCumulativeProbabilityAt(mzError);
                 }
                 return filterItemComparator.passes(input, p.toString());
             case sequenceCoverage:

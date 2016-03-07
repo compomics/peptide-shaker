@@ -57,8 +57,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -4215,8 +4213,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             NonSymmetricalNormalDistribution peptideLengthDistribution = peptideShakerGUI.getMetrics().getPeptideLengthDistribution();
             if (peptideLengthDistribution != null) {
                 double medianLength = peptideLengthDistribution.getMean();
-                MathContext mathContext = new MathContext(10, RoundingMode.HALF_DOWN);
-                maxHeight = (1 - minHeight) * peptideLengthDistribution.getProbabilityAt(medianLength, mathContext).doubleValue();
+                maxHeight = (1 - minHeight) * peptideLengthDistribution.getProbabilityAt(medianLength);
             }
 
             double[] coverageLikelihood = identificationFeaturesGenerator.getCoverableAA(proteinKey);

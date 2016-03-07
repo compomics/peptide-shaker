@@ -83,10 +83,6 @@ public class PtmScorer {
      * The PSM PTM localization conflict map.
      */
     private PsmPTMMap psmPTMMap;
-    /**
-     * The math context to use when performing the PTM localization scoring.
-     */
-    public static final MathContext MATH_CONTEXT = new MathContext(10, RoundingMode.HALF_DOWN);
 
     /**
      * Constructor.
@@ -312,14 +308,14 @@ public class PtmScorer {
                 HashMap<Integer, Double> scores = null;
                 if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore && nMod.get(ptmMass) == 1) {
                     scores = AScore.getAScore(peptide, modifications.get(ptmMass), spectrum, annotationPreferences, specificAnnotationPreferences,
-                            scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences, ptmSequenceMatchingPreferences, peptideSpectrumAnnotator, MATH_CONTEXT);
+                            scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences, ptmSequenceMatchingPreferences, peptideSpectrumAnnotator);
                     if (scores == null) {
                         throw new IllegalArgumentException("An error occurred while scoring spectrum " + spectrum.getSpectrumTitle() + "of file " + spectrum.getFileName() + " with the A-score."); // Most likely a compatibility issue with utilities
                     }
                 } else if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
                     scores = PhosphoRS.getSequenceProbabilities(peptide, modifications.get(ptmMass), spectrum, annotationPreferences, specificAnnotationPreferences,
                             scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences,
-                            ptmSequenceMatchingPreferences, peptideSpectrumAnnotator, MATH_CONTEXT);
+                            ptmSequenceMatchingPreferences, peptideSpectrumAnnotator);
                     if (scores == null) {
                         throw new IllegalArgumentException("An error occurred while scoring spectrum " + spectrum.getSpectrumTitle() + "of file " + spectrum.getFileName() + " with PhosphoRS."); // Most likely a compatibility issue with utilities
                     }

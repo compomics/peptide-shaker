@@ -586,8 +586,7 @@ public class IdentificationFeaturesGenerator {
                             p = 0;
                         }
                     } else {
-                        MathContext mathContext = new MathContext(10, RoundingMode.HALF_DOWN);
-                        p = peptideLengthDistribution.getProbabilityAt(length, mathContext).doubleValue();
+                        p = peptideLengthDistribution.getProbabilityAt(length);
                     }
                     for (int j = lastCleavage + 1; j <= i; j++) {
                         result[j] = p;
@@ -611,7 +610,7 @@ public class IdentificationFeaturesGenerator {
                 }
             } else {
                 MathContext mathContext = new MathContext(10, RoundingMode.HALF_DOWN);
-                p = peptideLengthDistribution.getProbabilityAt(length, mathContext).doubleValue();
+                p = peptideLengthDistribution.getProbabilityAt(length);
             }
             for (int j = lastCleavage; j < sequence.length(); j++) {
                 result[j] = p;
@@ -1297,8 +1296,7 @@ public class IdentificationFeaturesGenerator {
         Protein currentProtein = sequenceFactory.getProtein(mainMatch);
         double lengthMax = identificationParameters.getPeptideAssumptionFilter().getMaxPepLength();
         if (metrics.getPeptideLengthDistribution() != null) {
-            MathContext mathContext = new MathContext(10, RoundingMode.HALF_DOWN);
-            lengthMax = Math.min(lengthMax, metrics.getPeptideLengthDistribution().getValueAtCumulativeProbability(0.99, mathContext).doubleValue());
+            lengthMax = Math.min(lengthMax, metrics.getPeptideLengthDistribution().getValueAtCumulativeProbability(0.99));
         }
         return ((double) currentProtein.getObservableLength(enyzme, lengthMax)) / currentProtein.getLength();
     }
