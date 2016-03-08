@@ -22,7 +22,6 @@ public enum PeptideShakerCLIParams {
     SPECTRUM_FILES("spectrum_files", "Spectrum files (mgf format), comma separated list or an entire folder.", false),
     IDENTIFICATION_FILES("identification_files", "Identification files (.t.xml, .mzid, .cvs, .omx, .dat, .txt, .pep.xml, .zip), comma separated list or an entire folder.", true),
     PEPTIDESHAKER_OUTPUT("out", "PeptideShaker output file. Note: if file exists it will be overwritten.", true),
-    SPECIES_UPDATE("species_update", "Check for new species information in Ensembl and update if possible. (1: true, 0: false, default is '0').", false),
     GUI("gui", "Use a dialog to display the progress (1: true, 0: false, default is '0').", false),
     ZIP("zip", "Exports the entire project as a zip file in the file specified.", false),
     THREADS("threads", "The number of threads to use. Defaults to the number of available CPUs.", false);
@@ -102,9 +101,6 @@ public enum PeptideShakerCLIParams {
         output += "\n\nOptional Input Parameter:\n\n";
         output += "-" + String.format(formatter, SPECTRUM_FILES.id) + " " + SPECTRUM_FILES.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.id) + " " + IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.description + "\n";
-        
-        output += "\n\nOptional Gene Annotation Parameter:\n\n";
-        output += "-" + String.format(formatter, SPECIES_UPDATE.id) + " " + SPECIES_UPDATE.description + "\n";
         
         output += "\n\nOptional Processing Parameters:\n\n";
         output += "-" + String.format(formatter, GUI.id) + " " + GUI.description + "\n";

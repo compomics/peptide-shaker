@@ -46,11 +46,6 @@ public class PeptideShakerCLIInputBean {
      */
     private File prideFile = null;
     /**
-     * If true the tool will always check the Ensembl version for the selected
-     * species and try to update if the version is outdated.
-     */
-    private boolean autoUpdateSpecies = false;
-    /**
      * Boolean indicating whether a waiting dialog shall be used.
      */
     private boolean gui = false;
@@ -114,14 +109,6 @@ public class PeptideShakerCLIInputBean {
             String guiOption = aLine.getOptionValue(PeptideShakerCLIParams.GUI.id);
             if (guiOption.trim().equals("1")) {
                 gui = true;
-            }
-        }
-
-        // species auto update
-        if (aLine.hasOption(PeptideShakerCLIParams.SPECIES_UPDATE.id)) {
-            String guiOption = aLine.getOptionValue(PeptideShakerCLIParams.SPECIES_UPDATE.id);
-            if (guiOption.trim().equals("1")) {
-                autoUpdateSpecies = true;
             }
         }
 
@@ -328,24 +315,6 @@ public class PeptideShakerCLIInputBean {
      */
     public boolean isGUI() {
         return gui;
-    }
-
-    /**
-     * Returns true of the species is to be auto updated to the latest version.
-     *
-     * @return rue of the species is to be auto updated to the latest version
-     */
-    public boolean updateSpecies() {
-        return autoUpdateSpecies;
-    }
-
-    /**
-     * Set if the species is to be auto updated to the latest version.
-     *
-     * @param autoUpdateSpecies auto update species_
-     */
-    public void setUpdateSpecies(boolean autoUpdateSpecies) {
-        this.autoUpdateSpecies = autoUpdateSpecies;
     }
 
     /**
