@@ -3383,6 +3383,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      */
     public boolean asMgf(Spectrum spectrum, BufferedWriter bw) throws IOException {
 
+        String lineBreak = System.getProperty("line.separator");
         boolean valid = true;
 
         int msLevel = spectrum.getSpectrumDesc().getSpectrumSettings().getSpectrumInstrument().getMsLevel();
@@ -3395,8 +3396,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     && spectrum.getSpectrumDesc().getPrecursorList().getPrecursor() != null
                     && spectrum.getSpectrumDesc().getPrecursorList().getPrecursor().size() > 0) {
 
-                bw.write("BEGIN IONS" + System.getProperty("line.separator"));
-                bw.write("TITLE=" + spectrum.getId() + System.getProperty("line.separator"));
+                bw.write("BEGIN IONS" + lineBreak);
+                bw.write("TITLE=" + spectrum.getId() + lineBreak);
 
                 Precursor precursor = spectrum.getSpectrumDesc().getPrecursorList().getPrecursor().get(0); // get the first precursor
                 List<CvParam> precursorCvParams = precursor.getIonSelection().getCvParam();
@@ -3426,14 +3427,14 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     bw.write("\t" + precursorIntensity);
                 }
 
-                bw.write(System.getProperty("line.separator"));
+                bw.write(lineBreak);
 
                 if (precursorRt != null) {
-                    bw.write("RTINSECONDS=" + precursorRt + System.getProperty("line.separator")); // @TODO: improve the retention time mapping, e.g., support rt windows
+                    bw.write("RTINSECONDS=" + precursorRt + lineBreak); // @TODO: improve the retention time mapping, e.g., support rt windows
                 }
 
                 if (precursorCharge != null) {
-                    bw.write("CHARGE=" + precursorCharge + System.getProperty("line.separator"));
+                    bw.write("CHARGE=" + precursorCharge + lineBreak);
 
                     if (maxPrecursorCharge == null || precursorCharge > maxPrecursorCharge) {
                         maxPrecursorCharge = precursorCharge;
@@ -3452,10 +3453,10 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 for (int i = 0; i < mzBinaryArray.length; i++) {
                     bw.write(mzBinaryArray[i].toString());
                     bw.write(" ");
-                    bw.write(intensityArray[i] + System.getProperty("line.separator"));
+                    bw.write(intensityArray[i] + lineBreak);
                 }
 
-                bw.write("END IONS" + System.getProperty("line.separator") + System.getProperty("line.separator"));
+                bw.write("END IONS" + lineBreak + lineBreak);
 
             } else {
                 valid = false;

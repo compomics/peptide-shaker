@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
@@ -2750,9 +2749,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                     // update the table model
                     if (proteinTable.getModel() instanceof ProteinTableModel && ((ProteinTableModel) proteinTable.getModel()).isInstantiated()) {
-                        ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
+                        ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), 
+                                peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                     } else {
-                        ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
+                        ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), 
+                                peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                         proteinTable.setModel(proteinTableModel);
                     }
 
@@ -3322,6 +3323,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
             try {
                 OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
+                String lineBreak = System.getProperty("line.separator");
 
                 if (tableIndex == TableIndex.PROTEIN_TABLE) {
                     ArrayList<String> selectedProteins = getDisplayedProteins();
@@ -3347,14 +3349,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                         if (tableIndex == TableIndex.PDB_CHAINS) {
 
-                            writer.write("\tChain\tPDB-Start\tPDB-End\tCoverage" + System.getProperty("line.separator"));
+                            writer.write("\tChain\tPDB-Start\tPDB-End\tCoverage" + lineBreak);
 
                             for (int i = 0; i < pdbChainsJTable.getRowCount(); i++) {
                                 writer.write(pdbChainsJTable.getValueAt(i, 0) + "\t");
                                 writer.write(pdbChainsJTable.getValueAt(i, 1) + "\t");
                                 XYDataPoint pdbCoverage = (XYDataPoint) pdbChainsJTable.getValueAt(i, 2);
                                 writer.write(pdbCoverage.getX() + "\t" + pdbCoverage.getY() + "\t");
-                                writer.write(pdbChainsJTable.getValueAt(i, 3) + System.getProperty("line.separator"));
+                                writer.write(pdbChainsJTable.getValueAt(i, 3) + lineBreak);
                             }
 
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getPath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);

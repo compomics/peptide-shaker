@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -85,6 +84,10 @@ public class OutputGenerator {
      * The writer used to send the output to file.
      */
     private BufferedWriter writer;
+    /**
+     * The line break type.
+     */
+    private String lineBreak = System.getProperty("line.separator");
 
     /**
      * Constructor.
@@ -299,7 +302,7 @@ public class OutputGenerator {
                             if (!onlyStarred && showStar) {
                                 writer.write("Starred" + SEPARATOR);
                             }
-                            writer.write(System.getProperty("line.separator"));
+                            writer.write(lineBreak);
                         }
 
                         PSParameter proteinPSParameter = new PSParameter();
@@ -518,7 +521,7 @@ public class OutputGenerator {
                                             if (!onlyStarred && showStar) {
                                                 writer.write(proteinPSParameter.isStarred() + "");
                                             }
-                                            writer.write(System.getProperty("line.separator"));
+                                            writer.write(lineBreak);
                                         }
                                     }
                                 }
@@ -751,7 +754,7 @@ public class OutputGenerator {
                                 writer.write("Starred" + SEPARATOR);
                             }
 
-                            writer.write(System.getProperty("line.separator"));
+                            writer.write(lineBreak);
                         }
 
                         PSParameter peptidePSParameter = new PSParameter();
@@ -1053,7 +1056,7 @@ public class OutputGenerator {
                                                 if (!onlyStarred) {
                                                     writer.write(peptidePSParameter.isStarred() + SEPARATOR);
                                                 }
-                                                writer.write(System.getProperty("line.separator"));
+                                                writer.write(lineBreak);
                                             }
                                         }
                                     }
@@ -1255,7 +1258,7 @@ public class OutputGenerator {
                                 writer.write("Hidden" + SEPARATOR);
                             }
 
-                            writer.write(System.getProperty("line.separator"));
+                            writer.write(lineBreak);
                         }
 
                         PSParameter psParameter = new PSParameter();
@@ -1537,7 +1540,7 @@ public class OutputGenerator {
                                                 if (includeHidden) {
                                                     writer.write(psParameter.isHidden() + SEPARATOR);
                                                 }
-                                                writer.write(System.getProperty("line.separator"));
+                                                writer.write(lineBreak);
                                             }
 
                                         }
@@ -1683,7 +1686,7 @@ public class OutputGenerator {
                         writer.write("Validation" + SEPARATOR);
                         writer.write("Decoy" + SEPARATOR);
 
-                        writer.write(System.getProperty("line.separator"));
+                        writer.write(lineBreak);
 
                         PSParameter psParameter = new PSParameter();
                         int psmCounter = 0;
@@ -1894,7 +1897,7 @@ public class OutputGenerator {
                                 } else {
                                     writer.write(0 + SEPARATOR);
                                 }
-                                writer.write(System.getProperty("line.separator"));
+                                writer.write(lineBreak);
                                 progressDialog.increasePrimaryProgressCounter();
                             }
                         }
@@ -1933,7 +1936,7 @@ public class OutputGenerator {
                         writer.write("Confidence" + SEPARATOR);
                         writer.write("Validation" + SEPARATOR);
                         writer.write("Decoy" + SEPARATOR);
-                        writer.write(System.getProperty("line.separator"));
+                        writer.write(lineBreak);
 
                         PSParameter proteinPSParameter = new PSParameter();
                         int proteinCounter = 0;
@@ -2109,8 +2112,8 @@ public class OutputGenerator {
 //                                for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions()) {
 //                                    for (String accession : peptideAssumption.getPeptide().getParentProteins()) {
 //                                        if (!taken.contains(accession)) {
-//                                        writer.write(sequenceFactory.getHeader(accession).toString() + System.getProperty("line.separator"));
-//                                        writer.write(sequenceFactory.getProtein(accession).getSequence() + System.getProperty("line.separator"));
+//                                        writer.write(sequenceFactory.getHeader(accession).toString() + lineBreak);
+//                                        writer.write(sequenceFactory.getProtein(accession).getSequence() + lineBreak);
 //                                        taken.add(accession);
 //                                        }
 //                                    }
@@ -2285,7 +2288,7 @@ public class OutputGenerator {
                             }
                             writer.write("Retained as Main PSM" + SEPARATOR);
                             writer.write("Decoy" + SEPARATOR);
-                            writer.write(System.getProperty("line.separator"));
+                            writer.write(lineBreak);
                         }
 
                         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
@@ -2432,7 +2435,7 @@ public class OutputGenerator {
                                                     } else {
                                                         writer.write(0 + SEPARATOR);
                                                     }
-                                                    writer.write(System.getProperty("line.separator"));
+                                                    writer.write(lineBreak);
                                                     rank++;
                                                 }
                                             }
@@ -2658,7 +2661,7 @@ public class OutputGenerator {
                             if (!onlyStarred && showStar) {
                                 writer.write("Starred" + SEPARATOR);
                             }
-                            writer.write(System.getProperty("line.separator"));
+                            writer.write(lineBreak);
                         }
 
                         PSParameter proteinPSParameter = new PSParameter();
@@ -2893,7 +2896,7 @@ public class OutputGenerator {
                                             if (!onlyStarred && showStar) {
                                                 writer.write(proteinPSParameter.isStarred() + "");
                                             }
-                                            writer.write(System.getProperty("line.separator"));
+                                            writer.write(lineBreak);
                                         }
 
                                     }

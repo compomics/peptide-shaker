@@ -172,6 +172,10 @@ public class PrideXmlExport {
      * The peptide spectrum annotator.
      */
     private PeptideSpectrumAnnotator spectrumAnnotator;
+    /**
+     * The line break type.
+     */
+    private String lineBreak = System.getProperty("line.separator");
 
     /**
      * Constructor.
@@ -397,12 +401,12 @@ public class PrideXmlExport {
             proteinProbabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinProbabilities);
             double confidenceThreshold;
 
-            br.write(getCurrentTabSpace() + "<GelFreeIdentification>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<GelFreeIdentification>" + lineBreak);
             tabCounter++;
 
             // protein accession and database
-            br.write(getCurrentTabSpace() + "<Accession>" + proteinMatch.getMainMatch() + "</Accession>" + System.getProperty("line.separator"));
-            br.write(getCurrentTabSpace() + "<Database>" + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDatabaseType() + "</Database>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<Accession>" + proteinMatch.getMainMatch() + "</Accession>" + lineBreak);
+            br.write(getCurrentTabSpace() + "<Database>" + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDatabaseType() + "</Database>" + lineBreak);
 
             PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, true, parameters, waitingHandler);
 
@@ -431,11 +435,11 @@ public class PrideXmlExport {
                     Peptide tempPeptide = bestAssumption.getPeptide();
 
                     // the peptide
-                    br.write(getCurrentTabSpace() + "<PeptideItem>" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<PeptideItem>" + lineBreak);
                     tabCounter++;
 
                     // peptide sequence
-                    br.write(getCurrentTabSpace() + "<Sequence>" + tempPeptide.getSequence() + "</Sequence>" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<Sequence>" + tempPeptide.getSequence() + "</Sequence>" + lineBreak);
 
                     // peptide start and end
                     String proteinAccession = proteinMatch.getMainMatch();
@@ -446,11 +450,11 @@ public class PrideXmlExport {
                     ArrayList<Integer> startIndexes = currentProtein.getPeptideStart(peptideSequence, identificationParameters.getSequenceMatchingPreferences());
                     int peptideStart = startIndexes.get(0); // only one start-end pair is allowed, so we just pick the first in the list
                     int peptideEnd = peptideStart + tempPeptide.getSequence().length() - 1;
-                    br.write(getCurrentTabSpace() + "<Start>" + peptideStart + "</Start>" + System.getProperty("line.separator"));
-                    br.write(getCurrentTabSpace() + "<End>" + peptideEnd + "</End>" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<Start>" + peptideStart + "</Start>" + lineBreak);
+                    br.write(getCurrentTabSpace() + "<End>" + peptideEnd + "</End>" + lineBreak);
 
                     // spectrum index reference
-                    br.write(getCurrentTabSpace() + "<SpectrumReference>" + spectrumIndexes.get(spectrumMatch.getKey()) + "</SpectrumReference>" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<SpectrumReference>" + spectrumIndexes.get(spectrumMatch.getKey()) + "</SpectrumReference>" + lineBreak);
 
                     // modifications
                     writePtms(tempPeptide);
@@ -580,26 +584,26 @@ public class PrideXmlExport {
                     }
 
                     // additional peptide id parameters
-                    br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<additional>" + lineBreak);
                     tabCounter++;
-                    br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum File\" value=\"" + StringEscapeUtils.escapeHtml4(Spectrum.getSpectrumFile(spectrumKey)) + "\" />" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum File\" value=\"" + StringEscapeUtils.escapeHtml4(Spectrum.getSpectrumFile(spectrumKey)) + "\" />" + lineBreak);
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1000796", "Spectrum Title", "" + Spectrum.getSpectrumTitle(spectrumKey)));
-                    br.write(getCurrentTabSpace() + "<userParam name=\"Protein Inference\" value=\"" + peptideProteins + "\" />" + System.getProperty("line.separator"));
-                    br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence\" value=\"" + Util.roundDouble(peptideProbabilities.getPeptideConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<userParam name=\"Protein Inference\" value=\"" + peptideProteins + "\" />" + lineBreak);
+                    br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence\" value=\"" + Util.roundDouble(peptideProbabilities.getPeptideConfidence(), CONFIDENCE_DECIMALS) + "\" />" + lineBreak);
                     confidenceThreshold = peptideTargetDecoyMap.getTargetDecoyMap(peptideTargetDecoyMap.getCorrectedKey(peptideProbabilities.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
-                    br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + lineBreak);
                     MatchValidationLevel matchValidationLevel = peptideProbabilities.getMatchValidationLevel();
-                    br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"" + matchValidationLevel + "\" />" + System.getProperty("line.separator"));
-                    br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence\" value=\"" + Util.roundDouble(psmProbabilities.getPsmConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"" + matchValidationLevel + "\" />" + lineBreak);
+                    br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence\" value=\"" + Util.roundDouble(psmProbabilities.getPsmConfidence(), CONFIDENCE_DECIMALS) + "\" />" + lineBreak);
                     Integer charge = new Integer(psmProbabilities.getSpecificMapKey());
                     String fileName = Spectrum.getSpectrumFile(spectrumKey);
                     confidenceThreshold = psmTargetDecoyMap.getTargetDecoyMap(charge, fileName).getTargetDecoyResults().getConfidenceLimit();
-                    br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + lineBreak);
                     matchValidationLevel = psmProbabilities.getMatchValidationLevel();
-                    br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"" + matchValidationLevel + "\" />" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"" + matchValidationLevel + "\" />" + lineBreak);
 
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1000041", "Charge State", "" + bestAssumption.getIdentificationCharge().value)); // @TODO: is 2+ etc supported?
-                    //br.write(getCurrentTabSpace() + "<userParam name=\"Identified Charge\" value=\"" + bestAssumption.getIdentificationCharge().value + "\" />" + System.getProperty("line.separator"));
+                    //br.write(getCurrentTabSpace() + "<userParam name=\"Identified Charge\" value=\"" + bestAssumption.getIdentificationCharge().value + "\" />" + lineBreak);
 
                     // search engine specific parameters
                     ArrayList<Integer> searchEngines = new ArrayList<Integer>(eValues.keySet());
@@ -624,7 +628,7 @@ public class PrideXmlExport {
                             writeCvTerm(new CvTerm("PSI-MS", "MS:1001589", "MyriMatch:MVH", Double.toString(eValue)));
                         } else {
                             br.write(getCurrentTabSpace() + "<userParam name=\"" + Advocate.getAdvocate(tempAdvocate).getName()
-                                    + " e-value\" value=\"" + eValue + "\" />" + System.getProperty("line.separator"));
+                                    + " e-value\" value=\"" + eValue + "\" />" + lineBreak);
                         }
                     }
 
@@ -642,40 +646,40 @@ public class PrideXmlExport {
                     // "MS:1001331", "X!Tandem:hyperscore"
                     // PTM scoring
                     if (dScore.length() > 0) {
-                        br.write(getCurrentTabSpace() + "<userParam name=\"PTM D-score\" value=\"" + dScore + "\" />" + System.getProperty("line.separator"));
+                        br.write(getCurrentTabSpace() + "<userParam name=\"PTM D-score\" value=\"" + dScore + "\" />" + lineBreak);
                     }
                     if (ptmScoringPreferences.isProbabilitsticScoreCalculation() && probabilisticScore.length() > 0) {
                         br.write(getCurrentTabSpace() + "<userParam name=\"PTM "
                                 + ptmScoringPreferences.getSelectedProbabilisticScore().getName()
-                                + "\" value=\"" + probabilisticScore + "\" />" + System.getProperty("line.separator"));
+                                + "\" value=\"" + probabilisticScore + "\" />" + lineBreak);
                     }
                     tabCounter--;
-                    br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "</additional>" + lineBreak);
                     tabCounter--;
-                    br.write(getCurrentTabSpace() + "</PeptideItem>" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "</PeptideItem>" + lineBreak);
                 }
             }
 
             // additional protein id parameters
-            br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<additional>" + lineBreak);
             tabCounter++;
             if (ProteinMatch.isDecoy(proteinKey)) {
-                br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"1\" />" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"1\" />" + lineBreak);
             } else {
-                br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"0\" />" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"0\" />" + lineBreak);
             }
             try {
                 if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001905", "emPAI value", "" + identificationFeaturesGenerator.getSpectrumCounting(proteinKey)));
                 } else {
                     br.write(getCurrentTabSpace() + "<userParam name=\"NSAF+\" value=\""
-                            + identificationFeaturesGenerator.getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
+                            + identificationFeaturesGenerator.getSpectrumCounting(proteinKey) + "\" />" + lineBreak);
                 }
             } catch (Exception e) {
                 e.printStackTrace(); // @TODO: add better error handling
             }
             MatchValidationLevel matchValidationLevel = psmProbabilities.getMatchValidationLevel();
-            br.write(getCurrentTabSpace() + "<userParam name=\"Protein Validation\" value=\"" + matchValidationLevel + "\" />" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<userParam name=\"Protein Validation\" value=\"" + matchValidationLevel + "\" />" + lineBreak);
             String otherProteins = "";
             boolean first = true;
             for (String otherAccession : proteinMatch.getTheoreticProteinsAccessions()) {
@@ -689,23 +693,23 @@ public class PrideXmlExport {
                 }
             }
             if (!otherProteins.equals("")) {
-                br.write(getCurrentTabSpace() + "<userParam name=\"Secondary proteins\" value=\"" + otherProteins + "\" />" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "<userParam name=\"Secondary proteins\" value=\"" + otherProteins + "\" />" + lineBreak);
             }
             tabCounter--;
-            br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "</additional>" + lineBreak);
 
             // protein score
-            br.write(getCurrentTabSpace() + "<Score>" + Util.roundDouble(proteinProbabilities.getProteinConfidence(), CONFIDENCE_DECIMALS) + "</Score>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<Score>" + Util.roundDouble(proteinProbabilities.getProteinConfidence(), CONFIDENCE_DECIMALS) + "</Score>" + lineBreak);
 
             // protein threshold
             confidenceThreshold = proteinTargetDecoyMap.getTargetDecoyMap().getTargetDecoyResults().getConfidenceLimit();
-            br.write(getCurrentTabSpace() + "<Threshold>" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "</Threshold>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<Threshold>" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "</Threshold>" + lineBreak);
 
             // the search engines used
-            br.write(getCurrentTabSpace() + "<SearchEngine>" + searchEngineReport + "</SearchEngine>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<SearchEngine>" + searchEngineReport + "</SearchEngine>" + lineBreak);
 
             tabCounter--;
-            br.write(getCurrentTabSpace() + "</GelFreeIdentification>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "</GelFreeIdentification>" + lineBreak);
 
             progress += increment;
             progressDialog.setValue((int) ((100 * progress) / totalProgress));
@@ -756,7 +760,7 @@ public class PrideXmlExport {
                     || ionMatch.ion.getType() == IonType.REPORTER_ION) {
                 // || ionMatch.ion.getType() == IonType.RELATED_ION // @TODO: add? need related ion cv term first
                 SearchParameters searchParameters = identificationParameters.getSearchParameters();
-                br.write(getCurrentTabSpace() + "<FragmentIon>" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "<FragmentIon>" + lineBreak);
                 tabCounter++;
                 writeCvTerm(fragmentIonTerm);
                 writeCvTerm(ionMatch.getMZPrideCvTerm());
@@ -764,7 +768,7 @@ public class PrideXmlExport {
                 writeCvTerm(ionMatch.getIonMassErrorPrideCvTerm(searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
                 writeCvTerm(ionMatch.getChargePrideCvTerm());
                 tabCounter--;
-                br.write(getCurrentTabSpace() + "</FragmentIon>" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "</FragmentIon>" + lineBreak);
             }
         }
     }
@@ -781,7 +785,7 @@ public class PrideXmlExport {
         if (peptide.isModified()) {
             for (int i = 0; i < peptide.getModificationMatches().size(); i++) {
 
-                br.write(getCurrentTabSpace() + "<ModificationItem>" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "<ModificationItem>" + lineBreak);
                 tabCounter++;
 
                 ModificationMatch modMatch = peptide.getModificationMatches().get(i);
@@ -817,30 +821,30 @@ public class PrideXmlExport {
                     modLocation = peptide.getSequence().length() + 1;
                 }
 
-                br.write(getCurrentTabSpace() + "<ModLocation>" + modLocation + "</ModLocation>" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "<ModLocation>" + modLocation + "</ModLocation>" + lineBreak);
 
                 if (cvTerm == null) {
-                    br.write(getCurrentTabSpace() + "<ModAccession>" + StringEscapeUtils.escapeHtml4(cvTermName) + "</ModAccession>" + System.getProperty("line.separator"));
-                    br.write(getCurrentTabSpace() + "<ModDatabase>" + "PSI-MS" + "</ModDatabase>" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<ModAccession>" + StringEscapeUtils.escapeHtml4(cvTermName) + "</ModAccession>" + lineBreak);
+                    br.write(getCurrentTabSpace() + "<ModDatabase>" + "PSI-MS" + "</ModDatabase>" + lineBreak);
                 } else {
-                    br.write(getCurrentTabSpace() + "<ModAccession>" + cvTerm.getAccession() + "</ModAccession>" + System.getProperty("line.separator"));
-                    br.write(getCurrentTabSpace() + "<ModDatabase>" + "UNIMOD" + "</ModDatabase>" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<ModAccession>" + cvTerm.getAccession() + "</ModAccession>" + lineBreak);
+                    br.write(getCurrentTabSpace() + "<ModDatabase>" + "UNIMOD" + "</ModDatabase>" + lineBreak);
                 }
 
-                br.write(getCurrentTabSpace() + "<ModMonoDelta>" + ptmMass + "</ModMonoDelta>" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "<ModMonoDelta>" + ptmMass + "</ModMonoDelta>" + lineBreak);
 
-                br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "<additional>" + lineBreak);
                 tabCounter++;
                 if (cvTerm == null) {
-                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001460\" name=\"" + StringEscapeUtils.escapeHtml4(cvTermName) + "\" value=\"" + ptmMass + "\" />" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001460\" name=\"" + StringEscapeUtils.escapeHtml4(cvTermName) + "\" value=\"" + ptmMass + "\" />" + lineBreak);
                 } else {
-                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"UNIMOD\" accession=\"" + cvTerm.getAccession() + "\" name=\"" + StringEscapeUtils.escapeHtml4(cvTermName) + "\" value=\"" + ptmMass + "\" />" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"UNIMOD\" accession=\"" + cvTerm.getAccession() + "\" name=\"" + StringEscapeUtils.escapeHtml4(cvTermName) + "\" value=\"" + ptmMass + "\" />" + lineBreak);
                 }
                 tabCounter--;
-                br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "</additional>" + lineBreak);
 
                 tabCounter--;
-                br.write(getCurrentTabSpace() + "</ModificationItem>" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "</ModificationItem>" + lineBreak);
             }
         }
     }
@@ -856,14 +860,14 @@ public class PrideXmlExport {
      */
     private void writeMzData(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
 
-        br.write(getCurrentTabSpace() + "<mzData version=\"1.05\" accessionNumber=\"0\">" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<mzData version=\"1.05\" accessionNumber=\"0\">" + lineBreak);
         tabCounter++;
 
         // include the ontologies used, only MS and Unimod is included by default
         br.write(getCurrentTabSpace() + "<cvLookup cvLabel=\"MS\" fullName=\"PSI Mass Spectrometry Ontology\" version=\"1.0.0\" "
-                + "address=\"http://psidev.sourceforge.net/ontology\" />" + System.getProperty("line.separator"));
+                + "address=\"http://psidev.sourceforge.net/ontology\" />" + lineBreak);
         br.write(getCurrentTabSpace() + "<cvLookup cvLabel=\"UNIMOD\" fullName=\"UNIMOD CV for modifications\" version=\"1.2\" "
-                + "address=\"http://www.unimod.org/obo/unimod.obo\" />" + System.getProperty("line.separator"));
+                + "address=\"http://www.unimod.org/obo/unimod.obo\" />" + lineBreak);
 
         // write the mzData description (project description, sample details, contact details, instrument details and software details)
         writeMzDataDescription();
@@ -872,7 +876,7 @@ public class PrideXmlExport {
         writeSpectra(progressDialog);
 
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</mzData>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</mzData>" + lineBreak);
     }
 
     /**
@@ -892,7 +896,7 @@ public class PrideXmlExport {
 
         long spectrumCounter = 0;
 
-        br.write(getCurrentTabSpace() + "<spectrumList count=\"" + spectrumCounter + "\">" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<spectrumList count=\"" + spectrumCounter + "\">" + lineBreak);
         tabCounter++;
 
         progressDialog.setPrimaryProgressCounterIndeterminate(false);
@@ -925,7 +929,7 @@ public class PrideXmlExport {
         }
 
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</spectrumList>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</spectrumList>" + lineBreak);
     }
 
     /**
@@ -939,99 +943,99 @@ public class PrideXmlExport {
      */
     private void writeSpectrum(MSnSpectrum spectrum, boolean matchExists, long spectrumCounter) throws IOException {
 
-        br.write(getCurrentTabSpace() + "<spectrum id=\"" + spectrumCounter + "\">" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<spectrum id=\"" + spectrumCounter + "\">" + lineBreak);
         tabCounter++;
 
-        br.write(getCurrentTabSpace() + "<spectrumDesc>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<spectrumDesc>" + lineBreak);
         tabCounter++;
 
-        br.write(getCurrentTabSpace() + "<spectrumSettings>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<spectrumSettings>" + lineBreak);
         tabCounter++;
         br.write(getCurrentTabSpace() + "<spectrumInstrument mzRangeStop=\"" + spectrum.getMaxMz()
                 + " \" mzRangeStart=\"" + spectrum.getMinMz()
-                + "\" msLevel=\"" + spectrum.getLevel() + "\" />" + System.getProperty("line.separator"));
+                + "\" msLevel=\"" + spectrum.getLevel() + "\" />" + lineBreak);
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</spectrumSettings>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</spectrumSettings>" + lineBreak);
 
-        br.write(getCurrentTabSpace() + "<precursorList count=\"1\">" + System.getProperty("line.separator")); // note that precursor count is hardcoded to 1
+        br.write(getCurrentTabSpace() + "<precursorList count=\"1\">" + lineBreak); // note that precursor count is hardcoded to 1
         tabCounter++;
-        br.write(getCurrentTabSpace() + "<precursor msLevel=\"1\" spectrumRef=\"0\">" + System.getProperty("line.separator")); // note that precursor ms level is hardcoded to 1 with no corresponding spectrum
+        br.write(getCurrentTabSpace() + "<precursor msLevel=\"1\" spectrumRef=\"0\">" + lineBreak); // note that precursor ms level is hardcoded to 1 with no corresponding spectrum
         tabCounter++;
-        br.write(getCurrentTabSpace() + "<ionSelection>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<ionSelection>" + lineBreak);
         tabCounter++;
 
         // precursor charge states
         for (int i = 0; i < spectrum.getPrecursor().getPossibleCharges().size(); i++) {
             br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000041\" name=\"charge state\" value=\""
-                    + spectrum.getPrecursor().getPossibleCharges().get(i).value + "\" />" + System.getProperty("line.separator")); // @TODO: is 2+ etc supported?
+                    + spectrum.getPrecursor().getPossibleCharges().get(i).value + "\" />" + lineBreak); // @TODO: is 2+ etc supported?
         }
 
         // precursor m/z value
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000744\" name=\"selected ion m/z\" value=\""
-                + spectrum.getPrecursor().getMz() + "\" />" + System.getProperty("line.separator"));
+                + spectrum.getPrecursor().getMz() + "\" />" + lineBreak);
 
         // precursor intensity
         if (spectrum.getPrecursor().getIntensity() > 0) {
             br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000042\" name=\"peak intensity\" value=\""
-                    + spectrum.getPrecursor().getIntensity() + "\" />" + System.getProperty("line.separator"));
+                    + spectrum.getPrecursor().getIntensity() + "\" />" + lineBreak);
         }
 
         // precursor retention time
         if (spectrum.getPrecursor().hasRTWindow()) {
 
             br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000894\" name=\"retention time\" value=\""
-                    + spectrum.getPrecursor().getRtWindow()[0] + "\" />" + System.getProperty("line.separator"));
+                    + spectrum.getPrecursor().getRtWindow()[0] + "\" />" + lineBreak);
 
             // @TODO: figure out how to annotate retention time windows properly...
             //spectrum.getPrecursor().getRtWindow()[0] + "-" + spectrum.getPrecursor().getRtWindow()[1]
         } else if (spectrum.getPrecursor().getRt() != -1) {
             br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000894\" name=\"retention time\" value=\""
-                    + spectrum.getPrecursor().getRt() + "\" />" + System.getProperty("line.separator"));
+                    + spectrum.getPrecursor().getRt() + "\" />" + lineBreak);
         }
 
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</ionSelection>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</ionSelection>" + lineBreak);
 
         // activation
-        br.write(getCurrentTabSpace() + "<activation />" + System.getProperty("line.separator")); // @TODO: always empty, but i think it's a required field?
+        br.write(getCurrentTabSpace() + "<activation />" + lineBreak); // @TODO: always empty, but i think it's a required field?
 
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</precursor>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</precursor>" + lineBreak);
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</precursorList>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</precursorList>" + lineBreak);
 
         if (matchExists) {
-            br.write(getCurrentTabSpace() + "<comments>Identified</comments>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<comments>Identified</comments>" + lineBreak);
         } else {
-            br.write(getCurrentTabSpace() + "<comments>Not identified</comments>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<comments>Not identified</comments>" + lineBreak);
         }
 
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</spectrumDesc>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</spectrumDesc>" + lineBreak);
 
         // get the m/z and intensity arrays
         double[][] arrays = spectrum.getMzAndIntensityAsArray();
 
         // write the m/z values
-        br.write(getCurrentTabSpace() + "<mzArrayBinary>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<mzArrayBinary>" + lineBreak);
         tabCounter++;
         BinaryArrayImpl mzValues = new BinaryArrayImpl(arrays[0], BinaryArrayImpl.LITTLE_ENDIAN_LABEL);
         br.write(getCurrentTabSpace() + "<data precision=\"" + mzValues.getDataPrecision() + "\" endian=\"" + mzValues.getDataEndian()
-                + "\" length=\"" + mzValues.getDataLength() + "\">" + mzValues.getBase64String() + "</data>" + System.getProperty("line.separator"));
+                + "\" length=\"" + mzValues.getDataLength() + "\">" + mzValues.getBase64String() + "</data>" + lineBreak);
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</mzArrayBinary>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</mzArrayBinary>" + lineBreak);
 
         // write the intensity values
-        br.write(getCurrentTabSpace() + "<intenArrayBinary>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<intenArrayBinary>" + lineBreak);
         tabCounter++;
         BinaryArrayImpl intValues = new BinaryArrayImpl(arrays[1], BinaryArrayImpl.LITTLE_ENDIAN_LABEL);
         br.write(getCurrentTabSpace() + "<data precision=\"" + intValues.getDataPrecision() + "\" endian=\"" + intValues.getDataEndian()
-                + "\" length=\"" + intValues.getDataLength() + "\">" + intValues.getBase64String() + "</data>" + System.getProperty("line.separator"));
+                + "\" length=\"" + intValues.getDataLength() + "\">" + intValues.getBase64String() + "</data>" + lineBreak);
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</intenArrayBinary>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</intenArrayBinary>" + lineBreak);
 
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</spectrum>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</spectrum>" + lineBreak);
     }
 
     /**
@@ -1043,10 +1047,10 @@ public class PrideXmlExport {
     private void writeMzDataDescription() throws IOException {
 
         // write the project description
-        br.write(getCurrentTabSpace() + "<description>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<description>" + lineBreak);
         tabCounter++;
 
-        br.write(getCurrentTabSpace() + "<admin>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<admin>" + lineBreak);
         tabCounter++;
 
         // write the sample details
@@ -1056,7 +1060,7 @@ public class PrideXmlExport {
         writeContacts();
 
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</admin>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</admin>" + lineBreak);
 
         // write the instrument details
         writeInstrument();
@@ -1065,7 +1069,7 @@ public class PrideXmlExport {
         writeSoftware();
 
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</description>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</description>" + lineBreak);
     }
 
     /**
@@ -1076,41 +1080,41 @@ public class PrideXmlExport {
      */
     private void writeSoftware() throws IOException {
 
-        br.write(getCurrentTabSpace() + "<dataProcessing>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<dataProcessing>" + lineBreak);
         tabCounter++;
 
         // write the software details
-        br.write(getCurrentTabSpace() + "<software>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<software>" + lineBreak);
         tabCounter++;
-        br.write(getCurrentTabSpace() + "<name>" + "PeptideShaker" + "</name>" + System.getProperty("line.separator"));
-        br.write(getCurrentTabSpace() + "<version>" + peptideShakerVersion + "</version>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<name>" + "PeptideShaker" + "</name>" + lineBreak);
+        br.write(getCurrentTabSpace() + "<version>" + peptideShakerVersion + "</version>" + lineBreak);
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</software>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</software>" + lineBreak);
 
         // write the processing details
-        br.write(getCurrentTabSpace() + "<processingMethod>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<processingMethod>" + lineBreak);
         tabCounter++;
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
         // fragment mass accuracy
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000161\" name=\"Fragment mass tolerance setting\" value=\""
-                + searchParameters.getFragmentIonAccuracy() + "\" />" + System.getProperty("line.separator"));
+                + searchParameters.getFragmentIonAccuracy() + "\" />" + lineBreak);
 
         // precursor mass accuracy
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000078\" name=\"Peptide mass tolerance setting\" value=\""
-                + searchParameters.getPrecursorAccuracy() + "\" />" + System.getProperty("line.separator"));
+                + searchParameters.getPrecursorAccuracy() + "\" />" + lineBreak);
 
         // allowed missed cleavages
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000162\" name=\"Allowed missed cleavages\" value=\""
-                + searchParameters.getnMissedCleavages() + "\" />" + System.getProperty("line.separator"));
+                + searchParameters.getnMissedCleavages() + "\" />" + lineBreak);
 
         // @TODO: add more settings??
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</processingMethod>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</processingMethod>" + lineBreak);
 
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</dataProcessing>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</dataProcessing>" + lineBreak);
     }
 
     /**
@@ -1121,43 +1125,43 @@ public class PrideXmlExport {
      */
     private void writeInstrument() throws IOException {
 
-        br.write(getCurrentTabSpace() + "<instrument>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<instrument>" + lineBreak);
         tabCounter++;
 
         // write the instrument name
-        br.write(getCurrentTabSpace() + "<instrumentName>" + StringEscapeUtils.escapeHtml4(instrument.getName()) + "</instrumentName>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<instrumentName>" + StringEscapeUtils.escapeHtml4(instrument.getName()) + "</instrumentName>" + lineBreak);
 
         // write the source
-        br.write(getCurrentTabSpace() + "<source>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<source>" + lineBreak);
         tabCounter++;
         writeCvTerm(instrument.getSource());
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</source>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</source>" + lineBreak);
 
         // write the analyzers
-        br.write(getCurrentTabSpace() + "<analyzerList count=\"" + instrument.getCvTerms().size() + "\">" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<analyzerList count=\"" + instrument.getCvTerms().size() + "\">" + lineBreak);
         tabCounter++;
 
         for (int i = 0; i < instrument.getCvTerms().size(); i++) {
-            br.write(getCurrentTabSpace() + "<analyzer>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<analyzer>" + lineBreak);
             tabCounter++;
             writeCvTerm(instrument.getCvTerms().get(i));
             tabCounter--;
-            br.write(getCurrentTabSpace() + "</analyzer>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "</analyzer>" + lineBreak);
         }
 
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</analyzerList>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</analyzerList>" + lineBreak);
 
         // write the detector
-        br.write(getCurrentTabSpace() + "<detector>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<detector>" + lineBreak);
         tabCounter++;
         writeCvTerm(instrument.getDetector());
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</detector>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</detector>" + lineBreak);
 
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</instrument>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</instrument>" + lineBreak);
     }
 
     /**
@@ -1168,15 +1172,15 @@ public class PrideXmlExport {
      */
     private void writeContacts() throws IOException {
         for (int i = 0; i < contactGroup.getContacts().size(); i++) {
-            br.write(getCurrentTabSpace() + "<contact>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<contact>" + lineBreak);
             tabCounter++;
 
-            br.write(getCurrentTabSpace() + "<name>" + StringEscapeUtils.escapeHtml4(contactGroup.getContacts().get(i).getName()) + "</name>" + System.getProperty("line.separator"));
-            br.write(getCurrentTabSpace() + "<institution>" + StringEscapeUtils.escapeHtml4(contactGroup.getContacts().get(i).getInstitution()) + "</institution>" + System.getProperty("line.separator"));
-            br.write(getCurrentTabSpace() + "<contactInfo>" + StringEscapeUtils.escapeHtml4(contactGroup.getContacts().get(i).getEMail()) + "</contactInfo>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<name>" + StringEscapeUtils.escapeHtml4(contactGroup.getContacts().get(i).getName()) + "</name>" + lineBreak);
+            br.write(getCurrentTabSpace() + "<institution>" + StringEscapeUtils.escapeHtml4(contactGroup.getContacts().get(i).getInstitution()) + "</institution>" + lineBreak);
+            br.write(getCurrentTabSpace() + "<contactInfo>" + StringEscapeUtils.escapeHtml4(contactGroup.getContacts().get(i).getEMail()) + "</contactInfo>" + lineBreak);
 
             tabCounter--;
-            br.write(getCurrentTabSpace() + "</contact>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "</contact>" + lineBreak);
         }
     }
 
@@ -1188,9 +1192,9 @@ public class PrideXmlExport {
      */
     private void writeSample() throws IOException {
 
-        br.write(getCurrentTabSpace() + "<sampleName>" + sample.getName() + "</sampleName>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<sampleName>" + sample.getName() + "</sampleName>" + lineBreak);
 
-        br.write(getCurrentTabSpace() + "<sampleDescription>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<sampleDescription>" + lineBreak);
         tabCounter++;
 
         for (int i = 0; i < sample.getCvTerms().size(); i++) {
@@ -1198,7 +1202,7 @@ public class PrideXmlExport {
         }
 
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</sampleDescription>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</sampleDescription>" + lineBreak);
     }
 
     /**
@@ -1208,30 +1212,30 @@ public class PrideXmlExport {
      * reading/writing a file
      */
     private void writeAdditionalTags() throws IOException {
-        br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<additional>" + lineBreak);
         tabCounter++;
 
         // XML generation software
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000175\" name=\"XML generation software\" "
-                + "value=\"PeptideShaker v" + peptideShakerVersion + "\" />" + System.getProperty("line.separator"));
+                + "value=\"PeptideShaker v" + peptideShakerVersion + "\" />" + lineBreak);
 
         // Project
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000097\" name=\"Project\" "
-                + "value=\"" + StringEscapeUtils.escapeHtml4(experimentProject) + "\" />" + System.getProperty("line.separator"));
+                + "value=\"" + StringEscapeUtils.escapeHtml4(experimentProject) + "\" />" + lineBreak);
 
         // Experiment description
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000040\" name=\"Experiment description\" "
-                + "value=\"" + StringEscapeUtils.escapeHtml4(experimentDescription) + "\" />" + System.getProperty("line.separator"));
+                + "value=\"" + StringEscapeUtils.escapeHtml4(experimentDescription) + "\" />" + lineBreak);
 
         // Global peptide FDR
-        //br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001364\" name=\"pep:global FDR\" value=\"" + peptideShakerGUI. + "\" />" + System.getProperty("line.separator"));  // @TODO: add global peptide FDR?
+        //br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001364\" name=\"pep:global FDR\" value=\"" + peptideShakerGUI. + "\" />" + lineBreak);  // @TODO: add global peptide FDR?
         // @TODO: add global protein FDR??
         // search type
-        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001083\" name=\"ms/ms search\" />" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001083\" name=\"ms/ms search\" />" + lineBreak);
 
         // @TODO: add more??
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</additional>" + lineBreak);
     }
 
     /**
@@ -1241,7 +1245,7 @@ public class PrideXmlExport {
      * reading/writing a file
      */
     private void writeTitle() throws IOException {
-        br.write(getCurrentTabSpace() + "<Title>" + StringEscapeUtils.escapeHtml4(experimentTitle) + "</Title>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<Title>" + StringEscapeUtils.escapeHtml4(experimentTitle) + "</Title>" + lineBreak);
     }
 
     /**
@@ -1251,7 +1255,7 @@ public class PrideXmlExport {
      * reading/writing a file
      */
     private void writeShortLabel() throws IOException {
-        br.write(getCurrentTabSpace() + "<ShortLabel>" + StringEscapeUtils.escapeHtml4(experimentLabel) + "</ShortLabel>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<ShortLabel>" + StringEscapeUtils.escapeHtml4(experimentLabel) + "</ShortLabel>" + lineBreak);
     }
 
     /**
@@ -1261,29 +1265,29 @@ public class PrideXmlExport {
      * reading/writing a file
      */
     private void writeProtocol() throws IOException {
-        br.write(getCurrentTabSpace() + "<Protocol>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<Protocol>" + lineBreak);
         tabCounter++;
 
-        br.write(getCurrentTabSpace() + "<ProtocolName>" + StringEscapeUtils.escapeHtml4(protocol.getName()) + "</ProtocolName>" + System.getProperty("line.separator"));
-        br.write(getCurrentTabSpace() + "<ProtocolSteps>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<ProtocolName>" + StringEscapeUtils.escapeHtml4(protocol.getName()) + "</ProtocolName>" + lineBreak);
+        br.write(getCurrentTabSpace() + "<ProtocolSteps>" + lineBreak);
 
         for (int i = 0; i < protocol.getCvTerms().size(); i++) {
 
             tabCounter++;
 
-            br.write(getCurrentTabSpace() + "<StepDescription>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<StepDescription>" + lineBreak);
             tabCounter++;
             writeCvTerm(protocol.getCvTerms().get(i));
             tabCounter--;
-            br.write(getCurrentTabSpace() + "</StepDescription>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "</StepDescription>" + lineBreak);
 
             tabCounter--;
         }
 
-        br.write(getCurrentTabSpace() + "</ProtocolSteps>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</ProtocolSteps>" + lineBreak);
 
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</Protocol>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</Protocol>" + lineBreak);
     }
 
     /**
@@ -1297,31 +1301,31 @@ public class PrideXmlExport {
 
             Reference tempReference = referenceGroup.getReferences().get(i);
 
-            br.write(getCurrentTabSpace() + "<Reference>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<Reference>" + lineBreak);
             tabCounter++;
 
-            br.write(getCurrentTabSpace() + "<RefLine>" + StringEscapeUtils.escapeHtml4(tempReference.getReference()) + "</RefLine>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<RefLine>" + StringEscapeUtils.escapeHtml4(tempReference.getReference()) + "</RefLine>" + lineBreak);
 
             if (tempReference.getPmid() != null || tempReference.getDoi() != null) {
-                br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "<additional>" + lineBreak);
                 tabCounter++;
 
                 if (tempReference.getPmid() != null) {
                     br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000029\" name=\"PubMed\" value=\""
-                            + tempReference.getPmid() + "\" />" + System.getProperty("line.separator"));
+                            + tempReference.getPmid() + "\" />" + lineBreak);
                 }
 
                 if (tempReference.getDoi() != null) {
                     br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000042\" name=\"DOI\" value=\""
-                            + tempReference.getDoi() + "\" />" + System.getProperty("line.separator"));
+                            + tempReference.getDoi() + "\" />" + lineBreak);
                 }
 
                 tabCounter--;
-                br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "</additional>" + lineBreak);
             }
 
             tabCounter--;
-            br.write(getCurrentTabSpace() + "</Reference>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "</Reference>" + lineBreak);
         }
     }
 
@@ -1332,10 +1336,10 @@ public class PrideXmlExport {
      * reading/writing a file
      */
     private void writeExperimentCollectionStartTag() throws IOException {
-        br.write("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>" + System.getProperty("line.separator"));
-        br.write("<ExperimentCollection version=\"2.1\">" + System.getProperty("line.separator"));
+        br.write("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>" + lineBreak);
+        br.write("<ExperimentCollection version=\"2.1\">" + lineBreak);
         tabCounter++;
-        br.write(getCurrentTabSpace() + "<Experiment>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<Experiment>" + lineBreak);
         tabCounter++;
     }
 
@@ -1347,7 +1351,7 @@ public class PrideXmlExport {
      */
     private void writeExperimentCollectionEndTag() throws IOException {
         tabCounter--;
-        br.write(getCurrentTabSpace() + "</Experiment>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "</Experiment>" + lineBreak);
         tabCounter--;
         br.write("</ExperimentCollection>");
     }
@@ -1569,9 +1573,9 @@ public class PrideXmlExport {
                 + "name=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getName()) + "\"");
 
         if (cvTerm.getValue() != null) {
-            br.write(" value=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getValue()) + "\" />" + System.getProperty("line.separator"));
+            br.write(" value=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getValue()) + "\" />" + lineBreak);
         } else {
-            br.write(" />" + System.getProperty("line.separator"));
+            br.write(" />" + lineBreak);
         }
     }
 }

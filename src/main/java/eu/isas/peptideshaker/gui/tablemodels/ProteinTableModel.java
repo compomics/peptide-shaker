@@ -103,8 +103,8 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * @param exceptionHandler an exception handler catching exceptions
      * @param proteinKeys the keys of the protein matches to display
      */
-    public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps, DisplayFeaturesGenerator displayFeaturesGenerator,
-            ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
+    public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps, 
+            DisplayFeaturesGenerator displayFeaturesGenerator, ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.geneMaps = geneMaps;
@@ -121,15 +121,17 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * information
      * @param identificationFeaturesGenerator the identification features
      * generator generating the features of the identification
+     * @param geneMaps the gene maps
      * @param displayFeaturesGenerator the display features generator generating
      * the display elements
      * @param exceptionHandler an exception handler catching exceptions
      * @param proteinKeys the keys of the protein matches to display
      */
-    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, DisplayFeaturesGenerator displayFeaturesGenerator,
-            ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
+    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps, 
+            DisplayFeaturesGenerator displayFeaturesGenerator, ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+        this.geneMaps = geneMaps;
         this.displayFeaturesGenerator = displayFeaturesGenerator;
         this.exceptionHandler = exceptionHandler;
         this.proteinKeys = proteinKeys;
