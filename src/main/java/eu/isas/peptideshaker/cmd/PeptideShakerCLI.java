@@ -140,6 +140,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 }
             } catch (Exception e) {
                 System.out.println("Unable to load the path configurations. Default paths will be used.");
+                e.printStackTrace();
             }
 
             // Set the gene mappings

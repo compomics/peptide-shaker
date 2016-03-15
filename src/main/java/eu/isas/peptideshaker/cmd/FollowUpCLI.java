@@ -101,6 +101,7 @@ public class FollowUpCLI extends CpsParent {
             }
         } catch (Exception e) {
             System.out.println("Unable to load the path configurations. Default paths will be used.");
+            e.printStackTrace();
         }
 
         waitingHandler = new WaitingHandlerCLIImpl();
