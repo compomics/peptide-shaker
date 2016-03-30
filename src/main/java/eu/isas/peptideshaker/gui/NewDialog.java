@@ -1738,7 +1738,7 @@ public class NewDialog extends javax.swing.JDialog {
             if (found) {
                 // see if the protein inference fasta file is also missing
                 File proteinInferenceSequenceDatabase = tempIdentificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
-                if (!proteinInferenceSequenceDatabase.exists() && proteinInferenceSequenceDatabase.getName().equalsIgnoreCase(fastaFile.getName())) {
+                if (proteinInferenceSequenceDatabase == null || (!proteinInferenceSequenceDatabase.exists() && proteinInferenceSequenceDatabase.getName().equalsIgnoreCase(fastaFile.getName()))) {
                     tempIdentificationParameters.getProteinInferencePreferences().setProteinSequenceDatabase(fastaFile);
                 }
 
