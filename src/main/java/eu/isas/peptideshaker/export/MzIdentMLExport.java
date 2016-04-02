@@ -56,7 +56,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
-import org.apache.commons.lang3.StringEscapeUtils; 
+import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  * The class that takes care of converting the data to mzIdentML.
@@ -322,8 +322,8 @@ public class MzIdentMLExport {
 
         br.write(getCurrentTabSpace()
                 + "<cv id=\"PSI-MS\" "
-                + "uri=\"http://psidev.cvs.sourceforge.net/viewvc/*checkout*/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo\" "
-                + "version=\"3.73.0\" "
+                + "uri=\"https://github.com/HUPO-PSI/psi-ms-CV/blob/master/psi-ms.obo\" "
+                + "version=\"3.79.0\" "
                 + "fullName=\"PSI-MS\"/>" + lineBreak);
 
         br.write(getCurrentTabSpace()
@@ -333,12 +333,12 @@ public class MzIdentMLExport {
 
         br.write(getCurrentTabSpace()
                 + "<cv id=\"UO\" "
-                + "uri=\"http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/unit.obo\" "
+                + "uri=\"https://github.com/bio-ontology-research-group/unit-ontology/blob/master/unit.obo\" "
                 + "fullName=\"UNIT-ONTOLOGY\"/>" + lineBreak);
 
         br.write(getCurrentTabSpace()
                 + "<cv id=\"PRIDE\" "
-                + "uri=\"http://code.google.com/p/ebi-pride/source/browse/trunk/pride-core/schema/pride_cv.obo\" " // @TODO: will disappear at some point...
+                + "uri=\"https://github.com/PRIDE-Utilities/pride-ontology/blob/master/pride_cv.obo\" "
                 + "fullName=\"PRIDE\"/>" + lineBreak);
 
         tabCounter--;
@@ -369,7 +369,7 @@ public class MzIdentMLExport {
         tabCounter++;
         br.write(getCurrentTabSpace() + "<Role>" + lineBreak);
         tabCounter++;
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1001267", "software vendor", "CompOmics"));
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1001267", "software vendor", null));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Role>" + lineBreak);
         tabCounter--;
@@ -436,7 +436,7 @@ public class MzIdentMLExport {
         tabCounter++;
         writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", projectDetails.getContactAddress()));
         if (projectDetails.getContactUrl() != null && !projectDetails.getContactUrl().isEmpty()) {
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact url", projectDetails.getContactUrl()));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact URL", projectDetails.getContactUrl()));
         }
         writeCvTerm(new CvTerm("PSI-MS", "MS:1000589", "contact email", projectDetails.getContactEmail()));
         br.write(getCurrentTabSpace() + "<Affiliation organization_ref=\"ORG_DOC_OWNER\"/>" + lineBreak);
@@ -448,7 +448,7 @@ public class MzIdentMLExport {
         writeCvTerm(new CvTerm("PSI-MS", "MS:1000586", "contact name", projectDetails.getOrganizationName()));
         writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", projectDetails.getOrganizationAddress()));
         if (projectDetails.getOrganizationUrl() != null && !projectDetails.getOrganizationUrl().isEmpty()) {
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact url", projectDetails.getOrganizationUrl()));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact URL", projectDetails.getOrganizationUrl()));
         }
         writeCvTerm(new CvTerm("PSI-MS", "MS:1000589", "contact email", projectDetails.getOrganizationEmail()));
         tabCounter--;
@@ -458,7 +458,7 @@ public class MzIdentMLExport {
         tabCounter++;
         writeCvTerm(new CvTerm("PSI-MS", "MS:1000586", "contact name", "PeptideShaker developers"));
         writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", "Proteomics Unit, Building for Basic Biology, University of Bergen, Jonas Liesvei 91, N-5009 Bergen, Norway"));
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact url", "http://compomics.github.io/projects/peptide-shaker.html"));
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact URL", "http://compomics.github.io/projects/peptide-shaker.html"));
         writeCvTerm(new CvTerm("PSI-MS", "MS:1000589", "contact email", "peptide-shaker@googlegroups.com"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Organization>" + lineBreak);
@@ -548,7 +548,7 @@ public class MzIdentMLExport {
                     CvTerm ptmCvTerm = currentPtm.getCvTerm();
                     if (ptmCvTerm != null) {
                         tabCounter++;
-                        writeCvTerm(ptmCvTerm);
+                        writeCvTerm(ptmCvTerm, false);
                         tabCounter--;
                     }
 
@@ -1916,20 +1916,45 @@ public class MzIdentMLExport {
     }
 
     /**
-     * Convenience method writing a CV Term.
+     * Convenience method writing a CV term.
      *
-     * @param cvTerm the cvTerm
+     * @param cvTerm the CV term
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
      */
     private void writeCvTerm(CvTerm cvTerm) throws IOException {
+        writeCvTerm(cvTerm, true);
+    }
+
+    /**
+     * Convenience method writing a CV term.
+     *
+     * @param cvTerm the CV term
+     * @param showValue decides if the CV terms value (if existing) is
+     * printed or not
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeCvTerm(CvTerm cvTerm, boolean showValue) throws IOException {
 
         br.write(getCurrentTabSpace() + "<cvParam "
                 + "cvRef=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getOntology()) + "\" "
                 + "accession=\"" + cvTerm.getAccession() + "\" "
                 + "name=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getName()) + "\"");
 
-        if (cvTerm.getValue() != null) {
+        writeCvTermValue(cvTerm, showValue);
+    }
+    
+    /**
+     * Convenience method writing the value element of a CV term.
+     * 
+     * @param cvTerm the CV term
+     * @param showValue decides if the CV terms value (if existing) is
+     * printed or not
+     * @throws IOException 
+     */
+    private void writeCvTermValue(CvTerm cvTerm, boolean showValue) throws IOException {
+        if (showValue && cvTerm.getValue() != null) {
             br.write(" value=\"" + StringEscapeUtils.escapeHtml4(cvTerm.getValue()) + "\"/>" + lineBreak);
         } else {
             br.write("/>" + lineBreak);
