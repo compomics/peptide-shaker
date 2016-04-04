@@ -736,7 +736,7 @@ public class MzIdentMLExport {
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002492", "consensus scoring", null));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002490", "peptide-level scoring", null));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002497", "group PSMs by sequence with modifications", null));
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002491", "modification localization scoring performed", null));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002491", "modification localization scoring", null));
         }
 
         // @TODO: list all search parameters from the search engines used?
@@ -967,7 +967,7 @@ public class MzIdentMLExport {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002567", "phosphoRS score threshold", ptmScoringPreferences.getProbabilisticScoreThreshold() + ""));
                 }
             }
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002557", "D-score threshold", dScoreThreshold.toString()));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002557", "D-Score threshold", dScoreThreshold.toString()));
 
             // @TODO: add peptide and psm level annotation
 //            // peptideshaker maps
@@ -1537,7 +1537,7 @@ public class MzIdentMLExport {
                                             if (score < dScoreThreshold) {
                                                 valid = "false";
                                             }
-                                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002536", "D-score", ptmIndex + ":" + score + ":" + site + ":" + valid));
+                                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002536", "D-Score", ptmIndex + ":" + score + ":" + site + ":" + valid));
                                         }
                                     }
                                 }
