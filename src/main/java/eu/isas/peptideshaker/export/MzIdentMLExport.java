@@ -323,7 +323,6 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace()
                 + "<cv id=\"PSI-MS\" "
                 + "uri=\"https://github.com/HUPO-PSI/psi-ms-CV/blob/master/psi-ms.obo\" "
-                + "version=\"3.79.0\" "
                 + "fullName=\"PSI-MS\"/>" + lineBreak);
 
         br.write(getCurrentTabSpace()
@@ -1705,24 +1704,24 @@ public class MzIdentMLExport {
         // mz
         br.write(getCurrentTabSpace() + "<Measure id=\"Measure_MZ\">" + lineBreak);
         tabCounter++;
-        br.write(getCurrentTabSpace() + "<cvParam unitCvRef=\"PSI-MS\" accession=\"MS:1001225\" cvRef=\"PSI-MS\" unitName=\"m/z\" "
-                + "unitAccession=\"MS:1000040\" name=\"product ion m/z\"/>" + lineBreak);
+        br.write(getCurrentTabSpace() + "<cvParam cvRef=\"PSI-MS\" accession=\"MS:1001225\" name=\"product ion m/z\" " + 
+                "unitCvRef=\"PSI-MS\" unitAccession=\"MS:1000040\" unitName=\"m/z\" />" + lineBreak);
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Measure>" + lineBreak);
 
         // intensity
         br.write(getCurrentTabSpace() + "<Measure id=\"Measure_Int\">" + lineBreak);
         tabCounter++;
-        br.write(getCurrentTabSpace() + "<cvParam accession=\"MS:1001226\" cvRef=\"PSI-MS\" "
-                + "name=\"product ion intensity\"/>" + lineBreak);
+        br.write(getCurrentTabSpace() + "<cvParam cvRef=\"PSI-MS\" accession=\"MS:1001226\" name=\"product ion intensity\" " + 
+                "unitCvRef=\"PSI-MS\" unitAccession=\"MS:1000043\" unitName=\"intensity unit\"/>" + lineBreak);
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Measure>" + lineBreak);
 
         // mass error
         br.write(getCurrentTabSpace() + "<Measure id=\"Measure_Error\">" + lineBreak);
         tabCounter++;
-        br.write(getCurrentTabSpace() + "<cvParam unitCvRef=\"PSI-MS\" accession=\"MS:1001227\" cvRef=\"PSI-MS\" "
-                + "unitName=\"m/z\" unitAccession=\"MS:1000040\" name=\"product ion m/z error\"/>" + lineBreak);
+        br.write(getCurrentTabSpace() + "<cvParam cvRef=\"PSI-MS\" accession=\"MS:1001227\" name=\"product ion m/z error\" " + 
+                "unitCvRef=\"PSI-MS\" unitAccession=\"MS:1000040\" unitName=\"m/z\"/>" + lineBreak);
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Measure>" + lineBreak);
 
