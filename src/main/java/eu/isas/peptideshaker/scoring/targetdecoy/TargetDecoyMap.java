@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * This map contains the information of a target/decoy strategy
+ * This map contains the information of a target/decoy strategy.
  *
  * @author Marc Vaudel
  */
@@ -175,18 +175,16 @@ public class TargetDecoyMap implements Serializable {
                 } else {
                     nTargetOnly += point.nTarget;
                 }
-            } else {
-                if (point.nDecoy > 0) {
-                    targetCpt += point.nTarget / 2 + point.nTarget % 2;
-                    if (targetCpt > nmax
-                            && score < 1.0
-                            && (point.nDecoy == 1 || targetCpt < nTargetOnly)) {
-                        nmax = targetCpt;
-                    }
-                    targetCpt = point.nTarget / 2;
-                } else {
-                    targetCpt += point.nTarget;
+            } else if (point.nDecoy > 0) {
+                targetCpt += point.nTarget / 2 + point.nTarget % 2;
+                if (targetCpt > nmax
+                        && score < 1.0
+                        && (point.nDecoy == 1 || targetCpt < nTargetOnly)) {
+                    nmax = targetCpt;
                 }
+                targetCpt = point.nTarget / 2;
+            } else {
+                targetCpt += point.nTarget;
             }
             targetCount += point.nTarget;
             decoyCount += point.nDecoy;
@@ -288,7 +286,6 @@ public class TargetDecoyMap implements Serializable {
             nFP.put(currentScore, nDecoy);
             nTP.put(currentScore, nTp);
         }
-
     }
 
     /**
@@ -385,8 +382,7 @@ public class TargetDecoyMap implements Serializable {
         if (nmax == null) {
             estimateNs();
         }
-        if (nmax < 100
-                || minFDR > initialFDR) {
+        if (nmax < 100 || minFDR > initialFDR) {
             return true;
         }
         return false;
