@@ -2847,11 +2847,18 @@ public class ValidationPanel extends javax.swing.JPanel {
         XYSeries decoySeries = new XYSeries("False Positives");
 
         // get the data
-        double[] scores = targetDecoySeries.getScoresLog();
+        double[] scores = targetDecoySeries.getTpScores();
+        double[] tp = targetDecoySeries.getNTP();
         for (int i = 0; i < scores.length; i++) {
             double tempScore = scores[i];
-            targetSeries.add(tempScore, targetDecoySeries.getNTP()[i]);
-            decoySeries.add(tempScore, targetDecoySeries.getNFP()[i]);
+            targetSeries.add(tempScore, tp[i]);
+        }
+        
+        scores = targetDecoySeries.getFpScores();
+        double[] fp = targetDecoySeries.getNFP();
+        for (int i = 0; i < scores.length; i++) {
+            double tempScore = scores[i];
+            decoySeries.add(tempScore, fp[i]);
         }
 
         // add the datasets

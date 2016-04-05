@@ -76,18 +76,18 @@ public class TargetDecoyMap implements Serializable {
         } else if (score >= scores.get(scores.size() - 1)) {
             return hitMap.get(scores.get(scores.size() - 1)).p;
         } else {
-            int indexInf = 0;
-            int indexSup = scores.size() - 1;
+            int indexDown = 0;
+            int indexUp = scores.size() - 1;
             int indexTemp;
-            while (indexSup - indexInf > 1) {
-                indexTemp = (indexSup - indexInf) / 2 + indexInf;
+            while (indexUp - indexDown > 1) {
+                indexTemp = (indexUp - indexDown) / 2 + indexDown;
                 if (scores.get(indexTemp) > score) {
-                    indexSup = indexTemp;
+                    indexUp = indexTemp;
                 } else {
-                    indexInf = indexTemp;
+                    indexDown = indexTemp;
                 }
             }
-            return (hitMap.get(scores.get(indexSup)).p + hitMap.get(scores.get(indexInf)).p) / 2;
+            return (hitMap.get(scores.get(indexUp)).p + hitMap.get(scores.get(indexDown)).p) / 2;
         }
     }
 
@@ -221,30 +221,32 @@ public class TargetDecoyMap implements Serializable {
         nFP = new HashMap<Double, Double>(scores.size());
 
         // estimate p
-        TargetDecoyPoint tempPoint, previousPoint = hitMap.get(scores.get(0));
+        Double currentScore = scores.get(0);
+        TargetDecoyPoint tempPoint, previousPoint = hitMap.get(currentScore);
         double nLimit = 0.5 * windowSize;
-        double nTargetSup = 1.5 * previousPoint.nTarget;
-        double nTargetInf = -0.5 * previousPoint.nTarget;
+        double nTargetUp = 1.5 * previousPoint.nTarget;
+        double nTargetDown = -0.5 * previousPoint.nTarget;
         double nDecoy = previousPoint.nDecoy;
-        int cptInf = 0;
-        int cptSup = 1;
+        int iDown = 0;
+        int iUp = 1;
+        int lastiUp = -1;
         boolean oneReached = false;
 
-        for (int cpt = 0; cpt < scores.size(); cpt++) {
-            Double currentScore = scores.get(cpt);
+        for (int i = 0; i < scores.size(); i++) {
+            currentScore = scores.get(i);
             TargetDecoyPoint point = hitMap.get(currentScore);
             if (!oneReached) {
                 double change = 0.5 * (previousPoint.nTarget + point.nTarget);
-                nTargetInf += change;
-                nTargetSup -= change;
-                while (nTargetInf > nLimit) {
-                    if (cptInf < cpt) {
-                        tempPoint = hitMap.get(scores.get(cptInf));
-                        double nTargetInfTemp = nTargetInf - tempPoint.nTarget;
-                        if (nTargetInfTemp >= nLimit) {
+                nTargetDown += change;
+                nTargetUp -= change;
+                while (nTargetDown > nLimit) {
+                    if (iDown < i) {
+                        tempPoint = hitMap.get(scores.get(iDown));
+                        double nTargetDownTemp = nTargetDown - tempPoint.nTarget;
+                        if (nTargetDownTemp >= nLimit) {
                             nDecoy -= tempPoint.nDecoy;
-                            nTargetInf = nTargetInfTemp;
-                            cptInf++;
+                            nTargetDown = nTargetDownTemp;
+                            iDown++;
                         } else {
                             break;
                         }
@@ -252,17 +254,13 @@ public class TargetDecoyMap implements Serializable {
                         break;
                     }
                 }
-                while (nTargetSup < nLimit) {
-                    if (cptSup < scores.size()) {
-                        tempPoint = hitMap.get(scores.get(cptSup));
-                        nTargetSup += tempPoint.nTarget;
-                        nDecoy += tempPoint.nDecoy;
-                        cptSup++;
-                    } else {
-                        break;
-                    }
+                while (nTargetUp < nLimit && iUp < scores.size()) {
+                    tempPoint = hitMap.get(scores.get(iUp));
+                    nTargetUp += tempPoint.nTarget;
+                    nDecoy += tempPoint.nDecoy;
+                    iUp++;
                 }
-                double nTarget = nTargetInf + nTargetSup;
+                double nTarget = nTargetDown + nTargetUp;
                 point.p = Math.max(Math.min(nDecoy / nTarget, 1), 0);
                 if (point.p >= 0.98) {
                     oneReached = true;
@@ -272,16 +270,25 @@ public class TargetDecoyMap implements Serializable {
             }
             previousPoint = point;
 
-            Double nTp = nTargetInf + nTargetSup - nDecoy;
-            nFP.put(currentScore, nDecoy);
-            nTP.put(currentScore, nTp);
+            if (iDown > lastiUp) {
+                Double nTp = nTargetDown + nTargetUp - nDecoy;
+                nFP.put(currentScore, nDecoy);
+                nTP.put(currentScore, nTp);
+                lastiUp = iUp;
+            }
 
             waitingHandler.increaseSecondaryProgressCounter();
             if (waitingHandler.isRunCanceled()) {
                 return;
             }
         }
-        
+
+        if (iUp > lastiUp) {
+            Double nTp = nTargetDown + nTargetUp - nDecoy;
+            nFP.put(currentScore, nDecoy);
+            nTP.put(currentScore, nTp);
+        }
+
     }
 
     /**

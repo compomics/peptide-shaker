@@ -1,7 +1,10 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import eu.isas.peptideshaker.parameters.PSParameter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -13,30 +16,38 @@ import java.util.HashMap;
 public class TargetDecoySeries {
 
     /**
-     * The probabilistic score.
+     * The probabilistic score series.
      */
     private double[] scores;
     /**
-     * The log transformed probabilistic score.
+     * The log transformed probabilistic score series.
      */
     private double[] scoresLog;
     /**
-     * The confidence.
+     * The confidence series.
      */
     private double[] confidence;
     /**
-     * The confidence corresponding to the log score.
+     * The confidence series corresponding to the log score series.
      */
     private double[] confidenceLog;
     /**
-     * The pep.
+     * The PEP series.
      */
     private double[] pep;
+    /**
+     * The histogram scores bins of the nTP series.
+     */
+    private double[] tpScores;
     /**
      * The estimated number of true positives in the bin centered on a given
      * score.
      */
     private double[] nTP;
+    /**
+     * The histogram scores bins of the nTP series.
+     */
+    private double[] fpScores;
     /**
      * The estimated number of false positives in the bin centered on a given
      * score.
@@ -115,8 +126,6 @@ public class TargetDecoySeries {
         classicalFP = new double[scores.length];
         probaBenefit = new double[scores.length];
         pep = new double[scores.length];
-        nFP = new double[scores.length];
-        nTP = new double[scores.length];
         decoy = new boolean[scores.length];
 
         double nTemp = 0;
@@ -138,10 +147,6 @@ public class TargetDecoySeries {
             confidence[i] = confidenceAtI;
             int iInvert = scores.length - i - 1;
             confidenceLog[iInvert] = confidenceAtI;
-            Double tp = nTPMap.get(score);
-            Double fp = nFPMap.get(score);
-            nTP[iInvert] = tp;
-            nFP[iInvert] = fp;
             n[i] = nTemp;
             classicalFP[i] = classicalFPTemp;
             probaFP[i] = probaFPTemp;
@@ -150,6 +155,28 @@ public class TargetDecoySeries {
             probaFNR[i] = probaFnrTemp;
             probaBenefit[i] = 100 - probaFnrTemp;
             decoy[i] = currentPoint.nTarget == 0;
+        }
+        
+        // Construct the TP histogram
+        nTP = new double[nTPMap.size()];
+        tpScores = new double[nTPMap.size()];
+        ArrayList<Double> scoresBins = new ArrayList<Double>(nTPMap.keySet());
+        Collections.sort(scoresBins);
+        for (int i = 0; i < scoresBins.size(); i++) {
+            Double score = scoresBins.get(i);
+            tpScores[i] = PSParameter.getScore(score);
+            nTP[i] = nTPMap.get(score);
+        }
+        
+        // Construct the FP histogram
+        nFP = new double[nFPMap.size()];
+        fpScores = new double[nFPMap.size()];
+        scoresBins = new ArrayList<Double>(nFPMap.keySet());
+        Collections.sort(scoresBins);
+        for (int i = 0; i < scoresBins.size(); i++) {
+            Double score = scoresBins.get(i);
+            fpScores[i] = PSParameter.getScore(score);
+            nFP[i] = nFPMap.get(score);
         }
     }
 
@@ -294,12 +321,30 @@ public class TargetDecoySeries {
     }
 
     /**
+     * Returns the bin scores for the true positives series.
+     * 
+     * @return the bin scores for the true positives series
+     */
+    public double[] getTpScores() {
+        return tpScores;
+    }
+    
+    /**
      * Returns the number of true positives series.
      *
      * @return the number of true positives series
      */
     public double[] getNTP() {
         return nTP;
+    }
+
+    /**
+     * Returns the bin scores for the false positives series.
+     * 
+     * @return the bin scores for the false positives series
+     */
+    public double[] getFpScores() {
+        return fpScores;
     }
 
     /**
