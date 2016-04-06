@@ -17,6 +17,7 @@ import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -29,19 +30,25 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.LegendItemSource;
 import org.jfree.chart.axis.AxisLocation;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.ExtendedCategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.block.BlockFrame;
+import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
+import org.jfree.chart.plot.CategoryMarker;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYAreaRenderer;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.LegendTitle;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.DefaultXYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.Layer;
 import org.jfree.ui.RectangleEdge;
 
 /**
@@ -100,7 +107,7 @@ public class ValidationPanel extends javax.swing.JPanel {
     /**
      * The target/decoy plot.
      */
-    private XYPlot targetDecoyPlot = new XYPlot();
+    private CategoryPlot targetDecoyPlot = new CategoryPlot();
     /**
      * The benefit/cost plot.
      */
@@ -194,13 +201,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         confidencePlot.addDomainMarker(confidenceMarker);
 
         // Initialize target/decoy plot
-        NumberAxis targetDecoyAxis = new NumberAxis("Frequency");
-        targetDecoyAxis.setAutoRangeIncludesZero(true);
-        targetDecoyPlot.setDomainAxis(scoreAxis);
-        targetDecoyPlot.setRangeAxis(0, targetDecoyAxis);
-        targetDecoyPlot.setRangeAxisLocation(0, AxisLocation.TOP_OR_LEFT);
-        targetDecoyPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
-        targetDecoyPlot.addDomainMarker(confidenceMarker);
+        // @TODO: do something here?
 
         // Initialize cost/benefit plot
         NumberAxis benefitAxis = new NumberAxis("Coverage (1-FNR) [%]");
@@ -2842,40 +2843,75 @@ public class ValidationPanel extends javax.swing.JPanel {
      */
     private void updateTargteDecoyChart() {
 
-        XYSeriesCollection targetDecoyDataset = new XYSeriesCollection();
-        XYSeries targetSeries = new XYSeries("True Positives");
-        XYSeries decoySeries = new XYSeries("False Positives");
+        DefaultCategoryDataset targetDecoyDataset = new DefaultCategoryDataset();
 
         // get the histogram data
         double[] bins = targetDecoySeries.getTdBins();
         double[] nTarget = targetDecoySeries.getnTarget();
         double[] nDecoy = targetDecoySeries.getnDecoy();
-        for (int i = 0; i < bins.length; i++) {
+
+        String[] categories = new String[bins.length];
+
+        for (int i = bins.length - 1; i >= 0; i--) {
             double tempScore = bins[i];
-            targetSeries.add(tempScore, nTarget[i]);
-            decoySeries.add(tempScore, nDecoy[i]);
+            categories[i] = ((int) (100 - tempScore)) + "";
+            targetDecoyDataset.addValue(nTarget[i], "True Positives", categories[i]);
+            targetDecoyDataset.addValue(nDecoy[i], "False Positives", categories[i]);
         }
 
-        // add the datasets
-        targetDecoyDataset.addSeries(targetSeries);
-        targetDecoyDataset.addSeries(decoySeries);
-        targetDecoyPlot.setDataset(0, targetDecoyDataset);
-        targetDecoyPlot.mapDatasetToRangeAxis(0, 0);
+        // prepare for hiding every second category label
+        final String[] extendedCategories = new String[categories.length];
+        for (int i = 0; i < categories.length; i++) {
+            if (i % 2 == 0) {
+                extendedCategories[i] = categories[i];
+            } else {
+                extendedCategories[i] = " ";
+            }
+        }
 
+        // create the plot
+        targetDecoyPlot = new CategoryPlot(targetDecoyDataset, new CategoryAxis("Score"), new NumberAxis("Frequency"), new BarRenderer());
+
+        // hide every second category label
+        final ExtendedCategoryAxis extendedCategoryAxis = new ExtendedCategoryAxis("Score");
+        for (int i = 0; i < categories.length; i++) {
+            extendedCategoryAxis.addSubLabel(categories[i], extendedCategories[i]);
+        }
+        Font theFont = extendedCategoryAxis.getTickLabelFont();
+        extendedCategoryAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 0));
+        extendedCategoryAxis.setSubLabelFont(theFont);
+        targetDecoyPlot.setDomainAxis(extendedCategoryAxis);
+
+        // remove the space before and after the plots on the x-axis
+        targetDecoyPlot.getDomainAxis().setLowerMargin(0.0);
+        targetDecoyPlot.getDomainAxis().setUpperMargin(0.0);
+        
         // create the chart
         JFreeChart targetDecoyChart = new JFreeChart(targetDecoyPlot);
 
         // set the renderer
-        XYAreaRenderer renderer = new XYAreaRenderer();
-        renderer.setOutline(true);
+        //BarRenderer renderer = new BarRenderer();
+        StackedBarRenderer renderer = new StackedBarRenderer();
+        renderer.setShadowVisible(false);
         renderer.setSeriesPaint(0, new Color(110, 196, 97, 225));
-        renderer.setSeriesFillPaint(0, new Color(110, 196, 97, 225));
-        renderer.setSeriesOutlinePaint(0, new Color(110, 196, 97, 225).darker().darker());
         renderer.setSeriesPaint(1, new Color(255, 0, 0));
-        renderer.setSeriesFillPaint(1, new Color(255, 0, 0));
-        renderer.setSeriesOutlinePaint(1, new Color(255, 0, 0).darker().darker());
-        renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-        targetDecoyPlot.setRenderer(renderer);
+        renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+        renderer.setItemMargin(0.0);
+        ((CategoryPlot) targetDecoyChart.getPlot()).setRenderer(renderer);
+        CategoryAxis axis = targetDecoyPlot.getDomainAxis();
+        //axis.setCategoryMargin(0);
+        
+        // add the confidence marker
+        double confidenceValue = confidenceMarker.getValue();
+        
+        for (String categorie : categories) {
+            int value = Integer.parseInt(categorie);
+            if (value < confidenceValue) {
+                targetDecoyPlot.addDomainMarker(new CategoryMarker(categorie, fdrHighlightColor, new BasicStroke(4)), Layer.BACKGROUND);
+            } else {
+                targetDecoyPlot.addDomainMarker(new CategoryMarker(categorie, fnrHighlightColor, new BasicStroke(4)), Layer.BACKGROUND);
+            }
+        }
 
         // set the chart title
         ChartPanel chartPanel = new ChartPanel(targetDecoyChart);

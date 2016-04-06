@@ -48,7 +48,6 @@ public class TargetDecoySeries {
      * The decoy histogram series.
      */
     private double[] nDecoy;
-    
     /**
      * The classical FDR.
      */
@@ -92,7 +91,7 @@ public class TargetDecoySeries {
      * @param hitMap a map as present in target decoy maps
      */
     public TargetDecoySeries(HashMap<Double, TargetDecoyPoint> hitMap) {
-        
+
         scores = new double[hitMap.size()];
         scoresLog = new double[scores.length];
         probaNTotal = 0;
@@ -114,11 +113,11 @@ public class TargetDecoySeries {
                 maxScore = scoreLog;
             }
         }
-        
+
         int histogramScoreMin = (int) minScore;
         int histogramScoreMax = (int) maxScore;
         initiateTDHistogram(histogramScoreMin, histogramScoreMax);
-        
+
         Arrays.sort(scores);
         Arrays.sort(scoresLog);
 
@@ -161,34 +160,34 @@ public class TargetDecoySeries {
             probaFNR[i] = probaFnrTemp;
             probaBenefit[i] = 100 - probaFnrTemp;
             decoy[i] = currentPoint.nTarget == 0;
-            
+
             double scoreLog = scoresLog[i];
             int bin = ((int) (Math.round((scoreLog - histogramScoreMin) / binSize)));
             nDecoy[bin] += currentPoint.nDecoy;
             nTarget[bin] += currentPoint.nTarget;
         }
     }
-    
+
     /**
-     * Creates the bins of the target decoy histogram and set empty values for the target and decoy series.
-     * 
+     * Creates the bins of the target decoy histogram and set empty values for
+     * the target and decoy series.
+     *
      * @param histogramScoreMin the minimal value of the histogram
      * @param histogramScoreMax the maximal value of the histogram
      */
     private void initiateTDHistogram(int histogramScoreMin, int histogramScoreMax) {
-        
-        int nBins = (int) (Math.floor(histogramScoreMax / binSize)) - (int) (Math.floor(histogramScoreMin/binSize)) + 1;
-        
+
+        int nBins = (int) (Math.floor(histogramScoreMax / binSize)) - (int) (Math.floor(histogramScoreMin / binSize)) + 1;
+
         tdBins = new double[nBins];
         nTarget = new double[nBins];
         nDecoy = new double[nBins];
-        
-        for (int i = 0 ; i < nBins ; i++) {
+
+        for (int i = 0; i < nBins; i++) {
             tdBins[i] = histogramScoreMin + (i * binSize);
             nTarget[i] = 0.0;
             nDecoy[i] = 0.0;
         }
-        
     }
 
     /**
@@ -333,7 +332,7 @@ public class TargetDecoySeries {
 
     /**
      * Returns the target decoy bins to use for the histogram.
-     * 
+     *
      * @return the target decoy bins to use for the histogram
      */
     public double[] getTdBins() {
@@ -342,7 +341,7 @@ public class TargetDecoySeries {
 
     /**
      * Returns the target series of the target decoy histogram.
-     * 
+     *
      * @return the target series of the target decoy histogram
      */
     public double[] getnTarget() {
@@ -351,7 +350,7 @@ public class TargetDecoySeries {
 
     /**
      * Returns the decoy series of the target decoy histogram.
-     * 
+     *
      * @return the decoy series of the target decoy histogram
      */
     public double[] getnDecoy() {
