@@ -1,10 +1,7 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -36,23 +33,22 @@ public class TargetDecoySeries {
      */
     private double[] pep;
     /**
-     * The histogram scores bins of the nTP series.
+     * The bin size to use in the histogram.
      */
-    private double[] tpScores;
+    private double binSize = 5;
     /**
-     * The estimated number of true positives in the bin centered on a given
-     * score.
+     * The series of bins to use for the target / decoy histogram.
      */
-    private double[] nTP;
+    private double[] tdBins;
     /**
-     * The histogram scores bins of the nTP series.
+     * The target histogram series.
      */
-    private double[] fpScores;
+    private double[] nTarget;
     /**
-     * The estimated number of false positives in the bin centered on a given
-     * score.
+     * The decoy histogram series.
      */
-    private double[] nFP;
+    private double[] nDecoy;
+    
     /**
      * The classical FDR.
      */
@@ -94,25 +90,35 @@ public class TargetDecoySeries {
      * Constructor.
      *
      * @param hitMap a map as present in target decoy maps
-     * @param nTPMap the true positives map
-     * @param nFPMap the false positives map
      */
-    public TargetDecoySeries(HashMap<Double, TargetDecoyPoint> hitMap, HashMap<Double, Double> nTPMap, HashMap<Double, Double> nFPMap) {
-
+    public TargetDecoySeries(HashMap<Double, TargetDecoyPoint> hitMap) {
+        
         scores = new double[hitMap.size()];
         scoresLog = new double[scores.length];
         probaNTotal = 0;
-        int cpt = 0;
+        int counter = 0;
         TargetDecoyPoint currentPoint;
+        double minScore = 0, maxScore = 100;
 
         for (double score : hitMap.keySet()) {
             currentPoint = hitMap.get(score);
-            scores[cpt] = score;
-            scoresLog[cpt] = PSParameter.getScore(score);
+            double scoreLog = PSParameter.getScore(score);
+            scores[counter] = score;
+            scoresLog[counter] = scoreLog;
             probaNTotal += (1 - currentPoint.p) * currentPoint.nTarget;
-            cpt++;
+            counter++;
+            if (scoreLog < minScore) {
+                minScore = scoreLog;
+            }
+            if (scoreLog > maxScore) {
+                maxScore = scoreLog;
+            }
         }
-
+        
+        int histogramScoreMin = (int) minScore;
+        int histogramScoreMax = (int) maxScore;
+        initiateTDHistogram(histogramScoreMin, histogramScoreMax);
+        
         Arrays.sort(scores);
         Arrays.sort(scoresLog);
 
@@ -155,29 +161,34 @@ public class TargetDecoySeries {
             probaFNR[i] = probaFnrTemp;
             probaBenefit[i] = 100 - probaFnrTemp;
             decoy[i] = currentPoint.nTarget == 0;
+            
+            double scoreLog = scoresLog[i];
+            int bin = ((int) (Math.round((scoreLog - histogramScoreMin) / binSize)));
+            nDecoy[bin] += currentPoint.nDecoy;
+            nTarget[bin] += currentPoint.nTarget;
+        }
+    }
+    
+    /**
+     * Creates the bins of the target decoy histogram and set empty values for the target and decoy series.
+     * 
+     * @param histogramScoreMin the minimal value of the histogram
+     * @param histogramScoreMax the maximal value of the histogram
+     */
+    private void initiateTDHistogram(int histogramScoreMin, int histogramScoreMax) {
+        
+        int nBins = (int) (Math.floor(histogramScoreMax / binSize)) - (int) (Math.floor(histogramScoreMin/binSize)) + 1;
+        
+        tdBins = new double[nBins];
+        nTarget = new double[nBins];
+        nDecoy = new double[nBins];
+        
+        for (int i = 0 ; i < nBins ; i++) {
+            tdBins[i] = histogramScoreMin + (i * binSize);
+            nTarget[i] = 0.0;
+            nDecoy[i] = 0.0;
         }
         
-        // Construct the TP histogram
-        nTP = new double[nTPMap.size()];
-        tpScores = new double[nTPMap.size()];
-        ArrayList<Double> scoresBins = new ArrayList<Double>(nTPMap.keySet());
-        Collections.sort(scoresBins);
-        for (int i = 0; i < scoresBins.size(); i++) {
-            Double score = scoresBins.get(i);
-            tpScores[i] = PSParameter.getScore(score);
-            nTP[i] = nTPMap.get(score);
-        }
-        
-        // Construct the FP histogram
-        nFP = new double[nFPMap.size()];
-        fpScores = new double[nFPMap.size()];
-        scoresBins = new ArrayList<Double>(nFPMap.keySet());
-        Collections.sort(scoresBins);
-        for (int i = 0; i < scoresBins.size(); i++) {
-            Double score = scoresBins.get(i);
-            fpScores[i] = PSParameter.getScore(score);
-            nFP[i] = nFPMap.get(score);
-        }
     }
 
     /**
@@ -321,39 +332,30 @@ public class TargetDecoySeries {
     }
 
     /**
-     * Returns the bin scores for the true positives series.
+     * Returns the target decoy bins to use for the histogram.
      * 
-     * @return the bin scores for the true positives series
+     * @return the target decoy bins to use for the histogram
      */
-    public double[] getTpScores() {
-        return tpScores;
-    }
-    
-    /**
-     * Returns the number of true positives series.
-     *
-     * @return the number of true positives series
-     */
-    public double[] getNTP() {
-        return nTP;
+    public double[] getTdBins() {
+        return tdBins;
     }
 
     /**
-     * Returns the bin scores for the false positives series.
+     * Returns the target series of the target decoy histogram.
      * 
-     * @return the bin scores for the false positives series
+     * @return the target series of the target decoy histogram
      */
-    public double[] getFpScores() {
-        return fpScores;
+    public double[] getnTarget() {
+        return nTarget;
     }
 
     /**
-     * Returns the number of false positives series.
-     *
-     * @return the number of false positives series
+     * Returns the decoy series of the target decoy histogram.
+     * 
+     * @return the decoy series of the target decoy histogram
      */
-    public double[] getNFP() {
-        return nFP;
+    public double[] getnDecoy() {
+        return nDecoy;
     }
 
     /**

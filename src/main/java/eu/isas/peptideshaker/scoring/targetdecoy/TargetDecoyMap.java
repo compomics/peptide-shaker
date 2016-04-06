@@ -1,6 +1,9 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
 import com.compomics.util.waiting.WaitingHandler;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,11 +27,15 @@ public class TargetDecoyMap implements Serializable {
     /**
      * The estimated number of true positives in the bin centered on a given
      * score.
+     * 
+     * @deprecated not used anymore
      */
     private HashMap<Double, Double> nTP;
     /**
      * The estimated number of false positives in the bin centered on a given
      * score.
+     * 
+     * @deprecated not used anymore
      */
     private HashMap<Double, Double> nFP;
     /**
@@ -206,89 +213,71 @@ public class TargetDecoyMap implements Serializable {
      */
     public void estimateProbabilities(WaitingHandler waitingHandler) {
 
-        if (scores == null) {
-            estimateScores();
-        }
-        if (nmax == null) {
-            estimateNs();
-        }
-        if (windowSize == null) {
-            windowSize = nmax;
-        }
+            if (scores == null) {
+                estimateScores();
+            }
+            if (nmax == null) {
+                estimateNs();
+            }
+            if (windowSize == null) {
+                windowSize = nmax;
+            }
 
-        // Store the TP and FP series
-        nTP = new HashMap<Double, Double>(scores.size());
-        nFP = new HashMap<Double, Double>(scores.size());
-
-        // estimate p
-        Double currentScore = scores.get(0);
-        TargetDecoyPoint tempPoint, previousPoint = hitMap.get(currentScore);
-        double nLimit = 0.5 * windowSize;
-        double nTargetUp = 1.5 * previousPoint.nTarget;
-        double nTargetDown = -0.5 * previousPoint.nTarget;
-        double nDecoy = previousPoint.nDecoy;
-        int iDown = 0;
-        int iUp = 1;
-        int lastiUp = -1;
-        boolean oneReached = false;
-
-        for (int i = 0; i < scores.size(); i++) {
-            currentScore = scores.get(i);
-            TargetDecoyPoint point = hitMap.get(currentScore);
-            if (!oneReached) {
-                double change = 0.5 * (previousPoint.nTarget + point.nTarget);
-                nTargetDown += change;
-                nTargetUp -= change;
-                while (nTargetDown > nLimit) {
-                    if (iDown < i) {
-                        tempPoint = hitMap.get(scores.get(iDown));
-                        double nTargetDownTemp = nTargetDown - tempPoint.nTarget;
-                        if (nTargetDownTemp >= nLimit) {
-                            nDecoy -= tempPoint.nDecoy;
-                            nTargetDown = nTargetDownTemp;
-                            iDown++;
+            // estimate p
+            Double currentScore = scores.get(0);
+            TargetDecoyPoint tempPoint, previousPoint = hitMap.get(currentScore);
+            double nLimit = 0.5 * windowSize;
+            double nTargetUp = 1.5 * previousPoint.nTarget;
+            double nTargetDown = -0.5 * previousPoint.nTarget;
+            double nDecoy = previousPoint.nDecoy;
+            int iDown = 0;
+            int iUp = 1;
+            int lastiUp = -1;
+            boolean oneReached = false;
+            
+            for (int i = 0; i < scores.size(); i++) {
+                currentScore = scores.get(i);
+                TargetDecoyPoint point = hitMap.get(currentScore);
+                if (!oneReached) {
+                    double change = 0.5 * (previousPoint.nTarget + point.nTarget);
+                    nTargetDown += change;
+                    nTargetUp -= change;
+                    while (nTargetDown > nLimit) {
+                        if (iDown < i) {
+                            tempPoint = hitMap.get(scores.get(iDown));
+                            double nTargetDownTemp = nTargetDown - tempPoint.nTarget;
+                            if (nTargetDownTemp >= nLimit) {
+                                nDecoy -= tempPoint.nDecoy;
+                                nTargetDown = nTargetDownTemp;
+                                iDown++;
+                            } else {
+                                break;
+                            }
                         } else {
                             break;
                         }
-                    } else {
-                        break;
                     }
+                    while (nTargetUp < nLimit && iUp < scores.size()) {
+                        tempPoint = hitMap.get(scores.get(iUp));
+                        nTargetUp += tempPoint.nTarget;
+                        nDecoy += tempPoint.nDecoy;
+                        iUp++;
+                    }
+                    double nTarget = nTargetDown + nTargetUp;
+                    point.p = Math.max(Math.min(nDecoy / nTarget, 1), 0);
+                    if (point.p >= 0.98) {
+                        oneReached = true;
+                    }
+                } else {
+                    point.p = 1;
                 }
-                while (nTargetUp < nLimit && iUp < scores.size()) {
-                    tempPoint = hitMap.get(scores.get(iUp));
-                    nTargetUp += tempPoint.nTarget;
-                    nDecoy += tempPoint.nDecoy;
-                    iUp++;
+                previousPoint = point;
+
+                waitingHandler.increaseSecondaryProgressCounter();
+                if (waitingHandler.isRunCanceled()) {
+                    return;
                 }
-                double nTarget = nTargetDown + nTargetUp;
-                point.p = Math.max(Math.min(nDecoy / nTarget, 1), 0);
-                if (point.p >= 0.98) {
-                    oneReached = true;
-                }
-            } else {
-                point.p = 1;
             }
-            previousPoint = point;
-
-            if (iDown > lastiUp) {
-                Double nTp = nTargetDown + nTargetUp - nDecoy;
-                nFP.put(currentScore, nDecoy);
-                nTP.put(currentScore, nTp);
-                lastiUp = iUp;
-            }
-
-            waitingHandler.increaseSecondaryProgressCounter();
-            if (waitingHandler.isRunCanceled()) {
-                return;
-            }
-        }
-
-        if (iUp > lastiUp) {
-            Double nTp = nTargetDown + nTargetUp - nDecoy;
-            nFP.put(currentScore, nDecoy);
-            nTP.put(currentScore, nTp);
-        }
-
     }
 
     /**
@@ -407,7 +396,7 @@ public class TargetDecoyMap implements Serializable {
      * @return the target decoy series
      */
     public TargetDecoySeries getTargetDecoySeries() {
-        return new TargetDecoySeries(hitMap, nTP, nFP);
+        return new TargetDecoySeries(hitMap);
     }
 
     /**
