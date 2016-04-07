@@ -42,7 +42,6 @@ import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.LegendTitle;
@@ -2855,8 +2854,8 @@ public class ValidationPanel extends javax.swing.JPanel {
         for (int i = bins.length - 1; i >= 0; i--) {
             double tempScore = bins[i];
             categories[i] = ((int) (100 - tempScore)) + "";
-            targetDecoyDataset.addValue(nTarget[i], "True Positives", categories[i]);
-            targetDecoyDataset.addValue(nDecoy[i], "False Positives", categories[i]);
+            targetDecoyDataset.addValue(nTarget[i], "Target", categories[i]);
+            targetDecoyDataset.addValue(nDecoy[i], "Decoy", categories[i]);
         }
 
         // prepare for hiding every second category label
@@ -2890,8 +2889,8 @@ public class ValidationPanel extends javax.swing.JPanel {
         JFreeChart targetDecoyChart = new JFreeChart(targetDecoyPlot);
 
         // set the renderer
-        //BarRenderer renderer = new BarRenderer();
-        StackedBarRenderer renderer = new StackedBarRenderer();
+        BarRenderer renderer = new BarRenderer();
+        //StackedBarRenderer renderer = new StackedBarRenderer();
         renderer.setShadowVisible(false);
         renderer.setSeriesPaint(0, new Color(110, 196, 97, 225));
         renderer.setSeriesPaint(1, new Color(255, 0, 0));
@@ -2915,7 +2914,7 @@ public class ValidationPanel extends javax.swing.JPanel {
 
         // set the chart title
         ChartPanel chartPanel = new ChartPanel(targetDecoyChart);
-        targetDecoyChart.setTitle("True Positives & False Positives");
+        targetDecoyChart.setTitle("Target vs. Decoy");
 
         // set background color
         targetDecoyChart.getPlot().setBackgroundPaint(Color.WHITE);
