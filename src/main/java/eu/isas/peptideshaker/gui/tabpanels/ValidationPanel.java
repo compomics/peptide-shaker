@@ -201,7 +201,6 @@ public class ValidationPanel extends javax.swing.JPanel {
 
         // Initialize target/decoy plot
         // @TODO: do something here?
-
         // Initialize cost/benefit plot
         NumberAxis benefitAxis = new NumberAxis("Coverage (1-FNR) [%]");
         NumberAxis costAxis = new NumberAxis("False Discovery Rate (FDR) [%]");
@@ -2851,9 +2850,10 @@ public class ValidationPanel extends javax.swing.JPanel {
 
         String[] categories = new String[bins.length];
 
-        for (int i = bins.length - 1; i >= 0; i--) {
+        for (int i = 0; i < bins.length; i++) {
             double tempScore = bins[i];
-            categories[i] = ((int) (100 - tempScore)) + "";
+            String category = ((int) (Math.round(tempScore))) + "";
+            categories[i] = category;
             targetDecoyDataset.addValue(nTarget[i], "Target", categories[i]);
             targetDecoyDataset.addValue(nDecoy[i], "Decoy", categories[i]);
         }
@@ -2884,7 +2884,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         // remove the space before and after the plots on the x-axis
         targetDecoyPlot.getDomainAxis().setLowerMargin(0.0);
         targetDecoyPlot.getDomainAxis().setUpperMargin(0.0);
-        
+
         // create the chart
         JFreeChart targetDecoyChart = new JFreeChart(targetDecoyPlot);
 
@@ -2899,10 +2899,10 @@ public class ValidationPanel extends javax.swing.JPanel {
         ((CategoryPlot) targetDecoyChart.getPlot()).setRenderer(renderer);
         CategoryAxis axis = targetDecoyPlot.getDomainAxis();
         //axis.setCategoryMargin(0);
-        
+
         // add the confidence marker
         double confidenceValue = confidenceMarker.getValue();
-        
+
         for (String categorie : categories) {
             int value = Integer.parseInt(categorie);
             if (value < confidenceValue) {

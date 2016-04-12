@@ -161,7 +161,7 @@ public class TargetDecoySeries {
             probaBenefit[i] = 100 - probaFnrTemp;
             decoy[i] = currentPoint.nTarget == 0;
 
-            double scoreLog = scoresLog[i];
+            double scoreLog = scoresLog[iInvert];
             int bin = ((int) (Math.round((scoreLog - histogramScoreMin) / binSize)));
             nDecoy[bin] += currentPoint.nDecoy;
             nTarget[bin] += currentPoint.nTarget;

@@ -227,7 +227,6 @@ public class TargetDecoyMap implements Serializable {
         double nDecoy = previousPoint.nDecoy;
         int iDown = 0;
         int iUp = 1;
-        int lastiUp = -1;
         boolean oneReached = false;
 
         for (int i = 0; i < scores.size(); i++) {
