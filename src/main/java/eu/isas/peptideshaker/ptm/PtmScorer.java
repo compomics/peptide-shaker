@@ -2162,7 +2162,6 @@ public class PtmScorer {
                             if (nAssignedSites == null) {
                                 nAssignedSites = 0;
                             }
-                            boolean enoughPtms = nPTMs - nAssignedSites >= sites.size();
 
                             for (int site : sites) {
 
@@ -2193,10 +2192,10 @@ public class PtmScorer {
                                         modificationMatch.setTheoreticPtm(modName);
                                         assignedPtms.add(modificationMatch);
 
-                                        if (pScore <= randomThreshold || !enoughPtms && pScore <= doubtfulThreshold) {
+                                        if (pScore <= randomThreshold) {
                                             ptmScoring.setSiteConfidence(site, PtmScoring.RANDOM);
                                             modificationMatch.setConfident(false);
-                                        } else if (pScore <= doubtfulThreshold || enoughPtms) {
+                                        } else if (pScore <= doubtfulThreshold) {
                                             ptmScoring.setSiteConfidence(site, PtmScoring.DOUBTFUL);
                                             modificationMatch.setConfident(false);
                                         } else {
