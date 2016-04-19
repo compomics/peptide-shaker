@@ -641,7 +641,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="preferencesMenuItem">
               <Properties>
                 <Property name="mnemonic" type="int" value="79"/>
-                <Property name="text" type="java.lang.String" value="Project Settings"/>
+                <Property name="text" type="java.lang.String" value="Project Preferences"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>

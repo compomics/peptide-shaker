@@ -162,7 +162,7 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
             }
         });
 
-        preferencesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Project Settings"));
+        preferencesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Project Preferences"));
         preferencesPanel.setOpaque(false);
 
         spectrumCountingLbl.setText("Spectrum Counting");

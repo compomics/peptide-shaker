@@ -1577,7 +1577,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         editMenu.add(jSeparator13);
 
         preferencesMenuItem.setMnemonic('O');
-        preferencesMenuItem.setText("Project Settings");
+        preferencesMenuItem.setText("Project Preferences");
         preferencesMenuItem.setEnabled(false);
         preferencesMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
