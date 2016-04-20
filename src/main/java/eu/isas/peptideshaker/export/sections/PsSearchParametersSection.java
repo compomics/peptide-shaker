@@ -160,6 +160,9 @@ public class PsSearchParametersSection {
                     ionName = PeptideFragmentIon.getSubTypeAsString(searchParameters.getIonSearched2());
                     writer.write(ionName);
                     break;
+                case mc:
+                    writer.write(searchParameters.getnMissedCleavages().toString());
+                    break;
                 default:
                     writer.write("Not implemented");
             }

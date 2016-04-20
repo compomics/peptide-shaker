@@ -16,7 +16,7 @@ public enum PsSearchFeature implements ExportFeature {
     fragment_tolerance_unit("Fragment Ion Tolerance Unit", "Unit of the precursor tolearance: ppm or Da.", false),
     fragment_tolerance("Fragment Ion m/z Tolerance", "Fragment ion m/z tolerance used for the search.", false),
     enzyme("Enzyme", "Enzyme used for the search.", false),
-    mc("Number of Missed Cleavages", "The number of missed cleavages.", false),
+    mc("Maximum Missed Cleavages", "The maximum number of missed cleavages.", false),
     database("Database", "The protein sequence database.", false),
     forward_ion("Forward Ion", "The forward ion type searched for.", false),
     rewind_ion("Rewind Ion", "The rewind ion type searched for.", false),
