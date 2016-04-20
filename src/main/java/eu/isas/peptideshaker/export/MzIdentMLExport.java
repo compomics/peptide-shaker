@@ -498,7 +498,7 @@ public class MzIdentMLExport {
                     + "accession=\"" + currentProtein.getAccession() + "\" searchDatabase_ref=\"" + "SearchDB_1" + "\" >" + lineBreak);
             tabCounter++;
             //br.write(getCurrentTabSpace() + "<Seq>" + currentProtein.getSequence() + "</Seq>" + lineBreak);
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1001088", "protein description", sequenceFactory.getHeader(currentProtein.getAccession()).getDescription()));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1001088", "protein description", StringEscapeUtils.escapeHtml4(sequenceFactory.getHeader(currentProtein.getAccession()).getDescription())));
             tabCounter--;
             br.write(getCurrentTabSpace() + "</DBSequence>" + lineBreak);
 
@@ -1183,7 +1183,7 @@ public class MzIdentMLExport {
             return;
         }
 
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1002439", "final PSM list", null));
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1002439", "final PSM list", null)); // @TODO: add children of MS:1001184 (search statistics)?
 
         tabCounter--;
         br.write(getCurrentTabSpace() + "</SpectrumIdentificationList>" + lineBreak);
@@ -1713,7 +1713,7 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<Measure id=\"Measure_Int\">" + lineBreak);
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam cvRef=\"PSI-MS\" accession=\"MS:1001226\" name=\"product ion intensity\" " + 
-                "unitCvRef=\"PSI-MS\" unitAccession=\"MS:1000043\" unitName=\"intensity unit\"/>" + lineBreak);
+                "unitCvRef=\"PSI-MS\" unitAccession=\"MS:1000131\" unitName=\"number of detector counts\"/>" + lineBreak);
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Measure>" + lineBreak);
 
@@ -1801,7 +1801,7 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "</FileFormat>" + lineBreak);
         br.write(getCurrentTabSpace() + "<DatabaseName>" + lineBreak);
         tabCounter++;
-        writeUserParam(database.getName()); // @TODO: add database type? children of MS:1001013 - database name???
+        writeUserParam(database.getName()); // @TODO: add database type? children of MS:1001013 - database name??? for example: MS:1001104 (database UniProtKB/Swiss-Prot)
         tabCounter--;
         br.write(getCurrentTabSpace() + "</DatabaseName>" + lineBreak);
         writeCvTerm(new CvTerm("PSI-MS", "MS:1001073", "database type amino acid", null));
