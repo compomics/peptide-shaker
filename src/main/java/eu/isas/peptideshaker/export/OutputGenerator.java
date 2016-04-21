@@ -2237,7 +2237,7 @@ public class OutputGenerator {
                             progressDialog.setWaitingText("Importing Peptide to Protein Mapping. Please Wait...");
 
                             // make sure that the tree is available for exporting secondary hit protein mappings
-                            SequenceFactory.getInstance().getDefaultProteinTree();
+                            SequenceFactory.getInstance().getDefaultPeptideMapper();
                             progressDialog.resetPrimaryProgressCounter();
                             progressDialog.setPrimaryProgressCounterIndeterminate(true);
                             progressDialog.setTitle("Copying to File. Please Wait...");

@@ -36,6 +36,8 @@ import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
+import com.compomics.util.experiment.identification.protein_inference.PeptideMapperType;
+import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.experiment.io.identifications.idfilereaders.NovorIdfileReader;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
@@ -351,12 +353,16 @@ public class PsmImporter {
         if (MemoryConsumptionStatus.memoryUsed() > 0.9 && !peptideShakerCache.isEmpty()) {
             peptideShakerCache.reduceMemoryConsumption(0.5, null);
         }
-        // free memory if needed
-        if (MemoryConsumptionStatus.memoryUsed() > 0.9 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
-            ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(0.5, null);
-        }
-        if (!MemoryConsumptionStatus.halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
-            sequenceFactory.reduceNodeCacheSize(0.5);
+        // free from the tree if used
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        if (sequenceMatchingPreferences.getPeptideMapperType() == PeptideMapperType.tree) {
+            if (MemoryConsumptionStatus.memoryUsed() > 0.9 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
+                ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(0.5, null);
+            }
+            ProteinTree proteinTree = (ProteinTree) sequenceFactory.getDefaultPeptideMapper();
+            if (!MemoryConsumptionStatus.halfGbFree() && proteinTree.getNodesInCache() > 0) {
+                proteinTree.reduceNodeCacheSize(0.5);
+            }
         }
 
         nPSMs++;

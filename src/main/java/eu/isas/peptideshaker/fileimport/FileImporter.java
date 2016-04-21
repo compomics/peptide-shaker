@@ -22,6 +22,7 @@ import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
+import com.compomics.util.experiment.identification.protein_inference.PeptideMapperType;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
@@ -30,6 +31,7 @@ import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -96,10 +98,6 @@ public class FileImporter {
      */
     public static final double PTM_MASS_TOLERANCE = 0.01;
     /**
-     * The protein tree used to map peptides on protein sequences.
-     */
-    private ProteinTree proteinTree;
-    /**
      * The shotgun protocol.
      */
     private ShotgunProtocol shotgunProtocol;
@@ -162,12 +160,13 @@ public class FileImporter {
     /**
      * Imports sequences from a FASTA file.
      *
+     * @param sequenceMatchingPreferences the sequence matching preferences
      * @param waitingHandler the handler displaying feedback to the user and
      * allowing canceling the import
      * @param exceptionHandler handler for exceptions
      * @param fastaFile FASTA file to process
      */
-    public void importSequences(WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, File fastaFile) {
+    public void importSequences(SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, File fastaFile) {
 
         try {
             waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".", true, true);
@@ -208,7 +207,7 @@ public class FileImporter {
             sequenceFactory.setnCache(cacheSize);
 
             try {
-                proteinTree = sequenceFactory.getDefaultProteinTree(waitingHandler, exceptionHandler);
+                sequenceFactory.getDefaultPeptideMapper(sequenceMatchingPreferences, waitingHandler, exceptionHandler);
             } catch (SQLException e) {
                 waitingHandler.appendReport("Database " + sequenceFactory.getCurrentFastaFile().getName()
                         + " could not be accessed, make sure that the file is not used by another "
@@ -446,7 +445,7 @@ public class FileImporter {
         public int importFiles() {
 
             try {
-                importSequences(waitingHandler, exceptionHandler, identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase());
+                importSequences(identificationParameters.getSequenceMatchingPreferences(), waitingHandler, exceptionHandler, identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase());
 
                 if (waitingHandler.isRunCanceled()) {
                     return 1;
@@ -734,7 +733,7 @@ public class FileImporter {
 
                         // if any map spectrum sequencing matches on protein sequences
                         if (tagMapper == null) {
-                            tagMapper = new TagMapper(proteinTree, identificationParameters, exceptionHandler);
+                            tagMapper = new TagMapper(identificationParameters, exceptionHandler);
                         }
                         if (fileReader.getTagsMap() != null && !fileReader.getTagsMap().isEmpty()) {
                             if (!peptideShaker.getCache().isEmpty()) {
@@ -759,15 +758,21 @@ public class FileImporter {
                                 }
                             } catch (OutOfMemoryError e) {
                                 // Skip batch mapping and empty caches
-                                ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(1, null);
-                                sequenceFactory.reduceNodeCacheSize(1);
+                                SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+                                if (sequenceMatchingPreferences.getPeptideMapperType() == PeptideMapperType.tree) {
+                                    ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(1, null);
+                                    sequenceFactory.getDefaultPeptideMapper().emptyCache();
+                                }
                                 peptideMapper.setCanceled(true);
                             }
                         }
                         // empty protein caches
                         if (MemoryConsumptionStatus.memoryUsed() > 0.8) {
-                            ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(1, null);
-                            sequenceFactory.reduceNodeCacheSize(1);
+                            SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+                            if (sequenceMatchingPreferences.getPeptideMapperType() == PeptideMapperType.tree) {
+                                ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(1, null);
+                                sequenceFactory.emptyCache();
+                            }
                         }
 
                         waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
@@ -810,8 +815,12 @@ public class FileImporter {
                             peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
                             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                         }
-                        if (!MemoryConsumptionStatus.halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
-                            sequenceFactory.reduceNodeCacheSize(0.5);
+                        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+                        if (sequenceMatchingPreferences.getPeptideMapperType() == PeptideMapperType.tree) {
+                            ProteinTree proteinTree = (ProteinTree) sequenceFactory.getDefaultPeptideMapper();
+                            if (!MemoryConsumptionStatus.halfGbFree() && proteinTree.getNodesInCache() > 0) {
+                                proteinTree.reduceNodeCacheSize(0.5);
+                            }
                         }
                         projectDetails.addIdentificationFiles(idFile);
 

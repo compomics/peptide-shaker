@@ -11,6 +11,8 @@ import com.compomics.util.experiment.identification.filtering.PeptideAssumptionF
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.protein_inference.PeptideMapperType;
+import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
@@ -290,8 +292,11 @@ public class PeptideMapper {
         if (MemoryConsumptionStatus.memoryUsed() > 0.8 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
             ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(0.5, null);
         }
-        if (!MemoryConsumptionStatus.halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
-            sequenceFactory.reduceNodeCacheSize(0.5);
+        if (sequenceMatchingPreferences.getPeptideMapperType() == PeptideMapperType.tree) {
+            ProteinTree proteinTree = (ProteinTree) sequenceFactory.getDefaultPeptideMapper();
+            if (MemoryConsumptionStatus.memoryUsed() > 0.9 && proteinTree.getNodesInCache() > 0) {
+                proteinTree.reduceNodeCacheSize(0.5);
+            }
         }
         if (MemoryConsumptionStatus.memoryUsed() > 0.8) {
             Runtime.getRuntime().gc();
@@ -346,9 +351,13 @@ public class PeptideMapper {
             }
         }
 
-        int peptideMapKeyLength = SequenceFactory.getInstance().getDefaultProteinTree().getInitialTagSize();
+        int peptideMapKeyLength = 2;
+        if (sequenceMatchingPreferences.getPeptideMapperType() == PeptideMapperType.tree) {
+            ProteinTree proteinTree = (ProteinTree) SequenceFactory.getInstance().getDefaultPeptideMapper();
+            peptideMapKeyLength = proteinTree.getInitialTagSize();
+        }
         int rankMax = 3;
-        HashMap<String, LinkedList<Peptide>> peptideMap = new HashMap<String, LinkedList<Peptide>>(7000);
+        HashMap<String, LinkedList<Peptide>> peptideMap = new HashMap<String, LinkedList<Peptide>>(8000);
 
         for (SpectrumMatch spectrumMatch : idFileSpectrumMatches) {
 

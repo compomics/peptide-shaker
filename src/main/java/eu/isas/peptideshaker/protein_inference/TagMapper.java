@@ -17,7 +17,6 @@ import com.compomics.util.experiment.identification.identification_parameters.to
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.TagSpectrumAnnotator;
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.experiment.identification.amino_acid_tags.TagComponent;
@@ -33,6 +32,8 @@ import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
+import com.compomics.util.experiment.identification.protein_inference.PeptideMapperType;
+import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
 import com.compomics.util.waiting.WaitingHandler;
@@ -65,10 +66,6 @@ public class TagMapper {
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
-     * The protein tree to use for the mapping.
-     */
-    private ProteinTree proteinTree;
-    /**
      * The identification parameters.
      */
     private IdentificationParameters identificationParameters;
@@ -84,12 +81,10 @@ public class TagMapper {
     /**
      * Constructor.
      *
-     * @param proteinTree the protein tree to use for the mapping
      * @param identificationParameters the identification parameters
      * @param exceptionHandler an exception handler
      */
-    public TagMapper(ProteinTree proteinTree, IdentificationParameters identificationParameters, ExceptionHandler exceptionHandler) {
-        this.proteinTree = proteinTree;
+    public TagMapper(IdentificationParameters identificationParameters, ExceptionHandler exceptionHandler) {
         this.identificationParameters = identificationParameters;
         this.exceptionHandler = exceptionHandler;
     }
@@ -261,7 +256,7 @@ public class TagMapper {
      * @param spectrumMatch the spectrum match containing the tags to map
      * @param tagMatcher the tag matcher to match the tags
      * @param key the key of the tag to match
-     * @param waitingHandler waiting handler allowing the display of progress 
+     * @param waitingHandler waiting handler allowing the display of progress
      * and canceling the process
      * @param increaseProgress boolean indicating whether the progress bar of
      * the waiting handler should be increased
@@ -277,9 +272,9 @@ public class TagMapper {
      * @throws MzMLUnmarshallerException exception thrown whenever an error
      * occurred while accessing an mzML file.
      */
-    private void mapTagsForSpectrumMatch(Identification identification, SpectrumMatch spectrumMatch, TagMatcher tagMatcher, String key, WaitingHandler 
-            waitingHandler, boolean increaseProgress) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+    private void mapTagsForSpectrumMatch(Identification identification, SpectrumMatch spectrumMatch, TagMatcher tagMatcher, String key, WaitingHandler waitingHandler, boolean increaseProgress) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
 
+        com.compomics.util.experiment.identification.protein_inference.PeptideMapper peptideMapper = sequenceFactory.getDefaultPeptideMapper();
         TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
         int keySize = key.length();
         ArrayList<Integer> charges = new ArrayList<Integer>(1);
@@ -352,7 +347,7 @@ public class TagMapper {
                             if (searchParameters.getFragmentAccuracyType() != SearchParameters.MassAccuracyType.DA) {
                                 throw new UnsupportedOperationException("Fragment ion tolerance in " + searchParameters.getFragmentAccuracyType() + " not supported for tag mapping.");
                             }
-                            HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = proteinTree.getProteinMapping(extendedAssumption.getTag(), tagMatcher, sequenceMatchingPreferences, searchParameters.getFragmentIonAccuracy());
+                            HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = peptideMapper.getProteinMapping(extendedAssumption.getTag(), tagMatcher, sequenceMatchingPreferences, searchParameters.getFragmentIonAccuracy());
                             for (Peptide peptide : proteinMapping.keySet()) {
                                 String peptideKey = peptide.getKey();
                                 if (!peptidesFound.contains(peptideKey)) {
@@ -390,8 +385,11 @@ public class TagMapper {
         if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
             tagMatcher.clearCache();
         }
-        if (MemoryConsumptionStatus.memoryUsed() > 0.9 && sequenceFactory.getNodesInCache() > 0) {
-            sequenceFactory.reduceNodeCacheSize(0.5);
+        if (sequenceMatchingPreferences.getPeptideMapperType() == PeptideMapperType.tree) {
+            ProteinTree proteinTree = (ProteinTree) sequenceFactory.getDefaultPeptideMapper();
+            if (MemoryConsumptionStatus.memoryUsed() > 0.9 && proteinTree.getNodesInCache() > 0) {
+                proteinTree.reduceNodeCacheSize(0.5);
+            }
         }
     }
 
