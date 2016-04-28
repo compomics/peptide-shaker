@@ -206,7 +206,7 @@ public class QCPanel extends javax.swing.JPanel {
 
         psmButtonGroup.add(psmPrecursorMassErrorJRadioButton);
         psmPrecursorMassErrorJRadioButton.setSelected(true);
-        psmPrecursorMassErrorJRadioButton.setText("Precursor Mass Error");
+        psmPrecursorMassErrorJRadioButton.setText("Precursor m/z Error");
         psmPrecursorMassErrorJRadioButton.setIconTextGap(10);
         psmPrecursorMassErrorJRadioButton.setOpaque(false);
         psmPrecursorMassErrorJRadioButton.addActionListener(new java.awt.event.ActionListener() {
@@ -234,7 +234,7 @@ public class QCPanel extends javax.swing.JPanel {
                 .addComponent(psmPrecursorMassErrorJRadioButton)
                 .addGap(18, 18, 18)
                 .addComponent(psmPrecursorChargeJRadioButton)
-                .addContainerGap(723, Short.MAX_VALUE))
+                .addContainerGap(729, Short.MAX_VALUE))
         );
         psmPlotTypePanelLayout.setVerticalGroup(
             psmPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -276,9 +276,9 @@ public class QCPanel extends javax.swing.JPanel {
                 psmPlotHelpJButtonActionPerformed(evt);
             }
         });
-        psmPlotLayeredPane.setLayer(psmPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         psmPlotLayeredPane.add(psmPlotHelpJButton);
         psmPlotHelpJButton.setBounds(640, 0, 10, 25);
+        psmPlotLayeredPane.setLayer(psmPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPsmPlotJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportPsmPlotJButton.setToolTipText("Export");
@@ -301,9 +301,9 @@ public class QCPanel extends javax.swing.JPanel {
                 exportPsmPlotJButtonActionPerformed(evt);
             }
         });
-        psmPlotLayeredPane.setLayer(exportPsmPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         psmPlotLayeredPane.add(exportPsmPlotJButton);
         exportPsmPlotJButton.setBounds(630, 0, 10, 25);
+        psmPlotLayeredPane.setLayer(exportPsmPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout psmPanelLayout = new javax.swing.GroupLayout(psmPanel);
         psmPanel.setLayout(psmPanelLayout);
@@ -463,9 +463,9 @@ public class QCPanel extends javax.swing.JPanel {
                 peptidesPlotHelpJButtonActionPerformed(evt);
             }
         });
-        peptidesPlotLayeredPane.setLayer(peptidesPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         peptidesPlotLayeredPane.add(peptidesPlotHelpJButton);
         peptidesPlotHelpJButton.setBounds(640, 0, 10, 25);
+        peptidesPlotLayeredPane.setLayer(peptidesPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPeptidesPlotJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportPeptidesPlotJButton.setToolTipText("Export");
@@ -488,9 +488,9 @@ public class QCPanel extends javax.swing.JPanel {
                 exportPeptidesPlotJButtonActionPerformed(evt);
             }
         });
-        peptidesPlotLayeredPane.setLayer(exportPeptidesPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         peptidesPlotLayeredPane.add(exportPeptidesPlotJButton);
         exportPeptidesPlotJButton.setBounds(630, 0, 10, 25);
+        peptidesPlotLayeredPane.setLayer(exportPeptidesPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout peptidePanelLayout = new javax.swing.GroupLayout(peptidePanel);
         peptidePanel.setLayout(peptidePanelLayout);
@@ -553,9 +553,9 @@ public class QCPanel extends javax.swing.JPanel {
                 proteinsPlotHelpJButtonActionPerformed(evt);
             }
         });
-        proteinsPlotLayeredPane.setLayer(proteinsPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         proteinsPlotLayeredPane.add(proteinsPlotHelpJButton);
         proteinsPlotHelpJButton.setBounds(640, 0, 10, 25);
+        proteinsPlotLayeredPane.setLayer(proteinsPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportProteinsPlotJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportProteinsPlotJButton.setToolTipText("Export");
@@ -578,9 +578,9 @@ public class QCPanel extends javax.swing.JPanel {
                 exportProteinsPlotJButtonActionPerformed(evt);
             }
         });
-        proteinsPlotLayeredPane.setLayer(exportProteinsPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         proteinsPlotLayeredPane.add(exportProteinsPlotJButton);
         exportProteinsPlotJButton.setBounds(630, 0, 10, 25);
+        proteinsPlotLayeredPane.setLayer(exportProteinsPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         proteinPlotTypePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plot Type"));
         proteinPlotTypePanel.setOpaque(false);
@@ -1696,8 +1696,8 @@ public class QCPanel extends javax.swing.JPanel {
                         ChartPanel chartPanel = new ChartPanel(psmChart);
 
                         if (psmPrecursorMassErrorJRadioButton.isSelected()) {
-                            psmChart.getCategoryPlot().getDomainAxis().setLabel("Precursor Mass Error");
-                            psmChart.setTitle("PSMs QC Plot - Precursor Mass Error");
+                            psmChart.getCategoryPlot().getDomainAxis().setLabel("Precursor m/z Error");
+                            psmChart.setTitle("PSMs QC Plot - Precursor m/z Error");
                         } else if (psmPrecursorChargeJRadioButton.isSelected()) {
                             psmChart.getCategoryPlot().getDomainAxis().setLabel("Precursor Charge");
                             psmChart.setTitle("PSMs QC Plot - Precursor Charge");

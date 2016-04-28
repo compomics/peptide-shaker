@@ -156,7 +156,7 @@
                               <Component id="psmPrecursorMassErrorJRadioButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                               <Component id="psmPrecursorChargeJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="723" max="32767" attributes="0"/>
+                              <EmptySpace pref="729" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -180,7 +180,7 @@
                           <ComponentRef name="psmButtonGroup"/>
                         </Property>
                         <Property name="selected" type="boolean" value="true"/>
-                        <Property name="text" type="java.lang.String" value="Precursor Mass Error"/>
+                        <Property name="text" type="java.lang.String" value="Precursor m/z Error"/>
                         <Property name="iconTextGap" type="int" value="10"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
