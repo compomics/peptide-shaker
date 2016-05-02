@@ -316,7 +316,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         psmTableToolTips.add("Identification Software Agreement");
         psmTableToolTips.add("Peptide Sequence");
         psmTableToolTips.add("Precursor Charge");
-        psmTableToolTips.add("Mass Error");
+        psmTableToolTips.add("m/z Error");
         psmTableToolTips.add("Peptide Spectrum Match Confidence");
         psmTableToolTips.add("Validated");
     }
@@ -479,10 +479,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         psmTooltipMap.put(SpectrumIdentificationPanel.PARTIALLY_MISSING, "First Hit(s) Missing");
 
         psmTable.getColumn("ID").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(Color.lightGray, psmColorMap, psmTooltipMap));
-        psmTable.getColumn("Mass Error").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
+        psmTable.getColumn("m/z Error").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                 -peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPrecursorAccuracy(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPrecursorAccuracy(), // @TODO: how to handle negative values..?
                 peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("m/z Error").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
         psmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                 (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() - 30);
@@ -504,9 +504,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         }
 
         if (peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()) {
-            psmTableToolTips.set(psmTable.getColumn("Mass Error").getModelIndex(), "Mass Error (ppm)");
+            psmTableToolTips.set(psmTable.getColumn("m/z Error").getModelIndex(), "m/z Error (ppm)");
         } else {
-            psmTableToolTips.set(psmTable.getColumn("Mass Error").getModelIndex(), "Mass Error (Da)");
+            psmTableToolTips.set(psmTable.getColumn("m/z Error").getModelIndex(), "m/z Error (Da)");
         }
 
         psmTable.getModel().addTableModelListener(new TableModelListener() {
@@ -3339,7 +3339,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 popupMenu.add(menuItem);
 
-                menuItem = new JMenuItem("Mass Error Plot");
+                menuItem = new JMenuItem("m/z Error Plot");
                 menuItem.addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(java.awt.event.ActionEvent evt) {
                         peptideShakerGUI.exportMassErrorPlotAsFigure();
@@ -3819,7 +3819,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
         }
 
-        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("m/z Error").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
 
         try {

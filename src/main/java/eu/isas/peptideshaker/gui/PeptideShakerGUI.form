@@ -380,7 +380,7 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="exportMassErrorPlotGraphicsJMenuItem">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Mass Error Plot"/>
+                    <Property name="text" type="java.lang.String" value="m/z Error Plot"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportMassErrorPlotGraphicsJMenuItemActionPerformed"/>

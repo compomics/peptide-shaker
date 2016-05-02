@@ -154,7 +154,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
             case 4:
                 return "Charge";
             case 5:
-                return "Mass Error";
+                return "m/z Error";
             case 6:
                 if (showScores) {
                     return "Score";

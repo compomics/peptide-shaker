@@ -1207,7 +1207,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         });
         exportSpectrumMenu.add(exportIntensityHistogramGraphicsJMenuItem);
 
-        exportMassErrorPlotGraphicsJMenuItem.setText("Mass Error Plot");
+        exportMassErrorPlotGraphicsJMenuItem.setText("m/z Error Plot");
         exportMassErrorPlotGraphicsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportMassErrorPlotGraphicsJMenuItemActionPerformed(evt);
@@ -5956,7 +5956,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                 new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, tempChartPanel, lastSelectedFolder);
             } else {
-                JOptionPane.showMessageDialog(this, "No mass error plot to export!", "Export Error", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "No m/z error plot to export!", "Export Error", JOptionPane.INFORMATION_MESSAGE);
             }
         }
 //        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {

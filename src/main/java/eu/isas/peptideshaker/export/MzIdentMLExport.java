@@ -486,7 +486,7 @@ public class MzIdentMLExport {
         // get the sequence database
         ProteinIterator iterator = sequenceFactory.getProteinIterator(false);
 
-//        String dbType = Header.getDatabaseTypeAsString(Header.DatabaseType.Unknown); // @TODO: add database type as user or cv param?
+//        String dbType = Header.getDatabaseTypeAsString(Header.DatabaseType.Unknown); // @TODO: add database type as cv param? children of MS:1001013 (database name)
 //        FastaIndex fastaIndex = sequenceFactory.getCurrentFastaIndex();
 //        if (fastaIndex != null) {
 //            dbType = Header.getDatabaseTypeAsString(fastaIndex.getDatabaseType());
