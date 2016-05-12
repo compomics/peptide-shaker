@@ -13,9 +13,11 @@ import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.utils.user_choice.list_choosers.PtmChooser;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.preferences.LastSelectedFolder;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.followup.ProgenesisExcelExport;
 import eu.isas.peptideshaker.followup.FastaExport;
 import eu.isas.peptideshaker.followup.InclusionListExport;
+import eu.isas.peptideshaker.followup.PepXmlExport;
 import eu.isas.peptideshaker.followup.SpectrumExporter;
 import eu.isas.peptideshaker.followup.ProgenesisExport;
 import eu.isas.peptideshaker.followup.RecalibrationExporter;
@@ -69,6 +71,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         psmSelectionComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         graphDatabaseFormat.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         skylineExportCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        tppExportCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         this.setLocationRelativeTo(peptideShakerGUI);
 
@@ -114,7 +117,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         skylinePanel = new javax.swing.JPanel();
         skylineExportButton = new javax.swing.JButton();
         skylineExportCmb = new javax.swing.JComboBox();
-        swathExportLabel = new javax.swing.JLabel();
+        skylineExportLabel = new javax.swing.JLabel();
+        tppPanel = new javax.swing.JPanel();
+        tppExportButton = new javax.swing.JButton();
+        tppExportCmb = new javax.swing.JComboBox();
+        tppLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Export - Follow Up Analysis");
@@ -383,8 +390,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         skylineExportCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "(no filters yet supported)" }));
         skylineExportCmb.setEnabled(false);
 
-        swathExportLabel.setText("mzIdentML Format");
-        swathExportLabel.setToolTipText("Click for Progenesis LC-MS export help");
+        skylineExportLabel.setText("mzIdentML Format");
+        skylineExportLabel.setToolTipText("Click for Progenesis LC-MS export help");
 
         javax.swing.GroupLayout skylinePanelLayout = new javax.swing.GroupLayout(skylinePanel);
         skylinePanel.setLayout(skylinePanelLayout);
@@ -392,7 +399,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             skylinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, skylinePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(swathExportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(skylineExportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(skylineExportCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
@@ -406,7 +413,47 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(skylinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(skylineExportCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(skylineExportButton)
-                    .addComponent(swathExportLabel))
+                    .addComponent(skylineExportLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        tppPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("TPP Export (beta)"));
+        tppPanel.setOpaque(false);
+
+        tppExportButton.setText("Export as pepXML");
+        tppExportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tppExportButtonActionPerformed(evt);
+            }
+        });
+
+        tppExportCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "(no filters yet supported)" }));
+        tppExportCmb.setEnabled(false);
+
+        tppLabel.setText("pepXML Format");
+        tppLabel.setToolTipText("Click for Progenesis LC-MS export help");
+
+        javax.swing.GroupLayout tppPanelLayout = new javax.swing.GroupLayout(tppPanel);
+        tppPanel.setLayout(tppPanelLayout);
+        tppPanelLayout.setHorizontalGroup(
+            tppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tppPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(tppLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tppExportCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(tppExportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        tppPanelLayout.setVerticalGroup(
+            tppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tppPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(tppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tppExportCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tppExportButton)
+                    .addComponent(tppLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -422,7 +469,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(proteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(spectraPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(graphDatabasesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(skylinePanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(skylinePanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tppPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -440,7 +488,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(inclusionListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(skylinePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tppPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(42, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -451,7 +501,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -859,6 +909,55 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         skylineExport();
     }//GEN-LAST:event_skylineExportButtonActionPerformed
 
+    private void tppExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tppExportButtonActionPerformed
+
+        JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "PepXML does not allow the storage of all PeptideShaker results and should thus be used carefully." + System.getProperty("line.separator")
+                + "For third party tools we recommend using mzIdentML, the standard format of proteomics identification results.", "Warning", JOptionPane.WARNING_MESSAGE);
+
+        final File finalOutputFile = peptideShakerGUI.getUserSelectedFile("tpp_psm_export.pep.xml", ".pep.xml", "PepXML (*.pep.xml)", "Select Destination File", false);;
+
+        if (finalOutputFile != null) {
+
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
+            progressDialog.setTitle("Exporting PSMs. Please Wait...");
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ProgenesisPsmThread") {
+                @Override
+                public void run() {
+                    try {
+                        PepXmlExport pepXmlExport = new PepXmlExport();
+                        pepXmlExport.writePepXmlFile(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationParameters(), finalOutputFile, PeptideShaker.getVersion(), progressDialog);
+
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
+
+                        if (!processCancelled) {
+                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Results exported to \'"
+                                    + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (Exception e) {
+                        progressDialog.setRunFinished();
+                        peptideShakerGUI.catchException(e);
+                    }
+                }
+            }.start();
+        }
+    }//GEN-LAST:event_tppExportButtonActionPerformed
+
     /**
      * Creates an mzIdentML file for Skyline.
      */
@@ -1072,10 +1171,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JLabel recalibrateSpectraLabel;
     private javax.swing.JButton skylineExportButton;
     private javax.swing.JComboBox skylineExportCmb;
+    private javax.swing.JLabel skylineExportLabel;
     private javax.swing.JPanel skylinePanel;
     private javax.swing.JPanel spectraPanel;
     private javax.swing.JComboBox spectrumRecalibrationCmb;
     private javax.swing.JComboBox spectrumValidationCmb;
-    private javax.swing.JLabel swathExportLabel;
+    private javax.swing.JButton tppExportButton;
+    private javax.swing.JComboBox tppExportCmb;
+    private javax.swing.JLabel tppLabel;
+    private javax.swing.JPanel tppPanel;
     // End of variables declaration//GEN-END:variables
 }
