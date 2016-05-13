@@ -166,7 +166,7 @@ public class FileImporter {
      * @param exceptionHandler handler for exceptions
      * @param fastaFile FASTA file to process
      */
-    public void importSequences(SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, File fastaFile) {
+    public void importSequences(SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, File fastaFile, IdentificationParameters identificationParameters) {
 
         try {
             waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".", true, true);
@@ -207,7 +207,7 @@ public class FileImporter {
             sequenceFactory.setnCache(cacheSize);
 
             try {
-                sequenceFactory.getDefaultPeptideMapper(sequenceMatchingPreferences, waitingHandler, exceptionHandler);
+                sequenceFactory.getDefaultPeptideMapper(sequenceMatchingPreferences, waitingHandler, exceptionHandler, identificationParameters);
             } catch (SQLException e) {
                 waitingHandler.appendReport("Database " + sequenceFactory.getCurrentFastaFile().getName()
                         + " could not be accessed, make sure that the file is not used by another "
@@ -445,7 +445,7 @@ public class FileImporter {
         public int importFiles() {
 
             try {
-                importSequences(identificationParameters.getSequenceMatchingPreferences(), waitingHandler, exceptionHandler, identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase());
+                importSequences(identificationParameters.getSequenceMatchingPreferences(), waitingHandler, exceptionHandler, identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase(), identificationParameters);
 
                 if (waitingHandler.isRunCanceled()) {
                     return 1;
