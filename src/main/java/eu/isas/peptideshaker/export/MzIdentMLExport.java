@@ -14,6 +14,8 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.ions.ImmoniumIon;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
+import com.compomics.util.experiment.biology.ions.PrecursorIon;
+import com.compomics.util.experiment.biology.ions.ReporterIon;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory.ProteinIterator;
 import com.compomics.util.experiment.identification.matches.*;
@@ -1455,6 +1457,13 @@ public class MzIdentMLExport {
                                         indexes += (i + 1) + " ";
                                     }
                                 }
+                                
+                                // change the cv term to the generic immonium ion cv term
+                                fragmentIonTerm = new CvTerm("PSI-MS", "MS:1001239", "frag: immonium ion", null);
+                            } else if (ionMatch.ion instanceof ReporterIon) {
+                                // not yet implemented...
+                            } else if (ionMatch.ion instanceof PrecursorIon) {
+                                // not yet implemented...
                             } else {
                                 // not yet implemented...
                             }
