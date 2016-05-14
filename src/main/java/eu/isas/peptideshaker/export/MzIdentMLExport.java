@@ -8,6 +8,7 @@ import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.Ion.IonType;
+import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -15,6 +16,7 @@ import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.ions.ImmoniumIon;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.biology.ions.PrecursorIon;
+import com.compomics.util.experiment.biology.ions.RelatedIon;
 import com.compomics.util.experiment.biology.ions.ReporterIon;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory.ProteinIterator;
@@ -1400,12 +1402,12 @@ public class MzIdentMLExport {
             for (IonMatch ionMatch : matches) {
 
                 if (ionMatch.ion.getType() == IonType.PEPTIDE_FRAGMENT_ION
-                        || ionMatch.ion.getType() == IonType.IMMONIUM_ION) { // @TODO: add PRECURSOR_ION and REPORTER_ION (and RELATED_ION?)
-//                    || ionMatch.ion.getType() == IonType.PRECURSOR_ION
-//                    || ionMatch.ion.getType() == IonType.REPORTER_ION
-//                   || ionMatch.ion.getType() == IonType.RELATED_ION) {
+                        || ionMatch.ion.getType() == IonType.IMMONIUM_ION
+                        || ionMatch.ion.getType() == IonType.PRECURSOR_ION
+                        || ionMatch.ion.getType() == IonType.REPORTER_ION
+                        || ionMatch.ion.getType() == IonType.RELATED_ION) { // @TODO: what about tag fragment ion?
 
-                    CvTerm fragmentIonTerm = ionMatch.ion.getPrideCvTerm(); // @TODO: replace by PSI-MS mappings... (children of MS:1001221)
+                    CvTerm fragmentIonTerm = ionMatch.ion.getPrideCvTerm();
                     Integer charge = ionMatch.charge.value;
 
                     if (fragmentIonTerm != null) {
@@ -1437,19 +1439,25 @@ public class MzIdentMLExport {
 
                         Integer fragmentCharge = chargeTypeIterator.next();
                         ArrayList<IonMatch> ionMatches = allFragmentIons.get(fragmentType).get(fragmentCharge);
-                        CvTerm fragmentIonTerm = ionMatches.get(0).ion.getPrideCvTerm();
+                        CvTerm fragmentIonCvTerm = ionMatches.get(0).ion.getPrideCvTerm();
 
                         String indexes = "";
                         String mzValues = "";
                         String intensityValues = "";
                         String errorValues = "";
 
+                        boolean supportedIon = true;
+
                         // get the fragment ion details
                         for (IonMatch ionMatch : ionMatches) {
 
                             if (ionMatch.ion instanceof PeptideFragmentIon) {
-                                indexes += ((PeptideFragmentIon) ionMatch.ion).getNumber() + " ";
+
+                                indexes += ((PeptideFragmentIon) ionMatch.ion).getNumber() + " "; 
+                                // @TODO: request more peptide fragment ion with neutal losses cv terms? (add to getPrideCvTerm in PeptideFragmentIon)
+
                             } else if (ionMatch.ion instanceof ImmoniumIon) {
+
                                 char residue = ImmoniumIon.getResidue(((ImmoniumIon) ionMatch.ion).getSubType());
                                 char[] peptideAsArray = peptideSequence.toCharArray();
                                 for (int i = 0; i < peptideAsArray.length; i++) {
@@ -1457,15 +1465,49 @@ public class MzIdentMLExport {
                                         indexes += (i + 1) + " ";
                                     }
                                 }
-                                
+
                                 // change the cv term to the generic immonium ion cv term
-                                fragmentIonTerm = new CvTerm("PSI-MS", "MS:1001239", "frag: immonium ion", null);
+                                fragmentIonCvTerm = new CvTerm("PSI-MS", "MS:1001239", "frag: immonium ion", null);
+
                             } else if (ionMatch.ion instanceof ReporterIon) {
-                                // not yet implemented...
+
+                                //indexes = "0";
+                                //fragmentIonCvTerm = new CvTerm("PSI-MS", "MS:100????", "frag: reporter ion", null); // @TODO: request cv terms...
+                                supportedIon = false;
+
+                            } else if (ionMatch.ion instanceof RelatedIon) {
+                                
+                                // @TODO: request cv terms?
+                                supportedIon = false;
+                                
                             } else if (ionMatch.ion instanceof PrecursorIon) {
-                                // not yet implemented...
+
+                                indexes = "0";
+                                ArrayList<NeutralLoss> neutralLosses = ionMatch.ion.getNeutralLosses();
+
+                                if (neutralLosses.isEmpty()) {
+                                    fragmentIonCvTerm = new CvTerm("PSI-MS", "MS:1001523", "frag: precursor ion", null);
+                                } else if (neutralLosses.size() == 1) {
+
+                                    NeutralLoss tempNeutralLoss = neutralLosses.get(0);
+
+                                    if (tempNeutralLoss.isSameAs(NeutralLoss.H2O)) {
+                                        fragmentIonCvTerm = new CvTerm("PSI-MS", "MS:1001521", "frag: precursor ion - H2O", null);
+                                    } else if (tempNeutralLoss.isSameAs(NeutralLoss.NH3)) {
+                                        fragmentIonCvTerm = new CvTerm("PSI-MS", "MS:1001522", "frag: precursor ion - NH3", null);
+                                    } else {
+                                        // no cv terms for other neutral losses // @TODO: request more cv terms?
+                                        supportedIon = false;
+                                    }
+
+                                } else {
+                                    // no cv terms for multiple neutral losses
+                                    supportedIon = false;
+                                }
+
                             } else {
-                                // not yet implemented...
+                                // unsupported ion types...
+                                supportedIon = false;
                             }
 
                             mzValues += ionMatch.peak.mz + " ";
@@ -1473,17 +1515,20 @@ public class MzIdentMLExport {
                             errorValues += ionMatch.getAbsoluteError() + " ";
                         }
 
-                        br.write(getCurrentTabSpace() + "<IonType charge=\"" + fragmentCharge + "\" index=\"" + indexes.trim() + "\">" + lineBreak);
-                        tabCounter++;
+                        // add the supported fragment ions
+                        if (supportedIon) {
+                            br.write(getCurrentTabSpace() + "<IonType charge=\"" + fragmentCharge + "\" index=\"" + indexes.trim() + "\">" + lineBreak);
+                            tabCounter++;
 
-                        br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_MZ\" values=\"" + mzValues.trim() + "\"/>" + lineBreak);
-                        br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Int\" values=\"" + intensityValues.trim() + "\"/>" + lineBreak);
-                        br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Error\" values=\"" + errorValues.trim() + "\"/>" + lineBreak);
+                            br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_MZ\" values=\"" + mzValues.trim() + "\"/>" + lineBreak);
+                            br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Int\" values=\"" + intensityValues.trim() + "\"/>" + lineBreak);
+                            br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Error\" values=\"" + errorValues.trim() + "\"/>" + lineBreak);
 
-                        writeCvTerm(new CvTerm(fragmentIonTerm.getOntology(), fragmentIonTerm.getAccession(), fragmentIonTerm.getName(), null));
+                            writeCvTerm(new CvTerm(fragmentIonCvTerm.getOntology(), fragmentIonCvTerm.getAccession(), fragmentIonCvTerm.getName(), null));
 
-                        tabCounter--;
-                        br.write(getCurrentTabSpace() + "</IonType>" + lineBreak);
+                            tabCounter--;
+                            br.write(getCurrentTabSpace() + "</IonType>" + lineBreak);
+                        }
                     }
                 }
 
@@ -1677,7 +1722,7 @@ public class MzIdentMLExport {
 
             // add other cv and user params
             br.write(getCurrentTabSpace() + "<cvParam cvRef=\"PSI-MS\" accession=\"MS:1001117\" name=\"theoretical mass\" value=\"" + String.valueOf(bestPeptideAssumption.getTheoreticMass()) + "\" "
-                        + "unitCvRef=\"UO\" unitAccession=\"UO:0000221\" unitName=\"dalton\"/>" + lineBreak);
+                    + "unitCvRef=\"UO\" unitAccession=\"UO:0000221\" unitName=\"dalton\"/>" + lineBreak);
 
             // add validation level information
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002540", "PeptideShaker PSM confidence type", psmParameter.getMatchValidationLevel().getName()));
@@ -1713,24 +1758,24 @@ public class MzIdentMLExport {
         // mz
         br.write(getCurrentTabSpace() + "<Measure id=\"Measure_MZ\">" + lineBreak);
         tabCounter++;
-        br.write(getCurrentTabSpace() + "<cvParam cvRef=\"PSI-MS\" accession=\"MS:1001225\" name=\"product ion m/z\" " + 
-                "unitCvRef=\"PSI-MS\" unitAccession=\"MS:1000040\" unitName=\"m/z\" />" + lineBreak);
+        br.write(getCurrentTabSpace() + "<cvParam cvRef=\"PSI-MS\" accession=\"MS:1001225\" name=\"product ion m/z\" "
+                + "unitCvRef=\"PSI-MS\" unitAccession=\"MS:1000040\" unitName=\"m/z\" />" + lineBreak);
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Measure>" + lineBreak);
 
         // intensity
         br.write(getCurrentTabSpace() + "<Measure id=\"Measure_Int\">" + lineBreak);
         tabCounter++;
-        br.write(getCurrentTabSpace() + "<cvParam cvRef=\"PSI-MS\" accession=\"MS:1001226\" name=\"product ion intensity\" " + 
-                "unitCvRef=\"PSI-MS\" unitAccession=\"MS:1000131\" unitName=\"number of detector counts\"/>" + lineBreak);
+        br.write(getCurrentTabSpace() + "<cvParam cvRef=\"PSI-MS\" accession=\"MS:1001226\" name=\"product ion intensity\" "
+                + "unitCvRef=\"PSI-MS\" unitAccession=\"MS:1000131\" unitName=\"number of detector counts\"/>" + lineBreak);
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Measure>" + lineBreak);
 
         // mass error
         br.write(getCurrentTabSpace() + "<Measure id=\"Measure_Error\">" + lineBreak);
         tabCounter++;
-        br.write(getCurrentTabSpace() + "<cvParam cvRef=\"PSI-MS\" accession=\"MS:1001227\" name=\"product ion m/z error\" " + 
-                "unitCvRef=\"PSI-MS\" unitAccession=\"MS:1000040\" unitName=\"m/z\"/>" + lineBreak);
+        br.write(getCurrentTabSpace() + "<cvParam cvRef=\"PSI-MS\" accession=\"MS:1001227\" name=\"product ion m/z error\" "
+                + "unitCvRef=\"PSI-MS\" unitAccession=\"MS:1000040\" unitName=\"m/z\"/>" + lineBreak);
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Measure>" + lineBreak);
 
@@ -1939,8 +1984,8 @@ public class MzIdentMLExport {
      * Convenience method writing a CV term.
      *
      * @param cvTerm the CV term
-     * @param showValue decides if the CV terms value (if existing) is
-     * printed or not
+     * @param showValue decides if the CV terms value (if existing) is printed
+     * or not
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
      */
@@ -1953,14 +1998,14 @@ public class MzIdentMLExport {
 
         writeCvTermValue(cvTerm, showValue);
     }
-    
+
     /**
      * Convenience method writing the value element of a CV term.
-     * 
+     *
      * @param cvTerm the CV term
-     * @param showValue decides if the CV terms value (if existing) is
-     * printed or not
-     * @throws IOException 
+     * @param showValue decides if the CV terms value (if existing) is printed
+     * or not
+     * @throws IOException
      */
     private void writeCvTermValue(CvTerm cvTerm, boolean showValue) throws IOException {
         if (showValue && cvTerm.getValue() != null) {
