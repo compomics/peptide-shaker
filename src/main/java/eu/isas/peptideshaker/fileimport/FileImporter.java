@@ -207,7 +207,7 @@ public class FileImporter {
             sequenceFactory.setnCache(cacheSize);
 
             try {
-                sequenceFactory.getDefaultPeptideMapper(sequenceMatchingPreferences, waitingHandler, exceptionHandler, identificationParameters);
+                sequenceFactory.getDefaultPeptideMapper(sequenceMatchingPreferences, identificationParameters.getSearchParameters().getPtmSettings(), waitingHandler, exceptionHandler);
             } catch (SQLException e) {
                 waitingHandler.appendReport("Database " + sequenceFactory.getCurrentFastaFile().getName()
                         + " could not be accessed, make sure that the file is not used by another "
