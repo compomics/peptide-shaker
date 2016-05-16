@@ -940,7 +940,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
                     try {
                         PepXmlExport pepXmlExport = new PepXmlExport();
-                        pepXmlExport.writePepXmlFile(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationParameters(), finalOutputFile, PeptideShaker.getVersion(), progressDialog);
+                        pepXmlExport.writePepXmlFile(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationParameters(), finalOutputFile, PeptideShaker.getVersion(), progressDialog, peptideShakerGUI.getExceptionHandler());
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();

@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.followup;
 
 import com.compomics.util.Util;
+import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.AminoAcid;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.Atom;
@@ -14,6 +15,7 @@ import com.compomics.util.experiment.identification.SpectrumIdentificationAssump
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
+import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -48,6 +50,10 @@ public class PepXmlExport {
      * The PTM factory
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
+    /**
+     * The sequence factory.
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
     /**
      * Constructor
@@ -66,6 +72,7 @@ public class PepXmlExport {
      * @param peptideShakerVersion the PeptideShaker version
      * @param waitingHandler a waiting handler to display progress and allow
      * interrupting the process
+     * @param exceptionHandler a handler for exceptions
      *
      * @throws IOException exception thrown whenever an error is encountered
      * while reading or writing a file
@@ -78,7 +85,14 @@ public class PepXmlExport {
      * @throws MzMLUnmarshallerException exception thrown whenever an error is
      * encountered while reading an mzML file
      */
-    public void writePepXmlFile(Identification identification, IdentificationParameters identificationParameters, File destinationFile, String peptideShakerVersion, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public void writePepXmlFile(Identification identification, IdentificationParameters identificationParameters, File destinationFile, String peptideShakerVersion, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+
+        if (waitingHandler != null) {
+            waitingHandler.setWaitingText("Loading peptide to protein mapping. Please Wait...");
+            waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+        }
+
+        sequenceFactory.getDefaultPeptideMapper(identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getSearchParameters().getPtmSettings(), waitingHandler, exceptionHandler);
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Exporting PSMs. Please Wait...");
