@@ -386,7 +386,7 @@ public class PeptideShaker {
             return;
         }
 
-        if (identificationParameters.getPtmScoringPreferences().getAlignNonConfidentPTMs()) {
+        if (ptmScoringPreferences.getAlignNonConfidentPTMs()) {
             waitingHandler.appendReport("Resolving peptide inference issues.", true, true);
             ptmScorer.peptideInference(identification, identificationParameters, waitingHandler);
             waitingHandler.increasePrimaryProgressCounter();
@@ -405,12 +405,14 @@ public class PeptideShaker {
             return;
         }
 
-        waitingHandler.appendReport("Simplifying protein groups.", true, true);
         ProteinInference proteinInference = new ProteinInference();
-        proteinInference.removeRedundantGroups(identification, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, waitingHandler);
-        waitingHandler.increasePrimaryProgressCounter();
-        if (waitingHandler.isRunCanceled()) {
-            return;
+        if (identificationParameters.getProteinInferencePreferences().getSimplifyGroups()) {
+            waitingHandler.appendReport("Simplifying protein groups.", true, true);
+            proteinInference.removeRedundantGroups(identification, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, waitingHandler);
+            waitingHandler.increasePrimaryProgressCounter();
+            if (waitingHandler.isRunCanceled()) {
+                return;
+            }
         }
 
         waitingHandler.appendReport("Generating peptide map.", true, true);
