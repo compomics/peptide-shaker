@@ -386,11 +386,13 @@ public class PeptideShaker {
             return;
         }
 
-        waitingHandler.appendReport("Resolving peptide inference issues.", true, true);
-        ptmScorer.peptideInference(identification, identificationParameters, waitingHandler);
-        waitingHandler.increasePrimaryProgressCounter();
-        if (waitingHandler.isRunCanceled()) {
-            return;
+        if (identificationParameters.getPtmScoringPreferences().getAlignNonConfidentPTMs()) {
+            waitingHandler.appendReport("Resolving peptide inference issues.", true, true);
+            ptmScorer.peptideInference(identification, identificationParameters, waitingHandler);
+            waitingHandler.increasePrimaryProgressCounter();
+            if (waitingHandler.isRunCanceled()) {
+                return;
+            }
         }
 
         if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
