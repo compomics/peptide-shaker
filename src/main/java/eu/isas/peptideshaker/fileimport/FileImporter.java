@@ -22,6 +22,7 @@ import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
+import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.experiment.identification.protein_inference.PeptideMapperType;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -165,8 +166,10 @@ public class FileImporter {
      * allowing canceling the import
      * @param exceptionHandler handler for exceptions
      * @param fastaFile FASTA file to process
+     * @param ptmSettings the PTM settings
      */
-    public void importSequences(SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, File fastaFile, IdentificationParameters identificationParameters) {
+    public void importSequences(SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler,
+            ExceptionHandler exceptionHandler, File fastaFile, PtmSettings ptmSettings) {
 
         try {
             waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".", true, true);
@@ -207,7 +210,7 @@ public class FileImporter {
             sequenceFactory.setnCache(cacheSize);
 
             try {
-                sequenceFactory.getDefaultPeptideMapper(sequenceMatchingPreferences, identificationParameters.getSearchParameters().getPtmSettings(), waitingHandler, exceptionHandler);
+                sequenceFactory.getDefaultPeptideMapper(sequenceMatchingPreferences, ptmSettings, waitingHandler, exceptionHandler);
             } catch (SQLException e) {
                 waitingHandler.appendReport("Database " + sequenceFactory.getCurrentFastaFile().getName()
                         + " could not be accessed, make sure that the file is not used by another "
@@ -445,7 +448,9 @@ public class FileImporter {
         public int importFiles() {
 
             try {
-                importSequences(identificationParameters.getSequenceMatchingPreferences(), waitingHandler, exceptionHandler, identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase(), identificationParameters);
+                importSequences(identificationParameters.getSequenceMatchingPreferences(), waitingHandler, exceptionHandler,
+                        identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase(),
+                        identificationParameters.getSearchParameters().getPtmSettings());
 
                 if (waitingHandler.isRunCanceled()) {
                     return 1;

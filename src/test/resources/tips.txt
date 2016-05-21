@@ -60,9 +60,9 @@ Running out of disc space?<br><br>An index file is created for every protein dat
 When should I update my tool?<br><br>New versions are frequently released for a constant improvement of our tools. You will be notified if the tool can connect the internet. It is advised to always keep your tools up to date.
 How do results compare between versions?<br><br>Results cannot be compared between major releases (big number change) but between minor releases (small number change).
 What is the best music to listen to when running PeptideShaker?<br><br>Click <a href="https://www.youtube.com/watch?v=Ilj-1sCr6y4">here</a> to enhance your shaking experience! &#9786;
-Missing gene/chromosome information? Gene and Chromosome information is downloaded automatically from the <a href="ensembl.org/biomart">Ensembl biomarts</a>. Make sure that you are using a Uniprot database, that your species is annotated in Ensembl, and that the tool has access to the internet.
+Missing gene/chromosome information? Gene and Chromosome information is downloaded automatically from the <a href="ensembl.org/biomart">Ensembl biomarts</a>. Make sure that you are using a UniProt database, that your species is annotated in Ensembl, and that the tool has access to the internet.
 How to operate PeptideShaker from other applications?<br><br>You can run PeptideShaker <i>via</i> <a href="http://compomics.github.io/peptide-shaker/wiki/peptideshakercli.html">command line</a>. The parameters can be provided in command line or as json files.
-Working with labeled peptides?<br><br>Search a couple of files with variable modifications and then check the labeling efficiency in the peptide <i>Modification Efficiency</i> plot of the <b>QC Tab</b>!
-<b>Fixed</b> or <b>Variable</b> modification?<br><br>Search a couple of files with all variable and then check the site modification rate in the peptide <i>Modification Efficiency</i> plot of the <b>QC Tab</b>!
-Which modifications to search?<br><br>Try different combinations and evaluate the results in the <i>#Modification</i> plot of the <b>QC Tab</b>!
-Working with enriched peptides?<br><br>Check the enrichment specificity in the peptide <i>Modification Specificity</i> plot of the <b>QC Tab</b>!
+Working with labeled peptides?<br><br>Search a couple of files with variable modifications and then check the labeling efficiency in the peptide <i>Modification Efficiency</i> plot in the <i>QC Plots</i> tab!
+<b>Fixed</b> or <b>Variable</b> modification?<br><br>Search a couple of files with all variable and then check the site modification rate in the peptide <i>Modification Efficiency</i> plot in the <i>QC Plots</i> tab!
+Which modifications to search?<br><br>Try different combinations and evaluate the results in the <i>#Modification</i> plot in the <i>QC Plots</i> tab!
+Working with enriched peptides?<br><br>Check the enrichment specificity in the peptide <i>Modification Specificity</i> plot in the <i>QC Plots</i> tab!
