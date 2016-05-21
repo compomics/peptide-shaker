@@ -923,7 +923,12 @@ public class PtmScorer {
                 }
             }
 
-            HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSites, nRepresentativesMap, inferredSites);
+            HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> representativeToSecondaryMap;
+            try {
+                representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSites, nRepresentativesMap, inferredSites);
+            } catch (Exception e) {
+                representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSites, nRepresentativesMap, inferredSites);
+            }
 
             for (Double ptmMass : representativeToSecondaryMap.keySet()) {
                 HashMap<Integer, HashMap<Integer, ArrayList<String>>> representativesAtMass = representativeToSecondaryMap.get(ptmMass);
@@ -1633,7 +1638,6 @@ public class PtmScorer {
                         }
                     }
                     if (variableAA) {
-                        ptmSiteInference(spectrumMatch, identificationParameters);
                         boolean confident = true;
                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
                             if (modMatch.isVariable()) {
@@ -1919,7 +1923,7 @@ public class PtmScorer {
             PSPtmScores ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
             HashMap<Double, ArrayList<ModificationMatch>> modMatchesMap = new HashMap<Double, ArrayList<ModificationMatch>>(psPeptide.getNModifications());
             HashMap<Double, HashMap<Integer, String>> possiblePositions = new HashMap<Double, HashMap<Integer, String>>(psPeptide.getNModifications());
-            HashMap<Double, HashMap<Integer, ArrayList<String>>> confidentSites = new HashMap<Double, HashMap<Integer, ArrayList<String>>>();
+            HashMap<Double, HashMap<Integer, ArrayList<String>>> confidentSites = new HashMap<Double, HashMap<Integer, ArrayList<String>>>(psPeptide.getNModifications());
 
             for (ModificationMatch modificationMatch : psPeptide.getModificationMatches()) {
                 if (modificationMatch.isVariable()) {
@@ -2362,6 +2366,7 @@ public class PtmScorer {
                     SpectrumMatch spectrumMatch = psmIterator.next();
                     if (spectrumMatch != null && spectrumMatch.getBestPeptideAssumption() != null) {
                         scorePTMs(identification, spectrumMatch, identificationParameters, waitingHandler, peptideSpectrumAnnotator);
+                        ptmSiteInference(spectrumMatch, identificationParameters);
                     }
                     if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
                         waitingHandler.increaseSecondaryProgressCounter();

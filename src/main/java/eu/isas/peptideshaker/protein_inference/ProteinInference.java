@@ -11,6 +11,7 @@ import com.compomics.util.experiment.identification.matches_iterators.PeptideMat
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.preferences.ProteinInferencePreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.maps.ProteinMap;
@@ -169,19 +170,27 @@ public class ProteinInference {
      * @param processedKeys map of already processed keys and their best smaller
      * key
      * @param keysToDelete list of keys to delete
+     * @param shotgunProtocol the protocol containing the enzyme used
+     * @param identificationFeaturesGenerator the identification features
+     * generator
+     * @param proteinInferencePreferences the protein inference preferences
      *
      * @return the best smaller group, null if none found.
      *
-     * @throws SQLException exception thrown whenever an error occurred while
-     * getting a match
      * @throws IOException exception thrown whenever an error occurred while
-     * getting a match
+     * reading or writing a file
+     * @throws InterruptedException exception thrown whenever an threading error
+     * occurred
      * @throws ClassNotFoundException exception thrown whenever an error
-     * occurred while getting a match
+     * occurred while deserializing an object
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the back-end database
      */
     private String getSubgroup(Identification identification, String sharedKey, ProteinMatch sharedProteinMatch, HashMap<String, String> processedKeys,
             HashSet<String> keysToDelete, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        ProteinInferencePreferences proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
 
         ArrayList<String> sharedAccessions;
         if (sharedProteinMatch == null) {
@@ -264,7 +273,7 @@ public class ProteinInference {
                                             best = false;
                                         }
                                         for (String accession2 : ProteinMatch.getAccessions(key2)) {
-                                            int tempPrefernce = compareMainProtein(match, accession2, match, accession1, shotgunProtocol, identificationFeaturesGenerator);
+                                            int tempPrefernce = compareMainProtein(match, accession2, match, accession1, shotgunProtocol, identificationFeaturesGenerator, proteinInferencePreferences);
                                             if (tempPrefernce != 1) {
                                                 best = false;
                                             } else {
@@ -280,7 +289,7 @@ public class ProteinInference {
                             if (best) {
                                 ArrayList<String> accessions = ProteinMatch.getOtherProteins(sharedKey, key1);
                                 for (String accession2 : accessions) {
-                                    int tempPrefernce = compareMainProtein(match, accession2, match, accession1, shotgunProtocol, identificationFeaturesGenerator);
+                                    int tempPrefernce = compareMainProtein(match, accession2, match, accession1, shotgunProtocol, identificationFeaturesGenerator, proteinInferencePreferences);
                                     if (tempPrefernce == 0) {
                                         best = false;
                                         break;
@@ -383,85 +392,91 @@ public class ProteinInference {
 
         ArrayList<String> toRemove = new ArrayList<String>();
         int maxProteinKeyLength = 0;
+        ProteinInferencePreferences proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
 
-        int max = 3 * identification.getProteinIdentification().size();
+        int max = 2 * identification.getProteinIdentification().size();
+        if (proteinInferencePreferences.getSimplifyGroups() && proteinInferencePreferences.getSimplifyGroupsScore()) {
+            max += identification.getProteinIdentification().size();
+        }
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
+        if (proteinInferencePreferences.getSimplifyGroups() && proteinInferencePreferences.getSimplifyGroupsScore()) {
+            ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
 
-        while (proteinMatchesIterator.hasNext()) {
+            while (proteinMatchesIterator.hasNext()) {
 
-            ProteinMatch proteinMatch = proteinMatchesIterator.next();
+                ProteinMatch proteinMatch = proteinMatchesIterator.next();
 
-            if (waitingHandler.isRunCanceled()) {
-                return;
-            }
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
 
-            String proteinSharedKey = proteinMatch.getKey();
-            ArrayList<String> sharedAccessions = proteinMatch.getTheoreticProteinsAccessions();
+                String proteinSharedKey = proteinMatch.getKey();
+                ArrayList<String> sharedAccessions = proteinMatch.getTheoreticProteinsAccessions();
 
-            if (sharedAccessions.size() > 1) {
+                if (sharedAccessions.size() > 1) {
 
-                HashSet<String> sharedAccessionsAsSet = null;
-                psParameter = (PSParameter) identification.getProteinMatchParameter(proteinSharedKey, psParameter);
-                double sharedProteinProbabilityScore = psParameter.getProteinProbabilityScore();
-                boolean better = false;
+                    HashSet<String> sharedAccessionsAsSet = null;
+                    psParameter = (PSParameter) identification.getProteinMatchParameter(proteinSharedKey, psParameter);
+                    double sharedProteinProbabilityScore = psParameter.getProteinProbabilityScore();
+                    boolean better = false;
 
-                for (String accession : sharedAccessions) {
-                    HashSet<String> otherGroups = identification.getProteinMap().get(accession);
-                    for (String proteinUniqueKey : otherGroups) {
-                        if (!proteinUniqueKey.equals(proteinSharedKey)) {
-                            ProteinMatch uniqueProteinMatch = identification.getProteinMatch(proteinUniqueKey, false);
-                            ArrayList<String> uniqueAccessions;
-                            if (uniqueProteinMatch != null) {
-                                uniqueAccessions = uniqueProteinMatch.getTheoreticProteinsAccessions();
-                            } else {
-                                uniqueAccessions = getProteins(proteinUniqueKey);
-                            }
-                            if (sharedAccessions.size() >= uniqueAccessions.size()) {
-                                if (sharedAccessionsAsSet == null) {
-                                    sharedAccessionsAsSet = new HashSet<String>(sharedAccessions);
+                    for (String accession : sharedAccessions) {
+                        HashSet<String> otherGroups = identification.getProteinMap().get(accession);
+                        for (String proteinUniqueKey : otherGroups) {
+                            if (!proteinUniqueKey.equals(proteinSharedKey)) {
+                                ProteinMatch uniqueProteinMatch = identification.getProteinMatch(proteinUniqueKey, false);
+                                ArrayList<String> uniqueAccessions;
+                                if (uniqueProteinMatch != null) {
+                                    uniqueAccessions = uniqueProteinMatch.getTheoreticProteinsAccessions();
+                                } else {
+                                    uniqueAccessions = getProteins(proteinUniqueKey);
                                 }
-                                if (ProteinMatch.contains(sharedAccessionsAsSet, uniqueAccessions)) {
-                                    psParameter = (PSParameter) identification.getProteinMatchParameter(proteinUniqueKey, psParameter);
-                                    double uniqueProteinProbabilityScore = psParameter.getProteinProbabilityScore();
-                                    ProteinMatch proteinUnique = identification.getProteinMatch(proteinUniqueKey);
-                                    ProteinMatch proteinShared = identification.getProteinMatch(proteinSharedKey);
-                                    for (String sharedPeptideKey : proteinShared.getPeptideMatchesKeys()) {
-                                        proteinUnique.addPeptideMatchKey(sharedPeptideKey);
+                                if (sharedAccessions.size() >= uniqueAccessions.size()) {
+                                    if (sharedAccessionsAsSet == null) {
+                                        sharedAccessionsAsSet = new HashSet<String>(sharedAccessions);
                                     }
-                                    identification.updateProteinMatch(proteinUnique);
-                                    if (uniqueProteinProbabilityScore <= sharedProteinProbabilityScore) {
-                                        better = true;
+                                    if (ProteinMatch.contains(sharedAccessionsAsSet, uniqueAccessions)) {
+                                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinUniqueKey, psParameter);
+                                        double uniqueProteinProbabilityScore = psParameter.getProteinProbabilityScore();
+                                        ProteinMatch proteinUnique = identification.getProteinMatch(proteinUniqueKey);
+                                        ProteinMatch proteinShared = identification.getProteinMatch(proteinSharedKey);
+                                        for (String sharedPeptideKey : proteinShared.getPeptideMatchesKeys()) {
+                                            proteinUnique.addPeptideMatchKey(sharedPeptideKey);
+                                        }
+                                        identification.updateProteinMatch(proteinUnique);
+                                        if (uniqueProteinProbabilityScore <= sharedProteinProbabilityScore) {
+                                            better = true;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
 
-                if (better) {
-                    toRemove.add(proteinSharedKey);
-                } else {
-                    waitingHandler.increaseSecondaryProgressCounter();
-                    if (waitingHandler.isRunCanceled()) {
-                        return;
+                    if (better) {
+                        toRemove.add(proteinSharedKey);
+                    } else {
+                        waitingHandler.increaseSecondaryProgressCounter();
+                        if (waitingHandler.isRunCanceled()) {
+                            return;
+                        }
                     }
                 }
             }
+
+            for (String proteinKey : toRemove) {
+                psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+                proteinMap.removePoint(psParameter.getProteinProbabilityScore(), ProteinMatch.isDecoy(proteinKey));
+                identification.removeProteinMatch(proteinKey);
+                waitingHandler.increaseSecondaryProgressCounter();
+            }
         }
 
-        for (String proteinKey : toRemove) {
-            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-            proteinMap.removePoint(psParameter.getProteinProbabilityScore(), ProteinMatch.isDecoy(proteinKey));
-            identification.removeProteinMatch(proteinKey);
-            waitingHandler.increaseSecondaryProgressCounter();
-        }
-        
         clearCache();
         ProteinMatch.clearCache();
 
@@ -469,6 +484,7 @@ public class ProteinInference {
         int nGroups = 0;
         int nLeft = 0;
 
+        waitingHandler.setWaitingText("Inferring PI status, sorting proteins. Please Wait...");
         // As we go through all protein ids, keep the sorted list of proteins and maxima in the instance of the Metrics class to pass them to the GUI afterwards
         // proteins are sorted according to the protein score, then number of peptides (inverted), then number of spectra (inverted).
         HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> orderMap
@@ -476,7 +492,7 @@ public class ProteinInference {
         PSParameter probabilities = new PSParameter();
         double maxMW = 0;
 
-        proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
 
         while (proteinMatchesIterator.hasNext()) {
 
@@ -536,7 +552,7 @@ public class ProteinInference {
                 boolean allSimilar = false;
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
                 for (String accession : accessions) {
-                    if (compareMainProtein(proteinMatch, mainKey, proteinMatch, accession, shotgunProtocol, identificationFeaturesGenerator) > 0) {
+                    if (compareMainProtein(proteinMatch, mainKey, proteinMatch, accession, shotgunProtocol, identificationFeaturesGenerator, proteinInferencePreferences) > 0) {
                         mainKey = accession;
                     }
                 }
@@ -544,7 +560,7 @@ public class ProteinInference {
                     for (int j = i + 1; j < accessions.size(); j++) {
                         if (getSimilarity(accessions.get(i), accessions.get(j))) {
                             similarityFound = true;
-                            if (compareMainProtein(proteinMatch, mainKey, proteinMatch, accessions.get(j), shotgunProtocol, identificationFeaturesGenerator) > 0) {
+                            if (compareMainProtein(proteinMatch, mainKey, proteinMatch, accessions.get(j), shotgunProtocol, identificationFeaturesGenerator, proteinInferencePreferences) > 0) {
                                 mainKey = accessions.get(i);
                             }
                             break;
@@ -701,7 +717,14 @@ public class ProteinInference {
         }
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-        waitingHandler.appendReport(nSolved + " conflicts resolved. " + nGroups + " protein groups remaining (" + nLeft + " suspicious).", true, true);
+        String report;
+        if (nSolved > 0) {
+            report = nSolved + " conflicts resolved. ";
+        } else {
+            report = "";
+        }
+        report += nGroups + " protein groups remaining (" + nLeft + " suspicious).";
+        waitingHandler.appendReport(report, true, true);
     }
 
     /**
@@ -738,83 +761,96 @@ public class ProteinInference {
      * @param oldAccession the accession of the old protein
      * @param newProteinMatch the protein match of newAccession
      * @param newAccession the accession of the new protein
+     * @param shotgunProtocol the protocol containing the enzyme used
+     * @param identificationFeaturesGenerator the identification features
+     * generator
+     * @param proteinInferencePreferences the protein inference preferences
      *
      * @return the product of the comparison: 1: better enzymaticity, 2: better
      * evidence, 3: better characterization, 0: equal or not better
      *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws IllegalArgumentException
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file
+     * @throws InterruptedException exception thrown whenever an threading error
+     * occurred
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the back-end database
      */
     private int compareMainProtein(ProteinMatch oldProteinMatch, String oldAccession, ProteinMatch newProteinMatch, String newAccession,
-            ShotgunProtocol shotgunProtocol, IdentificationFeaturesGenerator identificationFeaturesGenerator)
+            ShotgunProtocol shotgunProtocol, IdentificationFeaturesGenerator identificationFeaturesGenerator, ProteinInferencePreferences proteinInferencePreferences)
             throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException, SQLException {
 
-        Enzyme enzyme = shotgunProtocol.getEnzyme();
-        if (enzyme != null && !enzyme.isSemiSpecific()) { // null enzymes should not occur, but could happen with old search param files
-            boolean newEnzymatic = identificationFeaturesGenerator.hasEnzymaticPeptides(newProteinMatch, newAccession);
-            boolean oldEnzymatic = identificationFeaturesGenerator.hasEnzymaticPeptides(oldProteinMatch, oldAccession);
-            if (newEnzymatic && !oldEnzymatic) {
-                return 1;
-            } else if (!newEnzymatic && oldEnzymatic) {
+        if (proteinInferencePreferences.getSimplifyGroupsEnzymaticity()) {
+            Enzyme enzyme = shotgunProtocol.getEnzyme();
+            if (enzyme != null && !enzyme.isSemiSpecific()) { // null enzymes should not occur, but could happen with old search param files
+                boolean newEnzymatic = identificationFeaturesGenerator.hasEnzymaticPeptides(newProteinMatch, newAccession);
+                boolean oldEnzymatic = identificationFeaturesGenerator.hasEnzymaticPeptides(oldProteinMatch, oldAccession);
+                if (newEnzymatic && !oldEnzymatic) {
+                    return 1;
+                } else if (!newEnzymatic && oldEnzymatic) {
+                    return 0;
+                }
+            }
+        }
+
+        if (proteinInferencePreferences.getSimplifyGroupsEvidence()) {
+            String evidenceLevelOld = sequenceFactory.getHeader(oldAccession).getProteinEvidence();
+            String evidenceLevelNew = sequenceFactory.getHeader(newAccession).getProteinEvidence();
+
+            // compare protein evidence levels
+            if (evidenceLevelOld != null && evidenceLevelNew != null) {
+                try {
+                    Integer levelOld = new Integer(evidenceLevelOld);
+                    Integer levelNew = new Integer(evidenceLevelNew);
+                    if (levelNew < levelOld) {
+                        return 2;
+                    } else if (levelOld < levelNew) {
+                        return 0;
+                    }
+                } catch (NumberFormatException e) {
+                    // ignore
+                }
+            }
+            // only the new match has evidence information
+            if (evidenceLevelOld == null && evidenceLevelNew != null) {
+                return 2;
+            }
+            // only the old match has evidence information
+            if (evidenceLevelOld != null && evidenceLevelNew == null) {
                 return 0;
             }
         }
 
-        String evidenceLevelOld = sequenceFactory.getHeader(oldAccession).getProteinEvidence();
-        String evidenceLevelNew = sequenceFactory.getHeader(newAccession).getProteinEvidence();
+        if (proteinInferencePreferences.getSimplifyGroupsUncharacterized()) {
+            // Compare descriptions for keywords of uncharacterized proteins
+            String oldDescription = sequenceFactory.getHeader(oldAccession).getSimpleProteinDescription();
+            String newDescription = sequenceFactory.getHeader(newAccession).getSimpleProteinDescription();
 
-        // compare protein evidence levels
-        if (evidenceLevelOld != null && evidenceLevelNew != null) {
-            try {
-                Integer levelOld = new Integer(evidenceLevelOld);
-                Integer levelNew = new Integer(evidenceLevelNew);
-                if (levelNew < levelOld) {
-                    return 2;
-                } else if (levelOld < levelNew) {
-                    return 0;
+            // if the description is not set, return the accessions instead - fix for home made fasta headers
+            if (oldDescription == null || oldDescription.trim().isEmpty()) {
+                oldDescription = oldAccession;
+            }
+            if (newDescription == null || newDescription.trim().isEmpty()) {
+                newDescription = newAccession;
+            }
+
+            boolean oldUncharacterized = false, newUncharacterized = false;
+            String[] keyWords = {"Uncharacterized", "Putative"};
+            for (String keyWord : keyWords) {
+                if (newDescription.contains(keyWord)) {
+                    newUncharacterized = true;
                 }
-            } catch (NumberFormatException e) {
-                // ignore
+                if (oldDescription.contains(keyWord)) {
+                    oldUncharacterized = true;
+                }
             }
-        }
-
-        // only the new match has evidence information
-        if (evidenceLevelOld == null && evidenceLevelNew != null) {
-            return 2;
-        }
-
-        // only the old match has evidence information
-        if (evidenceLevelOld != null && evidenceLevelNew == null) {
-            return 0;
-        }
-
-        // protein evidence level missing, compare descriptions instead
-        String oldDescription = sequenceFactory.getHeader(oldAccession).getSimpleProteinDescription();
-        String newDescription = sequenceFactory.getHeader(newAccession).getSimpleProteinDescription();
-
-        // if the description is not set, return the accessions instead - fix for home made fasta headers
-        if (oldDescription == null || oldDescription.trim().isEmpty()) {
-            oldDescription = oldAccession;
-        }
-        if (newDescription == null || newDescription.trim().isEmpty()) {
-            newDescription = newAccession;
-        }
-
-        boolean oldUncharacterized = false, newUncharacterized = false;
-        String[] keyWords = {"Uncharacterized", "Putative"};
-        for (String keyWord : keyWords) {
-            if (newDescription.contains(keyWord)) {
-                newUncharacterized = true;
+            if (oldUncharacterized && !newUncharacterized) {
+                return 3;
+            } else if (!oldUncharacterized && newUncharacterized) {
+                return 0;
             }
-            if (oldDescription.contains(keyWord)) {
-                oldUncharacterized = true;
-            }
-        }
-        if (oldUncharacterized && !newUncharacterized) {
-            return 3;
-        } else if (!oldUncharacterized && newUncharacterized) {
-            return 0;
         }
 
         return 0;
@@ -923,7 +959,7 @@ public class ProteinInference {
         }
         return result;
     }
-    
+
     /**
      * Clears the cache.
      */

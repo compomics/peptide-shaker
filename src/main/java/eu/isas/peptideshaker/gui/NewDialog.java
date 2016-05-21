@@ -735,9 +735,15 @@ public class NewDialog extends javax.swing.JDialog {
             progressCounter++; // the FASTA file
             progressCounter++; // the peptide to protein map
             progressCounter += 6; // computing probabilities etc
-            progressCounter += 2; // resolving protein inference
+            if (identificationParameters.getProteinInferencePreferences().getSimplifyGroups()) {
+                progressCounter++; // simplify protein groups
+            }
+            progressCounter++; // resolving protein inference
             progressCounter += 4; // Correcting protein probabilities, Validating identifications at 1% FDR, Scoring PTMs in peptides, Scoring PTMs in proteins.
-            progressCounter += 3; // Scoring PTMs in PSMs. Estimating PTM FLR. Resolving peptide inference issues.
+            progressCounter += 2; // Scoring PTMs in PSMs. Estimating PTM FLR.
+            if (identificationParameters.getPtmScoringPreferences().getAlignNonConfidentPTMs()) {
+                progressCounter++; // Peptide inference
+            }
 
             // add one more just to not start at 0%
             progressCounter++;

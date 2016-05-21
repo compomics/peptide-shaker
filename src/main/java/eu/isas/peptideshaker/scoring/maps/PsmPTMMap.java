@@ -224,13 +224,15 @@ public class PsmPTMMap implements Serializable {
      * @return the corresponding key
      */
     public Integer getCorrectedKey(Double ptmMass, int specificKey) {
-        if (!grouping.containsKey(ptmMass)) {
+        HashMap<Integer, Integer> groupingAtPtmMass = grouping.get(ptmMass);
+        if (groupingAtPtmMass == null) {
             throw new IllegalArgumentException(ptmMass + " not present in the PSM PTM grouping mapping keys.");
         }
-        if (grouping.get(ptmMass).containsKey(specificKey)) {
-            return grouping.get(ptmMass).get(specificKey);
+        Integer result = groupingAtPtmMass.get(specificKey);
+        if (result == null) {
+            return specificKey;
         }
-        return specificKey;
+        return result;
     }
 
     /**
