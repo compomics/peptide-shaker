@@ -407,7 +407,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         // turn off the derby log file
         DerbyUtil.disableDerbyLog();
 
-        // Create the gene mappping folder if not set
+        // create the gene mappping folder if not set
         GeneFactory geneFactory = GeneFactory.getInstance();
         try {
             geneFactory.initialize(PeptideShaker.getJarFilePath());
@@ -416,7 +416,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             JOptionPane.showMessageDialog(null, "An error occurred while loading the gene mappings.", "Gene Mapping File Error", JOptionPane.ERROR_MESSAGE);
         }
 
-        // Load the species mapping
+        // load the species mapping
         try {
             SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
             speciesFactory.initiate(PeptideShaker.getJarFilePath());
@@ -1980,11 +1980,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             } else if (value == JOptionPane.CANCEL_OPTION || value == JOptionPane.CLOSED_OPTION) {
                 // do nothing
             } else { // no option
-                clearData(true);
+                clearData(true, true);
                 new NewDialog(this, true);
             }
         } else {
-            clearData(true);
+            clearData(true, true);
             new NewDialog(this, true);
         }
     }//GEN-LAST:event_newJMenuItemActionPerformed
@@ -2455,7 +2455,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 importPeptideShakerZipFile(selectedFile);
             } else if (selectedFile.getName().endsWith(".cpsx")) {
                 exceptionHandler.setIgnoreExceptions(true);
-                clearData(true);
+                clearData(true, true);
                 exceptionHandler.setIgnoreExceptions(false);
                 clearPreferences();
                 getUserPreferences().addRecentProject(selectedFile);
@@ -4159,8 +4159,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @param clearDatabaseFolder decides if the database folder is to be
      * cleared or not
+     * @param updateGuiComponents true if the GUI components are to be updated
      */
-    public void clearData(boolean clearDatabaseFolder) {
+    public void clearData(boolean clearDatabaseFolder, boolean updateGuiComponents) {
 
         // reset the preferences
         selectedProteinKey = NO_SELECTION;
@@ -4202,15 +4203,18 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         resetIdentificationFeaturesGenerator();
 
-        // set up the tabs/panels
-        scoresJCheckBoxMenuItem.setSelected(false);
-        setUpPanels(true);
+        if (updateGuiComponents) {
+            // set up the tabs/panels
+            scoresJCheckBoxMenuItem.setSelected(false);
+            setUpPanels(true);
 
-        // repaint the panels
-        repaintPanels();
+            // repaint the panels
+            repaintPanels();
 
-        // select the overview tab
-        allTabsJTabbedPane.setSelectedIndex(OVER_VIEW_TAB_INDEX);
+            // select the overview tab
+            allTabsJTabbedPane.setSelectedIndex(OVER_VIEW_TAB_INDEX);
+        }
+
         cpsParent.setCpsFile(null);
         dataSaved = false;
     }
@@ -4772,7 +4776,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     finalRef.setVisible(false);
 
                     // clear the data and database folder
-                    clearData(true);
+                    clearData(true, true);
 
                     // close the jvm
                     System.exit(0);
@@ -4831,7 +4835,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     spectrumFactory.closeFiles();
                     sequenceFactory.closeFile();
                     cpsParent.saveUserPreferences();
-                    PeptideShakerGUI.this.clearData(true);
+                    PeptideShakerGUI.this.clearData(true, false);
                     TempFilesManager.deleteTempFolders();
                     UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
                 } catch (Exception e) {
@@ -5178,7 +5182,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                             JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
                             temp.getUserPreferences().removeRecentProject(filePath);
                         } else {
-                            clearData(true);
+                            clearData(true, true);
                             clearPreferences();
                             importPeptideShakerFile(new File(filePath));
                             cpsParent.getUserPreferences().addRecentProject(filePath);
@@ -5231,7 +5235,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         tempWelcomeDialog.dispose();
                         setVisible(true);
 
-                        clearData(true);
+                        clearData(true, true);
                         clearPreferences();
 
                         if (filePath.endsWith(".zip")) {
@@ -5382,7 +5386,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         for (File file : destinationFolder.listFiles()) {
                             if (file.getName().toLowerCase().endsWith(".cpsx")) {
                                 exceptionHandler.setIgnoreExceptions(true);
-                                clearData(true);
+                                clearData(true, true);
                                 exceptionHandler.setIgnoreExceptions(false);
                                 clearPreferences();
                                 getUserPreferences().addRecentProject(zipFile);
@@ -5468,7 +5472,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     resetDisplayFeaturesGenerator();
 
                     if (progressDialog.isRunCanceled()) {
-                        clearData(true);
+                        clearData(true, true);
                         clearPreferences();
                         progressDialog.setRunFinished();
                         openingExistingProject = false;
@@ -5490,7 +5494,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                 "An error occurred while reading:\n" + fastaFile.getAbsolutePath() + "."
                                 + "\n\nOpen canceled.",
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
-                        clearData(true);
+                        clearData(true, true);
                         clearPreferences();
                         progressDialog.setRunFinished();
                         openingExistingProject = false;
@@ -5498,7 +5502,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     }
 
                     if (progressDialog.isRunCanceled()) {
-                        clearData(true);
+                        clearData(true, true);
                         clearPreferences();
                         progressDialog.setRunFinished();
                         openingExistingProject = false;
@@ -5574,7 +5578,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                     JOptionPane.showMessageDialog(peptideShakerGUI,
                                             spectrumFileName + " was not found in the given folder.",
                                             "File Input Error", JOptionPane.ERROR_MESSAGE);
-                                    clearData(true);
+                                    clearData(true, true);
                                     clearPreferences();
                                     progressDialog.setRunFinished();
                                     openingExistingProject = false;
@@ -5584,7 +5588,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         }
 
                         if (progressDialog.isRunCanceled()) {
-                            clearData(true);
+                            clearData(true, true);
                             clearPreferences();
                             progressDialog.setRunFinished();
                             openingExistingProject = false;
@@ -6538,7 +6542,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             if (!new File(filePath).exists()) {
                 JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                clearData(true);
+                clearData(true, true);
                 clearPreferences();
 
                 importPeptideShakerFile(new File(filePath));

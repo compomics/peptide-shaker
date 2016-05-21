@@ -581,7 +581,7 @@ public class MzIdentMLExport {
 
                 SpectrumMatch spectrumMatch = psmIterator.next();
                 PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
-
+                
                 if (bestPeptideAssumption != null) {
 
                     Peptide peptide = bestPeptideAssumption.getPeptide();
@@ -633,14 +633,13 @@ public class MzIdentMLExport {
                             String peptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
                             String pepEvidenceKey = tempProtein + "_" + peptideStart + "_" + peptideKey;
                             pepEvidenceIds.put(pepEvidenceKey, "PepEv_" + ++peptideEvidenceCounter);
-                            String matchingPeptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
 
                             br.write(getCurrentTabSpace() + "<PeptideEvidence isDecoy=\"" + peptide.isDecoy(sequenceMatchingPreferences) + "\" "
                                     + "pre=\"" + aaBefore + "\" "
                                     + "post=\"" + aaAfter + "\" "
                                     + "start=\"" + peptideStart + "\" "
                                     + "end=\"" + peptideEnd + "\" "
-                                    + "peptide_ref=\"" + matchingPeptideKey + "\" "
+                                    + "peptide_ref=\"" + peptideKey + "\" "
                                     + "dBSequence_ref=\"" + sequenceFactory.getProtein(tempProtein).getAccession() + "\" "
                                     + "id=\"" + pepEvidenceIds.get(pepEvidenceKey) + "\" "
                                     + "/>" + lineBreak);
@@ -1485,7 +1484,7 @@ public class MzIdentMLExport {
                                 indexes = "0";
                                 ArrayList<NeutralLoss> neutralLosses = ionMatch.ion.getNeutralLosses();
 
-                                if (neutralLosses.isEmpty()) {
+                                if (neutralLosses == null || neutralLosses.isEmpty()) {
                                     fragmentIonCvTerm = new CvTerm("PSI-MS", "MS:1001523", "frag: precursor ion", null);
                                 } else if (neutralLosses.size() == 1) {
 
