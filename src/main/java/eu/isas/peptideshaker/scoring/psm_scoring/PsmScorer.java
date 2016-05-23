@@ -8,7 +8,7 @@ import com.compomics.util.experiment.identification.protein_sequences.SequenceFa
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
-import com.compomics.util.experiment.identification.psm_scoring.PsmScores;
+import com.compomics.util.experiment.identification.psm_scoring.PsmScore;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
@@ -110,11 +110,11 @@ public class PsmScorer {
                                         boolean decoy = peptide.isDecoy(sequenceMatchingPreferences);
                                         double score;
 
-                                        if (scoreIndex == PsmScores.native_score.index) {
+                                        if (scoreIndex == PsmScore.native_score.index) {
                                             score = peptideAssumption.getScore();
                                         } else {
                                             SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-                                            score = PsmScores.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge().value, spectrum, shotgunProtocol, identificationParameters, specificAnnotationPreferences, scoreIndex);
+                                            score = PsmScore.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge().value, spectrum, shotgunProtocol, identificationParameters, specificAnnotationPreferences, scoreIndex);
                                         }
 
                                         psParameter.setIntermediateScore(scoreIndex, score);

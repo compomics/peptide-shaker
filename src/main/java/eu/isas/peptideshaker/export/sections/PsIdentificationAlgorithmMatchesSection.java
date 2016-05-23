@@ -15,7 +15,7 @@ import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
-import com.compomics.util.experiment.identification.psm_scoring.PsmScores;
+import com.compomics.util.experiment.identification.psm_scoring.PsmScore;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
@@ -571,16 +571,16 @@ public class PsIdentificationAlgorithmMatchesSection {
             case fragment_mz_accuracy_score:
                 annotationPreferences = identificationParameters.getAnnotationPreferences();
                 specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-                score = PsmScores.getDecreasingScore(peptideAssumption.getPeptide(), peptideAssumption.getIdentificationCharge().value,
+                score = PsmScore.getDecreasingScore(peptideAssumption.getPeptide(), peptideAssumption.getIdentificationCharge().value,
                         (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey), shotgunProtocol,
-                        identificationParameters, specificAnnotationPreferences, PsmScores.aa_ms2_mz_fidelity.index);
+                        identificationParameters, specificAnnotationPreferences, PsmScore.aa_ms2_mz_fidelity.index);
                 return score + "";
             case intensity_score:
                 annotationPreferences = identificationParameters.getAnnotationPreferences();
                 specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-                score = PsmScores.getDecreasingScore(peptideAssumption.getPeptide(), peptideAssumption.getIdentificationCharge().value,
+                score = PsmScore.getDecreasingScore(peptideAssumption.getPeptide(), peptideAssumption.getIdentificationCharge().value,
                         (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey), shotgunProtocol,
-                        identificationParameters, specificAnnotationPreferences, PsmScores.aa_intensity.index);
+                        identificationParameters, specificAnnotationPreferences, PsmScore.aa_intensity.index);
                 return score + "";
             case sequence_coverage:
                 peptide = peptideAssumption.getPeptide();
