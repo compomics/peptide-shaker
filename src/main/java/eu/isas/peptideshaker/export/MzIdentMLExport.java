@@ -8,7 +8,6 @@ import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.Ion.IonType;
-import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -173,6 +172,10 @@ public class MzIdentMLExport {
      * The line break type.
      */
     private String lineBreak = System.getProperty("line.separator");
+    /**
+     * If true, the fragment ions will be written to the mzid file.
+     */
+    private boolean writeFragmentIons = true;
 
     /**
      * Constructor.
@@ -581,7 +584,7 @@ public class MzIdentMLExport {
 
                 SpectrumMatch spectrumMatch = psmIterator.next();
                 PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
-                
+
                 if (bestPeptideAssumption != null) {
 
                     Peptide peptide = bestPeptideAssumption.getPeptide();
@@ -1421,7 +1424,7 @@ public class MzIdentMLExport {
                 }
             }
 
-            if (!allFragmentIons.isEmpty()) {
+            if (!allFragmentIons.isEmpty() && writeFragmentIons) {
 
                 br.write(getCurrentTabSpace() + "<Fragmentation>" + lineBreak);
                 tabCounter++;
@@ -1445,18 +1448,14 @@ public class MzIdentMLExport {
                         String intensityValues = "";
                         String errorValues = "";
 
-                        boolean supportedIon = true;
-
                         // get the fragment ion details
                         for (IonMatch ionMatch : ionMatches) {
 
                             if (ionMatch.ion instanceof PeptideFragmentIon) {
-
-                                indexes += ((PeptideFragmentIon) ionMatch.ion).getNumber() + " "; 
-                                // @TODO: request more peptide fragment ion with neutal losses cv terms? (add to getPrideCvTerm in PeptideFragmentIon)
-
+                                indexes += ((PeptideFragmentIon) ionMatch.ion).getNumber() + " ";
                             } else if (ionMatch.ion instanceof ImmoniumIon) {
 
+                                // get the indexes of the corresponding residues
                                 char residue = ImmoniumIon.getResidue(((ImmoniumIon) ionMatch.ion).getSubType());
                                 char[] peptideAsArray = peptideSequence.toCharArray();
                                 for (int i = 0; i < peptideAsArray.length; i++) {
@@ -1467,46 +1466,10 @@ public class MzIdentMLExport {
 
                                 // change the cv term to the generic immonium ion cv term
                                 fragmentIonCvTerm = new CvTerm("PSI-MS", "MS:1001239", "frag: immonium ion", null);
-
-                            } else if (ionMatch.ion instanceof ReporterIon) {
-
-                                //indexes = "0";
-                                //fragmentIonCvTerm = new CvTerm("PSI-MS", "MS:100????", "frag: reporter ion", null); // @TODO: request cv terms...
-                                supportedIon = false;
-
-                            } else if (ionMatch.ion instanceof RelatedIon) {
-                                
-                                // @TODO: request cv terms?
-                                supportedIon = false;
-                                
-                            } else if (ionMatch.ion instanceof PrecursorIon) {
-
+                            } else if (ionMatch.ion instanceof ReporterIon
+                                    || ionMatch.ion instanceof RelatedIon
+                                    || ionMatch.ion instanceof PrecursorIon) { // @TODO: request cv terms for reporter (and related?) ions
                                 indexes = "0";
-                                ArrayList<NeutralLoss> neutralLosses = ionMatch.ion.getNeutralLosses();
-
-                                if (neutralLosses == null || neutralLosses.isEmpty()) {
-                                    fragmentIonCvTerm = new CvTerm("PSI-MS", "MS:1001523", "frag: precursor ion", null);
-                                } else if (neutralLosses.size() == 1) {
-
-                                    NeutralLoss tempNeutralLoss = neutralLosses.get(0);
-
-                                    if (tempNeutralLoss.isSameAs(NeutralLoss.H2O)) {
-                                        fragmentIonCvTerm = new CvTerm("PSI-MS", "MS:1001521", "frag: precursor ion - H2O", null);
-                                    } else if (tempNeutralLoss.isSameAs(NeutralLoss.NH3)) {
-                                        fragmentIonCvTerm = new CvTerm("PSI-MS", "MS:1001522", "frag: precursor ion - NH3", null);
-                                    } else {
-                                        // no cv terms for other neutral losses // @TODO: request more cv terms?
-                                        supportedIon = false;
-                                    }
-
-                                } else {
-                                    // no cv terms for multiple neutral losses
-                                    supportedIon = false;
-                                }
-
-                            } else {
-                                // unsupported ion types...
-                                supportedIon = false;
                             }
 
                             mzValues += ionMatch.peak.mz + " ";
@@ -1515,7 +1478,7 @@ public class MzIdentMLExport {
                         }
 
                         // add the supported fragment ions
-                        if (supportedIon) {
+                        if (fragmentIonCvTerm != null) {
                             br.write(getCurrentTabSpace() + "<IonType charge=\"" + fragmentCharge + "\" index=\"" + indexes.trim() + "\">" + lineBreak);
                             tabCounter++;
 
