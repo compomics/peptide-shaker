@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * This map contains the information of a target/decoy strategy.
@@ -171,7 +172,8 @@ public class TargetDecoyMap implements Serializable {
      */
     public synchronized void cleanUp() {
         boolean removed = false;
-        for (Double score : hitMap.keySet()) {
+        HashSet<Double> currentScores = new HashSet<Double>(hitMap.keySet());
+        for (Double score : currentScores) {
             TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
             if (targetDecoyPoint.nTarget == 0
                     && targetDecoyPoint.nDecoy == 0) {
