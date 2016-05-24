@@ -573,14 +573,14 @@ public class PsIdentificationAlgorithmMatchesSection {
                 specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
                 score = PsmScore.getDecreasingScore(peptideAssumption.getPeptide(), peptideAssumption.getIdentificationCharge().value,
                         (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey), shotgunProtocol,
-                        identificationParameters, specificAnnotationPreferences, PsmScore.aa_ms2_mz_fidelity.index);
+                        identificationParameters, specificAnnotationPreferences, peptideSpectrumAnnotator, PsmScore.aa_ms2_mz_fidelity.index);
                 return score + "";
             case intensity_score:
                 annotationPreferences = identificationParameters.getAnnotationPreferences();
                 specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
                 score = PsmScore.getDecreasingScore(peptideAssumption.getPeptide(), peptideAssumption.getIdentificationCharge().value,
                         (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey), shotgunProtocol,
-                        identificationParameters, specificAnnotationPreferences, PsmScore.aa_intensity.index);
+                        identificationParameters, specificAnnotationPreferences, peptideSpectrumAnnotator, PsmScore.aa_intensity.index);
                 return score + "";
             case sequence_coverage:
                 peptide = peptideAssumption.getPeptide();
