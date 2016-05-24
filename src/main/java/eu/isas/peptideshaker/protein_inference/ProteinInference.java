@@ -469,11 +469,14 @@ public class ProteinInference {
                 }
             }
 
-            for (String proteinKey : toRemove) {
-                psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                proteinMap.removePoint(psParameter.getProteinProbabilityScore(), ProteinMatch.isDecoy(proteinKey));
-                identification.removeProteinMatch(proteinKey);
-                waitingHandler.increaseSecondaryProgressCounter();
+            if (!toRemove.isEmpty()) {
+                for (String proteinKey : toRemove) {
+                    psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+                    proteinMap.removePoint(psParameter.getProteinProbabilityScore(), ProteinMatch.isDecoy(proteinKey));
+                    identification.removeProteinMatch(proteinKey);
+                    waitingHandler.increaseSecondaryProgressCounter();
+                }
+                proteinMap.cleanUp();
             }
         }
 

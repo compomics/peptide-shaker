@@ -833,9 +833,18 @@ public class PSParameter implements UrParameter {
      */
     public void setIntermediateScore(int scoreId, double score) {
         if (intermediateScores == null) {
-            intermediateScores = new HashMap<Integer, Double>();
+            createIntermediateScoreMap();
         }
         intermediateScores.put(scoreId, score);
+    }
+    
+    /**
+     * Instantiates the intermediate scores map if null.
+     */
+    public synchronized void createIntermediateScoreMap() {
+        if (intermediateScores == null) {
+            intermediateScores = new HashMap<Integer, Double>();
+        }
     }
 
     /**

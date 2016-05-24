@@ -121,38 +121,69 @@ public class TargetDecoyMap implements Serializable {
      * @param score The given score
      * @param isDecoy boolean indicating whether the hit is decoy
      */
-    public synchronized void put(double score, boolean isDecoy) {
+    public void put(Double score, boolean isDecoy) {
+        TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
+        if (targetDecoyPoint == null) {
+            targetDecoyPoint = createTargetDecoyPoint(score);
+        }
+        if (isDecoy) {
+            targetDecoyPoint.increaseDecoy();
+        } else {
+            targetDecoyPoint.increaseTarget();
+        }
+    }
+
+    /**
+     * Creates the target decoy point of the map at the given score if no other
+     * thread has done it before.
+     *
+     * @param score the score of interest
+     *
+     * @return the target decoy point of the map at the given score
+     */
+    public synchronized TargetDecoyPoint createTargetDecoyPoint(Double score) {
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
         if (targetDecoyPoint == null) {
             targetDecoyPoint = new TargetDecoyPoint();
             hitMap.put(score, targetDecoyPoint);
         }
-        if (isDecoy) {
-            targetDecoyPoint.nDecoy++;
-        } else {
-            targetDecoyPoint.nTarget++;
-        }
+        return targetDecoyPoint;
     }
 
     /**
-     * Removes a point in the target/decoy map at the given score.
+     * Removes a point in the target/decoy map at the given score. Note: it is
+     * necessary to run cleanUp() afterwards to clean up the map.
      *
      * @param score the given score
      * @param isDecoy boolean indicating whether the hit is decoy
      */
-    public void remove(double score, boolean isDecoy) {
+    public void remove(Double score, boolean isDecoy) {
+        TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
         if (!isDecoy) {
-            hitMap.get(score).nTarget--;
+            targetDecoyPoint.decreaseTarget();
         } else {
-            hitMap.get(score).nDecoy--;
+            targetDecoyPoint.decreaseDecoy();
         }
-        if (hitMap.get(score).nTarget == 0
-                && hitMap.get(score).nDecoy == 0) {
-            hitMap.remove(score);
+    }
+
+    /**
+     * Removes empty points and clears dependent metrics if needed.
+     */
+    public synchronized void cleanUp() {
+        boolean removed = false;
+        for (Double score : hitMap.keySet()) {
+            TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
+            if (targetDecoyPoint.nTarget == 0
+                    && targetDecoyPoint.nDecoy == 0) {
+                hitMap.remove(score);
+                removed = true;
+            }
         }
-        scores = null;
-        nmax = null;
-        windowSize = null;
+        if (removed) {
+            scores = null;
+            nmax = null;
+            windowSize = null;
+        }
     }
 
     /**

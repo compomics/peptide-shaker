@@ -294,7 +294,7 @@ public class PeptideShaker {
             PsmScorer psmScorer = new PsmScorer();
 
             waitingHandler.appendReport("Estimating PSM scores.", true, true);
-            psmScorer.estimateIntermediateScores(identification, inputMap, processingPreferences, shotgunProtocol, identificationParameters, waitingHandler);
+            psmScorer.estimateIntermediateScores(identification, inputMap, processingPreferences, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler);
 
             if (psmScoringPreferences.isTargetDecoyNeededForPsmScoring(usedAlgorithms)) {
                 if (sequenceFactory.concatenatedTargetDecoy()) {

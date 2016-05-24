@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.scoring.psm_scoring;
 
+import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
@@ -16,16 +17,22 @@ import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PsmScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
+import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
+import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
+import eu.isas.peptideshaker.utils.Metrics;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -53,6 +60,7 @@ public class PsmScorer {
      * @param shotgunProtocol information on the protocol used
      * @param identificationParameters identification parameters used
      * @param waitingHandler the handler displaying feedback to the user
+     * @param exceptionHandler a handler for exceptions
      *
      * @throws IOException thrown if an IOException occurs
      * @throws InterruptedException thrown if an InterruptedException occurs
@@ -64,6 +72,58 @@ public class PsmScorer {
      * occurs
      */
     public void estimateIntermediateScores(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler)
+            throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+
+        waitingHandler.setWaitingText("Scoring PSMs. Please Wait...");
+
+        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+        waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
+
+        for (String spectrumFileName : identification.getSpectrumFiles()) {
+            ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, null, true, null);
+            for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
+                PsmScorerRunnable runnable = new PsmScorerRunnable(psmIterator, identification, inputMap, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler);
+                pool.submit(runnable);
+            }
+            if (waitingHandler.isRunCanceled()) {
+                pool.shutdownNow();
+                return;
+            }
+            pool.shutdown();
+            if (!pool.awaitTermination(7, TimeUnit.DAYS)) {
+                throw new InterruptedException("PSM scoring timed out. Please contact the developers.");
+            }
+        }
+
+//        for (BufferedWriter br : brs.values()) {
+//            br.close();
+//        }
+        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+    }
+
+    /**
+     * Scores the PSMs contained in an identification object.
+     *
+     * @param identification the object containing the identification matches
+     * @param spectrumMatch a spectrum match containing the peptides and
+     * spectrum to score
+     * @param inputMap the input map scores
+     * @param shotgunProtocol information on the protocol used
+     * @param identificationParameters identification parameters used
+     * @param waitingHandler the handler displaying feedback to the user
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
+     */
+    public void estimateIntermediateScores(Identification identification, SpectrumMatch spectrumMatch, InputMap inputMap,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
             throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
@@ -72,53 +132,43 @@ public class PsmScorer {
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
         PsmScoringPreferences psmScoringPreferences = identificationParameters.getPsmScoringPreferences();
 
-        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
+        String spectrumKey = spectrumMatch.getKey();
+        String spectrumFileName = Spectrum.getSpectrumFile(spectrumKey);
 
-        //HashMap<Integer, BufferedWriter> brs = new HashMap<Integer, BufferedWriter>();
-        for (String spectrumFileName : identification.getSpectrumFiles()) {
+        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, null, false, waitingHandler);
+        for (int advocateIndex : assumptions.keySet()) {
 
-            while (psmIterator.hasNext()) {
+            HashSet<Integer> scoresForAdvocate = psmScoringPreferences.getScoreForAlgorithm(advocateIndex);
 
-                SpectrumMatch spectrumMatch = psmIterator.next();
-                String spectrumKey = spectrumMatch.getKey();
+            if (scoresForAdvocate != null) {
 
-                HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateIndex);
 
-                for (int advocateIndex : assumptions.keySet()) {
+                for (double eValue : advocateAssumptions.keySet()) {
+                    for (SpectrumIdentificationAssumption assumption : advocateAssumptions.get(eValue)) {
 
-                    HashSet<Integer> scoresForAdvocate = psmScoringPreferences.getScoreForAlgorithm(advocateIndex);
+                        if (assumption instanceof PeptideAssumption) {
 
-                    if (scoresForAdvocate != null) {
+                            PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                            PSParameter psParameter = new PSParameter();
+                            MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
 
-                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateIndex);
+                            for (int scoreIndex : scoresForAdvocate) {
 
-                        for (double eValue : advocateAssumptions.keySet()) {
-                            for (SpectrumIdentificationAssumption assumption : advocateAssumptions.get(eValue)) {
+                                Peptide peptide = peptideAssumption.getPeptide();
+                                boolean decoy = peptide.isDecoy(sequenceMatchingPreferences);
+                                double score;
 
-                                if (assumption instanceof PeptideAssumption) {
+                                if (scoreIndex == PsmScore.native_score.index) {
+                                    score = peptideAssumption.getScore();
+                                } else {
+                                    SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
+                                    score = PsmScore.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge().value, spectrum, shotgunProtocol, identificationParameters, specificAnnotationPreferences, scoreIndex);
+                                }
 
-                                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                    PSParameter psParameter = new PSParameter();
-                                    MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
-
-                                    for (int scoreIndex : scoresForAdvocate) {
-
-                                        Peptide peptide = peptideAssumption.getPeptide();
-                                        boolean decoy = peptide.isDecoy(sequenceMatchingPreferences);
-                                        double score;
-
-                                        if (scoreIndex == PsmScore.native_score.index) {
-                                            score = peptideAssumption.getScore();
-                                        } else {
-                                            SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-                                            score = PsmScore.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge().value, spectrum, shotgunProtocol, identificationParameters, specificAnnotationPreferences, scoreIndex);
-                                        }
-
-                                        psParameter.setIntermediateScore(scoreIndex, score);
-                                        inputMap.setIntermediateScore(spectrumFileName, advocateIndex, scoreIndex, score, decoy);
+                                psParameter.setIntermediateScore(scoreIndex, score);
+                                inputMap.setIntermediateScore(spectrumFileName, advocateIndex, scoreIndex, score, decoy);
 
 //                                    try {
 //                                        BufferedWriter br = brs.get(scoreIndex);
@@ -139,28 +189,16 @@ public class PsmScorer {
 //                                    } catch (Exception e) {
 //                                        e.printStackTrace();
 //                                    }
-                                    }
-
-                                    assumption.addUrParam(psParameter);
-                                }
                             }
+
+                            assumption.addUrParam(psParameter);
                         }
                     }
-                }
-
-                identification.updateAssumptions(spectrumKey, assumptions);
-
-                waitingHandler.increaseSecondaryProgressCounter();
-                if (waitingHandler.isRunCanceled()) {
-                    return;
                 }
             }
         }
 
-//        for (BufferedWriter br : brs.values()) {
-//            br.close();
-//        }
-        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+        identification.updateAssumptions(spectrumKey, assumptions);
     }
 
     /**
@@ -310,5 +348,85 @@ public class PsmScorer {
 
 //        br.close();
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+    }
+
+    /**
+     * Runnable scoring PSM PTMs.
+     *
+     * @author Marc Vaudel
+     */
+    private class PsmScorerRunnable implements Runnable {
+
+        /**
+         * An iterator for the PSMs.
+         */
+        private PsmIterator psmIterator;
+        /**
+         * The identification.
+         */
+        private Identification identification;
+        /**
+         * The input map
+         */
+        private InputMap inputMap;
+        /**
+         * The protocol used
+         */
+        private ShotgunProtocol shotgunProtocol;
+        /**
+         * The identification parameters.
+         */
+        private IdentificationParameters identificationParameters;
+        /**
+         * The waiting handler.
+         */
+        private WaitingHandler waitingHandler;
+        /**
+         * Handler for the exceptions.
+         */
+        private ExceptionHandler exceptionHandler;
+        /**
+         * The peptide spectrum annotator.
+         */
+        private PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
+
+        /**
+         * Constructor.
+         *
+         * @param psmIterator An iterator of the PSMs to iterate
+         * @param identification the identification containing all matches
+         * @param inputMap the input map used to store the scores
+         * @param shotgunProtocol the shotgun protocol
+         * @param identificationParameters the identification parameters
+         * @param waitingHandler a waiting handler to display progress and allow
+         * canceling the process
+         * @param exceptionHandler handler for exceptions
+         */
+        public PsmScorerRunnable(PsmIterator psmIterator, Identification identification, InputMap inputMap, ShotgunProtocol shotgunProtocol,
+                IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
+            this.psmIterator = psmIterator;
+            this.identification = identification;
+            this.inputMap = inputMap;
+            this.shotgunProtocol = shotgunProtocol;
+            this.identificationParameters = identificationParameters;
+            this.waitingHandler = waitingHandler;
+            this.exceptionHandler = exceptionHandler;
+        }
+
+        @Override
+        public void run() {
+            try {
+                while (psmIterator.hasNext() && !waitingHandler.isRunCanceled()) {
+                    SpectrumMatch spectrumMatch = psmIterator.next();
+                    estimateIntermediateScores(identification, spectrumMatch, inputMap, shotgunProtocol, identificationParameters, waitingHandler);
+                    if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
+                        waitingHandler.increaseSecondaryProgressCounter();
+                    }
+                }
+            } catch (Exception e) {
+                exceptionHandler.catchException(e);
+                waitingHandler.setRunCanceled();
+            }
+        }
     }
 }

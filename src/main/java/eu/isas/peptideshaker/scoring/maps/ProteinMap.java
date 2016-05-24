@@ -56,13 +56,21 @@ public class ProteinMap implements Serializable {
     }
 
     /**
-     * Removes a point in the target/decoy map.
+     * Removes a point in the target/decoy map. Note: it is necessary to run
+     * cleanUp() afterwards to clean up the map.
      *
      * @param probabilityScore The estimated protein probabilistic score
      * @param isDecoy a boolean indicating whether the protein is decoy
      */
     public void removePoint(double probabilityScore, boolean isDecoy) {
         proteinMatchMap.remove(probabilityScore, isDecoy);
+    }
+
+    /**
+     * Removes empty points and clears dependent metrics if needed.
+     */
+    public void cleanUp() {
+        proteinMatchMap.cleanUp();
     }
 
     /**

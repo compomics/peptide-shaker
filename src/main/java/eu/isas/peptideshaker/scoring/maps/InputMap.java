@@ -241,27 +241,72 @@ public class InputMap implements Serializable {
      * index
      * @param spectrumFileName the name of the inspected spectrum file
      * @param eValue The search engine e-value
-     * @param isDecoy boolean indicating whether the hit was decoy or target
-     * (resp. true/false)
+     * @param isDecoy boolean indicating whether the hit was decoy
      */
-    public synchronized void addEntry(int searchEngine, String spectrumFileName, double eValue, boolean isDecoy) {
+    public void addEntry(Integer searchEngine, String spectrumFileName, Double eValue, boolean isDecoy) {
+        TargetDecoyMap targetDecoyMap = inputMap.get(searchEngine);
+        if (targetDecoyMap == null) {
+            targetDecoyMap = createTargetDecoyInputMap(searchEngine);
+        }
+        targetDecoyMap.put(eValue, isDecoy);
+        HashMap<String, TargetDecoyMap> algorithmMap = inputSpecificMap.get(searchEngine);
+        if (algorithmMap == null) {
+            algorithmMap = createIntermediateInputSpecificMap(searchEngine);
+        }
+        targetDecoyMap = algorithmMap.get(spectrumFileName);
+        if (targetDecoyMap == null) {
+            targetDecoyMap = createTargetDecoySpecificMap(spectrumFileName, algorithmMap);
+        }
+        targetDecoyMap.put(eValue, isDecoy);
+    }
+
+    /**
+     * Creates the target decoy input map for the given search engine unless already done by another thread.
+     * 
+     * @param searchEngine the index of the search engine
+     * 
+     * @return the corresponding map
+     */
+    private synchronized TargetDecoyMap createTargetDecoyInputMap(Integer searchEngine) {
         TargetDecoyMap targetDecoyMap = inputMap.get(searchEngine);
         if (targetDecoyMap == null) {
             targetDecoyMap = new TargetDecoyMap();
             inputMap.put(searchEngine, targetDecoyMap);
         }
-        targetDecoyMap.put(eValue, isDecoy);
+        return targetDecoyMap;
+    }
+
+    /**
+     * Creates the intermediate input specific map for the given search engine unless already done by another thread.
+     * 
+     * @param searchEngine the index of the search engine
+     * 
+     * @return the corresponding map
+     */
+    private synchronized HashMap<String, TargetDecoyMap> createIntermediateInputSpecificMap(Integer searchEngine) {
         HashMap<String, TargetDecoyMap> algorithmMap = inputSpecificMap.get(searchEngine);
         if (algorithmMap == null) {
-            algorithmMap = new HashMap<String, TargetDecoyMap>();
+            algorithmMap = new HashMap<String, TargetDecoyMap>(2);
             inputSpecificMap.put(searchEngine, algorithmMap);
         }
-        targetDecoyMap = algorithmMap.get(spectrumFileName);
+        return algorithmMap;
+    }
+
+    /**
+     * Creates the target-decoy input specific map for the given search engine unless already done by another thread.
+     * 
+     * @param spectrumFileName the name of the spectrum file
+     * @param algorithmMap the algorithm map
+     * 
+     * @return the corresponding map
+     */
+    private synchronized TargetDecoyMap createTargetDecoySpecificMap(String spectrumFileName, HashMap<String, TargetDecoyMap> algorithmMap) {
+        TargetDecoyMap targetDecoyMap = algorithmMap.get(spectrumFileName);
         if (targetDecoyMap == null) {
             targetDecoyMap = new TargetDecoyMap();
             algorithmMap.put(spectrumFileName, targetDecoyMap);
         }
-        targetDecoyMap.put(eValue, isDecoy);
+        return targetDecoyMap;
     }
 
     /**
@@ -570,23 +615,73 @@ public class InputMap implements Serializable {
      * @param decoy indicates whether the match maps to a target or a decoy
      * protein
      */
-    public synchronized void setIntermediateScore(String fileName, int advocateIndex, int scoreIndex, double score, boolean decoy) {
+    public void setIntermediateScore(String fileName, Integer advocateIndex, Integer scoreIndex, double score, boolean decoy) {
+        HashMap<Integer, HashMap<Integer, TargetDecoyMap>> advocateMap = intermediateScores.get(fileName);
+        if (advocateMap == null) {
+            advocateMap = createIntermediateScoreMap(fileName);
+        }
+        HashMap<Integer, TargetDecoyMap> scoreMap = advocateMap.get(advocateIndex);
+        if (scoreMap == null) {
+            scoreMap = createIntermediateScoreMap(advocateIndex, advocateMap);
+        }
+        TargetDecoyMap targetDecoyMap = scoreMap.get(scoreIndex);
+        if (targetDecoyMap == null) {
+            targetDecoyMap = createTargetDecoyMap(scoreIndex, scoreMap);
+        }
+        targetDecoyMap.put(score, decoy);
+    }
+
+    /**
+     * Creates the intermediate score map for the given file if not set before
+     * by another thread.
+     *
+     * @param fileName the name of the file
+     *
+     * @return the intermediate score map
+     */
+    private synchronized HashMap<Integer, HashMap<Integer, TargetDecoyMap>> createIntermediateScoreMap(String fileName) {
         HashMap<Integer, HashMap<Integer, TargetDecoyMap>> advocateMap = intermediateScores.get(fileName);
         if (advocateMap == null) {
             advocateMap = new HashMap<Integer, HashMap<Integer, TargetDecoyMap>>();
             intermediateScores.put(fileName, advocateMap);
         }
+        return advocateMap;
+    }
+
+    /**
+     * Creates the intermediate score map for the given advocate if not set
+     * before by another thread.
+     *
+     * @param advocateIndex the index of the advocate
+     * @param advocateMap the map for the current file
+     *
+     * @return the intermediate score map
+     */
+    private synchronized HashMap<Integer, TargetDecoyMap> createIntermediateScoreMap(Integer advocateIndex, HashMap<Integer, HashMap<Integer, TargetDecoyMap>> advocateMap) {
         HashMap<Integer, TargetDecoyMap> scoreMap = advocateMap.get(advocateIndex);
         if (scoreMap == null) {
             scoreMap = new HashMap<Integer, TargetDecoyMap>();
             advocateMap.put(advocateIndex, scoreMap);
         }
+        return scoreMap;
+    }
+
+    /**
+     * Creates the target-decoy map for the given score index if not created
+     * before by another thread.
+     *
+     * @param scoreIndex the index of the score
+     * @param scoreMap the intermediate map for this advocate
+     *
+     * @return the target-decoy map
+     */
+    private synchronized TargetDecoyMap createTargetDecoyMap(Integer scoreIndex, HashMap<Integer, TargetDecoyMap> scoreMap) {
         TargetDecoyMap targetDecoyMap = scoreMap.get(scoreIndex);
         if (targetDecoyMap == null) {
             targetDecoyMap = new TargetDecoyMap();
             scoreMap.put(scoreIndex, targetDecoyMap);
         }
-        targetDecoyMap.put(score, decoy);
+        return targetDecoyMap;
     }
 
     /**
