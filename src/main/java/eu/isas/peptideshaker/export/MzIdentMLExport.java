@@ -143,6 +143,10 @@ public class MzIdentMLExport {
      */
     private HashMap<String, String> spectrumIds = new HashMap<String, String>();
     /**
+     * The spectrum key to parent peptide key map.
+     */
+    private HashMap<String, String> spectrumKeyToPeptideKeyMap = new HashMap<String, String>();
+    /**
      * Information on the protocol.
      */
     private ShotgunProtocol shotgunProtocol;
@@ -189,13 +193,13 @@ public class MzIdentMLExport {
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param outputFile Output file
+     * @param outputFile the output file
      * @param waitingHandler waiting handler used to display progress to the
      * user and interrupt the process
      *
-     * @throws IOException Exception thrown whenever an error occurred while
+     * @throws IOException exception thrown whenever an error occurred while
      * reading/writing a file
-     * @throws ClassNotFoundException Exception thrown whenever an error
+     * @throws ClassNotFoundException exception thrown whenever an error
      * occurred while deserializing an object
      */
     public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails,
@@ -216,19 +220,19 @@ public class MzIdentMLExport {
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param outputFile Output file
+     * @param outputFile the output file
      * @param waitingHandler waiting handler used to display progress to the
      * user and interrupt the process
      * @param proteinMatchValidationLevel the match validation level a protein
      * must have to be included in the export
      * @param peptideMatchValidationLevel the match validation level a peptide
      * must have to be included in the export
-     * @param psmMatchValidationLevel the match validation level a psm must have
+     * @param psmMatchValidationLevel the match validation level a PSM must have
      * to be included in the export
      *
-     * @throws IOException Exception thrown whenever an error occurred while
+     * @throws IOException exception thrown whenever an error occurred while
      * reading/writing a file
-     * @throws ClassNotFoundException Exception thrown whenever an error
+     * @throws ClassNotFoundException exception thrown whenever an error
      * occurred while deserializing an object
      */
     public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails,
@@ -256,9 +260,9 @@ public class MzIdentMLExport {
      *
      * @param version12 if true, mzid 1.2 version information will be included
      *
-     * @throws IOException Exception thrown whenever an error occurred while
+     * @throws IOException exception thrown whenever an error occurred while
      * reading/writing a file
-     * @throws ClassNotFoundException Exception thrown whenever an error
+     * @throws ClassNotFoundException exception thrown whenever an error
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an error
      * occurred while reading an mzML file
@@ -268,6 +272,8 @@ public class MzIdentMLExport {
      * interacting with the database
      */
     public void createMzIdentMLFile(boolean version12) throws IOException, MzMLUnmarshallerException, ClassNotFoundException, InterruptedException, SQLException {
+
+        long start = System.currentTimeMillis();
 
         mzidVersion_1_2 = version12;
 
@@ -289,7 +295,10 @@ public class MzIdentMLExport {
 
         waitingHandler.setPrimaryProgressCounterIndeterminate(false);
         waitingHandler.resetPrimaryProgressCounter();
-        waitingHandler.setMaxPrimaryProgressCounter(sequenceFactory.getNSequences() + identification.getSpectrumIdentificationSize() * 3 + identification.getProteinIdentification().size());
+        waitingHandler.setMaxPrimaryProgressCounter(sequenceFactory.getNSequences()
+                + identification.getPeptideIdentification().size() * 2
+                + identification.getSpectrumIdentificationSize()
+                + identification.getProteinIdentification().size());
 
         // write the sequence collection
         writeSequenceCollection();
@@ -314,6 +323,13 @@ public class MzIdentMLExport {
 
         br.close();
         r.close();
+
+        long end = System.currentTimeMillis();
+
+        long result = end - start;
+
+        System.out.println(((float) result) / 1000);
+
     }
 
     /**
@@ -476,9 +492,9 @@ public class MzIdentMLExport {
     /**
      * Write the sequence collection.
      *
-     * @throws IOException Exception thrown whenever an error occurred while
+     * @throws IOException exception thrown whenever an error occurred while
      * reading/writing a file
-     * @throws ClassNotFoundException Exception thrown whenever an error
+     * @throws ClassNotFoundException exception thrown whenever an error
      * occurred while deserializing an object
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred while writing the export
@@ -498,7 +514,8 @@ public class MzIdentMLExport {
 //        if (fastaIndex != null) {
 //            dbType = Header.getDatabaseTypeAsString(fastaIndex.getDatabaseType());
 //        }
-        // iterate all the protein sequences
+//
+        // iterate all the protein sequences // @TODO: should be able to do this faster? we're just reading through the file once?
         while (iterator.hasNext()) {
             Protein currentProtein = iterator.getNextProtein();
             br.write(getCurrentTabSpace() + "<DBSequence id=\"" + currentProtein.getAccession() + "\" "
@@ -522,6 +539,9 @@ public class MzIdentMLExport {
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
 
+        // set up the spectrum key to peptide key map
+        spectrumKeyToPeptideKeyMap = new HashMap<String, String>();
+
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters, waitingHandler);
 
         while (peptideMatchesIterator.hasNext()) {
@@ -530,6 +550,11 @@ public class MzIdentMLExport {
             String peptideKey = peptideMatch.getKey();
             Peptide peptide = peptideMatch.getTheoreticPeptide();
             String peptideSequence = peptide.getSequence();
+
+            // store the spectrum to peptide mapping for later
+            for (String spectrumMatchKey : peptideMatch.getSpectrumMatchesKeys()) {
+                spectrumKeyToPeptideKeyMap.put(spectrumMatchKey, peptideKey);
+            }
 
             br.write(getCurrentTabSpace() + "<Peptide id=\"" + peptideKey + "\">" + lineBreak);
             tabCounter++;
@@ -575,87 +600,75 @@ public class MzIdentMLExport {
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
         int peptideEvidenceCounter = 0;
 
-        // iterate the spectrum files
-        for (String spectrumFileName : identification.getSpectrumFiles()) {
+        // re-iterate the peptides to get peptide to protein mapping
+        peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters, waitingHandler);
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, null, false, waitingHandler);
+        while (peptideMatchesIterator.hasNext()) {
 
-            while (psmIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            String peptideKey = peptideMatch.getKey();
+            Peptide peptide = peptideMatch.getTheoreticPeptide();
 
-                SpectrumMatch spectrumMatch = psmIterator.next();
-                PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
+            // get the possible parent proteins
+            ArrayList<String> possibleProteins = peptide.getParentProteins(sequenceMatchingPreferences);
 
-                if (bestPeptideAssumption != null) {
+            // iterate the possible protein parents
+            for (String tempProtein : possibleProteins) {
 
-                    Peptide peptide = bestPeptideAssumption.getPeptide();
+                // get the start indexes and the surrounding 
+                HashMap<Integer, String[]> aaSurrounding = sequenceFactory.getProtein(tempProtein).getSurroundingAA(
+                        peptide.getSequence(), 1, sequenceMatchingPreferences);
 
-                    // get all the possible parent proteins
-                    ArrayList<String> possibleProteins = peptide.getParentProteins(sequenceMatchingPreferences);
+                ArrayList<Integer> indexes = new ArrayList<Integer>();
+                ArrayList<String> before = new ArrayList<String>();
+                ArrayList<String> after = new ArrayList<String>();
 
-                    // iterate all the possible protein parents for each peptide
-                    for (String tempProtein : possibleProteins) {
-
-                        // get the start indexes and the surrounding 
-                        HashMap<Integer, String[]> aaSurrounding = sequenceFactory.getProtein(tempProtein).getSurroundingAA(
-                                peptide.getSequence(), 1, sequenceMatchingPreferences);
-
-                        ArrayList<Integer> indexes = new ArrayList<Integer>();
-                        ArrayList<String> before = new ArrayList<String>();
-                        ArrayList<String> after = new ArrayList<String>();
-
-                        if (aaSurrounding.size() == 1) {
-                            for (int index : aaSurrounding.keySet()) {
-                                indexes.add(index);
-                                before.add(aaSurrounding.get(index)[0]);
-                                after.add(aaSurrounding.get(index)[1]);
-                            }
-                        } else {
-                            ArrayList<Integer> tempIndexes = new ArrayList<Integer>(aaSurrounding.keySet());
-                            Collections.sort(tempIndexes);
-                            for (int index : tempIndexes) {
-                                indexes.add(index);
-                                before.add(aaSurrounding.get(index)[0]);
-                                after.add(aaSurrounding.get(index)[1]);
-                            }
-                        }
-
-                        for (int i = 0; i < indexes.size(); i++) {
-                            String aaBefore = "-";
-                            String aaAfter = "-";
-
-                            if (!before.get(i).isEmpty()) {
-                                aaBefore = before.get(i);
-                            }
-                            if (!after.get(i).isEmpty()) {
-                                aaAfter = after.get(i);
-                            }
-
-                            int peptideStart = indexes.get(i);
-                            int peptideEnd = (indexes.get(i) + peptide.getSequence().length() - 1);
-
-                            String peptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
-                            String pepEvidenceKey = tempProtein + "_" + peptideStart + "_" + peptideKey;
-                            pepEvidenceIds.put(pepEvidenceKey, "PepEv_" + ++peptideEvidenceCounter);
-
-                            br.write(getCurrentTabSpace() + "<PeptideEvidence isDecoy=\"" + peptide.isDecoy(sequenceMatchingPreferences) + "\" "
-                                    + "pre=\"" + aaBefore + "\" "
-                                    + "post=\"" + aaAfter + "\" "
-                                    + "start=\"" + peptideStart + "\" "
-                                    + "end=\"" + peptideEnd + "\" "
-                                    + "peptide_ref=\"" + peptideKey + "\" "
-                                    + "dBSequence_ref=\"" + sequenceFactory.getProtein(tempProtein).getAccession() + "\" "
-                                    + "id=\"" + pepEvidenceIds.get(pepEvidenceKey) + "\" "
-                                    + "/>" + lineBreak);
-                        }
+                if (aaSurrounding.size() == 1) {
+                    for (int index : aaSurrounding.keySet()) {
+                        indexes.add(index);
+                        before.add(aaSurrounding.get(index)[0]);
+                        after.add(aaSurrounding.get(index)[1]);
                     }
-
-                    waitingHandler.increasePrimaryProgressCounter();
-
-                    if (waitingHandler.isRunCanceled()) {
-                        break;
+                } else {
+                    ArrayList<Integer> tempIndexes = new ArrayList<Integer>(aaSurrounding.keySet());
+                    Collections.sort(tempIndexes);
+                    for (int index : tempIndexes) {
+                        indexes.add(index);
+                        before.add(aaSurrounding.get(index)[0]);
+                        after.add(aaSurrounding.get(index)[1]);
                     }
                 }
+
+                for (int i = 0; i < indexes.size(); i++) {
+                    String aaBefore = "-";
+                    String aaAfter = "-";
+
+                    if (!before.get(i).isEmpty()) {
+                        aaBefore = before.get(i);
+                    }
+                    if (!after.get(i).isEmpty()) {
+                        aaAfter = after.get(i);
+                    }
+
+                    int peptideStart = indexes.get(i);
+                    int peptideEnd = (indexes.get(i) + peptide.getSequence().length() - 1);
+
+                    String pepEvidenceKey = tempProtein + "_" + peptideStart + "_" + peptideKey;
+                    pepEvidenceIds.put(pepEvidenceKey, "PepEv_" + ++peptideEvidenceCounter);
+
+                    br.write(getCurrentTabSpace() + "<PeptideEvidence isDecoy=\"" + peptide.isDecoy(sequenceMatchingPreferences) + "\" "
+                            + "pre=\"" + aaBefore + "\" "
+                            + "post=\"" + aaAfter + "\" "
+                            + "start=\"" + peptideStart + "\" "
+                            + "end=\"" + peptideEnd + "\" "
+                            + "peptide_ref=\"" + peptideKey + "\" "
+                            + "dBSequence_ref=\"" + sequenceFactory.getProtein(tempProtein).getAccession() + "\" "
+                            + "id=\"" + pepEvidenceIds.get(pepEvidenceKey) + "\" "
+                            + "/>" + lineBreak);
+                }
             }
+
+            waitingHandler.increasePrimaryProgressCounter();
 
             if (waitingHandler.isRunCanceled()) {
                 break;
@@ -1118,9 +1131,9 @@ public class MzIdentMLExport {
     /**
      * Write the data collection.
      *
-     * @throws IOException Exception thrown whenever an error occurred while
+     * @throws IOException exception thrown whenever an error occurred while
      * reading/writing a file
-     * @throws ClassNotFoundException Exception thrown whenever an error
+     * @throws ClassNotFoundException exception thrown whenever an error
      * occurred while deserializing an object
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred while writing the export
@@ -1139,9 +1152,9 @@ public class MzIdentMLExport {
     /**
      * Write the data analysis section.
      *
-     * @throws IOException Exception thrown whenever an error occurred while
+     * @throws IOException exception thrown whenever an error occurred while
      * reading/writing a file
-     * @throws ClassNotFoundException Exception thrown whenever an error
+     * @throws ClassNotFoundException exception thrown whenever an error
      * occurred while deserializing an object
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred while writing the export
@@ -1203,9 +1216,9 @@ public class MzIdentMLExport {
     /**
      * Write the protein groups.
      *
-     * @throws IOException Exception thrown whenever an error occurred while
+     * @throws IOException exception thrown whenever an error occurred while
      * reading/writing a file
-     * @throws ClassNotFoundException Exception thrown whenever an error
+     * @throws ClassNotFoundException exception thrown whenever an error
      * occurred while deserializing an object
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred while writing the export
@@ -1326,9 +1339,9 @@ public class MzIdentMLExport {
      * @param psmKey the key of the PSM to write
      * @param psmIndex the index of the PSM
      *
-     * @throws IOException Exception thrown whenever an error occurred while
+     * @throws IOException exception thrown whenever an error occurred while
      * reading/writing a file
-     * @throws ClassNotFoundException Exception thrown whenever an error
+     * @throws ClassNotFoundException exception thrown whenever an error
      * occurred while deserializing an object
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred while writing the export
@@ -1361,12 +1374,13 @@ public class MzIdentMLExport {
             String spectrumIdentificationItemKey = "SII_" + psmIndex + "_" + rank;
             spectrumIds.put(psmKey, spectrumIdentificationItemKey);
 
-            String bestPeptideKey = bestPeptideAssumption.getPeptide().getMatchingKey(identificationParameters.getSequenceMatchingPreferences());
+            //String bestPeptideKey = bestPeptideAssumption.getPeptide().getMatchingKey(identificationParameters.getSequenceMatchingPreferences());
+            String peptideKey = spectrumKeyToPeptideKeyMap.get(psmKey);
 
             br.write(getCurrentTabSpace() + "<SpectrumIdentificationItem "
                     + "passThreshold=\"" + psmParameter.getMatchValidationLevel().isValidated() + "\" "
                     + "rank=\"" + rank + "\" "
-                    + "peptide_ref=\"" + bestPeptideKey + "\" "
+                    + "peptide_ref=\"" + peptideKey + "\" "
                     + "calculatedMassToCharge=\"" + bestPeptideAssumption.getTheoreticMz() + "\" "
                     + "experimentalMassToCharge=\"" + spectrumFactory.getPrecursorMz(psmKey) + "\" "
                     + "chargeState=\"" + bestPeptideAssumption.getIdentificationCharge().value + "\" "
@@ -1386,116 +1400,120 @@ public class MzIdentMLExport {
                         peptideSequence, identificationParameters.getSequenceMatchingPreferences());
 
                 for (int start : peptideStarts) {
-                    String pepEvidenceKey = tempProtein + "_" + start + "_" + bestPeptideKey;
+                    String pepEvidenceKey = tempProtein + "_" + start + "_" + peptideKey;
                     String peptideEvidenceId = pepEvidenceIds.get(pepEvidenceKey);
                     br.write(getCurrentTabSpace() + "<PeptideEvidenceRef peptideEvidence_ref=\"" + peptideEvidenceId + "\"/>" + lineBreak);
                 }
             }
 
-            // add the fragment ion annotation
-            AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
-            MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumFileName, spectrumTitle);
-            SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), bestPeptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-            ArrayList<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, bestPeptideAssumption.getPeptide());
+            // add the fragment ions detected
+            if (writeFragmentIons) {
 
-            // organize the fragment ions by ion type
-            HashMap<String, HashMap<Integer, ArrayList<IonMatch>>> allFragmentIons = new HashMap<String, HashMap<Integer, ArrayList<IonMatch>>>();
+                // add the fragment ion annotation
+                AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
+                MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumFileName, spectrumTitle);
+                SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), bestPeptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
+                ArrayList<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, bestPeptideAssumption.getPeptide());
 
-            for (IonMatch ionMatch : matches) {
+                // organize the fragment ions by ion type
+                HashMap<String, HashMap<Integer, ArrayList<IonMatch>>> allFragmentIons = new HashMap<String, HashMap<Integer, ArrayList<IonMatch>>>();
 
-                if (ionMatch.ion.getType() == IonType.PEPTIDE_FRAGMENT_ION
-                        || ionMatch.ion.getType() == IonType.IMMONIUM_ION
-                        || ionMatch.ion.getType() == IonType.PRECURSOR_ION
-                        || ionMatch.ion.getType() == IonType.REPORTER_ION
-                        || ionMatch.ion.getType() == IonType.RELATED_ION) { // @TODO: what about tag fragment ion?
+                for (IonMatch ionMatch : matches) {
 
-                    CvTerm fragmentIonTerm = ionMatch.ion.getPrideCvTerm();
-                    Integer charge = ionMatch.charge.value;
+                    if (ionMatch.ion.getType() == IonType.PEPTIDE_FRAGMENT_ION
+                            || ionMatch.ion.getType() == IonType.IMMONIUM_ION
+                            || ionMatch.ion.getType() == IonType.PRECURSOR_ION
+                            || ionMatch.ion.getType() == IonType.REPORTER_ION
+                            || ionMatch.ion.getType() == IonType.RELATED_ION) { // @TODO: what about tag fragment ion?
 
-                    if (fragmentIonTerm != null) {
-                        if (!allFragmentIons.containsKey(fragmentIonTerm.getName())) {
-                            allFragmentIons.put(fragmentIonTerm.getName(), new HashMap<Integer, ArrayList<IonMatch>>());
+                        CvTerm fragmentIonTerm = ionMatch.ion.getPrideCvTerm();
+                        Integer charge = ionMatch.charge.value;
+
+                        if (fragmentIonTerm != null) {
+                            if (!allFragmentIons.containsKey(fragmentIonTerm.getName())) {
+                                allFragmentIons.put(fragmentIonTerm.getName(), new HashMap<Integer, ArrayList<IonMatch>>());
+                            }
+                            if (!allFragmentIons.get(fragmentIonTerm.getName()).containsKey(charge)) {
+                                allFragmentIons.get(fragmentIonTerm.getName()).put(charge, new ArrayList<IonMatch>());
+                            }
+                            allFragmentIons.get(fragmentIonTerm.getName()).get(charge).add(ionMatch);
                         }
-                        if (!allFragmentIons.get(fragmentIonTerm.getName()).containsKey(charge)) {
-                            allFragmentIons.get(fragmentIonTerm.getName()).put(charge, new ArrayList<IonMatch>());
-                        }
-                        allFragmentIons.get(fragmentIonTerm.getName()).get(charge).add(ionMatch);
                     }
                 }
-            }
 
-            if (!allFragmentIons.isEmpty() && writeFragmentIons) {
+                if (!allFragmentIons.isEmpty()) {
 
-                br.write(getCurrentTabSpace() + "<Fragmentation>" + lineBreak);
-                tabCounter++;
+                    br.write(getCurrentTabSpace() + "<Fragmentation>" + lineBreak);
+                    tabCounter++;
 
-                // add the fragment ions
-                Iterator<String> fragmentTypeIterator = allFragmentIons.keySet().iterator();
+                    // add the fragment ions
+                    Iterator<String> fragmentTypeIterator = allFragmentIons.keySet().iterator();
 
-                while (fragmentTypeIterator.hasNext()) {
+                    while (fragmentTypeIterator.hasNext()) {
 
-                    String fragmentType = fragmentTypeIterator.next();
-                    Iterator<Integer> chargeTypeIterator = allFragmentIons.get(fragmentType).keySet().iterator();
+                        String fragmentType = fragmentTypeIterator.next();
+                        Iterator<Integer> chargeTypeIterator = allFragmentIons.get(fragmentType).keySet().iterator();
 
-                    while (chargeTypeIterator.hasNext()) {
+                        while (chargeTypeIterator.hasNext()) {
 
-                        Integer fragmentCharge = chargeTypeIterator.next();
-                        ArrayList<IonMatch> ionMatches = allFragmentIons.get(fragmentType).get(fragmentCharge);
-                        CvTerm fragmentIonCvTerm = ionMatches.get(0).ion.getPrideCvTerm();
+                            Integer fragmentCharge = chargeTypeIterator.next();
+                            ArrayList<IonMatch> ionMatches = allFragmentIons.get(fragmentType).get(fragmentCharge);
+                            CvTerm fragmentIonCvTerm = ionMatches.get(0).ion.getPrideCvTerm();
 
-                        String indexes = "";
-                        String mzValues = "";
-                        String intensityValues = "";
-                        String errorValues = "";
+                            String indexes = "";
+                            String mzValues = "";
+                            String intensityValues = "";
+                            String errorValues = "";
 
-                        // get the fragment ion details
-                        for (IonMatch ionMatch : ionMatches) {
+                            // get the fragment ion details
+                            for (IonMatch ionMatch : ionMatches) {
 
-                            if (ionMatch.ion instanceof PeptideFragmentIon) {
-                                indexes += ((PeptideFragmentIon) ionMatch.ion).getNumber() + " ";
-                            } else if (ionMatch.ion instanceof ImmoniumIon) {
+                                if (ionMatch.ion instanceof PeptideFragmentIon) {
+                                    indexes += ((PeptideFragmentIon) ionMatch.ion).getNumber() + " ";
+                                } else if (ionMatch.ion instanceof ImmoniumIon) {
 
-                                // get the indexes of the corresponding residues
-                                char residue = ImmoniumIon.getResidue(((ImmoniumIon) ionMatch.ion).getSubType());
-                                char[] peptideAsArray = peptideSequence.toCharArray();
-                                for (int i = 0; i < peptideAsArray.length; i++) {
-                                    if (peptideAsArray[i] == residue) {
-                                        indexes += (i + 1) + " ";
+                                    // get the indexes of the corresponding residues
+                                    char residue = ImmoniumIon.getResidue(((ImmoniumIon) ionMatch.ion).getSubType());
+                                    char[] peptideAsArray = peptideSequence.toCharArray();
+                                    for (int i = 0; i < peptideAsArray.length; i++) {
+                                        if (peptideAsArray[i] == residue) {
+                                            indexes += (i + 1) + " ";
+                                        }
                                     }
+
+                                    // change the cv term to the generic immonium ion cv term
+                                    fragmentIonCvTerm = new CvTerm("PSI-MS", "MS:1001239", "frag: immonium ion", null);
+                                } else if (ionMatch.ion instanceof ReporterIon
+                                        || ionMatch.ion instanceof RelatedIon
+                                        || ionMatch.ion instanceof PrecursorIon) { // @TODO: request cv terms for reporter (and related?) ions
+                                    indexes = "0";
                                 }
 
-                                // change the cv term to the generic immonium ion cv term
-                                fragmentIonCvTerm = new CvTerm("PSI-MS", "MS:1001239", "frag: immonium ion", null);
-                            } else if (ionMatch.ion instanceof ReporterIon
-                                    || ionMatch.ion instanceof RelatedIon
-                                    || ionMatch.ion instanceof PrecursorIon) { // @TODO: request cv terms for reporter (and related?) ions
-                                indexes = "0";
+                                mzValues += ionMatch.peak.mz + " ";
+                                intensityValues += ionMatch.peak.intensity + " ";
+                                errorValues += ionMatch.getAbsoluteError() + " ";
                             }
 
-                            mzValues += ionMatch.peak.mz + " ";
-                            intensityValues += ionMatch.peak.intensity + " ";
-                            errorValues += ionMatch.getAbsoluteError() + " ";
-                        }
+                            // add the supported fragment ions
+                            if (fragmentIonCvTerm != null) {
+                                br.write(getCurrentTabSpace() + "<IonType charge=\"" + fragmentCharge + "\" index=\"" + indexes.trim() + "\">" + lineBreak);
+                                tabCounter++;
 
-                        // add the supported fragment ions
-                        if (fragmentIonCvTerm != null) {
-                            br.write(getCurrentTabSpace() + "<IonType charge=\"" + fragmentCharge + "\" index=\"" + indexes.trim() + "\">" + lineBreak);
-                            tabCounter++;
+                                br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_MZ\" values=\"" + mzValues.trim() + "\"/>" + lineBreak);
+                                br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Int\" values=\"" + intensityValues.trim() + "\"/>" + lineBreak);
+                                br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Error\" values=\"" + errorValues.trim() + "\"/>" + lineBreak);
 
-                            br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_MZ\" values=\"" + mzValues.trim() + "\"/>" + lineBreak);
-                            br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Int\" values=\"" + intensityValues.trim() + "\"/>" + lineBreak);
-                            br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Error\" values=\"" + errorValues.trim() + "\"/>" + lineBreak);
+                                writeCvTerm(new CvTerm(fragmentIonCvTerm.getOntology(), fragmentIonCvTerm.getAccession(), fragmentIonCvTerm.getName(), null));
 
-                            writeCvTerm(new CvTerm(fragmentIonCvTerm.getOntology(), fragmentIonCvTerm.getAccession(), fragmentIonCvTerm.getName(), null));
-
-                            tabCounter--;
-                            br.write(getCurrentTabSpace() + "</IonType>" + lineBreak);
+                                tabCounter--;
+                                br.write(getCurrentTabSpace() + "</IonType>" + lineBreak);
+                            }
                         }
                     }
-                }
 
-                tabCounter--;
-                br.write(getCurrentTabSpace() + "</Fragmentation>" + lineBreak);
+                    tabCounter--;
+                    br.write(getCurrentTabSpace() + "</Fragmentation>" + lineBreak);
+                }
             }
 
             // add peptide shaker score and confidence
@@ -1505,7 +1523,7 @@ public class MzIdentMLExport {
             if (mzidVersion_1_2) {
 
                 PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
-                PeptideMatch peptideMatch = identification.getPeptideMatch(bestPeptideKey);
+                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                 PSPtmScores psPtmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
 
                 if (psPtmScores != null) {
@@ -1562,11 +1580,11 @@ public class MzIdentMLExport {
                     }
                 }
 
-                PSParameter peptideParameter = (PSParameter) identification.getPeptideMatchParameter(bestPeptideKey, psmParameter);
+                PSParameter peptideParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psmParameter);
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002469", "PeptideShaker peptide confidence", peptideParameter.getPeptideConfidence() + ""));
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002468", "PeptideShaker peptide score", peptideParameter.getPeptideScore() + ""));
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002500", "peptide passes threshold", peptideParameter.getMatchValidationLevel().isValidated() + ""));
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002520", "peptide group ID", bestPeptideKey));
+                writeCvTerm(new CvTerm("PSI-MS", "MS:1002520", "peptide group ID", peptideKey));
 
                 psPtmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
 
