@@ -15,19 +15,16 @@ public class TargetDecoyPoint implements Serializable {
     static final long serialVersionUID = 1030681250987827768L;
     /**
      * The number of target hits at this point.
-     * @TODO make private
      */
-    public int nTarget = 0;
+    public int nTarget = 0; // @TODO make private
     /**
      * The number of decoy hits at this point.
-     * @TODO make private
      */
-    public int nDecoy = 0;
+    public int nDecoy = 0; // @TODO make private
     /**
      * The posterior error probability associated to this point.
-     * @TODO make private
      */
-    public double p;
+    public double p; // @TODO make private
 
     /**
      * Constructor.
