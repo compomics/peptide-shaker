@@ -273,8 +273,6 @@ public class MzIdentMLExport {
      */
     public void createMzIdentMLFile(boolean version12) throws IOException, MzMLUnmarshallerException, ClassNotFoundException, InterruptedException, SQLException {
 
-        long start = System.currentTimeMillis();
-
         mzidVersion_1_2 = version12;
 
         // @TODO: use the waiting handler more (especially for command line mode)
@@ -323,13 +321,6 @@ public class MzIdentMLExport {
 
         br.close();
         r.close();
-
-        long end = System.currentTimeMillis();
-
-        long result = end - start;
-
-        System.out.println(((float) result) / 1000);
-
     }
 
     /**
