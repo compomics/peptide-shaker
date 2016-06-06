@@ -344,10 +344,9 @@ public class TagMapper {
                                 }
                             }
                             assumptionAtScoreToSave.add(extendedAssumption);
-                            if (searchParameters.getFragmentAccuracyType() != SearchParameters.MassAccuracyType.DA) {
-                                throw new UnsupportedOperationException("Fragment ion tolerance in " + searchParameters.getFragmentAccuracyType() + " not supported for tag mapping.");
-                            }
-                            HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = peptideMapper.getProteinMapping(extendedAssumption.getTag(), tagMatcher, sequenceMatchingPreferences, searchParameters.getFragmentIonAccuracy());
+                            Double refMass = spectrum.getPrecursor().getMassPlusProton(1);
+                            Double fragmentIonAccuracy = searchParameters.getFragmentIonAccuracyInDaltons(refMass);
+                            HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = peptideMapper.getProteinMapping(extendedAssumption.getTag(), tagMatcher, sequenceMatchingPreferences, fragmentIonAccuracy);
                             for (Peptide peptide : proteinMapping.keySet()) {
                                 String peptideKey = peptide.getKey();
                                 if (!peptidesFound.contains(peptideKey)) {
