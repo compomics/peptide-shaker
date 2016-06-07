@@ -339,9 +339,6 @@ public class TagMapper {
                             // free memory if needed and possible
                             if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
                                 tagMatcher.clearCache();
-                                if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
-                                    tagMatcher.setUseCache(false);
-                                }
                             }
                             assumptionAtScoreToSave.add(extendedAssumption);
                             Double refMass = spectrum.getPrecursor().getMassPlusProton(1);
