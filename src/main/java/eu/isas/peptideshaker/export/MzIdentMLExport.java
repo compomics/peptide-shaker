@@ -1421,13 +1421,20 @@ public class MzIdentMLExport {
                         Integer charge = ionMatch.charge.value;
 
                         if (fragmentIonTerm != null) {
-                            if (!allFragmentIons.containsKey(fragmentIonTerm.getName())) {
-                                allFragmentIons.put(fragmentIonTerm.getName(), new HashMap<Integer, ArrayList<IonMatch>>());
+
+                            String fragmentIonName = fragmentIonTerm.getName();
+
+                            if (ionMatch.ion.getType() == IonType.REPORTER_ION) {
+                                fragmentIonName += fragmentIonTerm.getValue(); // have to add the value to handle the reporter ions separately
                             }
-                            if (!allFragmentIons.get(fragmentIonTerm.getName()).containsKey(charge)) {
-                                allFragmentIons.get(fragmentIonTerm.getName()).put(charge, new ArrayList<IonMatch>());
+
+                            if (!allFragmentIons.containsKey(fragmentIonName)) {
+                                allFragmentIons.put(fragmentIonName, new HashMap<Integer, ArrayList<IonMatch>>());
                             }
-                            allFragmentIons.get(fragmentIonTerm.getName()).get(charge).add(ionMatch);
+                            if (!allFragmentIons.get(fragmentIonName).containsKey(charge)) {
+                                allFragmentIons.get(fragmentIonName).put(charge, new ArrayList<IonMatch>());
+                            }
+                            allFragmentIons.get(fragmentIonName).get(charge).add(ionMatch);
                         }
                     }
                 }
@@ -1472,12 +1479,21 @@ public class MzIdentMLExport {
                                         }
                                     }
 
-                                    // change the cv term to the generic immonium ion cv term
+                                    // change the cv term to the generic immonium ion cv term and remove the value
                                     fragmentIonCvTerm = new CvTerm("PSI-MS", "MS:1001239", "frag: immonium ion", null);
                                 } else if (ionMatch.ion instanceof ReporterIon
-                                        || ionMatch.ion instanceof RelatedIon
-                                        || ionMatch.ion instanceof PrecursorIon) { // @TODO: request cv terms for reporter (and related?) ions
+                                        || ionMatch.ion instanceof RelatedIon // @TODO: request cv terms for related ions?
+                                        || ionMatch.ion instanceof PrecursorIon) {
                                     indexes = "0";
+                                }
+
+                                // remove the value except if a reporter ion
+                                if (!(ionMatch.ion instanceof ReporterIon) && fragmentIonCvTerm != null) {
+                                    fragmentIonCvTerm = new CvTerm(
+                                            fragmentIonCvTerm.getOntology(),
+                                            fragmentIonCvTerm.getAccession(),
+                                            fragmentIonCvTerm.getName(),
+                                            null);
                                 }
 
                                 mzValues += ionMatch.peak.mz + " ";
@@ -1494,7 +1510,7 @@ public class MzIdentMLExport {
                                 br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Int\" values=\"" + intensityValues.trim() + "\"/>" + lineBreak);
                                 br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Error\" values=\"" + errorValues.trim() + "\"/>" + lineBreak);
 
-                                writeCvTerm(new CvTerm(fragmentIonCvTerm.getOntology(), fragmentIonCvTerm.getAccession(), fragmentIonCvTerm.getName(), null));
+                                writeCvTerm(new CvTerm(fragmentIonCvTerm.getOntology(), fragmentIonCvTerm.getAccession(), fragmentIonCvTerm.getName(), fragmentIonCvTerm.getValue()));
 
                                 tabCounter--;
                                 br.write(getCurrentTabSpace() + "</IonType>" + lineBreak);

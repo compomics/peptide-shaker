@@ -274,7 +274,6 @@ public class FileImporter {
      * reading or writing a file
      */
     public void importGenes() throws IOException {
-
         GeneFactory geneFactory = GeneFactory.getInstance();
         GenePreferences genePreferences = identificationParameters.getGenePreferences();
         GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, waitingHandler);
