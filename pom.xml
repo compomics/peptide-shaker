@@ -535,13 +535,23 @@
     </dependencies>
 
 
-    <!-- The deployment maven2 repository-->
+    <!-- The deployment maven repository-->
     <distributionManagement>
+        
+        <!-- UGent Genesis archiva repository -->
         <repository>
-            <id>genesis-maven2-repo</id>
-            <name>Genesis Maven Repository</name>
-            <url>scp://genesis.ugent.be/home/maven/public_html/maven2</url>
+            <id>archiva.compomics_maven_2</id>
+            <name>Internal Release Repository</name>
+            <url>http://genesis.ugent.be/archiva/repository/compomics_maven_2</url>
         </repository>
+         
+        <!-- UGent Genesis archiva snapshot repository -->
+        <snapshotRepository>
+            <id>archiva.snapshots</id>
+            <name>Internal Snapshot Repository</name>
+            <url>http://genesis.ugent.be/archiva/repository/snapshots</url>
+        </snapshotRepository>
+        
     </distributionManagement>
 
 </project>

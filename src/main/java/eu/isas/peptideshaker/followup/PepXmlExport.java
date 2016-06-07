@@ -88,7 +88,7 @@ public class PepXmlExport {
     public void writePepXmlFile(Identification identification, IdentificationParameters identificationParameters, File destinationFile, String peptideShakerVersion, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
-            waitingHandler.setWaitingText("Loading peptide to protein mapping. Please Wait...");
+            waitingHandler.setWaitingText("Loading Peptide to Protein Mapping. Please Wait...");
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         }
 
