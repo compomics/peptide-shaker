@@ -336,7 +336,7 @@ public class MzIdentMLExport {
 
         br.write(getCurrentTabSpace()
                 + "<cv id=\"PSI-MS\" "
-                + "uri=\"https://github.com/HUPO-PSI/psi-ms-CV/blob/master/psi-ms.obo\" "
+                + "uri=\"https://raw.githubusercontent.com/HUPO-PSI/psi-ms-CV/master/psi-ms.obo\" "
                 + "fullName=\"PSI-MS\"/>" + lineBreak);
 
         br.write(getCurrentTabSpace()
@@ -346,7 +346,7 @@ public class MzIdentMLExport {
 
         br.write(getCurrentTabSpace()
                 + "<cv id=\"UO\" "
-                + "uri=\"https://github.com/bio-ontology-research-group/unit-ontology/blob/master/unit.obo\" "
+                + "uri=\"https://raw.githubusercontent.com/bio-ontology-research-group/unit-ontology/master/unit.obo\" "
                 + "fullName=\"UNIT-ONTOLOGY\"/>" + lineBreak);
 
         br.write(getCurrentTabSpace()
@@ -1193,7 +1193,7 @@ public class MzIdentMLExport {
             return;
         }
 
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1002439", "final PSM list", null)); // @TODO: add children of MS:1001184 (search statistics)?
+        //writeCvTerm(new CvTerm("PSI-MS", "MS:1002439", "final PSM list", null)); // @TODO: add children of MS:1001184 (search statistics)?
 
         tabCounter--;
         br.write(getCurrentTabSpace() + "</SpectrumIdentificationList>" + lineBreak);
@@ -1688,7 +1688,7 @@ public class MzIdentMLExport {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001172", "Mascot:expectation value", Double.toString(eValue)));
                 } else if (tempAdvocate == Advocate.omssa.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001328", "OMSSA:evalue", Double.toString(eValue)));
-                } else if (tempAdvocate == Advocate.xtandem.getIndex()) {
+                    } else if (tempAdvocate == Advocate.xtandem.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001330", "X!Tandem:expect", Double.toString(eValue)));
                 } else if (tempAdvocate == Advocate.comet.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002257", "Comet:expectation value", Double.toString(eValue)));

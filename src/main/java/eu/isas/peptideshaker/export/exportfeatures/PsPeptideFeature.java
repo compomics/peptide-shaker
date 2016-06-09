@@ -43,7 +43,7 @@ public enum PsPeptideFeature implements ExportFeature {
     raw_score("Raw Score", "Peptide score before log transform.", true),
     confidence("Confidence [%]", "Confidence in percent associated to the peptide.", false),
     decoy("Decoy", "Indicates whether the peptide is a decoy (1: yes, 0: no).", false),
-    validated("Validation", "Indicates the validation level of the protein group.", false),
+    validated("Validation", "Indicates the validation level of the peptide.", false),
     starred("Starred", "Indicates whether the match was starred in the interface (1: yes, 0: no).", false),
     hidden("Hidden", "Indicates whether the match was hidden in the interface (1: yes, 0: no).", false);
 

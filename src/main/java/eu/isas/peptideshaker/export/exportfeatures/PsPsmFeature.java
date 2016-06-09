@@ -25,10 +25,10 @@ public enum PsPsmFeature implements ExportFeature {
     ambiguous_phosphosites("Ambiguous Phosphosites", "List of the sites where a phosphorylation was ambiguously localized.", false),
     ambiguous_phosphosites_number("#Ambiguous Phosphosites", "Number of ambiguously localized phosphorylations.", false),
     algorithm_score("Algorithm Score", "Best score given by the identification algorithm to the hit retained by PeptideShaker independent of modification localization.", false),
-    score("Score", "Score of the retained peptide as a combination of the algorithm scores (used to rank PSMs).", true),
+    score("Score", "Score of the retained PSM as a combination of the algorithm scores (used to rank PSMs).", true),
     raw_score("Raw score", "Score before log transformation.", true),
     confidence("Confidence [%]", "Confidence in percent associated to the retained PSM.", false),
-    validated("Validation", "Indicates the validation level of the protein group.", false),
+    validated("Validation", "Indicates the validation level of the retained PSM.", false),
     starred("Starred", "Indicates whether the match was starred in the interface (1: yes, 0: no).", false),
     hidden("Hidden", "Indicates whether the match was hidden in the interface (1: yes, 0: no).", false);
 
