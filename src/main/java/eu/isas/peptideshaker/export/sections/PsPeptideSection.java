@@ -337,6 +337,9 @@ public class PsPeptideSection {
                 Peptide peptide = peptideMatch.getTheoreticPeptide();
                 String start = "";
                 for (String proteinAccession : accessions) {
+                    if (!start.equals("")) {
+                        start += "; ";
+                    }
                     Protein protein = SequenceFactory.getInstance().getProtein(proteinAccession);
                     ArrayList<Integer> starts = protein.getPeptideStart(peptide.getSequence(),
                             identificationParameters.getSequenceMatchingPreferences());
@@ -350,8 +353,6 @@ public class PsPeptideSection {
                         }
                         start += startAa;
                     }
-
-                    start += "; ";
                 }
                 return start;
             case psms:

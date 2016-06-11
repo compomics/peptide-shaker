@@ -256,8 +256,10 @@ public class PSExportFactory implements ExportFactory {
      * @throws SQLException thrown if an SQLException occurs
      * @throws ClassNotFoundException thrown if an ClassNotFoundException occurs
      * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException occurs
-     * @throws org.apache.commons.math.MathException thrown if an MathException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
+     * @throws org.apache.commons.math.MathException thrown if an MathException
+     * occurs
      */
     public static void writeExport(ExportScheme exportScheme, File destinationFile, ExportFormat exportFormat, String experiment, String sample, int replicateNumber,
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
@@ -594,19 +596,22 @@ public class PSExportFactory implements ExportFactory {
         // accessions
         sectionContent.add(PsPeptideFeature.accessions);
         sectionContent.add(PsPeptideFeature.unique_database);
-        
-        // Proteing Group
+
+        // protein group
         sectionContent.add(PsPeptideFeature.protein_groups);
         sectionContent.add(PsPeptideFeature.nValidatedProteinGroups);
 
+        // position
+        sectionContent.add(PsPeptideFeature.position);
+        
         // peptide sequence
         sectionContent.add(PsPeptideFeature.aaBefore);
         sectionContent.add(PsPeptideFeature.sequence);
         sectionContent.add(PsPeptideFeature.aaAfter);
 
         // ptms
-        sectionContent.add(PsPeptideFeature.fixed_ptms);
         sectionContent.add(PsPeptideFeature.modified_sequence);
+        sectionContent.add(PsPeptideFeature.fixed_ptms);
         sectionContent.add(PsPeptideFeature.variable_ptms);
         sectionContent.add(PsPeptideFeature.localization_confidence);
 
@@ -630,9 +635,17 @@ public class PSExportFactory implements ExportFactory {
 
         // protein accessions
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.accessions);
+
+        // position
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.position);
+        
+        // peptide sequence
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.aaBefore);
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.sequence);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.aaAfter);
 
         // ptms
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.modified_sequence);
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.fixed_ptms);
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.variable_ptms);
         sectionContent.add(PsPsmFeature.d_score);
@@ -669,9 +682,17 @@ public class PSExportFactory implements ExportFactory {
 
         // protein accessions
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.accessions);
+
+        // position
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.position);
+        
+        // peptide sequence
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.aaBefore);
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.sequence);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.aaAfter);
 
         // ptms
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.modified_sequence);
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.fixed_ptms);
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.variable_ptms);
         sectionContent.add(PsPsmFeature.d_score);
@@ -757,8 +778,8 @@ public class PSExportFactory implements ExportFactory {
         // accessions
         sectionContent.add(PsPeptideFeature.accessions);
         sectionContent.add(PsPeptideFeature.unique_database);
-        
-        // Proteing Group
+
+        // protein group
         sectionContent.add(PsPeptideFeature.protein_groups);
         sectionContent.add(PsPeptideFeature.nValidatedProteinGroups);
 
@@ -772,7 +793,7 @@ public class PSExportFactory implements ExportFactory {
         sectionContent.add(PsPeptideFeature.modified_sequence);
         sectionContent.add(PsPeptideFeature.variable_ptms);
         sectionContent.add(PsPeptideFeature.localization_confidence);
-        
+
         // phosphorylation
         sectionContent.add(PsPeptideFeature.confident_phosphosites);
         sectionContent.add(PsPeptideFeature.confident_phosphosites_number);

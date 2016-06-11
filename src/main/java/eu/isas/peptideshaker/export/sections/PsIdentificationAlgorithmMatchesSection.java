@@ -4,6 +4,7 @@ import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.AminoAcid;
 import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
@@ -543,6 +544,30 @@ public class PsIdentificationAlgorithmMatchesSection {
                     }
                 }
                 return subSequence;
+            case position:
+                accessions = peptideAssumption.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
+                Collections.sort(accessions);
+                String peptideSequence = peptideAssumption.getPeptide().getSequence();
+                String start = "";
+                for (String proteinAccession : accessions) {
+                    if (!start.equals("")) {
+                        start += "; ";
+                    }
+                    Protein protein = SequenceFactory.getInstance().getProtein(proteinAccession);
+                    ArrayList<Integer> starts = protein.getPeptideStart(peptideSequence,
+                            identificationParameters.getSequenceMatchingPreferences());
+                    Collections.sort(starts);
+                    boolean first = true;
+                    for (int startAa : starts) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            start += ", ";
+                        }
+                        start += startAa;
+                    }
+                }
+                return start;
             case missed_cleavages:
                 String sequence = peptideAssumption.getPeptide().getSequence();
                 return Peptide.getNMissedCleavages(sequence, shotgunProtocol.getEnzyme()) + "";
@@ -979,6 +1004,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             case sequence_coverage:
             case longest_amino_acid_sequence_annotated:
             case amino_acids_annotated:
+            case position:
                 return "";
             default:
                 return "Not implemented";
