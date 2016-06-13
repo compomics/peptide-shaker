@@ -61,6 +61,7 @@ To start using PeptideShaker, unzip the downloaded file, and double-click the `P
 ## Read Me ##
 
   * [Minimum Requirements](#minimum-requirements)
+  * [From the Command Line](#from-the-command-line)
   * [Miniconda and Docker](#miniconda-and-docker)
   * [SearchGUI](#searchgui)
   * [User Defined Modifications](#user-defined-modifications)
@@ -86,6 +87,16 @@ The minimum screen resolution for PeptideShaker is 1280 x 800, but it is highly 
 
 ---
 
+### From the Command Line
+
+The main purpose of PeptideShaker is to make it simpler to process and display the results of multiple search engines. We believe that a graphical user interface would be the best choice for most users, and therefore made PeptideShaker with a graphical user interface. However, PeptideShaker can also be used via the command line, for example for incorporation into different analysis pipelines.
+
+For details about the command line see: [PeptideShakerCLI](https://github.com/compomics/peptide-shaker/wiki/PeptideShakerCLI).
+
+[Go to top of page](#peptideshaker)
+
+----
+
 ### Miniconda and Docker ###
 
 PeptideShaker is available as a [Miniconda package](http://conda.pydata.org/miniconda.html) in the [bioconda](https://bioconda.github.io) channel. You can install PeptideShaker with:
@@ -97,8 +108,10 @@ conda install peptide-shaker -c bioconda
 A [Docker](https://www.docker.com/) container is available via the [mulled](https://mulled.github.io/mulled/) project. You can make use of the container via:
 
 ```bash
-docker run quay.io/mulled/peptide-shaker:1.1.3--1 peptide-shaker eu.isas.peptideshaker.cmd.PeptideShakerCLI 
+docker run quay.io/mulled/peptide-shaker:X.Y.Z--1 peptide-shaker eu.isas.peptideshaker.cmd.PeptideShakerCLI 
 ```
+
+Replace X.Y.Z with the wanted PeptideShaker version number.
 
 [Go to top of page](#peptideshaker)
 
