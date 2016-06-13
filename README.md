@@ -97,7 +97,7 @@ conda install peptide-shaker -c bioconda
 A [Docker](https://www.docker.com/) container is available via the [mulled](https://mulled.github.io/mulled/) project. You can make use of the container via:
 
 ```bash
-docker run  quay.io/mulled/peptide-shaker:1.1.3--1 peptide-shaker eu.isas.peptideshaker.cmd.PeptideShakerCLI 
+docker run quay.io/mulled/peptide-shaker:1.1.3--1 peptide-shaker eu.isas.peptideshaker.cmd.PeptideShakerCLI 
 ```
 
 [Go to top of page](#peptideshaker)
