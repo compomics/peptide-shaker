@@ -116,7 +116,7 @@ public class PsFragmentSection {
                 spectrum,
                 peptideAssumption.getPeptide());
 
-        HashMap<Double, ArrayList<IonMatch>> sortedAnnotation = new HashMap<Double, ArrayList<IonMatch>>();
+        HashMap<Double, ArrayList<IonMatch>> sortedAnnotation = new HashMap<Double, ArrayList<IonMatch>>(annotations.size());
         for (IonMatch ionMatch : annotations) {
             double mz = ionMatch.peak.mz;
             if (!sortedAnnotation.containsKey(mz)) {
