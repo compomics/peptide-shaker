@@ -242,10 +242,10 @@ public class PeptideMapper {
     }
 
     /**
-     * Sets whether the mapping should be cancelled.
+     * Sets whether the mapping should be canceled.
      *
      * @param canceled a boolean indicating whether the mapping should be
-     * cancelled.
+     * canceled.
      */
     public void setCanceled(boolean canceled) {
         this.canceled = canceled;
@@ -282,7 +282,11 @@ public class PeptideMapper {
             try {
                 peptide.getParentProteins(sequenceMatchingPreferences);
             } catch (java.sql.SQLNonTransientConnectionException derbyException) {
-                throw new IllegalArgumentException("PeptideShaker could not access the FASTA index databse. Please make sure that no other instance of PeptideShaker is running. If the problem persists, restart your computer." + System.getProperty("line.separator"));
+                derbyException.printStackTrace();
+                throw new IllegalArgumentException("PeptideShaker could not access the FASTA index database. "
+                        + "Please make sure that no other instance of PeptideShaker is running. "
+                        + "If the problem persists, restart your computer." 
+                        + System.getProperty("line.separator"));
             }
         }
         if (increaseProgressBar) {
