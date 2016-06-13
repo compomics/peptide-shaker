@@ -61,6 +61,8 @@ To start using PeptideShaker, unzip the downloaded file, and double-click the `P
 ## Read Me ##
 
   * [Minimum Requirements](#minimum-requirements)
+  * [From the Command Line](#from-the-command-line)
+  * [Miniconda and Docker](#miniconda-and-docker)
   * [SearchGUI](#searchgui)
   * [User Defined Modifications](#user-defined-modifications)
   * [Database Help](#database-help)
@@ -80,6 +82,36 @@ However to get the best out of PeptideShaker a newer machine with at least 4 GB 
 Note that in order to use more than 1500 MB of memory you need to install the 64 bit version of Java. See our [Java Troubleshooting](https://github.com/compomics/compomics-utilities/wiki/JavaTroubleShooting) for help.
 
 The minimum screen resolution for PeptideShaker is 1280 x 800, but it is highly recommended to use at least 1680 x 1050. Again, the bigger the better.
+
+[Go to top of page](#peptideshaker)
+
+---
+
+### From the Command Line
+
+The main purpose of PeptideShaker is to make it simpler to process and display the results of multiple search engines. We believe that a graphical user interface would be the best choice for most users, and therefore made PeptideShaker with a graphical user interface. However, PeptideShaker can also be used via the command line, for example for incorporation into different analysis pipelines.
+
+For details about the command line see: [PeptideShakerCLI](https://github.com/compomics/peptide-shaker/wiki/PeptideShakerCLI).
+
+[Go to top of page](#peptideshaker)
+
+----
+
+### Miniconda and Docker ###
+
+PeptideShaker is available as a [Miniconda package](http://conda.pydata.org/miniconda.html) in the [bioconda](https://bioconda.github.io) channel. You can install PeptideShaker with:
+
+```bash
+conda install peptide-shaker -c bioconda
+```
+
+A [Docker](https://www.docker.com/) container is available via the [mulled](https://mulled.github.io/mulled/) project. You can make use of the container via:
+
+```bash
+docker run quay.io/mulled/peptide-shaker:X.Y.Z--1 peptide-shaker eu.isas.peptideshaker.cmd.PeptideShakerCLI 
+```
+
+Replace X.Y.Z with the wanted PeptideShaker version number.
 
 [Go to top of page](#peptideshaker)
 
