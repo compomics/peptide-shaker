@@ -61,7 +61,7 @@ To start using PeptideShaker, unzip the downloaded file, and double-click the `P
 ## Read Me ##
 
   * [Minimum Requirements](#minimum-requirements)
-  * [Availability](#availability)
+  * [Miniconda and Docker](#miniconda-and-docker)
   * [SearchGUI](#searchgui)
   * [User Defined Modifications](#user-defined-modifications)
   * [Database Help](#database-help)
@@ -86,15 +86,15 @@ The minimum screen resolution for PeptideShaker is 1280 x 800, but it is highly 
 
 ---
 
-### Availability ###
+### Miniconda and Docker ###
 
-PeptideShaker is available as [conda package](http://conda.pydata.org/miniconda.html) in the [bioconda](https://bioconda.github.io) channel. You can install PeptideShaker with:
+PeptideShaker is available as a [Miniconda package](http://conda.pydata.org/miniconda.html) in the [bioconda](https://bioconda.github.io) channel. You can install PeptideShaker with:
 
 ```bash
 conda install peptide-shaker -c bioconda
 ```
 
-A [Docker](https://www.docker.com/) container is available via the [mulled](https://mulled.github.io/mulled/) project. You can make use of the container with a similar command to this:
+A [Docker](https://www.docker.com/) container is available via the [mulled](https://mulled.github.io/mulled/) project. You can make use of the container via:
 
 ```bash
 docker run  quay.io/mulled/peptide-shaker:1.1.3--1 peptide-shaker eu.isas.peptideshaker.cmd.PeptideShakerCLI 
@@ -102,7 +102,6 @@ docker run  quay.io/mulled/peptide-shaker:1.1.3--1 peptide-shaker eu.isas.peptid
 
 [Go to top of page](#peptideshaker)
 
----
 ---
 
 ### SearchGUI ###
