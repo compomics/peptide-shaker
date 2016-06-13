@@ -370,7 +370,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
             targetDecoySettingsButton.setEnabled(true);
 
             // check if the database contains decoys
-            if (!file.getAbsolutePath().endsWith(peptideShakerGUI.getUtilitiesUserPreferences().getTargetDecoyFileNameTag() + ".fasta")) {
+            if (!file.getAbsolutePath().endsWith(peptideShakerGUI.getUtilitiesUserPreferences().getTargetDecoyFileNameSuffix() + ".fasta")) {
 
                 int value = JOptionPane.showConfirmDialog(this,
                         "The selected FASTA file does not seem to contain decoy sequences.\n"
@@ -630,7 +630,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
 
                     try {
                         String newFasta = fastaInput.substring(0, fastaInput.lastIndexOf("."));
-                        newFasta += peptideShakerGUI.getUtilitiesUserPreferences().getTargetDecoyFileNameTag() + ".fasta";
+                        newFasta += peptideShakerGUI.getUtilitiesUserPreferences().getTargetDecoyFileNameSuffix() + ".fasta";
                         progressDialog.setTitle("Appending Decoy Sequences. Please Wait...");
                         sequenceFactory.appendDecoySequences(new File(newFasta), progressDialog);
                         databaseSettingsTxt.setText(newFasta);
