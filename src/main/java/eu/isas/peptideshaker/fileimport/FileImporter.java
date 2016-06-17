@@ -31,6 +31,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.preferences.PeptideVariantsPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
@@ -162,13 +163,14 @@ public class FileImporter {
      * Imports sequences from a FASTA file.
      *
      * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param peptideVariantsPreferences the peptide variants preferences set by the user
      * @param waitingHandler the handler displaying feedback to the user and
      * allowing canceling the import
      * @param exceptionHandler handler for exceptions
      * @param fastaFile FASTA file to process
      * @param ptmSettings the PTM settings
      */
-    public void importSequences(SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler,
+    public void importSequences(SequenceMatchingPreferences sequenceMatchingPreferences, PeptideVariantsPreferences peptideVariantsPreferences, WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler, File fastaFile, PtmSettings ptmSettings) {
 
         try {
@@ -210,7 +212,7 @@ public class FileImporter {
             sequenceFactory.setnCache(cacheSize);
 
             try {
-                sequenceFactory.getDefaultPeptideMapper(sequenceMatchingPreferences, ptmSettings, waitingHandler, exceptionHandler);
+                sequenceFactory.getDefaultPeptideMapper(sequenceMatchingPreferences, ptmSettings, peptideVariantsPreferences, waitingHandler, exceptionHandler);
             } catch (SQLException e) {
                 waitingHandler.appendReport("Database " + sequenceFactory.getCurrentFastaFile().getName()
                         + " could not be accessed, make sure that the file is not used by another "
@@ -447,7 +449,7 @@ public class FileImporter {
         public int importFiles() {
 
             try {
-                importSequences(identificationParameters.getSequenceMatchingPreferences(), waitingHandler, exceptionHandler,
+                importSequences(identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPeptideVariantsPreferences(), waitingHandler, exceptionHandler,
                         identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase(),
                         identificationParameters.getSearchParameters().getPtmSettings());
 
