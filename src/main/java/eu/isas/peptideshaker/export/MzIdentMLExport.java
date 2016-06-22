@@ -7,7 +7,9 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
+import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.Ion.IonType;
+import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -98,6 +100,10 @@ public class MzIdentMLExport {
      * The number of decimals to use for the confidence values.
      */
     private final int CONFIDENCE_DECIMALS = 2;
+    /**
+     * The maximum number of neutral losses a fragment ion can have in order to be annotated.
+     */
+    private final int MAX_NEUTRAL_LOSSES = 1;
     /**
      * D-score threshold.
      */
@@ -1396,7 +1402,7 @@ public class MzIdentMLExport {
                     br.write(getCurrentTabSpace() + "<PeptideEvidenceRef peptideEvidence_ref=\"" + peptideEvidenceId + "\"/>" + lineBreak);
                 }
             }
-
+            
             // add the fragment ions detected
             if (writeFragmentIons) {
 
@@ -1417,16 +1423,13 @@ public class MzIdentMLExport {
                             || ionMatch.ion.getType() == IonType.REPORTER_ION
                             || ionMatch.ion.getType() == IonType.RELATED_ION) { // @TODO: what about tag fragment ion?
 
-                        CvTerm fragmentIonTerm = ionMatch.ion.getPrideCvTerm();
+                        CvTerm fragmentIonCvTerm = ionMatch.ion.getPsiMsCvTerm();
                         Integer charge = ionMatch.charge.value;
 
-                        if (fragmentIonTerm != null) {
+                        // only include ions with cv terms and less than the maximum number of allowed neutral losses
+                        if (fragmentIonCvTerm != null && ionMatch.ion.getNeutralLosses().size() <= MAX_NEUTRAL_LOSSES) {
 
-                            String fragmentIonName = fragmentIonTerm.getName();
-
-                            if (ionMatch.ion.getType() == IonType.REPORTER_ION) {
-                                fragmentIonName += fragmentIonTerm.getValue(); // have to add the value to handle the reporter ions separately
-                            }
+                            String fragmentIonName = ionMatch.ion.getName();
 
                             if (!allFragmentIons.containsKey(fragmentIonName)) {
                                 allFragmentIons.put(fragmentIonName, new HashMap<Integer, ArrayList<IonMatch>>());
@@ -1434,6 +1437,7 @@ public class MzIdentMLExport {
                             if (!allFragmentIons.get(fragmentIonName).containsKey(charge)) {
                                 allFragmentIons.get(fragmentIonName).put(charge, new ArrayList<IonMatch>());
                             }
+
                             allFragmentIons.get(fragmentIonName).get(charge).add(ionMatch);
                         }
                     }
@@ -1456,7 +1460,8 @@ public class MzIdentMLExport {
 
                             Integer fragmentCharge = chargeTypeIterator.next();
                             ArrayList<IonMatch> ionMatches = allFragmentIons.get(fragmentType).get(fragmentCharge);
-                            CvTerm fragmentIonCvTerm = ionMatches.get(0).ion.getPrideCvTerm();
+                            Ion currentIon = ionMatches.get(0).ion;
+                            CvTerm fragmentIonCvTerm = currentIon.getPsiMsCvTerm();
 
                             String indexes = "";
                             String mzValues = "";
@@ -1478,22 +1483,10 @@ public class MzIdentMLExport {
                                             indexes += (i + 1) + " ";
                                         }
                                     }
-
-                                    // change the cv term to the generic immonium ion cv term and remove the value
-                                    fragmentIonCvTerm = new CvTerm("PSI-MS", "MS:1001239", "frag: immonium ion", null);
                                 } else if (ionMatch.ion instanceof ReporterIon
                                         || ionMatch.ion instanceof RelatedIon // @TODO: request cv terms for related ions?
                                         || ionMatch.ion instanceof PrecursorIon) {
                                     indexes = "0";
-                                }
-
-                                // remove the value except if a reporter ion
-                                if (!(ionMatch.ion instanceof ReporterIon) && fragmentIonCvTerm != null) {
-                                    fragmentIonCvTerm = new CvTerm(
-                                            fragmentIonCvTerm.getOntology(),
-                                            fragmentIonCvTerm.getAccession(),
-                                            fragmentIonCvTerm.getName(),
-                                            null);
                                 }
 
                                 mzValues += ionMatch.peak.mz + " ";
@@ -1510,7 +1503,18 @@ public class MzIdentMLExport {
                                 br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Int\" values=\"" + intensityValues.trim() + "\"/>" + lineBreak);
                                 br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Error\" values=\"" + errorValues.trim() + "\"/>" + lineBreak);
 
-                                writeCvTerm(new CvTerm(fragmentIonCvTerm.getOntology(), fragmentIonCvTerm.getAccession(), fragmentIonCvTerm.getName(), fragmentIonCvTerm.getValue()));
+                                // add the cv term for the fragment ion type
+                                writeCvTerm(fragmentIonCvTerm);
+                                
+                                // add the cv term for the neutral losses
+                                int neutralLossesCount = currentIon.getNeutralLosses().size();
+                                if (neutralLossesCount > MAX_NEUTRAL_LOSSES) {
+                                    throw new IllegalArgumentException("A maximum of " + MAX_NEUTRAL_LOSSES + " neutral losses is allowed!");
+                                } else {
+                                    for (NeutralLoss tempNeutralLoss : currentIon.getNeutralLosses()) {
+                                        writeCvTerm(tempNeutralLoss.getPsiMsCvTerm());
+                                    }
+                                }
 
                                 tabCounter--;
                                 br.write(getCurrentTabSpace() + "</IonType>" + lineBreak);
