@@ -306,6 +306,19 @@
             <layout>default</layout>
         </repository>
 
+            <repository>
+                <id>snapshots</id>
+                <name>Archiva Managed Snapshot Repository</name>
+                <url>http://genesis.ugent.be/maven/repository/snapshots/</url>
+                <releases>
+                    <enabled>false</enabled>
+                </releases>
+                <snapshots>
+                    <enabled>true</enabled>
+                </snapshots>
+            </repository>
+
+
     </repositories>
 
 
