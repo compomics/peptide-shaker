@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.software.CommandLineUtils;
+import com.compomics.software.cli.CommandLineUtils;
 import eu.isas.peptideshaker.export.PSExportFactory;
 import java.io.File;
 import java.util.ArrayList;
