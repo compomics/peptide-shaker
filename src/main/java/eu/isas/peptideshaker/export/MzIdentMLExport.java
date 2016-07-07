@@ -101,9 +101,10 @@ public class MzIdentMLExport {
      */
     private final int CONFIDENCE_DECIMALS = 2;
     /**
-     * The maximum number of neutral losses a fragment ion can have in order to be annotated.
+     * The maximum number of neutral losses a fragment ion can have in order to
+     * be annotated.
      */
-    private final int MAX_NEUTRAL_LOSSES = 1;
+    private int maxNeutalLosses;
     /**
      * D-score threshold.
      */
@@ -280,6 +281,11 @@ public class MzIdentMLExport {
     public void createMzIdentMLFile(boolean version12) throws IOException, MzMLUnmarshallerException, ClassNotFoundException, InterruptedException, SQLException {
 
         mzidVersion_1_2 = version12;
+        if (mzidVersion_1_2) {
+            maxNeutalLosses = 1;
+        } else {
+            maxNeutalLosses = 0;
+        }
 
         // @TODO: use the waiting handler more (especially for command line mode)
         // the mzIdentML start tag
@@ -1200,7 +1206,6 @@ public class MzIdentMLExport {
         }
 
         //writeCvTerm(new CvTerm("PSI-MS", "MS:1002439", "final PSM list", null)); // @TODO: add children of MS:1001184 (search statistics)?
-
         tabCounter--;
         br.write(getCurrentTabSpace() + "</SpectrumIdentificationList>" + lineBreak);
 
@@ -1402,7 +1407,7 @@ public class MzIdentMLExport {
                     br.write(getCurrentTabSpace() + "<PeptideEvidenceRef peptideEvidence_ref=\"" + peptideEvidenceId + "\"/>" + lineBreak);
                 }
             }
-            
+
             // add the fragment ions detected
             if (writeFragmentIons) {
 
@@ -1427,7 +1432,7 @@ public class MzIdentMLExport {
                         Integer charge = ionMatch.charge.value;
 
                         // only include ions with cv terms and less than the maximum number of allowed neutral losses
-                        if (fragmentIonCvTerm != null && ionMatch.ion.getNeutralLosses().size() <= MAX_NEUTRAL_LOSSES) {
+                        if (fragmentIonCvTerm != null && ionMatch.ion.getNeutralLosses().size() <= maxNeutalLosses) {
 
                             String fragmentIonName = ionMatch.ion.getName();
 
@@ -1505,11 +1510,11 @@ public class MzIdentMLExport {
 
                                 // add the cv term for the fragment ion type
                                 writeCvTerm(fragmentIonCvTerm);
-                                
+
                                 // add the cv term for the neutral losses
                                 int neutralLossesCount = currentIon.getNeutralLosses().size();
-                                if (neutralLossesCount > MAX_NEUTRAL_LOSSES) {
-                                    throw new IllegalArgumentException("A maximum of " + MAX_NEUTRAL_LOSSES + " neutral losses is allowed!");
+                                if (neutralLossesCount > maxNeutalLosses) {
+                                    throw new IllegalArgumentException("A maximum of " + maxNeutalLosses + " neutral losses is allowed!");
                                 } else {
                                     for (NeutralLoss tempNeutralLoss : currentIon.getNeutralLosses()) {
                                         writeCvTerm(tempNeutralLoss.getPsiMsCvTerm());
@@ -1692,7 +1697,7 @@ public class MzIdentMLExport {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001172", "Mascot:expectation value", Double.toString(eValue)));
                 } else if (tempAdvocate == Advocate.omssa.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001328", "OMSSA:evalue", Double.toString(eValue)));
-                    } else if (tempAdvocate == Advocate.xtandem.getIndex()) {
+                } else if (tempAdvocate == Advocate.xtandem.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001330", "X!Tandem:expect", Double.toString(eValue)));
                 } else if (tempAdvocate == Advocate.comet.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002257", "Comet:expectation value", Double.toString(eValue)));
