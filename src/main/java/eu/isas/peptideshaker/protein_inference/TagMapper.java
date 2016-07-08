@@ -33,6 +33,7 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Annotati
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.experiment.identification.protein_inference.PeptideMapperType;
+import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
@@ -343,8 +344,8 @@ public class TagMapper {
                             assumptionAtScoreToSave.add(extendedAssumption);
                             Double refMass = spectrum.getPrecursor().getMassPlusProton(1);
                             Double fragmentIonAccuracy = searchParameters.getFragmentIonAccuracyInDaltons(refMass);
-                            HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = peptideMapper.getProteinMapping(extendedAssumption.getTag(), tagMatcher, sequenceMatchingPreferences, fragmentIonAccuracy);
-                            for (Peptide peptide : proteinMapping.keySet()) {
+                            ArrayList<PeptideProteinMapping> proteinMapping = peptideMapper.getProteinMapping(extendedAssumption.getTag(), tagMatcher, sequenceMatchingPreferences, fragmentIonAccuracy);
+                            for (Peptide peptide : PeptideProteinMapping.getPeptides(proteinMapping)) {
                                 String peptideKey = peptide.getKey();
                                 if (!peptidesFound.contains(peptideKey)) {
                                     PeptideAssumption peptideAssumption = new PeptideAssumption(peptide, extendedAssumption.getRank(), advocateId, tagAssumption.getIdentificationCharge(), tagAssumption.getScore(), tagAssumption.getIdentificationFile());
