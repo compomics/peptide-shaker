@@ -92,7 +92,7 @@ public class ReportCLI extends CpsParent {
         try {
             ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
             if (!errorKeys.isEmpty()) {
-                System.out.println("FASTA to write in the following configuration folders. Please use a temporary folder, "
+                System.out.println("Unable to write in the following configuration folders. Please use a temporary folder, "
                         + "the path configuration command line, or edit the configuration paths from the graphical interface.");
                 for (PathKey pathKey : errorKeys) {
                     System.out.println(pathKey.getId() + ": " + pathKey.getDescription());
@@ -124,15 +124,14 @@ public class ReportCLI extends CpsParent {
                     + "It looks like another instance of PeptideShaker is still connected to the file. "
                     + "Please close all instances of PeptideShaker and try again.", true, true);
             e.printStackTrace();
-            waitingHandler.appendReport(inputFilePath + " successfuly loaded.", true, true);
+            return 1;
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while reading: " + inputFilePath + ".", true, true);
             e.printStackTrace();
             try {
                 PeptideShakerCLI.closePeptideShaker(identification);
             } catch (Exception e2) {
-                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-                e2.printStackTrace();
+                // Ignore
             }
             return 1;
         }

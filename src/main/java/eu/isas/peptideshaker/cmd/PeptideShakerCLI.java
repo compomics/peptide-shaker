@@ -741,7 +741,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     }
 
     /**
-     * Close the PeptideShaker instance by clearing up factories and cache.
+     * Close the PeptideShaker instance. Closes file connections and deletes temporary files.
      *
      * @param identification the identification to close
      *
@@ -749,17 +749,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * @throws SQLException thrown if SQLException occurs
      */
     public static void closePeptideShaker(Identification identification) throws IOException, SQLException {
-
-        try {
-            SpectrumFactory.getInstance().closeFiles();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            SequenceFactory.getInstance().clearFactory();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         try {
             if (identification != null) {
@@ -787,6 +776,17 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            SpectrumFactory.getInstance().closeFiles();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            SequenceFactory.getInstance().closeFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
