@@ -31,7 +31,6 @@ import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.ProcessingPreferences;
-import com.compomics.util.preferences.ProteinInferencePreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.preferences.ValidationQCPreferences;
 import eu.isas.peptideshaker.export.ProjectExport;

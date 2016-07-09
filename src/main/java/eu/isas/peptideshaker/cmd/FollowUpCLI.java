@@ -141,7 +141,7 @@ public class FollowUpCLI extends CpsParent {
         // load fasta file
         try {
             if (!loadFastaFile(waitingHandler)) {
-                waitingHandler.appendReport("The fasta file was not found, please locate it using the GUI.", true, true);
+                waitingHandler.appendReport("The FASTA file was not found. Please provide its location in the command line parameters.", true, true);
                 try {
                     PeptideShakerCLI.closePeptideShaker(identification);
                 } catch (Exception e2) {
@@ -167,9 +167,9 @@ public class FollowUpCLI extends CpsParent {
         try {
             if (!loadSpectrumFiles(waitingHandler)) {
                 if (identification.getSpectrumFiles().size() > 1) {
-                    waitingHandler.appendReport("The spectrum files were not found, please locate them using the GUI.", true, true);
+                    waitingHandler.appendReport("The spectrum files were not found. Please provide their location in the command line parameters.", true, true);
                 } else {
-                    waitingHandler.appendReport("The spectrum file was not found, please locate it using the GUI.", true, true);
+                    waitingHandler.appendReport("The spectrum file was not found. Please provide its location in the command line parameters", true, true);
                 }
                 try {
                     PeptideShakerCLI.closePeptideShaker(identification);
