@@ -74,7 +74,7 @@ public class ReportCLI extends CpsParent {
         if (pathSettingsCLIInputBean.getLogFolder() != null) {
             redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
         }
-        
+
         if (pathSettingsCLIInputBean.hasInput()) {
             PathSettingsCLI pathSettingsCLI = new PathSettingsCLI(pathSettingsCLIInputBean);
             pathSettingsCLI.setPathSettings();
@@ -148,7 +148,6 @@ public class ReportCLI extends CpsParent {
                 }
                 return 1;
             }
-            waitingHandler.appendReport("Protein database " + identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getName() + ".", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the fasta file.", true, true);
             e.printStackTrace();
@@ -177,7 +176,6 @@ public class ReportCLI extends CpsParent {
                 }
                 return 1;
             }
-            waitingHandler.appendReport("Spectrum file(s) successfully loaded.", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the spectrum file(s).", true, true);
             e.printStackTrace();
@@ -189,7 +187,7 @@ public class ReportCLI extends CpsParent {
             }
             return 1;
         }
-        
+
         // Load project specific PTMs
         String error = PeptideShaker.loadModifications(getIdentificationParameters().getSearchParameters());
         if (error != null) {

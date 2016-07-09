@@ -125,7 +125,6 @@ public class MzidCLI extends CpsParent {
                     + "It looks like another instance of PeptideShaker is still connected to the file. "
                     + "Please close all instances of PeptideShaker and try again.", true, true);
             e.printStackTrace();
-            waitingHandler.appendReport(inputFilePath + " successfuly loaded.", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while reading: " + inputFilePath + ".", true, true);
             e.printStackTrace();
@@ -179,7 +178,6 @@ public class MzidCLI extends CpsParent {
                 }
                 return 1;
             }
-            waitingHandler.appendReport("Spectrum file(s) successfully loaded.", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the spectrum file(s).", true, true);
             e.printStackTrace();
