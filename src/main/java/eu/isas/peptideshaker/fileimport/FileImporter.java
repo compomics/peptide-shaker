@@ -973,7 +973,7 @@ public class FileImporter {
                 spectrumKey = spectrumMatch.getKey();
             }
 
-            // import the mgf file needed if not done already
+            // import the mgf file if not done already
             if (!mgfUsed.contains(fileName)) {
                 File spectrumFile = spectrumFiles.get(fileName);
                 if (spectrumFile != null && spectrumFile.exists()) {
