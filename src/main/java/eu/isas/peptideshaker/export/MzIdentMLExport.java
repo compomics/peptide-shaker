@@ -978,7 +978,7 @@ public class MzIdentMLExport {
         } else {
             // Initial global thresholds
             IdMatchValidationPreferences idMatchValidationPreferences = identificationParameters.getIdValidationPreferences();
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "distinct peptide-level global FDR", Double.toString(Util.roundDouble(idMatchValidationPreferences.getDefaultPeptideFDR(), CONFIDENCE_DECIMALS))));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "peptide sequence-level global FDR", Double.toString(Util.roundDouble(idMatchValidationPreferences.getDefaultPeptideFDR(), CONFIDENCE_DECIMALS))));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "PSM-level global FDR", Double.toString(Util.roundDouble(idMatchValidationPreferences.getDefaultPsmFDR(), CONFIDENCE_DECIMALS))));
 
             PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
@@ -1012,7 +1012,7 @@ public class MzIdentMLExport {
 //                if (thresholdType == 0) {
 //                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002463", "distinct peptide-level global confidence", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // confidence
 //                } else if (targetDecoyResults.getInputType() == 1) {
-//                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "distinct peptide-level global FDR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FDR
+//                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "peptide sequence-level global FDR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FDR
 //                } else if (targetDecoyResults.getInputType() == 2) {
 //                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002462", "distinct peptide-level global FNR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FNR
 //                }
@@ -1799,7 +1799,7 @@ public class MzIdentMLExport {
 //            FileInputStream fis = new FileInputStream(new File("foo"));
 //            String md5 = DigestUtils.md5Hex(fis);
 //            fis.close();
-            br.write(getCurrentTabSpace() + "<SourceFile location=\"" + idFile.getAbsolutePath() + "\" id=\"SourceFile_" + sourceFileCounter++ + "\">" + lineBreak);
+            br.write(getCurrentTabSpace() + "<SourceFile location=\"" + idFile.toURI().toString() + "\" id=\"SourceFile_" + sourceFileCounter++ + "\">" + lineBreak);
             tabCounter++;
             br.write(getCurrentTabSpace() + "<FileFormat>" + lineBreak);
             tabCounter++;
@@ -1841,7 +1841,7 @@ public class MzIdentMLExport {
         // add the database
         File database = identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
         br.write(getCurrentTabSpace() + "<SearchDatabase numDatabaseSequences=\"" + sequenceFactory.getNSequences()
-                + "\" location=\"" + database.getAbsolutePath() + "\" "
+                + "\" location=\"" + database.toURI().toString() + "\" "
                 + "id=\"" + "SearchDB_1\">" + lineBreak);
         tabCounter++;
         br.write(getCurrentTabSpace() + "<FileFormat>" + lineBreak);
@@ -1862,7 +1862,7 @@ public class MzIdentMLExport {
         for (String mgfFileName : spectrumFactory.getMgfFileNames()) {
             File mgfFile = projectDetails.getSpectrumFile(mgfFileName);
 
-            br.write(getCurrentTabSpace() + "<SpectraData location=\"" + mgfFile.getAbsolutePath() + "\" id=\"" + mgfFileName
+            br.write(getCurrentTabSpace() + "<SpectraData location=\"" + mgfFile.toURI().toString() + "\" id=\"" + mgfFileName
                     + "\" name=\"" + mgfFile.getName() + "\">" + lineBreak);
             tabCounter++;
 
