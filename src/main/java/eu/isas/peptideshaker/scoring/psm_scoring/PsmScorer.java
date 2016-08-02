@@ -315,9 +315,10 @@ public class PsmScorer {
                                             Double intermediateScore = psParameter.getIntermediateScore(scoreIndex);
                                             if (intermediateScore != null) {
                                                 double p = targetDecoyMap.getProbability(intermediateScore);
-                                                score *= p;
+                                                score *= (1-p);
                                             }
                                         }
+                                        score = 1-score;
                                     }
 
                                     assumption.setScore(score);
