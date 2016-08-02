@@ -169,7 +169,7 @@ public class PsmScorer {
                                 }
 
                                 psParameter.setIntermediateScore(scoreIndex, score);
-                                inputMap.setIntermediateScore(spectrumFileName, advocateIndex, scoreIndex, score, decoy);
+                                inputMap.setIntermediateScore(spectrumFileName, advocateIndex, scoreIndex, score, decoy, psmScoringPreferences);
 
 //                                    try {
 //                                        BufferedWriter br = brs.get(scoreIndex);
