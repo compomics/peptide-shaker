@@ -7,6 +7,7 @@ import com.compomics.util.db.DerbyUtil;
 import com.compomics.util.experiment.biology.genes.go.GoMapping;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
@@ -38,7 +39,7 @@ public class ReportCLI extends CpsParent {
     /**
      * The enzyme factory.
      */
-    private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
+    private EnzymeFactory enzymeFactory;
     /**
      * The Progress messaging handler reports the status throughout all
      * PeptideShaker processes.
@@ -47,7 +48,7 @@ public class ReportCLI extends CpsParent {
     /**
      * The compomics PTM factory.
      */
-    private PTMFactory ptmFactory = PTMFactory.getInstance();
+    private PTMFactory ptmFactory;
 
     /**
      * Construct a new ReportCLI runnable from a ReportCLI Bean. When
@@ -58,8 +59,6 @@ public class ReportCLI extends CpsParent {
      */
     public ReportCLI(ReportCLIInputBean reportCLIInputBean) {
         this.reportCLIInputBean = reportCLIInputBean;
-        loadEnzymes();
-        loadPtms();
     }
 
     /**
@@ -102,6 +101,14 @@ public class ReportCLI extends CpsParent {
             System.out.println("Unable to load the path configurations. Default paths will be used.");
             e.printStackTrace();
         }
+
+        // Initiate factories
+        ptmFactory = PTMFactory.getInstance();
+        enzymeFactory = EnzymeFactory.getInstance();
+
+        // Load resources files
+        loadEnzymes();
+        loadSpecies();
 
         waitingHandler = new WaitingHandlerCLIImpl();
 
@@ -385,11 +392,15 @@ public class ReportCLI extends CpsParent {
     }
 
     /**
-     * Loads the modifications.
+     * Loads the species from the species file into the species factory.
      */
-    public void loadPtms() {
-
-        // reset ptm factory
-        ptmFactory = PTMFactory.getInstance();
+    private void loadSpecies() {
+        try {
+            SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
+            speciesFactory.initiate(PeptideShaker.getJarFilePath());
+        } catch (Exception e) {
+            System.out.println("An error occurred while loading the species.");
+            e.printStackTrace();
+        }
     }
 }

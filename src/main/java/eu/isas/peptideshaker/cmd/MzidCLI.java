@@ -43,11 +43,11 @@ public class MzidCLI extends CpsParent {
     /**
      * The compomics PTM factory.
      */
-    private PTMFactory ptmFactory = PTMFactory.getInstance();
+    private PTMFactory ptmFactory;
     /**
      * The enzyme factory.
      */
-    private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
+    private EnzymeFactory enzymeFactory;
 
     /**
      * Construct a new MzidCLI runnable from a MzidCLI input bean. When
@@ -58,9 +58,6 @@ public class MzidCLI extends CpsParent {
      */
     public MzidCLI(MzidCLIInputBean mzidCLIInputBean) {
         this.mzidCLIInputBean = mzidCLIInputBean;
-        loadEnzymes();
-        loadPtms();
-        loadSpecies();
     }
 
     /**
@@ -103,6 +100,14 @@ public class MzidCLI extends CpsParent {
             System.out.println("Unable to load the path configurations. Default paths will be used.");
             e.printStackTrace();
         }
+
+        // Initiate factories
+        ptmFactory = PTMFactory.getInstance();
+        enzymeFactory = EnzymeFactory.getInstance();
+
+        // Load resources files
+        loadEnzymes();
+        loadSpecies();
 
         waitingHandler = new WaitingHandlerCLIImpl();
 
@@ -189,7 +194,7 @@ public class MzidCLI extends CpsParent {
             }
             return 1;
         }
-        
+
         // Load project specific PTMs
         String error = PeptideShaker.loadModifications(getIdentificationParameters().getSearchParameters());
         if (error != null) {
@@ -335,15 +340,6 @@ public class MzidCLI extends CpsParent {
             System.out.println("An error occurred while loading the species.");
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Loads the modifications.
-     */
-    public void loadPtms() {
-
-        // reset ptm factory
-        ptmFactory = PTMFactory.getInstance();
     }
 
     /**
