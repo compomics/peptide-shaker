@@ -43,11 +43,11 @@ public class FollowUpCLI extends CpsParent {
     /**
      * The compomics PTM factory.
      */
-    private PTMFactory ptmFactory = PTMFactory.getInstance();
+    private PTMFactory ptmFactory;
     /**
      * The enzyme factory.
      */
-    private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
+    private EnzymeFactory enzymeFactory;
 
     /**
      * Construct a new FollowUpCLI runnable from a FollowUpCLI Bean. When
@@ -58,9 +58,6 @@ public class FollowUpCLI extends CpsParent {
      */
     public FollowUpCLI(FollowUpCLIInputBean followUpCLIInputBean) {
         this.followUpCLIInputBean = followUpCLIInputBean;
-        loadEnzymes();
-        loadPtms();
-        loadSpecies();
     }
 
     /**
@@ -103,6 +100,14 @@ public class FollowUpCLI extends CpsParent {
             System.out.println("Unable to load the path configurations. Default paths will be used.");
             e.printStackTrace();
         }
+
+        // Initiate factories
+        ptmFactory = PTMFactory.getInstance();
+        enzymeFactory = EnzymeFactory.getInstance();
+
+        // Load resources files
+        loadEnzymes();
+        loadSpecies();
 
         waitingHandler = new WaitingHandlerCLIImpl();
 
@@ -189,7 +194,7 @@ public class FollowUpCLI extends CpsParent {
             }
             return 1;
         }
-        
+
         // Load project specific PTMs
         String error = PeptideShaker.loadModifications(getIdentificationParameters().getSearchParameters());
         if (error != null) {
@@ -395,13 +400,6 @@ public class FollowUpCLI extends CpsParent {
             System.out.println("An error occurred while loading the species.");
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Loads the modifications.
-     */
-    public void loadPtms() {
-        ptmFactory = PTMFactory.getInstance();
     }
 
     /**
