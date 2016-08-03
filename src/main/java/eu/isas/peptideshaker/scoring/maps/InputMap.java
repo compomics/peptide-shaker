@@ -681,6 +681,7 @@ public class InputMap implements Serializable {
     private synchronized TargetDecoyMap createTargetDecoyMap(Integer scoreIndex, HashMap<Integer, TargetDecoyMap> scoreMap, PsmScoringPreferences psmScoringPreferences) {
         TargetDecoyMap targetDecoyMap = scoreMap.get(scoreIndex);
         if (targetDecoyMap == null) {
+            targetDecoyMap = new TargetDecoyMap(psmScoringPreferences.getDecoysInFirstBin());
             scoreMap.put(scoreIndex, targetDecoyMap);
         }
         return targetDecoyMap;
