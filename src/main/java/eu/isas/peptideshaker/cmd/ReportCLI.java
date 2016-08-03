@@ -74,7 +74,7 @@ public class ReportCLI extends CpsParent {
         if (pathSettingsCLIInputBean.getLogFolder() != null) {
             redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
         }
-        
+
         if (pathSettingsCLIInputBean.hasInput()) {
             PathSettingsCLI pathSettingsCLI = new PathSettingsCLI(pathSettingsCLIInputBean);
             pathSettingsCLI.setPathSettings();
@@ -92,7 +92,7 @@ public class ReportCLI extends CpsParent {
         try {
             ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
             if (!errorKeys.isEmpty()) {
-                System.out.println("FASTA to write in the following configuration folders. Please use a temporary folder, "
+                System.out.println("Unable to write in the following configuration folders. Please use a temporary folder, "
                         + "the path configuration command line, or edit the configuration paths from the graphical interface.");
                 for (PathKey pathKey : errorKeys) {
                     System.out.println(pathKey.getId() + ": " + pathKey.getDescription());
@@ -124,15 +124,14 @@ public class ReportCLI extends CpsParent {
                     + "It looks like another instance of PeptideShaker is still connected to the file. "
                     + "Please close all instances of PeptideShaker and try again.", true, true);
             e.printStackTrace();
-            waitingHandler.appendReport(inputFilePath + " successfuly loaded.", true, true);
+            return 1;
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while reading: " + inputFilePath + ".", true, true);
             e.printStackTrace();
             try {
                 PeptideShakerCLI.closePeptideShaker(identification);
             } catch (Exception e2) {
-                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-                e2.printStackTrace();
+                // Ignore
             }
             return 1;
         }
@@ -140,7 +139,7 @@ public class ReportCLI extends CpsParent {
         // load fasta file
         try {
             if (!loadFastaFile(waitingHandler)) {
-                waitingHandler.appendReport("The FASTA file was not found. Please locate it using the GUI.", true, true);
+                waitingHandler.appendReport("The FASTA file was not found. Please provide it in the command line parameters", true, true);
                 try {
                     PeptideShakerCLI.closePeptideShaker(identification);
                 } catch (Exception e2) {
@@ -149,7 +148,6 @@ public class ReportCLI extends CpsParent {
                 }
                 return 1;
             }
-            waitingHandler.appendReport("Protein database " + identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getName() + ".", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the fasta file.", true, true);
             e.printStackTrace();
@@ -166,9 +164,9 @@ public class ReportCLI extends CpsParent {
         try {
             if (!loadSpectrumFiles(waitingHandler)) {
                 if (identification.getSpectrumFiles().size() > 1) {
-                    waitingHandler.appendReport("The spectrum files were not found, please locate them using the GUI.", true, true);
+                    waitingHandler.appendReport("The spectrum files were not found. Please provide their location in the command line parameters.", true, true);
                 } else {
-                    waitingHandler.appendReport("The spectrum file was not found, please locate it using the GUI.", true, true);
+                    waitingHandler.appendReport("The spectrum file was not found. Please provide its location in the command line parameters.", true, true);
                 }
                 try {
                     PeptideShakerCLI.closePeptideShaker(identification);
@@ -178,7 +176,6 @@ public class ReportCLI extends CpsParent {
                 }
                 return 1;
             }
-            waitingHandler.appendReport("Spectrum file(s) successfully loaded.", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the spectrum file(s).", true, true);
             e.printStackTrace();
@@ -190,7 +187,7 @@ public class ReportCLI extends CpsParent {
             }
             return 1;
         }
-        
+
         // Load project specific PTMs
         String error = PeptideShaker.loadModifications(getIdentificationParameters().getSearchParameters());
         if (error != null) {

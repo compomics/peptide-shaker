@@ -169,7 +169,7 @@ public class PsmScorer {
                                 }
 
                                 psParameter.setIntermediateScore(scoreIndex, score);
-                                inputMap.setIntermediateScore(spectrumFileName, advocateIndex, scoreIndex, score, decoy);
+                                inputMap.setIntermediateScore(spectrumFileName, advocateIndex, scoreIndex, score, decoy, psmScoringPreferences);
 
 //                                    try {
 //                                        BufferedWriter br = brs.get(scoreIndex);
@@ -315,9 +315,10 @@ public class PsmScorer {
                                             Double intermediateScore = psParameter.getIntermediateScore(scoreIndex);
                                             if (intermediateScore != null) {
                                                 double p = targetDecoyMap.getProbability(intermediateScore);
-                                                score *= p;
+                                                score *= (1-p);
                                             }
                                         }
+                                        score = 1-score;
                                     }
 
                                     assumption.setScore(score);

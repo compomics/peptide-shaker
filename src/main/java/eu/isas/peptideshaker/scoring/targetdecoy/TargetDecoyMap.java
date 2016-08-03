@@ -41,7 +41,11 @@ public class TargetDecoyMap implements Serializable {
      */
     private ArrayList<Double> scores;
     /**
-     * The maximal number of target hits comprised between two subsequent decoy
+     * The number of decoy matches to include in the first bin to set the bin size nmax. 2 means that two consecutive decoys will be used.
+     */
+    private Integer minDecoysInBin = 2;
+    /**
+     * The bin size, by default the maximal number of target hits comprised between minDecoysInBin subsequent decoy
      * hits.
      */
     private Integer nmax;
@@ -63,9 +67,18 @@ public class TargetDecoyMap implements Serializable {
     private TargetDecoyResults targetDecoyResults = new TargetDecoyResults();
 
     /**
-     * Constructs a target/decoy map.
+     * Constructor.
      */
     public TargetDecoyMap() {
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param minDecoysInBin The number of decoy matches to include in the first bin to set the bin size
+     */
+    public TargetDecoyMap(Integer minDecoysInBin) {
+        this.minDecoysInBin = minDecoysInBin;
     }
 
     /**
@@ -199,6 +212,7 @@ public class TargetDecoyMap implements Serializable {
         boolean onlyTarget = true;
         nmax = 0;
         int targetCpt = 0;
+        int decoyCpt = 0;
         nTargetOnly = 0;
         int targetCount = 0, decoyCount = 0;
 
@@ -209,17 +223,21 @@ public class TargetDecoyMap implements Serializable {
                     nTargetOnly += point.nTarget / 2 + point.nTarget % 2;
                     targetCpt += point.nTarget / 2;
                     onlyTarget = false;
+                    decoyCpt += point.nDecoy;
+                    
                 } else {
                     nTargetOnly += point.nTarget;
                 }
             } else if (point.nDecoy > 0) {
                 targetCpt += point.nTarget / 2 + point.nTarget % 2;
+                    decoyCpt += point.nDecoy;
                 if (targetCpt > nmax
                         && score < 1.0
-                        && (point.nDecoy == 1 || targetCpt < nTargetOnly)) {
+                        && decoyCpt >= minDecoysInBin) {
                     nmax = targetCpt;
                 }
                 targetCpt = point.nTarget / 2;
+                    decoyCpt = point.nDecoy;
             } else {
                 targetCpt += point.nTarget;
             }
