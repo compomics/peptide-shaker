@@ -645,7 +645,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             try {
                 UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
                 File tempDbFolder = utilitiesUserPreferences.getDbFolder();
-                File newFile = new File(tempDbFolder, fastaFile.getName());
+                File newFile = new File(tempDbFolder, fastaFile.getName()); // @TODO: getName() does not work cross-platform, returns the complete path... 
                 if (newFile.exists()) {
                     fastaFile = newFile;
                     searchParameters.setFastaFile(fastaFile);
@@ -657,7 +657,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             if (!found) {
                 // look in the data folders
                 for (File dataFolder : dataFolders) {
-                    File newFile = new File(dataFolder, fastaFile.getName());
+                    File newFile = new File(dataFolder, fastaFile.getName()); // @TODO: getName() does not work cross-platform, returns the complete path... 
                     if (newFile.exists()) {
                         fastaFile = newFile;
                         searchParameters.setFastaFile(fastaFile);
