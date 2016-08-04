@@ -104,7 +104,7 @@ public class MzIdentMLExport {
      * The maximum number of neutral losses a fragment ion can have in order to
      * be annotated.
      */
-    private int maxNeutalLosses;
+    private int maxNeutralLosses;
     /**
      * D-score threshold.
      */
@@ -282,9 +282,9 @@ public class MzIdentMLExport {
 
         mzidVersion_1_2 = version12;
         if (mzidVersion_1_2) {
-            maxNeutalLosses = 1;
+            maxNeutralLosses = 1;
         } else {
-            maxNeutalLosses = 0;
+            maxNeutralLosses = 0;
         }
 
         // @TODO: use the waiting handler more (especially for command line mode)
@@ -1432,7 +1432,7 @@ public class MzIdentMLExport {
                         Integer charge = ionMatch.charge.value;
 
                         // only include ions with cv terms and less than the maximum number of allowed neutral losses
-                        if (fragmentIonCvTerm != null && ionMatch.ion.getNeutralLosses().size() <= maxNeutalLosses) {
+                        if (fragmentIonCvTerm != null && ionMatch.ion.getNeutralLosses().size() <= maxNeutralLosses) {
 
                             String fragmentIonName = ionMatch.ion.getName();
 
@@ -1513,8 +1513,8 @@ public class MzIdentMLExport {
 
                                 // add the cv term for the neutral losses
                                 int neutralLossesCount = currentIon.getNeutralLosses().size();
-                                if (neutralLossesCount > maxNeutalLosses) {
-                                    throw new IllegalArgumentException("A maximum of " + maxNeutalLosses + " neutral losses is allowed!");
+                                if (neutralLossesCount > maxNeutralLosses) {
+                                    throw new IllegalArgumentException("A maximum of " + maxNeutralLosses + " neutral losses is allowed!");
                                 } else {
                                     for (NeutralLoss tempNeutralLoss : currentIon.getNeutralLosses()) {
                                         writeCvTerm(tempNeutralLoss.getPsiMsCvTerm());
