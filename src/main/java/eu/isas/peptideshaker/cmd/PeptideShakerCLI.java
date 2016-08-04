@@ -31,7 +31,6 @@ import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.ProcessingPreferences;
-import com.compomics.util.preferences.ProteinInferencePreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.preferences.ValidationQCPreferences;
 import eu.isas.peptideshaker.export.ProjectExport;
@@ -640,7 +639,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             try {
                 UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
                 File tempDbFolder = utilitiesUserPreferences.getDbFolder();
-                File newFile = new File(tempDbFolder, fastaFile.getName());
+                File newFile = new File(tempDbFolder, fastaFile.getName()); // @TODO: getName() does not work cross-platform, returns the complete path... 
                 if (newFile.exists()) {
                     fastaFile = newFile;
                     searchParameters.setFastaFile(fastaFile);
@@ -652,7 +651,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             if (!found) {
                 // look in the data folders
                 for (File dataFolder : dataFolders) {
-                    File newFile = new File(dataFolder, fastaFile.getName());
+                    File newFile = new File(dataFolder, fastaFile.getName()); // @TODO: getName() does not work cross-platform, returns the complete path... 
                     if (newFile.exists()) {
                         fastaFile = newFile;
                         searchParameters.setFastaFile(fastaFile);
