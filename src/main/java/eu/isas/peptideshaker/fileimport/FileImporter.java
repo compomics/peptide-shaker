@@ -163,7 +163,8 @@ public class FileImporter {
      * Imports sequences from a FASTA file.
      *
      * @param sequenceMatchingPreferences the sequence matching preferences
-     * @param peptideVariantsPreferences the peptide variants preferences set by the user
+     * @param peptideVariantsPreferences the peptide variants preferences set by
+     * the user
      * @param waitingHandler the handler displaying feedback to the user and
      * allowing canceling the import
      * @param exceptionHandler handler for exceptions
@@ -729,8 +730,13 @@ public class FileImporter {
                     waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                     waitingHandler.appendReport("Loading spectra for " + idFile.getName() + ".", true, true);
                     for (SpectrumMatch spectrumMatch : idFileSpectrumMatches) {
+                        // Verify that the spectrum is in the provided mgf files
                         if (!importSpectrum(idFile, spectrumMatch, numberOfMatches)) {
                             allLoaded = false;
+                        }
+                        // Load spectrum in cache for tag mapping
+                        if (fileReader.getTagsMap() != null && !fileReader.getTagsMap().isEmpty()) {
+                            spectrumFactory.getSpectrum(spectrumMatch.getKey());
                         }
                         waitingHandler.increaseSecondaryProgressCounter();
                     }
