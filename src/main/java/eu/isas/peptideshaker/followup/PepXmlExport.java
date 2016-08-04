@@ -92,7 +92,7 @@ public class PepXmlExport {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         }
 
-        sequenceFactory.getDefaultPeptideMapper(identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getSearchParameters().getPtmSettings(), waitingHandler, exceptionHandler);
+        sequenceFactory.getDefaultPeptideMapper(identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getSearchParameters().getPtmSettings(), identificationParameters.getPeptideVariantsPreferences(), waitingHandler, exceptionHandler);
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Exporting PSMs. Please Wait...");

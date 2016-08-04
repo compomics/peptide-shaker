@@ -33,6 +33,7 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Annotati
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.experiment.identification.protein_inference.PeptideMapperType;
+import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
@@ -114,8 +115,10 @@ public class TagMapper {
             InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
         if (nThreads == 1) {
             mapTagsSingleThread(idfileReader, identification, waitingHandler);
-        } else {
+        } else if (identificationParameters.getSequenceMatchingPreferences().getPeptideMapperType() == PeptideMapperType.tree) {
             mapTagsThreadingPerKey(idfileReader, identification, waitingHandler, nThreads);
+        } else {
+            mapTagsThreadingPerMatch(idfileReader, identification, waitingHandler, nThreads);
         }
     }
 
@@ -145,12 +148,13 @@ public class TagMapper {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
             PtmSettings modificationProfile = identificationParameters.getSearchParameters().getPtmSettings();
+            TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
             for (String key : tagMap.keySet()) {
                 TagMatcher tagMatcher = new TagMatcher(modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences());
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
                 while (matchIterator.hasNext()) {
                     SpectrumMatch spectrumMatch = matchIterator.next();
-                    mapTagsForSpectrumMatch(identification, spectrumMatch, tagMatcher, key, waitingHandler, !matchIterator.hasNext());
+                    mapTagsForSpectrumMatch(identification, spectrumMatch, spectrumAnnotator, tagMatcher, key, waitingHandler, !matchIterator.hasNext(), true);
                 }
             }
         }
@@ -254,12 +258,15 @@ public class TagMapper {
      *
      * @param identification identification object used to store the matches
      * @param spectrumMatch the spectrum match containing the tags to map
+     * @param spectrumAnnotator a spectrum annotator
      * @param tagMatcher the tag matcher to match the tags
      * @param key the key of the tag to match
      * @param waitingHandler waiting handler allowing the display of progress
      * and canceling the process
      * @param increaseProgress boolean indicating whether the progress bar of
      * the waiting handler should be increased
+     * @param threadPerSpectrum boolean indicating whether only one thread is
+     * used per spectrum
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading or writing a file.
@@ -272,10 +279,9 @@ public class TagMapper {
      * @throws MzMLUnmarshallerException exception thrown whenever an error
      * occurred while accessing an mzML file.
      */
-    private void mapTagsForSpectrumMatch(Identification identification, SpectrumMatch spectrumMatch, TagMatcher tagMatcher, String key, WaitingHandler waitingHandler, boolean increaseProgress) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+    private void mapTagsForSpectrumMatch(Identification identification, SpectrumMatch spectrumMatch, TagSpectrumAnnotator spectrumAnnotator, TagMatcher tagMatcher, String key, WaitingHandler waitingHandler, boolean increaseProgress, boolean threadPerSpectrum) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
 
         com.compomics.util.experiment.identification.protein_inference.PeptideMapper peptideMapper = sequenceFactory.getDefaultPeptideMapper();
-        TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
         int keySize = key.length();
         ArrayList<Integer> charges = new ArrayList<Integer>(1);
         charges.add(1); //@TODO: use other charges?
@@ -343,8 +349,8 @@ public class TagMapper {
                             assumptionAtScoreToSave.add(extendedAssumption);
                             Double refMass = spectrum.getPrecursor().getMassPlusProton(1);
                             Double fragmentIonAccuracy = searchParameters.getFragmentIonAccuracyInDaltons(refMass);
-                            HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = peptideMapper.getProteinMapping(extendedAssumption.getTag(), tagMatcher, sequenceMatchingPreferences, fragmentIonAccuracy);
-                            for (Peptide peptide : proteinMapping.keySet()) {
+                            ArrayList<PeptideProteinMapping> proteinMapping = peptideMapper.getProteinMapping(extendedAssumption.getTag(), tagMatcher, sequenceMatchingPreferences, fragmentIonAccuracy);
+                            for (Peptide peptide : PeptideProteinMapping.getPeptides(proteinMapping)) {
                                 String peptideKey = peptide.getKey();
                                 if (!peptidesFound.contains(peptideKey)) {
                                     PeptideAssumption peptideAssumption = new PeptideAssumption(peptide, extendedAssumption.getRank(), advocateId, tagAssumption.getIdentificationCharge(), tagAssumption.getScore(), tagAssumption.getIdentificationFile());
@@ -367,7 +373,7 @@ public class TagMapper {
             spectrumMatch.removeAssumptions();
         }
         if (!assumptionsToSave.isEmpty()) {
-            identification.addRawAssumptions(spectrumKey, assumptionsToSave);
+            identification.addRawAssumptions(spectrumKey, assumptionsToSave, threadPerSpectrum);
         }
 
         if (increaseProgress) {
@@ -513,6 +519,10 @@ public class TagMapper {
          */
         private final WaitingHandler waitingHandler;
         /**
+         * The spectrum annotator for this thread.
+         */
+        private final TagSpectrumAnnotator tagSpectrumAnnotator;
+        /**
          * The tag to protein matcher.
          */
         private final TagMatcher tagMatcher;
@@ -540,6 +550,7 @@ public class TagMapper {
             this.key = key;
             this.waitingHandler = waitingHandler;
             this.tagMatcher = new TagMatcher(fixedModifications, variableModifications, sequenceMatchingPreferences);
+            this.tagSpectrumAnnotator = new TagSpectrumAnnotator();
             this.identification = identification;
         }
 
@@ -551,7 +562,7 @@ public class TagMapper {
                 while (matchIterator.hasNext()) {
                     SpectrumMatch spectrumMatch = matchIterator.next();
                     if (!waitingHandler.isRunCanceled()) {
-                        mapTagsForSpectrumMatch(identification, spectrumMatch, tagMatcher, key, waitingHandler, !matchIterator.hasNext());
+                        mapTagsForSpectrumMatch(identification, spectrumMatch, tagSpectrumAnnotator, tagMatcher, key, waitingHandler, !matchIterator.hasNext(), false);
                     }
                 }
             } catch (Exception e) {
@@ -583,6 +594,10 @@ public class TagMapper {
          */
         private final WaitingHandler waitingHandler;
         /**
+         * The spectrum annotator for this thread.
+         */
+        private final TagSpectrumAnnotator tagSpectrumAnnotator;
+        /**
          * boolean indicating whether the progress bar should be increased.
          */
         private final boolean increaseProgress;
@@ -612,6 +627,7 @@ public class TagMapper {
             this.spectrumMatch = spectrumMatch;
             this.key = key;
             this.waitingHandler = waitingHandler;
+            this.tagSpectrumAnnotator = new TagSpectrumAnnotator();
             this.increaseProgress = increaseProgress;
             this.tagMatcher = tagMatcher;
             this.identification = identification;
@@ -622,7 +638,7 @@ public class TagMapper {
 
             try {
                 if (!waitingHandler.isRunCanceled()) {
-                    mapTagsForSpectrumMatch(identification, spectrumMatch, tagMatcher, key, waitingHandler, increaseProgress);
+                    mapTagsForSpectrumMatch(identification, spectrumMatch, tagSpectrumAnnotator, tagMatcher, key, waitingHandler, increaseProgress, true);
                 }
             } catch (Exception e) {
                 if (!waitingHandler.isRunCanceled()) {
