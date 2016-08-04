@@ -11,6 +11,7 @@ import com.compomics.util.experiment.identification.protein_sequences.SequenceFa
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
+import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import static eu.isas.peptideshaker.cmd.PeptideShakerCLI.redirectErrorStream;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
@@ -41,13 +42,17 @@ public class FollowUpCLI extends CpsParent {
      */
     private WaitingHandler waitingHandler;
     /**
-     * The compomics PTM factory.
+     * The PTM factory.
      */
     private PTMFactory ptmFactory;
     /**
      * The enzyme factory.
      */
     private EnzymeFactory enzymeFactory;
+    /**
+     * The utilities user preferences.
+     */
+    private UtilitiesUserPreferences utilitiesUserPreferences;
 
     /**
      * Construct a new FollowUpCLI runnable from a FollowUpCLI Bean. When
@@ -101,7 +106,11 @@ public class FollowUpCLI extends CpsParent {
             e.printStackTrace();
         }
 
-        // Initiate factories
+        // Load user preferences
+        utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+
+        // Instantiate factories
+        PeptideShaker.instantiateFacories(utilitiesUserPreferences);
         ptmFactory = PTMFactory.getInstance();
         enzymeFactory = EnzymeFactory.getInstance();
 

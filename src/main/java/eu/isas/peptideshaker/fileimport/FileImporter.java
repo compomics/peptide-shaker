@@ -79,11 +79,11 @@ public class FileImporter {
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance(100);
+    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance(30000);
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * If a Mascot dat file is bigger than this size, an indexed parsing will be
      * used.
@@ -729,6 +729,7 @@ public class FileImporter {
                     waitingHandler.resetSecondaryProgressCounter();
                     waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                     waitingHandler.appendReport("Loading spectra for " + idFile.getName() + ".", true, true);
+                    int nTags = 0;
                     for (SpectrumMatch spectrumMatch : idFileSpectrumMatches) {
                         // Verify that the spectrum is in the provided mgf files
                         if (!importSpectrum(idFile, spectrumMatch, numberOfMatches)) {
@@ -736,6 +737,10 @@ public class FileImporter {
                         }
                         // Load spectrum in cache for tag mapping
                         if (fileReader.getTagsMap() != null && !fileReader.getTagsMap().isEmpty()) {
+                            nTags++;
+                            if (spectrumFactory.getCacheSize() < nTags) {
+                                spectrumFactory.setCacheSize(nTags);
+                            }
                             spectrumFactory.getSpectrum(spectrumMatch.getKey());
                         }
                         waitingHandler.increaseSecondaryProgressCounter();

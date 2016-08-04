@@ -4,7 +4,6 @@ import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.util.Util;
 import com.compomics.util.db.DerbyUtil;
-import com.compomics.util.experiment.biology.genes.go.GoMapping;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
@@ -12,6 +11,7 @@ import com.compomics.util.experiment.identification.protein_sequences.SequenceFa
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
+import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import static eu.isas.peptideshaker.cmd.PeptideShakerCLI.redirectErrorStream;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
@@ -46,9 +46,13 @@ public class ReportCLI extends CpsParent {
      */
     private WaitingHandler waitingHandler;
     /**
-     * The compomics PTM factory.
+     * The PTM factory.
      */
     private PTMFactory ptmFactory;
+    /**
+     * The utilities user preferences.
+     */
+    private UtilitiesUserPreferences utilitiesUserPreferences;
 
     /**
      * Construct a new ReportCLI runnable from a ReportCLI Bean. When
@@ -102,7 +106,11 @@ public class ReportCLI extends CpsParent {
             e.printStackTrace();
         }
 
-        // Initiate factories
+        // Load user preferences
+        utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+
+        // Instantiate factories
+        PeptideShaker.instantiateFacories(utilitiesUserPreferences);
         ptmFactory = PTMFactory.getInstance();
         enzymeFactory = EnzymeFactory.getInstance();
 

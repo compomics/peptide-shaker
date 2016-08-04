@@ -22,6 +22,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.io.ConfigurationFile;
 import com.compomics.util.memory.MemoryConsumptionStatus;
@@ -37,6 +38,7 @@ import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.PsmScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.waiting.Duration;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -1025,6 +1027,38 @@ public class PeptideShaker {
      */
     public static File getMatchesFolder() {
         return new File(getMatchesDirectoryParentFile(), PeptideShaker.getMatchesDirectorySubPath());
+    }
+    
+    /**
+     * Instantiates the spectrum, sequence, and PTM factories with caches adapted to the memory available as set in the user preferences.
+     * 
+     * @param utilitiesUserPreferences the user preferences
+     */
+    public static void instantiateFacories(UtilitiesUserPreferences utilitiesUserPreferences) {
+        int nSequences;
+        int nSpectra;
+        if (utilitiesUserPreferences.getMemoryPreference() > 32000) {
+            nSequences = 10000000;
+            nSpectra = 5000000;
+        } else if (utilitiesUserPreferences.getMemoryPreference() > 16000) {
+            nSequences = 1000000;
+            nSpectra = 1000000;
+        } else if (utilitiesUserPreferences.getMemoryPreference() > 8000) {
+            nSequences = 5000000;
+            nSpectra = 500000;
+        } else if (utilitiesUserPreferences.getMemoryPreference() > 4000) {
+            nSequences = 100000;
+            nSpectra = 50000;
+        } else if (utilitiesUserPreferences.getMemoryPreference() > 2000) {
+            nSequences = 50000;
+            nSpectra = 10000;
+        } else {
+            nSequences = 10000;
+            nSpectra = 100;
+        }
+        PTMFactory.getInstance();
+        SequenceFactory.getInstance(nSequences);
+        SpectrumFactory.getInstance(nSpectra);
     }
 
     /**

@@ -296,11 +296,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance(100);
+    private SpectrumFactory spectrumFactory;
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance(30000);
+    private SequenceFactory sequenceFactory;
     /**
      * The exception handler
      */
@@ -525,8 +525,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             editPathSettings(null);
         }
 
-        ptmFactory = PTMFactory.getInstance();
-
         // load the user preferences
         loadUserPreferences();
 
@@ -574,6 +572,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     addShortcutAtDeskTop();
                 }
             }
+
+            // Instantiate factories
+            loadEnzymes();
+            PeptideShaker.instantiateFacories(utilitiesUserPreferences);
+            ptmFactory = PTMFactory.getInstance();
+            spectrumFactory = SpectrumFactory.getInstance();
+            sequenceFactory = SequenceFactory.getInstance();
 
             // set the font color for the titlted borders, looks better than the default black
             UIManager.put("TitledBorder.titleColor", new Color(59, 59, 59));
@@ -623,9 +628,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
             this.setExtendedState(MAXIMIZED_BOTH);
-
-            loadEnzymes();
-            resetPtmFactory();
 
             setLocationRelativeTo(null);
 
@@ -3991,7 +3993,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-     * Loads the modifications from the modification file.
+     * Resets the PTM factory.
      */
     public void resetPtmFactory() {
 

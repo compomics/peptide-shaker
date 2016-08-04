@@ -80,6 +80,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * The enzyme factory.
      */
     private EnzymeFactory enzymeFactory;
+    /**
+     * The utilities user preferences.
+     */
+    private UtilitiesUserPreferences utilitiesUserPreferences;
 
     /**
      * Construct a new PeptideShakerCLI runnable. When initialization is
@@ -139,8 +143,12 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 System.out.println("Unable to load the path configurations. Default paths will be used.");
                 e.printStackTrace();
             }
+            
+            // Load user preferences
+            utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
 
-            // Initiate factories
+            // Instantiate factories
+            PeptideShaker.instantiateFacories(utilitiesUserPreferences);
             ptmFactory = PTMFactory.getInstance();
             enzymeFactory = EnzymeFactory.getInstance();
 
@@ -643,7 +651,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             boolean found = false;
             // look in the database folder
             try {
-                UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
                 File tempDbFolder = utilitiesUserPreferences.getDbFolder();
                 File newFile = new File(tempDbFolder, fastaFile.getName());
                 if (newFile.exists()) {
