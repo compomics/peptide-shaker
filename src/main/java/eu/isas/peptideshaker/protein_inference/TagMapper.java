@@ -115,8 +115,10 @@ public class TagMapper {
             InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
         if (nThreads == 1) {
             mapTagsSingleThread(idfileReader, identification, waitingHandler);
-        } else {
+        } else if (identificationParameters.getSequenceMatchingPreferences().getPeptideMapperType() == PeptideMapperType.tree) {
             mapTagsThreadingPerKey(idfileReader, identification, waitingHandler, nThreads);
+        } else {
+            mapTagsThreadingPerMatch(idfileReader, identification, waitingHandler, nThreads);
         }
     }
 
@@ -152,7 +154,7 @@ public class TagMapper {
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
                 while (matchIterator.hasNext()) {
                     SpectrumMatch spectrumMatch = matchIterator.next();
-                    mapTagsForSpectrumMatch(identification, spectrumMatch, spectrumAnnotator, tagMatcher, key, waitingHandler, !matchIterator.hasNext());
+                    mapTagsForSpectrumMatch(identification, spectrumMatch, spectrumAnnotator, tagMatcher, key, waitingHandler, !matchIterator.hasNext(), true);
                 }
             }
         }
@@ -263,6 +265,8 @@ public class TagMapper {
      * and canceling the process
      * @param increaseProgress boolean indicating whether the progress bar of
      * the waiting handler should be increased
+     * @param threadPerSpectrum boolean indicating whether only one thread is
+     * used per spectrum
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading or writing a file.
@@ -275,7 +279,7 @@ public class TagMapper {
      * @throws MzMLUnmarshallerException exception thrown whenever an error
      * occurred while accessing an mzML file.
      */
-    private void mapTagsForSpectrumMatch(Identification identification, SpectrumMatch spectrumMatch, TagSpectrumAnnotator spectrumAnnotator, TagMatcher tagMatcher, String key, WaitingHandler waitingHandler, boolean increaseProgress) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+    private void mapTagsForSpectrumMatch(Identification identification, SpectrumMatch spectrumMatch, TagSpectrumAnnotator spectrumAnnotator, TagMatcher tagMatcher, String key, WaitingHandler waitingHandler, boolean increaseProgress, boolean threadPerSpectrum) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
 
         com.compomics.util.experiment.identification.protein_inference.PeptideMapper peptideMapper = sequenceFactory.getDefaultPeptideMapper();
         int keySize = key.length();
@@ -369,7 +373,7 @@ public class TagMapper {
             spectrumMatch.removeAssumptions();
         }
         if (!assumptionsToSave.isEmpty()) {
-            identification.addRawAssumptions(spectrumKey, assumptionsToSave);
+            identification.addRawAssumptions(spectrumKey, assumptionsToSave, threadPerSpectrum);
         }
 
         if (increaseProgress) {
@@ -558,7 +562,7 @@ public class TagMapper {
                 while (matchIterator.hasNext()) {
                     SpectrumMatch spectrumMatch = matchIterator.next();
                     if (!waitingHandler.isRunCanceled()) {
-                        mapTagsForSpectrumMatch(identification, spectrumMatch, tagSpectrumAnnotator, tagMatcher, key, waitingHandler, !matchIterator.hasNext());
+                        mapTagsForSpectrumMatch(identification, spectrumMatch, tagSpectrumAnnotator, tagMatcher, key, waitingHandler, !matchIterator.hasNext(), false);
                     }
                 }
             } catch (Exception e) {
@@ -634,7 +638,7 @@ public class TagMapper {
 
             try {
                 if (!waitingHandler.isRunCanceled()) {
-                    mapTagsForSpectrumMatch(identification, spectrumMatch, tagSpectrumAnnotator, tagMatcher, key, waitingHandler, increaseProgress);
+                    mapTagsForSpectrumMatch(identification, spectrumMatch, tagSpectrumAnnotator, tagMatcher, key, waitingHandler, increaseProgress, true);
                 }
             } catch (Exception e) {
                 if (!waitingHandler.isRunCanceled()) {
