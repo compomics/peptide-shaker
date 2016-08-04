@@ -75,11 +75,11 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     /**
      * The compomics PTM factory.
      */
-    private PTMFactory ptmFactory = PTMFactory.getInstance();
+    private PTMFactory ptmFactory;
     /**
      * The enzyme factory.
      */
-    private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
+    private EnzymeFactory enzymeFactory;
 
     /**
      * Construct a new PeptideShakerCLI runnable. When initialization is
@@ -87,8 +87,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * start PeptideShaker and write the output files when finished.
      */
     public PeptideShakerCLI() {
-        loadEnzymes();
-        loadSpecies();
     }
 
     /**
@@ -141,6 +139,14 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 System.out.println("Unable to load the path configurations. Default paths will be used.");
                 e.printStackTrace();
             }
+
+            // Initiate factories
+            ptmFactory = PTMFactory.getInstance();
+            enzymeFactory = EnzymeFactory.getInstance();
+
+            // Load resources files
+            loadEnzymes();
+            loadSpecies();
 
             // Set the gene mappings
             GeneFactory geneFactory = GeneFactory.getInstance();
@@ -662,8 +668,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 if (!found) {
                     waitingHandler.appendReport("FASTA file \'" + fastaFile.getName() + "\' not found.", true, true);
                 }
-            } 
-            
+            }
+
             if (found) {
                 // see if the protein inference fasta file is also missing
                 File proteinInferenceSequenceDatabase = identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
@@ -740,7 +746,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     }
 
     /**
-     * Close the PeptideShaker instance by clearing up factories and cache.
+     * Close the PeptideShaker instance. Closes file connections and deletes
+     * temporary files.
      *
      * @param identification the identification to close
      *
@@ -748,17 +755,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * @throws SQLException thrown if SQLException occurs
      */
     public static void closePeptideShaker(Identification identification) throws IOException, SQLException {
-
-        try {
-            SpectrumFactory.getInstance().closeFiles();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            SequenceFactory.getInstance().clearFactory();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         try {
             if (identification != null) {
@@ -786,6 +782,17 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            SpectrumFactory.getInstance().closeFiles();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            SequenceFactory.getInstance().closeFile();
         } catch (Exception e) {
             e.printStackTrace();
         }

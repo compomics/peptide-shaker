@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.scoring.maps;
 
 import com.compomics.util.experiment.identification.Advocate;
+import com.compomics.util.preferences.PsmScoringPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.io.Serializable;
@@ -614,8 +615,9 @@ public class InputMap implements Serializable {
      * @param score the score of the match
      * @param decoy indicates whether the match maps to a target or a decoy
      * protein
+     * @param psmScoringPreferences the psm scoring preferences
      */
-    public void setIntermediateScore(String fileName, Integer advocateIndex, Integer scoreIndex, double score, boolean decoy) {
+    public void setIntermediateScore(String fileName, Integer advocateIndex, Integer scoreIndex, double score, boolean decoy, PsmScoringPreferences psmScoringPreferences) {
         HashMap<Integer, HashMap<Integer, TargetDecoyMap>> advocateMap = intermediateScores.get(fileName);
         if (advocateMap == null) {
             advocateMap = createIntermediateScoreMap(fileName);
@@ -626,7 +628,7 @@ public class InputMap implements Serializable {
         }
         TargetDecoyMap targetDecoyMap = scoreMap.get(scoreIndex);
         if (targetDecoyMap == null) {
-            targetDecoyMap = createTargetDecoyMap(scoreIndex, scoreMap);
+            targetDecoyMap = createTargetDecoyMap(scoreIndex, scoreMap, psmScoringPreferences);
         }
         targetDecoyMap.put(score, decoy);
     }
@@ -672,10 +674,11 @@ public class InputMap implements Serializable {
      *
      * @param scoreIndex the index of the score
      * @param scoreMap the intermediate map for this advocate
+     * @param psmScoringPreferences the psm scoring preferences
      *
      * @return the target-decoy map
      */
-    private synchronized TargetDecoyMap createTargetDecoyMap(Integer scoreIndex, HashMap<Integer, TargetDecoyMap> scoreMap) {
+    private synchronized TargetDecoyMap createTargetDecoyMap(Integer scoreIndex, HashMap<Integer, TargetDecoyMap> scoreMap, PsmScoringPreferences psmScoringPreferences) {
         TargetDecoyMap targetDecoyMap = scoreMap.get(scoreIndex);
         if (targetDecoyMap == null) {
             targetDecoyMap = new TargetDecoyMap();

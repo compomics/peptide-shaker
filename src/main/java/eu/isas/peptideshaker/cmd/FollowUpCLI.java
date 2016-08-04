@@ -43,11 +43,11 @@ public class FollowUpCLI extends CpsParent {
     /**
      * The compomics PTM factory.
      */
-    private PTMFactory ptmFactory = PTMFactory.getInstance();
+    private PTMFactory ptmFactory;
     /**
      * The enzyme factory.
      */
-    private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
+    private EnzymeFactory enzymeFactory;
 
     /**
      * Construct a new FollowUpCLI runnable from a FollowUpCLI Bean. When
@@ -58,9 +58,6 @@ public class FollowUpCLI extends CpsParent {
      */
     public FollowUpCLI(FollowUpCLIInputBean followUpCLIInputBean) {
         this.followUpCLIInputBean = followUpCLIInputBean;
-        loadEnzymes();
-        loadPtms();
-        loadSpecies();
     }
 
     /**
@@ -104,6 +101,14 @@ public class FollowUpCLI extends CpsParent {
             e.printStackTrace();
         }
 
+        // Initiate factories
+        ptmFactory = PTMFactory.getInstance();
+        enzymeFactory = EnzymeFactory.getInstance();
+
+        // Load resources files
+        loadEnzymes();
+        loadSpecies();
+
         waitingHandler = new WaitingHandlerCLIImpl();
 
         String inputFilePath = null;
@@ -125,7 +130,6 @@ public class FollowUpCLI extends CpsParent {
                     + "It looks like another instance of PeptideShaker is still connected to the file. "
                     + "Please close all instances of PeptideShaker and try again.", true, true);
             e.printStackTrace();
-            waitingHandler.appendReport(inputFilePath + " successfuly loaded.", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while reading: " + inputFilePath + ".", true, true);
             e.printStackTrace();
@@ -141,7 +145,7 @@ public class FollowUpCLI extends CpsParent {
         // load fasta file
         try {
             if (!loadFastaFile(waitingHandler)) {
-                waitingHandler.appendReport("The fasta file was not found, please locate it using the GUI.", true, true);
+                waitingHandler.appendReport("The FASTA file was not found. Please provide its location in the command line parameters.", true, true);
                 try {
                     PeptideShakerCLI.closePeptideShaker(identification);
                 } catch (Exception e2) {
@@ -167,9 +171,9 @@ public class FollowUpCLI extends CpsParent {
         try {
             if (!loadSpectrumFiles(waitingHandler)) {
                 if (identification.getSpectrumFiles().size() > 1) {
-                    waitingHandler.appendReport("The spectrum files were not found, please locate them using the GUI.", true, true);
+                    waitingHandler.appendReport("The spectrum files were not found. Please provide their location in the command line parameters.", true, true);
                 } else {
-                    waitingHandler.appendReport("The spectrum file was not found, please locate it using the GUI.", true, true);
+                    waitingHandler.appendReport("The spectrum file was not found. Please provide its location in the command line parameters", true, true);
                 }
                 try {
                     PeptideShakerCLI.closePeptideShaker(identification);
@@ -179,7 +183,6 @@ public class FollowUpCLI extends CpsParent {
                 }
                 return 1;
             }
-            waitingHandler.appendReport("Spectrum file(s) successfully loaded.", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the spectrum file(s).", true, true);
             e.printStackTrace();
@@ -191,7 +194,7 @@ public class FollowUpCLI extends CpsParent {
             }
             return 1;
         }
-        
+
         // Load project specific PTMs
         String error = PeptideShaker.loadModifications(getIdentificationParameters().getSearchParameters());
         if (error != null) {
@@ -397,13 +400,6 @@ public class FollowUpCLI extends CpsParent {
             System.out.println("An error occurred while loading the species.");
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Loads the modifications.
-     */
-    public void loadPtms() {
-        ptmFactory = PTMFactory.getInstance();
     }
 
     /**
