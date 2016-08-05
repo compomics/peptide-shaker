@@ -2,6 +2,8 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.software.settings.UtilitiesPathPreferences;
+import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
+import com.compomics.util.waiting.WaitingHandler;
 import static eu.isas.peptideshaker.cmd.PeptideShakerCLI.redirectErrorStream;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import java.io.File;
@@ -22,6 +24,10 @@ public class PathSettingsCLI {
      * The input bean containing the user parameters.
      */
     private PathSettingsCLIInputBean pathSettingsCLIInputBean;
+    /**
+     * Waiting handler used to keep track of the progress.
+     */
+    private WaitingHandler waitingHandler;
 
     /**
      * Constructor.
@@ -34,8 +40,15 @@ public class PathSettingsCLI {
     }
 
     public Object call() {
+        waitingHandler = new WaitingHandlerCLIImpl();
         setPathSettings();
-        return null;
+        if (!waitingHandler.isRunCanceled()) {
+            System.exit(0);
+            return 0;
+        } else {
+            System.exit(1);
+            return 1;
+        }
     }
 
     /**
@@ -54,6 +67,7 @@ public class PathSettingsCLI {
             } catch (Exception e) {
                 System.out.println("An error occurred when setting the temporary folder path.");
                 e.printStackTrace();
+                waitingHandler.setRunCanceled();
             }
         }
 
@@ -74,6 +88,7 @@ public class PathSettingsCLI {
             } catch (Exception e) {
                 System.out.println("An error occurred when setting the path " + id + ".");
                 e.printStackTrace();
+                waitingHandler.setRunCanceled();
             }
         }
 
@@ -84,9 +99,12 @@ public class PathSettingsCLI {
         } catch (Exception e) {
             System.out.println("An error occurred when saving the path preference to " + destinationFile.getAbsolutePath() + ".");
             e.printStackTrace();
+            waitingHandler.setRunCanceled();
         }
 
-        System.out.println("Path configuration completed.");
+        if (!waitingHandler.isRunCanceled()) {
+            System.out.println("Path configuration completed.");
+        }
     }
 
     /**

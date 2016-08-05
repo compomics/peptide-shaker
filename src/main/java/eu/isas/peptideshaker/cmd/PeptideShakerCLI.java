@@ -143,7 +143,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 System.out.println("Unable to load the path configurations. Default paths will be used.");
                 e.printStackTrace();
             }
-            
+
             // Load user preferences
             utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
 
@@ -187,7 +187,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     // do something here?
                 }
 
-                PeptideShakerGUI peptideShakerGUI = new PeptideShakerGUI(); // dummy object to get at the version and tips
+                PeptideShakerGUI peptideShakerGUI = new PeptideShakerGUI(); // dummy object to get the version and tips
                 if (pathSettingsCLIInputBean.getLogFolder() == null) {
                     peptideShakerGUI.setUpLogFile(false); // redirect the error stream to the PeptideShaker log file
                 }
@@ -219,6 +219,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while creating the PeptideShaker project.", true, true);
                 e.printStackTrace();
+                waitingHandler.setRunCanceled();
             }
 
             // see if the project was created or canceled
@@ -229,8 +230,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
                     e.printStackTrace();
                 }
-                System.exit(0);
-                return null;
+                System.exit(1);
+                return 1;
             } else {
                 waitingHandler.appendReport("Project successfully created.", true, true);
             }
@@ -245,6 +246,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             } catch (Exception e) {
                 waitingHandler.appendReport("An exception occurred while saving the project.", true, true);
                 e.printStackTrace();
+                waitingHandler.setRunCanceled();
             }
 
             // finished
@@ -263,6 +265,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while recalibrating the spectra.", true, true);
                         e.printStackTrace();
+                        waitingHandler.setRunCanceled();
                     }
                 }
 
@@ -273,6 +276,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the spectra.", true, true);
                         e.printStackTrace();
+                        waitingHandler.setRunCanceled();
                     }
                 }
 
@@ -283,6 +287,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the protein accessions.", true, true);
                         e.printStackTrace();
+                        waitingHandler.setRunCanceled();
                     }
                 }
 
@@ -293,6 +298,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the protein details.", true, true);
                         e.printStackTrace();
+                        waitingHandler.setRunCanceled();
                     }
                 }
 
@@ -304,6 +310,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);
                         e.printStackTrace();
+                        waitingHandler.setRunCanceled();
                     }
                 }
 
@@ -315,6 +322,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the Pepnovo training file.", true, true);
                         e.printStackTrace();
+                        waitingHandler.setRunCanceled();
                     }
                 }
 
@@ -340,6 +348,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                         } catch (Exception e) {
                             waitingHandler.appendReport("An error occurred while exporting the " + reportType + ".", true, true);
                             e.printStackTrace();
+                            waitingHandler.setRunCanceled();
                         }
                     }
                 }
@@ -352,6 +361,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                         } catch (Exception e) {
                             waitingHandler.appendReport("An error occurred while exporting the documentation for " + reportType + ".", true, true);
                             e.printStackTrace();
+                            waitingHandler.setRunCanceled();
                         }
                     }
                 }
@@ -369,6 +379,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     parent.mkdirs();
                 } catch (Exception e) {
                     waitingHandler.appendReport("An error occurred while creating folder " + parent.getAbsolutePath() + ".", true, true);
+                    waitingHandler.setRunCanceled();
                 }
 
                 File fastaFile = identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
@@ -386,9 +397,11 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                     waitingHandler.appendReport("An error occurred while attempting to zip project in " + zipFile.getAbsolutePath() + ".", true, true);
+                    waitingHandler.setRunCanceled();
                 } catch (IOException e) {
                     e.printStackTrace();
                     waitingHandler.appendReport("An error occurred while attempting to zip project in " + zipFile.getAbsolutePath() + ".", true, true);
+                    waitingHandler.setRunCanceled();
                 }
             }
 
@@ -401,19 +414,24 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 e.printStackTrace();
             }
 
-            waitingHandler.appendReport("PeptideShaker process completed.", true, true);
-            waitingHandler.setSecondaryProgressText("Processing Completed.");
-
             saveReport();
         } catch (Exception e) {
             waitingHandler.appendReport("PeptideShaker processing failed. See the PeptideShaker log for details.", true, true);
             saveReport();
-            throw e;
+            waitingHandler.setRunCanceled();
         }
 
-        System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
-        // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
-        return null;
+        if (!waitingHandler.isRunCanceled()) {
+            waitingHandler.appendReport("PeptideShaker process completed.", true, true);
+            waitingHandler.setSecondaryProgressText("Processing Completed.");
+            System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
+            // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+            return 0;
+        } else {
+            System.exit(1); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
+            // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+            return 1;
+        }
     }
 
     /**
@@ -652,7 +670,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             // look in the database folder
             try {
                 File tempDbFolder = utilitiesUserPreferences.getDbFolder();
-                File newFile = new File(tempDbFolder, fastaFile.getName()); // @TODO: getName() does not work cross-platform, returns the complete path... 
+                File newFile = new File(tempDbFolder, fastaFile.getName());
                 if (newFile.exists()) {
                     fastaFile = newFile;
                     searchParameters.setFastaFile(fastaFile);
@@ -664,7 +682,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             if (!found) {
                 // look in the data folders
                 for (File dataFolder : dataFolders) {
-                    File newFile = new File(dataFolder, fastaFile.getName()); // @TODO: getName() does not work cross-platform, returns the complete path... 
+                    File newFile = new File(dataFolder, fastaFile.getName());
                     if (newFile.exists()) {
                         fastaFile = newFile;
                         searchParameters.setFastaFile(fastaFile);

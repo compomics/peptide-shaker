@@ -2,13 +2,9 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
-import com.compomics.util.Util;
-import com.compomics.util.db.DerbyUtil;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
@@ -218,6 +214,7 @@ public class FollowUpCLI extends CpsParent {
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while recalibrating the spectra.", true, true);
                 e.printStackTrace();
+                waitingHandler.setRunCanceled();
             }
         }
 
@@ -229,6 +226,7 @@ public class FollowUpCLI extends CpsParent {
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the spectra.", true, true);
                 e.printStackTrace();
+                waitingHandler.setRunCanceled();
             }
         }
 
@@ -240,6 +238,7 @@ public class FollowUpCLI extends CpsParent {
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the protein accessions.", true, true);
                 e.printStackTrace();
+                waitingHandler.setRunCanceled();
             }
         }
 
@@ -251,6 +250,7 @@ public class FollowUpCLI extends CpsParent {
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the protein details.", true, true);
                 e.printStackTrace();
+                waitingHandler.setRunCanceled();
             }
         }
 
@@ -262,6 +262,7 @@ public class FollowUpCLI extends CpsParent {
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);
                 e.printStackTrace();
+                waitingHandler.setRunCanceled();
             }
         }
 
@@ -273,6 +274,7 @@ public class FollowUpCLI extends CpsParent {
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the Pepnovo training file.", true, true);
                 e.printStackTrace();
+                waitingHandler.setRunCanceled();
             }
         }
 
@@ -283,28 +285,28 @@ public class FollowUpCLI extends CpsParent {
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while generating the inclusion list.", true, true);
                 e.printStackTrace();
+                waitingHandler.setRunCanceled();
             }
         }
-
-        try {
-            closePeptideShaker();
-        } catch (Exception e) {
-            waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-            e.printStackTrace();
-        }
-
-        waitingHandler.appendReport("Follow-up export completed.", true, true);
 
         try {
             PeptideShakerCLI.closePeptideShaker(identification);
         } catch (Exception e2) {
             waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
             e2.printStackTrace();
+            waitingHandler.setRunCanceled();
         }
-        System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
-        // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
 
-        return null;
+        if (!waitingHandler.isRunCanceled()) {
+            waitingHandler.appendReport("Follow-up export completed.", true, true);
+            System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
+            // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+            return 0;
+        } else {
+            System.exit(1); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
+            // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+            return 1;
+        }
     }
 
     /**
@@ -314,30 +316,6 @@ public class FollowUpCLI extends CpsParent {
         File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
         if (pathConfigurationFile.exists()) {
             PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
-        }
-    }
-
-    /**
-     * Close the PeptideShaker instance by clearing up factories and cache.
-     *
-     * @throws IOException thrown of IOException occurs
-     * @throws SQLException thrown if SQLException occurs
-     */
-    public void closePeptideShaker() throws IOException, SQLException {
-
-        SpectrumFactory.getInstance().closeFiles();
-        SequenceFactory.getInstance().closeFile();
-        identification.close();
-
-        DerbyUtil.closeConnection();
-
-        File matchFolder = PeptideShaker.getMatchesFolder();
-        File[] tempFiles = matchFolder.listFiles();
-
-        if (tempFiles != null) {
-            for (File currentFile : tempFiles) {
-                Util.deleteDir(currentFile);
-            }
         }
     }
 

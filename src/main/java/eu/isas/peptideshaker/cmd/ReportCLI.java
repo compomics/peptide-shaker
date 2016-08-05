@@ -218,6 +218,7 @@ public class ReportCLI extends CpsParent {
                 } catch (Exception e) {
                     waitingHandler.appendReport("An error occurred while exporting the " + reportType + ".", true, true);
                     e.printStackTrace();
+                    waitingHandler.setRunCanceled();
                 }
             }
         }
@@ -230,6 +231,7 @@ public class ReportCLI extends CpsParent {
                 } catch (Exception e) {
                     waitingHandler.appendReport("An error occurred while exporting the documentation for " + reportType + ".", true, true);
                     e.printStackTrace();
+                    waitingHandler.setRunCanceled();
                 }
             }
         }
@@ -240,12 +242,17 @@ public class ReportCLI extends CpsParent {
             waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
             e2.printStackTrace();
         }
-        waitingHandler.appendReport("Report export completed.", true, true);
 
-        System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
-        // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
-
-        return null;
+        if (!waitingHandler.isRunCanceled()) {
+            waitingHandler.appendReport("Report export completed.", true, true);
+            System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
+            // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+            return 0;
+        } else {
+            System.exit(1); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
+            // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+            return 1;
+        }
     }
 
     /**
