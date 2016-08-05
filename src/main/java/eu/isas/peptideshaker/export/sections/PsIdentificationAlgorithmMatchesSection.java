@@ -252,7 +252,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                                     fractionPrefix += linePrefix;
                                 }
                                 fractionPrefix += line + ".";
-                                fragmentSection.writeSection(spectrumMatch, shotgunProtocol, identificationParameters, fractionPrefix, null);
+                                fragmentSection.writeSection(spectrumMatch.getKey(), assumption, shotgunProtocol, identificationParameters, fractionPrefix, null);
                             }
                             line++;
                             writer.newLine();
