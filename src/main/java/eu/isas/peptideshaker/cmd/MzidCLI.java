@@ -2,13 +2,9 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
-import com.compomics.util.Util;
-import com.compomics.util.db.DerbyUtil;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.waiting.WaitingHandler;
@@ -220,16 +216,10 @@ public class MzidCLI extends CpsParent {
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while generating the mzid file.", true, true);
             e.printStackTrace();
+            waitingHandler.setRunCanceled();
         } finally {
             // reset the annotation level
             this.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(currentIntensityLimit);
-        }
-
-        try {
-            closePeptideShaker();
-        } catch (Exception e) {
-            waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-            e.printStackTrace();
         }
 
         try {
@@ -238,11 +228,15 @@ public class MzidCLI extends CpsParent {
             waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
             e2.printStackTrace();
         }
-        waitingHandler.appendReport("MzIdentML export completed.", true, true);
 
-        System.exit(0);
-
-        return null;
+        if (!waitingHandler.isRunCanceled()) {
+            waitingHandler.appendReport("MzIdentML export completed.", true, true);
+            System.exit(0);
+            return 0;
+        } else {
+            System.exit(1);
+            return 1;
+        }
     }
 
     /**
@@ -252,30 +246,6 @@ public class MzidCLI extends CpsParent {
         File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
         if (pathConfigurationFile.exists()) {
             PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
-        }
-    }
-
-    /**
-     * Close the PeptideShaker instance by clearing up factories and cache.
-     *
-     * @throws IOException thrown of IOException occurs
-     * @throws SQLException thrown if SQLException occurs
-     */
-    public void closePeptideShaker() throws IOException, SQLException {
-
-        SpectrumFactory.getInstance().closeFiles();
-        SequenceFactory.getInstance().closeFile();
-        identification.close();
-
-        DerbyUtil.closeConnection();
-
-        File matchFolder = PeptideShaker.getMatchesFolder();
-        File[] tempFiles = matchFolder.listFiles();
-
-        if (tempFiles != null) {
-            for (File currentFile : tempFiles) {
-                Util.deleteDir(currentFile);
-            }
         }
     }
 
