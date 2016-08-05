@@ -3,9 +3,9 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
+import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
-import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -15,6 +15,8 @@ import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
+import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.TagSpectrumAnnotator;
+import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import static eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature.fragment_number;
 import static eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature.fragment_type;
@@ -82,19 +84,26 @@ public class PsFragmentSection {
     /**
      * Writes the desired section.
      *
-     * @param spectrumMatch the spectrum match of interest
+     * @param spectrumKey the key of the spectrum
+     * @param spectrumIdentificationAssumption the spectrum identification of
+     * interest
      * @param shotgunProtocol information on the shotgun protocol
      * @param identificationParameters the identification parameters
      * @param linePrefix the line prefix
      * @param waitingHandler the waiting handler
-     * 
-     * @throws IOException exception thrown whenever an error occurred while interacting with a file
-     * @throws SQLException thrown whenever an error occurred while interacting with the database
-     * @throws ClassNotFoundException thrown whenever an error occurred while deserializing a match from the database
-     * @throws InterruptedException thrown whenever a threading error occurred while interacting with the database
-     * @throws MzMLUnmarshallerException thrown whenever an error occurred while reading an mzML file
+     *
+     * @throws IOException exception thrown whenever an error occurred while
+     * interacting with a file
+     * @throws SQLException thrown whenever an error occurred while interacting
+     * with the database
+     * @throws ClassNotFoundException thrown whenever an error occurred while
+     * deserializing a match from the database
+     * @throws InterruptedException thrown whenever a threading error occurred
+     * while interacting with the database
+     * @throws MzMLUnmarshallerException thrown whenever an error occurred while
+     * reading an mzML file
      */
-    public void writeSection(SpectrumMatch spectrumMatch, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
+    public void writeSection(String spectrumKey, SpectrumIdentificationAssumption spectrumIdentificationAssumption, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
             String linePrefix, WaitingHandler waitingHandler) throws IOException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -106,15 +115,23 @@ public class PsFragmentSection {
             writeHeader();
         }
 
-        String spectrumKey = spectrumMatch.getKey();
-        PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
+        ArrayList<IonMatch> annotations;
         MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
-        PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
         AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
-        SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-        ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
-                spectrum,
-                peptideAssumption.getPeptide());
+        SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, spectrumIdentificationAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
+        if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
+            PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdentificationAssumption;
+            PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
+            annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
+                    spectrum, peptideAssumption.getPeptide());
+        } else if (spectrumIdentificationAssumption instanceof TagAssumption) {
+            TagAssumption tagAssumption = (TagAssumption) spectrumIdentificationAssumption;
+            TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
+            annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
+                    spectrum, tagAssumption.getTag());
+        } else {
+            throw new UnsupportedOperationException("Export not implemented for spectrum identification of type " + spectrumIdentificationAssumption.getClass() + ".");
+        }
 
         HashMap<Double, ArrayList<IonMatch>> sortedAnnotation = new HashMap<Double, ArrayList<IonMatch>>(annotations.size());
         for (IonMatch ionMatch : annotations) {
@@ -214,7 +231,8 @@ public class PsFragmentSection {
     /**
      * Writes the header of this section.
      *
-     * @throws IOException exception thrown whenever an error occurred while writing the file
+     * @throws IOException exception thrown whenever an error occurred while
+     * writing the file
      */
     public void writeHeader() throws IOException {
         if (indexes) {
