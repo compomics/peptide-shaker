@@ -380,14 +380,14 @@ public class TagMapper {
             tagMatcher.clearCache();
             waitingHandler.increaseSecondaryProgressCounter();
         }
-        if (MemoryConsumptionStatus.memoryUsed() > 0.8 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
-            ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(0.5, null);
-        }
         // free memory if needed and possible
         if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
             tagMatcher.clearCache();
         }
         if (sequenceMatchingPreferences.getPeptideMapperType() == PeptideMapperType.tree) {
+            if (MemoryConsumptionStatus.memoryUsed() > 0.8 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
+                ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(0.5, null);
+            }
             ProteinTree proteinTree = (ProteinTree) sequenceFactory.getDefaultPeptideMapper();
             if (MemoryConsumptionStatus.memoryUsed() > 0.9 && proteinTree.getNodesInCache() > 0) {
                 proteinTree.reduceNodeCacheSize(0.5);

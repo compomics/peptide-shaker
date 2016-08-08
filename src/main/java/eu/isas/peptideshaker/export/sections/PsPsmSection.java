@@ -242,9 +242,9 @@ public class PsPsmSection {
                             fractionPrefix += line + ".";
                             writer.increaseDepth();
                             if (spectrumMatch.getBestPeptideAssumption() != null) {
-                                fragmentSection.writeSection(spectrumMatch.getKey(), spectrumMatch.getBestPeptideAssumption(), shotgunProtocol, identificationParameters, fractionPrefix, null);
+                                fragmentSection.writeSection(spectrumKey, spectrumMatch.getBestPeptideAssumption(), shotgunProtocol, identificationParameters, fractionPrefix, null);
                             } else if (spectrumMatch.getBestTagAssumption() != null) {
-                                fragmentSection.writeSection(spectrumMatch.getKey(), spectrumMatch.getBestTagAssumption(), shotgunProtocol, identificationParameters, fractionPrefix, null);
+                                fragmentSection.writeSection(spectrumKey, spectrumMatch.getBestTagAssumption(), shotgunProtocol, identificationParameters, fractionPrefix, null);
                             }
                             writer.decreseDepth();
                         }
