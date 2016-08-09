@@ -480,7 +480,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * folder cannot be accessed.
      */
     private void setPathConfiguration() throws IOException {
-        File pathConfigurationFile = new File(getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
+        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
         if (pathConfigurationFile.exists()) {
             PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
         }
@@ -530,15 +530,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         // check for new version
         boolean newVersion = false;
-        if (!getJarFilePath().equalsIgnoreCase(".") && utilitiesUserPreferences.isAutoUpdate()) {
+        if (!PeptideShaker.getJarFilePath().equalsIgnoreCase(".") && utilitiesUserPreferences.isAutoUpdate()) {
             newVersion = checkForNewVersion();
         }
 
         if (!newVersion) {
 
             // set this version as the default PeptideShaker version
-            if (!getJarFilePath().equalsIgnoreCase(".")) {
-                utilitiesUserPreferences.setPeptideShakerPath(new File(getJarFilePath(), "PeptideShaker-" + PeptideShaker.getVersion() + ".jar").getAbsolutePath());
+            if (!PeptideShaker.getJarFilePath().equalsIgnoreCase(".")) {
+                utilitiesUserPreferences.setPeptideShakerPath(new File(PeptideShaker.getJarFilePath(), "PeptideShaker-" + PeptideShaker.getVersion() + ".jar").getAbsolutePath());
                 UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
             }
 
@@ -549,13 +549,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             boolean javaVersionWarning = javaVersion.startsWith("1.5") || javaVersion.startsWith("1.6");
 
             // add desktop shortcut?
-            if (!getJarFilePath().equalsIgnoreCase(".")
+            if (!PeptideShaker.getJarFilePath().equalsIgnoreCase(".")
                     && System.getProperty("os.name").lastIndexOf("Windows") != -1
-                    && new File(getJarFilePath() + "/resources/conf/firstRun").exists()) {
+                    && new File(PeptideShaker.getJarFilePath() + "/resources/conf/firstRun").exists()) {
 
                 // @TODO: add support for desktop icons in mac and linux??
                 // delete the firstRun file such that the user is not asked the next time around
-                boolean fileDeleted = new File(getJarFilePath() + "/resources/conf/firstRun").delete();
+                boolean fileDeleted = new File(PeptideShaker.getJarFilePath() + "/resources/conf/firstRun").delete();
 
                 if (!fileDeleted) {
                     JOptionPane.showMessageDialog(this, "Failed to delete the file /resources/conf/firstRun.\n"
@@ -2767,7 +2767,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void logReportMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logReportMenuActionPerformed
         new BugReport(this, lastSelectedFolder, "PeptideShaker", "peptide-shaker", PeptideShaker.getVersion(),
-                "peptide-shaker", "PeptideShaker", new File(getJarFilePath() + "/resources/PeptideShaker.log"));
+                "peptide-shaker", "PeptideShaker", new File(PeptideShaker.getJarFilePath() + "/resources/PeptideShaker.log"));
     }//GEN-LAST:event_logReportMenuActionPerformed
 
     /**
@@ -3366,7 +3366,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     }
                 }
                 // write path file preference
-                File destinationFile = new File(getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
+                File destinationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
                 try {
                     PeptideShakerPathPreferences.writeConfigurationToFile(destinationFile);
                     if (welcomeDialog != null) {
@@ -3387,7 +3387,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void loadEnzymes() {
         try {
-            enzymeFactory.importEnzymes(new File(getJarFilePath(), PeptideShaker.ENZYME_FILE));
+            enzymeFactory.importEnzymes(new File(PeptideShaker.getJarFilePath(), PeptideShaker.ENZYME_FILE));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Not able to load the enzyme file.", "Wrong enzyme file.", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
@@ -3648,9 +3648,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public void setUpLogFile(boolean redirectOutputStream) {
 
-        if (useLogFile && !getJarFilePath().equalsIgnoreCase(".")) {
+        if (useLogFile && !PeptideShaker.getJarFilePath().equalsIgnoreCase(".")) {
             try {
-                String path = getJarFilePath() + "/resources/PeptideShaker.log";
+                String path = PeptideShaker.getJarFilePath() + "/resources/PeptideShaker.log";
 
                 File file = new File(path);
                 System.setErr(new java.io.PrintStream(new FileOutputStream(file, true)));
@@ -3715,15 +3715,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public void setUtilitiesUserPreferences(UtilitiesUserPreferences utilitiesUserPreferences) {
         this.utilitiesUserPreferences = utilitiesUserPreferences;
-    }
-
-    /**
-     * Returns the path to the jar file.
-     *
-     * @return the path to the jar file
-     */
-    public String getJarFilePath() {
-        return CompomicsWrapper.getJarFilePath(this.getClass().getResource("PeptideShakerGUI.class").getPath(), "PeptideShaker");
     }
 
     /**
@@ -6097,7 +6088,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public void saveProject(boolean aCloseWhenDone, boolean aExportToZipWhenDone) {
 
         // check if the project is the example project
-        if (cpsParent.getCpsFile() != null && cpsParent.getCpsFile().equals(new File(getJarFilePath() + EXAMPLE_DATASET_PATH))) {
+        if (cpsParent.getCpsFile() != null && cpsParent.getCpsFile().equals(new File(PeptideShaker.getJarFilePath() + EXAMPLE_DATASET_PATH))) {
             int value = JOptionPane.showConfirmDialog(this,
                     "Overwriting the example project is not possible.\n"
                     + "Please save to a different location.", "Example Project", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -6409,7 +6400,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void addShortcutAtDeskTop() {
 
-        String jarFilePath = getJarFilePath();
+        String jarFilePath = PeptideShaker.getJarFilePath();
 
         if (!jarFilePath.equalsIgnoreCase(".")) {
 
@@ -6539,7 +6530,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         if (open) {
 
-            String filePath = getJarFilePath() + EXAMPLE_DATASET_PATH;
+            String filePath = PeptideShaker.getJarFilePath() + EXAMPLE_DATASET_PATH;
 
             if (!new File(filePath).exists()) {
                 JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
