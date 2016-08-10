@@ -128,7 +128,7 @@ public class DisplayPreferencesDialog extends javax.swing.JDialog {
 
         surroundingAminoAcidsLabel.setText("Surrounding Amino Acids");
 
-        nAASpinner.setModel(new javax.swing.SpinnerNumberModel(2, 0, 5, 1));
+        nAASpinner.setModel(new javax.swing.SpinnerNumberModel(2, 0, null, 1));
 
         javax.swing.GroupLayout optionsPanelLayout = new javax.swing.GroupLayout(optionsPanel);
         optionsPanel.setLayout(optionsPanelLayout);
