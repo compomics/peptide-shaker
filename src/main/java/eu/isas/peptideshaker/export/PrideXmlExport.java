@@ -853,12 +853,14 @@ public class PrideXmlExport {
      * Writes the spectra in the mzData format.
      *
      * @param progressDialog a progress dialog to display progress to the user
+     * 
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
      * occurred while reading the mzML file
+     * @throws InterruptedException exception thrown if the thread is interrupted
      */
-    private void writeMzData(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
+    private void writeMzData(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, InterruptedException {
 
         br.write(getCurrentTabSpace() + "<mzData version=\"1.05\" accessionNumber=\"0\">" + lineBreak);
         tabCounter++;
@@ -883,12 +885,14 @@ public class PrideXmlExport {
      * Writes all spectra in the mzData format.
      *
      * @param progressDialog a progress dialog to display progress to the user
+     * 
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
      * occurred while reading the mzML file
+     * @throws InterruptedException exception thrown if the thread is interrupted
      */
-    private void writeSpectra(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
+    private void writeSpectra(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, InterruptedException {
 
         progressDialog.setTitle("Creating PRIDE XML File. Please Wait...  (Part 1 of 2: Exporting Spectra)");
 
@@ -937,11 +941,13 @@ public class PrideXmlExport {
      *
      * @param spectrum the spectrum
      * @param matchExists boolean indicating whether the match exists
-     * @param spectrumCounter index of the spectrum
+     * @param spectrumCounter index of the 
+     * 
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
+     * @throws InterruptedException exception thrown if the thread is interrupted
      */
-    private void writeSpectrum(MSnSpectrum spectrum, boolean matchExists, long spectrumCounter) throws IOException {
+    private void writeSpectrum(MSnSpectrum spectrum, boolean matchExists, long spectrumCounter) throws IOException, InterruptedException {
 
         br.write(getCurrentTabSpace() + "<spectrum id=\"" + spectrumCounter + "\">" + lineBreak);
         tabCounter++;
