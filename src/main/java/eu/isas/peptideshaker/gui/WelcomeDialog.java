@@ -844,7 +844,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private void bugReportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bugReportMenuItemActionPerformed
         new BugReport(this, peptideShakerGUI.getLastSelectedFolder(), "PeptideShaker", "peptide-shaker",
                 PeptideShaker.getVersion(), "peptide-shaker", "PeptideShaker",
-                new File(peptideShakerGUI.getJarFilePath() + "/resources/PeptideShaker.log"));
+                new File(PeptideShaker.getJarFilePath() + "/resources/PeptideShaker.log"));
     }//GEN-LAST:event_bugReportMenuItemActionPerformed
 
     /**

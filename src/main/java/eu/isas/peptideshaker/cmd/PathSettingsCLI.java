@@ -1,9 +1,9 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.software.CompomicsWrapper;
 import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.waiting.WaitingHandler;
+import eu.isas.peptideshaker.PeptideShaker;
 import static eu.isas.peptideshaker.cmd.PeptideShakerCLI.redirectErrorStream;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import java.io.File;
@@ -93,7 +93,7 @@ public class PathSettingsCLI {
         }
 
         // Write path file preference
-        File destinationFile = new File(getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
+        File destinationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
         try {
             PeptideShakerPathPreferences.writeConfigurationToFile(destinationFile);
         } catch (Exception e) {
@@ -105,15 +105,6 @@ public class PathSettingsCLI {
         if (!waitingHandler.isRunCanceled()) {
             System.out.println("Path configuration completed.");
         }
-    }
-
-    /**
-     * Returns the path to the jar file.
-     *
-     * @return the path to the jar file
-     */
-    public String getJarFilePath() {
-        return CompomicsWrapper.getJarFilePath(this.getClass().getResource("PathSettingsCLI.class").getPath(), "PeptideShaker");
     }
 
     /**

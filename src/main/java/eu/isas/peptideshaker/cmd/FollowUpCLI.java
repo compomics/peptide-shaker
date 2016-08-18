@@ -270,9 +270,9 @@ public class FollowUpCLI extends CpsParent {
         if (followUpCLIInputBean.pepnovoTrainingExportNeeded()) {
             try {
                 CLIMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
-                waitingHandler.appendReport("Pepnovo training export completed.", true, true);
+                waitingHandler.appendReport("PepNovo training export completed.", true, true);
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while exporting the Pepnovo training file.", true, true);
+                waitingHandler.appendReport("An error occurred while exporting the PepNovo training file.", true, true);
                 e.printStackTrace();
                 waitingHandler.setRunCanceled();
             }

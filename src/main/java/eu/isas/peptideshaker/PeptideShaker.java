@@ -1030,8 +1030,9 @@ public class PeptideShaker {
     }
     
     /**
-     * Instantiates the spectrum, sequence, and PTM factories with caches adapted to the memory available as set in the user preferences.
-     * 
+     * Instantiates the spectrum, sequence, and PTM factories with caches
+     * adapted to the memory available as set in the user preferences.
+     *
      * @param utilitiesUserPreferences the user preferences
      */
     public static void instantiateFacories(UtilitiesUserPreferences utilitiesUserPreferences) {
