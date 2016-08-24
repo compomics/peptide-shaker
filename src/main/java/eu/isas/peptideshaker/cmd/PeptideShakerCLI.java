@@ -417,7 +417,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             saveReport();
         } catch (Exception e) {
             waitingHandler.appendReport("PeptideShaker processing failed. See the PeptideShaker log for details.", true, true);
-            e.printStackTrace();
             saveReport();
             waitingHandler.setRunCanceled();
         }
