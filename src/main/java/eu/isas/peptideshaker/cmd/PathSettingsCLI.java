@@ -56,6 +56,10 @@ public class PathSettingsCLI {
      */
     public void setPathSettings() {
 
+        if (waitingHandler == null) {
+            waitingHandler = new WaitingHandlerCLIImpl();
+        }
+
         if (pathSettingsCLIInputBean.getLogFolder() != null) {
             redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
         }

@@ -109,64 +109,13 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      */
     public Object call() throws Exception {
 
-        PathSettingsCLIInputBean pathSettingsCLIInputBean = cliInputBean.getPathSettingsCLIInputBean();
-
-        if (pathSettingsCLIInputBean.getLogFolder() != null) {
-            redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
-        }
-
         try {
-            if (pathSettingsCLIInputBean.hasInput()) {
-                PathSettingsCLI pathSettingsCLI = new PathSettingsCLI(pathSettingsCLIInputBean);
-                pathSettingsCLI.setPathSettings();
-            } else {
-                try {
-                    setPathConfiguration();
-                } catch (Exception e) {
-                    System.out.println("An error occurred when setting the path configurations. Default paths will be used.");
-                    e.printStackTrace();
-                }
-            }
+            // get the path settings input
+            PathSettingsCLIInputBean pathSettingsCLIInputBean = cliInputBean.getPathSettingsCLIInputBean();
 
-            setDbFolder(PeptideShaker.getMatchesFolder());
-
-            try {
-                ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
-                if (!errorKeys.isEmpty()) {
-                    System.out.println("FASTA to write in the following configuration folders. Please use a temporary folder, "
-                            + "the path configuration command line, or edit the configuration paths from the graphical interface.");
-                    for (PathKey pathKey : errorKeys) {
-                        System.out.println(pathKey.getId() + ": " + pathKey.getDescription());
-                    }
-                }
-            } catch (Exception e) {
-                System.out.println("Unable to load the path configurations. Default paths will be used.");
-                e.printStackTrace();
-            }
-
-            // Load user preferences
-            utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
-
-            // Instantiate factories
-            PeptideShaker.instantiateFacories(utilitiesUserPreferences);
-            ptmFactory = PTMFactory.getInstance();
-            enzymeFactory = EnzymeFactory.getInstance();
-
-            // Load resources files
-            loadEnzymes();
-            loadSpecies();
-
-            // Set the gene mappings
-            GeneFactory geneFactory = GeneFactory.getInstance();
-            geneFactory.initialize(PeptideShaker.getJarFilePath());
-
-            // Load the species mapping
-            try {
-                SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
-                speciesFactory.initiate(PeptideShaker.getJarFilePath());
-            } catch (Exception e) {
-                System.out.println("An error occurred while loading the species mapping. Gene annotation might be impaired.");
-                e.printStackTrace();
+            // redirect the error stream
+            if (pathSettingsCLIInputBean.getLogFolder() != null) {
+                redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
             }
 
             // set up the waiting handler
@@ -211,6 +160,59 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 }, "ProgressDialog").start();
             } else {
                 waitingHandler = new WaitingHandlerCLIImpl();
+            }
+
+            if (pathSettingsCLIInputBean.hasInput()) {
+                PathSettingsCLI pathSettingsCLI = new PathSettingsCLI(pathSettingsCLIInputBean);
+                pathSettingsCLI.setPathSettings();
+            } else {
+                try {
+                    setPathConfiguration();
+                } catch (Exception e) {
+                    System.out.println("An error occurred when setting the path configurations. Default paths will be used.");
+                    e.printStackTrace();
+                }
+            }
+
+            setDbFolder(PeptideShaker.getMatchesFolder());
+
+            try {
+                ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
+                if (!errorKeys.isEmpty()) {
+                    System.out.println("Failed to write in the following configuration folders. Please use a temporary folder, "
+                            + "the path configuration command line, or edit the configuration paths from the graphical interface.");
+                    for (PathKey pathKey : errorKeys) {
+                        System.out.println(pathKey.getId() + ": " + pathKey.getDescription());
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("Unable to load the path configurations. Default paths will be used.");
+                e.printStackTrace();
+            }
+
+            // Load user preferences
+            utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+
+            // Instantiate factories
+            PeptideShaker.instantiateFacories(utilitiesUserPreferences);
+            ptmFactory = PTMFactory.getInstance();
+            enzymeFactory = EnzymeFactory.getInstance();
+
+            // Load resources files
+            loadEnzymes();
+            loadSpecies();
+
+            // Set the gene mappings
+            GeneFactory geneFactory = GeneFactory.getInstance();
+            geneFactory.initialize(PeptideShaker.getJarFilePath());
+
+            // Load the species mapping
+            try {
+                SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
+                speciesFactory.initiate(PeptideShaker.getJarFilePath());
+            } catch (Exception e) {
+                System.out.println("An error occurred while loading the species mapping. Gene annotation might be impaired.");
+                e.printStackTrace();
             }
 
             // create project
@@ -416,19 +418,22 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
             saveReport();
         } catch (Exception e) {
-            waitingHandler.appendReport("PeptideShaker processing failed. See the PeptideShaker log for details.", true, true);
             e.printStackTrace();
-            saveReport();
-            waitingHandler.setRunCanceled();
+            if (waitingHandler != null) {
+                waitingHandler.appendReport("PeptideShaker processing failed. See the PeptideShaker log for details.", true, true);
+                saveReport();
+                waitingHandler.setRunCanceled();
+            }
         }
 
-        if (!waitingHandler.isRunCanceled()) {
+        if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
             waitingHandler.appendReport("PeptideShaker process completed.", true, true);
             waitingHandler.setSecondaryProgressText("Processing Completed.");
             System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
             // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
             return 0;
         } else {
+            System.out.println("PeptideShaker process failed!");
             System.exit(1); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
             // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
             return 1;
