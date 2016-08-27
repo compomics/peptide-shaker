@@ -274,7 +274,7 @@
 
     <!-- Repositores -->
     <repositories>
-
+        
         <!-- UGent Genesis Maven 2 repository -->
         <repository>
             <id>genesis-maven2-repository</id>
@@ -306,18 +306,17 @@
             <layout>default</layout>
         </repository>
 
-            <repository>
-                <id>snapshots</id>
-                <name>Archiva Managed Snapshot Repository</name>
-                <url>http://genesis.ugent.be/maven/repository/snapshots/</url>
-                <releases>
-                    <enabled>false</enabled>
-                </releases>
-                <snapshots>
-                    <enabled>true</enabled>
-                </snapshots>
-            </repository>
-
+        <repository>
+            <id>snapshots</id>
+            <name>Archiva Managed Snapshot Repository</name>
+            <url>http://genesis.ugent.be/maven/repository/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
 
     </repositories>
 
@@ -377,7 +376,6 @@
             </exclusions>
         </dependency>
         
-        <!-- The junit JAR file -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -385,8 +383,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- This project depends on the JAR file "xpp-1.1.3.4.jar" (XmlPullParser)
-        the remote repository root of which is 'http://genesis.UGent.be/maven'. -->
         <dependency>
             <groupId>xpp3</groupId>
             <artifactId>xpp3</artifactId>
@@ -436,13 +432,6 @@
             <artifactId>commons-math</artifactId>
             <version>2.2</version>
         </dependency>
-
-        <!-- JDAS dependency -->    <!-- not used!! -->
-        <!--<dependency>
-            <groupId>uk.ac.ebi.das</groupId>
-            <artifactId>jdas</artifactId>
-            <version>1.0</version>
-        </dependency>-->
 
         <dependency>
             <groupId>no.uib</groupId>
