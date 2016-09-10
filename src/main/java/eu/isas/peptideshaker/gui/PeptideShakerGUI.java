@@ -371,6 +371,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * peptide.
      */
     private SpecificAnnotationSettings specificAnnotationPreferences;
+    /**
+     * The list of spectrum files.
+     */
+    private ArrayList<File> spectrumFiles = new ArrayList<File>();
 
     /**
      * The main method used to start PeptideShaker.
@@ -4179,6 +4183,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         try {
             spectrumFactory.clearFactory();
+            spectrumFiles.clear();
         } catch (Exception e) {
             e.printStackTrace();
             catchException(e);
@@ -5485,7 +5490,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         File fastaFile = getIdentificationParameters().getProteinInferencePreferences().getProteinSequenceDatabase();
                         JOptionPane.showMessageDialog(peptideShakerGUI,
                                 "An error occurred while reading:\n" + fastaFile.getAbsolutePath() + "."
-                                + "\n\nOpen canceled.",
+                                + "\n\nFile not found.",
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
                         clearData(true, true);
                         clearPreferences();
@@ -5515,7 +5520,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                         boolean found;
                         try {
-                            found = cpsParent.loadSpectrumFile(spectrumFileName, progressDialog);
+                            found = cpsParent.loadSpectrumFile(spectrumFileName, spectrumFiles, progressDialog);
                         } catch (Exception e) {
                             found = false;
                         }
@@ -5558,6 +5563,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                             if (spectrumFileName2.equals(fileName)) {
                                                 getProjectDetails().addSpectrumFile(file);
                                                 spectrumFactory.addSpectra(file, progressDialog);
+                                                spectrumFiles.add(file);
                                             }
                                             if (fileName.equals(spectrumFileName2)) {
                                                 found = true;
@@ -5672,7 +5678,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         File fastaFile = getIdentificationParameters().getProteinInferencePreferences().getProteinSequenceDatabase();
         JOptionPane.showMessageDialog(this,
-                "Fasta file " + fastaFile.getAbsolutePath() + " was not found."
+                "FASTA file " + fastaFile.getAbsolutePath() + " was not found."
                 + "\n\nPlease locate it manually.",
                 "File Input Error", JOptionPane.WARNING_MESSAGE);
 
@@ -5700,6 +5706,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File selectedFastaFile = fileChooser.getSelectedFile();
             tempLastSelectedFolder.setLastSelectedFolder(selectedFastaFile.getAbsolutePath());
+            getIdentificationParameters().getProteinInferencePreferences().setProteinSequenceDatabase(selectedFastaFile);
+            dataSaved = false;            
             return cpsParent.loadFastaFile(selectedFastaFile.getParentFile(), progressDialog);
         } else {
             return false;

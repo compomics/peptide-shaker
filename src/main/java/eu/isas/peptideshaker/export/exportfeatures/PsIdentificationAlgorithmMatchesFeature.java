@@ -8,6 +8,7 @@ import java.util.Arrays;
  * This class lists the Algorithm identification features.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public enum PsIdentificationAlgorithmMatchesFeature implements ExportFeature {
 
@@ -25,6 +26,7 @@ public enum PsIdentificationAlgorithmMatchesFeature implements ExportFeature {
     spectrum_file("Spectrum File", "The spectrum file.", false),
     spectrum_title("Spectrum Title", "The title of the spectrum.", false),
     spectrum_scan_number("Spectrum Scan Number", "The spectrum scan number.", false),
+    spectrum_array_list("Spectrum Array List", "The peaks in the spectrum as an array list.", false),
     rt("RT", "Retention time as provided in the spectrum file.", false),
     mz("m/z", "Measured m/z.", false),
     spectrum_charge("Measured Charge", "The charge as given in the spectrum file.", false),

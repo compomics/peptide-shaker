@@ -45,6 +45,7 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  * This report section contains the results of the identification algorithms.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class PsIdentificationAlgorithmMatchesSection {
 
@@ -195,8 +196,10 @@ public class PsIdentificationAlgorithmMatchesSection {
 
                 SpectrumMatch spectrumMatch = psmIterator.next();
 
-                if (waitingHandler.isRunCanceled()) {
-                    return;
+                if (waitingHandler != null) {
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
                 }
 
                 String spectrumKey = spectrumMatch.getKey();
@@ -581,6 +584,8 @@ public class PsIdentificationAlgorithmMatchesSection {
                 return spectrumFile;
             case spectrum_scan_number:
                 return SpectrumFactory.getInstance().getSpectrum(spectrumKey).getScanNumber();
+            case spectrum_array_list:
+                return SpectrumFactory.getInstance().getSpectrum(spectrumKey).getPeakListAsString();
             case spectrum_title:
                 return Spectrum.getSpectrumTitle(spectrumKey);
             case starred:
@@ -987,6 +992,8 @@ public class PsIdentificationAlgorithmMatchesSection {
                 return spectrumFile;
             case spectrum_scan_number:
                 return SpectrumFactory.getInstance().getSpectrum(spectrumKey).getScanNumber();
+            case spectrum_array_list:
+                return SpectrumFactory.getInstance().getSpectrum(spectrumKey).getPeakListAsString();
             case spectrum_title:
                 return Spectrum.getSpectrumTitle(spectrumKey);
             case starred:

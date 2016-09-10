@@ -44,6 +44,7 @@ import org.apache.commons.compress.archivers.ArchiveException;
  * Implementing this abstract class allows interacting with a cps files.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class CpsParent extends UserPreferencesParent {
 
@@ -437,6 +438,7 @@ public class CpsParent extends UserPreferencesParent {
      * Loads the spectra in the spectrum factory.
      *
      * @param spectrumFileName the name of the spectrum file to load
+     * @param mgfFiles the list to add the detected mgf files to
      * @param waitingHandler a waiting handler displaying progress to the user.
      * Can be null
      *
@@ -445,7 +447,7 @@ public class CpsParent extends UserPreferencesParent {
      * @throws IOException thrown of IOException occurs exception thrown
      * whenever an error occurred while reading or writing a file
      */
-    public boolean loadSpectrumFile(String spectrumFileName, WaitingHandler waitingHandler) throws IOException {
+    public boolean loadSpectrumFile(String spectrumFileName, ArrayList<File> mgfFiles, WaitingHandler waitingHandler) throws IOException {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
@@ -469,6 +471,7 @@ public class CpsParent extends UserPreferencesParent {
 
         File mgfFile = projectDetails.getSpectrumFile(spectrumFileName);
         spectrumFactory.addSpectra(mgfFile, waitingHandler);
+        mgfFiles.add(mgfFile);
 
         return true;
     }
@@ -807,7 +810,7 @@ public class CpsParent extends UserPreferencesParent {
      */
     public String getExtendedProjectReport(String waitingHandlerReport) {
 
-        String report = null;
+        String report;
 
         if (projectDetails != null && getIdentification() != null) {
 
