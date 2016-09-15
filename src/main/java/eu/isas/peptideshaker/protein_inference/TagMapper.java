@@ -342,10 +342,6 @@ public class TagMapper {
                             extendedTagList.add(tagAssumption.reverse(nY >= nB));
                         }
                         for (TagAssumption extendedAssumption : extendedTagList) {
-                            // free memory if needed and possible
-                            if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
-                                tagMatcher.clearCache();
-                            }
                             assumptionAtScoreToSave.add(extendedAssumption);
                             Double refMass = spectrum.getPrecursor().getMassPlusProton(1);
                             Double fragmentIonAccuracy = searchParameters.getFragmentIonAccuracyInDaltons(refMass);
