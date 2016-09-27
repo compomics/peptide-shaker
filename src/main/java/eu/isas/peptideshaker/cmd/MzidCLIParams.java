@@ -19,7 +19,7 @@ public enum MzidCLIParams {
     ORGANIZATION_EMAIL("organization_email", "Organization e-mail.", true, true),
     ORGANIZATION_ADDRESS("organization_address", "Organization address.", true, true),
     ORGANIZATION_URL("organization_url", "Organization URL.", true, false),
-    INCLUDE_PROTEIN_SEQUENCES("include_sequences", "Include the protein sequences.", true, false),
+    INCLUDE_PROTEIN_SEQUENCES("include_sequences", "Include the protein sequences. 1: true, 0: false, default is '0'.", true, false),
     OUTPUT_FILE("output_file", "Output file.", true, true);
 
     /**
