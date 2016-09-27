@@ -45,7 +45,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
      */
     private boolean validateMzIdentML = false; // just takes too long if switched on...
     /**
-     * If true mzIdentML version 1.2 is created, false creates mzIdentML 1.1.
+     * If true, mzIdentML version 1.2 is created, false creates mzIdentML 1.1.
      */
     private boolean mzIdentML_v1_2 = false;
 
@@ -99,6 +99,8 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         organizationAddressJTextField.setText(peptideShakerGUI.getProjectDetails().getOrganizationAddress());
         organizationUrlJTextField.setText(peptideShakerGUI.getProjectDetails().getOrganizationUrl());
 
+        includeSequencesCheckBox.setSelected(peptideShakerGUI.getProjectDetails().getIncludeProteinSequences());
+        
         if (peptideShakerGUI.getProjectDetails().getMzIdentMLOutputFile() != null
                 && new File(peptideShakerGUI.getProjectDetails().getMzIdentMLOutputFile()).exists()) {
             outputFolderJTextField.setText(peptideShakerGUI.getProjectDetails().getMzIdentMLOutputFile());
@@ -139,6 +141,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         outputFolderLabel = new javax.swing.JLabel();
         outputFolderJTextField = new javax.swing.JTextField();
         browseOutputFolderJButton = new javax.swing.JButton();
+        includeSequencesCheckBox = new javax.swing.JCheckBox();
         helpLabel = new javax.swing.JLabel();
         openDialogHelpJButton = new javax.swing.JButton();
         convertJButton = new javax.swing.JButton();
@@ -364,15 +367,25 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
             }
         });
 
+        includeSequencesCheckBox.setText("Include Protein Sequences");
+        includeSequencesCheckBox.setToolTipText("Select to include the protein sequences in the mzIdentML file");
+        includeSequencesCheckBox.setIconTextGap(10);
+
         javax.swing.GroupLayout outputPanelLayout = new javax.swing.GroupLayout(outputPanel);
         outputPanel.setLayout(outputPanelLayout);
         outputPanelLayout.setHorizontalGroup(
             outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, outputPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(outputFolderLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(outputFolderJTextField)
+                .addGroup(outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(outputPanelLayout.createSequentialGroup()
+                        .addComponent(outputFolderLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(outputFolderJTextField))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, outputPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(includeSequencesCheckBox)
+                        .addGap(12, 12, 12)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(browseOutputFolderJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -385,6 +398,8 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                     .addComponent(outputFolderLabel)
                     .addComponent(outputFolderJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(browseOutputFolderJButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(includeSequencesCheckBox)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -636,6 +651,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                     peptideShakerGUI.getProjectDetails().setOrganizationUrl(null);
                 }
 
+                peptideShakerGUI.getProjectDetails().setIncludeProteinSequences(includeSequencesCheckBox.isSelected());
                 peptideShakerGUI.getProjectDetails().setMzIdentOutputFile(outputFolderJTextField.getText());
                 peptideShakerGUI.setDataSaved(false); // @TODO: this might not always be true, e.g., if nothing has changed, but better than not saving at all
 
@@ -648,7 +664,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 try {
                     MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
                             peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
-                            finalOutputFile, progressDialog, MatchValidationLevel.none, MatchValidationLevel.none, MatchValidationLevel.none);
+                            finalOutputFile, includeSequencesCheckBox.isSelected(), progressDialog, MatchValidationLevel.none, MatchValidationLevel.none, MatchValidationLevel.none);
                     mzIdentMLExport.createMzIdentMLFile(mzIdentML_v1_2);
 
                     // validate the mzidentml file
@@ -757,6 +773,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
     private javax.swing.JLabel contactUrlLabel;
     private javax.swing.JButton convertJButton;
     private javax.swing.JLabel helpLabel;
+    private javax.swing.JCheckBox includeSequencesCheckBox;
     private javax.swing.JButton openDialogHelpJButton;
     private javax.swing.JTextField organizationAddressJTextField;
     private javax.swing.JLabel organizationAddressLabel;

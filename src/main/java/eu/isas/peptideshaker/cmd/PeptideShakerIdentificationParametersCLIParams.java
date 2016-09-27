@@ -22,6 +22,10 @@ public class PeptideShakerIdentificationParametersCLIParams {
         for (IdentificationParametersCLIParams identificationParametersCLIParams : IdentificationParametersCLIParams.values()) {
             aOptions.addOption(identificationParametersCLIParams.id, identificationParametersCLIParams.hasArgument, identificationParametersCLIParams.description);
         }
+
+        // Path setup
+        PathSettingsCLIParams.createOptionsCLI(aOptions);
+
         //@TODO: Add QC filters?
     }
 

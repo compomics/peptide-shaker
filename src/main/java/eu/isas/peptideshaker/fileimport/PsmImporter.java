@@ -559,7 +559,7 @@ public class PsmImporter {
                                                 try {
                                                     andromedaIndex = new Integer(sePTM);
                                                 } catch (Exception e) {
-                                                    throw new IllegalArgumentException("Impossible to parse Andromdea modification index " + sePTM + ".");
+                                                    throw new IllegalArgumentException("Impossible to parse Andromeda modification index " + sePTM + ".");
                                                 }
                                                 String andromedaName = andromedaParameters.getModificationName(andromedaIndex);
                                                 if (andromedaName == null) {

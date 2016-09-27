@@ -19,6 +19,7 @@ public enum MzidCLIParams {
     ORGANIZATION_EMAIL("organization_email", "Organization e-mail.", true, true),
     ORGANIZATION_ADDRESS("organization_address", "Organization address.", true, true),
     ORGANIZATION_URL("organization_url", "Organization URL.", true, false),
+    INCLUDE_PROTEIN_SEQUENCES("include_sequences", "Include the protein sequences.", true, false),
     OUTPUT_FILE("output_file", "Output file.", true, true);
 
     /**
@@ -67,7 +68,7 @@ public enum MzidCLIParams {
         }
 
         // Path setup
-        aOptions.addOption(PathSettingsCLIParams.ALL.id, true, PathSettingsCLIParams.ALL.description);
+        PathSettingsCLIParams.createOptionsCLI(aOptions);
     }
 
     /**

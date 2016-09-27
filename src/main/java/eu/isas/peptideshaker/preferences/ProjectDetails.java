@@ -2,8 +2,6 @@ package eu.isas.peptideshaker.preferences;
 
 import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.Advocate;
-import com.compomics.util.experiment.io.identifications.IdfileReader;
-import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,6 +13,7 @@ import java.util.HashMap;
  * This class contains the details about a project.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class ProjectDetails implements Serializable {
 
@@ -88,6 +87,10 @@ public class ProjectDetails implements Serializable {
      * The mzIdentML output file.
      */
     private String mzIdentMLOutputFile;
+    /**
+     * If true, the protein sequences are included in the mzid file.
+     */
+    private Boolean includeProteinSequences;
     /**
      * The PeptideShaker version used to create the project.
      */
@@ -712,5 +715,28 @@ public class ProjectDetails implements Serializable {
      */
     public void setUserAdvocateMapping(HashMap<Integer, Advocate> userAdvocateMapping) {
         this.userAdvocateMapping = userAdvocateMapping;
+    }
+
+    /**
+     * Returns true if the protein sequences are to be included in the mzid
+     * export.
+     *
+     * @return true if the protein sequences are to be included in the mzid
+     * export
+     */
+    public Boolean getIncludeProteinSequences() {
+        if (includeProteinSequences == null) {
+            includeProteinSequences = false;
+        }
+        return includeProteinSequences;
+    }
+
+    /**
+     * Set if the protein sequences are to be included in the mzid export.
+     *
+     * @param includeProteinSequences the includeProteinSequences to set
+     */
+    public void setIncludeProteinSequences(Boolean includeProteinSequences) {
+        this.includeProteinSequences = includeProteinSequences;
     }
 }

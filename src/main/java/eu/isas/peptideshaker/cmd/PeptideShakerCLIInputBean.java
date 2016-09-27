@@ -383,6 +383,7 @@ public class PeptideShakerCLIInputBean {
     public static boolean isValidStartup(CommandLine aLine) throws IOException {
 
         if (aLine.getOptions().length == 0) {
+            System.out.println("\nMandatory parameters not specified.\n");
             return false;
         }
 

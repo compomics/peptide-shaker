@@ -187,6 +187,10 @@ public class MzIdentMLExport {
      * If true, the fragment ions will be written to the mzid file.
      */
     private boolean writeFragmentIons = true;
+    /**
+     * If true, the protein sequences are included in the mzid file.
+     */
+    private boolean includeProteinSequences = false;
 
     /**
      * Constructor.
@@ -201,6 +205,8 @@ public class MzIdentMLExport {
      * @param identificationFeaturesGenerator the identification features
      * generator
      * @param outputFile the output file
+     * @param includeProteinSequences if true, the protein sequences are
+     * included in the output
      * @param waitingHandler waiting handler used to display progress to the
      * user and interrupt the process
      *
@@ -211,8 +217,8 @@ public class MzIdentMLExport {
      */
     public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences,
-            IdentificationFeaturesGenerator identificationFeaturesGenerator, File outputFile, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException {
-        this(peptideShakerVersion, identification, projectDetails, shotgunProtocol, identificationParameters, spectrumCountingPreferences, identificationFeaturesGenerator, outputFile, waitingHandler, MatchValidationLevel.none, MatchValidationLevel.none, MatchValidationLevel.none);
+            IdentificationFeaturesGenerator identificationFeaturesGenerator, File outputFile, boolean includeProteinSequences, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException {
+        this(peptideShakerVersion, identification, projectDetails, shotgunProtocol, identificationParameters, spectrumCountingPreferences, identificationFeaturesGenerator, outputFile, includeProteinSequences, waitingHandler, MatchValidationLevel.none, MatchValidationLevel.none, MatchValidationLevel.none);
     }
 
     /**
@@ -228,6 +234,8 @@ public class MzIdentMLExport {
      * @param identificationFeaturesGenerator the identification features
      * generator
      * @param outputFile the output file
+     * @param includeProteinSequences if true, the protein sequences are
+     * included in the output
      * @param waitingHandler waiting handler used to display progress to the
      * user and interrupt the process
      * @param proteinMatchValidationLevel the match validation level a protein
@@ -244,7 +252,7 @@ public class MzIdentMLExport {
      */
     public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences,
-            IdentificationFeaturesGenerator identificationFeaturesGenerator, File outputFile, WaitingHandler waitingHandler,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator, File outputFile, boolean includeProteinSequences, WaitingHandler waitingHandler,
             MatchValidationLevel proteinMatchValidationLevel, MatchValidationLevel peptideMatchValidationLevel, MatchValidationLevel psmMatchValidationLevel) throws IOException, ClassNotFoundException {
         this.peptideShakerVersion = peptideShakerVersion;
         this.identification = identification;
@@ -253,6 +261,7 @@ public class MzIdentMLExport {
         this.identificationParameters = identificationParameters;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+        this.includeProteinSequences = includeProteinSequences;
         this.waitingHandler = waitingHandler;
         this.proteinMatchValidationLevel = proteinMatchValidationLevel;
         this.peptideMatchValidationLevel = peptideMatchValidationLevel;
@@ -524,7 +533,10 @@ public class MzIdentMLExport {
             br.write(getCurrentTabSpace() + "<DBSequence id=\"" + currentProtein.getAccession() + "\" "
                     + "accession=\"" + currentProtein.getAccession() + "\" searchDatabase_ref=\"" + "SearchDB_1" + "\" >" + lineBreak);
             tabCounter++;
-            //br.write(getCurrentTabSpace() + "<Seq>" + currentProtein.getSequence() + "</Seq>" + lineBreak);
+
+            if (includeProteinSequences) {
+                br.write(getCurrentTabSpace() + "<Seq>" + currentProtein.getSequence() + "</Seq>" + lineBreak);
+            }
             writeCvTerm(new CvTerm("PSI-MS", "MS:1001088", "protein description", StringEscapeUtils.escapeHtml4(sequenceFactory.getHeader(currentProtein.getAccession()).getDescription())));
             tabCounter--;
             br.write(getCurrentTabSpace() + "</DBSequence>" + lineBreak);

@@ -8,6 +8,7 @@ import org.apache.commons.cli.CommandLine;
  * Options instance.
  *
  * @author Marc Vaueel
+ * @author Harald Barsnes
  */
 public class MzidCLIInputBean {
 
@@ -60,6 +61,10 @@ public class MzidCLIInputBean {
      */
     private File outputFile;
     /**
+     * If true, the protein sequences are included in the mzid file.
+     */
+    private Boolean includeProteinSequences;
+    /**
      * The path settings.
      */
     private PathSettingsCLIInputBean pathSettingsCLIInputBean;
@@ -107,6 +112,10 @@ public class MzidCLIInputBean {
         }
         if (aLine.hasOption(MzidCLIParams.ORGANIZATION_URL.id)) {
             organizationUrl = aLine.getOptionValue(MzidCLIParams.ORGANIZATION_URL.id);
+        }
+        if (aLine.hasOption(MzidCLIParams.INCLUDE_PROTEIN_SEQUENCES.id)) {
+             String input = aLine.getOptionValue(MzidCLIParams.INCLUDE_PROTEIN_SEQUENCES.id);
+             includeProteinSequences = input.trim().equals("1");
         }
         if (aLine.hasOption(MzidCLIParams.OUTPUT_FILE.id)) {
             outputFile = new File(aLine.getOptionValue(MzidCLIParams.OUTPUT_FILE.id));
@@ -221,6 +230,20 @@ public class MzidCLIInputBean {
      */
     public File getOutputFile() {
         return outputFile;
+    }
+
+    /**
+     * Returns true if the protein sequences are to be included in the mzid
+     * export.
+     *
+     * @return true if the protein sequences are to be included in the mzid
+     * export
+     */
+    public Boolean getIncludeProteinSequences() {
+        if (includeProteinSequences == null) {
+            includeProteinSequences = false;
+        }
+        return includeProteinSequences;
     }
 
     /**
