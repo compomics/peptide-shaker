@@ -18,6 +18,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.preferences.LastSelectedFolder;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
+import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.WelcomeDialog;
@@ -2569,9 +2570,9 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     // set the database
                     prideSearchParameters.setFastaFile(new File(database));
 
-                    // default settings to be used, set the enzyme to trypsin
+                    // default settings to be used
                     if (selectedSearchSettingsFileLink == null) {
-                        prideSearchParameters.setEnzyme(EnzymeFactory.getUtilitiesEnzyme("Trypsin"));
+                        prideSearchParameters.setDigestionPreferences(DigestionPreferences.getDefaultPreferences());
                     }
 
                     String prideSearchParametersReport = null;
@@ -3103,7 +3104,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         if (!enzymes.isEmpty()) {
             if (enzymes.size() == 1) {
 
-                Enzyme mappedEnzyme = EnzymeFactory.getUtilitiesEnzyme(enzymes.get(0));
+                Enzyme mappedEnzyme = EnzymeFactory.getInstance().getUtilitiesEnzyme(enzymes.get(0));
 
                 // unknown enzyme
                 if (mappedEnzyme == null) {
