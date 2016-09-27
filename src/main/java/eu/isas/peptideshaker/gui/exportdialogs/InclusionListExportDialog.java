@@ -81,7 +81,7 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        proteinFilterPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Filter"));
+        proteinFilterPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Exclusion Filter"));
         proteinFilterPanel.setOpaque(false);
 
         relatedProteinsCheck.setText("Related Proteins");
@@ -107,7 +107,7 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
                     .addComponent(relatedProteinsCheck, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(relatredAndUnrelatedCheck)
                     .addComponent(unrelatedCheck))
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(97, Short.MAX_VALUE))
         );
         proteinFilterPanelLayout.setVerticalGroup(
             proteinFilterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -121,7 +121,7 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        peptideFilterPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide Filter"));
+        peptideFilterPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide Exclusion Filter"));
         peptideFilterPanel.setOpaque(false);
 
         miscleavedCheck.setSelected(true);
@@ -135,7 +135,7 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
         reactiveCheck.setOpaque(false);
 
         degeneratedCheck.setSelected(true);
-        degeneratedCheck.setText("Degenerated Peptides");
+        degeneratedCheck.setText("Shared Peptides");
         degeneratedCheck.setIconTextGap(15);
         degeneratedCheck.setOpaque(false);
 
@@ -171,7 +171,7 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
 
         minRtWindowUnitLabel.setText("s");
 
-        jLabel1.setText("Min RT");
+        jLabel1.setText("Min RT Window");
 
         javax.swing.GroupLayout rtFilterPanelLayout = new javax.swing.GroupLayout(rtFilterPanel);
         rtFilterPanel.setLayout(rtFilterPanelLayout);

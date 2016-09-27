@@ -86,7 +86,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Protein Filter"/>
+                <TitledBorder title="Protein Exclusion Filter"/>
               </Border>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
@@ -102,7 +102,7 @@
                           <Component id="relatredAndUnrelatedCheck" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="unrelatedCheck" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="37" max="32767" attributes="0"/>
+                      <EmptySpace pref="97" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -149,7 +149,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Peptide Filter"/>
+                <TitledBorder title="Peptide Exclusion Filter"/>
               </Border>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
@@ -203,7 +203,7 @@
             <Component class="javax.swing.JCheckBox" name="degeneratedCheck">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Degenerated Peptides"/>
+                <Property name="text" type="java.lang.String" value="Shared Peptides"/>
                 <Property name="iconTextGap" type="int" value="15"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
@@ -262,7 +262,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Min RT"/>
+                <Property name="text" type="java.lang.String" value="Min RT Window"/>
               </Properties>
             </Component>
           </SubComponents>
