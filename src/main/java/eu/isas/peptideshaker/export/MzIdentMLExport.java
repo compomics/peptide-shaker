@@ -38,7 +38,6 @@ import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
-import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.scoring.PSMaps;
@@ -860,76 +859,37 @@ public class MzIdentMLExport {
         tabCounter--;
         br.write(getCurrentTabSpace() + "</ModificationParams>" + lineBreak);
 
-        // Digestion
-        DigestionPreferences digestionPreferences = searchParameters.getDigestionPreferences();
+        // enzyme
+        br.write(getCurrentTabSpace() + "<Enzymes independent=\"false\">" + lineBreak);
+        // note: if multiple enzymes are specified, independent is set to true if cleavage with different enzymes is performed independently
+        tabCounter++;
 
-        if (digestionPreferences.isNoEnzymeSpecificity()) {
+        Enzyme enzyme = searchParameters.getEnzyme();
+        br.write(getCurrentTabSpace() + "<Enzyme "
+                + "missedCleavages=\"" + searchParameters.getnMissedCleavages() + "\" "
+                + "semiSpecific=\"" + enzyme.isSemiSpecific() + "\" "
+                //+ "cTermGain=\"OH\" " // Element formula gained at CTerm
+                //+ "nTermGain=\"H\" " // Element formula gained at NTerm
+                + "id=\"Enz1\" "
+                + "name=\"" + enzyme.getName() + "\">"
+                + lineBreak); // @TODO: add <SiteRegexp><![CDATA[(?<=[KR])(?!P)]]></SiteRegexp>?
+        tabCounter++;
 
-            br.write(getCurrentTabSpace() + "<Enzymes independent=\"false\">" + lineBreak);
-            tabCounter++;
-            br.write(getCurrentTabSpace() + "<Enzyme name=\"unspecific cleavage\">"
-                    + lineBreak);
-            tabCounter++;
-            br.write(getCurrentTabSpace() + "<EnzymeName>" + lineBreak);
-            tabCounter++;
-            CvTerm enzymeCvTerm = new CvTerm("PSI-MS", "MS:1001091", "unspecific cleavage", null);
+        br.write(getCurrentTabSpace() + "<EnzymeName>" + lineBreak);
+        tabCounter++;
+        CvTerm enzymeCvTerm = EnzymeFactory.getEnzymeCvTerm(enzyme);
+        if (enzymeCvTerm != null) {
             writeCvTerm(enzymeCvTerm);
-            tabCounter--;
-            br.write(getCurrentTabSpace() + "</EnzymeName>" + lineBreak);
-
-            tabCounter--;
-            br.write(getCurrentTabSpace() + "</Enzyme>" + lineBreak);
-
-        } else if (digestionPreferences.isWholeProtein()) {
-
-            br.write(getCurrentTabSpace() + "<Enzymes independent=\"false\">" + lineBreak);
-            tabCounter++;
-            br.write(getCurrentTabSpace() + "<Enzyme name=\"NoEnzyme\">"
-                    + lineBreak);
-            tabCounter++;
-            br.write(getCurrentTabSpace() + "<EnzymeName>" + lineBreak);
-            tabCounter++;
-            CvTerm enzymeCvTerm = new CvTerm("PSI-MS", "MS:1001955", "NoEnzyme", null);
-            writeCvTerm(enzymeCvTerm);
-            tabCounter--;
-            br.write(getCurrentTabSpace() + "</EnzymeName>" + lineBreak);
-
-            tabCounter--;
-            br.write(getCurrentTabSpace() + "</Enzyme>" + lineBreak);
-
         } else {
-            ArrayList<Enzyme> enzymes = digestionPreferences.getEnzymes();
-            br.write(getCurrentTabSpace() + "<Enzymes independent=\"" + (enzymes.size() > 1) + "\">" + lineBreak);
-
-            for (Enzyme enzyme : enzymes) {
-                String enzymeName = enzyme.getName();
-                br.write(getCurrentTabSpace() + "<Enzyme "
-                        + "missedCleavages=\"" + digestionPreferences.getnMissedCleavages(enzymeName) + "\" "
-                        + "semiSpecific=\"" + (digestionPreferences.getSpecificity(enzymeName) == DigestionPreferences.Specificity.semiSpecific) + "\" "
-                        //+ "cTermGain=\"OH\" " // Element formula gained at CTerm
-                        //+ "nTermGain=\"H\" " // Element formula gained at NTerm
-                        + "id=\"Enz1\" "
-                        + "name=\"" + enzyme.getName() + "\">"
-                        + lineBreak); // @TODO: add <SiteRegexp><![CDATA[(?<=[KR])(?!P)]]></SiteRegexp>?
-                tabCounter++;
-
-                br.write(getCurrentTabSpace() + "<EnzymeName>" + lineBreak);
-                tabCounter++;
-                CvTerm enzymeCvTerm = enzyme.getCvTerm();
-                if (enzymeCvTerm != null) {
-                    writeCvTerm(enzymeCvTerm);
-                } else {
-                    writeUserParam(enzyme.getName());
-                }
-                tabCounter--;
-                br.write(getCurrentTabSpace() + "</EnzymeName>" + lineBreak);
-
-                tabCounter--;
-                br.write(getCurrentTabSpace() + "</Enzyme>" + lineBreak);
-
-                tabCounter--;
-            }
+            writeUserParam(enzyme.getName());
         }
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</EnzymeName>" + lineBreak);
+
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</Enzyme>" + lineBreak);
+
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</Enzymes>" + lineBreak);
 
         // fragment tolerance
