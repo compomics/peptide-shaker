@@ -5,7 +5,7 @@
     <groupId>eu.isas.peptideshaker</groupId>
     <artifactId>PeptideShaker</artifactId>
     <packaging>jar</packaging>
-    <version>1.13.3</version>
+    <version>1.13.6</version>
     <name>PeptideShaker</name>
     <url>https://github.com/compomics/peptide-shaker</url>
     <description>Interpretation of proteomics identification results</description>
@@ -282,7 +282,7 @@
             <url>http://genesis.UGent.be/maven2</url>
             <layout>default</layout>
         </repository>
-
+        
         <!-- EBI repository -->
         <repository>
             <id>ebi-repo</id> 
@@ -327,7 +327,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>4.7.2</version>
+            <version>4.7.5</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>

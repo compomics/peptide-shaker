@@ -5876,7 +5876,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                 bw.write(mz + separator + peak.intensity + separator + separator + separator);
                                 bw.newLine();
                             }
-
                         }
                     }
 

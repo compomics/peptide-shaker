@@ -357,9 +357,11 @@ public class ReportCLI extends CpsParent {
             System.err.println("Memory used by the Java virtual machine: " + Runtime.getRuntime().totalMemory() + ".");
             System.err.println("Free memory in the Java virtual machine: " + Runtime.getRuntime().freeMemory() + ".");
             e.printStackTrace();
+            System.exit(1);
         } catch (Exception e) {
             System.out.print("<CompomicsError>PeptideShaker processing failed. See the PeptideShaker log for details.</CompomicsError>");
             e.printStackTrace();
+            System.exit(1);
         }
     }
 

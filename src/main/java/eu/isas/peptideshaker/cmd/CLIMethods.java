@@ -35,6 +35,7 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  * interfaces.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class CLIMethods {
 
@@ -349,12 +350,13 @@ public class CLIMethods {
         projectDetails.setOrganizationEmail(mzidCLIInputBean.getOrganizationMail());
         projectDetails.setOrganizationAddress(mzidCLIInputBean.getOrganizationAddress());
         projectDetails.setOrganizationUrl(mzidCLIInputBean.getOrganizationUrl());
+        projectDetails.setIncludeProteinSequences(mzidCLIInputBean.getIncludeProteinSequences());
         projectDetails.setPrideOutputFolder(mzidCLIInputBean.getOutputFile().getAbsolutePath());
 
         MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), cpsParent.getIdentification(), cpsParent.getProjectDetails(),
                 cpsParent.getShotgunProtocol(), cpsParent.getIdentificationParameters(),
                 cpsParent.getSpectrumCountingPreferences(), cpsParent.getIdentificationFeaturesGenerator(),
-                mzidCLIInputBean.getOutputFile(), waitingHandler);
+                mzidCLIInputBean.getOutputFile(), mzidCLIInputBean.getIncludeProteinSequences(), waitingHandler);
         mzIdentMLExport.createMzIdentMLFile(false);
     }
 }

@@ -191,7 +191,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        inclusionListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Inclusion List (beta)"));
+        inclusionListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Inclusion/Exclusion List (beta)"));
         inclusionListPanel.setOpaque(false);
 
         includeValidatedPsmsLabel.setText("Instrument Format");

@@ -94,7 +94,7 @@ public enum FollowUpCLIParams {
         aOptions.addOption(INCLUSION_LIST_RT_WINDOW.id, true, INCLUSION_LIST_RT_WINDOW.description);
         
         // Path setup
-        aOptions.addOption(PathSettingsCLIParams.ALL.id, true, PathSettingsCLIParams.ALL.description);
+        PathSettingsCLIParams.createOptionsCLI(aOptions);
 
         // note: remember to add new parameters to the getOptionsAsString below as well
     }
