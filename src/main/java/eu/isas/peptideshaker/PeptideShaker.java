@@ -1057,6 +1057,7 @@ public class PeptideShaker {
             nSequences = 10000;
             nSpectra = 100;
         }
+        EnzymeFactory.getInstance();
         PTMFactory.getInstance();
         SequenceFactory.getInstance(nSequences);
         SpectrumFactory.getInstance(nSpectra);

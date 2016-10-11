@@ -2983,8 +2983,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 if (identification.matchExists(spectrumKey)) {
 
                     SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
-                    int forwardIon = searchParameters.getIonSearched1();
-                    int rewindIon = searchParameters.getIonSearched2();
+                    Integer forwardIon = searchParameters.getForwardIons().get(0);
+                    Integer rewindIon = searchParameters.getRewindIons().get(0);
                     PtmSettings modificationProfile = searchParameters.getPtmSettings();
 
                     if (currentSpectrum != null && spectrum != null) {

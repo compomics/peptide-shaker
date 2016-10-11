@@ -244,7 +244,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     /**
      * The compomics enzyme factory.
      */
-    private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
+    private EnzymeFactory enzymeFactory;
     /**
      * The utilities user preferences.
      */
@@ -578,9 +578,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             }
 
             // Instantiate factories
-            loadEnzymes();
             PeptideShaker.instantiateFacories(utilitiesUserPreferences);
             ptmFactory = PTMFactory.getInstance();
+            enzymeFactory = EnzymeFactory.getInstance();
             spectrumFactory = SpectrumFactory.getInstance();
             sequenceFactory = SequenceFactory.getInstance();
 
@@ -2115,11 +2115,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             searchParameters = getIdentificationParameters().getSearchParameters();
         }
 
-        // set the default enzyme if not set
-        if (searchParameters.getEnzyme() == null) {
-            searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
-        }
-
         new SearchSettingsDialog(this, searchParameters,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
@@ -3387,18 +3382,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-     * Loads the enzymes from the enzyme file into the enzyme factory.
-     */
-    private void loadEnzymes() {
-        try {
-            enzymeFactory.importEnzymes(new File(PeptideShaker.getJarFilePath(), PeptideShaker.ENZYME_FILE));
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Not able to load the enzyme file.", "Wrong enzyme file.", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Initiate the display by displaying the data in the currently selected
      * tab. Was previously a part of the displayResults methods, but had to be
      * split into a separate method due to threading issues.
@@ -3738,21 +3721,25 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
-        if (searchParameters.getIonSearched1() == PeptideFragmentIon.A_ION) {
+        if (searchParameters.getForwardIons().contains(PeptideFragmentIon.A_ION)) {
             forwardIonsDeNovoCheckBoxMenuItem.setText("a-ions");
-        } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.B_ION) {
+        }
+        if (searchParameters.getForwardIons().contains(PeptideFragmentIon.B_ION)) {
             forwardIonsDeNovoCheckBoxMenuItem.setText("b-ions");
-        } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.C_ION) {
+        }
+        if (searchParameters.getForwardIons().contains(PeptideFragmentIon.C_ION)) {
             forwardIonsDeNovoCheckBoxMenuItem.setText("c-ions");
         }
 
         forwardIonsDeNovoCheckBoxMenuItem.repaint();
 
-        if (searchParameters.getIonSearched2() == PeptideFragmentIon.X_ION) {
+        if (searchParameters.getRewindIons().contains(PeptideFragmentIon.X_ION)) {
             rewindIonsDeNovoCheckBoxMenuItem.setText("x-ions");
-        } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.Y_ION) {
+        }
+        if (searchParameters.getRewindIons().contains(PeptideFragmentIon.Y_ION)) {
             rewindIonsDeNovoCheckBoxMenuItem.setText("y-ions");
-        } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.Z_ION) {
+        }
+        if (searchParameters.getRewindIons().contains(PeptideFragmentIon.Z_ION)) {
             rewindIonsDeNovoCheckBoxMenuItem.setText("z-ions");
         }
 
@@ -3992,7 +3979,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public void resetPtmFactory() {
 
-        // reset ptm factory
         ptmFactory.reloadFactory();
         ptmFactory = PTMFactory.getInstance();
     }
@@ -4269,7 +4255,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public void clearPreferences() {
 
         // reset enzymes, ptms and preferences
-        loadEnzymes();
         resetPtmFactory();
         setDefaultPreferences();
     }
@@ -5449,7 +5434,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                 try {
                     // reset enzymes, ptms and preferences
-                    loadEnzymes();
                     resetPtmFactory();
                     setDefaultPreferences();
                     setCurentNotes(new ArrayList<String>());

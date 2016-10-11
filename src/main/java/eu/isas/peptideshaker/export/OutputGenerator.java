@@ -2802,7 +2802,7 @@ public class OutputGenerator {
                                                             && proteinPSParameter.getFractionValidatedPeptides(fraction) > 0) {
 
                                                         HashMap<String, XYDataPoint> expectedMolecularWeightRanges
-                                                                = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFractionMolecularWeightRanges();
+                                                                = peptideShakerGUI.getIdentificationParameters().getFractionSettings().getFractionMolecularWeightRanges();
 
                                                         if (expectedMolecularWeightRanges != null && expectedMolecularWeightRanges.get(fraction) != null) {
 
@@ -2834,7 +2834,7 @@ public class OutputGenerator {
                                                             && proteinPSParameter.getFractionValidatedSpectra(fraction) > 0) {
 
                                                         HashMap<String, XYDataPoint> expectedMolecularWeightRanges
-                                                                = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFractionMolecularWeightRanges();
+                                                                = peptideShakerGUI.getIdentificationParameters().getFractionSettings().getFractionMolecularWeightRanges();
 
                                                         if (expectedMolecularWeightRanges != null && expectedMolecularWeightRanges.get(fraction) != null) {
 

@@ -4124,8 +4124,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumPanel.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                             spectrumPanel.setYAxisZoomExcludesBackgroundPeaks(annotationPreferences.yAxisZoomExcludesBackgroundPeaks());
 
-                            int forwardIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getIonSearched1();
-                            int rewindIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getIonSearched2();
+                            Integer forwardIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getForwardIons().get(0);
+                            Integer rewindIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getRewindIons().get(0);
 
                             spectrumPanel.addAutomaticDeNovoSequencing(peptides.get(i), allAnnotations.get(i),
                                     forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(),
@@ -4138,8 +4138,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumPanel.setAnnotateHighestPeak(!annotationPreferences.isHighResolutionAnnotation());
                             spectrumPanel.setAnnotationsMirrored(SpectrumAnnotator.getSpectrumAnnotation(allAnnotations.get(i)));
 
-                            int forwardIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getIonSearched1();
-                            int rewindIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getIonSearched2();
+                            Integer forwardIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getForwardIons().get(0);
+                            Integer rewindIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getRewindIons().get(0);
                             spectrumPanel.addAutomaticDeNovoSequencing(peptides.get(i), allAnnotations.get(i),
                                     forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(),
                                     annotationPreferences.showForwardIonDeNovoTags(),
@@ -4774,8 +4774,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumPanel.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                             spectrumPanel.setYAxisZoomExcludesBackgroundPeaks(annotationPreferences.yAxisZoomExcludesBackgroundPeaks());
 
-                            int forwardIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getIonSearched1();
-                            int rewindIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getIonSearched2();
+                            Integer forwardIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getForwardIons().get(0);
+                            Integer rewindIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getRewindIons().get(0);
 
                             // add de novo sequencing
                             spectrumPanel.addAutomaticDeNovoSequencing(currentPeptide, annotations,

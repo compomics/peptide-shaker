@@ -467,7 +467,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
     /**
      * Get the private project details from the user.
-     * 
+     *
      * @param pxAccesion the PX accession to open, can be null
      */
     private void getPrivateProjectDetails(String pxAccession) {
@@ -548,7 +548,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).setMinimumChartValue(2.0);
 
                 projectsTable.repaint();
-                
+
                 if (projectsTable.getRowCount() > 0) {
                     projectsTable.setRowSelectionInterval(0, 0);
                     projectsTableMouseReleased(null);
@@ -2119,7 +2119,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
     /**
      * Open a specific PX accession.
-     * 
+     *
      * @param pxAccession the PX accession to display
      */
     private void loadSpecificProject(final String pxAccession) {
@@ -2171,7 +2171,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     projectTagsAll = new ArrayList<String>();
 
                     ResponseEntity<ProjectDetail> projectDetail = template.getForEntity(url, ProjectDetail.class);
-                    
+
                     ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
                         (projectsTable.getRowCount() + 1),
                         "<html><a href=\"" + DisplayFeaturesGenerator.getPrideProjectArchiveLink("" + projectDetail.getBody().getAccession())
@@ -2234,7 +2234,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     instrumentsAll.add(0, "");
                     ptmsAll.add(0, "");
                     projectTagsAll.add(0, "");
-                    
+
                     if (projectsTable.getRowCount() > 0) {
                         projectsTable.setRowSelectionInterval(0, 0);
                         projectsTableMouseReleased(null);
@@ -3101,6 +3101,9 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         // set the enzyme
         prideParametersReport += "<br><br><b>Enzyme:</b> ";
 
+        DigestionPreferences prideDigestionPreferences = DigestionPreferences.getDefaultPreferences();
+        prideSearchParameters.setDigestionPreferences(prideDigestionPreferences);
+
         if (!enzymes.isEmpty()) {
             if (enzymes.size() == 1) {
 
@@ -3125,7 +3128,11 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     prideParametersReport += mappedEnzyme.getName() + "<br>";
                 }
 
-                prideSearchParameters.setEnzyme(mappedEnzyme);
+                if (mappedEnzyme != null) {
+                    prideDigestionPreferences.clearEnzymes();
+                    prideDigestionPreferences.addEnzyme(mappedEnzyme);
+                }
+
             } else {
 
                 // more than one enzyme given
@@ -3144,9 +3151,10 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 Enzyme selectedEnzyme = enzymeSelectionDialog.getEnzyme();
                 if (selectedEnzyme != null) {
                     prideParametersReport += selectedEnzyme.getName() + "<br>";
-                    prideSearchParameters.setEnzyme(selectedEnzyme);
+                    prideDigestionPreferences.clearEnzymes();
+                    prideDigestionPreferences.addEnzyme(selectedEnzyme);
                 } else {
-                    prideSearchParameters.setEnzyme(null);
+                    prideDigestionPreferences.clearEnzymes();
                     prideParametersReport += enzymesAsText + " (unknown)<br>";
                 }
 
@@ -3161,17 +3169,18 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             //for (String residues : peptideLastResidues.keySet()) {
             //}
 
-            prideSearchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
             prideParametersReport += "Trypsin (assumed)<br>";
         }
 
         // set the max missed cleavages
         prideParametersReport += "<b>Maximum Missed Cleavages:</b> ";
         if (maxMissedCleavages != null) {
-            prideSearchParameters.setnMissedCleavages(maxMissedCleavages);
+            for (Enzyme enzyme : prideDigestionPreferences.getEnzymes()) {
+                prideDigestionPreferences.setnMissedCleavages(enzyme.getName(), maxMissedCleavages);
+            }
             prideParametersReport += maxMissedCleavages;
         } else {
-            prideParametersReport += prideSearchParameters.getnMissedCleavages() + " (default)";
+            prideParametersReport += prideDigestionPreferences.getnMissedCleavages(prideDigestionPreferences.getEnzymes().get(0).getName()) + " (default)";
         }
 
         // set the min/max precursor charge

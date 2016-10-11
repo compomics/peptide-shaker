@@ -528,7 +528,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             // molecular mass plot
             DefaultBoxAndWhiskerCategoryDataset mwPlotDataset = new DefaultBoxAndWhiskerCategoryDataset();
 
-            HashMap<String, XYDataPoint> molecularWeights = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFractionMolecularWeightRanges();
+            HashMap<String, XYDataPoint> molecularWeights = peptideShakerGUI.getIdentificationParameters().getFractionSettings().getFractionMolecularWeightRanges();
             ArrayList<String> spectrumFiles = peptideShakerGUI.getIdentification().getOrderedSpectrumFileNames();
 
             for (int i = 0; i < spectrumFiles.size(); i++) {

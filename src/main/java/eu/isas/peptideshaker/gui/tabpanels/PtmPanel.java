@@ -4003,8 +4003,8 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 // add de novo sequencing
                 SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
-                int forwardIon = searchParameters.getIonSearched1();
-                int rewindIon = searchParameters.getIonSearched2();
+                Integer forwardIon = searchParameters.getForwardIons().get(0);
+                Integer rewindIon = searchParameters.getRewindIons().get(0);
 
                 spectrum.addAutomaticDeNovoSequencing(peptide, annotations,
                         forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(),

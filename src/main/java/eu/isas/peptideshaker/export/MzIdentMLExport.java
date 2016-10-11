@@ -875,7 +875,7 @@ public class MzIdentMLExport {
         // Digestion
         DigestionPreferences digestionPreferences = searchParameters.getDigestionPreferences();
 
-        if (digestionPreferences.isNoEnzymeSpecificity()) {
+        if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.unSpecific) {
 
             br.write(getCurrentTabSpace() + "<Enzymes independent=\"false\">" + lineBreak);
             tabCounter++;
@@ -892,7 +892,7 @@ public class MzIdentMLExport {
             tabCounter--;
             br.write(getCurrentTabSpace() + "</Enzyme>" + lineBreak);
 
-        } else if (digestionPreferences.isWholeProtein()) {
+        } else if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.wholeProtein) {
 
             br.write(getCurrentTabSpace() + "<Enzymes independent=\"false\">" + lineBreak);
             tabCounter++;
