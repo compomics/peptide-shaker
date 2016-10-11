@@ -111,7 +111,6 @@ public class FollowUpCLI extends CpsParent {
         enzymeFactory = EnzymeFactory.getInstance();
 
         // Load resources files
-        loadEnzymes();
         loadSpecies();
 
         waitingHandler = new WaitingHandlerCLIImpl();
@@ -361,19 +360,6 @@ public class FollowUpCLI extends CpsParent {
         }
 
         return true;
-    }
-
-    /**
-     * Loads the enzymes from the enzyme file into the enzyme factory.
-     */
-    private void loadEnzymes() {
-        try {
-            File lEnzymeFile = new File(PeptideShaker.getJarFilePath() + File.separator + PeptideShaker.ENZYME_FILE);
-            enzymeFactory.importEnzymes(lEnzymeFile);
-        } catch (Exception e) {
-            System.err.println("Not able to load the enzyme file.");
-            e.printStackTrace();
-        }
     }
 
     /**
