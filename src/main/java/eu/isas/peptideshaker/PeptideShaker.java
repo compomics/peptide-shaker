@@ -97,10 +97,6 @@ public class PeptideShaker {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The XML file containing the enzymes.
-     */
-    public static final String ENZYME_FILE = "resources/conf/peptideshaker_enzymes.xml";
-    /**
      * User preferences file.
      */
     private static String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
