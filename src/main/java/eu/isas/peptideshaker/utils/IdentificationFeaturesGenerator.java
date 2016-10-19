@@ -578,28 +578,28 @@ public class IdentificationFeaturesGenerator {
                     cleavage = true;
                     break;
                 }
-                if (cleavage) {
-                    int length = i - lastCleavage;
-                    if (peptideLengthDistribution == null) { // < 100 validated peptide
-                        int pepMax = identificationParameters.getPeptideAssumptionFilter().getMaxPepLength();
-                        if (length > pepMax) {
-                            p = 0;
-                        }
-                    } else {
-                        p = peptideLengthDistribution.getProbabilityAt(length);
-                    }
-                    for (int j = lastCleavage + 1; j <= i; j++) {
-                        result[j] = p;
-                    }
-                    lastCleavage = i;
-                }
-                previousChar = nextChar;
             }
+            if (cleavage) {
+                int length = i - lastCleavage;
+                if (peptideLengthDistribution == null) { // < 100 validated peptide
+                    int pepMax = identificationParameters.getPeptideAssumptionFilter().getMaxPepLength();
+                    if (length > pepMax) {
+                        p = 0;
+                    }
+                } else {
+                    p = peptideLengthDistribution.getProbabilityAt(length);
+                }
+                for (int j = lastCleavage + 1; j <= i; j++) {
+                    result[j] = p;
+                }
+                lastCleavage = i;
+            }
+            previousChar = nextChar;
         }
 
         double p = 1;
 
-        int length = sequence.length() - lastCleavage + 1;
+        int length = sequence.length() - 1 - lastCleavage;
         if (peptideLengthDistribution == null) { // < 100 validated peptide
             int pepMax = identificationParameters.getPeptideAssumptionFilter().getMaxPepLength();
             if (length > pepMax) {
@@ -608,7 +608,7 @@ public class IdentificationFeaturesGenerator {
         } else {
             p = peptideLengthDistribution.getProbabilityAt(length);
         }
-        for (int j = lastCleavage; j < sequence.length(); j++) {
+        for (int j = lastCleavage + 1; j < sequence.length(); j++) {
             result[j] = p;
         }
 
