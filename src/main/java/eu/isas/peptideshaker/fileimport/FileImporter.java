@@ -18,7 +18,6 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.exceptions.exception_handlers.WaitingDialogExceptionHandler;
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
@@ -100,10 +99,6 @@ public class FileImporter {
      */
     public static final double PTM_MASS_TOLERANCE = 0.01;
     /**
-     * The shotgun protocol.
-     */
-    private ShotgunProtocol shotgunProtocol;
-    /**
      * The identification parameters.
      */
     private IdentificationParameters identificationParameters;
@@ -115,16 +110,14 @@ public class FileImporter {
      * data into the maps and do the preliminary calculations
      * @param waitingHandler The handler displaying feedback to the user
      * @param proteomicAnalysis The current proteomic analysis
-     * @param shotgunProtocol the shotgun protocol
      * @param identificationParameters the identification parameters
      * @param metrics metrics of the dataset to be saved for the GUI
      */
-    public FileImporter(PeptideShaker identificationShaker, WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis, ShotgunProtocol shotgunProtocol,
+    public FileImporter(PeptideShaker identificationShaker, WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis,
             IdentificationParameters identificationParameters, Metrics metrics) {
         this.peptideShaker = identificationShaker;
         this.waitingHandler = waitingHandler;
         this.proteomicAnalysis = proteomicAnalysis;
-        this.shotgunProtocol = shotgunProtocol;
         this.identificationParameters = identificationParameters;
         this.metrics = metrics;
         if (waitingHandler instanceof WaitingDialog) {
@@ -150,7 +143,7 @@ public class FileImporter {
     public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, ProcessingPreferences processingPreferences,
             SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, boolean backgroundThread) {
 
-        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, shotgunProtocol, identificationParameters, processingPreferences, spectrumCountingPreferences, projectDetails);
+        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, identificationParameters, processingPreferences, spectrumCountingPreferences, projectDetails);
 
         if (backgroundThread) {
             idProcessor.execute();
@@ -368,10 +361,6 @@ public class FileImporter {
          */
         private long nSecondary = 0;
         /**
-         * The shotgun protocol.
-         */
-        private ShotgunProtocol shotgunProtocol;
-        /**
          * The identification parameters.
          */
         private IdentificationParameters identificationParameters;
@@ -392,7 +381,7 @@ public class FileImporter {
          * @param sequenceMatchingPreferences the sequence matching preferences
          * @param projectDetails the project details
          */
-        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, ShotgunProtocol shotgunProtocol,
+        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
                 IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences,
                 SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails) {
 
@@ -420,7 +409,6 @@ public class FileImporter {
             }
 
             this.spectrumFiles = new HashMap<String, File>();
-            this.shotgunProtocol = shotgunProtocol;
             this.identificationParameters = identificationParameters;
             this.processingPreferences = processingPreferences;
             this.spectrumCountingPreferences = spectrumCountingPreferences;
@@ -556,7 +544,7 @@ public class FileImporter {
                             + nPSMs + " first hits imported (" + nSecondary + " secondary) from " + nSpectra + " spectra.", true, true);
                     waitingHandler.appendReport("[" + nRetained + " first hits passed the initial filtering]", true, true);
                     waitingHandler.increaseSecondaryProgressCounter(spectrumFiles.size() - mgfUsed.size());
-                    peptideShaker.processIdentifications(inputMap, proteinCount, waitingHandler, exceptionHandler, shotgunProtocol, identificationParameters, processingPreferences, spectrumCountingPreferences, projectDetails);
+                    peptideShaker.processIdentifications(inputMap, proteinCount, waitingHandler, exceptionHandler, identificationParameters, processingPreferences, spectrumCountingPreferences, projectDetails);
                 }
             } catch (OutOfMemoryError error) {
 
@@ -795,7 +783,7 @@ public class FileImporter {
                         waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                         waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);
 
-                        PsmImporter psmImporter = new PsmImporter(peptideShaker.getCache(), shotgunProtocol, identificationParameters, processingPreferences, fileReader, idFile, identification,
+                        PsmImporter psmImporter = new PsmImporter(peptideShaker.getCache(), identificationParameters, processingPreferences, fileReader, idFile, identification,
                                 inputMap, proteinCount, singleProteinList, exceptionHandler);
                         psmImporter.importPsms(idFileSpectrumMatches, processingPreferences.getnThreads(), waitingHandler);
 

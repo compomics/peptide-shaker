@@ -271,7 +271,7 @@ public class CpsParent extends UserPreferencesParent {
         }
 
         // Set up caches
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, shotgunProtocol, identificationParameters, metrics, spectrumCountingPreferences);
+        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, metrics, spectrumCountingPreferences);
         IdentificationFeaturesCache identificationFeaturesCache = experimentSettings.getIdentificationFeaturesCache();
         if (identificationFeaturesCache != null) {
             identificationFeaturesGenerator.setIdentificationFeaturesCache(experimentSettings.getIdentificationFeaturesCache());
@@ -744,7 +744,7 @@ public class CpsParent extends UserPreferencesParent {
      * Resets the feature generator.
      */
     public void resetIdentificationFeaturesGenerator() {
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, shotgunProtocol, identificationParameters, metrics, spectrumCountingPreferences);
+        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, metrics, spectrumCountingPreferences);
     }
 
     /**

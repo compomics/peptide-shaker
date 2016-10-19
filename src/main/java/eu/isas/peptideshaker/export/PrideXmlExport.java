@@ -26,6 +26,7 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Annotati
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
+import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
@@ -1110,10 +1111,6 @@ public class PrideXmlExport {
         // precursor mass accuracy
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000078\" name=\"Peptide mass tolerance setting\" value=\""
                 + searchParameters.getPrecursorAccuracy() + "\" />" + lineBreak);
-
-        // allowed missed cleavages
-        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000162\" name=\"Allowed missed cleavages\" value=\""
-                + searchParameters.getnMissedCleavages() + "\" />" + lineBreak);
 
         // @TODO: add more settings??
         tabCounter--;

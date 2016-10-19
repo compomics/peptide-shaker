@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.filtering;
 
 import com.compomics.util.experiment.filtering.FilterItemComparator;
 import com.compomics.util.Util;
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.experiment.filtering.FilterItem;
@@ -395,7 +394,6 @@ public abstract class MatchFilter implements Serializable, Filter {
      * @param geneMaps the gene maps
      * @param identificationFeaturesGenerator the identification features
      * generator providing identification features
-     * @param shotgunProtocol information on the protocol
      * @param identificationParameters the identification parameters
      * @param peptideSpectrumAnnotator the annotator to use to annotate spectra when filtering on psm or assumptions
      *
@@ -417,7 +415,7 @@ public abstract class MatchFilter implements Serializable, Filter {
      * an error occurred while doing statistics on a distribution
      */
     public boolean isValidated(String matchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
+            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
 
         if (exceptions.contains(matchKey)) {
             return false;
@@ -429,7 +427,7 @@ public abstract class MatchFilter implements Serializable, Filter {
         for (String itemName : valuesMap.keySet()) {
             FilterItemComparator filterItemComparator = comparatorsMap.get(itemName);
             Object value = valuesMap.get(itemName);
-            if (!isValidated(itemName, filterItemComparator, value, matchKey, identification, geneMaps, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator)) {
+            if (!isValidated(itemName, filterItemComparator, value, matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, peptideSpectrumAnnotator)) {
                 return false;
             }
         }
@@ -449,7 +447,6 @@ public abstract class MatchFilter implements Serializable, Filter {
      * @param geneMaps the gene maps
      * @param identificationFeaturesGenerator the identification feature
      * generator where to get identification features
-     * @param shotgunProtocol information on the protocol used
      * @param identificationParameters the identification parameters used
      * @param peptideSpectrumAnnotator the annotator to use to annotate spectra when filtering on psm or assumptions
      *
@@ -472,7 +469,7 @@ public abstract class MatchFilter implements Serializable, Filter {
      * an error occurred while doing statistics on a distribution
      */
     public abstract boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, String matchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException;
+            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException;
 
     @Override
     public boolean isSameAs(Filter anotherFilter) {

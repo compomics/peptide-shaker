@@ -278,7 +278,7 @@ public class PeptideMapper {
      */
     private void mapPeptide(Peptide peptide, boolean increaseProgressBar) throws IOException, InterruptedException, SQLException, ClassNotFoundException {
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-        if (identificationParameters.getPeptideAssumptionFilter().validatePeptide(peptide, sequenceMatchingPreferences, identificationParameters.getSearchParameters().getEnzyme())) {
+        if (identificationParameters.getPeptideAssumptionFilter().validatePeptide(peptide, sequenceMatchingPreferences, identificationParameters.getSearchParameters().getDigestionPreferences())) {
             try {
                 peptide.getParentProteins(sequenceMatchingPreferences);
             } catch (java.sql.SQLNonTransientConnectionException derbyException) {
@@ -426,7 +426,7 @@ public class PeptideMapper {
                                     }
 
                                     if ((rank <= rankMax || potentialTerminalModification)
-                                            && peptideAssumptionFilter.validatePeptide(peptide, sequenceMatchingPreferences, searchParameters.getEnzyme())) {
+                                            && peptideAssumptionFilter.validatePeptide(peptide, sequenceMatchingPreferences, searchParameters.getDigestionPreferences())) {
                                         if (rank < rankMax) {
                                             bestScoringPeptides.add(peptide);
                                         } else if (potentialTerminalModification) {
@@ -457,7 +457,7 @@ public class PeptideMapper {
                                     }
 
                                     if ((rank <= rankMax || potentialTerminalModification)
-                                            && peptideAssumptionFilter.validatePeptide(peptide, sequenceMatchingPreferences, searchParameters.getEnzyme())) {
+                                            && peptideAssumptionFilter.validatePeptide(peptide, sequenceMatchingPreferences, searchParameters.getDigestionPreferences())) {
                                         if (rank <= rankMax) {
                                             bestScoringPeptides.add(peptide);
                                         } else if (potentialTerminalModification) {

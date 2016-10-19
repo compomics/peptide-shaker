@@ -1500,7 +1500,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
 
                         MatchesValidator matchesValidator = new MatchesValidator(pSMaps.getPsmSpecificMap(), pSMaps.getPeptideSpecificMap(), pSMaps.getProteinMap());
-                        matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), peptideShakerGUI.getGeneMaps(), pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getExceptionHandler(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getProcessingPreferences());
+                        matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), peptideShakerGUI.getGeneMaps(), pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getExceptionHandler(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getProcessingPreferences());
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
@@ -3072,7 +3072,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
                 try {
-                    miniShaker.peptideMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters());
+                    miniShaker.peptideMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getIdentificationParameters());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
                             "An identification conflict occured. If you can reproduce the error <br>"

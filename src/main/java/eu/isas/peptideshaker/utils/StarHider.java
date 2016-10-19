@@ -167,7 +167,7 @@ public class StarHider {
             if (matchFilter.getExceptions().contains(matchKey)) {
                 matchFilter.removeException(matchKey);
             }
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
                 validated = true;
             }
         }
@@ -218,7 +218,7 @@ public class StarHider {
             if (matchFilter.getManualValidation().contains(matchKey)) {
                 matchFilter.removeManualValidation(matchKey);
             }
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
                 matchFilter.addException(matchKey);
             }
         }
@@ -258,7 +258,7 @@ public class StarHider {
             if (matchFilter.getExceptions().contains(matchKey)) {
                 matchFilter.removeException(matchKey);
             }
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
                 validated = true;
             }
         }
@@ -308,7 +308,7 @@ public class StarHider {
             if (matchFilter.getManualValidation().contains(matchKey)) {
                 matchFilter.removeManualValidation(matchKey);
             }
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
                 matchFilter.addException(matchKey);
             }
         }
@@ -348,7 +348,7 @@ public class StarHider {
             if (matchFilter.getExceptions().contains(matchKey)) {
                 matchFilter.removeException(matchKey);
             }
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
                 validated = true;
             }
         }
@@ -399,7 +399,7 @@ public class StarHider {
             if (matchFilter.getManualValidation().contains(matchKey)) {
                 matchFilter.removeManualValidation(matchKey);
             }
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
                 matchFilter.addException(matchKey);
             }
         }
@@ -439,7 +439,7 @@ public class StarHider {
             if (matchFilter.getExceptions().contains(matchKey)) {
                 matchFilter.removeException(matchKey);
             }
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
                 validated = true;
             }
         }
@@ -490,7 +490,7 @@ public class StarHider {
             if (matchFilter.getManualValidation().contains(matchKey)) {
                 matchFilter.removeManualValidation(matchKey);
             }
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
                 matchFilter.addException(matchKey);
             }
         }
@@ -532,7 +532,7 @@ public class StarHider {
                 if (matchFilter.getExceptions().contains(matchKey)) {
                     matchFilter.removeException(matchKey);
                 }
-                if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
+                if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
                     validated = true;
                 }
             }
@@ -582,7 +582,7 @@ public class StarHider {
             if (matchFilter.getManualValidation().contains(matchKey)) {
                 matchFilter.removeManualValidation(matchKey);
             }
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
+            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
                 matchFilter.addException(matchKey);
             }
         }
@@ -624,7 +624,7 @@ public class StarHider {
                 if (matchFilter.getExceptions().contains(matchKey)) {
                     matchFilter.removeException(matchKey);
                 }
-                if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
+                if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
                     validated = true;
                 }
             }
@@ -674,7 +674,7 @@ public class StarHider {
             if (matchFilter.getManualValidation().contains(matchKey)) {
                 matchFilter.removeManualValidation(matchKey);
             }
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
+            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
                 matchFilter.addException(matchKey);
             }
         }
@@ -709,7 +709,7 @@ public class StarHider {
     public boolean isProteinHidden(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
-            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
                 return true;
             }
         }
@@ -742,7 +742,7 @@ public class StarHider {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
-            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
                 return true;
             }
         }
@@ -777,7 +777,7 @@ public class StarHider {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
-            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
+            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
                 return true;
             }
         }
@@ -811,7 +811,7 @@ public class StarHider {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
-            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
                 return true;
             }
         }
@@ -845,7 +845,7 @@ public class StarHider {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
-            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
                 return true;
             }
         }
@@ -879,7 +879,7 @@ public class StarHider {
     public boolean isPsmStarred(String matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
-            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
+            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
                 return true;
             }
         }

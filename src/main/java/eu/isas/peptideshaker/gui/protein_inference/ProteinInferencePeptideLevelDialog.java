@@ -10,6 +10,7 @@ import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.protein.Header;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
@@ -342,9 +343,13 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                     tempEdges.add(proteinNodeKey);
 
                     Protein protein = sequenceFactory.getProtein(tempProteinAccession);
-                    Boolean enzymatic = protein.isEnzymaticPeptide(peptideMatch.getTheoreticPeptide().getSequence(),
-                            peptideShakerGUI.getIdentificationParameters().getSearchParameters().getEnzyme(),
-                            peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                    Boolean enzymatic = false;
+                    DigestionPreferences digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionPreferences();
+                    if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+                        enzymatic = protein.isEnzymaticPeptide(peptideMatch.getTheoreticPeptide().getSequence(),
+                                digestionPreferences.getEnzymes(),
+                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                    }
 
                     edgeProperties.put(peptideNodeName + "|" + proteinNodeKey, enzymatic.toString());
                 }

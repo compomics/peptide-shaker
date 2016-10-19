@@ -2063,7 +2063,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 try {
                     MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(),
                             identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), pSMaps.getPsmSpecificMap(), psmKey,
-                            peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters());
+                            peptideShakerGUI.getIdentificationParameters());
                     if (matchValidationDialog.isValidationChanged()) {
                         updatePsmPanelTitle();
                         peptidesPanel.repaint();
@@ -2172,7 +2172,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     try {
                         MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(),
                                 identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), pSMaps.getProteinMap(), proteinKey,
-                                peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters());
+                                peptideShakerGUI.getIdentificationParameters());
                         if (matchValidationDialog.isValidationChanged()) {
                             updateProteinPanelTitle();
                         }
@@ -2254,7 +2254,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 try {
                     MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(),
                             identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), pSMaps.getPeptideSpecificMap(), peptideKey,
-                            peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters());
+                            peptideShakerGUI.getIdentificationParameters());
                     if (matchValidationDialog.isValidationChanged()) {
                         updateProteinPanelTitle();
                         updatePeptidePanelTitle();

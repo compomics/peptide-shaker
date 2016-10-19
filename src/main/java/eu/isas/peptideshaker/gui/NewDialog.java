@@ -1630,7 +1630,7 @@ public class NewDialog extends javax.swing.JDialog {
      * @param waitingDialog a dialog to display feedback to the user
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
-        peptideShaker.importFiles(waitingDialog, idFiles, spectrumFiles, shotgunProtocol,
+        peptideShaker.importFiles(waitingDialog, idFiles, spectrumFiles,
                 identificationParameters, projectDetails, processingPreferences, spectrumCountingPreferences, true);
     }
 

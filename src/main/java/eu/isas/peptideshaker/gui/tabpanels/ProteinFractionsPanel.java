@@ -15,6 +15,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
+import com.compomics.util.preferences.DigestionPreferences;
 import eu.isas.peptideshaker.gui.FractionDetailsDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanel;
@@ -395,15 +396,16 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                                     boolean includePeptide = false;
 
-                                    if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
+                                        DigestionPreferences digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionPreferences();
+                                    if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected() || digestionPreferences.getCleavagePreference() != DigestionPreferences.CleavagePreference.enzyme) {
                                         includePeptide = true;
                                     } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                peptideShakerGUI.getShotgunProtocol().getEnzyme(),
+                                                digestionPreferences.getEnzymes(),
                                                 peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                                     } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                peptideShakerGUI.getShotgunProtocol().getEnzyme(),
+                                                digestionPreferences.getEnzymes(),
                                                 peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                                     }
 

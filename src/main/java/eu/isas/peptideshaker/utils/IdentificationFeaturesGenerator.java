@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.experiment.units.MetricsPrefix;
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTM;
@@ -26,6 +25,7 @@ import com.compomics.util.experiment.units.StandardUnit;
 import com.compomics.util.experiment.units.UnitOfMeasurement;
 import com.compomics.util.math.statistics.Distribution;
 import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
+import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
@@ -37,8 +37,6 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.io.IOException;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -86,10 +84,6 @@ public class IdentificationFeaturesGenerator {
      */
     private IdentificationParameters identificationParameters;
     /**
-     * Information on the protocol used.
-     */
-    private ShotgunProtocol shotgunProtocol;
-    /**
      * The spectrum counting preferences.
      */
     private SpectrumCountingPreferences spectrumCountingPreferences;
@@ -102,15 +96,13 @@ public class IdentificationFeaturesGenerator {
      * Constructor.
      *
      * @param identification the identification of interest
-     * @param shotgunProtocol information on the protocol used
      * @param identificationParameters the identification parameters
      * @param metrics the metrics picked-up wile loading the data
      * @param spectrumCountingPreferences the spectrum counting preferences
      */
-    public IdentificationFeaturesGenerator(Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
+    public IdentificationFeaturesGenerator(Identification identification, IdentificationParameters identificationParameters,
             Metrics metrics, SpectrumCountingPreferences spectrumCountingPreferences) {
         this.metrics = metrics;
-        this.shotgunProtocol = shotgunProtocol;
         this.identificationParameters = identificationParameters;
         this.identification = identification;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
@@ -458,8 +450,11 @@ public class IdentificationFeaturesGenerator {
             String peptideSequence = Peptide.getSequence(peptideKey);
             boolean enzymaticPeptide = true;
             if (!allPeptides) {
-                enzymaticPeptide = currentProtein.isEnzymaticPeptide(peptideSequence, shotgunProtocol.getEnzyme(),
-                        identificationParameters.getSequenceMatchingPreferences());
+                DigestionPreferences digestionPreferences = identificationParameters.getSearchParameters().getDigestionPreferences();
+                if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+                    enzymaticPeptide = currentProtein.isEnzymaticPeptide(peptideSequence, digestionPreferences.getEnzymes(),
+                            identificationParameters.getSequenceMatchingPreferences());
+                }
             }
             if (allPeptides || enzymatic && enzymaticPeptide || !enzymatic && !enzymaticPeptide) {
                 int validationLevel = psParameter.getMatchValidationLevel().getIndex();
@@ -561,10 +556,10 @@ public class IdentificationFeaturesGenerator {
         String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
         double[] result = new double[sequence.length()];
         Distribution peptideLengthDistribution = metrics.getPeptideLengthDistribution();
-        Enzyme enzyme = shotgunProtocol.getEnzyme();
+        DigestionPreferences digestionPreferences = identificationParameters.getSearchParameters().getDigestionPreferences();
 
         // special case for no cleavage searches
-        if (enzyme.isWholeProtein()) {
+        if (digestionPreferences.getCleavagePreference() != DigestionPreferences.CleavagePreference.enzyme) {
             for (int i = 0; i < result.length; i++) {
                 result[i] = 1.0;
             }
@@ -576,9 +571,14 @@ public class IdentificationFeaturesGenerator {
 
         for (int i = 0; i < sequence.length() - 1; i++) {
             double p = 1;
-            if (!enzyme.isSemiSpecific()) {
-                nextChar = sequence.charAt(i + 1);
+            nextChar = sequence.charAt(i + 1);
+            boolean cleavage = false;
+            for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
                 if (enzyme.isCleavageSite(previousChar, nextChar)) {
+                    cleavage = true;
+                    break;
+                }
+                if (cleavage) {
                     int length = i - lastCleavage;
                     if (peptideLengthDistribution == null) { // < 100 validated peptide
                         int pepMax = identificationParameters.getPeptideAssumptionFilter().getMaxPepLength();
@@ -594,29 +594,22 @@ public class IdentificationFeaturesGenerator {
                     lastCleavage = i;
                 }
                 previousChar = nextChar;
-            } else {
-                result[i] = p;
             }
         }
 
         double p = 1;
 
-        if (!enzyme.isSemiSpecific()) {
-            int length = sequence.length() - lastCleavage + 1;
-            if (peptideLengthDistribution == null) { // < 100 validated peptide
-                int pepMax = identificationParameters.getPeptideAssumptionFilter().getMaxPepLength();
-                if (length > pepMax) {
-                    p = 0;
-                }
-            } else {
-                MathContext mathContext = new MathContext(10, RoundingMode.HALF_DOWN);
-                p = peptideLengthDistribution.getProbabilityAt(length);
-            }
-            for (int j = lastCleavage; j < sequence.length(); j++) {
-                result[j] = p;
+        int length = sequence.length() - lastCleavage + 1;
+        if (peptideLengthDistribution == null) { // < 100 validated peptide
+            int pepMax = identificationParameters.getPeptideAssumptionFilter().getMaxPepLength();
+            if (length > pepMax) {
+                p = 0;
             }
         } else {
-            result[sequence.length() - 1] = p;
+            p = peptideLengthDistribution.getProbabilityAt(length);
+        }
+        for (int j = lastCleavage; j < sequence.length(); j++) {
+            result[j] = p;
         }
 
         return result;
@@ -706,7 +699,7 @@ public class IdentificationFeaturesGenerator {
      * Returns a list of non-enzymatic peptides for a given protein match.
      *
      * @param proteinMatchKey the key of the protein match
-     * @param enzyme the enzyme used
+     * @param digestionPreferences the digestion preferences
      *
      * @return a list of non-enzymatic peptides for a given protein match
      *
@@ -722,12 +715,12 @@ public class IdentificationFeaturesGenerator {
      * threading error occurred while interacting with a database (from the
      * protein tree or identification)
      */
-    public ArrayList<String> getNonEnzymatic(String proteinMatchKey, Enzyme enzyme)
+    public ArrayList<String> getNonEnzymatic(String proteinMatchKey, DigestionPreferences digestionPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         ArrayList<String> result = (ArrayList<String>) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.tryptic_protein, proteinMatchKey);
 
         if (result == null) {
-            result = estimateNonEnzymatic(proteinMatchKey, enzyme);
+            result = estimateNonEnzymatic(proteinMatchKey, digestionPreferences);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.tryptic_protein, proteinMatchKey, result);
         }
         return result;
@@ -737,7 +730,7 @@ public class IdentificationFeaturesGenerator {
      * Returns a list of non-enzymatic peptides for a given protein match.
      *
      * @param proteinMatchKey the key of the protein match
-     * @param enzyme the enzyme used
+     * @param digestionPreferences the digestion preferences
      *
      * @return a list of non-enzymatic peptides for a given protein match
      *
@@ -750,7 +743,7 @@ public class IdentificationFeaturesGenerator {
      * @throws ClassNotFoundException exception thrown whenever an error
      * occurred while deserializing an object
      */
-    private ArrayList<String> estimateNonEnzymatic(String proteinMatchKey, Enzyme enzyme)
+    private ArrayList<String> estimateNonEnzymatic(String proteinMatchKey, DigestionPreferences digestionPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
@@ -761,26 +754,28 @@ public class IdentificationFeaturesGenerator {
 
         ArrayList<String> result = new ArrayList<String>();
 
-        // see if we have non-tryptic peptides
-        for (String peptideKey : peptideKeys) {
+        if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+            // see if we have non-tryptic peptides
+            for (String peptideKey : peptideKeys) {
 
-            peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter);
+                peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter);
 
-            if (peptidePSParameter.getMatchValidationLevel().isValidated()) {
+                if (peptidePSParameter.getMatchValidationLevel().isValidated()) {
 
-                String peptideSequence = Peptide.getSequence(peptideKey);
-                boolean enzymatic = false;
-                for (String accession : ProteinMatch.getAccessions(proteinMatchKey)) {
-                    Protein currentProtein = sequenceFactory.getProtein(accession);
-                    if (currentProtein.isEnzymaticPeptide(peptideSequence, enzyme,
-                            identificationParameters.getSequenceMatchingPreferences())) {
-                        enzymatic = true;
-                        break;
+                    String peptideSequence = Peptide.getSequence(peptideKey);
+                    boolean enzymatic = false;
+                    for (String accession : ProteinMatch.getAccessions(proteinMatchKey)) {
+                        Protein currentProtein = sequenceFactory.getProtein(accession);
+                        if (currentProtein.isEnzymaticPeptide(peptideSequence, digestionPreferences.getEnzymes(),
+                                identificationParameters.getSequenceMatchingPreferences())) {
+                            enzymatic = true;
+                            break;
+                        }
                     }
-                }
 
-                if (!enzymatic) {
-                    result.add(peptideKey);
+                    if (!enzymatic) {
+                        result.add(peptideKey);
+                    }
                 }
             }
         }
@@ -1018,7 +1013,7 @@ public class IdentificationFeaturesGenerator {
             SpectrumCountingPreferences tempPreferences = new SpectrumCountingPreferences();
             tempPreferences.setSelectedMethod(method);
             return estimateSpectrumCounting(identification, sequenceFactory, proteinMatchKey, tempPreferences,
-                    shotgunProtocol.getEnzyme(), identificationParameters.getPeptideAssumptionFilter().getMaxPepLength(), identificationParameters.getSequenceMatchingPreferences());
+                    identificationParameters.getPeptideAssumptionFilter().getMaxPepLength(), identificationParameters);
         }
     }
 
@@ -1056,8 +1051,8 @@ public class IdentificationFeaturesGenerator {
      */
     private double estimateSpectrumCounting(String proteinMatchKey) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         return estimateSpectrumCounting(identification, sequenceFactory, proteinMatchKey,
-                spectrumCountingPreferences, shotgunProtocol.getEnzyme(),
-                identificationParameters.getPeptideAssumptionFilter().getMaxPepLength(), identificationParameters.getSequenceMatchingPreferences());
+                spectrumCountingPreferences,
+                identificationParameters.getPeptideAssumptionFilter().getMaxPepLength(), identificationParameters);
     }
 
     /**
@@ -1067,9 +1062,8 @@ public class IdentificationFeaturesGenerator {
      * @param sequenceFactory the sequence factory
      * @param proteinMatchKey the protein match key
      * @param spectrumCountingPreferences the spectrum counting preferences
-     * @param enzyme the enzyme used
      * @param maxPepLength the maximal length accepted for a peptide
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param identificationParameters the identification parameters
      *
      * @return the spectrum counting index
      *
@@ -1086,12 +1080,15 @@ public class IdentificationFeaturesGenerator {
      * protein tree or identification)
      */
     public static Double estimateSpectrumCounting(Identification identification, SequenceFactory sequenceFactory, String proteinMatchKey,
-            SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength, SequenceMatchingPreferences sequenceMatchingPreferences)
+            SpectrumCountingPreferences spectrumCountingPreferences, int maxPepLength, IdentificationParameters identificationParameters)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch testMatch, proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        DigestionPreferences digestionPreferences = identificationParameters.getSearchParameters().getDigestionPreferences();
 
         if (spectrumCountingPreferences.getSelectedMethod() == SpectralCountingMethod.NSAF) {
+
+            SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
 
             // NSAF
             double result = 0;
@@ -1151,8 +1148,8 @@ public class IdentificationFeaturesGenerator {
 
             Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
 
-            if (!enzyme.isSemiSpecific()) {
-                result /= currentProtein.getObservableLength(enzyme, maxPepLength);
+            if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+                result /= currentProtein.getObservableLength(digestionPreferences.getEnzymes(), maxPepLength);
             } else {
                 result /= currentProtein.getLength();
             }
@@ -1178,7 +1175,11 @@ public class IdentificationFeaturesGenerator {
             }
 
             Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-            result = Math.pow(10, result / currentProtein.getNCleavageSites(enzyme)) - 1;
+            if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+                result = Math.pow(10, result / (currentProtein.getNCleavageSites(digestionPreferences.getEnzymes()) + 1)) - 1;
+            } else {
+                result = Math.pow(10, result) - 1;
+            }
 
             if (new Double(result).isInfinite() || new Double(result).isNaN()) {
                 result = 0.0;
@@ -1285,7 +1286,11 @@ public class IdentificationFeaturesGenerator {
      * acid
      */
     private Double estimateObservableCoverage(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MathException {
-        Enzyme enyzme = shotgunProtocol.getEnzyme();
+
+        DigestionPreferences digestionPreferences = identificationParameters.getSearchParameters().getDigestionPreferences();
+        if (digestionPreferences.getCleavagePreference() != DigestionPreferences.CleavagePreference.enzyme) {
+            return 1.0;
+        }
         String mainMatch;
         if (ProteinMatch.getNProteins(proteinMatchKey) == 1) {
             mainMatch = proteinMatchKey;
@@ -1298,7 +1303,7 @@ public class IdentificationFeaturesGenerator {
         if (metrics.getPeptideLengthDistribution() != null) {
             lengthMax = Math.min(lengthMax, metrics.getPeptideLengthDistribution().getValueAtCumulativeProbability(0.99));
         }
-        return ((double) currentProtein.getObservableLength(enyzme, lengthMax)) / currentProtein.getLength();
+        return ((double) currentProtein.getObservableLength(digestionPreferences.getEnzymes(), lengthMax)) / currentProtein.getLength();
     }
 
     /**
@@ -1815,7 +1820,13 @@ public class IdentificationFeaturesGenerator {
      * protein tree or identification)
      */
     private boolean checkEnzymaticPeptides(ProteinMatch proteinMatch, String proteinAccession) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-        return proteinMatch.hasEnzymaticPeptide(proteinAccession, shotgunProtocol.getEnzyme(), identificationParameters.getSequenceMatchingPreferences());
+        DigestionPreferences digestionPreferences = identificationParameters.getSearchParameters().getDigestionPreferences();
+        switch (digestionPreferences.getCleavagePreference()) {
+            case enzyme:
+                return proteinMatch.hasEnzymaticPeptide(proteinAccession, digestionPreferences.getEnzymes(), identificationParameters.getSequenceMatchingPreferences());
+            default:
+                return true;
+        }
     }
 
     /**

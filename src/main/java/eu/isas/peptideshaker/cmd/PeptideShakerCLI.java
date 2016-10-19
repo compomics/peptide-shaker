@@ -729,7 +729,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         // import the files
         peptideShaker.importFiles(waitingHandler, identificationFiles, spectrumFiles,
-                shotgunProtocol, identificationParameters, projectDetails, processingPreferences,
+                identificationParameters, projectDetails, processingPreferences,
                 spectrumCountingPreferences, false);
 
         // show the warnings

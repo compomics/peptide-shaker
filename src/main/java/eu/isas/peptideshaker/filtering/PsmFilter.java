@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.filtering;
 
 import com.compomics.util.experiment.filtering.FilterItemComparator;
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.identification.Identification;
@@ -87,11 +86,11 @@ public class PsmFilter extends MatchFilter {
 
     @Override
     public boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, String matchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
+            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
 
         PsmFilterItem filterItem = PsmFilterItem.getItem(itemName);
         if (filterItem == null) {
-            return assumptionFilter.isValidated(itemName, filterItemComparator, value, matchKey, identification, geneMaps, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
+            return assumptionFilter.isValidated(itemName, filterItemComparator, value, matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, peptideSpectrumAnnotator);
         }
         String input = value.toString();
         switch (filterItem) {

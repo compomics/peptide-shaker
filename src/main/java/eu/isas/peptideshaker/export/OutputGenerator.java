@@ -23,6 +23,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -437,6 +438,8 @@ public class OutputGenerator {
                                                 identification.loadPeptideMatches(peptideKeys, null, true);
                                                 identification.loadPeptideMatchParameters(peptideKeys, peptidePSParameter, null, true);
 
+                                                DigestionPreferences digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionPreferences();
+
                                                 // see if we have non-tryptic peptides
                                                 for (String peptideKey : peptideKeys) {
 
@@ -445,9 +448,12 @@ public class OutputGenerator {
 
                                                     if (peptidePSParameter.getMatchValidationLevel().isValidated()) {
 
-                                                        boolean isEnzymatic = currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                                peptideShakerGUI.getShotgunProtocol().getEnzyme(),
-                                                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                                                        boolean isEnzymatic = true;
+                                                        if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+                                                            currentProtein.isEnzymaticPeptide(peptideSequence,
+                                                                    digestionPreferences.getEnzymes(),
+                                                                    peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                                                        }
 
                                                         if (!isEnzymatic) {
                                                             allPeptidesEnzymatic = false;
@@ -966,8 +972,14 @@ public class OutputGenerator {
                                                 }
 
                                                 if (enzymatic) {
-                                                    boolean isEnzymatic = sequenceFactory.getProtein(proteinMatch.getMainMatch()).isEnzymaticPeptide(peptide.getSequence(),
-                                                            shotgunProtocol.getEnzyme(), sequenceMatchingPreferences);
+                                                    DigestionPreferences digestionPreferences = identificationParameters.getSearchParameters().getDigestionPreferences();
+                                                        boolean isEnzymatic = true;
+                                                        if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+                                                            Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                                                            currentProtein.isEnzymaticPeptide(peptide.getSequence(),
+                                                                    digestionPreferences.getEnzymes(),
+                                                                    peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                                                        }
 
                                                     writer.write(isEnzymatic + SEPARATOR);
                                                 }
@@ -2865,6 +2877,8 @@ public class OutputGenerator {
 
                                                 identification.loadPeptideMatches(peptideKeys, null, true);
                                                 identification.loadPeptideMatchParameters(peptideKeys, peptidePSParameter, null, true);
+                                                
+                                                DigestionPreferences digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionPreferences();
 
                                                 // see if we have non-tryptic peptides
                                                 for (String peptideKey : peptideKeys) {
@@ -2874,10 +2888,12 @@ public class OutputGenerator {
 
                                                     if (peptidePSParameter.getMatchValidationLevel().isValidated()) {
 
-                                                        boolean isEnzymatic = currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                                peptideShakerGUI.getShotgunProtocol().getEnzyme(),
-                                                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
-
+                                                        boolean isEnzymatic = true;
+                                                        if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+                                                            currentProtein.isEnzymaticPeptide(peptideSequence,
+                                                                    digestionPreferences.getEnzymes(),
+                                                                    peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                                                        }
                                                         if (!isEnzymatic) {
                                                             allPeptidesEnzymatic = false;
                                                             break;

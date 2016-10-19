@@ -190,10 +190,6 @@ public class PsmImporter {
      */
     private ExceptionHandler exceptionHandler;
     /**
-     * Information on the protocol.
-     */
-    private ShotgunProtocol shotgunProtocol;
-    /**
      * The identification parameters.
      */
     private IdentificationParameters identificationParameters;
@@ -203,7 +199,6 @@ public class PsmImporter {
      *
      * @param peptideShakerCache the cache to use when memory issues are
      * encountered
-     * @param shotgunProtocol information on the shotgun protocol
      * @param identificationParameters the identification parameters
      * @param processingPreferences the processing preferences
      * @param fileReader the reader of the file which the matches are imported
@@ -216,11 +211,10 @@ public class PsmImporter {
      * @param singleProteinList list of one hit wonders for this project
      * @param exceptionHandler handler for exceptions
      */
-    public PsmImporter(ObjectsCache peptideShakerCache, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences, IdfileReader fileReader, File idFile,
+    public PsmImporter(ObjectsCache peptideShakerCache, IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences, IdfileReader fileReader, File idFile,
             Identification identification, InputMap inputMap, HashMap<String, Integer> proteinCount, HashSet<String> singleProteinList,
             ExceptionHandler exceptionHandler) {
         this.peptideShakerCache = peptideShakerCache;
-        this.shotgunProtocol = shotgunProtocol;
         this.identificationParameters = identificationParameters;
         this.processingPreferences = processingPreferences;
         this.fileReader = fileReader;
@@ -654,7 +648,7 @@ public class PsmImporter {
                             PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                             Peptide peptide = peptideAssumption.getPeptide();
                             boolean filterPassed = true;
-                            if (!peptideAssumptionFilter.validatePeptide(peptide, sequenceMatchingPreferences, searchParameters.getEnzyme())) {
+                            if (!peptideAssumptionFilter.validatePeptide(peptide, sequenceMatchingPreferences, searchParameters.getDigestionPreferences())) {
                                 filterPassed = false;
                                 peptideIssue++;
                             } else if (!peptideAssumptionFilter.validateModifications(peptide, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getPtmSettings())) {
@@ -683,7 +677,7 @@ public class PsmImporter {
                         }
                     }
                     if (!firstHits.isEmpty()) {
-                        firstPeptideHit = BestMatchSelection.getBestHit(spectrumKey, firstHits, proteinCount, sequenceMatchingPreferences, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
+                        firstPeptideHit = BestMatchSelection.getBestHit(spectrumKey, firstHits, proteinCount, sequenceMatchingPreferences, identificationParameters, peptideSpectrumAnnotator);
                     }
                     if (firstPeptideHit != null) {
                         inputMap.addEntry(advocateId, spectrumFileName, firstPeptideHit.getScore(), firstPeptideHit.getPeptide().isDecoy(sequenceMatchingPreferences));
@@ -691,7 +685,7 @@ public class PsmImporter {
                         break;
                     } else if (!firstHitsNoProteins.isEmpty()) {
                         // See if a peptide without protein can be a best match
-                        firstPeptideHitNoProtein = BestMatchSelection.getBestHit(spectrumKey, firstHits, proteinCount, sequenceMatchingPreferences, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
+                        firstPeptideHitNoProtein = BestMatchSelection.getBestHit(spectrumKey, firstHits, proteinCount, sequenceMatchingPreferences, identificationParameters, peptideSpectrumAnnotator);
                     }
                 }
                 if (firstPeptideHit != null) {

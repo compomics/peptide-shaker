@@ -2870,7 +2870,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             if (peptideShakerGUI.getIdentificationParameters().getPeptideAssumptionFilter().validatePeptide(
                                     ((PeptideAssumption) tempAssumption).getPeptide(),
                                     peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences(),
-                                    peptideShakerGUI.getIdentificationParameters().getSearchParameters().getEnzyme())) {
+                                    peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionPreferences())) {
                                 if (vallidatedPsmsCheckBox.isSelected()) {
                                     psParameter = (PSParameter) tempAssumption.getUrParam(psParameter);
                                     if (psParameter.getMatchValidationLevel().isValidated()) {

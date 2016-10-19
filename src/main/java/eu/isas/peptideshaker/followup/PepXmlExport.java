@@ -21,6 +21,7 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.io.export.xml.SimpleXmlWriter;
+import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.waiting.WaitingHandler;
@@ -219,7 +220,12 @@ public class PepXmlExport {
 
             sw.writeLine(runStart.toString());
 
-            writeEnzyme(sw, identificationParameters.getSearchParameters().getEnzyme());
+            DigestionPreferences digestionPreferences = identificationParameters.getSearchParameters().getDigestionPreferences();
+            if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+                for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
+                    writeEnzyme(sw, enzyme);
+                }
+            }
             writeSearchSummary(sw, identificationParameters);
             writeSpectrumQueries(sw, identification, identificationParameters, spectrumFileName, waitingHandler);
 

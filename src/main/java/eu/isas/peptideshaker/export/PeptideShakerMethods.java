@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.export;
 
+import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
@@ -8,6 +9,7 @@ import com.compomics.util.experiment.identification.protein_sequences.FastaIndex
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.ptm.PtmScore;
+import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -36,58 +38,58 @@ public class PeptideShakerMethods {
     public static String getSearchEnginesText(ProjectDetails projectDetails) {
         String text = "Peak lists obtained from MS/MS spectra were identified using ";
 
-            ArrayList<Integer> searchEngines = projectDetails.getIdentificationAlgorithms();
-            Collections.sort(searchEngines);
-            HashMap<String, ArrayList<String>> algorithmToVersionMap = projectDetails.getAlgorithmNameToVersionsMap();
+        ArrayList<Integer> searchEngines = projectDetails.getIdentificationAlgorithms();
+        Collections.sort(searchEngines);
+        HashMap<String, ArrayList<String>> algorithmToVersionMap = projectDetails.getAlgorithmNameToVersionsMap();
 
-            for (int i = 0; i < searchEngines.size(); i++) {
-                if (i > 0) {
-                    if (i == searchEngines.size() - 1) {
-                        text += " and ";
-                    } else {
-                        text += ", ";
-                    }
-                }
-                Advocate advocate = Advocate.getAdvocate(searchEngines.get(i));
-                String ref = advocate.getPmid();
-                if (ref == null) {
-                    ref = "add reference here";
-                }
-                text += advocate.getName() + " ";
-
-                ArrayList<String> versions = algorithmToVersionMap.get(advocate.getName());
-
-                if (versions == null || versions.isEmpty()) {
-                    text += "version [add version here]";
-                } else if (versions.size() == 1) {
-                    if (versions.get(0) != null) {
-                        text += "version " + versions.get(0);
-                    } else {
-                        text += "version unknown";
-                    }
+        for (int i = 0; i < searchEngines.size(); i++) {
+            if (i > 0) {
+                if (i == searchEngines.size() - 1) {
+                    text += " and ";
                 } else {
-                    text += "versions ";
-                    Collections.sort(versions);
-                    for (int j = 0; j < versions.size(); j++) {
-                        if (j > 0) {
-                            if (j == versions.size() - 1) {
-                                text += " and ";
-                            } else {
-                                text += ", ";
-                            }
-                        }
-                        if (versions.get(0) != null) {
-                            text += versions.get(j);
+                    text += ", ";
+                }
+            }
+            Advocate advocate = Advocate.getAdvocate(searchEngines.get(i));
+            String ref = advocate.getPmid();
+            if (ref == null) {
+                ref = "add reference here";
+            }
+            text += advocate.getName() + " ";
+
+            ArrayList<String> versions = algorithmToVersionMap.get(advocate.getName());
+
+            if (versions == null || versions.isEmpty()) {
+                text += "version [add version here]";
+            } else if (versions.size() == 1) {
+                if (versions.get(0) != null) {
+                    text += "version " + versions.get(0);
+                } else {
+                    text += "version unknown";
+                }
+            } else {
+                text += "versions ";
+                Collections.sort(versions);
+                for (int j = 0; j < versions.size(); j++) {
+                    if (j > 0) {
+                        if (j == versions.size() - 1) {
+                            text += " and ";
                         } else {
-                            text += "unknown";
+                            text += ", ";
                         }
                     }
+                    if (versions.get(0) != null) {
+                        text += versions.get(j);
+                    } else {
+                        text += "unknown";
+                    }
                 }
-
-                text += " [PMID " + ref + "]";
             }
 
-            text += ".";
+            text += " [PMID " + ref + "]";
+        }
+
+        text += ".";
         return text;
     }
 
@@ -161,19 +163,49 @@ public class PeptideShakerMethods {
      * @return the identification settings details
      */
     public static String getIdentificationSettings(SearchParameters searchParameters) {
-        String text = "The identification settings were as follows: ";
-        text += searchParameters.getEnzyme().getName() + " with a maximum of " + searchParameters.getnMissedCleavages() + " missed cleavages; ";
-        text += searchParameters.getPrecursorAccuracy() + " " + searchParameters.getPrecursorAccuracyType() + " as MS1 and " + searchParameters.getFragmentIonAccuracy() + " " + searchParameters.getFragmentAccuracyType() + " as MS2 tolerances; ";
+        StringBuilder text = new StringBuilder("The identification settings were as follows: ");
+        DigestionPreferences digestionPreferences = searchParameters.getDigestionPreferences();
+        switch (digestionPreferences.getCleavagePreference()) {
+            case unSpecific:
+                text.append("No cleavage specificity; ");
+                break;
+            case wholeProtein:
+                text.append("No digestion; ");
+                break;
+            case enzyme:
+                for (int i = 0; i < digestionPreferences.getEnzymes().size(); i++) {
+                    Enzyme enzyme = digestionPreferences.getEnzymes().get(i);
+                    String enzymeName = enzyme.getName();
+                    if (i > 0) {
+                        if (digestionPreferences.getEnzymes().size() == 2) {
+                            text.append(" and ");
+                        } else {
+                            text.append(", ");
+                            if (i == digestionPreferences.getEnzymes().size() - 1) {
+                                text.append("and ");
+                            }
+                        }
+                    }
+                    text.append(enzymeName).append(", ").append(digestionPreferences.getSpecificity(enzymeName)).append(", with a maximum of ").append(digestionPreferences.getnMissedCleavages(enzymeName)).append(" missed cleavages");
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException("Cleavage of type " + digestionPreferences.getCleavagePreference() + " not supported.");
+        }
+        text.append(searchParameters.getPrecursorAccuracy()).append(" ").append(searchParameters.getPrecursorAccuracyType()).append(" as MS1 and ").append(searchParameters.getFragmentIonAccuracy()).append(" ").append(searchParameters.getFragmentAccuracyType()).append(" as MS2 tolerances; ");
         PTMFactory ptmFactory = PTMFactory.getInstance();
         ArrayList<String> fixedPtmsNames = searchParameters.getPtmSettings().getFixedModifications();
         if (!fixedPtmsNames.isEmpty()) {
-            text += "fixed modifications: ";
+            text.append("fixed modifications: ");
             for (int i = 0; i < fixedPtmsNames.size(); i++) {
                 if (i > 0) {
-                    if (i == fixedPtmsNames.size() - 1) {
-                        text += " and ";
+                    if (fixedPtmsNames.size() == 2) {
+                        text.append(" and ");
                     } else {
-                        text += ", ";
+                        text.append(", ");
+                        if (i == fixedPtmsNames.size() - 1) {
+                            text.append("and ");
+                        }
                     }
                 }
                 String ptmName = fixedPtmsNames.get(i);
@@ -184,20 +216,23 @@ public class PeptideShakerMethods {
                 } else {
                     sign = "+";
                 }
-                text += ptmName + " (" + sign + ptm.getRoundedMass() + " Da)";
+                text.append(ptmName).append(" (").append(sign).append(ptm.getRoundedMass()).append(" Da)");
             }
 
-            text += ", ";
+            text.append(", ");
         }
         ArrayList<String> variablePtmsNames = searchParameters.getPtmSettings().getVariableModifications();
         if (!variablePtmsNames.isEmpty()) {
-            text += " variable modifications: ";
+            text.append(" variable modifications: ");
             for (int i = 0; i < variablePtmsNames.size(); i++) {
                 if (i > 0) {
-                    if (i == variablePtmsNames.size() - 1) {
-                        text += " and ";
+                    if (fixedPtmsNames.size() == 2) {
+                        text.append(" and ");
                     } else {
-                        text += ", ";
+                        text.append(", ");
+                        if (i == fixedPtmsNames.size() - 1) {
+                            text.append("and ");
+                        }
                     }
                 }
                 String ptmName = variablePtmsNames.get(i);
@@ -208,20 +243,23 @@ public class PeptideShakerMethods {
                 } else {
                     sign = "+";
                 }
-                text += ptmName + " (" + sign + ptm.getRoundedMass() + " Da)";
+                text.append(ptmName).append(" (").append(sign).append(ptm.getRoundedMass()).append(" Da)");
             }
 
-            text += ", ";
+            text.append(", ");
         }
         ArrayList<String> refinementFixedPtmsNames = searchParameters.getPtmSettings().getRefinementFixedModifications();
         if (!refinementFixedPtmsNames.isEmpty()) {
-            text += "fixed modifications during refinement procedure: ";
+            text.append("fixed modifications during refinement procedure: ");
             for (int i = 0; i < refinementFixedPtmsNames.size(); i++) {
                 if (i > 0) {
-                    if (i == refinementFixedPtmsNames.size() - 1) {
-                        text += " and ";
+                    if (fixedPtmsNames.size() == 2) {
+                        text.append(" and ");
                     } else {
-                        text += ", ";
+                        text.append(", ");
+                        if (i == fixedPtmsNames.size() - 1) {
+                            text.append("and ");
+                        }
                     }
                 }
                 String ptmName = refinementFixedPtmsNames.get(i);
@@ -232,20 +270,23 @@ public class PeptideShakerMethods {
                 } else {
                     sign = "+";
                 }
-                text += ptmName + " (" + sign + ptm.getRoundedMass() + " Da)";
+                text.append(ptmName).append(" (").append(sign).append(ptm.getRoundedMass()).append(" Da)");
             }
 
-            text += ", ";
+            text.append(", ");
         }
         ArrayList<String> refinementVariablePtmsNames = searchParameters.getPtmSettings().getRefinementVariableModifications();
         if (!refinementVariablePtmsNames.isEmpty()) {
-            text += "variable modifications during refinement procedure: ";
+            text.append("variable modifications during refinement procedure: ");
             for (int i = 0; i < refinementVariablePtmsNames.size(); i++) {
                 if (i > 0) {
-                    if (i == refinementVariablePtmsNames.size() - 1) {
-                        text += " and ";
+                    if (fixedPtmsNames.size() == 2) {
+                        text.append(" and ");
                     } else {
-                        text += ", ";
+                        text.append(", ");
+                        if (i == fixedPtmsNames.size() - 1) {
+                            text.append("and ");
+                        }
                     }
                 }
                 String ptmName = refinementVariablePtmsNames.get(i);
@@ -256,11 +297,11 @@ public class PeptideShakerMethods {
                 } else {
                     sign = "+";
                 }
-                text += ptmName + " (" + sign + ptm.getRoundedMass() + " Da)";
+                text.append(ptmName).append(" (").append(sign).append(ptm.getRoundedMass()).append(" Da)");
             }
         }
-        text += ". All algorithms specific settings are listed in the Certificate of Analysis available in the supplementary information.";
-        return text;
+        text.append(". All algorithms specific settings are listed in the Certificate of Analysis available in the supplementary information.");
+        return text.toString();
     }
 
     /**

@@ -428,7 +428,7 @@ public class PsProteinSection {
                 Double proteinMW = SequenceFactory.getInstance().computeMolecularWeight(proteinMatch.getMainMatch());
                 return proteinMW.toString();
             case non_enzymatic:
-                ArrayList<String> nonEnzymatic = identificationFeaturesGenerator.getNonEnzymatic(proteinKey, shotgunProtocol.getEnzyme());
+                ArrayList<String> nonEnzymatic = identificationFeaturesGenerator.getNonEnzymatic(proteinKey, identificationParameters.getSearchParameters().getDigestionPreferences());
                 return nonEnzymatic.size() + "";
             case pi:
                 return psParameter.getProteinInferenceClassAsString();

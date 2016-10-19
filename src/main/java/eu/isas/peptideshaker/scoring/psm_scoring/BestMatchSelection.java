@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.scoring.psm_scoring;
 
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
@@ -90,7 +89,6 @@ public class BestMatchSelection {
      *
      * @param inputMap The input map
      * @param waitingHandler the handler displaying feedback to the user
-     * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
      *
      * @throws java.sql.SQLException exception thrown whenever an error occurred
@@ -104,7 +102,7 @@ public class BestMatchSelection {
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown
      * whenever an error occurred while reading an mzML file
      */
-    public void selectBestHitAndFillPsmMap(InputMap inputMap, WaitingHandler waitingHandler, ShotgunProtocol shotgunProtocol,
+    public void selectBestHitAndFillPsmMap(InputMap inputMap, WaitingHandler waitingHandler,
             IdentificationParameters identificationParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -177,7 +175,7 @@ public class BestMatchSelection {
                                 if (!identifications.contains(id)) {
 
                                     boolean filterPassed1 = true;
-                                    if (!peptideAssumptionFilter.validatePeptide(peptide1, sequenceMatchingPreferences, searchParameters.getEnzyme())
+                                    if (!peptideAssumptionFilter.validatePeptide(peptide1, sequenceMatchingPreferences, searchParameters.getDigestionPreferences())
                                             || !peptideAssumptionFilter.validateModifications(peptide1, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getPtmSettings())
                                             || !peptideAssumptionFilter.validatePrecursor(peptideAssumption1, spectrumKey, spectrumFactory, searchParameters)
                                             || !peptideAssumptionFilter.validateProteins(peptide1, sequenceMatchingPreferences)) {
@@ -579,7 +577,6 @@ public class BestMatchSelection {
      * @param firstHits list of equally scoring peptide matches
      * @param proteinCount map of the number of peptides for every protein
      * @param sequenceMatchingPreferences the sequence matching preferences
-     * @param shotgunProtocol the shotgun protocol
      * @param identificationParameters the identification parameters
      * @param spectrumAnnotator the spectrum annotator to use
      *
@@ -597,7 +594,7 @@ public class BestMatchSelection {
      * occurred while reading an mzML file
      */
     public static PeptideAssumption getBestHit(String spectrumKey, ArrayList<PeptideAssumption> firstHits, HashMap<String, Integer> proteinCount,
-            SequenceMatchingPreferences sequenceMatchingPreferences, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator spectrumAnnotator)
+            SequenceMatchingPreferences sequenceMatchingPreferences, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator spectrumAnnotator)
             throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException {
 
         if (firstHits.size() == 1) {

@@ -19,6 +19,7 @@ import com.compomics.util.experiment.identification.amino_acid_tags.TagComponent
 import com.compomics.util.experiment.biology.MassGap;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
+import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.protein.Header;
 import com.compomics.util.protein.Header.DatabaseType;
@@ -810,10 +811,13 @@ public class DisplayFeaturesGenerator {
             String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
             boolean enzymaticPeptide = true;
             if (!allPeptides) {
-                enzymaticPeptide = currentProtein.isEnzymaticPeptide(peptideSequence, searchParameters.getEnzyme(),
-                        sequenceMatchingPreferences);
+                DigestionPreferences digestionPreferences = searchParameters.getDigestionPreferences();
+                if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+                    enzymatic = currentProtein.isEnzymaticPeptide(peptideMatch.getTheoreticPeptide().getSequence(),
+                            digestionPreferences.getEnzymes(), sequenceMatchingPreferences);
+                }
             }
-            if (allPeptides || (enzymatic && enzymaticPeptide) || (!enzymatic && !enzymatic)) {
+            if (allPeptides || (enzymatic && enzymaticPeptide) || (!enzymatic && !enzymaticPeptide)) {
                 String modifiedSequence = getTaggedPeptideSequence(peptideMatch, true, false, true);
                 AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
                 ArrayList<Integer> startIndexes = aminoAcidPattern.getIndexes(sequence, sequenceMatchingPreferences);

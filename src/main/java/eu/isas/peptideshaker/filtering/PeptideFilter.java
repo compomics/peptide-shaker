@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.filtering;
 
 import com.compomics.util.experiment.filtering.FilterItemComparator;
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.filtering.FilterItem;
@@ -18,8 +17,6 @@ import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
-import javax.swing.RowFilter.ComparisonType;
 import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -91,7 +88,7 @@ public class PeptideFilter extends MatchFilter {
 
     @Override
     public boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, String matchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
+            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
 
         PeptideFilterItem filterItem = PeptideFilterItem.getItem(itemName);
         if (filterItem == null) {

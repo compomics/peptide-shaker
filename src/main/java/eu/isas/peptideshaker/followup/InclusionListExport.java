@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.followup;
 
+import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
@@ -10,6 +11,7 @@ import com.compomics.util.experiment.identification.matches_iterators.ProteinMat
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
+import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
@@ -102,7 +104,18 @@ public class InclusionListExport {
                                             break;
                                         }
                                     } else if (filterType == PeptideFilterType.miscleaved) {
-                                        if (searchParameters.getEnzyme().getNmissedCleavages(sequence) > 0) {
+
+                                        Integer peptideMinMissedCleavages = null;
+                                        DigestionPreferences digestionPreferences = searchParameters.getDigestionPreferences();
+                                        if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+                                            for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
+                                                int tempMissedCleavages = enzyme.getNmissedCleavages(sequence);
+                                                if (peptideMinMissedCleavages == null || tempMissedCleavages < peptideMinMissedCleavages) {
+                                                    peptideMinMissedCleavages = tempMissedCleavages;
+                                                }
+                                            }
+                                        }
+                                        if (peptideMinMissedCleavages != null && peptideMinMissedCleavages > 0) {
                                             passesFilter = false;
                                             break;
                                         }

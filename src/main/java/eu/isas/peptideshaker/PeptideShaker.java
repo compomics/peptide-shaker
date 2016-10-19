@@ -201,7 +201,6 @@ public class PeptideShaker {
      * @param idFiles the files to import
      * @param spectrumFiles the corresponding spectra (can be empty: spectra
      * will not be loaded)
-     * @param shotgunProtocol information about the protocol used
      * @param identificationParameters identification parameters
      * @param projectDetails the project details
      * @param processingPreferences the initial processing preferences
@@ -211,7 +210,7 @@ public class PeptideShaker {
      * line mode).
      */
     public void importFiles(WaitingHandler waitingHandler, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ProjectDetails projectDetails,
+            IdentificationParameters identificationParameters, ProjectDetails projectDetails,
             ProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, boolean backgroundThread) {
 
         projectCreationDuration = new Duration();
@@ -226,7 +225,7 @@ public class PeptideShaker {
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
         analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification(getIdentificationReference()));
 
-        fileImporter = new FileImporter(this, waitingHandler, analysis, shotgunProtocol, identificationParameters, metrics);
+        fileImporter = new FileImporter(this, waitingHandler, analysis, identificationParameters, metrics);
         fileImporter.importFiles(idFiles, spectrumFiles, processingPreferences, spectrumCountingPreferences, projectDetails, backgroundThread);
     }
 
@@ -258,7 +257,6 @@ public class PeptideShaker {
      * @param waitingHandler the handler displaying feedback to the user
      * @param exceptionHandler handler for exceptions
      * @param identificationParameters the identification parameters
-     * @param shotgunProtocol information on the shotgun protocol
      * @param processingPreferences the processing preferences
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param projectDetails the project details
@@ -267,12 +265,12 @@ public class PeptideShaker {
      * loading the identification files
      */
     public void processIdentifications(InputMap inputMap, HashMap<String, Integer> proteinCount, WaitingHandler waitingHandler,
-            ExceptionHandler exceptionHandler, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
+            ExceptionHandler exceptionHandler, IdentificationParameters identificationParameters,
             ProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails)
             throws Exception {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, shotgunProtocol, identificationParameters, metrics, spectrumCountingPreferences);
+        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, metrics, spectrumCountingPreferences);
 
         if (!objectsCache.memoryCheck() && memoryWarning) {
             waitingHandler.appendReport("PeptideShaker is encountering memory issues! See http://compomics.github.io/projects/peptide-shaker.html for help.", true, true);
@@ -292,7 +290,7 @@ public class PeptideShaker {
             PsmScorer psmScorer = new PsmScorer();
 
             waitingHandler.appendReport("Estimating PSM scores.", true, true);
-            psmScorer.estimateIntermediateScores(identification, inputMap, processingPreferences, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler);
+            psmScorer.estimateIntermediateScores(identification, inputMap, processingPreferences, identificationParameters, waitingHandler, exceptionHandler);
 
             if (psmScoringPreferences.isTargetDecoyNeededForPsmScoring(usedAlgorithms)) {
                 if (sequenceFactory.concatenatedTargetDecoy()) {
@@ -331,7 +329,7 @@ public class PeptideShaker {
 
         waitingHandler.appendReport("Selecting best peptide per spectrum.", true, true);
         BestMatchSelection bestMatchSelection = new BestMatchSelection(identification, proteinCount, matchesValidator, metrics);
-        bestMatchSelection.selectBestHitAndFillPsmMap(inputMap, waitingHandler, shotgunProtocol, identificationParameters);
+        bestMatchSelection.selectBestHitAndFillPsmMap(inputMap, waitingHandler, identificationParameters);
         IdMatchValidationPreferences idMatchValidationPreferences = identificationParameters.getIdValidationPreferences();
         if (idMatchValidationPreferences.getMergeSmallSubgroups()) {
             matchesValidator.getPsmMap().clean(idMatchValidationPreferences.getDefaultPsmFDR() / 100);
@@ -406,7 +404,7 @@ public class PeptideShaker {
         ProteinInference proteinInference = new ProteinInference();
         if (identificationParameters.getProteinInferencePreferences().getSimplifyGroups()) {
             waitingHandler.appendReport("Simplifying protein groups.", true, true);
-            proteinInference.removeRedundantGroups(identification, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, waitingHandler);
+            proteinInference.removeRedundantGroups(identification, identificationParameters, identificationFeaturesGenerator, waitingHandler);
             waitingHandler.increasePrimaryProgressCounter();
             if (waitingHandler.isRunCanceled()) {
                 return;
@@ -447,7 +445,7 @@ public class PeptideShaker {
         }
 
         waitingHandler.appendReport("Resolving protein inference issues, inferring peptide and protein PI status.", true, true); // could be slow
-        proteinInference.retainBestScoringGroups(identification, metrics, matchesValidator.getProteinMap(), shotgunProtocol, identificationParameters, identificationFeaturesGenerator, waitingHandler);
+        proteinInference.retainBestScoringGroups(identification, metrics, matchesValidator.getProteinMap(), identificationParameters, identificationFeaturesGenerator, waitingHandler);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -481,7 +479,7 @@ public class PeptideShaker {
         } else {
             waitingHandler.appendReport("No decoy sequences found. Impossible to estimate FDRs.", true, true);
         }
-        matchesValidator.validateIdentifications(identification, metrics, geneMaps, waitingHandler, exceptionHandler, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, inputMap, spectrumCountingPreferences, processingPreferences);
+        matchesValidator.validateIdentifications(identification, metrics, geneMaps, waitingHandler, exceptionHandler, identificationParameters, identificationFeaturesGenerator, inputMap, spectrumCountingPreferences, processingPreferences);
         waitingHandler.increasePrimaryProgressCounter();
         metrics.clearSpectrumKeys();
         if (waitingHandler.isRunCanceled()) {
@@ -496,7 +494,7 @@ public class PeptideShaker {
         }
 
         waitingHandler.appendReport("Scoring PTMs in proteins.", true, true);
-        ptmScorer.scoreProteinPtms(identification, metrics, waitingHandler, shotgunProtocol, identificationParameters, identificationFeaturesGenerator);
+        ptmScorer.scoreProteinPtms(identification, metrics, waitingHandler, identificationParameters, identificationFeaturesGenerator);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -614,7 +612,7 @@ public class PeptideShaker {
         proteinMap.estimateProbabilities(waitingHandler);
         matchesValidator.attachProteinProbabilities(identification, metrics, waitingHandler, identificationParameters.getFractionSettings());
         ProteinInference proteinInference = new ProteinInference();
-        proteinInference.retainBestScoringGroups(identification, metrics, proteinMap, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, waitingHandler);
+        proteinInference.retainBestScoringGroups(identification, metrics, proteinMap, identificationParameters, identificationFeaturesGenerator, waitingHandler);
     }
 
     /**
@@ -623,14 +621,13 @@ public class PeptideShaker {
      * @param identification the identification object containing the
      * identification matches
      * @param waitingHandler the waiting handler
-     * @param shotgunProtocol information on the protocol
      * @param identificationParameters the identification parameters
      *
      * @throws Exception exception thrown whenever it is attempted to attach
      * more than one identification per search engine per spectrum
      */
     public void peptideMapChanged(Identification identification, WaitingHandler waitingHandler,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws Exception {
+            IdentificationParameters identificationParameters) throws Exception {
         ProteinMap proteinMap = new ProteinMap();
         matchesValidator.setProteinMap(proteinMap);
         matchesValidator.attachPeptideProbabilities(identification, waitingHandler);
@@ -638,7 +635,7 @@ public class PeptideShaker {
         proteinMap.estimateProbabilities(waitingHandler);
         matchesValidator.attachProteinProbabilities(identification, metrics, waitingHandler, identificationParameters.getFractionSettings());
         ProteinInference proteinInference = new ProteinInference();
-        proteinInference.retainBestScoringGroups(identification, metrics, proteinMap, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, waitingHandler);
+        proteinInference.retainBestScoringGroups(identification, metrics, proteinMap, identificationParameters, identificationFeaturesGenerator, waitingHandler);
     }
 
     /**

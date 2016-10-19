@@ -17,6 +17,7 @@ import com.compomics.util.experiment.identification.matches_iterators.PsmIterato
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
+import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
@@ -85,7 +86,6 @@ public class ProgenesisExcelExport {
      * The identification parameters.
      */
     private IdentificationParameters identificationParameters;
-    
 
     /**
      * Constructor.
@@ -373,7 +373,12 @@ public class ProgenesisExcelExport {
                 cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 
                 cell = rowHead.createCell(column++);
-                cell.setCellValue(peptide.getNMissedCleavages(identificationParameters.getSearchParameters().getEnzyme())); // number of missed cleavages
+                DigestionPreferences digestionPreferences = identificationParameters.getSearchParameters().getDigestionPreferences();
+                Integer nMissedCleavages = peptide.getNMissedCleavages(digestionPreferences);
+                if (nMissedCleavages == null) {
+                    nMissedCleavages = 0;
+                }
+                cell.setCellValue(nMissedCleavages); // number of missed cleavages
                 cell.setCellStyle(peptideRowCellStyle);
                 cell.setCellType(Cell.CELL_TYPE_NUMERIC);
             }

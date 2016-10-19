@@ -368,8 +368,12 @@ public class PsPeptideSection {
             case sequence:
                 return peptideMatch.getTheoreticPeptide().getSequence();
             case missed_cleavages:
-                String sequence = peptideMatch.getTheoreticPeptide().getSequence();
-                return Peptide.getNMissedCleavages(sequence, shotgunProtocol.getEnzyme()) + "";
+                peptide = peptideMatch.getTheoreticPeptide();
+                Integer nMissedCleavages = peptide.getNMissedCleavages(identificationParameters.getSearchParameters().getDigestionPreferences());
+                if (nMissedCleavages == null) {
+                    nMissedCleavages = 0;
+                }
+                return nMissedCleavages + "";
             case modified_sequence:
                 return peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getPtmSettings(), false, false, true);
             case starred:
@@ -504,7 +508,7 @@ public class PsPeptideSection {
                 }
                 return "";
             case confident_modification_sites:
-                sequence = peptideMatch.getTheoreticPeptide().getSequence();
+                String sequence = peptideMatch.getTheoreticPeptide().getSequence();
                 return identificationFeaturesGenerator.getConfidentPtmSites(peptideMatch, sequence);
             case confident_modification_sites_number:
                 return identificationFeaturesGenerator.getConfidentPtmSitesNumber(peptideMatch);

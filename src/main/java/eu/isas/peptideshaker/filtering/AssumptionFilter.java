@@ -96,10 +96,10 @@ public class AssumptionFilter extends MatchFilter {
 
     @Override
     public boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, String spectrumKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
+            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
         PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
-        return isValidated(itemName, filterItemComparator, value, spectrumKey, peptideAssumption, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
+        return isValidated(itemName, filterItemComparator, value, spectrumKey, peptideAssumption, identification, identificationFeaturesGenerator, identificationParameters, peptideSpectrumAnnotator);
     }
 
     /**
@@ -111,7 +111,6 @@ public class AssumptionFilter extends MatchFilter {
      * from
      * @param identificationFeaturesGenerator the identification features
      * generator providing identification features
-     * @param shotgunProtocol information on the protocol
      * @param identificationParameters the identification parameters
      * @param peptideSpectrumAnnotator the annotator to use to annotate spectra
      * when filtering on psm or assumptions
@@ -134,7 +133,7 @@ public class AssumptionFilter extends MatchFilter {
      * an error occurred while doing statistics on a distribution
      */
     public boolean isValidated(String matchKey, PeptideAssumption peptideAssumption, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
+            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
 
         if (exceptions.contains(matchKey)) {
             return false;
@@ -146,7 +145,7 @@ public class AssumptionFilter extends MatchFilter {
         for (String itemName : valuesMap.keySet()) {
             FilterItemComparator filterItemComparator = comparatorsMap.get(itemName);
             Object value = valuesMap.get(itemName);
-            if (!isValidated(itemName, filterItemComparator, value, matchKey, peptideAssumption, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator)) {
+            if (!isValidated(itemName, filterItemComparator, value, matchKey, peptideAssumption, identification, identificationFeaturesGenerator, identificationParameters, peptideSpectrumAnnotator)) {
                 return false;
             }
         }
@@ -166,7 +165,6 @@ public class AssumptionFilter extends MatchFilter {
      * identification matches from
      * @param identificationFeaturesGenerator the identification feature
      * generator where to get identification features
-     * @param shotgunProtocol information on the protocol used
      * @param identificationParameters the identification parameters used
      * @param peptideSpectrumAnnotator the annotator to use to annotate spectra
      * when filtering on PSM or assumptions
@@ -190,7 +188,7 @@ public class AssumptionFilter extends MatchFilter {
      * an error occurred while doing statistics on a distribution
      */
     public boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, String spectrumKey, PeptideAssumption peptideAssumption, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
+            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
 
         AssumptionFilterItem filterItem = AssumptionFilterItem.getItem(itemName);
         if (filterItem == null) {

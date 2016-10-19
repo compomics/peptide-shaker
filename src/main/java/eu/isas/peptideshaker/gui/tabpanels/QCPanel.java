@@ -24,6 +24,7 @@ import com.compomics.util.experiment.identification.filtering.PeptideAssumptionF
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
+import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -1903,7 +1904,6 @@ public class QCPanel extends javax.swing.JPanel {
                 nonValidatedValues = new ArrayList<Double>();
                 validatedDecoyValues = new ArrayList<Double>();
                 nonValidatedDecoyValues = new ArrayList<Double>();
-                Enzyme enzyme = peptideShakerGUI.getShotgunProtocol().getEnzyme();
 
                 PSParameter psmParameter = new PSParameter();
                 ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
@@ -1923,7 +1923,19 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (!peptideParameter.isHidden()) {
 
-                        double value = Peptide.getNMissedCleavages(Peptide.getSequence(peptideKey), enzyme);
+                        Double value = null;
+                        DigestionPreferences digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionPreferences();
+                        if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+                            for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
+                                int enzymeMissedCelavages = enzyme.getNmissedCleavages(Peptide.getSequence(peptideKey));
+                                if (value == null || enzymeMissedCelavages < value) {
+                                    value = new Double(enzymeMissedCelavages);
+                                }
+                            }
+                        }
+                        if (value == null) {
+                            value = 0.0;
+                        }
                         if (value > 0) {
                             if (value > maxValue) {
                                 maxValue = value;

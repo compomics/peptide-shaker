@@ -57,7 +57,6 @@ public class PsmScorer {
      * @param identification the object containing the identification matches
      * @param inputMap the input map scores
      * @param processingPreferences the processing preferences
-     * @param shotgunProtocol information on the protocol used
      * @param identificationParameters identification parameters used
      * @param waitingHandler the handler displaying feedback to the user
      * @param exceptionHandler a handler for exceptions
@@ -72,7 +71,7 @@ public class PsmScorer {
      * occurs
      */
     public void estimateIntermediateScores(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler)
+            IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler)
             throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         waitingHandler.setWaitingText("Scoring PSMs. Please Wait...");
@@ -84,7 +83,7 @@ public class PsmScorer {
             ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, null, true, null);
             for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
-                PsmScorerRunnable runnable = new PsmScorerRunnable(psmIterator, identification, inputMap, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler);
+                PsmScorerRunnable runnable = new PsmScorerRunnable(psmIterator, identification, inputMap, identificationParameters, waitingHandler, exceptionHandler);
                 pool.submit(runnable);
             }
             if (waitingHandler.isRunCanceled()) {
@@ -110,7 +109,6 @@ public class PsmScorer {
      * @param spectrumMatch a spectrum match containing the peptides and
      * spectrum to score
      * @param inputMap the input map scores
-     * @param shotgunProtocol information on the protocol used
      * @param identificationParameters identification parameters used
      * @param peptideSpectrumAnnotator the spectrum annotator to use
      * @param waitingHandler the handler displaying feedback to the user
@@ -125,7 +123,7 @@ public class PsmScorer {
      * occurs
      */
     public void estimateIntermediateScores(Identification identification, SpectrumMatch spectrumMatch, InputMap inputMap,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
+            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
             throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
@@ -165,7 +163,7 @@ public class PsmScorer {
                                     score = peptideAssumption.getScore();
                                 } else {
                                     SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-                                    score = PsmScore.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge().value, spectrum, shotgunProtocol, identificationParameters, specificAnnotationPreferences, peptideSpectrumAnnotator, scoreIndex);
+                                    score = PsmScore.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge().value, spectrum, identificationParameters, specificAnnotationPreferences, peptideSpectrumAnnotator, scoreIndex);
                                 }
 
                                 psParameter.setIntermediateScore(scoreIndex, score);
@@ -398,18 +396,16 @@ public class PsmScorer {
          * @param psmIterator An iterator of the PSMs to iterate
          * @param identification the identification containing all matches
          * @param inputMap the input map used to store the scores
-         * @param shotgunProtocol the shotgun protocol
          * @param identificationParameters the identification parameters
          * @param waitingHandler a waiting handler to display progress and allow
          * canceling the process
          * @param exceptionHandler handler for exceptions
          */
-        public PsmScorerRunnable(PsmIterator psmIterator, Identification identification, InputMap inputMap, ShotgunProtocol shotgunProtocol,
+        public PsmScorerRunnable(PsmIterator psmIterator, Identification identification, InputMap inputMap,
                 IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
             this.psmIterator = psmIterator;
             this.identification = identification;
             this.inputMap = inputMap;
-            this.shotgunProtocol = shotgunProtocol;
             this.identificationParameters = identificationParameters;
             this.waitingHandler = waitingHandler;
             this.exceptionHandler = exceptionHandler;
@@ -420,7 +416,7 @@ public class PsmScorer {
             try {
                 while (psmIterator.hasNext() && !waitingHandler.isRunCanceled()) {
                     SpectrumMatch spectrumMatch = psmIterator.next();
-                    estimateIntermediateScores(identification, spectrumMatch, inputMap, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, waitingHandler);
+                    estimateIntermediateScores(identification, spectrumMatch, inputMap, identificationParameters, peptideSpectrumAnnotator, waitingHandler);
                     if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
                         waitingHandler.increaseSecondaryProgressCounter();
                     }

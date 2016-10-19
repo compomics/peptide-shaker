@@ -1498,7 +1498,6 @@ public class PtmScorer {
      * @param metrics if provided, metrics on proteins will be saved while
      * iterating the matches
      * @param waitingHandler the handler displaying feedback to the user
-     * @param shotgunProtocol information on the protocol used
      * @param identificationParameters the identification parameters
      * @param identificationFeaturesGenerator identification features generator
      * used to generate metrics which will be stored for later reuse
@@ -1506,7 +1505,7 @@ public class PtmScorer {
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    public void scoreProteinPtms(Identification identification, Metrics metrics, WaitingHandler waitingHandler, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator) throws Exception {
+    public void scoreProteinPtms(Identification identification, Metrics metrics, WaitingHandler waitingHandler, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator) throws Exception {
 
         waitingHandler.setWaitingText("Scoring Protein PTMs. Please Wait...");
 
