@@ -819,7 +819,7 @@ public class DisplayFeaturesGenerator {
             }
             if (allPeptides || (enzymatic && enzymaticPeptide) || (!enzymatic && !enzymaticPeptide)) {
                 String modifiedSequence = getTaggedPeptideSequence(peptideMatch, true, false, true);
-                AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+                AminoAcidPattern aminoAcidPattern = AminoAcidPattern.getAminoAcidPatternFromString(peptideSequence);
                 ArrayList<Integer> startIndexes = aminoAcidPattern.getIndexes(sequence, sequenceMatchingPreferences);
                 for (int index : startIndexes) {
                     int peptideTempStart = index;

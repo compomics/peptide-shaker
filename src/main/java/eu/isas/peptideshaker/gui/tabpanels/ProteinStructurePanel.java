@@ -3096,7 +3096,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
             String peptideKey = peptideTableMap.get(getPeptideIndex(i));
             String peptideSequence = Peptide.getSequence(peptideKey);
-            AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+            AminoAcidPattern aminoAcidPattern = AminoAcidPattern.getAminoAcidPatternFromString(peptideSequence);
 
             for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
 
@@ -3121,7 +3121,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         // highlight the selected peptide
         String peptideKey = peptideTableMap.get(getPeptideIndex(peptideTable.getSelectedRow()));
         String peptideSequence = Peptide.getSequence(peptideKey);
-        AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+        AminoAcidPattern aminoAcidPattern = AminoAcidPattern.getAminoAcidPatternFromString(peptideSequence);
 
         for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
 
@@ -3147,7 +3147,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
             peptideKey = peptideTableMap.get(getPeptideIndex(i));
             peptideSequence = Peptide.getSequence(peptideKey);
-            aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+            aminoAcidPattern = AminoAcidPattern.getAminoAcidPatternFromString(peptideSequence);
 
             ArrayList<ModificationMatch> modifications = null;
             try {

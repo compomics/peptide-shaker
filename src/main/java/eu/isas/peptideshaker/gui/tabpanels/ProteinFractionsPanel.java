@@ -411,7 +411,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                                     if (includePeptide && selectedRows.length == 1) {
 
-                                        AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+                                        AminoAcidPattern aminoAcidPattern = AminoAcidPattern.getAminoAcidPatternFromString(peptideSequence);
                                         for (int startIndex : aminoAcidPattern.getIndexes(currentProteinSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
                                             int peptideTempStart = startIndex - 1;
                                             int peptideTempEnd = peptideTempStart + peptideSequence.length();

@@ -466,7 +466,7 @@ public class IdentificationFeaturesGenerator {
                     levelAminoAcids = new ArrayList<Integer>();
                     aminoAcids.put(validationLevel, levelAminoAcids);
                 }
-                AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+                AminoAcidPattern aminoAcidPattern = AminoAcidPattern.getAminoAcidPatternFromString(peptideSequence);
                 for (int index : aminoAcidPattern.getIndexes(sequence, identificationParameters.getSequenceMatchingPreferences())) {
                     int peptideTempStart = index - 1;
                     int peptideTempEnd = peptideTempStart + peptideSequence.length();

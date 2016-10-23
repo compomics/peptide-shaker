@@ -4212,7 +4212,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 String peptideKey = peptideKeys.get(peptideIndex);
                 String peptideSequence = Peptide.getSequence(peptideKey);
 
-                AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+                AminoAcidPattern aminoAcidPattern = AminoAcidPattern.getAminoAcidPatternFromString(peptideSequence);
                 for (int startIndex : aminoAcidPattern.getIndexes(currentProteinSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
                     selectedPeptideStart.add(startIndex - 1);
                 }
