@@ -3107,7 +3107,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         if (!enzymes.isEmpty()) {
             if (enzymes.size() == 1) {
 
-                Enzyme mappedEnzyme = EnzymeFactory.getInstance().getUtilitiesEnzyme(enzymes.get(0));
+                Enzyme mappedEnzyme = EnzymeFactory.getInstance().getEnzyme(enzymes.get(0));
 
                 // unknown enzyme
                 if (mappedEnzyme == null) {
