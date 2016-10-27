@@ -90,6 +90,7 @@ import uk.ac.ebi.pride.jaxb.xml.PrideXmlReader;
  * reshaking.
  *
  * @author Harald Barsnes
+ * @author Marc Vaudel
  */
 public class PrideReshakeGUI extends javax.swing.JFrame {
 
@@ -2570,10 +2571,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     // set the database
                     prideSearchParameters.setFastaFile(new File(database));
 
-                    // default settings to be used
-                    if (selectedSearchSettingsFileLink == null) {
-                        prideSearchParameters.setDigestionPreferences(DigestionPreferences.getDefaultPreferences());
-                    }
+                    // set digestion preferences to default
+                    prideSearchParameters.setDigestionPreferences(DigestionPreferences.getDefaultPreferences());
 
                     String prideSearchParametersReport = null;
                     ArrayList<File> mgfFiles = new ArrayList<File>();
@@ -2920,10 +2919,10 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      * @param prideAccession the pride accession number
      * @param prideSearchParameters the search parameters object to add the
      * search settings to
+     *
      * @return the PRIDE search parameters report
-     * @throws Exception
      */
-    private String getSearchParams(SearchParameters prideSearchParameters) throws Exception {
+    private String getSearchParams(SearchParameters prideSearchParameters) {
 
         progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
@@ -3136,6 +3135,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             } else {
 
                 // more than one enzyme given
+                //@TODO: add all?
                 String enzymesAsText = "";
                 for (int i = 0; i < enzymes.size(); i++) {
                     if (i > 0) {
