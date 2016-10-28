@@ -255,6 +255,11 @@ public class MzIdentMLExport {
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences,
             IdentificationFeaturesGenerator identificationFeaturesGenerator, File outputFile, boolean includeProteinSequences, WaitingHandler waitingHandler,
             MatchValidationLevel proteinMatchValidationLevel, MatchValidationLevel peptideMatchValidationLevel, MatchValidationLevel psmMatchValidationLevel) throws IOException, ClassNotFoundException {
+        
+        if (outputFile.getParent() == null) {
+            throw new FileNotFoundException("The file " + outputFile + " does not have a valid parent folder. Please make sure that the parent folder exists.");
+        }
+        
         this.peptideShakerVersion = peptideShakerVersion;
         this.identification = identification;
         this.projectDetails = projectDetails;

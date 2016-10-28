@@ -354,21 +354,21 @@ public class CpsParent extends UserPreferencesParent {
         // Load fasta file
         ProteinInferencePreferences proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
         File providedFastaLocation = proteinInferencePreferences.getProteinSequenceDatabase();
-        String fileName = providedFastaLocation.getName();
+        String fastaFileName = providedFastaLocation.getName();
         File projectFolder = cpsFile.getParentFile();
         File dataFolder = new File(projectFolder, "data");
 
         if (providedFastaLocation.exists()) {
             sequenceFactory.loadFastaFile(providedFastaLocation, waitingHandler);
-        } else if (folder != null && new File(folder, fileName).exists()) {
-            sequenceFactory.loadFastaFile(new File(folder, fileName), waitingHandler);
-            proteinInferencePreferences.setProteinSequenceDatabase(new File(folder, fileName));
-        } else if (new File(projectFolder, fileName).exists()) {
-            sequenceFactory.loadFastaFile(new File(projectFolder, fileName), waitingHandler);
-            proteinInferencePreferences.setProteinSequenceDatabase(new File(projectFolder, fileName));
-        } else if (new File(dataFolder, fileName).exists()) {
-            sequenceFactory.loadFastaFile(new File(dataFolder, fileName), waitingHandler);
-            proteinInferencePreferences.setProteinSequenceDatabase(new File(dataFolder, fileName));
+        } else if (folder != null && new File(folder, fastaFileName).exists()) {
+            sequenceFactory.loadFastaFile(new File(folder, fastaFileName), waitingHandler);
+            proteinInferencePreferences.setProteinSequenceDatabase(new File(folder, fastaFileName));
+        } else if (new File(projectFolder, fastaFileName).exists()) {
+            sequenceFactory.loadFastaFile(new File(projectFolder, fastaFileName), waitingHandler);
+            proteinInferencePreferences.setProteinSequenceDatabase(new File(projectFolder, fastaFileName));
+        } else if (new File(dataFolder, fastaFileName).exists()) {
+            sequenceFactory.loadFastaFile(new File(dataFolder, fastaFileName), waitingHandler);
+            proteinInferencePreferences.setProteinSequenceDatabase(new File(dataFolder, fastaFileName));
         } else {
             return false;
         }
