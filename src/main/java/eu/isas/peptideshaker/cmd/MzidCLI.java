@@ -149,7 +149,7 @@ public class MzidCLI extends CpsParent {
         // load fasta file
         try {
             if (!loadFastaFile(waitingHandler)) {
-                waitingHandler.appendReport("The FASTA file was not found. Please provide its location in the command line parameters.", true, true);
+                waitingHandler.appendReport("The FASTA file was not found. Please move the FASTA file to the same folder as the cpsx file and make sure to provide the complete path to the cpsx file.", true, true);
                 try {
                     PeptideShakerCLI.closePeptideShaker(identification);
                 } catch (Exception e2) {
