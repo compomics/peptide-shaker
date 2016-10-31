@@ -6,6 +6,7 @@ import com.compomics.util.experiment.identification.protein_sequences.SequenceFa
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
+import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
@@ -103,24 +104,50 @@ public class SpectrumExporter {
                         waitingHandler.setWaitingText("Exporting Spectra - Writing File. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
                         // reset the progress bar
                         waitingHandler.resetSecondaryProgressCounter();
-                        waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(mgfFile).size());
+                        if (exportType == ExportType.non_validated_psms
+                                || exportType == ExportType.non_validated_peptides
+                                || exportType == ExportType.non_validated_proteins) {
+                            waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(mgfFile).size());
+                        } else {
+                            waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentification(mgfFile).size());
+                        }
                     }
 
+                    // Export the identified spectra
                     PsmIterator psmIterator = identification.getPsmIterator(mgfFile, parameters, false, waitingHandler);
-
                     while (psmIterator.hasNext()) {
 
                         SpectrumMatch spectrumMatch = psmIterator.next();
                         String spectrumKey = spectrumMatch.getKey();
 
                         if (shallExport(spectrumMatch, exportType, sequenceMatchingPreferences)) {
-                            b.write(((MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey)).asMgf());
+                            MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
+                            b.write(spectrum.asMgf());
                         }
                         if (waitingHandler != null) {
                             if (waitingHandler.isRunCanceled()) {
                                 return;
                             }
                             waitingHandler.increaseSecondaryProgressCounter();
+                        }
+                    }
+
+                    if (exportType == ExportType.non_validated_psms
+                            || exportType == ExportType.non_validated_peptides
+                            || exportType == ExportType.non_validated_proteins) {
+                        HashSet<String> identifiedSpectra = identification.getSpectrumIdentification(mgfFile);
+                        for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
+                            String spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
+                            if (!identifiedSpectra.contains(spectrumKey)) {
+                                MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(mgfFile, spectrumTitle);
+                                b.write(spectrum.asMgf());
+                            }
+                            if (waitingHandler != null) {
+                                if (waitingHandler.isRunCanceled()) {
+                                    return;
+                                }
+                                waitingHandler.increaseSecondaryProgressCounter();
+                            }
                         }
                     }
                 } finally {
