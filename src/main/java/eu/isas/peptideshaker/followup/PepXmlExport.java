@@ -223,7 +223,8 @@ public class PepXmlExport {
             DigestionPreferences digestionPreferences = identificationParameters.getSearchParameters().getDigestionPreferences();
             if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
                 for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
-                    writeEnzyme(sw, enzyme);
+                    DigestionPreferences.Specificity specificity = digestionPreferences.getSpecificity(enzyme.getName());
+                    writeEnzyme(sw, enzyme, specificity);
                 }
             }
             writeSearchSummary(sw, identificationParameters);
@@ -241,20 +242,12 @@ public class PepXmlExport {
      *
      * @param sw the xml file writer
      * @param enzyme the enzyme
+     * @param specificity the enzyme specificity
      *
      * @throws IOException exception thrown whenever an error is encountered
      * while reading or writing a file
      */
-    private void writeEnzyme(SimpleXmlWriter sw, Enzyme enzyme) throws IOException {
-
-        String specificity;
-        if (enzyme.isSemiSpecific()) {
-            specificity = "semispecific";
-        } else if (enzyme.isUnspecific()) {
-            specificity = "nonspecific";
-        } else {
-            specificity = "specific";
-        }
+    private void writeEnzyme(SimpleXmlWriter sw, Enzyme enzyme, DigestionPreferences.Specificity specificity) throws IOException {
 
         sw.writeLineIncreasedIndent("<sample_enzyme name=\"" + enzyme.getName() + "\" fidelity=\"" + specificity + "\">");
 
@@ -273,7 +266,7 @@ public class PepXmlExport {
                     noCut.append(aa);
                 }
             }
-            sw.writeLine("<specificity cut=\"" + cut + "\" no_cut=\"" + noCut + "\" sense=\"C\">");
+            sw.writeLine("<specificity cut=\"" + cut + "\" no_cut=\"" + noCut + "\" sense=\"C\"/>");
         }
         ArrayList<Character> aaAfter = enzyme.getAminoAcidAfter();
         if (aaAfter != null && !aaAfter.isEmpty()) {
@@ -289,7 +282,7 @@ public class PepXmlExport {
                     noCut.append(aa);
                 }
             }
-            sw.writeLine("<specificity cut=\"" + cut + "\" no_cut=\"" + noCut + "\" sense=\"N\">");
+            sw.writeLine("<specificity cut=\"" + cut + "\" no_cut=\"" + noCut + "\" sense=\"N\"/>");
         }
         sw.writeLineDecreasedIndent("</sample_enzyme>");
     }
@@ -382,7 +375,7 @@ public class PepXmlExport {
         if (cvTerm != null) {
             modificationLine.append("description=\"").append(cvTerm.getAccession()).append("\"");
         }
-        modificationLine.append(">");
+        modificationLine.append("/>");
         return modificationLine.toString();
     }
 
@@ -535,7 +528,7 @@ public class PepXmlExport {
         if (proteinAccessions.size() > 1) {
             for (String accession : proteinAccessions) {
                 StringBuilder proteinLine = new StringBuilder();
-                proteinLine.append("<alternative_protein protein=\"").append(accession).append("\">");
+                proteinLine.append("<alternative_protein protein=\"").append(accession).append("\"/>");
                 sw.writeLine(proteinLine.toString());
             }
         }
@@ -581,7 +574,7 @@ public class PepXmlExport {
                 for (Integer site : modifiedAminoAcids.keySet()) {
                     Double modifiedMass = modifiedAminoAcids.get(site);
                     StringBuilder modificationSite = new StringBuilder();
-                    modificationSite.append("<mod_aminoacid_mass position=\"").append(site).append("\" mass=\"").append(modifiedMass).append("\">");
+                    modificationSite.append("<mod_aminoacid_mass position=\"").append(site).append("\" mass=\"").append(modifiedMass).append("\"/>");
                     sw.writeLine(modificationSite.toString());
                 }
                 sw.decreaseIndent();
@@ -590,53 +583,53 @@ public class PepXmlExport {
         }
         if (mainHit) {
             StringBuilder searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"PSM raw score\" value=\"").append(psParameter.getPsmProbabilityScore()).append("\">");
+            searchScore.append("<search_score name=\"PSM raw score\" value=\"").append(psParameter.getPsmProbabilityScore()).append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"PSM score\" value=\"").append(psParameter.getPsmScore()).append("\">");
+            searchScore.append("<search_score name=\"PSM score\" value=\"").append(psParameter.getPsmScore()).append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"PSM PEP\" value=\"").append(psParameter.getPsmProbability()).append("\">");
+            searchScore.append("<search_score name=\"PSM PEP\" value=\"").append(psParameter.getPsmProbability()).append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"PSM confidence\" value=\"").append(psParameter.getPsmConfidence()).append("\">");
+            searchScore.append("<search_score name=\"PSM confidence\" value=\"").append(psParameter.getPsmConfidence()).append("\"/>");
             sw.writeLine(searchScore.toString());
         } else {
             if (peptideAssumption.getRawScore() != null) {
                 StringBuilder searchScore = new StringBuilder();
-                searchScore.append("<search_score name=\"Identification algorithm raw score\" value=\"").append(peptideAssumption.getRawScore()).append("\">");
+                searchScore.append("<search_score name=\"Identification algorithm raw score\" value=\"").append(peptideAssumption.getRawScore()).append("\"/>");
                 sw.writeLine(searchScore.toString());
             }
             StringBuilder searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"Identification algorithm score\" value=\"").append(peptideAssumption.getScore()).append("\">");
+            searchScore.append("<search_score name=\"Identification algorithm score\" value=\"").append(peptideAssumption.getScore()).append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"Identification algorithm PEP\" value=\"").append(psParameter.getSearchEngineProbability()).append("\">");
+            searchScore.append("<search_score name=\"Identification algorithm PEP\" value=\"").append(psParameter.getSearchEngineProbability()).append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"Identification algorithm confidence\" value=\"").append(psParameter.getSearchEngineConfidence()).append("\">");
+            searchScore.append("<search_score name=\"Identification algorithm confidence\" value=\"").append(psParameter.getSearchEngineConfidence()).append("\"/>");
             sw.writeLine(searchScore.toString());
         }
         sw.writeLine("<analysis_result>");
         int advocateId = peptideAssumption.getAdvocate();
         Advocate advocate = Advocate.getAdvocate(advocateId);
         StringBuilder parameterLine = new StringBuilder();
-        parameterLine.append("<parameter name=\"algorithm\" value=\"").append(advocate.getName()).append("\">");
+        parameterLine.append("<parameter name=\"algorithm\" value=\"").append(advocate.getName()).append("\"/>");
         sw.writeLineIncreasedIndent(parameterLine.toString());
         if (modificationMatches != null && !modificationMatches.isEmpty()) {
             for (ModificationMatch modificationMatch : modificationMatches) {
                 if (modificationMatch.isVariable()) {
                     parameterLine = new StringBuilder();
-                    parameterLine.append("<parameter name=\"ptm\" value=\"").append(modificationMatch.getTheoreticPtm()).append(" (").append(modificationMatch.getModificationSite()).append(")").append("\">");
+                    parameterLine.append("<parameter name=\"ptm\" value=\"").append(modificationMatch.getTheoreticPtm()).append(" (").append(modificationMatch.getModificationSite()).append(")").append("\"/>");
                     sw.writeLine(parameterLine.toString());
                 }
             }
         }
         parameterLine = new StringBuilder();
-        parameterLine.append("<parameter name=\"charge\" value=\"").append(peptideAssumption.getIdentificationCharge().toString()).append("\">");
+        parameterLine.append("<parameter name=\"charge\" value=\"").append(peptideAssumption.getIdentificationCharge().toString()).append("\"/>");
         sw.writeLine(parameterLine.toString());
         parameterLine = new StringBuilder();
-        parameterLine.append("<parameter name=\"isotope\" value=\"").append(peptideAssumption.getIsotopeNumber(precursorMz, identificationParameters.getSearchParameters().getMinIsotopicCorrection(), identificationParameters.getSearchParameters().getMaxIsotopicCorrection())).append("\">");
+        parameterLine.append("<parameter name=\"isotope\" value=\"").append(peptideAssumption.getIsotopeNumber(precursorMz, identificationParameters.getSearchParameters().getMinIsotopicCorrection(), identificationParameters.getSearchParameters().getMaxIsotopicCorrection())).append("\"/>");
         sw.writeLine(parameterLine.toString());
         sw.writeLineDecreasedIndent("</analysis_result>");
         sw.writeLineDecreasedIndent("</search_hit>");
