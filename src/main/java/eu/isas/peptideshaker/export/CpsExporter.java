@@ -82,10 +82,10 @@ public class CpsExporter {
             if (!objectsDB.hasTable(CpsParent.settingsTableName)) {
                 objectsDB.addTable(CpsParent.settingsTableName);
             }
-            if (objectsDB.inDB(CpsParent.settingsTableName, peptideShakerSettings.getFamilyName(), false)) {
-                objectsDB.updateObject(CpsParent.settingsTableName, peptideShakerSettings.getFamilyName(), peptideShakerSettings, false);
+            if (objectsDB.inDB(CpsParent.settingsTableName, PeptideShakerSettings.nameInCpsSettingsTable, false)) {
+                objectsDB.updateObject(CpsParent.settingsTableName, PeptideShakerSettings.nameInCpsSettingsTable, peptideShakerSettings, false);
             } else {
-                objectsDB.insertObject(CpsParent.settingsTableName, peptideShakerSettings.getFamilyName(), peptideShakerSettings, false);
+                objectsDB.insertObject(CpsParent.settingsTableName, PeptideShakerSettings.nameInCpsSettingsTable, peptideShakerSettings, false);
             }
 
             // save the objects in cache

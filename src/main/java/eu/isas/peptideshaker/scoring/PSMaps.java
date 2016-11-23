@@ -118,12 +118,7 @@ public class PSMaps implements UrParameter {
     }
 
     @Override
-    public String getFamilyName() {
-        return "PeptideShaker";
-    }
-
-    @Override
-    public int getIndex() {
-        return 1;
+    public String getParameterKey() {
+        return "PeptideShaker|1";
     }
 }

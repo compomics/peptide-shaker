@@ -466,12 +466,7 @@ public class PSPtmScores implements UrParameter {
     }
 
     @Override
-    public String getFamilyName() {
-        return "PeptideShaker";
-    }
-
-    @Override
-    public int getIndex() {
-        return 3;
+    public String getParameterKey() {
+        return "PeptideShaker|3";
     }
 }

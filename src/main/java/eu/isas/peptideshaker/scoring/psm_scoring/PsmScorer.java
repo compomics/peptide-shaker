@@ -10,6 +10,7 @@ import com.compomics.util.experiment.identification.SpectrumIdentificationAssump
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.psm_scoring.PsmScore;
+import com.compomics.util.experiment.identification.psm_scoring.PsmScoresEstimator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
@@ -50,6 +51,10 @@ public class PsmScorer {
      * The protein sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    /**
+     * The psm scores estimator to use when socring the psms.
+     */
+    private PsmScoresEstimator psmScoresEstimator = new PsmScoresEstimator();
 
     /**
      * Scores the PSMs contained in an identification object.
@@ -125,7 +130,7 @@ public class PsmScorer {
     public void estimateIntermediateScores(Identification identification, SpectrumMatch spectrumMatch, InputMap inputMap,
             IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
             throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
-
+        
         AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
 
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
@@ -163,7 +168,7 @@ public class PsmScorer {
                                     score = peptideAssumption.getScore();
                                 } else {
                                     SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-                                    score = PsmScore.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge().value, spectrum, identificationParameters, specificAnnotationPreferences, peptideSpectrumAnnotator, scoreIndex);
+                                    score = psmScoresEstimator.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge().value, spectrum, identificationParameters, specificAnnotationPreferences, peptideSpectrumAnnotator, scoreIndex);
                                 }
 
                                 psParameter.setIntermediateScore(scoreIndex, score);

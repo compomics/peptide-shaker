@@ -25,8 +25,9 @@ public class PeptideShakerSettings implements UrParameter {
     static final long serialVersionUID = -3531908843597367812L;
     /**
      * The initial processing preferences.
-     * 
- * @deprecated replaced by utilities processing preferences and fraction preferences
+     *
+     * @deprecated replaced by utilities processing preferences and fraction
+     * preferences
      */
     private PSProcessingPreferences processingPreferences;
     /**
@@ -65,6 +66,10 @@ public class PeptideShakerSettings implements UrParameter {
      * Information about the protocol used.
      */
     private ShotgunProtocol shotgunProtocol;
+    /**
+     * The name of the object when stored in settings table of a cps file.
+     */
+    public static final String nameInCpsSettingsTable = "PeptideShaker";
 
     /**
      * Blank constructor.
@@ -160,7 +165,7 @@ public class PeptideShakerSettings implements UrParameter {
 
     /**
      * Returns information about the protocol used.
-     * 
+     *
      * @return information about the protocol used
      */
     public ShotgunProtocol getShotgunProtocol() {
@@ -169,7 +174,7 @@ public class PeptideShakerSettings implements UrParameter {
 
     /**
      * Sets information about the protocol used.
-     * 
+     *
      * @param shotgunProtocol information about the protocol used
      */
     public void setShotgunProtocol(ShotgunProtocol shotgunProtocol) {
@@ -196,7 +201,7 @@ public class PeptideShakerSettings implements UrParameter {
         }
         return metrics;
     }
-    
+
     /**
      * Returns the gene maps.
      *
@@ -221,12 +226,7 @@ public class PeptideShakerSettings implements UrParameter {
     }
 
     @Override
-    public String getFamilyName() {
-        return "PeptideShaker";
-    }
-
-    @Override
-    public int getIndex() {
-        return 2;
+    public String getParameterKey() {
+        return "PeptideShaker|2";
     }
 }
