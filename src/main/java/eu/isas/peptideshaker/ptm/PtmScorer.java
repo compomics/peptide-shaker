@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.ptm;
 
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -45,8 +44,6 @@ import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
