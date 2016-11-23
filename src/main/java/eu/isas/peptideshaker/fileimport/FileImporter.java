@@ -181,18 +181,17 @@ public class FileImporter {
 
             UtilitiesUserPreferences userPreferences = UtilitiesUserPreferences.loadUserPreferences();
             int memoryPreference = userPreferences.getMemoryPreference();
-            long fileSize = fastaFile.length();
-            int fileSizeInMb = Math.max((int) fileSize / 1048576, 1);
-            long nSequences;
-            if (!sequenceFactory.isDefaultReversed() || fileSizeInMb < memoryPreference / 4) {
+            int nSequences = sequenceFactory.getNSequences();
+            int cacheSizeInMb = nSequences * 112 / 1048576; // 112 is the size taken by one protein
+            if (!sequenceFactory.isDefaultReversed() || cacheSizeInMb < memoryPreference / 4) {
                 nSequences = sequenceFactory.getNSequences();
                 sequenceFactory.setDecoyInMemory(true);
             } else {
                 nSequences = sequenceFactory.getNTargetSequences();
                 sequenceFactory.setDecoyInMemory(false);
             }
-            long sequencesPerMb = nSequences / fileSizeInMb;
-            long availableCachSize = 3 * memoryPreference * sequencesPerMb / 4;
+        long availableCachSize = 1048576 * memoryPreference / 112; // 112 is the size taken by one protein
+        availableCachSize *= 0.75;
             if (availableCachSize > nSequences) {
                 availableCachSize = nSequences;
             } else {
@@ -717,7 +716,6 @@ public class FileImporter {
                     waitingHandler.resetSecondaryProgressCounter();
                     waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                     waitingHandler.appendReport("Loading spectra for " + idFile.getName() + ".", true, true);
-                    int nTags = 0;
                     for (SpectrumMatch spectrumMatch : idFileSpectrumMatches) {
                         // Verify that the spectrum is in the provided mgf files
                         if (!importSpectrum(idFile, spectrumMatch, numberOfMatches)) {
@@ -725,10 +723,6 @@ public class FileImporter {
                         }
                         // Load spectrum in cache for tag mapping
                         if (fileReader.getTagsMap() != null && !fileReader.getTagsMap().isEmpty()) {
-                            nTags++;
-                            if (spectrumFactory.getCacheSize() < nTags) {
-                                spectrumFactory.setCacheSize(nTags);
-                            }
                             spectrumFactory.getSpectrum(spectrumMatch.getKey());
                         }
                         waitingHandler.increaseSecondaryProgressCounter();

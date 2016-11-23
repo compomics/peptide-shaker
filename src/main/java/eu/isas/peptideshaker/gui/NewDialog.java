@@ -69,7 +69,7 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance(30000);
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The experiment conducted.
      */

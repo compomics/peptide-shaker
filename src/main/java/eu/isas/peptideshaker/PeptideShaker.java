@@ -1032,23 +1032,20 @@ public class PeptideShaker {
         int nSequences;
         int nSpectra;
         if (utilitiesUserPreferences.getMemoryPreference() > 32000) {
+            nSequences = 100000000;
+            nSpectra = 100000000;
+        } else if (utilitiesUserPreferences.getMemoryPreference() > 16000) {
+            nSequences = 50000000;
+            nSpectra = 50000000;
+        } else if (utilitiesUserPreferences.getMemoryPreference() > 8000) {
+            nSequences = 10000000;
+            nSpectra = 10000000;
+        } else if (utilitiesUserPreferences.getMemoryPreference() > 4000) {
             nSequences = 10000000;
             nSpectra = 5000000;
-        } else if (utilitiesUserPreferences.getMemoryPreference() > 16000) {
+        } else {
             nSequences = 1000000;
             nSpectra = 1000000;
-        } else if (utilitiesUserPreferences.getMemoryPreference() > 8000) {
-            nSequences = 5000000;
-            nSpectra = 500000;
-        } else if (utilitiesUserPreferences.getMemoryPreference() > 4000) {
-            nSequences = 100000;
-            nSpectra = 50000;
-        } else if (utilitiesUserPreferences.getMemoryPreference() > 2000) {
-            nSequences = 50000;
-            nSpectra = 10000;
-        } else {
-            nSequences = 10000;
-            nSpectra = 100;
         }
         EnzymeFactory.getInstance();
         PTMFactory.getInstance();
