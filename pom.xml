@@ -283,29 +283,28 @@
             <layout>default</layout>
         </repository>
         
-        <!-- EBI repository -->
+        <!-- old EBI repository -->
         <repository>
             <id>ebi-repo</id> 
             <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo</url> 
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
         </repository>
 
-        <!-- EBI nexus repository -->
+        <!-- EBI repository -->
         <repository>
-            <id>nexus-ebi-repo</id> 
-            <name>The EBI nexus repository</name>
-            <url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
-            <layout>default</layout>
+            <id>pst-release</id>
+            <name>EBI Nexus Repository</name>
+            <url>http://www.ebi.ac.uk/Tools/maven/repos/content/repositories/pst-release</url>
         </repository>
-
-        <!-- EBI nexus snapshot repository -->
+        
+        <!-- EBI SNAPSHOT repo -->
         <repository>
-            <id>nexus-ebi-repo-snapshot</id> 
-            <name>The EBI nexus snapshot repository</name>
-            <url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo-snapshots/</url>
-            <layout>default</layout>
+            <id>pst-snapshots</id>
+            <name>EBI Nexus Snapshots Repository</name>
+            <url>http://www.ebi.ac.uk/Tools/maven/repos/content/repositories/pst-snapshots</url>
         </repository>
 
+        <!-- UGent snapshot repository -->
         <repository>
             <id>snapshots</id>
             <name>Archiva Managed Snapshot Repository</name>
