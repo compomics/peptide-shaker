@@ -32,6 +32,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import org.apache.commons.lang3.StringEscapeUtils;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
@@ -252,7 +253,8 @@ public class PepXmlExport {
         sw.writeLineIncreasedIndent("<sample_enzyme name=\"" + enzyme.getName() + "\" fidelity=\"" + specificity + "\">");
 
         sw.increaseIndent();
-        ArrayList<Character> aaBefore = enzyme.getAminoAcidBefore();
+        ArrayList<Character> aaBefore = new ArrayList<Character>(enzyme.getAminoAcidBefore());
+        Collections.sort(aaBefore);
         if (aaBefore != null && !aaBefore.isEmpty()) {
             StringBuilder cut = new StringBuilder(aaBefore.size());
             for (Character aa : aaBefore) {
@@ -260,7 +262,8 @@ public class PepXmlExport {
             }
 
             StringBuilder noCut = new StringBuilder(1);
-            ArrayList<Character> restrictionAfter = enzyme.getRestrictionAfter();
+            ArrayList<Character> restrictionAfter = new ArrayList<Character>(enzyme.getRestrictionAfter());
+            Collections.sort(restrictionAfter);
             if (restrictionAfter != null && !restrictionAfter.isEmpty()) {
                 for (Character aa : restrictionAfter) {
                     noCut.append(aa);
@@ -268,7 +271,8 @@ public class PepXmlExport {
             }
             sw.writeLine("<specificity cut=\"" + cut + "\" no_cut=\"" + noCut + "\" sense=\"C\"/>");
         }
-        ArrayList<Character> aaAfter = enzyme.getAminoAcidAfter();
+        ArrayList<Character> aaAfter = new ArrayList<Character>(enzyme.getAminoAcidAfter());
+        Collections.sort(aaAfter);
         if (aaAfter != null && !aaAfter.isEmpty()) {
             StringBuilder cut = new StringBuilder(aaAfter.size());
             for (Character aa : aaAfter) {
@@ -276,7 +280,8 @@ public class PepXmlExport {
             }
 
             StringBuilder noCut = new StringBuilder(1);
-            ArrayList<Character> restrictionBefore = enzyme.getRestrictionBefore();
+            ArrayList<Character> restrictionBefore = new ArrayList<Character>(enzyme.getRestrictionBefore());
+            Collections.sort(restrictionBefore);
             if (restrictionBefore != null && !restrictionBefore.isEmpty()) {
                 for (Character aa : restrictionBefore) {
                     noCut.append(aa);
