@@ -83,6 +83,7 @@ import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
+import com.compomics.util.experiment.identification.spectrum_annotation.SpectrumAnnotator;
 import com.compomics.util.gui.parameters.IdentificationParametersEditionDialog;
 import com.compomics.util.gui.parameters.IdentificationParametersOverviewDialog;
 import com.compomics.util.gui.parameters.ProcessingPreferencesDialog;
@@ -4968,7 +4969,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         // General annotation settings
         AnnotationSettings annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
-        highResAnnotationCheckBoxMenuItem.setSelected(annotationPreferences.isHighResolutionAnnotation());
+        highResAnnotationCheckBoxMenuItem.setSelected(annotationPreferences.getTiesResolution() == SpectrumAnnotator.TiesResolution.mostAccurateMz); //@TODO: change for a drop down menu
         allCheckBoxMenuItem.setSelected(annotationPreferences.showAllPeaks());
 
         // Display preferenecs
@@ -5055,7 +5056,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             }
 
             // The following preferences are kept for all spectra
-            annotationPreferences.setHighResolutionAnnotation(highResAnnotationCheckBoxMenuItem.isSelected());
+            SpectrumAnnotator.TiesResolution tiesResolution = highResAnnotationCheckBoxMenuItem.isSelected() ? SpectrumAnnotator.TiesResolution.mostAccurateMz : SpectrumAnnotator.TiesResolution.mostIntense;
+            annotationPreferences.setTiesResolution(tiesResolution); //@TODO: replace by a drop down menu
             annotationPreferences.setShowAllPeaks(allCheckBoxMenuItem.isSelected());
             annotationPreferences.setShowForwardIonDeNovoTags(forwardIonsDeNovoCheckBoxMenuItem.isSelected());
             annotationPreferences.setShowRewindIonDeNovoTags(rewindIonsDeNovoCheckBoxMenuItem.isSelected());
@@ -5691,7 +5693,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             File selectedFastaFile = fileChooser.getSelectedFile();
             tempLastSelectedFolder.setLastSelectedFolder(selectedFastaFile.getAbsolutePath());
             getIdentificationParameters().getProteinInferencePreferences().setProteinSequenceDatabase(selectedFastaFile);
-            dataSaved = false;            
+            dataSaved = false;
             return cpsParent.loadFastaFile(selectedFastaFile.getParentFile(), progressDialog);
         } else {
             return false;

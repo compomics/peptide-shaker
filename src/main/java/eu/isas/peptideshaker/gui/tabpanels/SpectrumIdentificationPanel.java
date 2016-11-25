@@ -3018,7 +3018,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                                         // add the spectrum annotations
                                         if (i == 0) {
-                                            spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), !annotationPreferences.isHighResolutionAnnotation());
+                                            spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), annotationPreferences.getTiesResolution() == SpectrumAnnotator.TiesResolution.mostIntense); //@TODO: the selection of the peak to annotate should be done outside the spectrum panel
 
                                             // add de novo sequencing
                                             spectrum.addAutomaticDeNovoSequencing(peptide, annotations,
@@ -3058,7 +3058,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                         ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, tagAssumption.getTag());
 
                                         // add the spectrum annotations
-                                        spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), !annotationPreferences.isHighResolutionAnnotation());
+                                        spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), annotationPreferences.getTiesResolution() == SpectrumAnnotator.TiesResolution.mostIntense); //@TODO: the selection of the peak to annotate should be done outside the spectrum panel
 
                                         // add de novo sequencing
                                         spectrum.addAutomaticDeNovoSequencing(tagAssumption.getTag(), annotations,
