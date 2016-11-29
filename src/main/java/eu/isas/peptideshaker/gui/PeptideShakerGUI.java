@@ -5841,7 +5841,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                     ArrayList<IonMatch> matches = annotationMap.get(mz);
                                     if (matches != null) {
                                         for (IonMatch ionMatch : matches) {
-                                            bw.write(mz + separator + peak.intensity + separator + ionMatch.getPeakAnnotation() + separator + ionMatch.ion.getTheoreticMz(ionMatch.charge.value) + separator + ionMatch.getAbsoluteError());
+                                            bw.write(mz + separator + peak.intensity + separator + ionMatch.getPeakAnnotation() + separator + ionMatch.ion.getTheoreticMz(ionMatch.charge) + separator + ionMatch.getAbsoluteError());
                                             bw.newLine();
                                         }
                                     } else {

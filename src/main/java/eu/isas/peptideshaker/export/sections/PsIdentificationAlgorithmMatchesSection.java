@@ -716,7 +716,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                 ionCoverage.put(PeptideFragmentIon.Y_ION, new boolean[sequenceLength]);
                 ionCoverage.put(PeptideFragmentIon.Z_ION, new boolean[sequenceLength]);
                 for (IonMatch ionMatch : matches) {
-                    if (ionMatch.charge.value == 1) {
+                    if (ionMatch.charge == 1) {
                         Ion ion = ionMatch.ion;
                         if (ion instanceof PeptideFragmentIon) {
                             PeptideFragmentIon peptideFragmentIon = (PeptideFragmentIon) ion;

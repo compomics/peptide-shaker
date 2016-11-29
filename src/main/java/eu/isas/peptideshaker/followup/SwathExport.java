@@ -400,7 +400,7 @@ public class SwathExport {
                         writer.write(peptideFragmentIon.getSubTypeAsString() + SEPARATOR);
 
                         // fragment z
-                        writer.write(ionMatch.charge.value + SEPARATOR);
+                        writer.write(ionMatch.charge + SEPARATOR);
 
                         // fragment number
                         writer.write(peptideFragmentIon.getNumber() + SEPARATOR);

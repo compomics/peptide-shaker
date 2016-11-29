@@ -1485,7 +1485,7 @@ public class MzIdentMLExport {
                             || ionMatch.ion.getType() == IonType.RELATED_ION) { // @TODO: what about tag fragment ion?
 
                         CvTerm fragmentIonCvTerm = ionMatch.ion.getPsiMsCvTerm();
-                        Integer charge = ionMatch.charge.value;
+                        Integer charge = ionMatch.charge;
 
                         // only include ions with cv terms and less than the maximum number of allowed neutral losses
                         if (fragmentIonCvTerm != null && ionMatch.ion.getNeutralLosses().size() <= maxNeutralLosses) {

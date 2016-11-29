@@ -200,10 +200,10 @@ public class PsFragmentSection {
                             writer.write(name);
                             break;
                         case fragment_charge:
-                            writer.write(ionMatch.charge.value + "");
+                            writer.write(ionMatch.charge + "");
                             break;
                         case theoretic_mz:
-                            writer.write(ionMatch.ion.getTheoreticMz(ionMatch.charge.value) + "");
+                            writer.write(ionMatch.ion.getTheoreticMz(ionMatch.charge) + "");
                             break;
                         case mz:
                             writer.write(ionMatch.peak.mz + "");
