@@ -247,7 +247,7 @@ public class PsmScorer {
                     }
                 }
                 if (scoresForAdvocate.contains(PsmScore.hyperScore.index)) {
-                    HashMap<Double, Double> eValuesMap = hyperScore.getEValueHistogram(hyperScores, false);
+                    HashMap<Double, Double> eValuesMap = hyperScore.getEValueHistogram(hyperScores);
                     if (eValuesMap != null) {
                         for (int i = 0; i < hyperScores.size(); i++) {
                             Double score = hyperScores.get(i);
@@ -341,9 +341,6 @@ public class PsmScorer {
 
         PSParameter psParameter = new PSParameter();
 
-//        BufferedWriter br = new BufferedWriter(new FileWriter(new File("D:\\projects\\PeptideShaker\\rescoring", "combination.txt")));
-//        br.write("Title\tPeptide\tScore\tDecoy");
-//        br.newLine();
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, null, false, waitingHandler);
