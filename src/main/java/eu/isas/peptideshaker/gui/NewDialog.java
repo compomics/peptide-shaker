@@ -966,6 +966,7 @@ public class NewDialog extends javax.swing.JDialog {
                         || myFile.getName().toLowerCase().endsWith(".tags")
                         || myFile.getName().toLowerCase().endsWith(".pnovo.txt")
                         || myFile.getName().toLowerCase().endsWith(".novor.csv")
+                        || myFile.getName().toLowerCase().endsWith(".psm")
                         || myFile.getName().toLowerCase().endsWith(".zip")
                         || myFile.isDirectory();
             }
@@ -1141,6 +1142,21 @@ public class NewDialog extends javax.swing.JDialog {
             }
         };
 
+        // filter for Onyase only
+        FileFilter onyaseFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                return myFile.getName().toLowerCase().endsWith(".psm")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Onyase (.dat)";
+            }
+        };
+
         // filter for mascot only
         FileFilter mascotFilter = new FileFilter() {
             @Override
@@ -1166,6 +1182,7 @@ public class NewDialog extends javax.swing.JDialog {
         fileChooser.addChoosableFileFilter(msAmandaFilter);
         fileChooser.addChoosableFileFilter(tideFilter);
         fileChooser.addChoosableFileFilter(mascotFilter);
+        fileChooser.addChoosableFileFilter(onyaseFilter);
         fileChooser.addChoosableFileFilter(direcTagFilter);
         fileChooser.addChoosableFileFilter(novorFilter);
         fileChooser.addChoosableFileFilter(pNovoFilter);
@@ -2313,7 +2330,8 @@ public class NewDialog extends javax.swing.JDialog {
                 || lowerCaseName.endsWith(".csv")
                 || lowerCaseName.endsWith(".tags")
                 || lowerCaseName.endsWith(".pnovo.txt")
-                || lowerCaseName.endsWith(".tide-search.target.txt")) {
+                || lowerCaseName.endsWith(".tide-search.target.txt")
+                || lowerCaseName.endsWith(".psm")) {
             if (!lowerCaseName.endsWith("mods.xml")
                     && !lowerCaseName.endsWith("usermods.xml")
                     && !lowerCaseName.endsWith("settings.xml")) {

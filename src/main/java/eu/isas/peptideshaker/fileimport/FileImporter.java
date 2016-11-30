@@ -697,8 +697,10 @@ public class FileImporter {
                 for (String advocateName : software.keySet()) {
                     Advocate advocate = Advocate.getAdvocate(advocateName);
                     if (advocate == null || advocate.getType() == Advocate.AdvocateType.unknown) {
-                        waitingHandler.appendReport("Warning: " + idFile.getName() + " is from an unknown software. "
-                                + "Correct processing thus cannot be guaranteed. Please contact the developers.", true, true);
+                        waitingHandler.appendReport("Warning: The software used to generate " + idFile.getName() + " was not recognized by PeptideShaker. "
+                                + "Please create an issue on the tool website and we will add support for the software used. "
+                                + "github.com/compomics/peptide-shaker/issues", true, true);
+                        return;
                     }
                 }
             }
