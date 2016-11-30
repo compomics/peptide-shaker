@@ -11,6 +11,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.psm_scoring.PsmScore;
 import com.compomics.util.experiment.identification.psm_scoring.PsmScoresEstimator;
+import com.compomics.util.experiment.identification.psm_scoring.psm_scores.HyperScore;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
@@ -20,6 +21,7 @@ import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
+import com.compomics.util.math.HistogramUtils;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
@@ -34,6 +36,7 @@ import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.math.util.FastMath;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -87,8 +90,10 @@ public class PsmScorer {
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, null, true, null);
+            ArrayList<PsmScorerRunnable> psmScorerRunnables = new ArrayList<PsmScorerRunnable>(processingPreferences.getnThreads());
             for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
                 PsmScorerRunnable runnable = new PsmScorerRunnable(psmIterator, identification, inputMap, identificationParameters, waitingHandler, exceptionHandler);
+                psmScorerRunnables.add(runnable);
                 pool.submit(runnable);
             }
             if (waitingHandler.isRunCanceled()) {
@@ -98,6 +103,44 @@ public class PsmScorer {
             pool.shutdown();
             if (!pool.awaitTermination(7, TimeUnit.DAYS)) {
                 throw new InterruptedException("PSM scoring timed out. Please contact the developers.");
+            }
+
+            ArrayList<HashMap<Double, Integer>> aHistograms = new ArrayList<HashMap<Double, Integer>>(processingPreferences.getnThreads());
+            ArrayList<HashMap<Double, Integer>> bHistograms = new ArrayList<HashMap<Double, Integer>>(processingPreferences.getnThreads());
+            HashMap<String, ArrayList<Integer>> missingValuesMap = new HashMap<String, ArrayList<Integer>>();
+            for (PsmScorerRunnable runnable : psmScorerRunnables) {
+                HashMap<String, ArrayList<Integer>> currentMissingValuesMap = runnable.getMissingEValues();
+                missingValuesMap.putAll(currentMissingValuesMap);
+                HyperScore hyperScore = runnable.getHyperScore();
+                aHistograms.add(hyperScore.getAs());
+                bHistograms.add(hyperScore.getBs());
+            }
+            if (!missingValuesMap.isEmpty()) {
+                HashMap<Double, Integer> aHistogram = HistogramUtils.mergeHistograms(aHistograms);
+                HashMap<Double, Integer> bHistogram = HistogramUtils.mergeHistograms(bHistograms);
+                Double defaultA = null;
+                if (!aHistogram.isEmpty()) {
+                    defaultA = HistogramUtils.getMedianValue(aHistogram);
+                }
+                Double defaultB = null;
+                if (!bHistogram.isEmpty()) {
+                    defaultB = HistogramUtils.getMedianValue(bHistogram);
+                }
+                ArrayList<String> spectrumKeys = new ArrayList<String>(missingValuesMap.keySet());
+                psmIterator = identification.getPsmIterator(spectrumKeys, null, true, null);
+                pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
+                for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
+                    MissingEValueEstimatorRunnable runnable = new MissingEValueEstimatorRunnable(missingValuesMap, defaultA, defaultB, psmIterator, identification, inputMap, identificationParameters, waitingHandler, exceptionHandler);
+                    pool.submit(runnable);
+                }
+                if (waitingHandler.isRunCanceled()) {
+                    pool.shutdownNow();
+                    return;
+                }
+                pool.shutdown();
+                if (!pool.awaitTermination(7, TimeUnit.DAYS)) {
+                    throw new InterruptedException("PSM scoring timed out. Please contact the developers.");
+                }
             }
         }
 
@@ -116,21 +159,25 @@ public class PsmScorer {
      * @param inputMap the input map scores
      * @param identificationParameters identification parameters used
      * @param peptideSpectrumAnnotator the spectrum annotator to use
+     * @param hyperScore the object to use to compute the hyperscore
      * @param waitingHandler the handler displaying feedback to the user
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @return a list of advocates where no e-values could be found
+     *
+     * @throws IOException thrown if an exception occurred while reading or
+     * writing a file
+     * @throws InterruptedException thrown if a threading exception occurred
+     * @throws SQLException thrown if an SQL exception occurred while retrieving
+     * or storing an object from the database
+     * @throws ClassNotFoundException thrown if a casting exception occurred
+     * while retrieving an object from the database
+     * @throws MzMLUnmarshallerException thrown if an exception occurred while
+     * reading a spectrum from an mzml file
      */
-    public void estimateIntermediateScores(Identification identification, SpectrumMatch spectrumMatch, InputMap inputMap,
-            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
+    public ArrayList<Integer> estimateIntermediateScores(Identification identification, SpectrumMatch spectrumMatch, InputMap inputMap,
+            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator, HyperScore hyperScore, WaitingHandler waitingHandler)
             throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
-        
+
         AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
 
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
@@ -141,30 +188,42 @@ public class PsmScorer {
 
         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
 
-        for (int advocateIndex : assumptions.keySet()) {
+        ArrayList<Integer> missingEvalue = new ArrayList<Integer>(0);
+
+        for (Integer advocateIndex : assumptions.keySet()) {
 
             HashSet<Integer> scoresForAdvocate = psmScoringPreferences.getScoreForAlgorithm(advocateIndex);
 
             if (scoresForAdvocate != null) {
 
-                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateIndex);
+                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> originalAssumptions = assumptions.get(advocateIndex);
 
-                for (double eValue : advocateAssumptions.keySet()) {
-                    for (SpectrumIdentificationAssumption assumption : advocateAssumptions.get(eValue)) {
+                // The hyperscore requires a second pass for the e-value estimation
+                ArrayList<Double> hyperScores = null;
+                ArrayList<PSParameter> hyperScoreParameters = null;
+                ArrayList<Boolean> hyperScoreDecoys = null;
+                if (scoresForAdvocate.contains(PsmScore.hyperScore.index)) {
+                    hyperScores = new ArrayList<Double>(originalAssumptions.size());
+                    hyperScoreParameters = new ArrayList<PSParameter>(originalAssumptions.size());
+                    hyperScoreDecoys = new ArrayList<Boolean>(originalAssumptions.size());
+                }
+
+                for (Double originalScore : originalAssumptions.keySet()) {
+                    for (SpectrumIdentificationAssumption assumption : originalAssumptions.get(originalScore)) {
 
                         if (assumption instanceof PeptideAssumption) {
 
                             PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                            Peptide peptide = peptideAssumption.getPeptide();
+                            boolean decoy = peptide.isDecoy(sequenceMatchingPreferences);
                             PSParameter psParameter = new PSParameter();
                             MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
 
-                            for (int scoreIndex : scoresForAdvocate) {
+                            for (Integer scoreIndex : scoresForAdvocate) {
 
-                                Peptide peptide = peptideAssumption.getPeptide();
-                                boolean decoy = peptide.isDecoy(sequenceMatchingPreferences);
-                                double score;
+                                Double score;
 
-                                if (scoreIndex == PsmScore.native_score.index) {
+                                if (scoreIndex.equals(PsmScore.native_score.index)) {
                                     score = peptideAssumption.getScore();
                                 } else {
                                     SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
@@ -172,37 +231,42 @@ public class PsmScorer {
                                 }
 
                                 psParameter.setIntermediateScore(scoreIndex, score);
-                                inputMap.setIntermediateScore(spectrumFileName, advocateIndex, scoreIndex, score, decoy, psmScoringPreferences);
 
-//                                    try {
-//                                        BufferedWriter br = brs.get(scoreIndex);
-//                                        if (br == null) {
-//                                            PsmScores psmScores = PsmScores.getScore(scoreIndex);
-//                                            br = new BufferedWriter(new FileWriter(new File("D:\\projects\\PeptideShaker\\rescoring", psmScores.name + ".txt")));
-//                                            brs.put(scoreIndex, br);
-//                                            br.write("Title\tPeptide\tScore\tDecoy");
-//                                        br.newLine();
-//                                        }
-//                                        if (decoy) {
-//                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 1);
-//                                        } else {
-//                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 0);
-//                                        }
-//                                        br.newLine();
-//
-//                                    } catch (Exception e) {
-//                                        e.printStackTrace();
-//                                    }
+                                if (scoreIndex.equals(PsmScore.hyperScore.index)) {
+                                    hyperScores.add(-score);
+                                    hyperScoreParameters.add(psParameter);
+                                    hyperScoreDecoys.add(decoy);
+                                } else {
+                                    inputMap.setIntermediateScore(spectrumFileName, advocateIndex, scoreIndex, score, decoy, psmScoringPreferences);
+                                }
+
                             }
 
                             assumption.addUrParam(psParameter);
                         }
                     }
                 }
+                if (scoresForAdvocate.contains(PsmScore.hyperScore.index)) {
+                    HashMap<Double, Double> eValuesMap = hyperScore.getEValueHistogram(hyperScores, false);
+                    if (eValuesMap != null) {
+                        for (int i = 0; i < hyperScores.size(); i++) {
+                            Double score = hyperScores.get(i);
+                            PSParameter psParameter = hyperScoreParameters.get(i);
+                            Boolean decoy = hyperScoreDecoys.get(i);
+                            Double eValue = eValuesMap.get(score);
+                            psParameter.setIntermediateScore(PsmScore.hyperScore.index, eValue);
+                            inputMap.setIntermediateScore(spectrumFileName, advocateIndex, PsmScore.hyperScore.index, score, decoy, psmScoringPreferences);
+                        }
+                    } else {
+                        missingEvalue.add(advocateIndex);
+                    }
+                }
             }
         }
 
         identification.updateAssumptions(spectrumKey, assumptions);
+
+        return missingEvalue;
     }
 
     /**
@@ -306,7 +370,7 @@ public class PsmScorer {
 
                                     psParameter = (PSParameter) assumption.getUrParam(psParameter);
 
-                                    double score = 1;
+                                    Double score = 1.0;
 
                                     HashSet<Integer> scores = psmScoringPreferences.getScoreForAlgorithm(advocateIndex);
 
@@ -317,11 +381,11 @@ public class PsmScorer {
                                             TargetDecoyMap targetDecoyMap = inputMap.getIntermediateScoreMap(spectrumFileName, advocateIndex, scoreIndex);
                                             Double intermediateScore = psParameter.getIntermediateScore(scoreIndex);
                                             if (intermediateScore != null) {
-                                                double p = targetDecoyMap.getProbability(intermediateScore);
-                                                score *= (1-p);
+                                                Double p = targetDecoyMap.getProbability(intermediateScore);
+                                                score *= (1.0 - p);
                                             }
                                         }
-                                        score = 1-score;
+                                        score = 1 - score;
                                     }
 
                                     assumption.setScore(score);
@@ -331,12 +395,6 @@ public class PsmScorer {
                                     boolean decoy = peptide.isDecoy(sequenceMatchingPreferences);
                                     inputMap.addEntry(advocateIndex, spectrumFileName, assumption.getScore(), decoy);
 
-//                                if (decoy) {
-//                                    br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 1);
-//                                } else {
-//                                    br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 0);
-//                                }
-//                                br.newLine();
                                 }
                             }
                         }
@@ -356,7 +414,7 @@ public class PsmScorer {
     }
 
     /**
-     * Runnable scoring PSM PTMs.
+     * Runnable scoring PSMs.
      *
      * @author Marc Vaudel
      */
@@ -375,10 +433,6 @@ public class PsmScorer {
          */
         private InputMap inputMap;
         /**
-         * The protocol used
-         */
-        private ShotgunProtocol shotgunProtocol;
-        /**
          * The identification parameters.
          */
         private IdentificationParameters identificationParameters;
@@ -394,6 +448,14 @@ public class PsmScorer {
          * The peptide spectrum annotator.
          */
         private PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
+        /**
+         * The object used to estimate the hyper score.
+         */
+        private HyperScore hyperScore = new HyperScore();
+        /**
+         * Map of the advocates missing a hyperscore e-value for every spectrum.
+         */
+        private HashMap<String, ArrayList<Integer>> missingEValues = new HashMap<String, ArrayList<Integer>>();
 
         /**
          * Constructor.
@@ -419,11 +481,189 @@ public class PsmScorer {
         @Override
         public void run() {
             try {
+                boolean increaseProgress = true;
                 while (psmIterator.hasNext() && !waitingHandler.isRunCanceled()) {
                     SpectrumMatch spectrumMatch = psmIterator.next();
-                    estimateIntermediateScores(identification, spectrumMatch, inputMap, identificationParameters, peptideSpectrumAnnotator, waitingHandler);
-                    if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
-                        waitingHandler.increaseSecondaryProgressCounter();
+                    if (spectrumMatch != null) {
+                        ArrayList<Integer> advocatesMissingEValues = estimateIntermediateScores(identification, spectrumMatch, inputMap, identificationParameters, peptideSpectrumAnnotator, hyperScore, waitingHandler);
+                        if (!advocatesMissingEValues.isEmpty()) {
+                            missingEValues.put(spectrumMatch.getKey(), advocatesMissingEValues);
+                            increaseProgress = !increaseProgress;
+                        } else {
+                            increaseProgress = true;
+                        }
+                        if (increaseProgress && waitingHandler != null && !waitingHandler.isRunCanceled()) {
+                            waitingHandler.increaseSecondaryProgressCounter();
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                exceptionHandler.catchException(e);
+                waitingHandler.setRunCanceled();
+            }
+        }
+
+        /**
+         * Returns the hyperscore used to score on this thread.
+         *
+         * @return the hyperscore used to score on this thread
+         */
+        public HyperScore getHyperScore() {
+            return hyperScore;
+        }
+
+        /**
+         * Returns the missing values map on this thread.
+         *
+         * @return the missing values map on this thread
+         */
+        public HashMap<String, ArrayList<Integer>> getMissingEValues() {
+            return missingEValues;
+        }
+
+    }
+
+    /**
+     * Runnable estimating the missing e-values.
+     *
+     * @author Marc Vaudel
+     */
+    private class MissingEValueEstimatorRunnable implements Runnable {
+
+        /**
+         * An iterator for the PSMs.
+         */
+        private PsmIterator psmIterator;
+        /**
+         * The identification.
+         */
+        private Identification identification;
+        /**
+         * The input map
+         */
+        private InputMap inputMap;
+        /**
+         * The identification parameters.
+         */
+        private IdentificationParameters identificationParameters;
+        /**
+         * The waiting handler.
+         */
+        private WaitingHandler waitingHandler;
+        /**
+         * Handler for the exceptions.
+         */
+        private ExceptionHandler exceptionHandler;
+        /**
+         * Map of the advocates missing a hyperscore e-value for every spectrum.
+         */
+        private HashMap<String, ArrayList<Integer>> missingEValues;
+        /**
+         * Default values for the a coefficient.
+         */
+        private Double defaultA;
+        /**
+         * Default values for the b coefficient.
+         */
+        private Double defaultB;
+
+        /**
+         * Constructor.
+         *
+         * @param missingEValuesMap a map for the missing values
+         * @param defaultA default values for the a coefficient
+         * @param defaultB default values for the b coefficient
+         * @param psmIterator An iterator of the PSMs to iterate
+         * @param identification the identification containing all matches
+         * @param inputMap the input map used to store the scores
+         * @param identificationParameters the identification parameters
+         * @param waitingHandler a waiting handler to display progress and allow
+         * canceling the process
+         * @param exceptionHandler handler for exceptions
+         */
+        public MissingEValueEstimatorRunnable(HashMap<String, ArrayList<Integer>> missingEValuesMap, Double defaultA, Double defaultB, PsmIterator psmIterator, Identification identification, InputMap inputMap,
+                IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
+            this.missingEValues = missingEValuesMap;
+            this.defaultA = defaultA;
+            this.defaultB = defaultB;
+            this.psmIterator = psmIterator;
+            this.identification = identification;
+            this.inputMap = inputMap;
+            this.identificationParameters = identificationParameters;
+            this.waitingHandler = waitingHandler;
+            this.exceptionHandler = exceptionHandler;
+        }
+
+        @Override
+        public void run() {
+            try {
+
+                PSParameter psParameter = new PSParameter();
+                boolean increaseProgress = true;
+                PsmScoringPreferences psmScoringPreferences = identificationParameters.getPsmScoringPreferences();
+                SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+
+                while (psmIterator.hasNext() && !waitingHandler.isRunCanceled()) {
+
+                    SpectrumMatch spectrumMatch = psmIterator.next();
+
+                    if (spectrumMatch != null) {
+
+                        String spectrumKey = spectrumMatch.getKey();
+                        ArrayList<Integer> advocates = missingEValues.get(spectrumKey);
+
+                        if (advocates != null) {
+
+                            String spectrumFileName = Spectrum.getSpectrumFile(spectrumKey);
+                            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+
+                            for (Integer advocateIndex : advocates) {
+
+                                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> originalAssumptions = assumptions.get(advocateIndex);
+                                Double nMatches = null;
+                                for (Double originalScore : originalAssumptions.keySet()) {
+                                    for (SpectrumIdentificationAssumption assumption : originalAssumptions.get(originalScore)) {
+
+                                        if (assumption instanceof PeptideAssumption) {
+
+                                            PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                                            Peptide peptide = peptideAssumption.getPeptide();
+                                            boolean decoy = peptide.isDecoy(sequenceMatchingPreferences);
+                                            psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
+                                            Double hyperScore = -psParameter.getIntermediateScore(PsmScore.hyperScore.index);
+                                            if (defaultA != null && defaultB != null) {
+                                                Double eValue;
+                                                if (hyperScore > 0) {
+                                                    hyperScore = FastMath.log10(hyperScore);
+                                                    eValue = HyperScore.getInterpolation(hyperScore, defaultA, defaultB);
+                                                } else {
+                                                    if (nMatches == null) {
+                                                        nMatches = 0.0;
+                                                        for (Double originalScoreTemp : originalAssumptions.keySet()) {
+                                                            for (SpectrumIdentificationAssumption assumptionTemp : originalAssumptions.get(originalScoreTemp)) {
+                                                                if (assumptionTemp instanceof PeptideAssumption) {
+                                                                    nMatches += 1;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    eValue = nMatches;
+                                                }
+                                                psParameter.setIntermediateScore(PsmScore.hyperScore.index, eValue);
+                                                inputMap.setIntermediateScore(spectrumFileName, advocateIndex, PsmScore.hyperScore.index, eValue, decoy, psmScoringPreferences);
+                                            } else {
+                                                inputMap.setIntermediateScore(spectrumFileName, advocateIndex, PsmScore.hyperScore.index, -hyperScore, decoy, psmScoringPreferences);
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+                            increaseProgress = !increaseProgress;
+                            if (increaseProgress && waitingHandler != null && !waitingHandler.isRunCanceled()) {
+                                waitingHandler.increaseSecondaryProgressCounter();
+                            }
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -432,4 +672,5 @@ public class PsmScorer {
             }
         }
     }
+
 }

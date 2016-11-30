@@ -76,7 +76,7 @@ public class PSParameter implements UrParameter {
     /**
      * Boolean indicating whether this is a starred match.
      */
-    private boolean starred = false; // @TODO would be nice to change this into a color
+    private boolean starred = false; // @TODO would be nice to change this into a symbol/color
     /**
      * the key in the corresponding specific map.
      */
@@ -831,7 +831,7 @@ public class PSParameter implements UrParameter {
      * @param scoreId the index of the score
      * @param score the value of the score
      */
-    public void setIntermediateScore(int scoreId, double score) {
+    public void setIntermediateScore(Integer scoreId, Double score) {
         if (intermediateScores == null) {
             createIntermediateScoreMap();
         }

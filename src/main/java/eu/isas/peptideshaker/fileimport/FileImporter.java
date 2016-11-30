@@ -190,8 +190,8 @@ public class FileImporter {
                 nSequences = sequenceFactory.getNTargetSequences();
                 sequenceFactory.setDecoyInMemory(false);
             }
-        long availableCachSize = 1048576 * memoryPreference / 112; // 112 is the size taken by one protein
-        availableCachSize *= 0.75;
+            long availableCachSize = 1048576 * memoryPreference / 112; // 112 is the size taken by one protein
+            availableCachSize *= 0.75;
             if (availableCachSize > nSequences) {
                 availableCachSize = nSequences;
             } else {
