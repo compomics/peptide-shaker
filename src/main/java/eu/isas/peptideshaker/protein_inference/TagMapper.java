@@ -302,8 +302,8 @@ public class TagMapper {
                     advocateMapToSave = new HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>(2);
                     assumptionsToSave.put(advocateId, advocateMapToSave);
                 }
-                ArrayList<String> inspectedTags = new ArrayList<String>();
-                ArrayList<String> peptidesFound = new ArrayList<String>();
+                HashSet<String> inspectedTags = new HashSet<String>(tagAssumptions.size());
+                HashSet<String> peptidesFound = new HashSet<String>(tagAssumptions.size());
                 for (TagAssumption tagAssumption : tagAssumptions) {
                     String tagSequence = tagAssumption.getTag().asSequence();
                     if (!inspectedTags.contains(tagSequence)) {
@@ -314,33 +314,15 @@ public class TagMapper {
                             advocateMapToSave.put(score, assumptionAtScoreToSave);
                         }
                         mapPtmsForTag(tagAssumption.getTag(), advocateId);
-                        ArrayList<TagAssumption> extendedTagList = new ArrayList<TagAssumption>();
+                        ArrayList<TagAssumption> extendedTagList = new ArrayList<TagAssumption>(1);
                         extendedTagList.add(tagAssumption);
-                        SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, tagAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-                        ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, tagAssumption.getTag());
-                        int nB = 0, nY = 0;
-                        for (IonMatch ionMatch : annotations) {
-                            Ion ion = ionMatch.ion;
-                            if (ion instanceof TagFragmentIon) {
-                                int ionType = ion.getSubType();
-                                if (ionType == TagFragmentIon.A_ION
-                                        || ionType == TagFragmentIon.B_ION
-                                        || ionType == TagFragmentIon.C_ION) {
-                                    nB++;
-                                } else {
-                                    nY++;
-                                }
-                            }
-                        }
-                        if (nB < 3) {
-                            extendedTagList.addAll(tagAssumption.getPossibleTags(false, searchParameters.getMinChargeSearched().value, searchParameters.getMaxChargeSearched().value, 2));
-                        }
-                        if (nY < 3) {
-                            extendedTagList.addAll(tagAssumption.getPossibleTags(true, searchParameters.getMinChargeSearched().value, searchParameters.getMaxChargeSearched().value, 2));
-                        }
-                        if (tagAssumption.getTag().canReverse()) {
-                            extendedTagList.add(tagAssumption.reverse(nY >= nB));
-                        }
+                        // @TODO: make the following a user parameter
+//                        extendedTagList.addAll(tagAssumption.getPossibleTags(false, searchParameters.getMinChargeSearched().value, searchParameters.getMaxChargeSearched().value, 2));
+//                        extendedTagList.addAll(tagAssumption.getPossibleTags(true, searchParameters.getMinChargeSearched().value, searchParameters.getMaxChargeSearched().value, 2));
+//                        if (tagAssumption.getTag().canReverse()) {
+//                            extendedTagList.add(tagAssumption.reverse(true));
+//                            extendedTagList.add(tagAssumption.reverse(false));
+//                        }
                         for (TagAssumption extendedAssumption : extendedTagList) {
                             assumptionAtScoreToSave.add(extendedAssumption);
                             Double refMass = spectrum.getPrecursor().getMassPlusProton(1);
