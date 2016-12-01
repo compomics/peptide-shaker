@@ -82,6 +82,11 @@ public class PsmScorer {
             IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler)
             throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
+        // Remove the intensity filter during scoring
+        AnnotationSettings annotationSettings = identificationParameters.getAnnotationPreferences();
+        double intensityThreshold = annotationSettings.getAnnotationIntensityLimit();
+        annotationSettings.setIntensityLimit(0);
+        
         waitingHandler.setWaitingText("Scoring PSMs. Please Wait...");
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -143,11 +148,11 @@ public class PsmScorer {
                 }
             }
         }
-
-//        for (BufferedWriter br : brs.values()) {
-//            br.close();
-//        }
+        
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+
+        // Restaure intensity scoring
+        annotationSettings.setIntensityLimit(intensityThreshold);
     }
 
     /**
