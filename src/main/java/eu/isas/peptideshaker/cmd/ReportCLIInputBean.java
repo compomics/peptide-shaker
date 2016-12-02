@@ -47,7 +47,7 @@ public class ReportCLIInputBean {
     public ReportCLIInputBean(CommandLine aLine) {
 
         if (aLine.hasOption(ReportCLIParams.CPS_FILE.id)) {
-            String file = aLine.getOptionValue(FollowUpCLIParams.CPS_FILE.id);
+            String file = aLine.getOptionValue(ReportCLIParams.CPS_FILE.id);
             if (file.toLowerCase().endsWith(".cpsx")) {
                 cpsFile = new File(file);
             } else if (file.toLowerCase().endsWith(".zip")) {

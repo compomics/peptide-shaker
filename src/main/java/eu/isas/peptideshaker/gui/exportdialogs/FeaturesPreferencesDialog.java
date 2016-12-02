@@ -790,8 +790,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                                 peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),
                                 peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
                                 peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), null, null, null, null,
-                                peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
-                                peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(),
+                                peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(), peptideShakerGUI.getIdentificationParameters(),
                                 peptideShakerGUI.getSpectrumCountingPreferences(), progressDialog);
 
                         boolean processCancelled = progressDialog.isRunCanceled();

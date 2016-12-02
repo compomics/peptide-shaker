@@ -112,7 +112,6 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @param identification the identification of the project
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
-     * @param shotgunProtocol information on the shotgun protocol
      * @param identificationParameters the identification parameters
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
@@ -131,7 +130,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * reading an mzML file
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys,
+            IdentificationParameters identificationParameters, ArrayList<String> keys,
             String linePrefix, int nSurroundingAA, WaitingHandler waitingHandler) throws IOException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -257,7 +256,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                                     fractionPrefix += linePrefix;
                                 }
                                 fractionPrefix += line + ".";
-                                fragmentSection.writeSection(spectrumMatch.getKey(), assumption, shotgunProtocol, identificationParameters, fractionPrefix, null);
+                                fragmentSection.writeSection(spectrumMatch.getKey(), assumption, identificationParameters, fractionPrefix, null);
                             }
                             line++;
                             writer.newLine();

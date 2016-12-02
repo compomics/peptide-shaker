@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.export.sections;
 
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
@@ -87,7 +86,6 @@ public class PsFragmentSection {
      * @param spectrumKey the key of the spectrum
      * @param spectrumIdentificationAssumption the spectrum identification of
      * interest
-     * @param shotgunProtocol information on the shotgun protocol
      * @param identificationParameters the identification parameters
      * @param linePrefix the line prefix
      * @param waitingHandler the waiting handler
@@ -103,7 +101,7 @@ public class PsFragmentSection {
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
      */
-    public void writeSection(String spectrumKey, SpectrumIdentificationAssumption spectrumIdentificationAssumption, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
+    public void writeSection(String spectrumKey, SpectrumIdentificationAssumption spectrumIdentificationAssumption, IdentificationParameters identificationParameters,
             String linePrefix, WaitingHandler waitingHandler) throws IOException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 

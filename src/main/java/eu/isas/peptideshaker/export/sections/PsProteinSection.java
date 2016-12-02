@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.genes.go.GoMapping;
 import com.compomics.util.experiment.biology.Protein;
@@ -105,7 +104,6 @@ public class PsProteinSection {
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
      * @param geneMaps the gene maps
-     * @param shotgunProtocol information on the shotgun protocol
      * @param identificationParameters the identification parameters
      * @param keys the keys of the protein matches to output. if null all
      * proteins will be exported.
@@ -129,7 +127,7 @@ public class PsProteinSection {
      * an error is encountered while calculating the observable coverage
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys,
+            IdentificationParameters identificationParameters, ArrayList<String> keys,
             int nSurroundingAas, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
@@ -190,7 +188,7 @@ public class PsProteinSection {
                             first = false;
                         }
                         PsProteinFeature tempProteinFeatures = (PsProteinFeature) exportFeature;
-                        writer.write(getFeature(identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, keys, nSurroundingAas, proteinKey, proteinMatch, psParameter, tempProteinFeatures, waitingHandler));
+                        writer.write(getFeature(identificationFeaturesGenerator, geneMaps, identificationParameters, keys, nSurroundingAas, proteinKey, proteinMatch, psParameter, tempProteinFeatures, waitingHandler));
                     }
                     writer.newLine();
                     if (peptideSection != null) {
@@ -198,7 +196,7 @@ public class PsProteinSection {
                         if (waitingHandler != null) {
                             waitingHandler.setDisplayProgress(false);
                         }
-                        peptideSection.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, proteinMatch.getPeptideMatchesKeys(), nSurroundingAas, line + ".", validatedOnly, decoys, waitingHandler);
+                        peptideSection.writeSection(identification, identificationFeaturesGenerator, identificationParameters, proteinMatch.getPeptideMatchesKeys(), nSurroundingAas, line + ".", validatedOnly, decoys, waitingHandler);
                         if (waitingHandler != null) {
                             waitingHandler.setDisplayProgress(true);
                         }
@@ -216,7 +214,6 @@ public class PsProteinSection {
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
      * @param geneMaps the gene maps
-     * @param shotgunProtocol information on the shotgun protocol
      * @param identificationParameters the identification parameters
      * @param keys the keys of the protein matches to output. if null all
      * proteins will be exported.
@@ -245,7 +242,7 @@ public class PsProteinSection {
      * an error is encountered while calculating the observable coverage
      */
     public static String getFeature(IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAas, String proteinKey, ProteinMatch proteinMatch, PSParameter psParameter, PsProteinFeature tempProteinFeatures, WaitingHandler waitingHandler)
+            IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAas, String proteinKey, ProteinMatch proteinMatch, PSParameter psParameter, PsProteinFeature tempProteinFeatures, WaitingHandler waitingHandler)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         switch (tempProteinFeatures) {

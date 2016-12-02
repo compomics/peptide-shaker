@@ -37,7 +37,7 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class CLIMethods {
+public class CLIExportMethods {
 
     /**
      * Recalibrates spectra as specified in the follow-up input bean.
@@ -261,7 +261,6 @@ public class CLIMethods {
      * @param geneMaps the gene maps
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param shotgunProtocol information on the protocol used
      * @param identificationParameters the identification parameters used
      * @param nSurroundingAA the number of amino acids to export on the side of
      * peptide sequences
@@ -284,8 +283,8 @@ public class CLIMethods {
      */
     public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, String sample, int replicateNumber,
             ProjectDetails projectDetails, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, int nSurroundingAA, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
-            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
+            IdentificationParameters identificationParameters, int nSurroundingAA, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
+            throws IOException, SQLException, ClassNotFoundException,
             InterruptedException, MzMLUnmarshallerException, MathException {
 
         PSExportFactory exportFactory = PSExportFactory.getInstance();
@@ -295,7 +294,7 @@ public class CLIMethods {
 
         //@TODO: allow format selection
         PSExportFactory.writeExport(exportScheme, reportFile, ExportFormat.text, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator, geneMaps,
-                null, null, null, null, nSurroundingAA, shotgunProtocol, identificationParameters, spectrumCountingPreferences, waitingHandler);
+                null, null, null, null, nSurroundingAA, identificationParameters, spectrumCountingPreferences, waitingHandler);
     }
 
     /**

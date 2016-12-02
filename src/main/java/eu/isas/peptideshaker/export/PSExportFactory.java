@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.export;
 
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.io.export.ExportScheme;
 import com.compomics.util.io.export.ExportFeature;
@@ -246,25 +245,29 @@ public class PSExportFactory implements ExportFactory {
      * a single protein match (optional for the Peptide sections)
      * @param nSurroundingAA the number of surrounding amino acids to export
      * (mandatory for the Peptide section)
-     * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
      * @param spectrumCountingPreferences the spectrum counting preferences
      * (mandatory for the spectrum counting section)
      * @param waitingHandler the waiting handler
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws ClassNotFoundException thrown if an ClassNotFoundException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
-     * @throws org.apache.commons.math.MathException thrown if an MathException
-     * occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while interacting with the database
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown whenever
+     * an exception occurred while estimating the theoretical coverage of a
+     * protein
      */
     public static void writeExport(ExportScheme exportScheme, File destinationFile, ExportFormat exportFormat, String experiment, String sample, int replicateNumber,
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
             ArrayList<String> proteinKeys, ArrayList<String> peptideKeys, ArrayList<String> psmKeys,
-            String proteinMatchKey, int nSurroundingAA, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
+            String proteinMatchKey, int nSurroundingAA, IdentificationParameters identificationParameters,
             SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
@@ -291,19 +294,19 @@ public class PSExportFactory implements ExportFactory {
                 section.writeSection(identificationParameters.getPeptideAssumptionFilter(), waitingHandler);
             } else if (sectionName.equals(PsPeptideFeature.type)) {
                 PsPeptideSection section = new PsPeptideSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideKeys, nSurroundingAA, "", exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
+                section.writeSection(identification, identificationFeaturesGenerator, identificationParameters, peptideKeys, nSurroundingAA, "", exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
             } else if (sectionName.equals(PsProjectFeature.type)) {
                 PsProjectSection section = new PsProjectSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
                 section.writeSection(experiment, sample, replicateNumber, projectDetails, waitingHandler);
             } else if (sectionName.equals(PsProteinFeature.type)) {
                 PsProteinSection section = new PsProteinSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identification, identificationFeaturesGenerator, geneMaps, shotgunProtocol, identificationParameters, psmKeys, nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
+                section.writeSection(identification, identificationFeaturesGenerator, geneMaps, identificationParameters, psmKeys, nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
             } else if (sectionName.equals(PsPsmFeature.type)) {
                 PsPsmSection section = new PsPsmSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, psmKeys, "", nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
+                section.writeSection(identification, identificationFeaturesGenerator, identificationParameters, psmKeys, "", nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
             } else if (sectionName.equals(PsIdentificationAlgorithmMatchesFeature.type)) {
                 PsIdentificationAlgorithmMatchesSection section = new PsIdentificationAlgorithmMatchesSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, psmKeys, "", nSurroundingAA, waitingHandler);
+                section.writeSection(identification, identificationFeaturesGenerator, identificationParameters, psmKeys, "", nSurroundingAA, waitingHandler);
             } else if (sectionName.equals(PsPtmScoringFeature.type)) {
                 PsPtmScoringSection section = new PsPtmScoringSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
                 section.writeSection(identificationParameters.getPtmScoringPreferences(), waitingHandler);

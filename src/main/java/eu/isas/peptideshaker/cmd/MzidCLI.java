@@ -211,7 +211,7 @@ public class MzidCLI extends CpsParent {
         this.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(0.0);
 
         try {
-            CLIMethods.exportMzId(mzidCLIInputBean, this, waitingHandler);
+            CLIExportMethods.exportMzId(mzidCLIInputBean, this, waitingHandler);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while generating the mzid file.", true, true);
             e.printStackTrace();

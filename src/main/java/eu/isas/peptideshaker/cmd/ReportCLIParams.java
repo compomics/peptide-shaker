@@ -10,36 +10,42 @@ import org.apache.commons.cli.Options;
  */
 public enum ReportCLIParams {
 
-    CPS_FILE("in", "PeptideShaker project (.cpsx or .zip file)", true),
-    EXPORT_FOLDER("out_reports", "Output folder for report files. (Existing files will be overwritten.)", true),
-    REPORT_TYPE("reports", "Comma separated list of types of report to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false),
-    DOCUMENTATION_TYPE("documentation", "Comma separated list of types of report documentation to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false);
+    CPS_FILE("in", "PeptideShaker project (.cpsx or .zip file)", true, true),
+    EXPORT_FOLDER("out_reports", "Output folder for report files. (Existing files will be overwritten.)", true, true),
+    REPORT_TYPE("reports", "Comma separated list of types of report to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false, true),
+    DOCUMENTATION_TYPE("documentation", "Comma separated list of types of report documentation to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false, true);
 
     /**
      * Short Id for the CLI parameter.
      */
-    public String id;
+    public final String id;
     /**
      * Explanation for the CLI parameter.
      */
-    public String description;
+    public final String description;
     /**
      * Boolean indicating whether the parameter is mandatory.
      */
-    public boolean mandatory;
+    public final boolean mandatory;
+    /**
+     * boolean indicating whether the parameter has arguments.
+     */
+    public final boolean hasArg;
 
     /**
      * Private constructor managing the various variables for the enum
      * instances.
      *
-     * @param id the id
-     * @param description the description
-     * @param mandatory is the parameter mandatory
+     * @param id the parameter id
+     * @param description the parameter description
+     * @param mandatory boolean indicating whether the parameter mandatory
+     * @param hasArg boolean indicating whether the parameter needs an argument
      */
-    private ReportCLIParams(String id, String description, boolean mandatory) {
+    private ReportCLIParams(String id, String description, boolean mandatory, boolean hasArg) {
         this.id = id;
         this.description = description;
         this.mandatory = mandatory;
+        this.hasArg = hasArg;
     }
 
     /**
@@ -50,10 +56,9 @@ public enum ReportCLIParams {
      */
     public static void createOptionsCLI(Options aOptions) {
 
-        aOptions.addOption(CPS_FILE.id, true, CPS_FILE.description);
-        aOptions.addOption(EXPORT_FOLDER.id, true, EXPORT_FOLDER.description);
-        aOptions.addOption(REPORT_TYPE.id, true, REPORT_TYPE.description);
-        aOptions.addOption(DOCUMENTATION_TYPE.id, true, DOCUMENTATION_TYPE.description);
+        for (ReportCLIParams reportCLIParams : values()) {
+            aOptions.addOption(reportCLIParams.id, reportCLIParams.hasArg, reportCLIParams.description);
+        }
 
         // Path setup
         aOptions.addOption(PathSettingsCLIParams.ALL.id, true, PathSettingsCLIParams.ALL.description);

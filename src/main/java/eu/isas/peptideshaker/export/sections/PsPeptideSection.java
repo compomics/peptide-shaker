@@ -95,7 +95,6 @@ public class PsPeptideSection {
      * @param identification the identification of the project
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
-     * @param shotgunProtocol information on the shotgun protocol
      * @param identificationParameters the identification parameters
      * @param keys the keys of the protein matches to output
      * @param nSurroundingAA the number of surrounding amino acids to export
@@ -116,7 +115,7 @@ public class PsPeptideSection {
      * reading an mzML file
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAA,
+            IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAA,
             String linePrefix, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -180,7 +179,7 @@ public class PsPeptideSection {
                             first = false;
                         }
                         PsPeptideFeature peptideFeature = (PsPeptideFeature) exportFeature;
-                        writer.write(getfeature(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, keys, nSurroundingAA, linePrefix, peptideMatch, psParameter, peptideFeature, validatedOnly, decoys, waitingHandler));
+                        writer.write(getfeature(identification, identificationFeaturesGenerator, identificationParameters, keys, nSurroundingAA, linePrefix, peptideMatch, psParameter, peptideFeature, validatedOnly, decoys, waitingHandler));
                     }
                     writer.newLine();
                     if (psmSection != null) {
@@ -193,7 +192,7 @@ public class PsPeptideSection {
                         if (waitingHandler != null) {
                             waitingHandler.setDisplayProgress(false);
                         }
-                        psmSection.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideMatch.getSpectrumMatchesKeys(), psmSectionPrefix, nSurroundingAA, validatedOnly, decoys, waitingHandler);
+                        psmSection.writeSection(identification, identificationFeaturesGenerator, identificationParameters, peptideMatch.getSpectrumMatchesKeys(), psmSectionPrefix, nSurroundingAA, validatedOnly, decoys, waitingHandler);
                         if (waitingHandler != null) {
                             waitingHandler.setDisplayProgress(true);
                         }
@@ -211,7 +210,6 @@ public class PsPeptideSection {
      * @param identification the identification of the project
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
-     * @param shotgunProtocol information on the shotgun protocol
      * @param identificationParameters the identification parameters
      * @param keys the keys of the protein matches to output
      * @param nSurroundingAA the number of surrounding amino acids to export
@@ -237,7 +235,7 @@ public class PsPeptideSection {
      * whenever an error occurred while reading an mzML file
      */
     public static String getfeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAA, String linePrefix, PeptideMatch peptideMatch, PSParameter psParameter, PsPeptideFeature peptideFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
+            IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAA, String linePrefix, PeptideMatch peptideMatch, PSParameter psParameter, PsPeptideFeature peptideFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         switch (peptideFeature) {
             case accessions:

@@ -208,7 +208,7 @@ public class FollowUpCLI extends CpsParent {
         // recalibrate spectra
         if (followUpCLIInputBean.recalibrationNeeded()) {
             try {
-                CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
+                CLIExportMethods.recalibrateSpectra(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
                 waitingHandler.appendReport("Recalibration process completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while recalibrating the spectra.", true, true);
@@ -220,7 +220,7 @@ public class FollowUpCLI extends CpsParent {
         // export spectra
         if (followUpCLIInputBean.spectrumExportNeeded()) {
             try {
-                CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingPreferences());
+                CLIExportMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingPreferences());
                 waitingHandler.appendReport("Spectrum export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the spectra.", true, true);
@@ -232,7 +232,7 @@ public class FollowUpCLI extends CpsParent {
         // export protein accessions
         if (followUpCLIInputBean.accessionExportNeeded()) {
             try {
-                CLIMethods.exportAccessions(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterPreferences);
+                CLIExportMethods.exportAccessions(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterPreferences);
                 waitingHandler.appendReport("Protein accessions export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the protein accessions.", true, true);
@@ -244,7 +244,7 @@ public class FollowUpCLI extends CpsParent {
         // export protein details
         if (followUpCLIInputBean.fastaExportNeeded()) {
             try {
-                CLIMethods.exportFasta(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterPreferences);
+                CLIExportMethods.exportFasta(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterPreferences);
                 waitingHandler.appendReport("Protein details export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the protein details.", true, true);
@@ -256,7 +256,7 @@ public class FollowUpCLI extends CpsParent {
         // progenesis export
         if (followUpCLIInputBean.progenesisExportNeeded()) {
             try {
-                CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingPreferences());
+                CLIExportMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingPreferences());
                 waitingHandler.appendReport("Progenesis export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);
@@ -268,7 +268,7 @@ public class FollowUpCLI extends CpsParent {
         // PepNovo training export
         if (followUpCLIInputBean.pepnovoTrainingExportNeeded()) {
             try {
-                CLIMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
+                CLIExportMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
                 waitingHandler.appendReport("PepNovo training export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the PepNovo training file.", true, true);
@@ -280,7 +280,7 @@ public class FollowUpCLI extends CpsParent {
         // inclusion list export
         if (followUpCLIInputBean.inclusionListNeeded()) {
             try {
-                CLIMethods.exportInclusionList(followUpCLIInputBean, identification, identificationFeaturesGenerator, identificationParameters.getSearchParameters(), waitingHandler, filterPreferences);
+                CLIExportMethods.exportInclusionList(followUpCLIInputBean, identification, identificationFeaturesGenerator, identificationParameters.getSearchParameters(), waitingHandler, filterPreferences);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while generating the inclusion list.", true, true);
                 e.printStackTrace();

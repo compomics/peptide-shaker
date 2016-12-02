@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.export.sections;
 
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.Advocate;
@@ -104,7 +103,6 @@ public class PsPsmSection {
      * @param identification the identification of the project
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
-     * @param shotgunProtocol information on the shotgun protocol
      * @param identificationParameters the identification parameters
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
@@ -125,7 +123,7 @@ public class PsPsmSection {
      * reading an mzML file
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys,
+            IdentificationParameters identificationParameters, ArrayList<String> keys,
             String linePrefix, int nSurroundingAA, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -230,7 +228,7 @@ public class PsPsmSection {
                             } else {
                                 first = false;
                             }
-                            writer.write(getFeature(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters,
+                            writer.write(getFeature(identification, identificationFeaturesGenerator, identificationParameters,
                                     keys, linePrefix, spectrumMatch, psParameter, psmFeature, validatedOnly, decoys, waitingHandler));
                         }
                         writer.newLine();
@@ -242,9 +240,9 @@ public class PsPsmSection {
                             fractionPrefix += line + ".";
                             writer.increaseDepth();
                             if (spectrumMatch.getBestPeptideAssumption() != null) {
-                                fragmentSection.writeSection(spectrumKey, spectrumMatch.getBestPeptideAssumption(), shotgunProtocol, identificationParameters, fractionPrefix, null);
+                                fragmentSection.writeSection(spectrumKey, spectrumMatch.getBestPeptideAssumption(), identificationParameters, fractionPrefix, null);
                             } else if (spectrumMatch.getBestTagAssumption() != null) {
-                                fragmentSection.writeSection(spectrumKey, spectrumMatch.getBestTagAssumption(), shotgunProtocol, identificationParameters, fractionPrefix, null);
+                                fragmentSection.writeSection(spectrumKey, spectrumMatch.getBestTagAssumption(), identificationParameters, fractionPrefix, null);
                             }
                             writer.decreseDepth();
                         }
@@ -261,7 +259,6 @@ public class PsPsmSection {
      * @param identification the identification of the project
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
-     * @param shotgunProtocol information on the shotgun protocol
      * @param identificationParameters the identification parameters
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
@@ -288,7 +285,7 @@ public class PsPsmSection {
      * reading an mzML file
      */
     public static String getFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix,
+            IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix,
             SpectrumMatch spectrumMatch, PSParameter psParameter, PsPsmFeature psmFeature, boolean validatedOnly, boolean decoys,
             WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
