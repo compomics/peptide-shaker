@@ -268,7 +268,7 @@ public class FileImporter {
      * @throws IOException exception thrown whenever an error occurred while
      * reading or writing a file
      */
-    public void importGenes() throws IOException {
+    public void importGenes() throws IOException, InterruptedException {
         GeneFactory geneFactory = GeneFactory.getInstance();
         GenePreferences genePreferences = identificationParameters.getGenePreferences();
         GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, waitingHandler);
