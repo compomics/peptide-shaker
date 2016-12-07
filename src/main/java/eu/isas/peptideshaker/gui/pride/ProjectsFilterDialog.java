@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.gui.pride;
 
-import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import java.awt.Insets;
 import java.awt.event.KeyAdapter;
@@ -12,7 +11,6 @@ import java.util.regex.PatternSyntaxException;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
@@ -98,7 +96,10 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
         }
         assaysJTextField.setText(currentFilterValues[++filterCounter]);
         if (currentFilterValues[++filterCounter] != null) {
-            typeComboBox.setSelectedItem(currentFilterValues[filterCounter]);
+            typeComboBox.setSelectedIndex(Integer.parseInt(currentFilterValues[filterCounter]));
+        }
+        if (currentFilterValues[++filterCounter] != null) {
+            categoryComboBox.setSelectedIndex(Integer.parseInt(currentFilterValues[filterCounter]));
         }
 
         if (assaysBiggerThan) {
@@ -157,6 +158,8 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
         });
 
         assaysComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        typeComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        categoryComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
     }
 
     /**
@@ -189,6 +192,8 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
         assaysComboBox = new javax.swing.JComboBox();
         tagsLabel = new javax.swing.JLabel();
         tagsComboBox = new javax.swing.JComboBox();
+        categoryLabel = new javax.swing.JLabel();
+        categoryComboBox = new javax.swing.JComboBox();
         clearJButton = new javax.swing.JButton();
         okJButton = new javax.swing.JButton();
         projectSearchLabel = new javax.swing.JLabel();
@@ -245,9 +250,9 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
 
         typeLabel.setText("Type");
 
-        typeComboBox.setEditable(true);
         typeComboBox.setMaximumRowCount(20);
-        typeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { " ", "COMPLETE", "PARTIAL", "PRIDE" }));
+        typeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "COMPLETE", "PARTIAL", "PRIDE", "All" }));
+        typeComboBox.setSelectedIndex(3);
         typeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 typeComboBoxActionPerformed(evt);
@@ -299,6 +304,17 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
             }
         });
 
+        categoryLabel.setText("Confidence");
+
+        categoryComboBox.setMaximumRowCount(20);
+        categoryComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Not yet classified", "High confidence", "Good confidence", "Moderate confidence", "Low confidence", "All" }));
+        categoryComboBox.setSelectedIndex(5);
+        categoryComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                categoryComboBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout filterPanelLayout = new javax.swing.GroupLayout(filterPanel);
         filterPanel.setLayout(filterPanelLayout);
         filterPanelLayout.setHorizontalGroup(
@@ -333,7 +349,11 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, filterPanelLayout.createSequentialGroup()
                         .addComponent(tagsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tagsComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(tagsComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(filterPanelLayout.createSequentialGroup()
+                        .addComponent(categoryLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(categoryComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         filterPanelLayout.setVerticalGroup(
@@ -376,10 +396,14 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
                 .addGroup(filterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(typeLabel)
                     .addComponent(typeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(filterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(categoryLabel)
+                    .addComponent(categoryComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
-        filterPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {accessionJTextField, assaysComboBox, assaysJTextField, instrumentsComboBox, ptmsComboBox, speciesComboBox, tissuesComboBox, titleJTextField, typeComboBox});
+        filterPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {accessionJTextField, assaysComboBox, assaysJTextField, categoryComboBox, instrumentsComboBox, ptmsComboBox, speciesComboBox, tagsComboBox, tissuesComboBox, titleJTextField, typeComboBox});
 
         clearJButton.setText("Clear");
         clearJButton.addActionListener(new java.awt.event.ActionListener() {
@@ -433,8 +457,8 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filterPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(filterPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(clearJButton)
                     .addComponent(okJButton)
@@ -470,7 +494,8 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
         ptmsComboBox.setSelectedIndex(0);
         instrumentsComboBox.setSelectedIndex(0);
         assaysJTextField.setText("");
-        typeComboBox.setSelectedIndex(0);
+        typeComboBox.setSelectedIndex(3);
+        categoryComboBox.setSelectedIndex(5);
         filter();
     }//GEN-LAST:event_clearJButtonActionPerformed
 
@@ -500,7 +525,7 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
     private void okJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okJButtonActionPerformed
 
         // store the current filter values
-        String[] currentFilterValues = new String[9];
+        String[] currentFilterValues = new String[10];
         currentFilterValues[0] = accessionJTextField.getText();
         currentFilterValues[1] = titleJTextField.getText();
 
@@ -522,9 +547,8 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
 
         currentFilterValues[7] = assaysJTextField.getText();
 
-        if (!((JTextField) typeComboBox.getEditor().getEditorComponent()).getText().trim().isEmpty()) {
-            currentFilterValues[8] = ((JTextField) typeComboBox.getEditor().getEditorComponent()).getText().trim();
-        }
+        currentFilterValues[8] = "" + typeComboBox.getSelectedIndex();
+        currentFilterValues[9] = "" + categoryComboBox.getSelectedIndex();
 
         prideReShakeGUI.setCurrentFilterValues(currentFilterValues, assaysComboBox.getSelectedIndex() == 0);
 
@@ -607,8 +631,8 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
 
     /**
      * Change the cursor into a hand cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void projectSearchLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_projectSearchLabelMouseEntered
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -616,8 +640,8 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
 
     /**
      * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void projectSearchLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_projectSearchLabelMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -625,12 +649,21 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
 
     /**
      * Open the PRIDE web page search.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void projectSearchLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_projectSearchLabelMouseReleased
         new PrideFreeTextSearchDialog(this, true);
     }//GEN-LAST:event_projectSearchLabelMouseReleased
+
+    /**
+     * Filters the projects table according to the current filter settings.
+     *
+     * @param evt
+     */
+    private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryComboBoxActionPerformed
+        filter();
+    }//GEN-LAST:event_categoryComboBoxActionPerformed
 
     /**
      * Make sure that the user is finished typing before applying the filters.
@@ -735,6 +768,20 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
                     //JOptionPane.showMessageDialog(this, "Bad regex pattern for type!", "Filter Error", JOptionPane.ERROR_MESSAGE);
                     //pse.printStackTrace();
                 }
+            }
+        }
+
+        // project category filter
+        int selectedIndex = categoryComboBox.getSelectedIndex();
+
+        if (selectedIndex == 5) {
+            filters.add(RowFilter.regexFilter(".*"));
+        } else {
+            try {
+                filters.add(RowFilter.regexFilter("(?i)" + Pattern.quote("" + selectedIndex), projectsTable.getColumn("  ").getModelIndex()));
+            } catch (PatternSyntaxException pse) {
+                //JOptionPane.showMessageDialog(this, "Bad regex pattern for type!", "Filter Error", JOptionPane.ERROR_MESSAGE);
+                //pse.printStackTrace();
             }
         }
 
@@ -857,6 +904,8 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
     private javax.swing.JTextField assaysJTextField;
     private javax.swing.JLabel assaysLabel;
     private javax.swing.JPanel backgroundPanel;
+    private javax.swing.JComboBox categoryComboBox;
+    private javax.swing.JLabel categoryLabel;
     private javax.swing.JButton clearJButton;
     private javax.swing.JPanel filterPanel;
     private javax.swing.JLabel instrumentLabel;

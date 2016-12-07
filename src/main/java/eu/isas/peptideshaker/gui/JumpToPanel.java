@@ -561,6 +561,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                 peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                                 inputTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                                inputTxt.requestFocus();
 
                             } else {
                                 indexLabel.setText("");
@@ -568,6 +569,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                 nextButton.setEnabled(false);
                                 inputTxt.setText(welcomeText.get(jumpType));
                                 inputTxt.selectAll();
+                                inputTxt.requestFocus();
                             }
                         }
 

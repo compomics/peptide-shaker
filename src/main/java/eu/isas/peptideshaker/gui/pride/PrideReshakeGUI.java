@@ -20,16 +20,21 @@ import com.compomics.util.preferences.LastSelectedFolder;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.WelcomeDialog;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
+import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -55,6 +60,7 @@ import javax.swing.table.TableRowSorter;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
+import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import org.apache.commons.codec.binary.Base64;
 import org.jfree.chart.plot.PlotOrientation;
 import org.springframework.http.HttpEntity;
@@ -181,7 +187,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     /**
      * The current filter values.
      */
-    private String[] currentFilterValues = new String[9];
+    private String[] currentFilterValues = new String[10];
     /**
      * The assay number filter type. True means greater than, false means
      * smaller than.
@@ -219,6 +225,14 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      * The identification parameters factory.
      */
     private IdentificationParametersFactory identificationParametersFactory = IdentificationParametersFactory.getInstance();
+    /**
+     * The project cluster annotation.
+     */
+    private HashMap<String, Integer> projectClusterAnnotation;
+    /**
+     * The assay cluster annotation.
+     */
+    private HashMap<String, Integer> assayClusterAnnotation;
 
     /**
      * Creates a new PrideReShakeGUI frame.
@@ -341,10 +355,12 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         projectsTable.getColumn(" ").setMinWidth(50);
         projectsTable.getColumn("#Assays").setMaxWidth(fixedColumnWidth);
         projectsTable.getColumn("#Assays").setMinWidth(fixedColumnWidth);
-        projectsTable.getColumn("Type").setMaxWidth(fixedColumnWidth);
-        projectsTable.getColumn("Type").setMinWidth(fixedColumnWidth);
         projectsTable.getColumn("Date").setMaxWidth(fixedColumnWidth);
         projectsTable.getColumn("Date").setMinWidth(fixedColumnWidth);
+        projectsTable.getColumn("Type").setMaxWidth(fixedColumnWidth);
+        projectsTable.getColumn("Type").setMinWidth(fixedColumnWidth);
+        projectsTable.getColumn("  ").setMaxWidth(30);
+        projectsTable.getColumn("  ").setMinWidth(30);
 
         assaysTable.getColumn("Accession").setMaxWidth(fixedColumnWidth);
         assaysTable.getColumn("Accession").setMinWidth(fixedColumnWidth);
@@ -356,6 +372,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         assaysTable.getColumn("#Peptides").setMinWidth(fixedColumnWidth);
         assaysTable.getColumn("#Spectra").setMaxWidth(fixedColumnWidth);
         assaysTable.getColumn("#Spectra").setMinWidth(fixedColumnWidth);
+        assaysTable.getColumn("  ").setMaxWidth(30);
+        assaysTable.getColumn("  ").setMinWidth(30);
 
         filesTable.getColumn("Assay").setMaxWidth(fixedColumnWidth);
         filesTable.getColumn("Assay").setMinWidth(fixedColumnWidth);
@@ -406,6 +424,25 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 null,
                 "Reshakeable", null));
 
+        // set up the peptide inference color map
+        HashMap<Integer, Color> clusterScoringColorMap = new HashMap<Integer, Color>();
+        clusterScoringColorMap.put(0, peptideShakerGUI.getSparklineColorNotFound());
+        clusterScoringColorMap.put(1, peptideShakerGUI.getSparklineColor());
+        clusterScoringColorMap.put(2, peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorPossible());
+        clusterScoringColorMap.put(3, peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful());
+        clusterScoringColorMap.put(4, peptideShakerGUI.getSparklineColorNonValidated());
+
+        // set up the peptide inference tooltip map
+        HashMap<Integer, String> clusterScoringTooltipMap = new HashMap<Integer, String>();
+        clusterScoringTooltipMap.put(0, "Not yet classified");
+        clusterScoringTooltipMap.put(1, "High confidence");
+        clusterScoringTooltipMap.put(2, "Good confidence");
+        clusterScoringTooltipMap.put(3, "Moderate confidence");
+        clusterScoringTooltipMap.put(4, "Low confidence");
+
+        projectsTable.getColumn("  ").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColorNotFound(), clusterScoringColorMap, clusterScoringTooltipMap));
+        assaysTable.getColumn("  ").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColorNotFound(), clusterScoringColorMap, clusterScoringTooltipMap));
+
         projectsTableToolTips = new ArrayList<String>();
         projectsTableToolTips.add(null);
         projectsTableToolTips.add("Project Accession Number");
@@ -416,8 +453,9 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         projectsTableToolTips.add("Post Translational Modifications");
         projectsTableToolTips.add("Instruments");
         projectsTableToolTips.add("Number of Assays");
-        projectsTableToolTips.add("Project Type");
         projectsTableToolTips.add("Publication Date (yyyy-mm-dd)");
+        projectsTableToolTips.add("Project Type");
+        projectsTableToolTips.add("Confidence Category");
 
         assaysTableToolTips = new ArrayList<String>();
         assaysTableToolTips.add(null);
@@ -431,6 +469,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         assaysTableToolTips.add("Number of Proteins");
         assaysTableToolTips.add("Number of Peptides");
         assaysTableToolTips.add("Number of Spectra");
+        assaysTableToolTips.add("Confidence Category");
 
         filesTableToolTips = new ArrayList<String>();
         filesTableToolTips.add(null);
@@ -445,7 +484,77 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         ((TitledBorder) assaysPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Assays");
         ((TitledBorder) filesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Files");
 
+        // get the cluster categories
+        getClusterAnnotations();
+
         reshakableCheckBoxActionPerformed(null);
+    }
+
+    /**
+     * Extracts the project and assay cluster annotation from the PRIDE files.
+     */
+    private void getClusterAnnotations() {
+
+        projectClusterAnnotation = new HashMap<String, Integer>();
+        assayClusterAnnotation = new HashMap<String, Integer>();
+
+        File projectAnnotationsFile = new File(PeptideShaker.getJarFilePath() + "/resources/conf/pride/project-annotation.tsv");
+
+        if (projectAnnotationsFile.exists()) {
+
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(projectAnnotationsFile));
+
+                // skip the header
+                br.readLine();
+
+                String line = br.readLine();
+
+                while (line != null) {
+                    String[] elements = line.split("\\t");
+                    projectClusterAnnotation.put(elements[1], Integer.parseInt(elements[10]));
+                    line = br.readLine();
+                }
+
+                br.close();
+
+            } catch (FileNotFoundException e) {
+                // ignore, already checked above
+                e.printStackTrace();
+            } catch (IOException ex) {
+                System.out.println("An error occurred reading the project cluster annotation:");
+                ex.printStackTrace();
+            }
+        }
+
+        File assayAnnotationsFile = new File(PeptideShaker.getJarFilePath() + "/resources/conf/pride/assay-annotation.tsv");
+
+        if (assayAnnotationsFile.exists()) {
+
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(assayAnnotationsFile));
+
+                // skip the header
+                br.readLine();
+
+                String line = br.readLine();
+
+                while (line != null) {
+                    String[] elements = line.split("\\t");
+                    assayClusterAnnotation.put(elements[2], Integer.parseInt(elements[11]));
+                    line = br.readLine();
+                }
+
+                br.close();
+
+            } catch (FileNotFoundException e) {
+                // ignore, already checked above
+                e.printStackTrace();
+            } catch (IOException ex) {
+                System.out.println("An error occurred reading the sassay cluster annotation:");
+                ex.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -535,8 +644,9 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     setToString(projectDetail.getPtmNames(), "; "),
                     setToString(projectDetail.getInstrumentNames(), ", "),
                     projectDetail.getNumAssays(),
+                    null,
                     projectDetail.getSubmissionType(),
-                    null
+                    0
                 });
 
                 ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects (" + projectsTable.getRowCount() + ")");
@@ -684,14 +794,14 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
             },
             new String [] {
-                " ", "Accession", "Title", "Tags", "Species", "Tissues", "PTMs", "Instruments", "#Assays", "Type", "Date"
+                " ", "Accession", "Title", "Tags", "Species", "Tissues", "PTMs", "Instruments", "#Assays", "Date", "Type", "  "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -833,14 +943,14 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
             },
             new String [] {
-                " ", "Accession", "Title", "Diseases", "Species", "Tissues", "PTMs", "Instruments", "#Proteins", "#Peptides", "#Spectra"
+                " ", "Accession", "Title", "Diseases", "Species", "Tissues", "PTMs", "Instruments", "#Proteins", "#Peptides", "#Spectra", "  "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -961,7 +1071,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         reshakableCheckBox.setText("Reshakeable Files Only");
         reshakableCheckBox.setToolTipText("Show only files that can be re-analyzed");
         reshakableCheckBox.setIconTextGap(10);
-        reshakableCheckBox.setOpaque(false);
         reshakableCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 reshakableCheckBoxActionPerformed(evt);
@@ -2024,6 +2133,11 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 for (AssayDetail assayDetail : assayDetailList.getBody().getList()) {
 
                     String assayAccession = assayDetail.getAssayAccession();
+                    
+                    int assayCategory = 0;
+                    if (assayClusterAnnotation.containsKey(assayAccession)) {
+                        assayCategory = assayClusterAnnotation.get(assayAccession);
+                    }
 
                     if (password == null) {
                         assayAccession = "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAssayArchiveLink(assayDetail.getProjectAccession(), assayDetail.getAssayAccession())
@@ -2042,7 +2156,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                         setToString(assayDetail.getInstrumentNames(), ", "),
                         assayDetail.getProteinCount(),
                         assayDetail.getPeptideCount(),
-                        assayDetail.getTotalSpectrumCount()
+                        assayDetail.getTotalSpectrumCount(),
+                        assayCategory
                     });
 
                     if (assayDetail.getProteinCount() > maxNumProteins) {
@@ -2173,6 +2288,13 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                     ResponseEntity<ProjectDetail> projectDetail = template.getForEntity(url, ProjectDetail.class);
 
+                    String projectAccession = projectDetail.getBody().getAccession();
+                    
+                    int projectCategory = 0;
+                    if (projectClusterAnnotation.containsKey(projectAccession)) {
+                        projectCategory = projectClusterAnnotation.get(projectAccession);
+                    }
+                    
                     ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
                         (projectsTable.getRowCount() + 1),
                         "<html><a href=\"" + DisplayFeaturesGenerator.getPrideProjectArchiveLink("" + projectDetail.getBody().getAccession())
@@ -2185,8 +2307,9 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                         setToString(projectDetail.getBody().getPtmNames(), "; "),
                         setToString(projectDetail.getBody().getInstrumentNames(), ", "),
                         projectDetail.getBody().getNumAssays(),
+                        dateFormat.format(projectDetail.getBody().getPublicationDate()),
                         projectDetail.getBody().getSubmissionType(),
-                        dateFormat.format(projectDetail.getBody().getPublicationDate())
+                        projectCategory
                     });
 
                     if (projectDetail.getBody().getNumAssays() > maxNumAssays) {
@@ -2364,12 +2487,19 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                         // iterate the project and add them to the table
                         for (ProjectDetail projectDetail : projectList.getBody().getList()) {
+                            
+                            String projectAccession = projectDetail.getAccession();
+                    
+                            int projectCategory = 0;
+                            if (projectClusterAnnotation.containsKey(projectAccession)) {
+                                projectCategory = projectClusterAnnotation.get(projectAccession);
+                            }
 
                             ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
                                 (projectsTable.getRowCount() + 1),
-                                "<html><a href=\"" + DisplayFeaturesGenerator.getPrideProjectArchiveLink("" + projectDetail.getAccession())
+                                "<html><a href=\"" + DisplayFeaturesGenerator.getPrideProjectArchiveLink("" + projectAccession)
                                 + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
-                                + projectDetail.getAccession() + "</font></a><html>",
+                                + projectAccession + "</font></a><html>",
                                 projectDetail.getTitle(),
                                 setToString(projectDetail.getProjectTags(), ", "),
                                 setToString(projectDetail.getSpecies(), ", "),
@@ -2377,8 +2507,9 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                                 setToString(projectDetail.getPtmNames(), "; "),
                                 setToString(projectDetail.getInstrumentNames(), ", "),
                                 projectDetail.getNumAssays(),
+                                dateFormat.format(projectDetail.getPublicationDate()),
                                 projectDetail.getSubmissionType(),
-                                dateFormat.format(projectDetail.getPublicationDate())
+                                projectCategory
                             });
 
                             if (projectDetail.getNumAssays() > maxNumAssays) {

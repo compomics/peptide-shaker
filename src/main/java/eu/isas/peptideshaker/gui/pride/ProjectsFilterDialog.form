@@ -70,9 +70,9 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Component id="filterPanel" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
+                  <Component id="filterPanel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="clearJButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="okJButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -133,6 +133,11 @@
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Component id="tagsComboBox" max="32767" attributes="0"/>
                           </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="categoryLabel" min="-2" pref="80" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="categoryComboBox" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -154,7 +159,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="tagsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="tagsComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="tagsComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -187,7 +192,12 @@
                           <Component id="typeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="typeComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="categoryLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="categoryComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -266,16 +276,16 @@
             </Component>
             <Component class="javax.swing.JComboBox" name="typeComboBox">
               <Properties>
-                <Property name="editable" type="boolean" value="true"/>
                 <Property name="maximumRowCount" type="int" value="20"/>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="4">
-                    <StringItem index="0" value=" "/>
-                    <StringItem index="1" value="COMPLETE"/>
-                    <StringItem index="2" value="PARTIAL"/>
-                    <StringItem index="3" value="PRIDE"/>
+                    <StringItem index="0" value="COMPLETE"/>
+                    <StringItem index="1" value="PARTIAL"/>
+                    <StringItem index="2" value="PRIDE"/>
+                    <StringItem index="3" value="All"/>
                   </StringArray>
                 </Property>
+                <Property name="selectedIndex" type="int" value="3"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="typeComboBoxActionPerformed"/>
@@ -347,6 +357,30 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tagsComboBoxActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="categoryLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Confidence"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="categoryComboBox">
+              <Properties>
+                <Property name="maximumRowCount" type="int" value="20"/>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="6">
+                    <StringItem index="0" value="Not yet classified"/>
+                    <StringItem index="1" value="High confidence"/>
+                    <StringItem index="2" value="Good confidence"/>
+                    <StringItem index="3" value="Moderate confidence"/>
+                    <StringItem index="4" value="Low confidence"/>
+                    <StringItem index="5" value="All"/>
+                  </StringArray>
+                </Property>
+                <Property name="selectedIndex" type="int" value="5"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="categoryComboBoxActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
