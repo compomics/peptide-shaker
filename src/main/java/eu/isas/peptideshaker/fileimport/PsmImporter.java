@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.fileimport;
 import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -1232,14 +1231,16 @@ public class PsmImporter {
                 XtandemParameters xtandemParameters = (XtandemParameters) algorithmParameter;
                 if (xtandemParameters.isProteinQuickAcetyl() && !modificationProfile.contains("Acetylation of protein N-term")) {
                     PTM ptm = PTMFactory.getInstance().getPTM("Acetylation of protein N-term");
-                    modificationProfile.addVariableModification(ptm);
+                    if (!modificationProfile.getRefinementVariableModifications().contains(ptm.getName())) {
+                        modificationProfile.addRefinementVariableModification(ptm);
+                    }
                 }
                 String[] pyroMods = {"Pyrolidone from E", "Pyrolidone from Q", "Pyrolidone from carbamidomethylated C"};
                 if (xtandemParameters.isQuickPyrolidone()) {
                     for (String ptmName : pyroMods) {
-                        if (!modificationProfile.getVariableModifications().contains(ptmName)) {
+                        if (!modificationProfile.getRefinementVariableModifications().contains(ptmName)) {
                             PTM ptm = PTMFactory.getInstance().getPTM(ptmName);
-                            modificationProfile.addVariableModification(ptm);
+                            modificationProfile.addRefinementVariableModification(ptm);
                         }
                     }
                 }
