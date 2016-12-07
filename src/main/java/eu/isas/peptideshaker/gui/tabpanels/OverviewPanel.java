@@ -2396,22 +2396,29 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 accuracySlider.setValue(accuracySlider.getValue() - 1);
             } else { // Up
                 int oldValue = accuracySlider.getValue();
-                int newValue = accuracySlider.getValue() + 1;
+                int newValue = oldValue + 1;
                 accuracySlider.setValue(newValue);
 
                 while (oldValue == accuracySlider.getValue()) {
                     accuracySlider.setValue(newValue++);
+                    if (accuracySlider.getValue() == accuracySlider.getMaximum()) {
+                        break;
+                    }
                 }
             }
         } else if (evt.getWheelRotation() > 0) { // Down
             intensitySlider.setValue(intensitySlider.getValue() - 1);
         } else { // Up
             int oldValue = intensitySlider.getValue();
-            int newValue = intensitySlider.getValue() + 1;
+            int newValue = oldValue + 1;
+
             intensitySlider.setValue(newValue);
 
             while (oldValue == intensitySlider.getValue()) {
                 intensitySlider.setValue(newValue++);
+                if (intensitySlider.getValue() == intensitySlider.getMaximum()) {
+                    break;
+                }
             }
         }
 
@@ -4539,7 +4546,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             }
         }
     }
-    
+
     /**
      * Update the peptide variations coverage plot.
      *
@@ -4929,7 +4936,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // update the table model
                 if (psmTable.getModel() instanceof PsmTableModel && ((PsmTableModel) psmTable.getModel()).isInstantiated()) {
-                    ((PsmTableModel) psmTable.getModel()).updateDataModel(identification, peptideShakerGUI.getDisplayFeaturesGenerator(), 
+                    ((PsmTableModel) psmTable.getModel()).updateDataModel(identification, peptideShakerGUI.getDisplayFeaturesGenerator(),
                             peptideShakerGUI.getIdentificationParameters(), psmKeys, peptideShakerGUI.getDisplayPreferences().showScores());
                     ((PsmTableModel) psmTable.getModel()).setSelfUpdating(true);
                     ((PsmTableModel) psmTable.getModel()).resetSorting(new ProgressDialogX(peptideShakerGUI,
@@ -4937,8 +4944,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                             true));
                 } else {
-                    PsmTableModel psmTableModel = new PsmTableModel(identification, peptideShakerGUI.getDisplayFeaturesGenerator(), 
-                            peptideShakerGUI.getIdentificationParameters(), psmKeys, peptideShakerGUI.getDisplayPreferences().showScores(), 
+                    PsmTableModel psmTableModel = new PsmTableModel(identification, peptideShakerGUI.getDisplayFeaturesGenerator(),
+                            peptideShakerGUI.getIdentificationParameters(), psmKeys, peptideShakerGUI.getDisplayPreferences().showScores(),
                             peptideShakerGUI.getExceptionHandler());
                     psmTable.setModel(psmTableModel);
                 }
@@ -5026,7 +5033,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // update the table model
                 if (peptideTable.getModel() instanceof PeptideTableModel && ((PeptideTableModel) peptideTable.getModel()).isInstantiated()) {
-                    ((PeptideTableModel) peptideTable.getModel()).updateDataModel(identification, identificationFeaturesGenerator, 
+                    ((PeptideTableModel) peptideTable.getModel()).updateDataModel(identification, identificationFeaturesGenerator,
                             peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(),
                             accession, peptideKeys, peptideShakerGUI.getDisplayPreferences().showScores());
                     ((PeptideTableModel) peptideTable.getModel()).setSelfUpdating(true);
@@ -5035,8 +5042,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                             true));
                 } else {
-                    PeptideTableModel peptideTableModel = new PeptideTableModel(identification, identificationFeaturesGenerator, 
-                            peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), 
+                    PeptideTableModel peptideTableModel = new PeptideTableModel(identification, identificationFeaturesGenerator,
+                            peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(),
                             accession, peptideKeys, peptideShakerGUI.getDisplayPreferences().showScores(), peptideShakerGUI.getExceptionHandler());
                     peptideTable.setModel(peptideTableModel);
                 }
@@ -5124,10 +5131,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     // update the table model
                     if (proteinTable.getModel() instanceof ProteinTableModel && ((ProteinTableModel) proteinTable.getModel()).isInstantiated()) {
-                        ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), 
+                        ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
                                 peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                     } else {
-                        ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), 
+                        ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
                                 peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                         proteinTable.setModel(proteinTableModel);
                     }
