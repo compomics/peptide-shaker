@@ -267,6 +267,8 @@ public class FileImporter {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading or writing a file
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while establishing the connection
      */
     public void importGenes() throws IOException, InterruptedException {
         GeneFactory geneFactory = GeneFactory.getInstance();
