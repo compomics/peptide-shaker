@@ -683,7 +683,7 @@ public class FileImporter {
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while loading spectrum matches from \'"
                         + Util.getFileName(idFile)
-                        + "\'. This file will be ignored. Error: " + e.getMessage()
+                        + "\'. This file will be ignored. Error: " + e.toString()
                         + " See resources/PeptideShaker.log for details.", true, true);
                 e.printStackTrace();
             }
