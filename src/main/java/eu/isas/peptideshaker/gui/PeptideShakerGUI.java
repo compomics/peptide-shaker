@@ -596,6 +596,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             quantifyMenuItem.setVisible(false); // @TODO: re-enable later?
             jSeparator2.setVisible(false); // @TODO: re-enable later?
             reporterPreferencesJMenuItem.setVisible(false); // @TODO: re-enable later?
+            
+            exportPrideMenuItem.setVisible(false); // disable the pride xml export
 
             notesButton.setVisible(false); // @TODO: re-enable later?
             newsButton.setVisible(false); // @TODO: re-enable later?

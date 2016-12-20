@@ -197,7 +197,6 @@
                 <Property name="dividerSize" type="int" value="0"/>
                 <Property name="orientation" type="int" value="0"/>
                 <Property name="resizeWeight" type="double" value="0.5"/>
-                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
@@ -274,9 +273,6 @@
                           </Layout>
                           <SubComponents>
                             <Container class="javax.swing.JScrollPane" name="proteinScrollPane">
-                              <Properties>
-                                <Property name="opaque" type="boolean" value="false"/>
-                              </Properties>
                               <AuxValues>
                                 <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
                               </AuxValues>
@@ -449,7 +445,6 @@
                     <Property name="dividerSize" type="int" value="0"/>
                     <Property name="orientation" type="int" value="0"/>
                     <Property name="resizeWeight" type="double" value="1.0"/>
-                    <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
@@ -726,7 +721,6 @@
                         <Property name="dividerLocation" type="int" value="450"/>
                         <Property name="dividerSize" type="int" value="0"/>
                         <Property name="resizeWeight" type="double" value="0.5"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
@@ -745,7 +739,6 @@
                             <Property name="dividerSize" type="int" value="0"/>
                             <Property name="orientation" type="int" value="0"/>
                             <Property name="resizeWeight" type="double" value="0.5"/>
-                            <Property name="opaque" type="boolean" value="false"/>
                           </Properties>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
@@ -827,9 +820,6 @@
                                       </Layout>
                                       <SubComponents>
                                         <Container class="javax.swing.JScrollPane" name="peptideScrollPane">
-                                          <Properties>
-                                            <Property name="opaque" type="boolean" value="false"/>
-                                          </Properties>
                                           <AuxValues>
                                             <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
                                           </AuxValues>
@@ -1108,9 +1098,6 @@
                                       </Layout>
                                       <SubComponents>
                                         <Container class="javax.swing.JScrollPane" name="spectraScrollPane">
-                                          <Properties>
-                                            <Property name="opaque" type="boolean" value="false"/>
-                                          </Properties>
                                           <AuxValues>
                                             <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
                                           </AuxValues>
@@ -1382,7 +1369,6 @@
                                         </Property>
                                         <Property name="dividerLocation" type="int" value="430"/>
                                         <Property name="dividerSize" type="int" value="0"/>
-                                        <Property name="opaque" type="boolean" value="false"/>
                                       </Properties>
 
                                       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
@@ -1445,9 +1431,6 @@
                                               </Layout>
                                               <SubComponents>
                                                 <Container class="javax.swing.JScrollPane" name="fragmentIonsJScrollPane">
-                                                  <Properties>
-                                                    <Property name="opaque" type="boolean" value="false"/>
-                                                  </Properties>
                                                   <Events>
                                                     <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="fragmentIonsJScrollPaneMouseWheelMoved"/>
                                                   </Events>
@@ -1746,7 +1729,6 @@
                                                 <Property name="paintTicks" type="boolean" value="true"/>
                                                 <Property name="toolTipText" type="java.lang.String" value="Annotation Accuracy"/>
                                                 <Property name="value" type="int" value="100"/>
-                                                <Property name="opaque" type="boolean" value="false"/>
                                               </Properties>
                                               <Events>
                                                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="accuracySliderStateChanged"/>
@@ -1759,7 +1741,6 @@
                                                 <Property name="paintTicks" type="boolean" value="true"/>
                                                 <Property name="toolTipText" type="java.lang.String" value="Annotation Level"/>
                                                 <Property name="value" type="int" value="75"/>
-                                                <Property name="opaque" type="boolean" value="false"/>
                                               </Properties>
                                               <Events>
                                                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="intensitySliderStateChanged"/>
@@ -1965,7 +1946,6 @@
                 <Property name="text" type="java.lang.String" value="Proteins"/>
                 <Property name="toolTipText" type="java.lang.String" value="Click to Show (Shift+Ctrl+P)"/>
                 <Property name="focusable" type="boolean" value="false"/>
-                <Property name="opaque" type="boolean" value="false"/>
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
               <Events>
@@ -1986,7 +1966,6 @@
                 <Property name="text" type="java.lang.String" value="Peptides &amp; PSMs"/>
                 <Property name="toolTipText" type="java.lang.String" value="Click to Show (Shift+Ctrl+E)"/>
                 <Property name="focusable" type="boolean" value="false"/>
-                <Property name="opaque" type="boolean" value="false"/>
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
               <Events>
@@ -2007,7 +1986,6 @@
                 <Property name="text" type="java.lang.String" value="Spectrum &amp; Fragment Ions"/>
                 <Property name="toolTipText" type="java.lang.String" value="Click to Show (Shift+Ctrl+S)"/>
                 <Property name="focusable" type="boolean" value="false"/>
-                <Property name="opaque" type="boolean" value="false"/>
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
               <Events>
@@ -2028,7 +2006,6 @@
                 <Property name="text" type="java.lang.String" value="Protein Sequence Coverage"/>
                 <Property name="toolTipText" type="java.lang.String" value="Click to Show (Shift+Ctrl+C)"/>
                 <Property name="focusable" type="boolean" value="false"/>
-                <Property name="opaque" type="boolean" value="false"/>
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
               <Events>
