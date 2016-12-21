@@ -2133,7 +2133,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 for (AssayDetail assayDetail : assayDetailList.getBody().getList()) {
 
                     String assayAccession = assayDetail.getAssayAccession();
-                    
+
                     int assayCategory = 0;
                     if (assayClusterAnnotation.containsKey(assayAccession)) {
                         assayCategory = assayClusterAnnotation.get(assayAccession);
@@ -2289,12 +2289,12 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     ResponseEntity<ProjectDetail> projectDetail = template.getForEntity(url, ProjectDetail.class);
 
                     String projectAccession = projectDetail.getBody().getAccession();
-                    
+
                     int projectCategory = 0;
                     if (projectClusterAnnotation.containsKey(projectAccession)) {
                         projectCategory = projectClusterAnnotation.get(projectAccession);
                     }
-                    
+
                     ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
                         (projectsTable.getRowCount() + 1),
                         "<html><a href=\"" + DisplayFeaturesGenerator.getPrideProjectArchiveLink("" + projectDetail.getBody().getAccession())
@@ -2487,9 +2487,9 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                         // iterate the project and add them to the table
                         for (ProjectDetail projectDetail : projectList.getBody().getList()) {
-                            
+
                             String projectAccession = projectDetail.getAccession();
-                    
+
                             int projectCategory = 0;
                             if (projectClusterAnnotation.containsKey(projectAccession)) {
                                 projectCategory = projectClusterAnnotation.get(projectAccession);
@@ -3304,14 +3304,16 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         }
 
         // set the max missed cleavages
-        prideParametersReport += "<b>Maximum Missed Cleavages:</b> ";
-        if (maxMissedCleavages != null) {
-            for (Enzyme enzyme : prideDigestionPreferences.getEnzymes()) {
-                prideDigestionPreferences.setnMissedCleavages(enzyme.getName(), maxMissedCleavages);
+        if (prideDigestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+            prideParametersReport += "<b>Maximum Missed Cleavages:</b> ";
+            if (maxMissedCleavages != null) {
+                for (Enzyme enzyme : prideDigestionPreferences.getEnzymes()) {
+                    prideDigestionPreferences.setnMissedCleavages(enzyme.getName(), maxMissedCleavages);
+                }
+                prideParametersReport += maxMissedCleavages;
+            } else {
+                prideParametersReport += prideDigestionPreferences.getnMissedCleavages(prideDigestionPreferences.getEnzymes().get(0).getName()) + " (default)";
             }
-            prideParametersReport += maxMissedCleavages;
-        } else {
-            prideParametersReport += prideDigestionPreferences.getnMissedCleavages(prideDigestionPreferences.getEnzymes().get(0).getName()) + " (default)";
         }
 
         // set the min/max precursor charge
