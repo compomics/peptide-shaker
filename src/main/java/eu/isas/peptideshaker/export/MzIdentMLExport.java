@@ -1489,7 +1489,7 @@ public class MzIdentMLExport {
                         Integer charge = ionMatch.charge;
 
                         // only include ions with cv terms and less than the maximum number of allowed neutral losses
-                        if (fragmentIonCvTerm != null && ionMatch.ion.getNeutralLosses().size() <= maxNeutralLosses) {
+                        if (fragmentIonCvTerm != null && ionMatch.ion.getNeutralLosses().length <= maxNeutralLosses) {
 
                             String fragmentIonName = ionMatch.ion.getName();
 
@@ -1569,7 +1569,7 @@ public class MzIdentMLExport {
                                 writeCvTerm(fragmentIonCvTerm);
 
                                 // add the cv term for the neutral losses
-                                int neutralLossesCount = currentIon.getNeutralLosses().size();
+                                int neutralLossesCount = currentIon.getNeutralLosses().length;
                                 if (neutralLossesCount > maxNeutralLosses) {
                                     throw new IllegalArgumentException("A maximum of " + maxNeutralLosses + " neutral losses is allowed!");
                                 } else {
