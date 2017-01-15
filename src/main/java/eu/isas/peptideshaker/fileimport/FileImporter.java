@@ -725,22 +725,15 @@ public class FileImporter {
                         if (!importSpectrum(idFile, spectrumMatch, numberOfMatches)) {
                             allLoaded = false;
                         }
-                        // Load spectrum in cache for tag mapping
-                        if (fileReader.getTagsMap() != null && !fileReader.getTagsMap().isEmpty()) {
-                            spectrumFactory.getSpectrum(spectrumMatch.getKey());
-                        }
                         waitingHandler.increaseSecondaryProgressCounter();
                     }
 
                     if (allLoaded) {
 
                         // if any map spectrum sequencing matches on protein sequences
-                        if (tagMapper == null) {
-                            tagMapper = new TagMapper(identificationParameters, exceptionHandler);
-                        }
-                        if (fileReader.getTagsMap() != null && !fileReader.getTagsMap().isEmpty()) {
-                            if (!peptideShaker.getCache().isEmpty()) {
-                                peptideShaker.getCache().reduceMemoryConsumption(0.9, waitingHandler);
+                        if (fileReader.hasDeNovoTags()) {
+                            if (tagMapper == null) {
+                                tagMapper = new TagMapper(identificationParameters, exceptionHandler);
                             }
                             tagMapper.mapTags(fileReader, identification, waitingHandler, processingPreferences.getnThreads());
                         }

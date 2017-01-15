@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.scoring.psm_scoring;
 
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
@@ -27,7 +26,6 @@ import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
-import eu.isas.peptideshaker.utils.Metrics;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -252,7 +250,7 @@ public class PsmScorer {
                     }
                 }
                 if (scoresForAdvocate.contains(PsmScore.hyperScore.index)) {
-                    HashMap<Double, Double> eValuesMap = hyperScore.getEValueHistogram(hyperScores);
+                    HashMap<Double, Double> eValuesMap = hyperScore.getEValueMap(hyperScores);
                     if (eValuesMap != null) {
                         for (int i = 0; i < hyperScores.size(); i++) {
                             Double score = hyperScores.get(i);
