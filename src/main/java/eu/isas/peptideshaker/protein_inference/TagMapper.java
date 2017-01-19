@@ -96,15 +96,19 @@ public class TagMapper {
      * @param nThreads the number of threads to use
      *
      * @throws IOException exception thrown whenever an error occurred while
-     * reading or writing a file.
+     * reading or writing a file
      * @throws InterruptedException exception thrown whenever a threading error
-     * occurred while mapping the tags.
+     * occurred while mapping the tags
      * @throws ClassNotFoundException exception thrown whenever an error
-     * occurred while deserializing a file.
+     * occurred while deserializing a file
      * @throws SQLException exception thrown whenever an error occurred while
-     * interacting with a database.
+     * interacting with a database
      * @throws MzMLUnmarshallerException exception thrown whenever an error
-     * occurred while accessing an mzML file.
+     * occurred while accessing an mzML file
+     * @throws javax.xml.bind.JAXBException thrown whenever an error
+     * occurred while accessing an mzML file
+     * @throws org.xmlpull.v1.XmlPullParserException thrown whenever an error
+     * occurred while accessing an mzML file
      */
     public void mapTags(IdfileReader idfileReader, Identification identification, WaitingHandler waitingHandler, int nThreads) throws IOException,
             InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, JAXBException, XmlPullParserException {
