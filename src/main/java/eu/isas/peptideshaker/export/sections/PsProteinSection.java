@@ -299,7 +299,6 @@ public class PsProteinSection {
                 if (!proteinMatch.isDecoy()) {
                     HashSet<String> goTermDescriptions = geneMaps.getGoNamesForProtein(proteinKey);
                     if (goTermDescriptions != null) {
-                        boolean first = true;
                         for (String description : goTermDescriptions) {
                             if (result.length() > 0) {
                                 result.append(", ");

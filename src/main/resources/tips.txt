@@ -29,7 +29,6 @@ Label free quantification?<br><br><b>PeptideShaker</b> supports <a href="http://
 Troubles identifying your proteomics data?<br><br>Check our <a href="http://compomics.com/bioinformatics-for-proteomics/">free tutorials</a>!
 Tried <i>de novo</i> sequencing?<br><br>Check out our user friendly <i>de novo</i> sequencing solution: <a href="http://compomics.github.io/projects/denovogui.html">DeNovoGUI</a>!
 Surprisingly large files?<br><br>Be sure that the data is in centroided mode and not in profile mode!<br><br>More information on peak-picking available in our <a href="http://compomics.com/bioinformatics-for-proteomics/identification/">free tutorials</a>.
-Database import is slow?<br><br>The first time you work with a database <b>PeptideShaker</b> needs to index all the possible peptides.<br><br>This task is time consuming, but will be done only once for each database.
 <b>Galaxy</b> + <b>PeptideShaker</b>?<br><br>Did you know it was possible to use <a href="https://usegalaxyp.readthedocs.org/en/latest/sections/peptideshaker.html">PeptideShaker in Galaxy</a>?
 Unexpected mass deviations?<br><br>It is possible to export recalibrated spectra via <i>Follow Up Analysis</i> in the <i>Export</i> menu.
 Need a graphical overview?<br><br>It is possible to export the protein identification data to <a href="http://cytoscape.org/">Cytoscape</a>, <a href="https://gephi.org/">Gephi</a> or <a href="http://www.neo4j.org/">Neo4j</a> via <i>Follow Up Analysis</i> in the <i>Export</i> menu.

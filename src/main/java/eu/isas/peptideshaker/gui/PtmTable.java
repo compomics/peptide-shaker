@@ -431,7 +431,7 @@ public class PtmTable extends JTable {
                 colorCoef = 1.0 - ((1.0 * modCpt) / nPTM);
             }
 
-            Ion genericIon = Ion.getGenericIon(Ion.IonType.PEPTIDE_FRAGMENT_ION, fragmentIonType, new ArrayList<NeutralLoss>());
+            Ion genericIon = Ion.getGenericIon(Ion.IonType.PEPTIDE_FRAGMENT_ION, fragmentIonType, new NeutralLoss[0]);
             Color areaColor = SpectrumPanel.determineFragmentIonColor(genericIon, false);
             areaColor = new Color((int) (colorCoef * areaColor.getRed()), (int) (colorCoef * areaColor.getGreen()), (int) (colorCoef * areaColor.getBlue()));
             String tooltip = "<html>" + PeptideFragmentIon.getSubTypeAsString(fragmentIonType) + "<sub>" + aa + "</sub>" + modification + "</html>";

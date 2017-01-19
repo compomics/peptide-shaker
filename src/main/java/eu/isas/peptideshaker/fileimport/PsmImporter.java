@@ -38,6 +38,7 @@ import com.compomics.util.experiment.identification.identification_parameters.Pt
 import com.compomics.util.experiment.identification.protein_inference.PeptideMapperType;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.experiment.io.identifications.idfilereaders.NovorIdfileReader;
+import com.compomics.util.experiment.io.identifications.idfilereaders.OnyaseIdfileReader;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
@@ -581,7 +582,8 @@ public class PsmImporter {
                                                 }
                                                 tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, PTM_MASS_TOLERANCE, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
                                             } else if (fileReader instanceof DirecTagIdfileReader
-                                                    || fileReader instanceof NovorIdfileReader) {
+                                                    || fileReader instanceof NovorIdfileReader
+                                                    || fileReader instanceof OnyaseIdfileReader) {
                                                 PTM ptm = ptmFactory.getPTM(sePTM);
                                                 if (ptm == PTMFactory.unknownPTM) {
                                                     throw new IllegalArgumentException("PTM not recognized spectrum " + spectrumTitle + " of file " + spectrumFileName + ".");
@@ -806,7 +808,8 @@ public class PsmImporter {
                     throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as a modification.");
                 }
             } else if (fileReader instanceof DirecTagIdfileReader
-                    || fileReader instanceof NovorIdfileReader) {
+                    || fileReader instanceof NovorIdfileReader
+                    || fileReader instanceof OnyaseIdfileReader) {
                 PTM ptm = ptmFactory.getPTM(sePTM);
                 if (ptm.getType() == PTM.MODC
                         || ptm.getType() == PTM.MODCAA

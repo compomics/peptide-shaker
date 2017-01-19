@@ -700,7 +700,7 @@ public class PtmScorer {
 
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(new PSParameter());
-        PsmIterator psmIterator = identification.getPsmIterator(bestKeys, parameters, true, waitingHandler);
+        PsmIterator psmIterator = identification.getPsmIterator(bestKeys, parameters, false, waitingHandler);
 
         // Map confident sites
         while (psmIterator.hasNext()) {

@@ -78,14 +78,11 @@ public class ProteinInference {
      * @throws InterruptedException thrown if an InterruptedException occurs
      * @throws SQLException thrown if an SQLException occurs
      * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
      */
     public void removeRedundantGroups(Identification identification, IdentificationParameters identificationParameters,
             IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler)
-            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
+            throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
-        ArrayList<String> toRemove = new ArrayList<String>();
         int max = identification.getProteinIdentification().size();
 
         if (waitingHandler != null) {
@@ -142,10 +139,10 @@ public class ProteinInference {
                 }
                 waitingHandler.appendReport(padding + "Note: a group can present combinations of these criteria.", true, true);
                 waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-                waitingHandler.setMaxSecondaryProgressCounter(toRemove.size());
+                waitingHandler.setMaxSecondaryProgressCounter(toDelete.size());
             }
 
-            for (String proteinKey : toRemove) { // @TODO: nothing is ever added to this map..?
+            for (String proteinKey : toDelete) {
                 identification.removeProteinMatch(proteinKey);
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
@@ -376,12 +373,10 @@ public class ProteinInference {
      * @throws InterruptedException thrown if an InterruptedException occurs
      * @throws SQLException thrown if an SQLException occurs
      * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
      */
     public void retainBestScoringGroups(Identification identification, Metrics metrics, ProteinMap proteinMap,
             IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler)
-            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
+            throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Simplifying Redundant Protein Groups. Please Wait...");
 
