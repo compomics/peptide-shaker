@@ -99,7 +99,7 @@ public class MzIdentMLExport {
     /**
      * The number of decimals to use for the confidence values.
      */
-    private final int CONFIDENCE_DECIMALS = 2;
+    private final int CONFIDENCE_DECIMALS = 4;
     /**
      * The maximum number of neutral losses a fragment ion can have in order to
      * be annotated.
