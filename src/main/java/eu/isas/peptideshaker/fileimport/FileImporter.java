@@ -156,6 +156,7 @@ public class FileImporter {
      * Imports sequences from a FASTA file.
      *
      * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param fragmentIonAccuracy the fragment ion accuracy
      * @param peptideVariantsPreferences the peptide variants preferences set by
      * the user
      * @param waitingHandler the handler displaying feedback to the user and
@@ -164,7 +165,7 @@ public class FileImporter {
      * @param fastaFile FASTA file to process
      * @param ptmSettings the PTM settings
      */
-    public void importSequences(SequenceMatchingPreferences sequenceMatchingPreferences, PeptideVariantsPreferences peptideVariantsPreferences, WaitingHandler waitingHandler,
+    public void importSequences(SequenceMatchingPreferences sequenceMatchingPreferences, Double fragmentIonAccuracy, PeptideVariantsPreferences peptideVariantsPreferences, WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler, File fastaFile, PtmSettings ptmSettings) {
 
         try {
@@ -205,7 +206,7 @@ public class FileImporter {
             sequenceFactory.setnCache(cacheSize);
 
             try {
-                sequenceFactory.getDefaultPeptideMapper(sequenceMatchingPreferences, ptmSettings, peptideVariantsPreferences, waitingHandler, exceptionHandler);
+                sequenceFactory.getDefaultPeptideMapper(sequenceMatchingPreferences, ptmSettings, fragmentIonAccuracy, peptideVariantsPreferences, waitingHandler, exceptionHandler);
             } catch (SQLException e) {
                 waitingHandler.appendReport("Database " + sequenceFactory.getCurrentFastaFile().getName()
                         + " could not be accessed, make sure that the file is not used by another "
@@ -439,7 +440,7 @@ public class FileImporter {
         public int importFiles() {
 
             try {
-                importSequences(identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPeptideVariantsPreferences(), waitingHandler, exceptionHandler,
+                importSequences(identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getSearchParameters().getFragmentIonAccuracy(), identificationParameters.getPeptideVariantsPreferences(), waitingHandler, exceptionHandler,
                         identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase(),
                         identificationParameters.getSearchParameters().getPtmSettings());
 

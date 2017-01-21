@@ -49,7 +49,7 @@ public class PepXmlExport {
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
-     * The PTM factory
+     * The PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
@@ -58,7 +58,7 @@ public class PepXmlExport {
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
     /**
-     * Constructor
+     * Constructor.
      */
     public PepXmlExport() {
 
@@ -87,14 +87,16 @@ public class PepXmlExport {
      * @throws MzMLUnmarshallerException exception thrown whenever an error is
      * encountered while reading an mzML file
      */
-    public void writePepXmlFile(Identification identification, IdentificationParameters identificationParameters, File destinationFile, String peptideShakerVersion, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public void writePepXmlFile(Identification identification, IdentificationParameters identificationParameters, File destinationFile, String peptideShakerVersion,
+            WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Loading Peptide to Protein Mapping. Please Wait...");
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         }
 
-        sequenceFactory.getDefaultPeptideMapper(identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getSearchParameters().getPtmSettings(), identificationParameters.getPeptideVariantsPreferences(), waitingHandler, exceptionHandler);
+        sequenceFactory.getDefaultPeptideMapper(identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getSearchParameters().getPtmSettings(),
+                identificationParameters.getSearchParameters().getFragmentIonAccuracy(), identificationParameters.getPeptideVariantsPreferences(), waitingHandler, exceptionHandler);
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Exporting PSMs. Please Wait...");
@@ -107,9 +109,9 @@ public class PepXmlExport {
     }
 
     /**
-     * Writes the header
+     * Writes the header.
      *
-     * @param sw the xml file writer
+     * @param sw the XML file writer
      *
      * @throws IOException exception thrown whenever an error is encountered
      * while writing to the file
@@ -119,9 +121,9 @@ public class PepXmlExport {
     }
 
     /**
-     * Writes the msms pipeline analysis block
+     * Writes the MS2 pipeline analysis block.
      *
-     * @param sw the xml file writer
+     * @param sw the XML file writer
      * @param identification the identification object containing the
      * identification results
      * @param identificationParameters the identification parameters
@@ -141,9 +143,11 @@ public class PepXmlExport {
      * @throws MzMLUnmarshallerException exception thrown whenever an error is
      * encountered while reading an mzML file
      */
-    private void writeMsmsPipelineAnalysis(SimpleXmlWriter sw, String peptideShakerVersion, File destinationFile, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    private void writeMsmsPipelineAnalysis(SimpleXmlWriter sw, String peptideShakerVersion, File destinationFile, Identification identification, IdentificationParameters identificationParameters,
+            WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
-        sw.writeLine("<msms_pipeline_analysis xmlns=\"http://regis-web.systemsbiology.net/pepXML\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://sashimi.sourceforge.net/schema_revision/pepXML/pepXML_v117.xsd\" summary_xml=\"" + destinationFile.getAbsolutePath() + "\">");
+        sw.writeLine("<msms_pipeline_analysis xmlns=\"http://regis-web.systemsbiology.net/pepXML\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                + "xsi:schemaLocation=\"http://sashimi.sourceforge.net/schema_revision/pepXML/pepXML_v117.xsd\" summary_xml=\"" + destinationFile.getAbsolutePath() + "\">");
 
         writeAnalysisSummary(sw, peptideShakerVersion);
         writeMsmsRunSummary(sw, identification, identificationParameters, waitingHandler);
@@ -154,7 +158,7 @@ public class PepXmlExport {
     /**
      * Writes the analysis summary section.
      *
-     * @param sw the xml file writer
+     * @param sw the XML file writer
      * @param peptideShakerVersion the PeptideShaker version
      *
      * @throws IOException exception thrown whenever an error is encountered
@@ -175,9 +179,9 @@ public class PepXmlExport {
     }
 
     /**
-     * Writes the msms run summary section.
+     * Writes the MS2 run summary section.
      *
-     * @param sw the xml file writer
+     * @param sw the XML file writer
      * @param identification the identification object containing the
      * identification results
      * @param identificationParameters the identification parameters
@@ -241,7 +245,7 @@ public class PepXmlExport {
     /**
      * Writes the enzyme section.
      *
-     * @param sw the xml file writer
+     * @param sw the XML file writer
      * @param enzyme the enzyme
      * @param specificity the enzyme specificity
      *
@@ -295,7 +299,7 @@ public class PepXmlExport {
     /**
      * Writes the search summary section.
      *
-     * @param sw the xml file writer
+     * @param sw the XML file writer
      * @param identificationParameters the identification parameters
      *
      * @throws IOException exception thrown whenever an error is encountered
@@ -318,7 +322,7 @@ public class PepXmlExport {
     /**
      * Gets the line for a PTM.
      *
-     * @param ptm the ptm
+     * @param ptm the PTM
      * @param variable a boolean indicating whether the modification is variable
      *
      * @return the line for a PTM
@@ -387,7 +391,7 @@ public class PepXmlExport {
     /**
      * Writes the spectrum queries.
      *
-     * @param sw the xml file writer
+     * @param sw the XML file writer
      * @param identification the identification object containing the
      * identification results
      * @param identificationParameters the identification parameters
@@ -429,13 +433,12 @@ public class PepXmlExport {
                 }
             }
         }
-
     }
 
     /**
      * Writes the content of a spectrum match.
      *
-     * @param sw the xml file writer
+     * @param sw the XML file writer
      * @param identification the identification object containing the
      * identification results
      * @param identificationParameters the identification parameters
@@ -489,7 +492,7 @@ public class PepXmlExport {
     /**
      * Writes a search hit section.
      *
-     * @param sw the xml file writer
+     * @param sw the XML file writer
      * @param identification the identification object containing the
      * identification results
      * @param identificationParameters the identification parameters
@@ -639,5 +642,4 @@ public class PepXmlExport {
         sw.writeLineDecreasedIndent("</analysis_result>");
         sw.writeLineDecreasedIndent("</search_hit>");
     }
-
 }
