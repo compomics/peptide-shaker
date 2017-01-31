@@ -83,6 +83,7 @@ public class ProteinInference {
             IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
+        ArrayList<String> toRemove = new ArrayList<String>(); 
         int max = identification.getProteinIdentification().size();
 
         if (waitingHandler != null) {
@@ -139,10 +140,10 @@ public class ProteinInference {
                 }
                 waitingHandler.appendReport(padding + "Note: a group can present combinations of these criteria.", true, true);
                 waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-                waitingHandler.setMaxSecondaryProgressCounter(toDelete.size());
+                waitingHandler.setMaxSecondaryProgressCounter(toRemove.size());
             }
 
-            for (String proteinKey : toDelete) {
+            for (String proteinKey : toRemove) { // @TODO: this map is never added to. however, adding to it will also remove the peptides...
                 identification.removeProteinMatch(proteinKey);
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
