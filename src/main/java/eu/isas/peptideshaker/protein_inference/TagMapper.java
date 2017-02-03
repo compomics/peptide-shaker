@@ -105,14 +105,14 @@ public class TagMapper {
      * interacting with a database
      * @throws MzMLUnmarshallerException exception thrown whenever an error
      * occurred while accessing an mzML file
-     * @throws javax.xml.bind.JAXBException thrown whenever an error
-     * occurred while accessing an mzML file
+     * @throws javax.xml.bind.JAXBException thrown whenever an error occurred
+     * while accessing an mzML file
      * @throws org.xmlpull.v1.XmlPullParserException thrown whenever an error
      * occurred while accessing an mzML file
      */
     public void mapTags(IdfileReader idfileReader, Identification identification, WaitingHandler waitingHandler, int nThreads) throws IOException,
             InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, JAXBException, XmlPullParserException {
-        
+
         ExecutorService pool = Executors.newFixedThreadPool(nThreads);
         LinkedList<SpectrumMatch> spectrumMatches = idfileReader.getAllSpectrumMatches(waitingHandler, identificationParameters.getSearchParameters());
         if (spectrumMatches != null && !spectrumMatches.isEmpty()) {
@@ -208,11 +208,12 @@ public class TagMapper {
                 algorithmTags.put(score, newAssumptions);
             }
         }
-            identification.addRawAssumptions(spectrumKey, assumptionsMap);
 
-            tagMatcher.clearCache();
-            waitingHandler.increaseSecondaryProgressCounter();
-            
+        identification.addRawAssumptions(spectrumKey, assumptionsMap);
+
+        tagMatcher.clearCache();
+        waitingHandler.increaseSecondaryProgressCounter();
+
         // free memory if needed and possible
         if (sequenceMatchingPreferences.getPeptideMapperType() == PeptideMapperType.tree) {
             if (MemoryConsumptionStatus.memoryUsed() > 0.8 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
@@ -330,6 +331,7 @@ public class TagMapper {
             }
         }
     }
+
     /**
      * Private runnable to map tags of a spectrum match.
      */
