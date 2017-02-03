@@ -254,11 +254,11 @@ public class MzIdentMLExport {
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences,
             IdentificationFeaturesGenerator identificationFeaturesGenerator, File outputFile, boolean includeProteinSequences, WaitingHandler waitingHandler,
             MatchValidationLevel proteinMatchValidationLevel, MatchValidationLevel peptideMatchValidationLevel, MatchValidationLevel psmMatchValidationLevel) throws IOException, ClassNotFoundException {
-        
+
         if (outputFile.getParent() == null) {
             throw new FileNotFoundException("The file " + outputFile + " does not have a valid parent folder. Please make sure that the parent folder exists.");
         }
-        
+
         this.peptideShakerVersion = peptideShakerVersion;
         this.identification = identification;
         this.projectDetails = projectDetails;
@@ -1470,7 +1470,7 @@ public class MzIdentMLExport {
                 // add the fragment ion annotation
                 AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
                 MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumFileName, spectrumTitle);
-                SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), bestPeptideAssumption, 
+                SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), bestPeptideAssumption,
                         identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
                 ArrayList<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, bestPeptideAssumption.getPeptide());
 
@@ -1488,8 +1488,14 @@ public class MzIdentMLExport {
                         CvTerm fragmentIonCvTerm = ionMatch.ion.getPsiMsCvTerm();
                         Integer charge = ionMatch.charge;
 
-                        // only include ions with cv terms and less than the maximum number of allowed neutral losses
-                        if (fragmentIonCvTerm != null && ionMatch.ion.getNeutralLosses().length <= maxNeutralLosses) {
+                        // check if there is less than the maximum number of allowed neutral losses
+                        boolean neutralLossesTestPassed = true;
+                        if (ionMatch.ion.hasNeutralLosses()) {
+                            neutralLossesTestPassed = ionMatch.ion.getNeutralLosses().length <= maxNeutralLosses;
+                        }
+
+                        // only include ions with cv terms
+                        if (fragmentIonCvTerm != null && neutralLossesTestPassed) {
 
                             String fragmentIonName = ionMatch.ion.getName();
 
@@ -1569,12 +1575,14 @@ public class MzIdentMLExport {
                                 writeCvTerm(fragmentIonCvTerm);
 
                                 // add the cv term for the neutral losses
-                                int neutralLossesCount = currentIon.getNeutralLosses().length;
-                                if (neutralLossesCount > maxNeutralLosses) {
-                                    throw new IllegalArgumentException("A maximum of " + maxNeutralLosses + " neutral losses is allowed!");
-                                } else {
-                                    for (NeutralLoss tempNeutralLoss : currentIon.getNeutralLosses()) {
-                                        writeCvTerm(tempNeutralLoss.getPsiMsCvTerm());
+                                if (currentIon.getNeutralLosses() != null) {
+                                    int neutralLossesCount = currentIon.getNeutralLosses().length;
+                                    if (neutralLossesCount > maxNeutralLosses) {
+                                        throw new IllegalArgumentException("A maximum of " + maxNeutralLosses + " neutral losses is allowed!");
+                                    } else {
+                                        for (NeutralLoss tempNeutralLoss : currentIon.getNeutralLosses()) {
+                                            writeCvTerm(tempNeutralLoss.getPsiMsCvTerm());
+                                        }
                                     }
                                 }
 
