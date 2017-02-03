@@ -576,9 +576,7 @@ public class FileImporter {
                     try {
                         identification.close();
                         sequenceFactory.clearFactory();
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -608,9 +606,7 @@ public class FileImporter {
                     try {
                         identification.close();
                         sequenceFactory.clearFactory();
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    } catch (IOException ex) {
+                    } catch (Exception ex) {
                         ex.printStackTrace();
                     }
                 }

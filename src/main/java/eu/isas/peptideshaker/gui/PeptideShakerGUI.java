@@ -4219,7 +4219,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             try {
                 getIdentification().close();
                 cpsParent.setIdentification(null);
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 databaseClosed = false;
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Failed to close the database.", "Database Error", JOptionPane.WARNING_MESSAGE);

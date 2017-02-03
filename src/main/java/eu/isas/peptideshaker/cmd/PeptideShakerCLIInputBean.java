@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.cli.CommandLineUtils;
-import com.compomics.util.experiment.identification.parameters_cli.IdentificationParametersInputBean;
+import com.compomics.cli.identification_parameters.IdentificationParametersInputBean;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.File;

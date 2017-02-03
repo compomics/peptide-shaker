@@ -797,7 +797,7 @@ public class NewDialog extends javax.swing.JDialog {
                     ProteomicAnalysis proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
                     Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
                     identification.close();
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     System.out.println("Failed to close the database!");
                     e.printStackTrace();
                 }
@@ -814,10 +814,7 @@ public class NewDialog extends javax.swing.JDialog {
         fastaFileTxt.setText("");
         try {
             sequenceFactory.clearFactory();
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to clear the sequence factory.", "File Error", JOptionPane.WARNING_MESSAGE);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Failed to clear the sequence factory.", "File Error", JOptionPane.WARNING_MESSAGE);
         }

@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.util.experiment.identification.parameters_cli.IdentificationParametersCLIParams;
+import com.compomics.cli.identification_parameters.IdentificationParametersCLIParams;
+import static com.compomics.software.cli.CommandLineUtils.formatter;
 import org.apache.commons.cli.Options;
 
 /**
@@ -37,7 +38,6 @@ public class PeptideShakerIdentificationParametersCLIParams {
     public static String getOptionsAsString() {
 
         String output = "";
-        String formatter = "%-35s";
 
         output += "Parameters Files:\n\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.OUT.id) + " " + IdentificationParametersCLIParams.OUT.description + ". (Mandatory)\n";
@@ -70,10 +70,6 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.FI.id) + " " + IdentificationParametersCLIParams.FI.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.RI.id) + " " + IdentificationParametersCLIParams.RI.description + "\n";
 
-        output += "\n\nGene Annotation:\n\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.USE_GENE_MAPPING.id) + " " + IdentificationParametersCLIParams.USE_GENE_MAPPING.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.UPDATE_GENE_MAPPING.id) + " " + IdentificationParametersCLIParams.UPDATE_GENE_MAPPING.description + "\n";
-
         output += "\n\nSpectrum Annotation:\n\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.ANNOTATION_LEVEL.id) + " " + IdentificationParametersCLIParams.ANNOTATION_LEVEL.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.ANNOTATION_MZ_TOLERANCE.id) + " " + IdentificationParametersCLIParams.ANNOTATION_MZ_TOLERANCE.description + "\n";
@@ -97,15 +93,13 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.PTM_THRESHOLD.id) + " " + IdentificationParametersCLIParams.PTM_THRESHOLD.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.SCORE_NEUTRAL_LOSSES.id) + " " + IdentificationParametersCLIParams.SCORE_NEUTRAL_LOSSES.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.PTM_SEQUENCE_MATCHING_TYPE.id) + " " + IdentificationParametersCLIParams.PTM_SEQUENCE_MATCHING_TYPE.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.PTM_ALIGNMENT.id) + " " + IdentificationParametersCLIParams.PTM_ALIGNMENT.description + "\n";
+
+        output += "\n\nGene Annotation:\n\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.USE_GENE_MAPPING.id) + " " + IdentificationParametersCLIParams.USE_GENE_MAPPING.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.UPDATE_GENE_MAPPING.id) + " " + IdentificationParametersCLIParams.UPDATE_GENE_MAPPING.description + "\n";
 
         output += "\n\nProtein Inference:\n\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.DB_PI.id) + " " + IdentificationParametersCLIParams.DB_PI.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SIMPLIFY_GOUPS.id) + " " + IdentificationParametersCLIParams.SIMPLIFY_GOUPS.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SIMPLIFY_GOUPS_SCORE.id) + " " + IdentificationParametersCLIParams.SIMPLIFY_GOUPS_SCORE.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SIMPLIFY_GOUPS_ENZYMATICITY.id) + " " + IdentificationParametersCLIParams.SIMPLIFY_GOUPS_ENZYMATICITY.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SIMPLIFY_GOUPS_EVIDENCE.id) + " " + IdentificationParametersCLIParams.SIMPLIFY_GOUPS_EVIDENCE.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SIMPLIFY_GOUPS_UNCHARACTERIZED.id) + " " + IdentificationParametersCLIParams.SIMPLIFY_GOUPS_UNCHARACTERIZED.description + "\n";
 
         output += "\n\nValidation Levels:\n\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.PSM_FDR.id) + " " + IdentificationParametersCLIParams.PSM_FDR.description + "\n";
@@ -116,7 +110,7 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MERGE_SUBGROUPS.id) + " " + IdentificationParametersCLIParams.MERGE_SUBGROUPS.description + "\n";
 
         output += "\n\nFraction Analysis:\n\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.PROTEIN_FRACTION_MW_CONFIDENCE.id) + IdentificationParametersCLIParams.PROTEIN_FRACTION_MW_CONFIDENCE.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.PROTEIN_FRACTION_MW_CONFIDENCE.id) + " " + IdentificationParametersCLIParams.PROTEIN_FRACTION_MW_CONFIDENCE.description + "\n";
 
 //        output += "\n\nQuality Control:\n\n";
 //        output += "-" + String.format(formatter, IdentificationParametersCLIParams.ANNOTATION_LEVEL.id) + IdentificationParametersCLIParams.ANNOTATION_LEVEL.description + "\n";

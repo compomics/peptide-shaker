@@ -20,7 +20,7 @@ import com.compomics.util.experiment.identification.protein_sequences.SequenceFa
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import eu.isas.peptideshaker.PeptideShaker;
-import com.compomics.util.experiment.identification.parameters_cli.IdentificationParametersInputBean;
+import com.compomics.cli.identification_parameters.IdentificationParametersInputBean;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;

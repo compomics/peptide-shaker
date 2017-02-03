@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.util.experiment.identification.parameters_cli.IdentificationParametersCLIParams;
+import com.compomics.cli.identification_parameters.IdentificationParametersCLIParams;
 import static eu.isas.peptideshaker.cmd.PathSettingsCLIParams.LOG;
 import org.apache.commons.cli.Options;
 
