@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.validation;
 
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.filtering.Filter;
@@ -736,8 +735,8 @@ public class MatchesValidator {
         }
 
         identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
-    }
-
+        }
+                        
     /**
      * Updates the validation status of a peptide assumption. If the match was
      * manually validated nothing will be changed.
@@ -1377,7 +1376,7 @@ public class MatchesValidator {
         proteinFilters.add(proteinFilter);
         validationQCPreferences.setProteinFilters(proteinFilters);
     }
-
+                
     /**
      * Runnable validating PSMs.
      *
