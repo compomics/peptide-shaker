@@ -400,6 +400,8 @@ public class MatchesValidator {
         }
         metrics.setTotalPeptidesPerFraction(validatedTotalPeptidesPerFraction);
 
+//        ObjectsDB.setDebugInteractions(true);
+        
         // validate the proteins
         pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
@@ -1882,6 +1884,12 @@ public class MatchesValidator {
                         // set the fraction details
                         PSParameter psParameter = new PSParameter();
                         psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+                        
+                        if (psParameter == null) {
+                            System.out.println("Null parameter: " + proteinKey);
+                        } else if (psParameter.getMatchValidationLevel() == null) {
+                            System.out.println("Null validation level: " + proteinKey);
+                        }
 
                         if (!proteinMatch.isDecoy() && psParameter.getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel()) {
                             double tempSpectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
