@@ -531,7 +531,7 @@ public class ProteinInference {
                 }
                 orderMap.get(score).get(nPeptides).get(nSpectra).add(proteinKey);
 
-                // save the lenght of the longest protein accession number
+                // save the length of the longest protein accession number
                 if (proteinMatch.getMainMatch().length() > maxProteinKeyLength) {
                     maxProteinKeyLength = proteinMatch.getMainMatch().length();
                 }

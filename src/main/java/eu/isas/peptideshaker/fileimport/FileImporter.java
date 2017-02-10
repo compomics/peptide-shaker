@@ -22,6 +22,7 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
+import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.protein_inference.PeptideMapperType;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -156,17 +157,16 @@ public class FileImporter {
      * Imports sequences from a FASTA file.
      *
      * @param sequenceMatchingPreferences the sequence matching preferences
-     * @param fragmentIonAccuracyInDaltons the fragment ion accuracy
+     * @param searchParameters the search parameters
      * @param peptideVariantsPreferences the peptide variants preferences set by
      * the user
      * @param waitingHandler the handler displaying feedback to the user and
      * allowing canceling the import
      * @param exceptionHandler handler for exceptions
      * @param fastaFile FASTA file to process
-     * @param ptmSettings the PTM settings
      */
-    public void importSequences(SequenceMatchingPreferences sequenceMatchingPreferences, Double fragmentIonAccuracyInDaltons, PeptideVariantsPreferences peptideVariantsPreferences, WaitingHandler waitingHandler,
-            ExceptionHandler exceptionHandler, File fastaFile, PtmSettings ptmSettings) {
+    public void importSequences(SequenceMatchingPreferences sequenceMatchingPreferences, SearchParameters searchParameters, PeptideVariantsPreferences peptideVariantsPreferences, WaitingHandler waitingHandler,
+            ExceptionHandler exceptionHandler, File fastaFile) {
 
         try {
             waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".", true, true);
@@ -206,7 +206,7 @@ public class FileImporter {
             sequenceFactory.setnCache(cacheSize);
 
             try {
-                sequenceFactory.getDefaultPeptideMapper(sequenceMatchingPreferences, ptmSettings, fragmentIonAccuracyInDaltons, peptideVariantsPreferences, waitingHandler, exceptionHandler);
+                sequenceFactory.getDefaultPeptideMapper(sequenceMatchingPreferences, searchParameters, peptideVariantsPreferences, waitingHandler, exceptionHandler);
             } catch (SQLException e) {
                 waitingHandler.appendReport("Database " + sequenceFactory.getCurrentFastaFile().getName()
                         + " could not be accessed, make sure that the file is not used by another "
@@ -440,9 +440,8 @@ public class FileImporter {
         public int importFiles() {
 
             try {
-                importSequences(identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getSearchParameters().getFragmentIonAccuracyInDaltons(), identificationParameters.getPeptideVariantsPreferences(), waitingHandler, exceptionHandler,
-                        identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase(),
-                        identificationParameters.getSearchParameters().getPtmSettings());
+                importSequences(identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getSearchParameters(), identificationParameters.getPeptideVariantsPreferences(), waitingHandler, exceptionHandler,
+                        identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase());
 
                 if (waitingHandler.isRunCanceled()) {
                     return 1;

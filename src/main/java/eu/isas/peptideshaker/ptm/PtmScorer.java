@@ -1874,6 +1874,7 @@ public class PtmScorer {
                                     modificationMatch.setInferred(true);
                                 }
                             }
+                            peptide.resetKeysCaches();
                         }
                         identification.updateSpectrumMatch(spectrumMatch);
                     }
@@ -2278,6 +2279,8 @@ public class PtmScorer {
                     }
                 }
             }
+
+            psPeptide.resetKeysCaches();
         }
     }
 
