@@ -65,3 +65,7 @@ Working with labeled peptides?<br><br>Search a couple of files with variable mod
 <b>Fixed</b> or <b>Variable</b> modification?<br><br>Search a couple of files with all variable and then check the site modification rate in the peptide <i>Modification Efficiency</i> plot in the <i>QC Plots</i> tab!
 Which modifications to search?<br><br>Try different combinations and evaluate the results in the <i>#Modification</i> plot in the <i>QC Plots</i> tab!
 Working with enriched peptides?<br><br>Check the enrichment specificity in the peptide <i>Modification Specificity</i> plot in the <i>QC Plots</i> tab!
+Questions on Proteomics?<br><br>Ask them at <a href="http://qa.proteomics-academy.org">qa.proteomics-academy.org</a>!
+Looking for training?<br><br>Find courses on the <a href="http://proteomics-academy.org">Protomics Academy</a>!
+Designed a bioinformatics workflow?<br><br>Write a tutorial on the <a href="http://wiki.proteomics-academy.org">Educational Wiki</a> of the <a href="http://proteomics-academy.org">Protomics Academy</a>!
+Want to use SearchGUI and PeptideShaker in Galaxy? Try the <a href="https://github.com/Stortebecker/training-material/tree/master/Proteomics">Galaxy-P tutorials</a>!
