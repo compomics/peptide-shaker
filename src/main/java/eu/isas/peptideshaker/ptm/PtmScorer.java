@@ -112,8 +112,8 @@ public class PtmScorer {
         HashMap<String, ArrayList<Integer>> modificationProfiles = new HashMap<String, ArrayList<Integer>>();
         PSPtmScores ptmScores = new PSPtmScores();
 
-        if (spectrumMatch.getUrParam(new PSPtmScores()) != null) {
-            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+        if (spectrumMatch.getUrParam(ptmScores) != null) {
+            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
         }
 
         PSParameter psParameter = new PSParameter();
@@ -268,8 +268,8 @@ public class PtmScorer {
         PtmSettings ptmProfile = searchParameters.getPtmSettings();
 
         PSPtmScores ptmScores = new PSPtmScores();
-        if (spectrumMatch.getUrParam(new PSPtmScores()) != null) {
-            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+        if (spectrumMatch.getUrParam(ptmScores) != null) {
+            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
         }
 
         HashMap<Double, ArrayList<PTM>> modifications = new HashMap<Double, ArrayList<PTM>>();
@@ -669,7 +669,7 @@ public class PtmScorer {
                         }
                         nTermPtmConfident = ptmFactory.getPTM(modName);
                     } else {
-                        throw new IllegalArgumentException("Terminal PTM should be of type PTM.MODAA.");
+                        throw new IllegalArgumentException("Non-terminal PTM should be of type PTM.MODAA.");
                     }
                 }
             } else {
@@ -683,25 +683,12 @@ public class PtmScorer {
 
         HashMap<Double, ArrayList<ModificationMatch>> newMatches = new HashMap<Double, ArrayList<ModificationMatch>>(variableModifications.size());
 
-        ArrayList<String> bestKeys = new ArrayList<String>(peptideMatch.getSpectrumCount());
-
-        boolean validated = false;
-        for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
-            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-            MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
-            if (matchValidationLevel.isValidated() && !validated) {
-                bestKeys.clear();
-                validated = true;
-            }
-            bestKeys.add(spectrumKey);
-        }
-
         HashMap<Double, ArrayList<Integer>> confidentSites = new HashMap<Double, ArrayList<Integer>>(variableModifications.size());
 
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(new PSParameter());
-        PsmIterator psmIterator = identification.getPsmIterator(bestKeys, parameters, false, waitingHandler);
-
+        PsmIterator psmIterator = identification.getPsmIterator(peptideMatch.getSpectrumMatchesKeys(), parameters, false, waitingHandler);
+        
         // Map confident sites
         while (psmIterator.hasNext()) {
             SpectrumMatch spectrumMatch = psmIterator.next();
@@ -744,7 +731,7 @@ public class PtmScorer {
                     if (occurrence != null) {
                         ArrayList<Integer> ptmConfidentSites = confidentSites.get(ptmMass);
                         if (ptmConfidentSites == null) {
-                            ptmConfidentSites = new ArrayList<Integer>();
+                            ptmConfidentSites = new ArrayList<Integer>(1);
                             confidentSites.put(ptmMass, ptmConfidentSites);
                         }
                         int nSitesOccupied = ptmConfidentSites.size();
@@ -797,7 +784,7 @@ public class PtmScorer {
                 }
             }
         }
-
+        
         boolean enoughSites = true;
         for (double ptmMass : variableModifications.keySet()) {
             int nPtms = variableModifications.get(ptmMass);
@@ -815,7 +802,7 @@ public class PtmScorer {
 
             HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>> ambiguousSites = new HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>>(originalMatches.size());
 
-            psmIterator = identification.getPsmIterator(bestKeys, parameters, true, waitingHandler);
+            psmIterator = identification.getPsmIterator(peptideMatch.getSpectrumMatchesKeys(), parameters, true, waitingHandler);
 
             // Map ambiguous sites
             while (psmIterator.hasNext()) {
@@ -1590,9 +1577,9 @@ public class PtmScorer {
         PtmSettings ptmSettings = searchParameters.getPtmSettings();
 
         // PSMs with confidently localized PTMs in a map: PTM mass -> peptide sequence -> spectrum keys
-        HashMap<Double, HashMap<String, ArrayList<String>>> confidentPeptideInference = new HashMap<Double, HashMap<String, ArrayList<String>>>();
+        HashMap<Double, HashMap<String, HashSet<String>>> confidentPeptideInference = new HashMap<Double, HashMap<String, HashSet<String>>>();
         // PSMs with ambiguously localized PTMs in a map: File -> PTM mass -> spectrum keys
-        HashMap<String, HashMap<Double, ArrayList<String>>> notConfidentPeptideInference = new HashMap<String, HashMap<Double, ArrayList<String>>>();
+        HashMap<String, HashMap<Double, HashSet<String>>> notConfidentPeptideInference = new HashMap<String, HashMap<Double, HashSet<String>>>();
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
@@ -1649,28 +1636,28 @@ public class PtmScorer {
                                 }
                                 if (maybeNotTerminal) {
                                     if (!modMatch.isConfident()) {
-                                        HashMap<Double, ArrayList<String>> fileMap = notConfidentPeptideInference.get(spectrumFileName);
+                                        HashMap<Double, HashSet<String>> fileMap = notConfidentPeptideInference.get(spectrumFileName);
                                         if (fileMap == null) {
-                                            fileMap = new HashMap<Double, ArrayList<String>>(2);
+                                            fileMap = new HashMap<Double, HashSet<String>>(2);
                                             notConfidentPeptideInference.put(spectrumFileName, fileMap);
                                         }
-                                        ArrayList<String> spectra = fileMap.get(ptmMass);
+                                        HashSet<String> spectra = fileMap.get(ptmMass);
                                         if (spectra == null) {
-                                            spectra = new ArrayList<String>(2);
+                                            spectra = new HashSet<String>(2);
                                             fileMap.put(ptmMass, spectra);
                                         }
                                         spectra.add(spectrumKey);
                                         confident = false;
                                     } else {
-                                        HashMap<String, ArrayList<String>> modMap = confidentPeptideInference.get(ptmMass);
+                                        HashMap<String, HashSet<String>> modMap = confidentPeptideInference.get(ptmMass);
                                         if (modMap == null) {
-                                            modMap = new HashMap<String, ArrayList<String>>(2);
+                                            modMap = new HashMap<String, HashSet<String>>(2);
                                             confidentPeptideInference.put(ptmMass, modMap);
                                         }
                                         String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
-                                        ArrayList<String> spectra = modMap.get(sequence);
+                                        HashSet<String> spectra = modMap.get(sequence);
                                         if (spectra == null) {
-                                            spectra = new ArrayList<String>(2);
+                                            spectra = new HashSet<String>(2);
                                             modMap.put(sequence, spectra);
                                         }
                                         spectra.add(spectrumKey);
@@ -1678,7 +1665,6 @@ public class PtmScorer {
                                 }
                             }
                         }
-                        identification.updateSpectrumMatch(spectrumMatch);
                         if (confident) {
                             waitingHandler.increaseSecondaryProgressCounter();
                         }
@@ -1699,11 +1685,11 @@ public class PtmScorer {
         for (String spectrumFile : notConfidentPeptideInference.keySet()) {
 
             HashSet<String> progress = new HashSet<String>();
-            HashMap<Double, ArrayList<String>> peptidesOfFile = notConfidentPeptideInference.get(spectrumFile);
+            HashMap<Double, HashSet<String>> peptidesOfFile = notConfidentPeptideInference.get(spectrumFile);
 
             for (Double ptmMass : peptidesOfFile.keySet()) {
 
-                ArrayList<String> spectrumKeys = peptidesOfFile.get(ptmMass);
+                ArrayList<String> spectrumKeys = new ArrayList<String>(peptidesOfFile.get(ptmMass));
                 PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, true, waitingHandler);
 
                 while (psmIterator.hasNext()) {
@@ -1718,12 +1704,12 @@ public class PtmScorer {
                     ArrayList<Integer> tempLocalizations, oldLocalizations = Peptide.getNModificationLocalized(notConfidentKey, ptmMass);
                     ArrayList<Integer> newLocalizationCandidates = new ArrayList<Integer>(oldLocalizations.size());
 
-                    HashMap<String, ArrayList<String>> ptmConfidentPeptides = confidentPeptideInference.get(ptmMass);
+                    HashMap<String, HashSet<String>> ptmConfidentPeptides = confidentPeptideInference.get(ptmMass);
 
                     if (ptmConfidentPeptides != null) {
 
                         // See if we can explain this peptide by another already identified peptide with the same number of modifications (the two peptides will be merged)
-                        ArrayList<String> keys = ptmConfidentPeptides.get(sequence);
+                        HashSet<String> keys = ptmConfidentPeptides.get(sequence);
 
                         if (keys != null) {
                             for (String tempKey : keys) {
@@ -1754,7 +1740,7 @@ public class PtmScorer {
                         }
                         if (oldLocalizations.size() + newLocalizationCandidates.size() < nMod) {
                             // There are still unexplained sites, let's see if we find a related peptide which can help.
-                            HashMap<String, ArrayList<String>> confidentAtMass = confidentPeptideInference.get(ptmMass);
+                            HashMap<String, HashSet<String>> confidentAtMass = confidentPeptideInference.get(ptmMass);
                             for (String otherSequence : confidentAtMass.keySet()) {
                                 if (!sequence.equals(otherSequence) && sequence.contains(otherSequence)) {
                                     for (String tempKey : confidentAtMass.get(otherSequence)) {
@@ -1836,6 +1822,7 @@ public class PtmScorer {
                                 }
                             }
                         }
+                        
                         // Map the most likely inferred sites
                         if (!newLocalizationCandidates.isEmpty()) {
                             HashMap<Integer, ModificationMatch> nonConfidentMatches = new HashMap<Integer, ModificationMatch>();
@@ -1909,7 +1896,9 @@ public class PtmScorer {
             throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
         Peptide psPeptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+        
         if (psPeptide.isModified()) {
+            
             SearchParameters searchParameters = identificationParameters.getSearchParameters();
             PtmSettings modificationProfile = searchParameters.getPtmSettings();
             PSPtmScores ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
