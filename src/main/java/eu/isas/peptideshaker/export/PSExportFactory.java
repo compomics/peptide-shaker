@@ -675,7 +675,7 @@ public class PSExportFactory implements ExportFactory {
 
         exportFeatures.put(PsPsmFeature.type, sectionContent);
 
-        ExportScheme psmReport = new ExportScheme("Default PSM Report", false, exportFeatures, "\t", true, true, 1, false, true, false);
+        ExportScheme psmReport = new ExportScheme("Default PSM Report", false, exportFeatures, "\t", true, true, 0, false, true, false);
 
         ///////////////////////////
         // All PSM report
@@ -723,7 +723,7 @@ public class PSExportFactory implements ExportFactory {
 
         exportFeatures.put(PsPsmFeature.type, sectionContent);
 
-        ExportScheme extendedPsmReport = new ExportScheme("Extended PSM Report", false, exportFeatures, "\t", true, true, 1, false, false, true);
+        ExportScheme extendedPsmReport = new ExportScheme("Extended PSM Report", false, exportFeatures, "\t", true, true, 0, false, false, true);
 
         ///////////////////////////
         // Default protein phospho report
@@ -856,7 +856,7 @@ public class PSExportFactory implements ExportFactory {
 
         exportFeatures.put(PsPsmFeature.type, sectionContent);
 
-        ExportScheme psmPhosphoReport = new ExportScheme("Default PSM Phosphorylation Report", false, exportFeatures, "\t", true, true, 1, false, true, false);
+        ExportScheme psmPhosphoReport = new ExportScheme("Default PSM Phosphorylation Report", false, exportFeatures, "\t", true, true, 0, false, true, false);
 
         ///////////////////////////
         // Certificate of analysis
