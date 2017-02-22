@@ -374,40 +374,8 @@ public class PsmImporter {
         } else if (matchAssumptions != null && rawDbAssumptions != null) {
             HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> combinedAssumptions
                     = new HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>>(Math.max(matchAssumptions.size(), rawDbAssumptions.size()));
-            for (Integer algorithm : matchAssumptions.keySet()) {
-                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> algorithmMap = matchAssumptions.get(algorithm);
-                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> combinedAlgorithmMap = combinedAssumptions.get(algorithm);
-                if (combinedAlgorithmMap == null) {
-                    combinedAlgorithmMap = new HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>(algorithmMap.size());
-                    combinedAssumptions.put(algorithm, algorithmMap);
-                }
-                for (Double score : algorithmMap.keySet()) {
-                    ArrayList<SpectrumIdentificationAssumption> scoreAssumptions = algorithmMap.get(score);
-                    ArrayList<SpectrumIdentificationAssumption> combinedScoreAssumptions = combinedAlgorithmMap.get(score);
-                    if (combinedScoreAssumptions == null) {
-                        combinedScoreAssumptions = new ArrayList<SpectrumIdentificationAssumption>(scoreAssumptions.size());
-                        combinedAlgorithmMap.put(score, scoreAssumptions);
-                    }
-                    combinedScoreAssumptions.addAll(scoreAssumptions);
-                }
-            }
-            for (Integer algorithm : rawDbAssumptions.keySet()) {
-                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> algorithmMap = rawDbAssumptions.get(algorithm);
-                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> combinedAlgorithmMap = combinedAssumptions.get(algorithm);
-                if (combinedAlgorithmMap == null) {
-                    combinedAlgorithmMap = new HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>(algorithmMap.size());
-                    combinedAssumptions.put(algorithm, algorithmMap);
-                }
-                for (Double score : algorithmMap.keySet()) {
-                    ArrayList<SpectrumIdentificationAssumption> scoreAssumptions = algorithmMap.get(score);
-                    ArrayList<SpectrumIdentificationAssumption> combinedScoreAssumptions = combinedAlgorithmMap.get(score);
-                    if (combinedScoreAssumptions == null) {
-                        combinedScoreAssumptions = new ArrayList<SpectrumIdentificationAssumption>(scoreAssumptions.size());
-                        combinedAlgorithmMap.put(score, scoreAssumptions);
-                    }
-                    combinedScoreAssumptions.addAll(scoreAssumptions);
-                }
-            }
+            extractor(matchAssumptions, combinedAssumptions);
+            extractor(rawDbAssumptions, combinedAssumptions);
             spectrumMatch.removeAssumptions();
             identification.removeRawAssumptions(spectrumKey);
             importAssumptions(spectrumMatch, combinedAssumptions, peptideSpectrumAnnotator, waitingHandler);
@@ -423,6 +391,26 @@ public class PsmImporter {
             return;
         }
         waitingHandler.setSecondaryProgressCounter(++progress);
+    }
+
+    private void extractor(HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> matchAssumptions, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> combinedAssumptions) {
+        for (Integer algorithm : matchAssumptions.keySet()) {
+            HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> algorithmMap = matchAssumptions.get(algorithm);
+            HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> combinedAlgorithmMap = combinedAssumptions.get(algorithm);
+            if (combinedAlgorithmMap == null) {
+                combinedAlgorithmMap = new HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>(algorithmMap.size());
+                combinedAssumptions.put(algorithm, algorithmMap);
+            }
+            for (Double score : algorithmMap.keySet()) {
+                ArrayList<SpectrumIdentificationAssumption> scoreAssumptions = algorithmMap.get(score);
+                ArrayList<SpectrumIdentificationAssumption> combinedScoreAssumptions = combinedAlgorithmMap.get(score);
+                if (combinedScoreAssumptions == null) {
+                    combinedScoreAssumptions = new ArrayList<SpectrumIdentificationAssumption>(scoreAssumptions.size());
+                    combinedAlgorithmMap.put(score, scoreAssumptions);
+                }
+                combinedScoreAssumptions.addAll(scoreAssumptions);
+            }
+        }
     }
 
     /**
