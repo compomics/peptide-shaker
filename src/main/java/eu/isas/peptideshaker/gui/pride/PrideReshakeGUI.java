@@ -2465,7 +2465,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     ResponseEntity<Integer> projectCountResult = template.getForEntity(url, Integer.class); // can also use project/count/?q=*
                     Integer numberOfProjects = projectCountResult.getBody();
 
-                    int projectBatchSize = 100;
+                    int projectBatchSize = 200;
                     int numberOfPages = (int) Math.ceil(((double) numberOfProjects) / projectBatchSize);
 
                     progressDialog.setPrimaryProgressCounterIndeterminate(false);
