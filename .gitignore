@@ -1,7 +1,3 @@
 /target/
-/resources/*
-.classpath
-.idea/
-.project
-.settings/
-PeptideShaker.iml
+/resources/example_dataset/
+resources/mzidml-core.log

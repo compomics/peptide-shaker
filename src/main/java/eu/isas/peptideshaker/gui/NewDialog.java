@@ -42,20 +42,17 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
 import eu.isas.peptideshaker.validation.MatchesValidator;
-
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.io.*;
-import java.sql.SQLException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
-import java.io.DataOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 /**
  * A dialog for selecting the files to load.
@@ -717,20 +714,22 @@ public class NewDialog extends javax.swing.JDialog {
             experiment.addAnalysisSet(sample, analysisSet);
 
             // incrementing the counter for a new PeptideShaker start run via GUI
-            final String COLLECT_URL = "http://www.google-analytics.com/collect";
-            final String POST = "v=1&tid=UA-36198780-1&cid=35119a79-1a05-49d7-b876-bb88420f825b&uid=asuueffeqqss&t=event&ec=usage&ea=startrun-gui&el=peptide-shaker";
-            try {
-                HttpURLConnection connection = (HttpURLConnection) new URL(COLLECT_URL).openConnection();
-                connection.setRequestMethod("POST");
-                connection.setConnectTimeout(3000);
-                connection.setDoOutput(true);
-                DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-                wr.writeBytes(POST);
-                int response = connection.getResponseCode();
-
-            } catch (IOException ex) {
-                System.out.println("GA connection refused");
+            if (peptideShakerGUI.getUtilitiesUserPreferences().isAutoUpdate()) {
+                final String COLLECT_URL = "http://www.google-analytics.com/collect";
+                final String POST = "v=1&tid=UA-36198780-1&cid=35119a79-1a05-49d7-b876-bb88420f825b&uid=asuueffeqqss&t=event&ec=usage&ea=startrun-gui&el=peptide-shaker";
+                try {
+                    HttpURLConnection connection = (HttpURLConnection) new URL(COLLECT_URL).openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setConnectTimeout(3000);
+                    connection.setDoOutput(true);
+                    DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+                    wr.writeBytes(POST);
+                    int response = connection.getResponseCode();
+                } catch (IOException ex) {
+                    System.out.println("GA connection refused");
+                }
             }
+
             peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
 
             ArrayList<String> tips;

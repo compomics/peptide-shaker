@@ -374,8 +374,8 @@ public class PsmImporter {
         } else if (matchAssumptions != null && rawDbAssumptions != null) {
             HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> combinedAssumptions
                     = new HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>>(Math.max(matchAssumptions.size(), rawDbAssumptions.size()));
-            extractor(matchAssumptions, combinedAssumptions);
-            extractor(rawDbAssumptions, combinedAssumptions);
+            getAssumptions(matchAssumptions, combinedAssumptions);
+            getAssumptions(rawDbAssumptions, combinedAssumptions);
             spectrumMatch.removeAssumptions();
             identification.removeRawAssumptions(spectrumKey);
             importAssumptions(spectrumMatch, combinedAssumptions, peptideSpectrumAnnotator, waitingHandler);
@@ -393,7 +393,13 @@ public class PsmImporter {
         waitingHandler.setSecondaryProgressCounter(++progress);
     }
 
-    private void extractor(HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> matchAssumptions, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> combinedAssumptions) {
+    /**
+     * Extracts the assumptions and adds them to the provided map.
+     * 
+     * @param matchAssumptions the match assumptions
+     * @param combinedAssumptions the combined assumptions
+     */
+    private void getAssumptions(HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> matchAssumptions, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> combinedAssumptions) {
         for (Integer algorithm : matchAssumptions.keySet()) {
             HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> algorithmMap = matchAssumptions.get(algorithm);
             HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> combinedAlgorithmMap = combinedAssumptions.get(algorithm);

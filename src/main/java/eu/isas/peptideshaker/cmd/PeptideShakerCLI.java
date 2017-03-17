@@ -45,7 +45,6 @@ import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.awt.Point;
 import java.awt.Toolkit;
 import org.apache.commons.cli.*;
-
 import java.io.*;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -728,6 +727,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         spectrumCountingPreferences = new SpectrumCountingPreferences();
 
         // incrementing the counter for a new PeptideShaker start run via GUI
+        if (utilitiesUserPreferences.isAutoUpdate()) {
             final String COLLECT_URL = "http://www.google-analytics.com/collect";
             final String POST = "v=1&tid=UA-36198780-1&cid=35119a79-1a05-49d7-b876-bb88420f825b&uid=asuueffeqqss&t=event&ec=usage&ea=startrun-cl&el=peptide-shaker";
             try {
@@ -738,10 +738,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
                 wr.writeBytes(POST);
                 int response = connection.getResponseCode();
-
             } catch (IOException ex) {
                 System.out.println("GA connection refused");
             }
+        }
         
         // create a shaker which will perform the analysis
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
