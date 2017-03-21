@@ -4825,6 +4825,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             // create the intensity histograms
                             secondarySpectrumPlotsJPanel.add(new IntensityHistogram(
                                     annotations, currentSpectrum,
+                                    annotationPreferences.getIntensityThresholdType(),
                                     annotationPreferences.getAnnotationIntensityLimit()));
 
                             // create the miniature mass error plot

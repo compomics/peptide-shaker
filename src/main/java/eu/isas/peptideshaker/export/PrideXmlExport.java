@@ -26,7 +26,6 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Annotati
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
-import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
@@ -49,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -256,8 +256,9 @@ public class PrideXmlExport {
      * occurred while deserializing an object
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred
+     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
-    public void createPrideXmlFile(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
+    public void createPrideXmlFile(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException, MathException {
 
         // the experiment start tag
         writeExperimentCollectionStartTag();
@@ -347,8 +348,9 @@ public class PrideXmlExport {
      * occurred while deserializing an object
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred
+     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
-    private void writePsms(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
+    private void writePsms(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException, MathException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter proteinProbabilities = new PSParameter();
@@ -726,8 +728,9 @@ public class PrideXmlExport {
      * reading/writing a file
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
      * occurred while reading the mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
-    private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
+    private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException, MathException {
 
         PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
         Peptide peptide = peptideAssumption.getPeptide();

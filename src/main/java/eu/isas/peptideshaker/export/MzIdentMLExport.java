@@ -62,6 +62,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.math.MathException;
 
 /**
  * The class that takes care of converting the data to mzIdentML.
@@ -291,8 +292,9 @@ public class MzIdentMLExport {
      * occurred while writing the export
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
+     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
-    public void createMzIdentMLFile(boolean version12) throws IOException, MzMLUnmarshallerException, ClassNotFoundException, InterruptedException, SQLException {
+    public void createMzIdentMLFile(boolean version12) throws IOException, MzMLUnmarshallerException, ClassNotFoundException, InterruptedException, SQLException, MathException {
 
         mzidVersion_1_2 = version12;
         if (mzidVersion_1_2) {
@@ -1198,8 +1200,9 @@ public class MzIdentMLExport {
      * occurred while writing the export
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
+     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
-    private void writeDataCollection() throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    private void writeDataCollection() throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
         br.write(getCurrentTabSpace() + "<DataCollection>" + lineBreak);
         tabCounter++;
         writeInputFileDetails();
@@ -1219,8 +1222,9 @@ public class MzIdentMLExport {
      * occurred while writing the export
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
+     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
-    private void writeDataAnalysis() throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    private void writeDataAnalysis() throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         br.write(getCurrentTabSpace() + "<AnalysisData>" + lineBreak);
         tabCounter++;
@@ -1407,9 +1411,10 @@ public class MzIdentMLExport {
      * interacting with the database
      * @throws MzMLUnmarshallerException exception thrown whenever an error
      * occurred while reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
     private void writeSpectrumIdentificationResult(String psmKey, int psmIndex)
-            throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
         String spectrumTitle = Spectrum.getSpectrumTitle(psmKey);

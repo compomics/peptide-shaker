@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.math.MathException;
 import org.apache.commons.math.util.FastMath;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -176,10 +177,11 @@ public class PsmScorer {
      * while retrieving an object from the database
      * @throws MzMLUnmarshallerException thrown if an exception occurred while
      * reading a spectrum from an mzml file
+     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
     public ArrayList<Integer> estimateIntermediateScores(Identification identification, SpectrumMatch spectrumMatch, InputMap inputMap,
             IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator, HyperScore hyperScore, WaitingHandler waitingHandler)
-            throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+            throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException, MathException {
 
         AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
 

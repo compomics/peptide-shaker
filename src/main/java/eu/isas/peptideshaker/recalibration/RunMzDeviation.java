@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -272,9 +273,10 @@ public class RunMzDeviation {
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
     public RunMzDeviation(String spectrumFileName, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
-            throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
+            throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException, MathException {
 
         AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();

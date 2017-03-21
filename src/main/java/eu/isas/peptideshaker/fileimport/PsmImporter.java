@@ -59,6 +59,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 import static eu.isas.peptideshaker.fileimport.FileImporter.PTM_MASS_TOLERANCE;
+import org.apache.commons.math.MathException;
 
 /**
  * This class can be used to import PSMs from search engine results.
@@ -244,9 +245,10 @@ public class PsmImporter {
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
     public void importPsms(LinkedList<SpectrumMatch> idFileSpectrumMatches, int nThreads, WaitingHandler waitingHandler)
-            throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+            throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException, MathException {
         if (nThreads == 1) {
             importPsmsSingleThread(idFileSpectrumMatches, waitingHandler);
         } else {
@@ -309,9 +311,10 @@ public class PsmImporter {
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
     private void importPsmsSingleThread(LinkedList<SpectrumMatch> idFileSpectrumMatches, WaitingHandler waitingHandler)
-            throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+            throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException, MathException {
 
         PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
         while (!idFileSpectrumMatches.isEmpty()) {
@@ -339,9 +342,10 @@ public class PsmImporter {
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
     private void importPsm(SpectrumMatch spectrumMatch, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
-            throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+            throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException, MathException {
 
         // free memory if needed
         if (MemoryConsumptionStatus.memoryUsed() > 0.9 && !peptideShakerCache.isEmpty()) {
@@ -448,9 +452,10 @@ public class PsmImporter {
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
     private void importAssumptions(SpectrumMatch spectrumMatch, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
-            throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+            throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException, MathException {
 
         PeptideAssumptionFilter peptideAssumptionFilter = identificationParameters.getPeptideAssumptionFilter();
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();

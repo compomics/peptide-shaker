@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -101,9 +102,10 @@ public class BestMatchSelection {
      * threading error occurred
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown
      * whenever an error occurred while reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
     public void selectBestHitAndFillPsmMap(InputMap inputMap, WaitingHandler waitingHandler,
-            IdentificationParameters identificationParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            IdentificationParameters identificationParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
@@ -592,10 +594,11 @@ public class BestMatchSelection {
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
     public static PeptideAssumption getBestHit(String spectrumKey, ArrayList<PeptideAssumption> firstHits, HashMap<String, Integer> proteinCount,
             SequenceMatchingPreferences sequenceMatchingPreferences, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator spectrumAnnotator)
-            throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException {
+            throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException, MathException {
 
         if (firstHits.size() == 1) {
             return firstHits.get(0);
