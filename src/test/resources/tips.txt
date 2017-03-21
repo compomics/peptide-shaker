@@ -55,7 +55,6 @@ PeptideShaker runs a lot faster on SSD discs!<br><br>Given that a lot of informa
 Terminal modifications on degraded proteins?<br><br><b>PeptideShaker</b> excludes all protein terminal modifications which do not occur at the terminus of a protein sequence or on the second amino acid when the first is a methionine. If you need more flexible modification mapping use modifications at peptide termini.
 Doubtful matches?<br><br><b>PeptideShaker</b> flags low confidence validation with a yellow warning icon. Clicking on the icon will provide you all details!
 Using <b>PeptideShaker</b> without <b>SearchGUI</b>?<br><br>Don't forget to provide the identification parameters when creating a project!
-Running out of disc space?<br><br>An index file is created for every protein database. You can select the folder where to store these indexes and clean it using the <i>Advanced</i> button of the database selection dialog.
 When should I update my tool?<br><br>New versions are frequently released for a constant improvement of our tools. You will be notified if the tool can connect the internet. It is advised to always keep your tools up to date.
 How do results compare between versions?<br><br>Results cannot be compared between major releases (big number change) but between minor releases (small number change).
 What is the best music to listen to when running PeptideShaker?<br><br>Click <a href="https://www.youtube.com/watch?v=Ilj-1sCr6y4">here</a> to enhance your shaking experience! &#9786;

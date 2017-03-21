@@ -28,6 +28,8 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import javax.swing.*;
 import javax.xml.stream.XMLStreamException;
+import java.io.DataOutputStream;
+import java.net.HttpURLConnection;
 
 /**
  * A simple welcome dialog with the option to open an existing project or create
@@ -70,7 +72,24 @@ public class WelcomeDialog extends javax.swing.JDialog {
         if (showJavaVersionWarning) {
             lowMemoryWarningLabel.setText("<html><u>Java Version Warning!</u>");
         }
-        
+
+        // incrementing the counter for a new PeptideShaker start
+        if (peptideShakerGUI.getUtilitiesUserPreferences().isAutoUpdate()) {
+            final String COLLECT_URL = "http://www.google-analytics.com/collect";
+            final String POST = "v=1&tid=UA-36198780-1&cid=35119a79-1a05-49d7-b876-bb88420f825b&uid=asuueffeqqss&t=event&ec=usage&ea=toolstart&el=peptide-shaker";
+            try {
+                HttpURLConnection connection = (HttpURLConnection) new URL(COLLECT_URL).openConnection();
+                connection.setRequestMethod("POST");
+                connection.setConnectTimeout(3000);
+                connection.setDoOutput(true);
+                DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+                wr.writeBytes(POST);
+                int response = connection.getResponseCode();
+            } catch (IOException ex) {
+                System.out.println("GA connection refused");
+            }
+        }
+
         setTitle(getTitle() + " " + PeptideShaker.getVersion());
 
         setLocationRelativeTo(null);
@@ -494,12 +513,12 @@ public class WelcomeDialog extends javax.swing.JDialog {
         String cpsFileFilterDescription = "PeptideShaker (.cpsx)";
         String zipFileFilterDescription = "Zipped PeptideShaker (.zip)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
-        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".cpsx", ".zip"}, 
+        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".cpsx", ".zip"},
                 new String[]{cpsFileFilterDescription, zipFileFilterDescription}, "Open PeptideShaker Project", lastSelectedFolderPath, null, true, false, false, 0);
 
         if (selectedFileAndFilter != null) {
 
-            File selectedFile = selectedFileAndFilter.getFile(); 
+            File selectedFile = selectedFileAndFilter.getFile();
             peptideShakerGUI.getLastSelectedFolder().setLastSelectedFolder(selectedFile.getParent());
 
             if (selectedFile.getName().endsWith(".zip")) {
@@ -1047,10 +1066,8 @@ public class WelcomeDialog extends javax.swing.JDialog {
             if (progressDialog.isRunCanceled()) {
                 progressDialog.setRunFinished();
                 return false;
-            } else {
-                if (!progressDialog.isRunFinished()) {
-                    progressDialog.setRunFinished();
-                }
+            } else if (!progressDialog.isRunFinished()) {
+                progressDialog.setRunFinished();
             }
 
             return true;
