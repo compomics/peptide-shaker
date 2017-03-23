@@ -173,7 +173,8 @@ public class PsPsmSection {
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, new ArrayList<String>(
                     psmMap.get(spectrumFile)), parameters, !identificationAlgorithmMatchesFeatures.isEmpty(), waitingHandler);
 
-            while (psmIterator.hasNext()) {
+            SpectrumMatch spectrumMatch;
+            while ((spectrumMatch = psmIterator.next()) != null) {
 
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
@@ -182,7 +183,6 @@ public class PsPsmSection {
                     waitingHandler.increaseSecondaryProgressCounter();
                 }
 
-                SpectrumMatch spectrumMatch = psmIterator.next();
                 String spectrumKey = spectrumMatch.getKey();
 
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);

@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.export.sections;
 
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
@@ -147,7 +146,8 @@ public class PsPeptideSection {
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(keys, parameters, psmSection != null, parameters, waitingHandler);
 
-        while (peptideMatchesIterator.hasNext()) {
+        PeptideMatch peptideMatch;
+        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
             if (waitingHandler != null) {
                 if (waitingHandler.isRunCanceled()) {
@@ -156,7 +156,6 @@ public class PsPeptideSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             String peptideKey = peptideMatch.getKey();
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 

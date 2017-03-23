@@ -77,7 +77,8 @@ public class SwathExport {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level in spectra
      */
     public static void writeSwathExport(File destinationFile, Identification identification, ExportType exportType, WaitingHandler waitingHandler,
             ArrayList<String> targetedPTMs, AnnotationSettings annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, SequenceMatchingPreferences ptmSequenceMatchingPreferences)
@@ -145,9 +146,9 @@ public class SwathExport {
 
                     PsmIterator psmIterator = identification.getPsmIterator(mgfFile, parameters, false, waitingHandler);
 
-                    while (psmIterator.hasNext()) {
+                    SpectrumMatch spectrumMatch;
+                    while ((spectrumMatch = psmIterator.next()) != null) {
 
-                        SpectrumMatch spectrumMatch = psmIterator.next();
                         String spectrumKey = spectrumMatch.getKey();
 
                         if (identification.matchExists(spectrumKey)) {
@@ -271,7 +272,8 @@ public class SwathExport {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level in spectra
      */
     private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences,
             SequenceMatchingPreferences ptmSequenceMatchingPreferences, AnnotationSettings annotationPreferences, PeptideSpectrumAnnotator spectrumAnnotator)
@@ -306,7 +308,8 @@ public class SwathExport {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level in spectra
      */
     private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification,
             SequenceMatchingPreferences sequenceMatchingPreferences, SequenceMatchingPreferences ptmSequenceMatchingPreferences,

@@ -96,8 +96,8 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      * occurs
      * @throws SQLException thrown if an SQLException occurs
      */
-    public PeptideTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
-            DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters, 
+    public PeptideTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters,
             String proteinAccession, ArrayList<String> peptideKeys, boolean displayScores, ExceptionHandler exceptionHandler)
             throws IOException, InterruptedException, ClassNotFoundException, IllegalArgumentException, SQLException {
         this.identification = identification;
@@ -124,8 +124,8 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      * @param showScores boolean indicating whether the scores should be
      * displayed instead of the confidence
      */
-    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
-            DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters, 
+    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters,
             String proteinAccession, ArrayList<String> peptideKeys, boolean showScores) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
@@ -331,16 +331,16 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
             return null;
         }
     }
-    
+
     /**
      * Indicates whether the table content was instantiated.
-     * 
+     *
      * @return a boolean indicating whether the table content was instantiated.
      */
     public boolean isInstantiated() {
         return identification != null;
     }
-    
+
     @Override
     public Class getColumnClass(int columnIndex) {
         for (int i = 0; i < getRowCount(); i++) {
@@ -380,8 +380,8 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
             peptideMatchesIterator.setBatchSize(batchSize);
 
             int i = 0;
-            while (peptideMatchesIterator.hasNext()) {
-                PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            PeptideMatch peptideMatch;
+            while ((peptideMatch = peptideMatchesIterator.next()) != null) {
                 if (waitingHandler.isRunCanceled()) {
                     return rows.get(i);
                 }

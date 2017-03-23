@@ -117,8 +117,9 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
             }
 
             PsmIterator psmIterator = peptideShakerGUI.getIdentification().getPsmIterator(peptideMatch.getSpectrumMatchesKeys(), null, false, null);
-            while (psmIterator.hasNext()) {
-                psms.add(psmIterator.next());
+            SpectrumMatch spectrumMatch;
+            while ((spectrumMatch = psmIterator.next()) != null) {
+                psms.add(spectrumMatch);
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);

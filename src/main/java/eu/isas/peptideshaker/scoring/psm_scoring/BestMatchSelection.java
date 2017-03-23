@@ -102,7 +102,8 @@ public class BestMatchSelection {
      * threading error occurred
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown
      * whenever an error occurred while reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level in spectra
      */
     public void selectBestHitAndFillPsmMap(InputMap inputMap, WaitingHandler waitingHandler,
             IdentificationParameters identificationParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
@@ -139,9 +140,9 @@ public class BestMatchSelection {
 
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, null, true, waitingHandler);
 
-            while (psmIterator.hasNext()) {
+            SpectrumMatch advocateMatch;
+            while ((advocateMatch = psmIterator.next()) != null) {
 
-                SpectrumMatch advocateMatch = psmIterator.next();
                 String spectrumKey = advocateMatch.getKey();
 
                 // map of the peptide first hits for this spectrum: score -> max protein count -> max search engine votes -> amino acids annotated -> min mass deviation -> peptide sequence
@@ -594,7 +595,8 @@ public class BestMatchSelection {
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level in spectra
      */
     public static PeptideAssumption getBestHit(String spectrumKey, ArrayList<PeptideAssumption> firstHits, HashMap<String, Integer> proteinCount,
             SequenceMatchingPreferences sequenceMatchingPreferences, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator spectrumAnnotator)

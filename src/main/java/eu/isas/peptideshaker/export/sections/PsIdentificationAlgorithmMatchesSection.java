@@ -186,7 +186,8 @@ public class PsIdentificationAlgorithmMatchesSection {
 
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, new ArrayList<String>(psmMap.get(spectrumFile)), null, true, waitingHandler); //@TODO: make an assumptions iterator?
 
-            while (psmIterator.hasNext()) {
+            SpectrumMatch spectrumMatch;
+            while ((spectrumMatch = psmIterator.next()) != null) {
 
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
@@ -195,7 +196,6 @@ public class PsIdentificationAlgorithmMatchesSection {
                     waitingHandler.increaseSecondaryProgressCounter();
                 }
 
-                SpectrumMatch spectrumMatch = psmIterator.next();
 
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
