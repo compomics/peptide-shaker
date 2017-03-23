@@ -266,10 +266,6 @@ public class MatchesValidator {
         }
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
-            Double intensityLimit = annotationPreferences.getAnnotationIntensityLimit();
-            annotationPreferences.setIntensityLimit(0);
-
             ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
             ArrayList<String> spectrumKeys = null;
@@ -353,8 +349,6 @@ public class MatchesValidator {
             if (!pool.awaitTermination(7, TimeUnit.DAYS)) {
                 throw new InterruptedException("PSM validation timed out. Please contact the developers.");
             }
-
-            annotationPreferences.setIntensityLimit(intensityLimit);
         }
 
         // validate the peptides

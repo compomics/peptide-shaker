@@ -206,9 +206,6 @@ public class MzidCLI extends CpsParent {
         }
 
         // export mzid file
-        // make sure that all annotations are included
-        double currentIntensityLimit = this.getIdentificationParameters().getAnnotationPreferences().getAnnotationIntensityLimit();
-        this.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(0.0);
 
         try {
             CLIExportMethods.exportMzId(mzidCLIInputBean, this, waitingHandler);
@@ -216,9 +213,6 @@ public class MzidCLI extends CpsParent {
             waitingHandler.appendReport("An error occurred while generating the mzid file.", true, true);
             e.printStackTrace();
             waitingHandler.setRunCanceled();
-        } finally {
-            // reset the annotation level
-            this.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(currentIntensityLimit);
         }
 
         try {

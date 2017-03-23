@@ -278,7 +278,7 @@ public class BestMatchSelection {
                                                 for (PeptideAssumption tempAssumption : assumptionMap.values()) { // There should be only one
                                                     Peptide peptide = tempAssumption.getPeptide();
                                                     SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), tempAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-                                                    HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
+                                                    HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide, true);
                                                     int nIons = coveredAminoAcids.size();
                                                     nSeMap.put(nIons, coverageMap);
                                                 }
@@ -287,7 +287,7 @@ public class BestMatchSelection {
 
                                             Peptide peptide = peptideAssumption1.getPeptide();
                                             SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption1, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-                                            HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
+                                            HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide, true);
                                             int nIons = coveredAminoAcids.size();
 
                                             coverageMap = nSeMap.get(nIons);
@@ -640,7 +640,7 @@ public class BestMatchSelection {
         for (PeptideAssumption peptideAssumption : firstHits) {
             Peptide peptide = peptideAssumption.getPeptide();
             SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-            HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
+            HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide, true);
             int nAas = coveredAminoAcids.size();
             if (nAas > maxCoveredAminoAcids) {
                 maxCoveredAminoAcids = nAas;

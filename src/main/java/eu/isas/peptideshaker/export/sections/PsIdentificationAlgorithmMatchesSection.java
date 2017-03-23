@@ -475,7 +475,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                 AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
                 SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
                 ArrayList<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
-                        (MSnSpectrum) spectrum, peptide);
+                        (MSnSpectrum) spectrum, peptide, false);
                 for (IonMatch ionMatch : matches) {
                     coveredIntensity += ionMatch.peak.intensity;
                 }

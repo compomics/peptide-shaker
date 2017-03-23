@@ -336,7 +336,7 @@ public class SwathExport {
             SpecificAnnotationSettings specificAnnotationPreferences
                     = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), bestAssumption, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
             ArrayList<IonMatch> matches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
-                    (MSnSpectrum) spectrum, bestAssumption.getPeptide());
+                    (MSnSpectrum) spectrum, bestAssumption.getPeptide(), false);
 
             for (IonMatch ionMatch : matches) {
 
