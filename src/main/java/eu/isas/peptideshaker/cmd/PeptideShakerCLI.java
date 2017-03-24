@@ -329,6 +329,17 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     }
                 }
 
+                // Ms2pip export
+                if (followUpCLIInputBean.isMs2pipNeeded()) {
+                    try {
+                        CLIExportMethods.exportMs2pipFeatures(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
+                    } catch (Exception e) {
+                        waitingHandler.appendReport("An error occurred while generating the ms2pip features file.", true, true);
+                        e.printStackTrace();
+                        waitingHandler.setRunCanceled();
+                    }
+                }
+
             }
 
             // report export if needed
@@ -742,7 +753,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 System.out.println("GA connection refused");
             }
         }
-        
+
         // create a shaker which will perform the analysis
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
 

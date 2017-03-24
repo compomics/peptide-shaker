@@ -120,9 +120,11 @@ public class FollowUpCLI extends CpsParent {
         try {
             if (followUpCLIInputBean.getZipFile() != null) {
                 inputFilePath = followUpCLIInputBean.getZipFile().getAbsolutePath();
+                waitingHandler.appendReport("Loading PeptideShaker project " + inputFilePath + ".", true, true);
                 loadCpsFromZipFile(followUpCLIInputBean.getZipFile(), PeptideShaker.getMatchesFolder(), waitingHandler);
             } else if (followUpCLIInputBean.getCpsFile() != null) {
                 inputFilePath = followUpCLIInputBean.getCpsFile().getAbsolutePath();
+                waitingHandler.appendReport("Loading PeptideShaker project " + inputFilePath + ".", true, true);
                 cpsFile = followUpCLIInputBean.getCpsFile();
                 loadCpsFile(PeptideShaker.getMatchesFolder(), waitingHandler);
             } else {
@@ -148,6 +150,7 @@ public class FollowUpCLI extends CpsParent {
 
         // load fasta file
         try {
+            waitingHandler.appendReport("Loading protein database " + identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getName() + ".", true, true);
             if (!loadFastaFile(waitingHandler)) {
                 waitingHandler.appendReport("The FASTA file was not found. Please provide its location in the command line parameters.", true, true);
                 try {
@@ -158,7 +161,6 @@ public class FollowUpCLI extends CpsParent {
                 }
                 return 1;
             }
-            waitingHandler.appendReport("Protein database " + identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getName() + ".", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the fasta file.", true, true);
             e.printStackTrace();
@@ -283,6 +285,17 @@ public class FollowUpCLI extends CpsParent {
                 CLIExportMethods.exportInclusionList(followUpCLIInputBean, identification, identificationFeaturesGenerator, identificationParameters.getSearchParameters(), waitingHandler, filterPreferences);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while generating the inclusion list.", true, true);
+                e.printStackTrace();
+                waitingHandler.setRunCanceled();
+            }
+        }
+
+        // Ms2pip export
+        if (followUpCLIInputBean.isMs2pipNeeded()) {
+            try {
+                CLIExportMethods.exportMs2pipFeatures(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
+            } catch (Exception e) {
+                waitingHandler.appendReport("An error occurred while generating the ms2pip features file.", true, true);
                 e.printStackTrace();
                 waitingHandler.setRunCanceled();
             }
