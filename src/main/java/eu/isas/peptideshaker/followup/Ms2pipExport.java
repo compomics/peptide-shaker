@@ -87,8 +87,10 @@ public class Ms2pipExport {
 
     private FeaturesMap featuresMap;
 
-    public Ms2pipExport() {
+    public Ms2pipExport(WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
 
+        this.waitingHandler = waitingHandler;
+        this.exceptionHandler = exceptionHandler;
     }
 
     public void exportFeatures(IdentificationParameters identificationParameters, File destinationFolder, Identification identification, FeaturesMap featuresMap, int nThreads) throws IOException, InterruptedException {
@@ -97,20 +99,20 @@ public class Ms2pipExport {
         
         writeDocumentation(destinationFolder);
 
-        BufferedWriter[] bufferedWriters = new BufferedWriter[2];
+        bufferedWriters = new BufferedWriter[2];
+        semaphores = new Semaphore[2];
 
         String header = getHeaderLine();
 
         for (int i = 0; i < 2; i++) {
-            int index = i + 1;
-            File destinationFile = getFeaturesFile(destinationFolder, index);
+            File destinationFile = getFeaturesFile(destinationFolder, i);
             FileOutputStream fileStream = new FileOutputStream(destinationFile);
             GZIPOutputStream gzipStream = new GZIPOutputStream(fileStream);
             OutputStreamWriter encoder = new OutputStreamWriter(gzipStream, encoding);
             BufferedWriter bw = new BufferedWriter(encoder);
             bufferedWriters[i] = bw;
             semaphores[i] = new Semaphore(1);
-            writeLine(index, header);
+            writeLine(i, header);
         }
 
         PSParameter psParameter = new PSParameter();
@@ -162,7 +164,7 @@ public class Ms2pipExport {
                     ZipUtils.addFileToZip(documentationFile, out);
 
                     for (int i = 0; i < 2; i++) {
-                        int index = i + 1;
+                        int index = i;
                         File featuresFile = getFeaturesFile(destinationFolder, index);
                         ZipUtils.addFileToZip(featuresFile, out);
                     }
@@ -204,7 +206,8 @@ public class Ms2pipExport {
     }
 
     public static File getFeaturesFile(File destinationFolder, int index) {
-        return new File(destinationFolder, fileName + "_" + index);
+        char ion = index == 0 ? 'b' : 'y';
+        return new File(destinationFolder, fileName + "_" + ion);
     }
 
     private void writeLine(int index, String line) throws InterruptedException, IOException {
@@ -331,14 +334,14 @@ public class Ms2pipExport {
                                         case PeptideFragmentIon.A_ION:
                                         case PeptideFragmentIon.B_ION:
                                         case PeptideFragmentIon.C_ION:
-                                            index = 1;
+                                            index = 0;
                                             aaIndex = peptideFragmentIon.getNumber() - 1;
                                             features = featuresGenerator.getForwardIonsFeatures(peptide, charge, aaIndex);
                                             break;
                                         case PeptideFragmentIon.X_ION:
                                         case PeptideFragmentIon.Y_ION:
                                         case PeptideFragmentIon.Z_ION:
-                                            index = 2;
+                                            index = 1;
                                             aaIndex = peptide.getSequence().length() - peptideFragmentIon.getNumber();
                                             features = featuresGenerator.getComplementaryIonsFeatures(peptide, charge, aaIndex);
                                             break;

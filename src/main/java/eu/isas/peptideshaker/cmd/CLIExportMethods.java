@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
+import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
@@ -259,6 +260,7 @@ public class CLIExportMethods {
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
      * @param identificationParameters the identification parameters
+     * @param exceptionHandler the exception handler
      * @param waitingHandler a waiting handler to display progress
      *
      * @throws IOException exception thrown whenever an IO exception occurred
@@ -268,13 +270,13 @@ public class CLIExportMethods {
      * @throws ClassNotFoundException exception thrown whenever an exception
      * occurred while deserializing an object
      */
-    public static void exportMs2pipFeatures(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, InterruptedException {
+    public static void exportMs2pipFeatures(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationParameters identificationParameters, ExceptionHandler exceptionHandler, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, InterruptedException {
         
         File destinationFile = followUpCLIInputBean.getMs2pipFolder();
         FeaturesMap featuresMap = FeaturesMapManager.getDefaultFeaturesMap();
         int nThreads = Math.max(Runtime.getRuntime().availableProcessors(), 1);
         
-        Ms2pipExport ms2pipExport = new Ms2pipExport();
+        Ms2pipExport ms2pipExport = new Ms2pipExport(waitingHandler, exceptionHandler);
         ms2pipExport.exportFeatures(identificationParameters, destinationFile, identification, featuresMap, nThreads);
         
     }

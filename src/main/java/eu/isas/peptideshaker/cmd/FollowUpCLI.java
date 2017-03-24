@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
+import com.compomics.util.exceptions.exception_handlers.CommandLineExceptionHandler;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
@@ -37,6 +38,10 @@ public class FollowUpCLI extends CpsParent {
      * PeptideShaker processes.
      */
     private WaitingHandler waitingHandler;
+    /**
+     * The exception handler.
+     */
+    private CommandLineExceptionHandler commandLineExceptionHandler = new CommandLineExceptionHandler();
     /**
      * The PTM factory.
      */
@@ -293,7 +298,7 @@ public class FollowUpCLI extends CpsParent {
         // Ms2pip export
         if (followUpCLIInputBean.isMs2pipNeeded()) {
             try {
-                CLIExportMethods.exportMs2pipFeatures(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
+                CLIExportMethods.exportMs2pipFeatures(followUpCLIInputBean, identification, identificationParameters, commandLineExceptionHandler, waitingHandler);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while generating the ms2pip features file.", true, true);
                 e.printStackTrace();
