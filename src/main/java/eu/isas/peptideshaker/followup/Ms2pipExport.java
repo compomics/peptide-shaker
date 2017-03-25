@@ -32,6 +32,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -334,10 +336,11 @@ public class Ms2pipExport {
      *
      * @return the line to write
      */
-    private String getLine(String psmId, double target, int[] features) {
+    private String getLine(String psmId, double target, int[] features) throws UnsupportedEncodingException {
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(psmId).append(separator).append(target);
+        String encodedPsmId = URLEncoder.encode(psmId, encoding);
+        stringBuilder.append(encodedPsmId).append(separator).append(target);
         for (int feature : features) {
             stringBuilder.append(separator).append(feature);
         }
