@@ -33,7 +33,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
@@ -69,8 +68,13 @@ public class Ms2pipExport {
      * The columns separator.
      */
     public final static String documentationSeparator = "\t";
-
+    /**
+     * The name of the target file.
+     */
     public final static String fileName = "ms2pip_targets";
+    /**
+     * The name of the documentation file.
+     */
     public final static String documentationFileName = "features_description.txt";
     /**
      * Encoding for the file according to the second rule.
@@ -80,23 +84,50 @@ public class Ms2pipExport {
      * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-
+    /**
+     * Array of buffered writers for the target files.
+     */
     private BufferedWriter[] bufferedWriters;
-
+    /**
+     * Array of mutexes for the writing.
+     */
     private Semaphore[] semaphores;
-
+    /**
+     * The features map to use.
+     */
     private FeaturesMap featuresMap;
 
+    /**
+     * Constructor.
+     *
+     * @param waitingHandler a waiting handler
+     * @param exceptionHandler an exception handler
+     */
     public Ms2pipExport(WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
 
         this.waitingHandler = waitingHandler;
         this.exceptionHandler = exceptionHandler;
     }
 
-    public void exportFeatures(IdentificationParameters identificationParameters, File destinationFolder, Identification identification, FeaturesMap featuresMap, int nThreads) throws IOException, InterruptedException {
+    /**
+     * Exports the ms2pip features and associated targets in a file along with
+     * documentation.
+     *
+     * @param identificationParameters the identification parameters
+     * @param destinationFolder the folder where to write the results
+     * @param cpsFileName the name of the cps file
+     * @param identification the identification object containing the PSMs
+     * @param featuresMap the ms2pip features map to use
+     * @param nThreads the number of threads to use
+     *
+     * @throws IOException thrown whenever an error occurred while writing or
+     * reading a file
+     * @throws InterruptedException thrown whenever a thread got interrupted.
+     */
+    public void exportFeatures(IdentificationParameters identificationParameters, File destinationFolder, String cpsFileName, Identification identification, FeaturesMap featuresMap, int nThreads) throws IOException, InterruptedException {
 
         this.featuresMap = featuresMap;
-        
+
         writeDocumentation(destinationFolder);
 
         bufferedWriters = new BufferedWriter[2];
@@ -129,7 +160,7 @@ public class Ms2pipExport {
         }
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-        waitingHandler.setSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
+        waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
         pool.shutdown();
         if (!pool.awaitTermination(7, TimeUnit.DAYS)) {
@@ -142,13 +173,21 @@ public class Ms2pipExport {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
-        packageResults(destinationFolder);
+        packageResults(destinationFolder, cpsFileName);
 
     }
 
-    private void packageResults(File destinationFolder) throws IOException {
+    /**
+     * Packages the target files and documentation in a single zip file.
+     *
+     * @param destinationFolder the folder where to write the results
+     *
+     * @throws IOException thrown whenever an error occurred while reading or
+     * writing a file
+     */
+    private void packageResults(File destinationFolder, String cpsFileName) throws IOException {
 
-        File destinationFile = new File(destinationFolder, fileName);
+        File destinationFile = new File(destinationFolder, cpsFileName + "_" + fileName + ".zip");
 
         FileOutputStream fos = new FileOutputStream(destinationFile);
 
@@ -162,11 +201,13 @@ public class Ms2pipExport {
 
                     File documentationFile = getDocumentationFile(destinationFolder);
                     ZipUtils.addFileToZip(documentationFile, out);
+                    documentationFile.delete();
 
                     for (int i = 0; i < 2; i++) {
                         int index = i;
                         File featuresFile = getFeaturesFile(destinationFolder, index);
                         ZipUtils.addFileToZip(featuresFile, out);
+                        featuresFile.delete();
                     }
 
                 } finally {
@@ -180,6 +221,14 @@ public class Ms2pipExport {
         }
     }
 
+    /**
+     * Writes the documentation file.
+     *
+     * @param destinationFolder the folder where to write the file
+     *
+     * @throws IOException thrown whenever an error occurred while reading or
+     * writing a file
+     */
     private void writeDocumentation(File destinationFolder) throws IOException {
 
         BufferedWriter bw = new BufferedWriter(new FileWriter(getDocumentationFile(destinationFolder)));
@@ -192,7 +241,7 @@ public class Ms2pipExport {
 
             for (Ms2pipFeature ms2pipFeature : featuresMap.getFeatures(category)) {
 
-                stringBuilder.append(index).append(documentationSeparator).append(category).append(documentationSeparator).append(ms2pipFeature.getDescription()).append(END_LINE);
+                stringBuilder.append(index++).append(documentationSeparator).append(category).append(documentationSeparator).append(ms2pipFeature.getDescription()).append(END_LINE);
                 bw.write(stringBuilder.toString());
                 stringBuilder = new StringBuilder(stringBuilder.length());
 
@@ -201,15 +250,40 @@ public class Ms2pipExport {
         bw.close();
     }
 
+    /**
+     * Returns the file to use for documentation.
+     *
+     * @param destinationFolder the folder where to write the file
+     *
+     * @return the file to use for documentation
+     */
     public static File getDocumentationFile(File destinationFolder) {
         return new File(destinationFolder, documentationFileName);
     }
 
+    /**
+     * Returns the file to use for targets.
+     *
+     * @param destinationFolder the folder where to write the file
+     * @param index the index of the ion
+     *
+     * @return the file to use for targets
+     */
     public static File getFeaturesFile(File destinationFolder, int index) {
         char ion = index == 0 ? 'b' : 'y';
         return new File(destinationFolder, fileName + "_" + ion);
     }
 
+    /**
+     * Writes the given line to the writer at the given index.
+     *
+     * @param index the index of the ion
+     * @param line the line to write
+     *
+     * @throws IOException thrown whenever an error occurred while writing or
+     * reading a file
+     * @throws InterruptedException thrown whenever a thread got interrupted.
+     */
     private void writeLine(int index, String line) throws InterruptedException, IOException {
 
         BufferedWriter bw = bufferedWriters[index];
@@ -223,6 +297,11 @@ public class Ms2pipExport {
         semaphore.release();
     }
 
+    /**
+     * Returns the header line for the target file.
+     *
+     * @return the header line for the target file
+     */
     private String getHeaderLine() {
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -246,6 +325,15 @@ public class Ms2pipExport {
         return stringBuilder.toString();
     }
 
+    /**
+     * Returns the line for the given content.
+     *
+     * @param psmId the psm id
+     * @param target the target value
+     * @param features the features in an array
+     *
+     * @return the line to write
+     */
     private String getLine(String psmId, double target, int[] features) {
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -262,28 +350,51 @@ public class Ms2pipExport {
      */
     private class PsmProcessor implements Runnable {
 
+        /**
+         * The identification object containing the PSMs.
+         */
         private Identification identification;
-
+        /**
+         * The iterator to go through the PSMs.
+         */
         private PsmIterator psmIterator;
-
+        /**
+         * The spectrum annotator.
+         */
         private PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
-
+        /**
+         * The spectrum annotation settings.
+         */
         private AnnotationSettings annotationSettings;
-
+        /**
+         * the sequence matching preferences.
+         */
         private SequenceMatchingPreferences sequenceMatchingPreferences;
-
+        /**
+         * The PTM sequence matching preferences.
+         */
         private SequenceMatchingPreferences ptmSequenceMatchingPreferences;
-
+        /**
+         * The ms2pip features generator.
+         */
         private FeaturesGenerator featuresGenerator;
-        
+
+        /**
+         * Constructor.
+         *
+         * @param identification the identification object containing the PSMs
+         * @param psmIterator the psm iterator
+         * @param identificationParameters the identification parameters
+         */
         private PsmProcessor(Identification identification, PsmIterator psmIterator, IdentificationParameters identificationParameters) {
-            
+
             this.identification = identification;
             this.psmIterator = psmIterator;
             this.annotationSettings = identificationParameters.getAnnotationPreferences();
             this.sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
             this.ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
             featuresGenerator = new FeaturesGenerator(featuresMap);
+
         }
 
         @Override
@@ -319,48 +430,48 @@ public class Ms2pipExport {
 
                             for (IonMatch ionMatch : ionMatches) {
 
-                                double intensity = ionMatch.peak.intensity;
-
                                 Ion ion = ionMatch.ion;
 
                                 if (ion.getType() == Ion.IonType.PEPTIDE_FRAGMENT_ION) {
 
                                     PeptideFragmentIon peptideFragmentIon = (PeptideFragmentIon) ion;
 
-                                    int index;
-                                    int aaIndex;
-                                    int[] features;
-                                    switch (peptideFragmentIon.getSubType()) {
-                                        case PeptideFragmentIon.A_ION:
-                                        case PeptideFragmentIon.B_ION:
-                                        case PeptideFragmentIon.C_ION:
-                                            index = 0;
-                                            aaIndex = peptideFragmentIon.getNumber() - 1;
-                                            features = featuresGenerator.getForwardIonsFeatures(peptide, charge, aaIndex);
-                                            break;
-                                        case PeptideFragmentIon.X_ION:
-                                        case PeptideFragmentIon.Y_ION:
-                                        case PeptideFragmentIon.Z_ION:
-                                            index = 1;
-                                            aaIndex = peptide.getSequence().length() - peptideFragmentIon.getNumber();
-                                            features = featuresGenerator.getComplementaryIonsFeatures(peptide, charge, aaIndex);
-                                            break;
-                                        default:
-                                            throw new UnsupportedOperationException("Peptide fragment ion of type " + ion.getSubTypeAsString() + " not supported.");
+                                    if (peptideFragmentIon.getNeutralLosses() == null || peptideFragmentIon.getNeutralLosses().length == 0) {
+
+                                        double intensity = ionMatch.peak.intensity;
+
+                                        int index;
+                                        int aaIndex;
+                                        int[] features;
+                                        switch (peptideFragmentIon.getSubType()) {
+                                            case PeptideFragmentIon.A_ION:
+                                            case PeptideFragmentIon.B_ION:
+                                            case PeptideFragmentIon.C_ION:
+                                                index = 0;
+                                                aaIndex = peptideFragmentIon.getNumber() - 1;
+                                                features = featuresGenerator.getForwardIonsFeatures(peptide, charge, aaIndex);
+                                                break;
+                                            case PeptideFragmentIon.X_ION:
+                                            case PeptideFragmentIon.Y_ION:
+                                            case PeptideFragmentIon.Z_ION:
+                                                index = 1;
+                                                aaIndex = peptide.getSequence().length() - peptideFragmentIon.getNumber();
+                                                features = featuresGenerator.getComplementaryIonsFeatures(peptide, charge, aaIndex);
+                                                break;
+                                            default:
+                                                throw new UnsupportedOperationException("Peptide fragment ion of type " + ion.getSubTypeAsString() + " not supported.");
+                                        }
+
+                                        double pMinusLog = -binnedCumulativeFunction.getBinnedCumulativeProbabilityLog(intensity);
+
+                                        String line = getLine(spectrumKey, pMinusLog, features);
+
+                                        writeLine(index, line);
+
                                     }
-
-                                    double pMinusLog = -binnedCumulativeFunction.getBinnedCumulativeProbabilityLog(intensity);
-
-                                    String line = getLine(spectrumKey, pMinusLog, features);
-
-                                    writeLine(index, line);
-
                                 }
-
                             }
-
                         }
-
                     }
 
                     waitingHandler.increaseSecondaryProgressCounter();

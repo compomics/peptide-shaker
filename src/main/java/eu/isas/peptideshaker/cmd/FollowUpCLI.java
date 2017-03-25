@@ -215,6 +215,7 @@ public class FollowUpCLI extends CpsParent {
         // recalibrate spectra
         if (followUpCLIInputBean.recalibrationNeeded()) {
             try {
+                waitingHandler.appendReport("Recalibrating spectra.", true, true);
                 CLIExportMethods.recalibrateSpectra(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
                 waitingHandler.appendReport("Recalibration process completed.", true, true);
             } catch (Exception e) {
@@ -227,6 +228,7 @@ public class FollowUpCLI extends CpsParent {
         // export spectra
         if (followUpCLIInputBean.spectrumExportNeeded()) {
             try {
+                waitingHandler.appendReport("Exporting spectra.", true, true);
                 CLIExportMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingPreferences());
                 waitingHandler.appendReport("Spectrum export completed.", true, true);
             } catch (Exception e) {
@@ -239,6 +241,7 @@ public class FollowUpCLI extends CpsParent {
         // export protein accessions
         if (followUpCLIInputBean.accessionExportNeeded()) {
             try {
+                waitingHandler.appendReport("Exporting protein accessions.", true, true);
                 CLIExportMethods.exportAccessions(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterPreferences);
                 waitingHandler.appendReport("Protein accessions export completed.", true, true);
             } catch (Exception e) {
@@ -251,6 +254,7 @@ public class FollowUpCLI extends CpsParent {
         // export protein details
         if (followUpCLIInputBean.fastaExportNeeded()) {
             try {
+                waitingHandler.appendReport("Exporting protein details.", true, true);
                 CLIExportMethods.exportFasta(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterPreferences);
                 waitingHandler.appendReport("Protein details export completed.", true, true);
             } catch (Exception e) {
@@ -263,6 +267,7 @@ public class FollowUpCLI extends CpsParent {
         // progenesis export
         if (followUpCLIInputBean.progenesisExportNeeded()) {
             try {
+                waitingHandler.appendReport("Writing progenesis export.", true, true);
                 CLIExportMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingPreferences());
                 waitingHandler.appendReport("Progenesis export completed.", true, true);
             } catch (Exception e) {
@@ -275,6 +280,7 @@ public class FollowUpCLI extends CpsParent {
         // PepNovo training export
         if (followUpCLIInputBean.pepnovoTrainingExportNeeded()) {
             try {
+                waitingHandler.appendReport("Writing pepnovo training files.", true, true);
                 CLIExportMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
                 waitingHandler.appendReport("PepNovo training export completed.", true, true);
             } catch (Exception e) {
@@ -287,6 +293,7 @@ public class FollowUpCLI extends CpsParent {
         // inclusion list export
         if (followUpCLIInputBean.inclusionListNeeded()) {
             try {
+                waitingHandler.appendReport("Writing inclusion list.", true, true);
                 CLIExportMethods.exportInclusionList(followUpCLIInputBean, identification, identificationFeaturesGenerator, identificationParameters.getSearchParameters(), waitingHandler, filterPreferences);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while generating the inclusion list.", true, true);
@@ -298,6 +305,7 @@ public class FollowUpCLI extends CpsParent {
         // Ms2pip export
         if (followUpCLIInputBean.isMs2pipNeeded()) {
             try {
+                waitingHandler.appendReport("Exporting ms2pip features.", true, true);
                 CLIExportMethods.exportMs2pipFeatures(followUpCLIInputBean, identification, identificationParameters, commandLineExceptionHandler, waitingHandler);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while generating the ms2pip features file.", true, true);
