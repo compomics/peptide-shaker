@@ -28,8 +28,6 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import javax.swing.*;
 import javax.xml.stream.XMLStreamException;
-import java.io.DataOutputStream;
-import java.net.HttpURLConnection;
 
 /**
  * A simple welcome dialog with the option to open an existing project or create
@@ -75,19 +73,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
         // incrementing the counter for a new PeptideShaker start
         if (peptideShakerGUI.getUtilitiesUserPreferences().isAutoUpdate()) {
-            final String COLLECT_URL = "http://www.google-analytics.com/collect";
-            final String POST = "v=1&tid=UA-36198780-1&cid=35119a79-1a05-49d7-b876-bb88420f825b&uid=asuueffeqqss&t=event&ec=usage&ea=toolstart&el=peptide-shaker";
-            try {
-                HttpURLConnection connection = (HttpURLConnection) new URL(COLLECT_URL).openConnection();
-                connection.setRequestMethod("POST");
-                connection.setConnectTimeout(3000);
-                connection.setDoOutput(true);
-                DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-                wr.writeBytes(POST);
-                int response = connection.getResponseCode();
-            } catch (IOException ex) {
-                System.out.println("GA connection refused");
-            }
+            Util.sendGAUpdate("UA-36198780-1", "toolstart", "peptide-shaker");
         }
 
         setTitle(getTitle() + " " + PeptideShaker.getVersion());
