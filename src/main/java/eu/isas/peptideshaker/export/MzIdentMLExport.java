@@ -1552,10 +1552,10 @@ public class MzIdentMLExport {
                                 } else if (ionMatch.ion instanceof ImmoniumIon) {
 
                                     // get the indexes of the corresponding residues
-                                    char residue = ImmoniumIon.getResidue(((ImmoniumIon) ionMatch.ion).getSubType());
+                                    ImmoniumIon immoniumIon = (ImmoniumIon) ionMatch.ion;
                                     char[] peptideAsArray = peptideSequence.toCharArray();
                                     for (int i = 0; i < peptideAsArray.length; i++) {
-                                        if (peptideAsArray[i] == residue) {
+                                        if (peptideAsArray[i] == immoniumIon.aa) {
                                             indexes += (i + 1) + " ";
                                         }
                                     }
