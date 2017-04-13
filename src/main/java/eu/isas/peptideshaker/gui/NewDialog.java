@@ -713,7 +713,7 @@ public class NewDialog extends javax.swing.JDialog {
 
             // incrementing the counter for a new PeptideShaker start run via GUI
             if (peptideShakerGUI.getUtilitiesUserPreferences().isAutoUpdate()) {
-                Util.sendGAUpdate("UA-36198780-1", "startrun-gui", "peptide-shaker");
+                Util.sendGAUpdate("UA-36198780-1", "startrun-gui", "peptide-shaker-" + PeptideShaker.getVersion());
             }
 
             peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);

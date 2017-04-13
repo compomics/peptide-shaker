@@ -725,7 +725,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         // incrementing the counter for a new PeptideShaker start run via GUI
         if (utilitiesUserPreferences.isAutoUpdate()) {
-            Util.sendGAUpdate("UA-36198780-1", "startrun-cl", "peptide-shaker");
+            Util.sendGAUpdate("UA-36198780-1", "startrun-cl", "peptide-shaker-" + PeptideShaker.getVersion());
         }
         
         // create a shaker which will perform the analysis

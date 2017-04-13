@@ -70,10 +70,10 @@ public class WelcomeDialog extends javax.swing.JDialog {
         if (showJavaVersionWarning) {
             lowMemoryWarningLabel.setText("<html><u>Java Version Warning!</u>");
         }
-
+        
         // incrementing the counter for a new PeptideShaker start
         if (peptideShakerGUI.getUtilitiesUserPreferences().isAutoUpdate()) {
-            Util.sendGAUpdate("UA-36198780-1", "toolstart", "peptide-shaker");
+            Util.sendGAUpdate("UA-36198780-1", "toolstart", "peptide-shaker-" + PeptideShaker.getVersion());
         }
 
         setTitle(getTitle() + " " + PeptideShaker.getVersion());
