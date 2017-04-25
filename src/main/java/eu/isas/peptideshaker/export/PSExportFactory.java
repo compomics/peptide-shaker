@@ -12,7 +12,6 @@ import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.io.export.writers.ExcelWriter;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.export.exportfeatures.PsAnnotationFeature;
-import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsInputFilterFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
@@ -165,7 +164,6 @@ public class PSExportFactory implements ExportFactory {
         result.add(PsPeptideFeature.type);
         result.add(PsPsmFeature.type);
         result.add(PsIdentificationAlgorithmMatchesFeature.type);
-        result.add(PsFragmentFeature.type);
         result.add(PsAnnotationFeature.type);
         result.add(PsInputFilterFeature.type);
         result.add(PsProjectFeature.type);
