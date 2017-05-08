@@ -25,7 +25,7 @@
 | [![](https://github.com/compomics/peptide-shaker/wiki/images/Overview_small.png)](https://github.com/compomics/peptide-shaker/wiki/images/Overview.png) | [![](https://github.com/compomics/peptide-shaker/wiki/images/SpectrumIDs_small.png)](https://github.com/compomics/peptide-shaker/wiki/images/SpectrumIDs.png) | [![](https://github.com/compomics/peptide-shaker/wiki/images/3DStructure_small.png)](https://github.com/compomics/peptide-shaker/wiki/images/3DStructure.png) |
 | [![](https://github.com/compomics/peptide-shaker/wiki/images/GO_Enrichment_small.png)](https://github.com/compomics/peptide-shaker/wiki/images/GO_Enrichment.png) | [![](https://github.com/compomics/peptide-shaker/wiki/images/Validation_small.png)](https://github.com/compomics/peptide-shaker/wiki/images/Validation.png) | [![](https://github.com/compomics/peptide-shaker/wiki/images/QC_Plots_small.png)](https://github.com/compomics/peptide-shaker/wiki/images/QC_Plots.png) |
 
-(Click on a figure to see the full size version)
+(Click on an image to see the full size version)
 
 ---
 
