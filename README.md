@@ -1,4 +1,4 @@
-# PeptideShaker # 
+# PeptideShaker #
 
   * [Introduction](#introduction)
   * [Read Me](#read-me)
