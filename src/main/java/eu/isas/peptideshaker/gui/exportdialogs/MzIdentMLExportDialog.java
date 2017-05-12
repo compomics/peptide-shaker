@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.gui.exportdialogs;
 
 import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.Util;
+import com.compomics.util.experiment.io.identifications.MzIdentMLVersion;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
@@ -45,9 +46,9 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
      */
     private boolean validateMzIdentML = false; // just takes too long if switched on...
     /**
-     * If true, mzIdentML version 1.2 is created, false creates mzIdentML 1.1.
+     * The version of mzIdentML to use.
      */
-    private boolean mzIdentML_v1_2 = false;
+    private MzIdentMLVersion mzIdentMLVersion = MzIdentMLVersion.v1_1;
 
     /**
      * Create a new MzIdentMLExportDialog.
@@ -547,18 +548,29 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
             }
         }
 
-        String mzid_v1_1_FileFilterDescription = "mzIdentML v1.1 (*.mzid)";
-        String mzid_v1_2_FileFilterDescription = "mzIdentML v1.2 (beta) (*.mzid)";
+        MzIdentMLVersion[] mzIdentMLVersions = MzIdentMLVersion.values();
+        String[] versionsDescriptions = new String[mzIdentMLVersions.length];
+        for (int i = 0 ; i < mzIdentMLVersions.length ; i++) {
+            MzIdentMLVersion tempVersion = mzIdentMLVersions[i];
+            StringBuilder stringBuilder = new StringBuilder(23);
+            stringBuilder.append("mzIdentML ").append(tempVersion.name).append(" (*.mzid)");
+            versionsDescriptions[i] = stringBuilder.toString();
+        }
 
         int defaultFilterIndex;
-        if (mzIdentML_v1_2 == true) {
-            defaultFilterIndex = 1;
-        } else {
+        switch (mzIdentMLVersion) {
+            case v1_1:
             defaultFilterIndex = 0;
+                break;
+            case v1_2:
+            defaultFilterIndex = 1;
+                break;
+            default:
+                throw new UnsupportedOperationException("mzIdentML version " + mzIdentMLVersion.name + " not supported.");
         }
 
         FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".mzid", ".mzid"},
-                new String[]{mzid_v1_1_FileFilterDescription, mzid_v1_2_FileFilterDescription}, "Select Export File",
+                versionsDescriptions, "Select Export File",
                 folder, peptideShakerGUI.getExperiment().getReference(), false, true, false, defaultFilterIndex);
 
         if (selectedFileAndFilter != null) {
@@ -567,8 +579,18 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
             if (!path.endsWith(".mzid")) {
                 path += ".mzid";
             }
+            
+            int index = -1;
+            String selectedVersionDescription = selectedFileAndFilter.getFileFilter().getDescription();
+            for (int i = 0 ; i < versionsDescriptions.length ; i++) {
+                String versionDescription = versionsDescriptions[i];
+                if (versionDescription.equals(selectedVersionDescription)) {
+                    index = i;
+                    break;
+                }
+            }
 
-            mzIdentML_v1_2 = selectedFileAndFilter.getFileFilter().getDescription().equalsIgnoreCase(mzid_v1_2_FileFilterDescription);
+            mzIdentMLVersion = MzIdentMLVersion.getMzIdentMLVersion(index);
 
             lastSelectedFolder.setLastSelectedFolder(ExportWriter.lastFolderKey, folder);
             outputFolderJTextField.setText(path);
@@ -665,7 +687,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                     MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
                             peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
                             finalOutputFile, includeSequencesCheckBox.isSelected(), progressDialog, MatchValidationLevel.none, MatchValidationLevel.none, MatchValidationLevel.none);
-                    mzIdentMLExport.createMzIdentMLFile(mzIdentML_v1_2);
+                    mzIdentMLExport.createMzIdentMLFile(mzIdentMLVersion);
 
                     // validate the mzidentml file
                     if (validateMzIdentML && !progressDialog.isRunCanceled()) {

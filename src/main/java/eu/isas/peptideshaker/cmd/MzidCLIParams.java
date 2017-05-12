@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
+import com.compomics.util.experiment.io.identifications.MzIdentMLVersion;
 import org.apache.commons.cli.Options;
 
 /**
@@ -20,6 +21,7 @@ public enum MzidCLIParams {
     ORGANIZATION_ADDRESS("organization_address", "Organization address.", true, true),
     ORGANIZATION_URL("organization_url", "Organization URL.", true, false),
     INCLUDE_PROTEIN_SEQUENCES("include_sequences", "Include the protein sequences. 1: true, 0: false, default is '0'.", true, false),
+    VERSION("mzid_version", "The mzIdentML version to use. " + MzIdentMLVersion.getCommandLineOptions() + ", default is '0'.", true, false),
     OUTPUT_FILE("output_file", "Output file.", true, true);
 
     /**
