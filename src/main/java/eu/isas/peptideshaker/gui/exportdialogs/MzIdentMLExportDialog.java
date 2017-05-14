@@ -101,7 +101,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         organizationUrlJTextField.setText(peptideShakerGUI.getProjectDetails().getOrganizationUrl());
 
         includeSequencesCheckBox.setSelected(peptideShakerGUI.getProjectDetails().getIncludeProteinSequences());
-        
+
         if (peptideShakerGUI.getProjectDetails().getMzIdentMLOutputFile() != null
                 && new File(peptideShakerGUI.getProjectDetails().getMzIdentMLOutputFile()).exists()) {
             outputFolderJTextField.setText(peptideShakerGUI.getProjectDetails().getMzIdentMLOutputFile());
@@ -550,7 +550,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
         MzIdentMLVersion[] mzIdentMLVersions = MzIdentMLVersion.values();
         String[] versionsDescriptions = new String[mzIdentMLVersions.length];
-        for (int i = 0 ; i < mzIdentMLVersions.length ; i++) {
+        for (int i = 0; i < mzIdentMLVersions.length; i++) {
             MzIdentMLVersion tempVersion = mzIdentMLVersions[i];
             StringBuilder stringBuilder = new StringBuilder(23);
             stringBuilder.append("mzIdentML ").append(tempVersion.name).append(" (*.mzid)");
@@ -560,10 +560,10 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         int defaultFilterIndex;
         switch (mzIdentMLVersion) {
             case v1_1:
-            defaultFilterIndex = 0;
+                defaultFilterIndex = 0;
                 break;
             case v1_2:
-            defaultFilterIndex = 1;
+                defaultFilterIndex = 1;
                 break;
             default:
                 throw new UnsupportedOperationException("mzIdentML version " + mzIdentMLVersion.name + " not supported.");
@@ -579,10 +579,10 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
             if (!path.endsWith(".mzid")) {
                 path += ".mzid";
             }
-            
+
             int index = -1;
             String selectedVersionDescription = selectedFileAndFilter.getFileFilter().getDescription();
-            for (int i = 0 ; i < versionsDescriptions.length ; i++) {
+            for (int i = 0; i < versionsDescriptions.length; i++) {
                 String versionDescription = versionsDescriptions[i];
                 if (versionDescription.equals(selectedVersionDescription)) {
                     index = i;
