@@ -60,6 +60,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -293,7 +294,8 @@ public class MzIdentMLExport {
      * occurred while writing the export
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
-     * @throws org.apache.commons.math.MathException exception thrown whenever a math error occurred.
+     * @throws org.apache.commons.math.MathException exception thrown whenever a
+     * math error occurred.
      */
     public void createMzIdentMLFile(MzIdentMLVersion mzIdentMLVersion) throws IOException, MzMLUnmarshallerException, ClassNotFoundException, InterruptedException, SQLException, MathException {
 
@@ -1638,23 +1640,26 @@ public class MzIdentMLExport {
 
                     if (psPtmScores != null) {
 
-                        ArrayList<Integer> ptmIndexesCovered = new ArrayList<Integer>();
-
                         Peptide peptide = bestPeptideAssumption.getPeptide();
                         if (peptide.isModified()) {
-                            for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+
+                            ArrayList<ModificationMatch> modificationMatches = peptide.getModificationMatches();
+                            HashSet<String> ptmsCovered = new HashSet<String>(modificationMatches.size());
+
+                            for (ModificationMatch modMatch : modificationMatches) {
 
                                 String ptmName = modMatch.getTheoreticPtm();
-                                PTM currentPtm = ptmFactory.getPTM(ptmName);
-                                Double ptmMass = currentPtm.getMass();
-                                Integer ptmIndex = ptmIndexMap.get(ptmMass);
-                                if (ptmIndex == null) {
-                                    throw new IllegalArgumentException("No index found for PTM " + ptmName + " of mass " + ptmMass + ".");
-                                }
 
-                                if (!ptmIndexesCovered.contains(ptmIndex)) {
+                                if (!ptmsCovered.contains(ptmName)) {
+                                    ptmsCovered.add(ptmName);
 
-                                    ptmIndexesCovered.add(ptmIndex);
+                                    PTM currentPtm = ptmFactory.getPTM(ptmName);
+                                    Double ptmMass = currentPtm.getMass();
+                                    Integer ptmIndex = ptmIndexMap.get(ptmMass);
+                                    if (ptmIndex == null) {
+                                        throw new IllegalArgumentException("No index found for PTM " + ptmName + " of mass " + ptmMass + ".");
+                                    }
+
                                     PtmScoring ptmScoring = psPtmScores.getPtmScoring(ptmName);
 
                                     if (ptmScoring != null) {
@@ -1700,23 +1705,25 @@ public class MzIdentMLExport {
 
                     if (psPtmScores != null) {
 
-                        ArrayList<Integer> ptmIndexesCovered = new ArrayList<Integer>();
-
                         Peptide peptide = peptideMatch.getTheoreticPeptide();
                         if (peptide.isModified()) {
-                            for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+
+                            ArrayList<ModificationMatch> modificationMatches = peptide.getModificationMatches();
+                            HashSet<String> ptmsCovered = new HashSet<String>(modificationMatches.size());
+
+                            for (ModificationMatch modMatch : modificationMatches) {
 
                                 String ptmName = modMatch.getTheoreticPtm();
-                                PTM currentPtm = ptmFactory.getPTM(ptmName);
-                                Double ptmMass = currentPtm.getMass();
-                                Integer ptmIndex = ptmIndexMap.get(ptmMass);
-                                if (ptmIndex == null) {
-                                    throw new IllegalArgumentException("No index found for PTM " + ptmName + " of mass " + ptmMass + ".");
-                                }
 
-                                if (!ptmIndexesCovered.contains(ptmIndex)) {
+                                if (!ptmsCovered.contains(ptmName)) {
+                                    ptmsCovered.add(ptmName);
 
-                                    ptmIndexesCovered.add(ptmIndex);
+                                    PTM currentPtm = ptmFactory.getPTM(ptmName);
+                                    Double ptmMass = currentPtm.getMass();
+                                    Integer ptmIndex = ptmIndexMap.get(ptmMass);
+                                    if (ptmIndex == null) {
+                                        throw new IllegalArgumentException("No index found for PTM " + ptmName + " of mass " + ptmMass + ".");
+                                    }
                                     PtmScoring ptmScoring = psPtmScores.getPtmScoring(modMatch.getTheoreticPtm());
 
                                     if (ptmScoring != null) {
