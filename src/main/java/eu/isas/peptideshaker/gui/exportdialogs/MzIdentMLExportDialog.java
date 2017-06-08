@@ -148,7 +148,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         convertJButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("PeptideShaker - Export");
+        setTitle("Export mzIdentML");
         setResizable(false);
 
         backgroundJPanel.setBackground(new java.awt.Color(230, 230, 230));
@@ -520,7 +520,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/mzIdentMLExportDialog.html"),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Export mzIdentML - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
 

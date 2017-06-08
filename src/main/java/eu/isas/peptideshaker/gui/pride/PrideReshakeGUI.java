@@ -3000,10 +3000,13 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                             prideSearchParametersReport = "<html><br><b><u>Extracted Search Parameters</u></b><br><br>"
                                     + "(No search parameters extracted)<br></html>";
                         }
+                        
+                        // set the PeptideShaker project name
+                        String projectName = getCurrentPxAccession();
 
                         // display the detected search parameters to the user
                         new PrideSearchParametersDialog(PrideReshakeGUI.this,
-                                new File(outputFolder, getIdentificationSettingsFileName(prideSearchParameters) + ".par"), prideSearchParametersReport, mgfFiles, rawFiles, selectedSpecies, selectedSpeciesType, true);
+                                new File(outputFolder, getIdentificationSettingsFileName(prideSearchParameters) + ".par"), prideSearchParametersReport, mgfFiles, rawFiles, selectedSpecies, selectedSpeciesType, projectName, true);
                     }
 
                 } catch (Exception e) {

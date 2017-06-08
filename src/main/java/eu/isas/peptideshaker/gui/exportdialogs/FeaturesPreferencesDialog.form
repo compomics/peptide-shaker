@@ -367,7 +367,6 @@
                         <Property name="text" type="java.lang.String" value="#Peptides"/>
                         <Property name="toolTipText" type="java.lang.String" value="#Peptides per protein per fraction"/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="precursorIntensitiesPerFraction">
@@ -376,7 +375,6 @@
                         <Property name="text" type="java.lang.String" value="Precursor Intensities"/>
                         <Property name="toolTipText" type="java.lang.String" value="Summed precursor intensity per protein per fraction"/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="spectraPerFraction">
@@ -385,7 +383,6 @@
                         <Property name="text" type="java.lang.String" value="#Spectra"/>
                         <Property name="toolTipText" type="java.lang.String" value="#Spectra per protein per fraction"/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JButton" name="fractionsExport">
@@ -433,7 +430,6 @@
                         <Property name="text" type="java.lang.String" value="Fraction MW Range"/>
                         <Property name="toolTipText" type="java.lang.String" value="Show the molecular weight ranges for each protein."/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="nonEnzymaticPeptidesFractionTab">
@@ -442,7 +438,6 @@
                         <Property name="text" type="java.lang.String" value="Non Enzymatic Peptides"/>
                         <Property name="toolTipText" type="java.lang.String" value="Do the proteins have non enzymatic peptides?"/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                   </SubComponents>

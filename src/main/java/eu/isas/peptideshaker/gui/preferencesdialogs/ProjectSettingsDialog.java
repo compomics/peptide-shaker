@@ -317,7 +317,7 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
         new HelpDialog(parentFrame, getClass().getResource("/helpFiles/PreferencesDialog.html"),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Preferences - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_helpJButtonActionPerformed
 

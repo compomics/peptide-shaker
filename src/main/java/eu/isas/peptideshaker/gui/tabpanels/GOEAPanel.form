@@ -158,9 +158,6 @@
           </Layout>
           <SubComponents>
             <Container class="javax.swing.JScrollPane" name="proteinGoMappingsScrollPane">
-              <Properties>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
               <AuxValues>
                 <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
               </AuxValues>
@@ -201,7 +198,6 @@
                 </Property>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="0.05"/>
-                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fivePercentRadioButtonActionPerformed"/>
@@ -213,7 +209,6 @@
                   <ComponentRef name="significanceLevelButtonGroup"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="0.01"/>
-                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onePercentRadioButtonActionPerformed"/>
@@ -401,9 +396,6 @@
                   </Layout>
                   <SubComponents>
                     <Container class="javax.swing.JScrollPane" name="proteinsScrollPane">
-                      <Properties>
-                        <Property name="opaque" type="boolean" value="false"/>
-                      </Properties>
                       <AuxValues>
                         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
                       </AuxValues>

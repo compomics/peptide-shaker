@@ -874,7 +874,7 @@ public class QCPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/QCPlots.html"), "#PSM",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Quality Control Plots - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_psmPlotHelpJButtonActionPerformed
 
@@ -906,7 +906,7 @@ public class QCPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/QCPlots.html"), "#Peptide",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Quality Control Plots - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_peptidesPlotHelpJButtonActionPerformed
 
@@ -996,7 +996,7 @@ public class QCPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/QCPlots.html"), "#Protein",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Quality Control Plots - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_proteinsPlotHelpJButtonActionPerformed
 

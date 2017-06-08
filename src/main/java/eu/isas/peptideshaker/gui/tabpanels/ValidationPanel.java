@@ -1548,7 +1548,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Validation_Parameters",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Validation - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_thresholdHelpJButtonActionPerformed
 
@@ -1562,7 +1562,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Coverage_Plot",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Validation - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_costBenefitPlotHelpJButtonActionPerformed
 
@@ -1576,7 +1576,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Target_Decoy_Plot",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Validation - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_fdrFnrPlotHelpJButtonActionPerformed
 
@@ -1590,7 +1590,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Confidence_Plot",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Validation - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_confidencePlotHelpJButtonActionPerformed
 
@@ -1713,7 +1713,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_Summary",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Validation - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_nMaxHelpJButtonActionPerformed
 
@@ -1763,7 +1763,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Group_Selection",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Validation - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_groupSelectionHelpJButtonActionPerformed
 
@@ -1902,7 +1902,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_Summary",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Validation - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_confidenceHelpJButtonActionPerformed
 
@@ -1934,7 +1934,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_Summary",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Validation - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_fdrHelpJButtonActionPerformed
 
@@ -1966,7 +1966,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_Summary",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Validation - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_fnrHelpJButtonActionPerformed
 
@@ -1998,7 +1998,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_Summary",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Validation - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_truePositivesHelpJButtonActionPerformed
 
@@ -2030,7 +2030,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_Summary",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Validation - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_falsePositivesHelpJButtonActionPerformed
 
@@ -2062,7 +2062,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_Summary",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Validation - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_validatedHitsHelpJButtonActionPerformed
 
@@ -2094,7 +2094,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_Summary",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Validation - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_totalTPHelpJButtonActionPerformed
 
@@ -2144,7 +2144,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Validation_Parameters",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Validation - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_estimatorHelpJButtonActionPerformed
 

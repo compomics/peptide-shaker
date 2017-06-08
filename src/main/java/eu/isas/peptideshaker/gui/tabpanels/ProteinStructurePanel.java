@@ -2122,7 +2122,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Protein Structure - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_proteinsHelpJButtonActionPerformed
 
@@ -2288,7 +2288,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Protein Structure - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_peptidesHelpJButtonActionPerformed
 
@@ -2347,7 +2347,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Protein Structure - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_pdbMatchesHelpJButtonActionPerformed
 
@@ -2406,7 +2406,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Protein Structure - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_pdbChainHelpJButtonActionPerformed
 
@@ -2465,7 +2465,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Protein Structure - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_pdbStructureHelpJButtonActionPerformed
 

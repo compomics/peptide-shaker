@@ -2625,28 +2625,28 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 new HelpDialog(this, getClass().getResource("/helpFiles/IonTable.html"),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                        "PeptideShaker - Help");
+                        "Ion Table - Help");
             } else if (spectrumTabIndex == 1) {
                 new HelpDialog(this, getClass().getResource("/helpFiles/BubblePlot.html"),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                        "PeptideShaker - Help");
+                        "Bubble Plot - Help");
             } else if (spectrumTabIndex == 2) {
                 new HelpDialog(this, getClass().getResource("/helpFiles/SpectrumPanel.html"),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                        "PeptideShaker - Help");
+                        "Spetrum Panel - Help");
             }
         } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
             new HelpDialog(this, getClass().getResource("/helpFiles/SpectrumPanel.html"),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    "PeptideShaker - Help");
+                    "Spectrum Panel - Help");
         } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
             new HelpDialog(this, getClass().getResource("/helpFiles/PTMPanel.html"),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    "PeptideShaker - Help");
+                    "Modification Analysis - Help");
         }
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));

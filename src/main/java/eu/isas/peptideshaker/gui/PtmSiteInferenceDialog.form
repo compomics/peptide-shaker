@@ -161,7 +161,6 @@
             <Container class="javax.swing.JScrollPane" name="ptmSiteTableScrollPane">
               <Properties>
                 <Property name="verticalScrollBarPolicy" type="int" value="22"/>
-                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
@@ -189,7 +188,6 @@
             <Container class="javax.swing.JScrollPane" name="ptmsTableScrollPane">
               <Properties>
                 <Property name="verticalScrollBarPolicy" type="int" value="22"/>
-                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>

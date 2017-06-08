@@ -1643,17 +1643,16 @@ public class MzIdentMLExport {
                         Peptide peptide = bestPeptideAssumption.getPeptide();
                         if (peptide.isModified()) {
 
-                            ArrayList<ModificationMatch> modificationMatches = peptide.getModificationMatches();
-                            HashSet<String> ptmsCovered = new HashSet<String>(modificationMatches.size());
+                            ArrayList<String> scoredPtms = psPtmScores.getScoredPTMs();
+                            HashSet<String> ptmsCovered = new HashSet<String>(scoredPtms.size());
+                            
+                            for (String ptmName : scoredPtms) {
 
-                            for (ModificationMatch modMatch : modificationMatches) {
-
-                                String ptmName = modMatch.getTheoreticPtm();
+                                PTM currentPtm = ptmFactory.getPTM(ptmName);
 
                                 if (!ptmsCovered.contains(ptmName)) {
                                     ptmsCovered.add(ptmName);
 
-                                    PTM currentPtm = ptmFactory.getPTM(ptmName);
                                     Double ptmMass = currentPtm.getMass();
                                     Integer ptmIndex = ptmIndexMap.get(ptmMass);
                                     if (ptmIndex == null) {
@@ -1708,12 +1707,10 @@ public class MzIdentMLExport {
                         Peptide peptide = peptideMatch.getTheoreticPeptide();
                         if (peptide.isModified()) {
 
-                            ArrayList<ModificationMatch> modificationMatches = peptide.getModificationMatches();
-                            HashSet<String> ptmsCovered = new HashSet<String>(modificationMatches.size());
-
-                            for (ModificationMatch modMatch : modificationMatches) {
-
-                                String ptmName = modMatch.getTheoreticPtm();
+                            ArrayList<String> scoredPtms = psPtmScores.getScoredPTMs();
+                            HashSet<String> ptmsCovered = new HashSet<String>(scoredPtms.size());
+                            
+                            for (String ptmName : scoredPtms) {
 
                                 if (!ptmsCovered.contains(ptmName)) {
                                     ptmsCovered.add(ptmName);
@@ -1724,7 +1721,7 @@ public class MzIdentMLExport {
                                     if (ptmIndex == null) {
                                         throw new IllegalArgumentException("No index found for PTM " + ptmName + " of mass " + ptmMass + ".");
                                     }
-                                    PtmScoring ptmScoring = psPtmScores.getPtmScoring(modMatch.getTheoreticPtm());
+                                    PtmScoring ptmScoring = psPtmScores.getPtmScoring(ptmName);
 
                                     if (ptmScoring != null) {
                                         for (int site = 1; site <= peptideSequence.length(); site++) {
