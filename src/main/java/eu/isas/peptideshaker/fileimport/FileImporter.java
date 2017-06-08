@@ -199,7 +199,7 @@ public class FileImporter {
                 waitingHandler.appendReport("Warning: PeptideShaker cannot load your FASTA file into memory. This will slow down the processing. "
                         + "Note that using large large databases also reduces the search engine efficiency. "
                         + "Try to either (i) use a smaller database, (ii) increase the memory provided to PeptideShaker, or (iii) improve the reading speed by using an SSD disc. "
-                        + "(See also http://compomics.github.io/compomics-utilities/wiki/proteininference.html.)", true, true);
+                        + "(See also http://compomics.github.io/projects/compomics-utilities/wiki/proteininference.html.)", true, true);
 
             }
             int cacheSize = (int) availableCachSize;
@@ -565,7 +565,7 @@ public class FileImporter {
                             "PeptideShaker used up all the available memory and had to be stopped.<br>"
                             + "Memory boundaries are changed in the the Welcome Dialog (Settings<br>"
                             + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit<br>"
-                            + "Java Options). See also <a href=\"http://compomics.github.io/compomics-utilities/wiki/javatroubleshooting.html\">JavaTroubleShooting</a>."),
+                            + "Java Options). See also <a href=\"http://compomics.github.io/projects/compomics-utilities/wiki/javatroubleshooting.html\">JavaTroubleShooting</a>."),
                             "Out Of Memory", JOptionPane.ERROR_MESSAGE);
                 }
 
@@ -591,7 +591,7 @@ public class FileImporter {
                 } else if (FrameExceptionHandler.getExceptionType(e).equalsIgnoreCase("Protein not found")) {
                     waitingHandler.appendReport("An error occurred while loading the identification files:", true, true);
                     waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
-                    waitingHandler.appendReport("Please see http://compomics.github.io/searchgui/wiki/databasehelp.html.", true, true);
+                    waitingHandler.appendReport("Please see http://compomics.github.io/projects/searchgui/wiki/databasehelp.html.", true, true);
                 } else {
                     waitingHandler.appendReport("An error occurred while loading the identification files:", true, true);
                     waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
@@ -895,7 +895,7 @@ public class FileImporter {
                             report
                                     += "- The protein sequence database must be the same or contain the database used for the search." + System.getProperty("line.separator")
                                     + "- When using the 'REVERSED' tag, decoy sequences must be reversed versions of the target sequences, use the 'DECOY' tag otherwise." + System.getProperty("line.separator")
-                                    + "- When using in house databases make sure that the format is recognized by search engines and PeptideShaker (more details at http://compomics.github.io/searchgui/wiki/databasehelp.html)." + System.getProperty("line.separator")
+                                    + "- When using in house databases make sure that the format is recognized by search engines and PeptideShaker (more details at http://compomics.github.io/projects/searchgui/wiki/databasehelp.html)." + System.getProperty("line.separator")
                                     + "The problematic spectra can be inspected in the Spectrum ID tab. In case of doubt please contact the developers.";
                             waitingHandler.appendReport(report, true, true);
                         }

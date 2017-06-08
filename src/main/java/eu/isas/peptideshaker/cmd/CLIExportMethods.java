@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
@@ -335,7 +334,8 @@ public class CLIExportMethods {
      * @throws ClassNotFoundException exception thrown whenever an exception
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
-     * @throws org.apache.commons.math.MathException exception thrown whenever a math error occurred.
+     * @throws org.apache.commons.math.MathException exception thrown whenever a
+     * math error occurred
      */
     public static void exportMzId(MzidCLIInputBean mzidCLIInputBean, CpsParent cpsParent, WaitingHandler waitingHandler)
             throws IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException, SQLException, MathException {

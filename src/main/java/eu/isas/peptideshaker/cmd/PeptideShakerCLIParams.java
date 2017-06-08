@@ -14,7 +14,7 @@ public enum PeptideShakerCLIParams {
 
     ///////////////////////////////////////////////////////////////////////////
     // IMPORTANT: Any change here must be reported in the wiki: 
-    // http://compomics.github.io/peptide-shaker/wiki/peptideshakercli.html
+    // http://compomics.github.io/projects/peptide-shaker/wiki/peptideshakercli.html
     ///////////////////////////////////////////////////////////////////////////
     EXPERIMENT("experiment", "Specifies the experiment name.", true),
     SAMPLE("sample", "Specifies the sample name.", true),
