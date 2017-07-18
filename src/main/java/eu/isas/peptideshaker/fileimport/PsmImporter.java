@@ -1195,8 +1195,9 @@ public class PsmImporter {
      * while reading or writing to a file
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
+     * @throws InterruptedException exception thrown if a thread is interrupted
      */
-    private synchronized void checkTagMassErrorsAndCharge(String spectrumKey, TagAssumption tagAssumption) throws MzMLUnmarshallerException, IOException {
+    private synchronized void checkTagMassErrorsAndCharge(String spectrumKey, TagAssumption tagAssumption) throws MzMLUnmarshallerException, IOException, InterruptedException {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
 

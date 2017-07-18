@@ -1487,7 +1487,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/GOEA.html"),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Gene Ontology Analysis - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_mappingsHelpJButtonActionPerformed
 
@@ -1583,12 +1583,12 @@ public class GOEAPanel extends javax.swing.JPanel {
             new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/GOEA.html"), "#Proteins",
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    "PeptideShaker - Help");
+                    "Gene Ontology Analysis - Help");
         } else {
             new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/GOEA.html"), "#GO_Plots",
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    "PeptideShaker - Help");
+                    "Gene Ontology Analysis - Help");
         }
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));

@@ -295,7 +295,6 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Protein Evidence"/>
             <Property name="toolTipText" type="java.lang.String" value="Protein Evidence (from UniProt)"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="evidenceRadioButtonActionPerformed"/>
@@ -308,7 +307,6 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Validation Status"/>
             <Property name="toolTipText" type="java.lang.String" value="Peptide and Protein Validation Status"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="validationStatusRadioButtonActionPerformed"/>
@@ -322,7 +320,6 @@
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Molecule Type"/>
             <Property name="toolTipText" type="java.lang.String" value="Peptide or Protein"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nodeTypeRadioButtonActionPerformed"/>
@@ -336,7 +333,6 @@
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="All Neighbors"/>
             <Property name="toolTipText" type="java.lang.String" value="Select all neighbors"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="allRadioButtonActionPerformed"/>
@@ -349,7 +345,6 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Unique Only"/>
             <Property name="toolTipText" type="java.lang.String" value="Select unique neighbors only"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="uniqueRadioButtonActionPerformed"/>
@@ -359,7 +354,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Highlight"/>
             <Property name="toolTipText" type="java.lang.String" value="Highlight the selected peptides and proteins"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="highlightCheckBoxActionPerformed"/>

@@ -380,8 +380,8 @@ public class CLIExportMethods {
      * @throws ClassNotFoundException exception thrown whenever an exception
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
-     * @throws org.apache.commons.math.MathException exception thrown if a math
-     * exception occurred when estimating the noise level in spectra
+     * @throws org.apache.commons.math.MathException exception thrown whenever a
+     * math error occurred
      */
     public static void exportMzId(MzidCLIInputBean mzidCLIInputBean, CpsParent cpsParent, WaitingHandler waitingHandler)
             throws IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException, SQLException, MathException {
@@ -403,6 +403,6 @@ public class CLIExportMethods {
                 cpsParent.getShotgunProtocol(), cpsParent.getIdentificationParameters(),
                 cpsParent.getSpectrumCountingPreferences(), cpsParent.getIdentificationFeaturesGenerator(),
                 mzidCLIInputBean.getOutputFile(), mzidCLIInputBean.getIncludeProteinSequences(), waitingHandler);
-        mzIdentMLExport.createMzIdentMLFile(false);
+        mzIdentMLExport.createMzIdentMLFile(mzidCLIInputBean.getMzIdentMLVersion());
     }
 }

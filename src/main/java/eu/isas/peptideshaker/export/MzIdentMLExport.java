@@ -37,6 +37,7 @@ import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
+import com.compomics.util.experiment.io.identifications.MzIdentMLVersion;
 import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.waiting.WaitingHandler;
@@ -59,6 +60,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -111,9 +113,9 @@ public class MzIdentMLExport {
      */
     private Double dScoreThreshold = 95.0; //@TODO: avoid this hard coded value!!
     /**
-     * Write mzid 1.2? False, results in mzid 1.1.
+     * The version of the mzIdentML file to use, 1.1 by default.
      */
-    private boolean mzidVersion_1_2 = false;
+    private MzIdentMLVersion mzIdentMLVersion = MzIdentMLVersion.v1_1;
     /**
      * The PeptideShaker version.
      */
@@ -280,7 +282,7 @@ public class MzIdentMLExport {
     /**
      * Creates the mzIdentML file.
      *
-     * @param version12 if true, mzid 1.2 version information will be included
+     * @param mzIdentMLVersion The version of mzIdentML to use
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading/writing a file
@@ -292,16 +294,21 @@ public class MzIdentMLExport {
      * occurred while writing the export
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
-     * @throws org.apache.commons.math.MathException exception thrown if a math
-     * exception occurred when estimating the noise level in spectra
+     * @throws org.apache.commons.math.MathException exception thrown whenever a
+     * math error occurred.
      */
-    public void createMzIdentMLFile(boolean version12) throws IOException, MzMLUnmarshallerException, ClassNotFoundException, InterruptedException, SQLException, MathException {
+    public void createMzIdentMLFile(MzIdentMLVersion mzIdentMLVersion) throws IOException, MzMLUnmarshallerException, ClassNotFoundException, InterruptedException, SQLException, MathException {
 
-        mzidVersion_1_2 = version12;
-        if (mzidVersion_1_2) {
-            maxNeutralLosses = 1;
-        } else {
-            maxNeutralLosses = 0;
+        this.mzIdentMLVersion = mzIdentMLVersion;
+        switch (mzIdentMLVersion) {
+            case v1_1:
+                maxNeutralLosses = 0;
+                break;
+            case v1_2:
+                maxNeutralLosses = 1;
+                break;
+            default:
+                throw new UnsupportedOperationException("mzIdentML version " + mzIdentMLVersion.name + " not supported.");
         }
 
         // @TODO: use the waiting handler more (especially for command line mode)
@@ -773,11 +780,17 @@ public class MzIdentMLExport {
         tabCounter++;
         writeCvTerm(new CvTerm("PSI-MS", "MS:1001211", "parent mass type mono", null));
         writeCvTerm(new CvTerm("PSI-MS", "MS:1001256", "fragment mass type mono", null));
-        if (mzidVersion_1_2) {
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002492", "consensus scoring", null));
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002490", "peptide-level scoring", null));
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002497", "group PSMs by sequence with modifications", null));
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002491", "modification localization scoring", null));
+        switch (mzIdentMLVersion) {
+            case v1_1:
+                break;
+            case v1_2:
+                writeCvTerm(new CvTerm("PSI-MS", "MS:1002492", "consensus scoring", null));
+                writeCvTerm(new CvTerm("PSI-MS", "MS:1002490", "peptide-level scoring", null));
+                writeCvTerm(new CvTerm("PSI-MS", "MS:1002497", "group PSMs by sequence with modifications", null));
+                writeCvTerm(new CvTerm("PSI-MS", "MS:1002491", "modification localization scoring", null));
+                break;
+            default:
+                throw new UnsupportedOperationException("mzIdentML version " + mzIdentMLVersion.name + " not supported.");
         }
 
         // @TODO: list all search parameters from the search engines used?
@@ -789,15 +802,21 @@ public class MzIdentMLExport {
         tabCounter++;
 
         // create the ptm index map
-        if (mzidVersion_1_2) {
-            for (String ptm : searchParameters.getPtmSettings().getAllModifications()) {
-                PTM currentPtm = ptmFactory.getPTM(ptm);
-                Double ptmMass = currentPtm.getMass();
-                Integer index = ptmIndexMap.get(ptmMass);
-                if (index == null) {
-                    ptmIndexMap.put(ptmMass, ptmIndexMap.size());
+        switch (mzIdentMLVersion) {
+            case v1_1:
+                break;
+            case v1_2:
+                for (String ptm : searchParameters.getPtmSettings().getAllModifications()) {
+                    PTM currentPtm = ptmFactory.getPTM(ptm);
+                    Double ptmMass = currentPtm.getMass();
+                    Integer index = ptmIndexMap.get(ptmMass);
+                    if (index == null) {
+                        ptmIndexMap.put(ptmMass, ptmIndexMap.size());
+                    }
                 }
-            }
+                break;
+            default:
+                throw new UnsupportedOperationException("mzIdentML version " + mzIdentMLVersion.name + " not supported.");
         }
 
         // iterate and add the ptms
@@ -863,12 +882,18 @@ public class MzIdentMLExport {
             }
 
             // add modification type/index
-            if (mzidVersion_1_2) {
-                Integer ptmIndex = ptmIndexMap.get(ptmMass);
-                if (ptmIndex == null) {
-                    throw new IllegalArgumentException("No index found for PTM " + currentPtm.getName() + " of mass " + ptmMass + ".");
-                }
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002504", "modification index", ptmIndex.toString()));
+            switch (mzIdentMLVersion) {
+                case v1_1:
+                    break;
+                case v1_2:
+                    Integer ptmIndex = ptmIndexMap.get(ptmMass);
+                    if (ptmIndex == null) {
+                        throw new IllegalArgumentException("No index found for PTM " + currentPtm.getName() + " of mass " + ptmMass + ".");
+                    }
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002504", "modification index", ptmIndex.toString()));
+                    break;
+                default:
+                    throw new UnsupportedOperationException("mzIdentML version " + mzIdentMLVersion.name + " not supported.");
             }
 
             tabCounter--;
@@ -1609,127 +1634,135 @@ public class MzIdentMLExport {
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002466", "PeptideShaker PSM score", Double.toString(Util.roundDouble(psmParameter.getPsmScore(), CONFIDENCE_DECIMALS))));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002467", "PeptideShaker PSM confidence", Double.toString(Util.roundDouble(psmParameter.getPsmConfidence(), CONFIDENCE_DECIMALS))));
 
-            if (mzidVersion_1_2) {
+            switch (mzIdentMLVersion) {
+                case v1_1:
+                    break;
+                case v1_2:
 
-                PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
-                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                PSPtmScores psPtmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                    PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
+                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                    PSPtmScores psPtmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
 
-                if (psPtmScores != null) {
+                    if (psPtmScores != null) {
 
-                    ArrayList<Integer> ptmIndexesCovered = new ArrayList<Integer>();
+                        Peptide peptide = bestPeptideAssumption.getPeptide();
+                        if (peptide.isModified()) {
 
-                    Peptide peptide = bestPeptideAssumption.getPeptide();
-                    if (peptide.isModified()) {
-                        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+                            ArrayList<String> scoredPtms = psPtmScores.getScoredPTMs();
+                            HashSet<String> ptmsCovered = new HashSet<String>(scoredPtms.size());
+                            
+                            for (String ptmName : scoredPtms) {
 
-                            String ptmName = modMatch.getTheoreticPtm();
-                            PTM currentPtm = ptmFactory.getPTM(ptmName);
-                            Double ptmMass = currentPtm.getMass();
-                            Integer ptmIndex = ptmIndexMap.get(ptmMass);
-                            if (ptmIndex == null) {
-                                throw new IllegalArgumentException("No index found for PTM " + ptmName + " of mass " + ptmMass + ".");
-                            }
+                                PTM currentPtm = ptmFactory.getPTM(ptmName);
 
-                            if (!ptmIndexesCovered.contains(ptmIndex)) {
+                                if (!ptmsCovered.contains(ptmName)) {
+                                    ptmsCovered.add(ptmName);
 
-                                ptmIndexesCovered.add(ptmIndex);
-                                PtmScoring ptmScoring = psPtmScores.getPtmScoring(ptmName);
+                                    Double ptmMass = currentPtm.getMass();
+                                    Integer ptmIndex = ptmIndexMap.get(ptmMass);
+                                    if (ptmIndex == null) {
+                                        throw new IllegalArgumentException("No index found for PTM " + ptmName + " of mass " + ptmMass + ".");
+                                    }
 
-                                if (ptmScoring != null) {
-                                    for (int site = 1; site <= peptideSequence.length(); site++) {
-                                        if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
-                                            double score = ptmScoring.getProbabilisticScore(site);
+                                    PtmScoring ptmScoring = psPtmScores.getPtmScoring(ptmName);
+
+                                    if (ptmScoring != null) {
+                                        for (int site = 1; site <= peptideSequence.length(); site++) {
+                                            if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
+                                                double score = ptmScoring.getProbabilisticScore(site);
+                                                if (score > 0) {
+                                                    String valid = "true";
+                                                    if (score < ptmScoringPreferences.getProbabilisticScoreThreshold()) {
+                                                        valid = "false";
+                                                    }
+
+                                                    if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore) {
+                                                        writeCvTerm(new CvTerm("PSI-MS", "MS:1001985", "Ascore", ptmIndex + ":" + score + ":" + site + ":" + valid));
+                                                    } else if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
+                                                        writeCvTerm(new CvTerm("PSI-MS", "MS:1001969", "phosphoRS score", ptmIndex + ":" + score + ":" + site + ":" + valid));
+                                                    }
+                                                }
+                                            }
+
+                                            double score = ptmScoring.getDeltaScore(site);
                                             if (score > 0) {
                                                 String valid = "true";
-                                                if (score < ptmScoringPreferences.getProbabilisticScoreThreshold()) {
+                                                if (score < dScoreThreshold) {
                                                     valid = "false";
                                                 }
-
-                                                if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore) {
-                                                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001985", "Ascore", ptmIndex + ":" + score + ":" + site + ":" + valid));
-                                                } else if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
-                                                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001969", "phosphoRS score", ptmIndex + ":" + score + ":" + site + ":" + valid));
-                                                }
+                                                writeCvTerm(new CvTerm("PSI-MS", "MS:1002536", "D-Score", ptmIndex + ":" + score + ":" + site + ":" + valid));
                                             }
-                                        }
-
-                                        double score = ptmScoring.getDeltaScore(site);
-                                        if (score > 0) {
-                                            String valid = "true";
-                                            if (score < dScoreThreshold) {
-                                                valid = "false";
-                                            }
-                                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002536", "D-Score", ptmIndex + ":" + score + ":" + site + ":" + valid));
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
 
-                PSParameter peptideParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psmParameter);
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002469", "PeptideShaker peptide confidence", peptideParameter.getPeptideConfidence() + ""));
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002468", "PeptideShaker peptide score", peptideParameter.getPeptideScore() + ""));
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002500", "peptide passes threshold", peptideParameter.getMatchValidationLevel().isValidated() + ""));
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002520", "peptide group ID", peptideKey));
+                    PSParameter peptideParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psmParameter);
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002469", "PeptideShaker peptide confidence", peptideParameter.getPeptideConfidence() + ""));
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002468", "PeptideShaker peptide score", peptideParameter.getPeptideScore() + ""));
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002500", "peptide passes threshold", peptideParameter.getMatchValidationLevel().isValidated() + ""));
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002520", "peptide group ID", peptideKey));
 
-                psPtmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
+                    psPtmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
 
-                if (psPtmScores != null) {
+                    if (psPtmScores != null) {
 
-                    ArrayList<Integer> ptmIndexesCovered = new ArrayList<Integer>();
+                        Peptide peptide = peptideMatch.getTheoreticPeptide();
+                        if (peptide.isModified()) {
 
-                    Peptide peptide = peptideMatch.getTheoreticPeptide();
-                    if (peptide.isModified()) {
-                        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+                            ArrayList<String> scoredPtms = psPtmScores.getScoredPTMs();
+                            HashSet<String> ptmsCovered = new HashSet<String>(scoredPtms.size());
+                            
+                            for (String ptmName : scoredPtms) {
 
-                            String ptmName = modMatch.getTheoreticPtm();
-                            PTM currentPtm = ptmFactory.getPTM(ptmName);
-                            Double ptmMass = currentPtm.getMass();
-                            Integer ptmIndex = ptmIndexMap.get(ptmMass);
-                            if (ptmIndex == null) {
-                                throw new IllegalArgumentException("No index found for PTM " + ptmName + " of mass " + ptmMass + ".");
-                            }
+                                if (!ptmsCovered.contains(ptmName)) {
+                                    ptmsCovered.add(ptmName);
 
-                            if (!ptmIndexesCovered.contains(ptmIndex)) {
+                                    PTM currentPtm = ptmFactory.getPTM(ptmName);
+                                    Double ptmMass = currentPtm.getMass();
+                                    Integer ptmIndex = ptmIndexMap.get(ptmMass);
+                                    if (ptmIndex == null) {
+                                        throw new IllegalArgumentException("No index found for PTM " + ptmName + " of mass " + ptmMass + ".");
+                                    }
+                                    PtmScoring ptmScoring = psPtmScores.getPtmScoring(ptmName);
 
-                                ptmIndexesCovered.add(ptmIndex);
-                                PtmScoring ptmScoring = psPtmScores.getPtmScoring(modMatch.getTheoreticPtm());
+                                    if (ptmScoring != null) {
+                                        for (int site = 1; site <= peptideSequence.length(); site++) {
+                                            if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
+                                                double score = ptmScoring.getProbabilisticScore(site);
+                                                if (score > 0) {
+                                                    String valid = "true";
+                                                    if (score < ptmScoringPreferences.getProbabilisticScoreThreshold()) {
+                                                        valid = "false";
+                                                    }
 
-                                if (ptmScoring != null) {
-                                    for (int site = 1; site <= peptideSequence.length(); site++) {
-                                        if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
-                                            double score = ptmScoring.getProbabilisticScore(site);
+                                                    if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore) {
+                                                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002551", "peptide:Ascore", ptmIndex + ":" + score + ":" + site + ":" + valid));
+                                                    } else if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
+                                                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002550", "peptide:phosphoRS score", ptmIndex + ":" + score + ":" + site + ":" + valid));
+                                                    }
+                                                }
+                                            }
+                                            double score = ptmScoring.getDeltaScore(site);
                                             if (score > 0) {
                                                 String valid = "true";
-                                                if (score < ptmScoringPreferences.getProbabilisticScoreThreshold()) {
+                                                if (score < dScoreThreshold) {
                                                     valid = "false";
                                                 }
-
-                                                if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore) {
-                                                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002551", "peptide:Ascore", ptmIndex + ":" + score + ":" + site + ":" + valid));
-                                                } else if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
-                                                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002550", "peptide:phosphoRS score", ptmIndex + ":" + score + ":" + site + ":" + valid));
-                                                }
+                                                writeCvTerm(new CvTerm("PSI-MS", "MS:1002553", "peptide:D-Score", ptmIndex + ":" + score + ":" + site + ":" + valid));
+                                                //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PeptideShaker PTM confidence type", "???")); // @TODO: can be at both the psm and peptide level...
                                             }
-                                        }
-                                        double score = ptmScoring.getDeltaScore(site);
-                                        if (score > 0) {
-                                            String valid = "true";
-                                            if (score < dScoreThreshold) {
-                                                valid = "false";
-                                            }
-                                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002553", "peptide:D-Score", ptmIndex + ":" + score + ":" + site + ":" + valid));
-                                            //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PeptideShaker PTM confidence type", "???")); // @TODO: can be at both the psm and peptide level...
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
+                    break;
+                default:
+                    throw new UnsupportedOperationException("mzIdentML version " + mzIdentMLVersion.name + " not supported.");
             }
 
             // add the individual search engine results
@@ -1969,19 +2002,23 @@ public class MzIdentMLExport {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         br.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + lineBreak);
 
-        if (mzidVersion_1_2) {
-            br.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-                    + "xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.2 http://www.psidev.info/files/mzIdentML1.2.0.xsd\" "
-                    + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.2\" version=\"1.2.0\" "
-                    + "creationDate=\"" + df.format(new Date()) + "\">"
-                    + lineBreak);
-        } else {
-            // assumes version 1.1
-            br.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-                    + "xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd\" "
-                    + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\" version=\"1.1.0\" "
-                    + "creationDate=\"" + df.format(new Date()) + "\">"
-                    + lineBreak);
+        switch (mzIdentMLVersion) {
+            case v1_1:
+                br.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                        + "xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd\" "
+                        + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\" version=\"1.1.0\" "
+                        + "creationDate=\"" + df.format(new Date()) + "\">"
+                        + lineBreak);
+                break;
+            case v1_2:
+                br.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                        + "xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.2 http://www.psidev.info/files/mzIdentML1.2.0.xsd\" "
+                        + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.2\" version=\"1.2.0\" "
+                        + "creationDate=\"" + df.format(new Date()) + "\">"
+                        + lineBreak);
+                break;
+            default:
+                throw new UnsupportedOperationException("mzIdentML version " + mzIdentMLVersion.name + " not supported.");
         }
 
         tabCounter++;

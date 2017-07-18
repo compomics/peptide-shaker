@@ -54,9 +54,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
-import java.io.DataOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 /**
  * A command line interface to run PeptideShaker.
@@ -744,19 +741,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         // incrementing the counter for a new PeptideShaker start run via GUI
         if (utilitiesUserPreferences.isAutoUpdate()) {
-            final String COLLECT_URL = "http://www.google-analytics.com/collect";
-            final String POST = "v=1&tid=UA-36198780-1&cid=35119a79-1a05-49d7-b876-bb88420f825b&uid=asuueffeqqss&t=event&ec=usage&ea=startrun-cl&el=peptide-shaker";
-            try {
-                HttpURLConnection connection = (HttpURLConnection) new URL(COLLECT_URL).openConnection();
-                connection.setRequestMethod("POST");
-                connection.setConnectTimeout(3000);
-                connection.setDoOutput(true);
-                DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-                wr.writeBytes(POST);
-                int response = connection.getResponseCode();
-            } catch (IOException ex) {
-                System.out.println("GA connection refused");
-            }
+            Util.sendGAUpdate("UA-36198780-1", "startrun-cl", "peptide-shaker-" + PeptideShaker.getVersion());
         }
 
         // create a shaker which will perform the analysis
@@ -876,7 +861,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         return System.getProperty("line.separator")
                 + "The PeptideShaker command line takes identification files from search engines and creates a PeptideShaker project saved as cpsx file. Various exports can be generated from the project." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
-                + "For further help see http://compomics.github.io/projects/peptide-shaker.html and http://compomics.github.io/peptide-shaker/wiki/peptideshakercli.html." + System.getProperty("line.separator")
+                + "For further help see http://compomics.github.io/projects/peptide-shaker.html and http://compomics.github.io/projects/peptide-shaker/wiki/peptideshakercli.html." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "Or contact the developers at https://groups.google.com/group/peptide-shaker." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")

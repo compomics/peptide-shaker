@@ -461,7 +461,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/FeatureExport.html"),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                "Export Features - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_helpJButtonActionPerformed
 

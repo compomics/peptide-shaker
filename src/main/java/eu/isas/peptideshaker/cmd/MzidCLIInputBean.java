@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
+import com.compomics.util.experiment.io.identifications.MzIdentMLVersion;
 import java.io.File;
 import org.apache.commons.cli.CommandLine;
 
@@ -68,6 +69,10 @@ public class MzidCLIInputBean {
      * The path settings.
      */
     private PathSettingsCLIInputBean pathSettingsCLIInputBean;
+    /**
+     * The version of mzIdentML file to use, 1.1 by default.
+     */
+    private MzIdentMLVersion mzIdentMLVersion = MzIdentMLVersion.v1_1;
 
     /**
      * Parses a MzidCLI command line and stores the input in the attributes.
@@ -114,8 +119,13 @@ public class MzidCLIInputBean {
             organizationUrl = aLine.getOptionValue(MzidCLIParams.ORGANIZATION_URL.id);
         }
         if (aLine.hasOption(MzidCLIParams.INCLUDE_PROTEIN_SEQUENCES.id)) {
-             String input = aLine.getOptionValue(MzidCLIParams.INCLUDE_PROTEIN_SEQUENCES.id);
-             includeProteinSequences = input.trim().equals("1");
+            String input = aLine.getOptionValue(MzidCLIParams.INCLUDE_PROTEIN_SEQUENCES.id);
+            includeProteinSequences = input.trim().equals("1");
+        }
+        if (aLine.hasOption(MzidCLIParams.VERSION.id)) {
+            String input = aLine.getOptionValue(MzidCLIParams.VERSION.id);
+            int index = Integer.parseInt(input.trim());
+            mzIdentMLVersion = MzIdentMLVersion.getMzIdentMLVersion(index);
         }
         if (aLine.hasOption(MzidCLIParams.OUTPUT_FILE.id)) {
             outputFile = new File(aLine.getOptionValue(MzidCLIParams.OUTPUT_FILE.id));
@@ -244,6 +254,15 @@ public class MzidCLIInputBean {
             includeProteinSequences = false;
         }
         return includeProteinSequences;
+    }
+
+    /**
+     * Returns the mzIdentML version to use for this file.
+     *
+     * @return the mzIdentML version to use for this file
+     */
+    public MzIdentMLVersion getMzIdentMLVersion() {
+        return mzIdentMLVersion;
     }
 
     /**

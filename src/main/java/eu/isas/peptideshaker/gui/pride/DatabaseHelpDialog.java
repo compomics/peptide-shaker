@@ -394,7 +394,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      */
     private void databaseHelpSettingsJLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_databaseHelpSettingsJLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://compomics.github.io/searchgui/wiki/databasehelp.html");
+        BareBonesBrowserLaunch.openURL("http://compomics.github.io/projects/searchgui/wiki/databasehelp.html");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_databaseHelpSettingsJLabelMouseClicked
 
