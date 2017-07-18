@@ -73,7 +73,7 @@ public class Ms2pipExport {
     /**
      * The name of the target file.
      */
-    public final static String fileName = "ms2pip_targets";
+    public final static String fileName = "targets";
     /**
      * The name of the documentation file.
      */
