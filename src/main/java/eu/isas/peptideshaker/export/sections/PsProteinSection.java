@@ -153,8 +153,7 @@ public class PsProteinSection {
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(
-                keys, parameters, peptideSection != null, parameters, peptideSection != null, parameters, waitingHandler); // @TODO: find a better way to know if we need psms
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(keys, waitingHandler); // @TODO: find a better way to know if we need psms
 
         while (proteinMatchesIterator.hasNext()) {
 
@@ -169,8 +168,8 @@ public class PsProteinSection {
             String proteinKey = proteinMatch.getKey();
 
             if (decoys || !ProteinMatch.isDecoy(proteinKey)) {
-
-                psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+                String parameterKey = proteinKey + "_" + psParameter.getParameterKey();
+                psParameter = (PSParameter)identification.retrieveObject(parameterKey);
 
                 if (!validatedOnly || psParameter.getMatchValidationLevel().isValidated()) {
 
