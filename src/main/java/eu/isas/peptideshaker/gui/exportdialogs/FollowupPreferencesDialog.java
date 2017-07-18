@@ -799,9 +799,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         parameters.add(psParameter);
                         PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(parameters, false, null, progressDialog);
 
-                        while (peptideMatchesIterator.hasNext()) {
+                        PeptideMatch peptideMatch;
+                        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-                            PeptideMatch peptideMatch = peptideMatchesIterator.next();
                             String peptideKey = peptideMatch.getKey();
                             psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
 

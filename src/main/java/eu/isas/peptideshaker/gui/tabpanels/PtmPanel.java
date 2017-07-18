@@ -3251,9 +3251,9 @@ public class PtmPanel extends javax.swing.JPanel {
         ArrayList<String> notModifiedPeptides = new ArrayList<String>();
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(null, false, null, progressDialogX);
 
-        while (peptideMatchesIterator.hasNext()) {
+        PeptideMatch peptideMatch;
+        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             String peptideKey = peptideMatch.getKey();
             Peptide peptide = peptideMatch.getTheoreticPeptide();
 

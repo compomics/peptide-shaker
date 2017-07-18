@@ -82,9 +82,9 @@ public class InclusionListExport {
                 parameters.add(psParameter);
                 ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
 
-                while (proteinMatchesIterator.hasNext()) {
+                ProteinMatch proteinMatch;
+                while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
-                    ProteinMatch proteinMatch = proteinMatchesIterator.next();
                     String proteinMatchKey = proteinMatch.getKey();
                     psParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, psParameter);
 

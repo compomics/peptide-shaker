@@ -679,10 +679,6 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
                 boolean conversionCompleted = false;
 
-                // make sure that all annotations are included
-                double currentIntensityLimit = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().getAnnotationIntensityLimit();
-                peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(0.0);
-
                 try {
                     MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
                             peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
@@ -710,9 +706,6 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                     progressDialog.setRunCanceled();
                     progressDialog.dispose();
                     return;
-                } finally {
-                    // reset the annotation level
-                    peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(currentIntensityLimit);
                 }
 
                 // close the progress dialog

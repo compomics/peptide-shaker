@@ -347,8 +347,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
             psmIterator.setBatchSize(batchSize);
 
             int i = 0;
-            while (psmIterator.hasNext()) {
-                psmIterator.next();
+            while (psmIterator.next() != null) {
                 if (waitingHandler.isRunCanceled()) {
                     return rows.get(i);
                 }

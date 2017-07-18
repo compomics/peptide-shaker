@@ -109,6 +109,10 @@ public class FollowUpCLIInputBean {
      * The path settings.
      */
     private PathSettingsCLIInputBean pathSettingsCLIInputBean;
+    /**
+     * The folder where to save ms2pip features.
+     */
+    private File ms2pipFolder;
 
     /**
      * Construct a FollowUpCLIInputBean from an Apache CLI instance.
@@ -189,6 +193,9 @@ public class FollowUpCLIInputBean {
         }
         if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id)) {
             inclusionRtWindow = new Double(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id));
+        }
+        if (aLine.hasOption(FollowUpCLIParams.MS2PIP_FOLDER.id)) {
+            ms2pipFolder = new File(aLine.getOptionValue(FollowUpCLIParams.MS2PIP_FOLDER.id));
         }
         pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
     }
@@ -441,7 +448,8 @@ public class FollowUpCLIInputBean {
                 || accessionExportNeeded()
                 || fastaExportNeeded()
                 || progenesisExportNeeded()
-                || inclusionListNeeded();
+                || inclusionListNeeded()
+                || isMs2pipNeeded();
     }
 
     /**
@@ -514,5 +522,23 @@ public class FollowUpCLIInputBean {
      */
     public PathSettingsCLIInputBean getPathSettingsCLIInputBean() {
         return pathSettingsCLIInputBean;
+    }
+    
+    /**
+     * Returns a boolean indicating whether an ms2pip export is needed.
+     * 
+     * @return a boolean indicating whether an ms2pip export is needed
+     */
+    public boolean isMs2pipNeeded() {
+        return ms2pipFolder != null;
+    }
+
+    /**
+     * Returns the ms2pip folder.
+     * 
+     * @return the ms2pip folder
+     */
+    public File getMs2pipFolder() {
+        return ms2pipFolder;
     }
 }

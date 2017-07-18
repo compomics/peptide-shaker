@@ -504,7 +504,8 @@ public class StarHider {
      * Stars a PSM match.
      *
      * @param matchKey the key of the match
-     * @param peptideSpectrumAnnotator the spectrum annotator to use during filtering
+     * @param peptideSpectrumAnnotator the spectrum annotator to use during
+     * filtering
      *
      * @throws IOException thrown whenever an error occurs while reading or
      * writing a file.
@@ -556,7 +557,8 @@ public class StarHider {
      * Unstars a PSM match.
      *
      * @param matchKey the key of the match
-     * @param peptideSpectrumAnnotator the spectrum annotator to use during filtering
+     * @param peptideSpectrumAnnotator the spectrum annotator to use during
+     * filtering
      *
      * @throws IOException thrown whenever an error occurs while reading or
      * writing a file.
@@ -596,7 +598,8 @@ public class StarHider {
      * Hides a PSM match.
      *
      * @param matchKey the key of the match
-     * @param peptideSpectrumAnnotator the spectrum annotator to use during filtering
+     * @param peptideSpectrumAnnotator the spectrum annotator to use during
+     * filtering
      *
      * @throws IOException thrown whenever an error occurs while reading or
      * writing a file.
@@ -648,7 +651,8 @@ public class StarHider {
      * Unhides a psm match.
      *
      * @param matchKey the key of the match
-     * @param peptideSpectrumAnnotator the spectrum annotator to use during filtering
+     * @param peptideSpectrumAnnotator the spectrum annotator to use during
+     * filtering
      *
      * @throws IOException thrown whenever an error occurs while reading or
      * writing a file.
@@ -755,7 +759,8 @@ public class StarHider {
      * filters.
      *
      * @param matchKey the key of the match
-     * @param peptideSpectrumAnnotator the spectrum annotator to use during filtering
+     * @param peptideSpectrumAnnotator the spectrum annotator to use during
+     * filtering
      *
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
@@ -858,7 +863,8 @@ public class StarHider {
      * filters.
      *
      * @param matchKey the key of the match
-     * @param peptideSpectrumAnnotator the spectrum annotator to use during filtering
+     * @param peptideSpectrumAnnotator the spectrum annotator to use during
+     * filtering
      *
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
@@ -938,9 +944,8 @@ public class StarHider {
 
                 PSParameter psParameter = new PSParameter();
 
-                while (proteinMatchesIterator.hasNext() && !progressDialog.isRunCanceled()) {
-
-                    ProteinMatch proteinMatch = proteinMatchesIterator.next();
+                ProteinMatch proteinMatch;
+                while ((proteinMatch = proteinMatchesIterator.next()) != null && !progressDialog.isRunCanceled()) {
 
                     if (proteinMatch != null) {
 

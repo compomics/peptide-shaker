@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.followup;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.ions.ElementaryIon;
 import com.compomics.util.experiment.identification.Identification;
@@ -19,7 +18,6 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
@@ -158,10 +156,8 @@ public class ProgenesisExcelExport {
         parameters.add(new PSParameter());
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
 
-        while (proteinMatchesIterator.hasNext()) {
-
-            // get the protein match
-            ProteinMatch proteinMatch = proteinMatchesIterator.next();
+        ProteinMatch proteinMatch;
+        while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
             // insert the protein details
             insertProteinDetails(proteinMatch.getMainMatch());
@@ -174,9 +170,8 @@ public class ProgenesisExcelExport {
             PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, true, parameters, waitingHandler);
 
             // print the peptide details
-            while (peptideMatchesIterator.hasNext()) {
-
-                PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            PeptideMatch peptideMatch;
+            while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
                 // insert peptide data
                 insertPeptideData(peptideMatch);
@@ -251,13 +246,13 @@ public class ProgenesisExcelExport {
 
         PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, parameters, false, waitingHandler);
 
-        while (psmIterator.hasNext()) {
+        SpectrumMatch spectrumMatch;
+        while ((spectrumMatch = psmIterator.next()) != null) {
 
             if (waitingHandler.isRunCanceled()) {
                 break;
             }
 
-            SpectrumMatch spectrumMatch = psmIterator.next();
             String spectrumKey = spectrumMatch.getKey();
             psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 

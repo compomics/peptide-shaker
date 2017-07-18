@@ -21,6 +21,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.cli.identification_parameters.IdentificationParametersInputBean;
+import com.compomics.util.exceptions.exception_handlers.CommandLineExceptionHandler;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
@@ -83,6 +84,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * The utilities user preferences.
      */
     private UtilitiesUserPreferences utilitiesUserPreferences;
+    /**
+     * The exception handler.
+     */
+    private CommandLineExceptionHandler commandLineExceptionHandler = new CommandLineExceptionHandler();
 
     /**
      * Construct a new PeptideShakerCLI runnable. When initialization is
@@ -321,6 +326,17 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                         waitingHandler.appendReport("PepNovo training export completed.", true, true);
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the Pepnovo training file.", true, true);
+                        e.printStackTrace();
+                        waitingHandler.setRunCanceled();
+                    }
+                }
+
+                // Ms2pip export
+                if (followUpCLIInputBean.isMs2pipNeeded()) {
+                    try {
+                        CLIExportMethods.exportMs2pipFeatures(followUpCLIInputBean, identification, identificationParameters, commandLineExceptionHandler, waitingHandler);
+                    } catch (Exception e) {
+                        waitingHandler.appendReport("An error occurred while generating the ms2pip features file.", true, true);
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
                     }
@@ -727,7 +743,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         if (utilitiesUserPreferences.isAutoUpdate()) {
             Util.sendGAUpdate("UA-36198780-1", "startrun-cl", "peptide-shaker-" + PeptideShaker.getVersion());
         }
-        
+
         // create a shaker which will perform the analysis
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
 

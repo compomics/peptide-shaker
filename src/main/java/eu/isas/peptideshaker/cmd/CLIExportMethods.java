@@ -1,8 +1,12 @@
 package eu.isas.peptideshaker.cmd;
 
+import com.compomics.util.Util;
+import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.experiment.identification.peptide_fragmentation.models.ms2pip.features_configuration.FeaturesMap;
+import com.compomics.util.experiment.identification.peptide_fragmentation.models.ms2pip.features_configuration.FeaturesMapManager;
 import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.export.PSExportFactory;
@@ -13,6 +17,7 @@ import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.MzIdentMLExport;
 import eu.isas.peptideshaker.followup.FastaExport;
 import eu.isas.peptideshaker.followup.InclusionListExport;
+import eu.isas.peptideshaker.followup.Ms2pipExport;
 import eu.isas.peptideshaker.followup.TrainingExport;
 import eu.isas.peptideshaker.followup.ProgenesisExport;
 import eu.isas.peptideshaker.followup.RecalibrationExporter;
@@ -56,9 +61,11 @@ public class CLIExportMethods {
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level in spectra
      */
     public static void recalibrateSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification,
-            IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
+            IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException, MathException {
         File recalibrationFolder = followUpCLIInputBean.getRecalibrationFolder();
         if (!recalibrationFolder.exists()) {
             recalibrationFolder.mkdir();
@@ -202,8 +209,10 @@ public class CLIExportMethods {
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level in spectra
      */
-    public static void exportPepnovoTrainingFiles(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public static void exportPepnovoTrainingFiles(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
         File destinationFolder = followUpCLIInputBean.getPepnovoTrainingFolder();
         if (!destinationFolder.exists()) {
             destinationFolder.mkdir();
@@ -244,6 +253,43 @@ public class CLIExportMethods {
         }
         File destinationFile = destinationFileTemp;
         InclusionListExport.exportInclusionList(destinationFile, identification, identificationFeaturesGenerator, followUpCLIInputBean.getInclusionProteinFilter(), peptideFilterType, InclusionListExport.ExportFormat.getTypeFromIndex(followUpCLIInputBean.getInclusionFormat()), searchParameters, followUpCLIInputBean.getInclusionRtWindow(), waitingHandler, filterPreferences);
+    }
+
+    /**
+     * Exports training files for ms2pip.
+     *
+     * @param followUpCLIInputBean the follow up input bean
+     * @param identification the identification
+     * @param identificationParameters the identification parameters
+     * @param exceptionHandler the exception handler
+     * @param waitingHandler a waiting handler to display progress
+     *
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     */
+    public static void exportMs2pipFeatures(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationParameters identificationParameters, ExceptionHandler exceptionHandler, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, InterruptedException {
+
+        File destinationFile = followUpCLIInputBean.getMs2pipFolder();
+        FeaturesMap featuresMap = FeaturesMapManager.getDefaultFeaturesMap();
+        int nThreads = Math.max(Runtime.getRuntime().availableProcessors(), 1);
+
+        File refFile;
+        if (followUpCLIInputBean.getZipFile() != null) {
+            refFile = followUpCLIInputBean.getZipFile();
+        } else if (followUpCLIInputBean.getCpsFile() != null) {
+            refFile = followUpCLIInputBean.getCpsFile();
+        } else {
+            throw new UnsupportedOperationException("File input not supported.");
+        }
+        String cpsFileName = Util.removeExtension(Util.getFileName(refFile));
+
+        Ms2pipExport ms2pipExport = new Ms2pipExport(waitingHandler, exceptionHandler);
+        ms2pipExport.exportFeatures(identificationParameters, destinationFile, cpsFileName, identification, featuresMap, nThreads);
+
     }
 
     /**
