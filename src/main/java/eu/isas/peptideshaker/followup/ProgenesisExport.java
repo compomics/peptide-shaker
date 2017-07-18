@@ -208,7 +208,7 @@ public class ProgenesisExport {
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
                 if (targetedPTMs.contains(modificationMatch.getTheoreticPtm())) {
                     found = true;
-                    if (!modificationMatch.isConfident()) {
+                    if (!modificationMatch.getConfident()) {
                         confident = false;
                         break;
                     }
@@ -279,7 +279,7 @@ public class ProgenesisExport {
             Peptide peptide = bestAssumption.getPeptide();
             if (peptide.isModified()) {
                 for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                    if (modificationMatch.isVariable()) {
+                    if (modificationMatch.getVariable()) {
                         if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
                             modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
                         }

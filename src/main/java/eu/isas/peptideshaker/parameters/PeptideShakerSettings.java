@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.parameters;
 
+import com.compomics.util.IdObject;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.preferences.PSProcessingPreferences;
@@ -17,7 +18,7 @@ import eu.isas.peptideshaker.utils.Metrics;
  *
  * @author Marc Vaudel
  */
-public class PeptideShakerSettings implements UrParameter {
+public class PeptideShakerSettings extends IdObject implements UrParameter {
 
     /**
      * Serial version UID for post-serialization compatibility.

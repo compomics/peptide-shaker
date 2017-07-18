@@ -479,7 +479,7 @@ public class BestMatchSelection {
                         if (sePeptide.isModified()) {
                             psModificationMatches = new ArrayList<ModificationMatch>(sePeptide.getNModifications());
                             for (ModificationMatch seModMatch : sePeptide.getModificationMatches()) {
-                                psModificationMatches.add(new ModificationMatch(seModMatch.getTheoreticPtm(), seModMatch.isVariable(), seModMatch.getModificationSite()));
+                                psModificationMatches.add(new ModificationMatch(seModMatch.getTheoreticPtm(), seModMatch.getVariable(), seModMatch.getModificationSite()));
                             }
                         }
 

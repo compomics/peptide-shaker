@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.parameters;
 
+import com.compomics.util.IdObject;
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import org.apache.commons.math.util.FastMath;
  *
  * @author Marc Vaudel
  */
-public class PSParameter implements UrParameter {
+public class PSParameter extends IdObject implements UrParameter {
 
     /**
      * Serial version UID for post-serialization compatibility.
@@ -85,7 +86,7 @@ public class PSParameter implements UrParameter {
      * Protein groups can belong to the following groups according to the static
      * field indexing.
      */
-    private int groupClass = NOT_GROUP;
+    private int proteinInferenceGroupClass = NOT_GROUP;
     /**
      * Static index for a protein inference group: 0 - not a protein group or
      * unique peptide of single protein group.
@@ -156,7 +157,14 @@ public class PSParameter implements UrParameter {
      * @return the peptide posterior error probability
      */
     public double getPeptideProbability() {
+        zooActivateRead();
         return peptideProbability;
+    }
+    
+    public void setGroupClass(int groupClass){
+        zooActivateWrite();
+        setModified(true);
+        this.proteinInferenceGroupClass = groupClass;
     }
 
     /**
@@ -167,6 +175,8 @@ public class PSParameter implements UrParameter {
      * @param peptideProbability the new peptide posterior error probability
      */
     public void setPeptideProbability(double peptideProbability) {
+        zooActivateWrite();
+        setModified(true);
         this.peptideProbability = peptideProbability;
     }
 
@@ -176,6 +186,7 @@ public class PSParameter implements UrParameter {
      * @return the peptide Probabilistic score
      */
     public double getPeptideProbabilityScore() {
+        zooActivateRead();
         return peptideProbabilityScore;
     }
 
@@ -209,6 +220,8 @@ public class PSParameter implements UrParameter {
      * @param peptideProbabilityScore the new peptide Probabilistic score
      */
     public void setPeptideProbabilityScore(double peptideProbabilityScore) {
+        zooActivateWrite();
+        setModified(true);
         this.peptideProbabilityScore = peptideProbabilityScore;
     }
 
@@ -218,6 +231,7 @@ public class PSParameter implements UrParameter {
      * @return the protein posterior error probability
      */
     public double getProteinProbability() {
+        zooActivateRead();
         return proteinProbability;
     }
 
@@ -229,6 +243,8 @@ public class PSParameter implements UrParameter {
      * @param proteinProbability the new protein posterior error probability
      */
     public void setProteinProbability(double proteinProbability) {
+        zooActivateWrite();
+        setModified(true);
         this.proteinProbability = proteinProbability;
     }
 
@@ -238,6 +254,7 @@ public class PSParameter implements UrParameter {
      * @return the protein Probabilistic score
      */
     public double getProteinProbabilityScore() {
+        zooActivateRead();
         return proteinProbabilityScore;
     }
 
@@ -271,6 +288,8 @@ public class PSParameter implements UrParameter {
      * @param proteinProbabilityScore the new protein Probabilistic score
      */
     public void setProteinProbabilityScore(double proteinProbabilityScore) {
+        zooActivateWrite();
+        setModified(true);
         this.proteinProbabilityScore = proteinProbabilityScore;
     }
 
@@ -280,6 +299,7 @@ public class PSParameter implements UrParameter {
      * @return the search engine posterior error probability
      */
     public double getSearchEngineProbability() {
+        zooActivateRead();
         return searchEngineProbability;
     }
 
@@ -292,6 +312,8 @@ public class PSParameter implements UrParameter {
      * probability
      */
     public void setSearchEngineProbability(double searchEngineProbability) {
+        zooActivateWrite();
+        setModified(true);
         this.searchEngineProbability = searchEngineProbability;
     }
 
@@ -305,6 +327,7 @@ public class PSParameter implements UrParameter {
      * search engine
      */
     public Double getAlgorithmDeltaPEP() {
+        zooActivateRead();
         return algorithmDeltaPEP;
     }
 
@@ -318,6 +341,8 @@ public class PSParameter implements UrParameter {
      * search engine
      */
     public void setAlgorithmDeltaPEP(Double deltaPEP) {
+        zooActivateWrite();
+        setModified(true);
         this.algorithmDeltaPEP = deltaPEP;
     }
 
@@ -331,6 +356,7 @@ public class PSParameter implements UrParameter {
      * engines
      */
     public Double getDeltaPEP() {
+        zooActivateRead();
         return deltaPEP;
     }
 
@@ -344,6 +370,8 @@ public class PSParameter implements UrParameter {
      * search engines
      */
     public void setDeltaPEP(Double deltaPEP) {
+        zooActivateWrite();
+        setModified(true);
         this.deltaPEP = deltaPEP;
     }
 
@@ -366,6 +394,7 @@ public class PSParameter implements UrParameter {
      * @return the PSM posterior error probability
      */
     public double getPsmProbability() {
+        zooActivateRead();
         return psmProbability;
     }
 
@@ -377,7 +406,21 @@ public class PSParameter implements UrParameter {
      * @param psmProbability the new the PSM posterior error probability
      */
     public void setPsmProbability(double psmProbability) {
+        zooActivateWrite();
+        setModified(true);
         this.psmProbability = psmProbability;
+    }
+    
+    public void setPsmProbabilityScore(double psmProbabilityScore) {
+        zooActivateWrite();
+        setModified(true);
+        this.psmProbabilityScore = psmProbabilityScore;
+    }
+    
+    public void setQcFilters(HashMap<String, Boolean> qcFilters){
+        zooActivateWrite();
+        setModified(true);
+        this.qcFilters = qcFilters;
     }
 
     /**
@@ -386,6 +429,7 @@ public class PSParameter implements UrParameter {
      * @return the PSM Probabilistic score
      */
     public double getPsmProbabilityScore() {
+        zooActivateRead();
         return psmProbabilityScore;
     }
 
@@ -427,6 +471,7 @@ public class PSParameter implements UrParameter {
      * @return the validation level of the match
      */
     public MatchValidationLevel getMatchValidationLevel() {
+        zooActivateRead();
         return matchValidationLevel;
     }
 
@@ -436,6 +481,8 @@ public class PSParameter implements UrParameter {
      * @param matchValidationLevel the validation level of the match
      */
     public void setMatchValidationLevel(MatchValidationLevel matchValidationLevel) {
+        zooActivateWrite();
+        setModified(true);
         this.matchValidationLevel = matchValidationLevel;
     }
 
@@ -445,6 +492,8 @@ public class PSParameter implements UrParameter {
      * @param hidden boolean indicating whether the match should be hidden
      */
     public void setHidden(boolean hidden) {
+        zooActivateWrite();
+        setModified(true);
         this.hidden = hidden;
     }
 
@@ -453,7 +502,8 @@ public class PSParameter implements UrParameter {
      *
      * @return boolean indicating whether a match is hidden or not
      */
-    public boolean isHidden() {
+    public boolean getHidden() {
+        zooActivateRead();
         return hidden;
     }
 
@@ -463,6 +513,8 @@ public class PSParameter implements UrParameter {
      * @param starred boolean indicating whether the match should be starred
      */
     public void setStarred(boolean starred) {
+        zooActivateWrite();
+        setModified(true);
         this.starred = starred;
     }
 
@@ -471,7 +523,8 @@ public class PSParameter implements UrParameter {
      *
      * @return boolean indicating whether a match is starred or not
      */
-    public boolean isStarred() {
+    public boolean getStarred() {
+        zooActivateRead();
         return starred;
     }
 
@@ -480,8 +533,9 @@ public class PSParameter implements UrParameter {
      *
      * @return the protein inference class of the protein match.
      */
-    public int getProteinInferenceClass() {
-        return groupClass;
+    public int getProteinInferenceGroupClass() {
+        zooActivateRead();
+        return proteinInferenceGroupClass;
     }
 
     /**
@@ -491,7 +545,7 @@ public class PSParameter implements UrParameter {
      * @return the group class description
      */
     public String getProteinInferenceClassAsString() {
-        return getProteinInferenceClassAsString(groupClass);
+        return getProteinInferenceClassAsString(proteinInferenceGroupClass);
     }
 
     /**
@@ -523,7 +577,7 @@ public class PSParameter implements UrParameter {
      * @param groupClass the protein group class
      */
     public void setProteinInferenceClass(int groupClass) {
-        this.groupClass = groupClass;
+        this.proteinInferenceGroupClass = groupClass;
     }
 
     /**
@@ -532,7 +586,18 @@ public class PSParameter implements UrParameter {
      * @return the match key in the corresponding specific map
      */
     public String getSpecificMapKey() {
+        zooActivateRead();
         return specificMapKey;
+    }
+    
+    public HashMap<String, Integer> getValidatedPeptidesPerFraction(){
+        zooActivateRead();
+        return validatedPeptidesPerFraction;
+    }
+    
+    public HashMap<String, Integer> getValidatedSpectraPerFraction(){
+        zooActivateRead();
+        return validatedSpectraPerFraction;
     }
 
     /**
@@ -541,6 +606,8 @@ public class PSParameter implements UrParameter {
      * @param specificMapKey the match key in the corresponding specific map
      */
     public void setSpecificMapKey(String specificMapKey) {
+        zooActivateWrite();
+        setModified(true);
         this.specificMapKey = specificMapKey;
     }
 
@@ -555,6 +622,12 @@ public class PSParameter implements UrParameter {
             fractionScore = new HashMap<String, Double>(2);
         }
         fractionScore.put(fraction, confidence);
+    }
+    
+    public void setFractionScore(HashMap<String, Double> fractionScore){
+        zooActivateWrite();
+        setModified(true);
+        this.fractionScore = fractionScore;
     }
 
     /**
@@ -575,7 +648,8 @@ public class PSParameter implements UrParameter {
      *
      * @return the fractions where this match was found
      */
-    public Set<String> getFractions() {
+    public Set<String> getFractionScore() {
+        zooActivateRead();
         if (fractionScore != null) {
             return fractionScore.keySet();
         } else {
@@ -595,6 +669,12 @@ public class PSParameter implements UrParameter {
         }
         fractionPEP.put(fraction, confidence);
     }
+    
+    public void setFractionPEP(HashMap<String, Double> fractionPEP){
+        zooActivateWrite();
+        setModified(true);
+        this.fractionPEP = fractionPEP;
+    }
 
     /**
      * Returns the fraction pep. null if not found.
@@ -607,6 +687,11 @@ public class PSParameter implements UrParameter {
             return null;
         }
         return fractionPEP.get(fraction);
+    }
+    
+    public HashMap<String, Double> getFractionPEP(){
+        zooActivateRead();
+        return fractionPEP;
     }
 
     /**
@@ -642,7 +727,9 @@ public class PSParameter implements UrParameter {
      * @param validatedPeptidesPerFraction the validated peptides per fraction
      * map
      */
-    public void setFractionValidatedPeptides(HashMap<String, Integer> validatedPeptidesPerFraction) {
+    public void setValidatedPeptidesPerFraction(HashMap<String, Integer> validatedPeptidesPerFraction) {
+        zooActivateWrite();
+        setModified(true);
         this.validatedPeptidesPerFraction = validatedPeptidesPerFraction;
     }
 
@@ -665,7 +752,9 @@ public class PSParameter implements UrParameter {
      *
      * @param validatedSpectraPerFraction the validated spectra per fraction map
      */
-    public void setFractionValidatedSpectra(HashMap<String, Integer> validatedSpectraPerFraction) {
+    public void setValidatedSpectraPepFraction(HashMap<String, Integer> validatedSpectraPerFraction) {
+        zooActivateWrite();
+        setModified(true);
         this.validatedSpectraPerFraction = validatedSpectraPerFraction;
     }
 
@@ -682,6 +771,25 @@ public class PSParameter implements UrParameter {
             return new ArrayList<Double>();
         }
     }
+    
+    public HashMap<String, ArrayList<Double>> getPrecursorIntensityPerFraction() {
+        zooActivateRead();
+        return precursorIntensityPerFraction;
+    }
+    
+    
+    public void setPrecursorIntensityAveragePerFraction(HashMap<String, Double> precursorIntensityAveragePerFraction) {
+        zooActivateWrite();
+        setModified(true);
+        this.precursorIntensityAveragePerFraction = precursorIntensityAveragePerFraction;
+    }
+    
+    
+    public void setPrecursorIntensitySummedPerFraction(HashMap<String, Double> precursorIntensitySummedPerFraction) {
+        zooActivateWrite();
+        setModified(true);
+        this.precursorIntensitySummedPerFraction = precursorIntensitySummedPerFraction;
+    }
 
     /**
      * Get the precursor intensity in the given fraction.
@@ -689,6 +797,8 @@ public class PSParameter implements UrParameter {
      * @param precursorIntensityPerFraction the precursor intensities per fraction map
      */
     public void setPrecursorIntensityPerFraction(HashMap<String, ArrayList<Double>> precursorIntensityPerFraction) {
+        zooActivateWrite();
+        setModified(true);
         this.precursorIntensityPerFraction = precursorIntensityPerFraction;
 
         // calculate the average precursor intensities
@@ -728,6 +838,11 @@ public class PSParameter implements UrParameter {
             return null;
         }
     }
+    
+    public HashMap<String, Double> getPrecursorIntensityAveragePerFraction() {
+        zooActivateRead();
+        return precursorIntensityAveragePerFraction;
+    }
 
     /**
      * Get the summed precursor intensity in the given fraction.
@@ -743,13 +858,19 @@ public class PSParameter implements UrParameter {
         }
     }
     
+    public HashMap<String, Double> getPrecursorIntensitySummedPerFraction() {
+        zooActivateRead();
+        return precursorIntensitySummedPerFraction;
+    }
+    
     /**
      * Indicates whether the match validation was manually inspected.
      *
      * @return a boolean indicating whether the match validation was manually
      * inspected
      */
-    public Boolean isManualValidation() {
+    public Boolean getManualValidation() {
+        zooActivateRead();
         if (manualValidation == null) {
             manualValidation = false;
         }
@@ -763,6 +884,8 @@ public class PSParameter implements UrParameter {
      * was manually inspected
      */
     public void setManualValidation(Boolean manualValidation) {
+        zooActivateWrite();
+        setModified(true);
         this.manualValidation = manualValidation;
     }
 
@@ -804,6 +927,11 @@ public class PSParameter implements UrParameter {
         }
         return qcFilters.keySet();
     }
+    
+    public HashMap<String, Boolean> getQcFilters(){
+        zooActivateRead();
+        return qcFilters;
+    }
 
     /**
      * Resets the results of the QC filters.
@@ -838,6 +966,12 @@ public class PSParameter implements UrParameter {
         intermediateScores.put(scoreId, score);
     }
     
+    public void setIntermediateScores(HashMap<Integer, Double> intermediateScores){
+        zooActivateWrite();
+        setModified(true);
+        this.intermediateScores = intermediateScores;
+    }
+    
     /**
      * Instantiates the intermediate scores map if null.
      */
@@ -860,6 +994,12 @@ public class PSParameter implements UrParameter {
         }
         return intermediateScores.get(scoreId);
     }
+    
+    public HashMap<Integer, Double> getIntermediateScores() {
+        zooActivateRead();
+        return intermediateScores;
+    }
+        
     
     /**
      * Returns a score from a raw score where the score = -10*log(rawScore). The maximum score is 100 and raw scores smaller or equal to zero have a score of 100.

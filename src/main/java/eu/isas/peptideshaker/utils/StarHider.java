@@ -1009,11 +1009,11 @@ public class StarHider {
                         identification.updateProteinMatchParameter(proteinKey, psParameter);
 
                         // update the observed fractional molecular weights per fraction
-                        if (!psParameter.isHidden() && psParameter.getMatchValidationLevel().isValidated() && !proteinMatch.isDecoy()) {
+                        if (!psParameter.getHidden() && psParameter.getMatchValidationLevel().isValidated() && !proteinMatch.isDecoy()) {
 
                             Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
 
-                            for (String fraction : psParameter.getFractions()) {
+                            for (String fraction : psParameter.getFractionScore()) {
 
                                 // set the fraction molecular weights
                                 if (psParameter.getFractionConfidence(fraction) > peptideShakerGUI.getIdentificationParameters().getFractionSettings().getProteinConfidenceMwPlots()) {

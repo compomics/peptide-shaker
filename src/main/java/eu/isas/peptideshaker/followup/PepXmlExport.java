@@ -626,7 +626,7 @@ public class PepXmlExport {
         sw.writeLineIncreasedIndent(parameterLine.toString());
         if (modificationMatches != null && !modificationMatches.isEmpty()) {
             for (ModificationMatch modificationMatch : modificationMatches) {
-                if (modificationMatch.isVariable()) {
+                if (modificationMatch.getVariable()) {
                     parameterLine = new StringBuilder();
                     parameterLine.append("<parameter name=\"ptm\" value=\"").append(modificationMatch.getTheoreticPtm()).append(" (").append(modificationMatch.getModificationSite()).append(")").append("\"/>");
                     sw.writeLine(parameterLine.toString());

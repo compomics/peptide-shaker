@@ -533,13 +533,13 @@ public class PsPsmSection {
             case validated:
                 return psParameter.getMatchValidationLevel().toString();
             case starred:
-                if (psParameter.isStarred()) {
+                if (psParameter.getStarred()) {
                     return "1";
                 } else {
                     return "0";
                 }
             case hidden:
-                if (psParameter.isHidden()) {
+                if (psParameter.getHidden()) {
                     return "1";
                 } else {
                     return "0";

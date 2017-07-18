@@ -399,7 +399,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     String proteinKey = proteinMatch.getKey();
                                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
 
-                                    if (psParameter.getMatchValidationLevel().isValidated() && !ProteinMatch.isDecoy(proteinKey) && !psParameter.isHidden()) {
+                                    if (psParameter.getMatchValidationLevel().isValidated() && !ProteinMatch.isDecoy(proteinKey) && !psParameter.getHidden()) {
 
                                         String mainMatch = proteinMatch.getMainMatch();
                                         HashSet<String> goTerms = backgroundGoMapping.getGoAccessions(mainMatch);

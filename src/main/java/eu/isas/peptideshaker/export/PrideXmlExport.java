@@ -494,7 +494,7 @@ public class PrideXmlExport {
                     Peptide peptide = bestAssumption.getPeptide();
                     if (peptide.isModified()) {
                         for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                            if (modificationMatch.isVariable()) {
+                            if (modificationMatch.getVariable()) {
                                 if (!modifications.contains(modificationMatch.getTheoreticPtm())) {
                                     modifications.add(modificationMatch.getTheoreticPtm());
                                 }

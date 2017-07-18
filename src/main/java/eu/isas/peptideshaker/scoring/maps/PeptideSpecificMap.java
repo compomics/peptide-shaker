@@ -179,7 +179,7 @@ public class PeptideSpecificMap implements Serializable {
         ArrayList<Double> modificationMasses = new ArrayList<Double>(peptide.getNModifications());
         if (peptide.isModified()) {
             for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
-                if (modificationMatch.getTheoreticPtm() != null && modificationMatch.isVariable()) {
+                if (modificationMatch.getTheoreticPtm() != null && modificationMatch.getVariable()) {
                     ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
                     modificationMasses.add(ptm.getMass());
                 }

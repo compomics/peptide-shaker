@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.export.sections;
 
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.AminoAcid;
 import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.Peptide;
@@ -33,7 +32,6 @@ import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.scoring.psm_scoring.PsmScorer;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -54,7 +52,7 @@ public class PsIdentificationAlgorithmMatchesSection {
     /**
      * The features to export.
      */
-    private ArrayList<PsIdentificationAlgorithmMatchesFeature> matchExportFeatures = new ArrayList<PsIdentificationAlgorithmMatchesFeature>();
+    private final ArrayList<PsIdentificationAlgorithmMatchesFeature> matchExportFeatures = new ArrayList<PsIdentificationAlgorithmMatchesFeature>();
     /**
      * The fragment subsection if needed.
      */
@@ -282,7 +280,7 @@ public class PsIdentificationAlgorithmMatchesSection {
         HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>(peptide.getNModifications());
         if (peptide.isModified()) {
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                if ((variablePtms && modificationMatch.isVariable()) || (!variablePtms && !modificationMatch.isVariable())) {
+                if ((variablePtms && modificationMatch.getVariable()) || (!variablePtms && !modificationMatch.getVariable())) {
                     if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
                         modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
                     }
@@ -448,7 +446,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                     return "0";
                 }
             case hidden:
-                if (psParameter.isHidden()) {
+                if (psParameter.getHidden()) {
                     return "1";
                 } else {
                     return "0";
@@ -593,7 +591,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             case spectrum_title:
                 return Spectrum.getSpectrumTitle(spectrumKey);
             case starred:
-                if (psParameter.isStarred()) {
+                if (psParameter.getStarred()) {
                     return "1";
                 } else {
                     return "0";
@@ -954,7 +952,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             case decoy:
                 return "";
             case hidden:
-                if (psParameter.isHidden()) {
+                if (psParameter.getHidden()) {
                     return "1";
                 } else {
                     return "0";
@@ -1002,7 +1000,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             case spectrum_title:
                 return Spectrum.getSpectrumTitle(spectrumKey);
             case starred:
-                if (psParameter.isStarred()) {
+                if (psParameter.getStarred()) {
                     return "1";
                 } else {
                     return "0";

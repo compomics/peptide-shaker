@@ -527,7 +527,7 @@ public class MatchesValidator {
         psParameter.resetQcResults();
         ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
 
-        if (!psParameter.isManualValidation()) {
+        if (!psParameter.getManualValidation()) {
 
             if (sequenceFactory.concatenatedTargetDecoy()) {
 
@@ -1089,7 +1089,7 @@ public class MatchesValidator {
             } else {
                 psParameter.setPeptideProbability(1.0);
             }
-            Set<String> fractions = psParameter.getFractions();
+            Set<String> fractions = psParameter.getFractionScore();
             if (fractions == null) {
                 throw new IllegalArgumentException("Fractions not found for peptide " + peptideKey + ".");
             }
@@ -1161,7 +1161,7 @@ public class MatchesValidator {
                 probaScore = probaScore * psParameter.getPeptideProbability();
 
                 if (nFractions > 1) {
-                    for (String fraction : psParameter.getFractions()) {
+                    for (String fraction : psParameter.getFractionScore()) {
 
                         Double fractionScore = fractionScores.get(fraction);
                         boolean change = false;
@@ -1251,7 +1251,7 @@ public class MatchesValidator {
                 psParameter.setProteinProbability(1.0);
             }
 
-            for (String fraction : psParameter.getFractions()) {
+            for (String fraction : psParameter.getFractionScore()) {
                 if (sequenceFactory.concatenatedTargetDecoy()) {
                     psParameter.setFractionPEP(fraction, proteinMap.getProbability(psParameter.getFractionScore(fraction)));
                 } else {
@@ -1671,10 +1671,10 @@ public class MatchesValidator {
                         }
 
                         // @TODO: could be a better more elegant way of doing this?
-                        HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>(psParameter.getFractions().size());
-                        HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionPeptideLevel = new HashMap<String, ArrayList<Double>>(psParameter.getFractions().size());
+                        HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>(psParameter.getFractionScore().size());
+                        HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionPeptideLevel = new HashMap<String, ArrayList<Double>>(psParameter.getFractionScore().size());
 
-                        for (String fractionName : psParameter.getFractions()) {
+                        for (String fractionName : psParameter.getFractionScore()) {
 
                             ArrayList<Double> precursorIntensities = new ArrayList<Double>();
 
@@ -1714,7 +1714,7 @@ public class MatchesValidator {
                         }
 
                         // set the number of validated spectra per fraction for each peptide
-                        psParameter.setFractionValidatedSpectra(validatedPsmsPerFraction);
+                        psParameter.setValidatedSpectraPepFraction(validatedPsmsPerFraction);
                         psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionPeptideLevel);
 
                         identification.updatePeptideMatchParameter(peptideKey, psParameter);
@@ -1913,7 +1913,7 @@ public class MatchesValidator {
 
                             PSParameter psParameter2 = (PSParameter) identification.getPeptideMatchParameter(currentPeptideKey, psParameter);
 
-                            for (String fraction : psParameter2.getFractions()) {
+                            for (String fraction : psParameter2.getFractionScore()) {
 
                                 if (psParameter2.getFractionValidatedSpectra(fraction) != null) {
                                     if (validatedPsmsPerFraction.containsKey(fraction)) {
@@ -1960,11 +1960,11 @@ public class MatchesValidator {
                         }
 
                         // set the number of validated spectra and peptides per fraction for each protein
-                        if (psParameter.getFractions().size() > 1) {
-                            psParameter.setFractionValidatedSpectra(validatedPsmsPerFraction);
-                            psParameter.setFractionValidatedPeptides(validatedPeptidesPerFraction);
+                        if (psParameter.getFractionScore().size() > 1) {
+                            psParameter.setValidatedSpectraPepFraction(validatedPsmsPerFraction);
+                            psParameter.setValidatedPeptidesPerFraction(validatedPeptidesPerFraction);
                             psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionProteinLevel);
-                            for (String fraction : psParameter.getFractions()) {
+                            for (String fraction : psParameter.getFractionScore()) {
                                 if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) != null) {
                                     if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) > maxProteinAveragePrecursorIntensity) {
                                         maxProteinAveragePrecursorIntensity = psParameter.getPrecursorIntensityAveragePerFraction(fraction);

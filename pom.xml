@@ -43,6 +43,15 @@
                 <role>Java Developer</role>
             </roles>
         </developer>
+        <developer>
+            <name>Dominik Kopczynski</name>
+            <id>dominik</id>
+            <email>dominik.kopczynski AT isas.de</email>
+            <organization>Leibniz Institut für Analytische Wissenschaften - ISAS - e.V., Dortmund, Germany</organization>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
     </developers>
 
 
@@ -326,7 +335,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>4.11.17</version>
+            <version>5.0.1</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -349,6 +358,15 @@
                     <groupId>org.xerial</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        
+        
+        
+        <!-- ZooDB as the new backend -->
+        <dependency>
+            <groupId>org.zoodb</groupId>
+            <artifactId>zoodb</artifactId>
+            <version>0.5.0</version>
         </dependency>
         
         <dependency>

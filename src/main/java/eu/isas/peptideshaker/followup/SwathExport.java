@@ -234,7 +234,7 @@ public class SwathExport {
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
                 if (targetedPTMs.contains(modificationMatch.getTheoreticPtm())) {
                     found = true;
-                    if (!modificationMatch.isConfident()) {
+                    if (!modificationMatch.getConfident()) {
                         confident = false;
                         break;
                     }

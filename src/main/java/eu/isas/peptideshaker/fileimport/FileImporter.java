@@ -748,21 +748,7 @@ public class FileImporter {
                                     peptideMap.clear();
                                 }
                             } catch (OutOfMemoryError e) {
-                                // Skip batch mapping and empty caches
-                                SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-                                if (sequenceMatchingPreferences.getPeptideMapperType() == PeptideMapperType.tree) {
-                                    ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(1, null);
-                                    sequenceFactory.getDefaultPeptideMapper().emptyCache();
-                                }
                                 peptideMapper.setCanceled(true);
-                            }
-                        }
-                        // empty protein caches
-                        if (MemoryConsumptionStatus.memoryUsed() > 0.8) {
-                            SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-                            if (sequenceMatchingPreferences.getPeptideMapperType() == PeptideMapperType.tree) {
-                                ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(1, null);
-                                sequenceFactory.emptyCache();
                             }
                         }
 

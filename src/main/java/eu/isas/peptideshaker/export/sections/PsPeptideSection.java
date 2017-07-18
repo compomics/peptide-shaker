@@ -319,7 +319,7 @@ public class PsPeptideSection {
                     return "0";
                 }
             case hidden:
-                if (psParameter.isHidden()) {
+                if (psParameter.getHidden()) {
                     return "1";
                 } else {
                     return "0";
@@ -374,7 +374,7 @@ public class PsPeptideSection {
             case modified_sequence:
                 return peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getPtmSettings(), false, false, true);
             case starred:
-                if (psParameter.isStarred()) {
+                if (psParameter.getStarred()) {
                     return "1";
                 } else {
                     return "0";

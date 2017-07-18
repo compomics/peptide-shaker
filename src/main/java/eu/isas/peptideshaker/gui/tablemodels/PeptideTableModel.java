@@ -218,7 +218,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                             return DisplayPreferences.LOADING_MESSAGE;
                         }
                     }
-                    return psParameter.isStarred();
+                    return psParameter.getStarred();
                 case 2:
                     psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB && !isScrolling);
                     if (psParameter == null) {
@@ -229,7 +229,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                             return DisplayPreferences.LOADING_MESSAGE;
                         }
                     }
-                    return psParameter.getProteinInferenceClass();
+                    return psParameter.getProteinInferenceGroupClass();
                 case 3:
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey, useDB && !isScrolling);
                     if (peptideMatch == null) {

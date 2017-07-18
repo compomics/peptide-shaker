@@ -108,7 +108,7 @@ public class PsmFilter extends MatchFilter {
                 psParameter = new PSParameter();
                 psParameter = (PSParameter) identification.getPeptideMatchParameter(matchKey, psParameter);
                 String starred;
-                if (psParameter.isStarred()) {
+                if (psParameter.getStarred()) {
                     starred = FilterItemComparator.trueFalse[0];
                 } else {
                     starred = FilterItemComparator.trueFalse[1];

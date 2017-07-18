@@ -333,8 +333,8 @@ public class OutputGenerator {
 
                             if (!ProteinMatch.isDecoy(proteinKey) || !onlyValidated) {
                                 if ((onlyValidated && proteinPSParameter.getMatchValidationLevel().isValidated()) || !onlyValidated) {
-                                    if ((!includeHidden && !proteinPSParameter.isHidden()) || includeHidden) {
-                                        if ((onlyStarred && proteinPSParameter.isStarred()) || !onlyStarred) {
+                                    if ((!includeHidden && !proteinPSParameter.getHidden()) || includeHidden) {
+                                        if ((onlyStarred && proteinPSParameter.getStarred()) || !onlyStarred) {
                                             if (indexes) {
                                                 writer.write(++proteinCounter + SEPARATOR);
                                             }
@@ -522,10 +522,10 @@ public class OutputGenerator {
                                                 writer.write(SEPARATOR);
                                             }
                                             if (includeHidden) {
-                                                writer.write(proteinPSParameter.isHidden() + SEPARATOR);
+                                                writer.write(proteinPSParameter.getHidden() + SEPARATOR);
                                             }
                                             if (!onlyStarred && showStar) {
-                                                writer.write(proteinPSParameter.isStarred() + "");
+                                                writer.write(proteinPSParameter.getStarred() + "");
                                             }
                                             writer.write(lineBreak);
                                         }
@@ -796,8 +796,8 @@ public class OutputGenerator {
 
                             if (!peptideMatch.getTheoreticPeptide().isDecoy(sequenceMatchingPreferences) || !onlyValidated) {
                                 if ((onlyValidated && peptidePSParameter.getMatchValidationLevel().isValidated()) || !onlyValidated) {
-                                    if ((!includeHidden && !peptidePSParameter.isHidden()) || includeHidden) {
-                                        if ((onlyStarred && peptidePSParameter.isStarred()) || !onlyStarred) {
+                                    if ((!includeHidden && !peptidePSParameter.getHidden()) || includeHidden) {
+                                        if ((onlyStarred && peptidePSParameter.getStarred()) || !onlyStarred) {
 
                                             Peptide peptide = peptideMatch.getTheoreticPeptide();
                                             ArrayList<String> possibleProteins = new ArrayList<String>();
@@ -1063,10 +1063,10 @@ public class OutputGenerator {
                                                     }
                                                 }
                                                 if (includeHidden) {
-                                                    writer.write(peptidePSParameter.isHidden() + SEPARATOR);
+                                                    writer.write(peptidePSParameter.getHidden() + SEPARATOR);
                                                 }
                                                 if (!onlyStarred) {
-                                                    writer.write(peptidePSParameter.isStarred() + SEPARATOR);
+                                                    writer.write(peptidePSParameter.getStarred() + SEPARATOR);
                                                 }
                                                 writer.write(lineBreak);
                                             }
@@ -1319,8 +1319,8 @@ public class OutputGenerator {
 
                                 if (!bestAssumption.getPeptide().isDecoy(identificationParameters.getSequenceMatchingPreferences()) || !onlyValidated) {
                                     if ((onlyValidated && psParameter.getMatchValidationLevel().isValidated()) || !onlyValidated) {
-                                        if ((!includeHidden && !psParameter.isHidden()) || includeHidden) {
-                                            if ((onlyStarred && psParameter.isStarred()) || !onlyStarred) {
+                                        if ((!includeHidden && !psParameter.getHidden()) || includeHidden) {
+                                            if ((onlyStarred && psParameter.getStarred()) || !onlyStarred) {
 
                                                 if (indexes) {
                                                     writer.write(++psmCounter + SEPARATOR);
@@ -1365,7 +1365,7 @@ public class OutputGenerator {
                                                     Peptide peptide = bestAssumption.getPeptide();
                                                     if (peptide.isModified()) {
                                                         for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                                            if (modificationMatch.isVariable()) {
+                                                            if (modificationMatch.getVariable()) {
                                                                 if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
                                                                     modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
                                                                 }
@@ -1401,7 +1401,7 @@ public class OutputGenerator {
                                                     Peptide peptide = bestAssumption.getPeptide();
                                                     if (peptide.isModified()) {
                                                         for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                                            if (modificationMatch.isVariable()) {
+                                                            if (modificationMatch.getVariable()) {
                                                                 PTM refPtm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
                                                                 for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
                                                                     if (!modList.contains(equivalentPtm)) {
@@ -1550,7 +1550,7 @@ public class OutputGenerator {
                                                     }
                                                 }
                                                 if (includeHidden) {
-                                                    writer.write(psParameter.isHidden() + SEPARATOR);
+                                                    writer.write(psParameter.getHidden() + SEPARATOR);
                                                 }
                                                 writer.write(lineBreak);
                                             }
@@ -1748,7 +1748,7 @@ public class OutputGenerator {
                                 HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>(peptide.getNModifications());
                                 if (peptide.isModified()) {
                                     for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                        if (modificationMatch.isVariable()) {
+                                        if (modificationMatch.getVariable()) {
                                             if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
                                                 modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
                                             }
@@ -1783,7 +1783,7 @@ public class OutputGenerator {
                                 peptide = bestAssumption.getPeptide();
                                 if (peptide.isModified()) {
                                     for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                        if (modificationMatch.isVariable()) {
+                                        if (modificationMatch.getVariable()) {
                                             String ptmName = modificationMatch.getTheoreticPtm();
                                             if (ptmName.contains("phospho")) {
                                                 nPhospho++;
@@ -2395,7 +2395,7 @@ public class OutputGenerator {
                                                         Peptide peptide = peptideAssumption.getPeptide();
                                                         if (peptide.isModified()) {
                                                             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                                                if (modificationMatch.isVariable()) {
+                                                                if (modificationMatch.getVariable()) {
                                                                     if (first) {
                                                                         first = false;
                                                                     } else {
@@ -2700,8 +2700,8 @@ public class OutputGenerator {
 
                             if (!ProteinMatch.isDecoy(proteinKey) || !onlyValidated) {
                                 if ((onlyValidated && proteinPSParameter.getMatchValidationLevel().isValidated()) || !onlyValidated) {
-                                    if ((!includeHidden && !proteinPSParameter.isHidden()) || includeHidden) {
-                                        if ((onlyStarred && proteinPSParameter.isStarred()) || !onlyStarred) {
+                                    if ((!includeHidden && !proteinPSParameter.getHidden()) || includeHidden) {
+                                        if ((onlyStarred && proteinPSParameter.getStarred()) || !onlyStarred) {
                                             if (indexes) {
                                                 writer.write(++proteinCounter + SEPARATOR);
                                             }
@@ -2775,7 +2775,7 @@ public class OutputGenerator {
 
                                             if (nPeptidesPerFraction) {
                                                 for (String fraction : fractionFileNames) {
-                                                    if (proteinPSParameter.getFractions() != null && proteinPSParameter.getFractions().contains(fraction)
+                                                    if (proteinPSParameter.getFractionScore() != null && proteinPSParameter.getFractionScore().contains(fraction)
                                                             && proteinPSParameter.getFractionValidatedPeptides(fraction) != null) {
                                                         writer.write(proteinPSParameter.getFractionValidatedPeptides(fraction) + SEPARATOR);
                                                     } else {
@@ -2785,7 +2785,7 @@ public class OutputGenerator {
                                             }
                                             if (nSpectraPerFraction) {
                                                 for (String fraction : fractionFileNames) {
-                                                    if (proteinPSParameter.getFractions() != null && proteinPSParameter.getFractions().contains(fraction)
+                                                    if (proteinPSParameter.getFractionScore() != null && proteinPSParameter.getFractionScore().contains(fraction)
                                                             && proteinPSParameter.getFractionValidatedSpectra(fraction) != null) {
                                                         writer.write(proteinPSParameter.getFractionValidatedSpectra(fraction) + SEPARATOR);
                                                     } else {
@@ -2795,7 +2795,7 @@ public class OutputGenerator {
                                             }
                                             if (precursorIntensities) {
                                                 for (String fraction : fractionFileNames) {
-                                                    if (proteinPSParameter.getFractions() != null && proteinPSParameter.getFractions().contains(fraction)
+                                                    if (proteinPSParameter.getFractionScore() != null && proteinPSParameter.getFractionScore().contains(fraction)
                                                             && proteinPSParameter.getPrecursorIntensityAveragePerFraction(fraction) != null) {
                                                         writer.write(proteinPSParameter.getPrecursorIntensityAveragePerFraction(fraction) + SEPARATOR);
                                                     } else {
@@ -2809,7 +2809,7 @@ public class OutputGenerator {
                                                 double minMwRangePeptides = Double.MAX_VALUE;
 
                                                 for (String fraction : fractionFileNames) {
-                                                    if (proteinPSParameter.getFractions() != null && proteinPSParameter.getFractions().contains(fraction)
+                                                    if (proteinPSParameter.getFractionScore() != null && proteinPSParameter.getFractionScore().contains(fraction)
                                                             && proteinPSParameter.getFractionValidatedPeptides(fraction) != null
                                                             && proteinPSParameter.getFractionValidatedPeptides(fraction) > 0) {
 
@@ -2841,7 +2841,7 @@ public class OutputGenerator {
                                                 double minMwRangeSpectra = Double.MAX_VALUE;
 
                                                 for (String fraction : fractionFileNames) {
-                                                    if (proteinPSParameter.getFractions() != null && proteinPSParameter.getFractions().contains(fraction)
+                                                    if (proteinPSParameter.getFractionScore() != null && proteinPSParameter.getFractionScore().contains(fraction)
                                                             && proteinPSParameter.getFractionValidatedSpectra(fraction) != null
                                                             && proteinPSParameter.getFractionValidatedSpectra(fraction) > 0) {
 
@@ -2907,10 +2907,10 @@ public class OutputGenerator {
                                             writer.write(matchValidationLevel.toString());
                                             writer.write(SEPARATOR);
                                             if (includeHidden) {
-                                                writer.write(proteinPSParameter.isHidden() + SEPARATOR);
+                                                writer.write(proteinPSParameter.getHidden() + SEPARATOR);
                                             }
                                             if (!onlyStarred && showStar) {
-                                                writer.write(proteinPSParameter.isStarred() + "");
+                                                writer.write(proteinPSParameter.getStarred() + "");
                                             }
                                             writer.write(lineBreak);
                                         }
@@ -3004,7 +3004,7 @@ public class OutputGenerator {
 
         if (peptide.isModified()) {
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                if ((variablePtms && modificationMatch.isVariable()) || (!variablePtms && !modificationMatch.isVariable())) {
+                if ((variablePtms && modificationMatch.getVariable()) || (!variablePtms && !modificationMatch.getVariable())) {
                     if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
                         modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
                     }
@@ -3061,7 +3061,7 @@ public class OutputGenerator {
 
         if (peptide.isModified()) {
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                if (modificationMatch.isVariable()) {
+                if (modificationMatch.getVariable()) {
                     PTM refPtm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
                     for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
                         if (!modList.contains(equivalentPtm)) {

@@ -2038,7 +2038,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 String psmKey = psmKeys.get(tableModel.getViewIndex(psmIndex));
                 try {
                     PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(psmKey, new PSParameter());
-                    if (!psParameter.isStarred()) {
+                    if (!psParameter.getStarred()) {
                         peptideShakerGUI.getStarHider().starPsm(psmKey, peptideShakerGUI.getSpectrumAnnotator());
                     } else {
                         peptideShakerGUI.getStarHider().unStarPsm(psmKey, peptideShakerGUI.getSpectrumAnnotator());
@@ -2127,7 +2127,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
                     try {
                         PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, new PSParameter());
-                        if (!psParameter.isStarred()) {
+                        if (!psParameter.getStarred()) {
                             peptideShakerGUI.getStarHider().starProtein(proteinKey);
                         } else {
                             peptideShakerGUI.getStarHider().unStarProtein(proteinKey);
@@ -2225,7 +2225,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             if (column == peptideTable.getColumn("  ").getModelIndex()) {
                 try {
                     PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, new PSParameter());
-                    if (!psParameter.isStarred()) {
+                    if (!psParameter.getStarred()) {
                         peptideShakerGUI.getStarHider().starPeptide(peptideKey);
                     } else {
                         peptideShakerGUI.getStarHider().unStarPeptide(peptideKey);
@@ -4455,7 +4455,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                         if (peptideMatch.getTheoreticPeptide().getModificationMatches() != null) {
                             for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
-                                if (!modMatch.isVariable()) {
+                                if (!modMatch.getVariable()) {
                                     String ptmName = modMatch.getTheoreticPtm();
                                     if (displayPreferences.isDisplayedPTM(ptmName)) {
                                         ArrayList<Integer> indexes = sequenceFactory.getProtein(proteinAccession).getPeptideStart(Peptide.getSequence(peptideKey),
@@ -4591,7 +4591,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                         if (peptideMatch.getTheoreticPeptide().getModificationMatches() != null) {
                             for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
-                                if (!modMatch.isVariable()) {
+                                if (!modMatch.getVariable()) {
                                     String ptmName = modMatch.getTheoreticPtm();
                                     if (displayPreferences.isDisplayedPTM(ptmName)) {
                                         ArrayList<Integer> indexes = sequenceFactory.getProtein(proteinAccession).getPeptideStart(Peptide.getSequence(peptideKey),

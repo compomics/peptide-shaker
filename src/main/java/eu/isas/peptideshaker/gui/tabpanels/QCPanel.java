@@ -1790,7 +1790,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 proteinParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinParameter);
 
-                if (!proteinParameter.isHidden()) {
+                if (!proteinParameter.getHidden()) {
 
                     if (value > maxValue) {
                         maxValue = value;
@@ -1862,7 +1862,7 @@ public class QCPanel extends javax.swing.JPanel {
                         }
 
                         spectrumParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, spectrumParameter);
-                        if (spectrumParameter.getMatchValidationLevel().isValidated() && !spectrumParameter.isHidden()) {
+                        if (spectrumParameter.getMatchValidationLevel().isValidated() && !spectrumParameter.getHidden()) {
                             value = value + 1;
                         }
                     }
@@ -1871,7 +1871,7 @@ public class QCPanel extends javax.swing.JPanel {
                     }
                     peptideParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, peptideParameter);
 
-                    if (!peptideParameter.isHidden()) {
+                    if (!peptideParameter.getHidden()) {
 
                         if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
@@ -1921,7 +1921,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     peptideParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, peptideParameter);
 
-                    if (!peptideParameter.isHidden()) {
+                    if (!peptideParameter.getHidden()) {
 
                         Double value = null;
                         DigestionPreferences digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionPreferences();
@@ -1990,7 +1990,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     peptideParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, peptideParameter);
 
-                    if (!peptideParameter.isHidden()) {
+                    if (!peptideParameter.getHidden()) {
 
                         double length = Peptide.getSequence(peptideKey).length();
                         if (length > 0) {
@@ -2065,7 +2065,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                         psmParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psmParameter);
 
-                        if (!psmParameter.isHidden() && spectrumMatch.getBestPeptideAssumption() != null) {
+                        if (!psmParameter.getHidden() && spectrumMatch.getBestPeptideAssumption() != null) {
 
                             Precursor precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                             SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
@@ -2119,7 +2119,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                         psmParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psmParameter);
 
-                        if (!psmParameter.isHidden() && spectrumMatch.getBestPeptideAssumption() != null) {
+                        if (!psmParameter.getHidden() && spectrumMatch.getBestPeptideAssumption() != null) {
 
                             double value = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                             if (value > maxValue) {

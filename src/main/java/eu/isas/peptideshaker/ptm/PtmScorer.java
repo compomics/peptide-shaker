@@ -144,7 +144,7 @@ public class PtmScorer {
 
         if (psPeptide.isModified()) {
             for (ModificationMatch modificationMatch : psPeptide.getModificationMatches()) {
-                if (modificationMatch.isVariable()) {
+                if (modificationMatch.getVariable()) {
                     String modificationName = modificationMatch.getTheoreticPtm();
                     if (!modifications.contains(modificationName)) {
                         modifications.add(modificationName);
@@ -279,7 +279,7 @@ public class PtmScorer {
 
         if (peptide.isModified()) {
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                if (modificationMatch.isVariable()) {
+                if (modificationMatch.getVariable()) {
                     PTM refPTM = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
                     double ptmMass = refPTM.getMass();
                     if (!modifications.containsKey(ptmMass)) {
@@ -421,7 +421,7 @@ public class PtmScorer {
             ArrayList<Double> modificationMasses = new ArrayList<Double>(peptide.getNModifications());
             if (peptide.isModified()) {
                 for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                    if (modificationMatch.isVariable()) {
+                    if (modificationMatch.getVariable()) {
                         PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
                         if (!modificationMasses.contains(ptm.getMass())) {
                             modificationMasses.add(ptm.getMass());
@@ -612,7 +612,7 @@ public class PtmScorer {
         ArrayList<ModificationMatch> newModificationMatches = new ArrayList<ModificationMatch>(originalMatches.size());
 
         for (ModificationMatch modificationMatch : originalMatches) {
-            if (modificationMatch.isVariable()) {
+            if (modificationMatch.getVariable()) {
                 String modName = modificationMatch.getTheoreticPtm();
                 PTM ptm = ptmFactory.getPTM(modName);
                 double ptmMass = ptm.getMass();
@@ -635,7 +635,7 @@ public class PtmScorer {
                     } else {
                         variableModifications.put(ptmMass, nPtm + 1);
                     }
-                    if (modificationMatch.isInferred()) {
+                    if (modificationMatch.getInferred()) {
                         Integer modificationSite;
                         if (ptm.isCTerm()) {
                             modificationSite = peptideSequence.length() + 1;
@@ -1579,7 +1579,7 @@ public class PtmScorer {
         // PSMs with confidently localized PTMs in a map: PTM mass -> peptide sequence -> spectrum keys
         HashMap<Double, HashMap<String, HashSet<String>>> confidentPeptideInference = new HashMap<Double, HashMap<String, HashSet<String>>>();
         // PSMs with ambiguously localized PTMs in a map: File -> PTM mass -> spectrum keys
-        HashMap<String, HashMap<Double, HashSet<String>>> notConfidentPeptideInference = new HashMap<String, HashMap<Double, HashSet<String>>>();
+        HashMap<Double, HashSet<String>> notConfidentPeptideInference = new HashMap<Double, HashSet<String>>();
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
@@ -1594,7 +1594,7 @@ public class PtmScorer {
                     Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                     if (peptide.isModified()) {
                         for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                            if (modificationMatch.isVariable()) {
+                            if (modificationMatch.getVariable()) {
                                 String modName = modificationMatch.getTheoreticPtm();
                                 PTM ptm = ptmFactory.getPTM(modName);
                                 if (ptm.getType() == PTM.MODAA) {
@@ -1618,7 +1618,7 @@ public class PtmScorer {
                     if (variableAA) {
                         boolean confident = true;
                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                            if (modMatch.isVariable()) {
+                            if (modMatch.getVariable()) {
                                 String modName = modMatch.getTheoreticPtm();
                                 PTM ptm = ptmFactory.getPTM(modName);
                                 double ptmMass = ptm.getMass();
@@ -1635,16 +1635,11 @@ public class PtmScorer {
                                     }
                                 }
                                 if (maybeNotTerminal) {
-                                    if (!modMatch.isConfident()) {
-                                        HashMap<Double, HashSet<String>> fileMap = notConfidentPeptideInference.get(spectrumFileName);
-                                        if (fileMap == null) {
-                                            fileMap = new HashMap<Double, HashSet<String>>(2);
-                                            notConfidentPeptideInference.put(spectrumFileName, fileMap);
-                                        }
-                                        HashSet<String> spectra = fileMap.get(ptmMass);
+                                    if (!modMatch.getConfident()) {
+                                        HashSet<String> spectra = notConfidentPeptideInference.get(ptmMass);
                                         if (spectra == null) {
                                             spectra = new HashSet<String>(2);
-                                            fileMap.put(ptmMass, spectra);
+                                            notConfidentPeptideInference.put(ptmMass, spectra);
                                         }
                                         spectra.add(spectrumKey);
                                         confident = false;
@@ -1681,197 +1676,192 @@ public class PtmScorer {
             }
         }
 
-        // try to infer the modification site based on any related peptide
-        for (String spectrumFile : notConfidentPeptideInference.keySet()) {
+        HashSet<String> progress = new HashSet<String>();
 
-            HashSet<String> progress = new HashSet<String>();
-            HashMap<Double, HashSet<String>> peptidesOfFile = notConfidentPeptideInference.get(spectrumFile);
+        for (Double ptmMass : notConfidentPeptideInference.keySet()) {
 
-            for (Double ptmMass : peptidesOfFile.keySet()) {
+            ArrayList<String> spectrumKeys = new ArrayList<String>(notConfidentPeptideInference.get(ptmMass));
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, true, waitingHandler);
 
-                ArrayList<String> spectrumKeys = new ArrayList<String>(peptidesOfFile.get(ptmMass));
-                PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, true, waitingHandler);
+            while (psmIterator.hasNext()) {
 
-                while (psmIterator.hasNext()) {
+                SpectrumMatch spectrumMatch = psmIterator.next();
+                String spectrumKey = spectrumMatch.getKey();
 
-                    SpectrumMatch spectrumMatch = psmIterator.next();
-                    String spectrumKey = spectrumMatch.getKey();
+                Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+                String sequence = peptide.getSequence();
+                String notConfidentKey = peptide.getMatchingKey(sequenceMatchingPreferences);
+                int nMod = Peptide.getModificationCount(notConfidentKey, ptmMass);
+                ArrayList<Integer> tempLocalizations, oldLocalizations = Peptide.getNModificationLocalized(notConfidentKey, ptmMass);
+                ArrayList<Integer> newLocalizationCandidates = new ArrayList<Integer>(oldLocalizations.size());
 
-                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                    String sequence = peptide.getSequence();
-                    String notConfidentKey = peptide.getMatchingKey(sequenceMatchingPreferences);
-                    int nMod = Peptide.getModificationCount(notConfidentKey, ptmMass);
-                    ArrayList<Integer> tempLocalizations, oldLocalizations = Peptide.getNModificationLocalized(notConfidentKey, ptmMass);
-                    ArrayList<Integer> newLocalizationCandidates = new ArrayList<Integer>(oldLocalizations.size());
+                HashMap<String, HashSet<String>> ptmConfidentPeptides = confidentPeptideInference.get(ptmMass);
 
-                    HashMap<String, HashSet<String>> ptmConfidentPeptides = confidentPeptideInference.get(ptmMass);
+                if (ptmConfidentPeptides != null) {
 
-                    if (ptmConfidentPeptides != null) {
+                    // See if we can explain this peptide by another already identified peptide with the same number of modifications (the two peptides will be merged)
+                    HashSet<String> keys = ptmConfidentPeptides.get(sequence);
 
-                        // See if we can explain this peptide by another already identified peptide with the same number of modifications (the two peptides will be merged)
-                        HashSet<String> keys = ptmConfidentPeptides.get(sequence);
-
-                        if (keys != null) {
-                            for (String tempKey : keys) {
-                                SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
-                                String secondaryKey = secondaryMatch.getBestPeptideAssumption().getPeptide().getMatchingKey(sequenceMatchingPreferences);
-                                if (Peptide.getModificationCount(secondaryKey, ptmMass) == nMod) {
-                                    tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, ptmMass);
-                                    for (int localization : tempLocalizations) {
-                                        if (!oldLocalizations.contains(localization) && !newLocalizationCandidates.contains(localization)) {
-                                            newLocalizationCandidates.add(localization);
-                                        }
-                                    }
-                                }
-                            }
-                            if (oldLocalizations.size() + newLocalizationCandidates.size() < nMod) {
-                                // we cannot merge this peptide, see whether we can explain the remaining modifications using peptides with the same sequence but other modification profile
-                                for (String tempKey : keys) {
-                                    SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
-                                    String secondaryKey = secondaryMatch.getBestPeptideAssumption().getPeptide().getMatchingKey(sequenceMatchingPreferences);
-                                    tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, ptmMass);
-                                    for (int localization : tempLocalizations) {
-                                        if (!oldLocalizations.contains(localization) && !newLocalizationCandidates.contains(localization)) {
-                                            newLocalizationCandidates.add(localization);
-                                        }
+                    if (keys != null) {
+                        for (String tempKey : keys) {
+                            SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
+                            String secondaryKey = secondaryMatch.getBestPeptideAssumption().getPeptide().getMatchingKey(sequenceMatchingPreferences);
+                            if (Peptide.getModificationCount(secondaryKey, ptmMass) == nMod) {
+                                tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, ptmMass);
+                                for (int localization : tempLocalizations) {
+                                    if (!oldLocalizations.contains(localization) && !newLocalizationCandidates.contains(localization)) {
+                                        newLocalizationCandidates.add(localization);
                                     }
                                 }
                             }
                         }
                         if (oldLocalizations.size() + newLocalizationCandidates.size() < nMod) {
-                            // There are still unexplained sites, let's see if we find a related peptide which can help.
-                            HashMap<String, HashSet<String>> confidentAtMass = confidentPeptideInference.get(ptmMass);
-                            for (String otherSequence : confidentAtMass.keySet()) {
-                                if (!sequence.equals(otherSequence) && sequence.contains(otherSequence)) {
-                                    for (String tempKey : confidentAtMass.get(otherSequence)) {
-                                        SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
-                                        String secondaryKey = secondaryMatch.getBestPeptideAssumption().getPeptide().getMatchingKey(sequenceMatchingPreferences);
-                                        tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, ptmMass);
-                                        int tempIndex, ref = 0;
-                                        String tempSequence = sequence;
-                                        while ((tempIndex = tempSequence.indexOf(otherSequence)) >= 0) {
-                                            ref += tempIndex;
-                                            for (int localization : tempLocalizations) {
-                                                int shiftedLocalization = ref + localization;
-                                                if (!oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
-                                                    boolean siteOccupied = false;
-                                                    for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                                        PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
-                                                        if (ptm.getMass() != ptmMass && modificationMatch.getModificationSite() == shiftedLocalization) { // @TODO: compare against the accuracy
-                                                            siteOccupied = true;
-                                                        }
-                                                    }
-                                                    boolean candidatePtm = false;
-                                                    if (!siteOccupied) {
-                                                        for (String ptmName : searchParameters.getPtmSettings().getAllNotFixedModifications()) {
-                                                            PTM ptm = ptmFactory.getPTM(ptmName);
-                                                            if (ptm.getMass() == ptmMass && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(shiftedLocalization)) { // @TODO: compare against the accuracy
-                                                                candidatePtm = true;
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-                                                    if (candidatePtm && !siteOccupied) {
-                                                        newLocalizationCandidates.add(shiftedLocalization);
-                                                    }
-                                                }
-                                            }
-                                            tempSequence = tempSequence.substring(tempIndex + 1);
-                                            ref++;
-                                        }
-                                    }
-                                } else if (!sequence.equals(otherSequence) && otherSequence.contains(sequence)) {
-                                    for (String tempKey : confidentAtMass.get(otherSequence)) {
-                                        SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
-                                        String secondaryKey = secondaryMatch.getBestPeptideAssumption().getPeptide().getMatchingKey(sequenceMatchingPreferences);
-                                        tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, ptmMass);
-                                        int tempIndex, ref = 0;
-                                        String tempSequence = otherSequence;
-                                        while ((tempIndex = tempSequence.indexOf(sequence)) >= 0) {
-                                            ref += tempIndex;
-                                            for (int localization : tempLocalizations) {
-                                                int shiftedLocalization = localization - ref;
-                                                if (shiftedLocalization > 0 && shiftedLocalization <= sequence.length()
-                                                        && !oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
-                                                    boolean siteOccupied = false;
-                                                    for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                                        PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
-                                                        if (ptm.getMass() != ptmMass && modificationMatch.getModificationSite() == shiftedLocalization) { // @TODO: compare against the accuracy
-                                                            siteOccupied = true;
-                                                        }
-                                                    }
-                                                    boolean candidatePtm = false;
-                                                    if (!siteOccupied) {
-                                                        for (String ptmName : searchParameters.getPtmSettings().getAllNotFixedModifications()) {
-                                                            PTM ptm = ptmFactory.getPTM(ptmName);
-                                                            if (ptm.getMass() == ptmMass && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(shiftedLocalization)) { // @TODO: compare against the accuracy
-                                                                candidatePtm = true;
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-                                                    if (candidatePtm && !siteOccupied) {
-                                                        newLocalizationCandidates.add(shiftedLocalization);
-                                                    }
-                                                }
-                                            }
-                                            tempSequence = tempSequence.substring(tempIndex + 1);
-                                            ref++;
-                                        }
+                            // we cannot merge this peptide, see whether we can explain the remaining modifications using peptides with the same sequence but other modification profile
+                            for (String tempKey : keys) {
+                                SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
+                                String secondaryKey = secondaryMatch.getBestPeptideAssumption().getPeptide().getMatchingKey(sequenceMatchingPreferences);
+                                tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, ptmMass);
+                                for (int localization : tempLocalizations) {
+                                    if (!oldLocalizations.contains(localization) && !newLocalizationCandidates.contains(localization)) {
+                                        newLocalizationCandidates.add(localization);
                                     }
                                 }
                             }
                         }
-                        
-                        // Map the most likely inferred sites
-                        if (!newLocalizationCandidates.isEmpty()) {
-                            HashMap<Integer, ModificationMatch> nonConfidentMatches = new HashMap<Integer, ModificationMatch>();
-                            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                String ptmName = modificationMatch.getTheoreticPtm();
-                                PTM ptm = ptmFactory.getPTM(ptmName);
-                                if (ptm.getMass() == ptmMass && !modificationMatch.isConfident()) { // @TODO: compare against the accuracy
-                                    nonConfidentMatches.put(modificationMatch.getModificationSite(), modificationMatch);
-                                }
-                            }
-                            HashMap<Integer, Integer> mapping = PtmSiteMapping.align(nonConfidentMatches.keySet(), newLocalizationCandidates);
-                            for (Integer oldLocalization : mapping.keySet()) {
-                                ModificationMatch modificationMatch = nonConfidentMatches.get(oldLocalization);
-                                Integer newLocalization = mapping.get(oldLocalization);
-                                if (modificationMatch == null) {
-                                    throw new IllegalArgumentException("No modification match found at site " + oldLocalization + " in spectrum " + spectrumKey + ".");
-                                }
-                                if (newLocalization != null) {
-                                    if (!newLocalization.equals(oldLocalization)) {
-                                        String ptmCandidateName = null;
-                                        for (String ptmName : searchParameters.getPtmSettings().getAllNotFixedModifications()) {
-                                            PTM ptm = ptmFactory.getPTM(ptmName);
-                                            if (ptm.getMass() == ptmMass && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(newLocalization)) { // @TODO: compare against the accuracy
-                                                ptmCandidateName = ptm.getName();
-                                                break;
+                    }
+                    if (oldLocalizations.size() + newLocalizationCandidates.size() < nMod) {
+                        // There are still unexplained sites, let's see if we find a related peptide which can help.
+                        HashMap<String, HashSet<String>> confidentAtMass = confidentPeptideInference.get(ptmMass);
+                        for (String otherSequence : confidentAtMass.keySet()) {
+                            if (!sequence.equals(otherSequence) && sequence.contains(otherSequence)) {
+                                for (String tempKey : confidentAtMass.get(otherSequence)) {
+                                    SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
+                                    String secondaryKey = secondaryMatch.getBestPeptideAssumption().getPeptide().getMatchingKey(sequenceMatchingPreferences);
+                                    tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, ptmMass);
+                                    int tempIndex, ref = 0;
+                                    String tempSequence = sequence;
+                                    while ((tempIndex = tempSequence.indexOf(otherSequence)) >= 0) {
+                                        ref += tempIndex;
+                                        for (int localization : tempLocalizations) {
+                                            int shiftedLocalization = ref + localization;
+                                            if (!oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
+                                                boolean siteOccupied = false;
+                                                for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                                                    PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
+                                                    if (ptm.getMass() != ptmMass && modificationMatch.getModificationSite() == shiftedLocalization) { // @TODO: compare against the accuracy
+                                                        siteOccupied = true;
+                                                    }
+                                                }
+                                                boolean candidatePtm = false;
+                                                if (!siteOccupied) {
+                                                    for (String ptmName : searchParameters.getPtmSettings().getAllNotFixedModifications()) {
+                                                        PTM ptm = ptmFactory.getPTM(ptmName);
+                                                        if (ptm.getMass() == ptmMass && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(shiftedLocalization)) { // @TODO: compare against the accuracy
+                                                            candidatePtm = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                if (candidatePtm && !siteOccupied) {
+                                                    newLocalizationCandidates.add(shiftedLocalization);
+                                                }
                                             }
                                         }
-                                        if (ptmCandidateName == null) {
-                                            throw new IllegalArgumentException("No PTM found for site " + newLocalization + " on  peptide " + peptide.getSequence() + " in spectrum " + spectrumKey + ".");
-                                        }
-                                        modificationMatch.setModificationSite(newLocalization);
-                                        modificationMatch.setTheoreticPtm(ptmCandidateName);
-                                        PSPtmScores psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                        psmScores.changeRepresentativeSite(ptmCandidateName, oldLocalization, newLocalization);
+                                        tempSequence = tempSequence.substring(tempIndex + 1);
+                                        ref++;
                                     }
-                                    modificationMatch.setInferred(true);
+                                }
+                            } else if (!sequence.equals(otherSequence) && otherSequence.contains(sequence)) {
+                                for (String tempKey : confidentAtMass.get(otherSequence)) {
+                                    SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
+                                    String secondaryKey = secondaryMatch.getBestPeptideAssumption().getPeptide().getMatchingKey(sequenceMatchingPreferences);
+                                    tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, ptmMass);
+                                    int tempIndex, ref = 0;
+                                    String tempSequence = otherSequence;
+                                    while ((tempIndex = tempSequence.indexOf(sequence)) >= 0) {
+                                        ref += tempIndex;
+                                        for (int localization : tempLocalizations) {
+                                            int shiftedLocalization = localization - ref;
+                                            if (shiftedLocalization > 0 && shiftedLocalization <= sequence.length()
+                                                    && !oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
+                                                boolean siteOccupied = false;
+                                                for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                                                    PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
+                                                    if (ptm.getMass() != ptmMass && modificationMatch.getModificationSite() == shiftedLocalization) { // @TODO: compare against the accuracy
+                                                        siteOccupied = true;
+                                                    }
+                                                }
+                                                boolean candidatePtm = false;
+                                                if (!siteOccupied) {
+                                                    for (String ptmName : searchParameters.getPtmSettings().getAllNotFixedModifications()) {
+                                                        PTM ptm = ptmFactory.getPTM(ptmName);
+                                                        if (ptm.getMass() == ptmMass && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(shiftedLocalization)) { // @TODO: compare against the accuracy
+                                                            candidatePtm = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                if (candidatePtm && !siteOccupied) {
+                                                    newLocalizationCandidates.add(shiftedLocalization);
+                                                }
+                                            }
+                                        }
+                                        tempSequence = tempSequence.substring(tempIndex + 1);
+                                        ref++;
+                                    }
                                 }
                             }
-                            peptide.resetKeysCaches();
                         }
-                        identification.updateSpectrumMatch(spectrumMatch);
                     }
-                    if (waitingHandler.isRunCanceled()) {
-                        return;
+
+                    // Map the most likely inferred sites
+                    if (!newLocalizationCandidates.isEmpty()) {
+                        HashMap<Integer, ModificationMatch> nonConfidentMatches = new HashMap<Integer, ModificationMatch>();
+                        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                            String ptmName = modificationMatch.getTheoreticPtm();
+                            PTM ptm = ptmFactory.getPTM(ptmName);
+                            if (ptm.getMass() == ptmMass && !modificationMatch.getConfident()) { // @TODO: compare against the accuracy
+                                nonConfidentMatches.put(modificationMatch.getModificationSite(), modificationMatch);
+                            }
+                        }
+                        HashMap<Integer, Integer> mapping = PtmSiteMapping.align(nonConfidentMatches.keySet(), newLocalizationCandidates);
+                        for (Integer oldLocalization : mapping.keySet()) {
+                            ModificationMatch modificationMatch = nonConfidentMatches.get(oldLocalization);
+                            Integer newLocalization = mapping.get(oldLocalization);
+                            if (modificationMatch == null) {
+                                throw new IllegalArgumentException("No modification match found at site " + oldLocalization + " in spectrum " + spectrumKey + ".");
+                            }
+                            if (newLocalization != null) {
+                                if (!newLocalization.equals(oldLocalization)) {
+                                    String ptmCandidateName = null;
+                                    for (String ptmName : searchParameters.getPtmSettings().getAllNotFixedModifications()) {
+                                        PTM ptm = ptmFactory.getPTM(ptmName);
+                                        if (ptm.getMass() == ptmMass && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(newLocalization)) { // @TODO: compare against the accuracy
+                                            ptmCandidateName = ptm.getName();
+                                            break;
+                                        }
+                                    }
+                                    if (ptmCandidateName == null) {
+                                        throw new IllegalArgumentException("No PTM found for site " + newLocalization + " on  peptide " + peptide.getSequence() + " in spectrum " + spectrumKey + ".");
+                                    }
+                                    modificationMatch.setModificationSite(newLocalization);
+                                    modificationMatch.setTheoreticPtm(ptmCandidateName);
+                                    PSPtmScores psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                                    psmScores.changeRepresentativeSite(ptmCandidateName, oldLocalization, newLocalization);
+                                }
+                                modificationMatch.setInferred(true);
+                            }
+                        }
+                        peptide.resetKeysCaches();
                     }
-                    if (!progress.contains(spectrumKey)) {
-                        progress.add(spectrumKey);
-                        waitingHandler.increaseSecondaryProgressCounter();
-                    }
+                    identification.updateSpectrumMatch(spectrumMatch);
+                }
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
+                if (!progress.contains(spectrumKey)) {
+                    progress.add(spectrumKey);
+                    waitingHandler.increaseSecondaryProgressCounter();
                 }
             }
         }
@@ -1907,7 +1897,7 @@ public class PtmScorer {
             HashMap<Double, HashMap<Integer, ArrayList<String>>> confidentSites = new HashMap<Double, HashMap<Integer, ArrayList<String>>>(psPeptide.getNModifications());
 
             for (ModificationMatch modificationMatch : psPeptide.getModificationMatches()) {
-                if (modificationMatch.isVariable()) {
+                if (modificationMatch.getVariable()) {
                     String modName = modificationMatch.getTheoreticPtm();
                     PTM ptm = ptmFactory.getPTM(modName);
                     double ptmMass = ptm.getMass();
@@ -2032,7 +2022,7 @@ public class PtmScorer {
                                     }
                                     ptmsAtAA.add(modName);
                                 }
-                                if (!modificationMatch.isConfident()) {
+                                if (!modificationMatch.getConfident()) {
                                     HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> pScoreAmbiguousMap = ambiguousScoreToSiteMap.get(pScore);
                                     if (pScoreAmbiguousMap == null) {
                                         pScoreAmbiguousMap = new HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>(1);
@@ -2198,7 +2188,7 @@ public class PtmScorer {
                                     }
                                 }
 
-                                if (modificationMatch == null || !modificationMatch.isConfident()) {
+                                if (modificationMatch == null || !modificationMatch.getConfident()) {
 
                                     HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> pScoreAmbiguousMap = ambiguousScoreToSiteMap.get(pScore);
                                     if (pScoreAmbiguousMap == null) {

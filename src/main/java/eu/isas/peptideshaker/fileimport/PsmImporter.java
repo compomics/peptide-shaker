@@ -347,17 +347,6 @@ public class PsmImporter {
         if (MemoryConsumptionStatus.memoryUsed() > 0.9 && !peptideShakerCache.isEmpty()) {
             peptideShakerCache.reduceMemoryConsumption(0.5, null);
         }
-        // free memory from the tree if used
-        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-        if (sequenceMatchingPreferences.getPeptideMapperType() == PeptideMapperType.tree) {
-            if (MemoryConsumptionStatus.memoryUsed() > 0.9 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
-                ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(0.5, null);
-            }
-            ProteinTree proteinTree = (ProteinTree) sequenceFactory.getDefaultPeptideMapper();
-            if (!MemoryConsumptionStatus.halfGbFree() && proteinTree.getNodesInCache() > 0) {
-                proteinTree.reduceNodeCacheSize(0.5);
-            }
-        }
 
         nPSMs++;
 
@@ -515,7 +504,7 @@ public class PsmImporter {
                                 if (peptide.isModified()) {
                                     for (ModificationMatch modMatch : peptide.getModificationMatches()) {
                                         HashMap<Integer, ArrayList<String>> tempNames = new HashMap<Integer, ArrayList<String>>();
-                                        if (modMatch.isVariable()) {
+                                        if (modMatch.getVariable()) {
                                             String sePTM = modMatch.getTheoreticPtm();
                                             if (fileReader instanceof OMSSAIdfileReader) {
                                                 OmssaParameters omssaParameters = (OmssaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.omssa.getIndex());
@@ -836,7 +825,7 @@ public class PsmImporter {
         ModificationMatch nTermModification = null;
         if (peptide.isModified()) {
             for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                if (modMatch.isVariable() && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                if (modMatch.getVariable() && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                     double refMass = getRefMass(modMatch.getTheoreticPtm(), searchParameters);
                     int modSite = modMatch.getModificationSite();
                     if (modSite == 1) {
@@ -878,7 +867,7 @@ public class PsmImporter {
             }
             ModificationMatch cTermModification = null;
             for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                if (modMatch.isVariable() && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName()) && modMatch != nTermModification) {
+                if (modMatch.getVariable() && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName()) && modMatch != nTermModification) {
                     double refMass = getRefMass(modMatch.getTheoreticPtm(), searchParameters);
                     int modSite = modMatch.getModificationSite();
                     if (modSite == peptideLength) {
@@ -927,7 +916,7 @@ public class PsmImporter {
 
             for (ModificationMatch modMatch : peptide.getModificationMatches()) {
                 boolean mapped = false;
-                if (modMatch.isVariable() && modMatch != nTermModification && modMatch != cTermModification && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                if (modMatch.getVariable() && modMatch != nTermModification && modMatch != cTermModification && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                     double refMass = getRefMass(modMatch.getTheoreticPtm(), searchParameters);
                     int modSite = modMatch.getModificationSite();
                     boolean terminal = false;
@@ -1060,7 +1049,7 @@ public class PsmImporter {
                 HashMap<Integer, ArrayList<Integer>> remap = new HashMap<Integer, ArrayList<Integer>>();
 
                 for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                    if (modMatch.isVariable() && modMatch != nTermModification && modMatch != cTermModification && !matchToSiteMap.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                    if (modMatch.getVariable() && modMatch != nTermModification && modMatch != cTermModification && !matchToSiteMap.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                         int modSite = modMatch.getModificationSite();
                         for (int candidateSite : expectedNames.keySet()) {
                             if (!siteToMatchMap.containsKey(candidateSite)) {
@@ -1088,7 +1077,7 @@ public class PsmImporter {
                 HashMap<Integer, Integer> correctedIndexes = PtmSiteMapping.alignAll(remap);
 
                 for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                    if (modMatch.isVariable() && modMatch != nTermModification && modMatch != cTermModification && !matchToSiteMap.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                    if (modMatch.getVariable() && modMatch != nTermModification && modMatch != cTermModification && !matchToSiteMap.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                         Integer modSite = correctedIndexes.get(modMatch.getModificationSite());
                         if (modSite != null) {
                             if (expectedNames.containsKey(modSite)) {

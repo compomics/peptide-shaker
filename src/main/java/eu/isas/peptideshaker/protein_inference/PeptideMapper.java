@@ -292,16 +292,6 @@ public class PeptideMapper {
         if (increaseProgressBar) {
             waitingHandler.increaseSecondaryProgressCounter();
         }
-        // free memory if needed
-        if (MemoryConsumptionStatus.memoryUsed() > 0.8 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
-            ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(0.5, null);
-        }
-        if (sequenceMatchingPreferences.getPeptideMapperType() == PeptideMapperType.tree) {
-            ProteinTree proteinTree = (ProteinTree) sequenceFactory.getDefaultPeptideMapper();
-            if (MemoryConsumptionStatus.memoryUsed() > 0.9 && proteinTree.getNodesInCache() > 0) {
-                proteinTree.reduceNodeCacheSize(0.5);
-            }
-        }
         if (MemoryConsumptionStatus.memoryUsed() > 0.8) {
             Runtime.getRuntime().gc();
             if (MemoryConsumptionStatus.memoryUsed() > 0.8) {

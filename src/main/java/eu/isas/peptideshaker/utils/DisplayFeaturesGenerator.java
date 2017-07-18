@@ -367,8 +367,8 @@ public class DisplayFeaturesGenerator {
             for (ModificationMatch modMatch : peptide.getModificationMatches()) {
                 String modName = modMatch.getTheoreticPtm();
                 int modSite = modMatch.getModificationSite();
-                if (modMatch.isVariable()) {
-                    if (modMatch.isConfident()) {
+                if (modMatch.getVariable()) {
+                    if (modMatch.getConfident()) {
                         if (!confidentModificationSites.containsKey(modSite)) {
                             confidentModificationSites.put(modSite, new ArrayList<String>());
                         }
@@ -465,7 +465,7 @@ public class DisplayFeaturesGenerator {
                         String affectedResidue = aminoAcidPattern.asSequence(site - 1);
                         String modName = modificationMatch.getTheoreticPtm();
                         Color ptmColor = modificationProfile.getColor(modName);
-                        if (modificationMatch.isConfident()) {
+                        if (modificationMatch.getConfident()) {
                             tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
                                     + affectedResidue
                                     + "</span>"
@@ -485,7 +485,7 @@ public class DisplayFeaturesGenerator {
                         char affectedResidue = aminoAcidSequence.charAt(site - 1);
                         String modName = modificationMatch.getTheoreticPtm();
                         Color ptmColor = modificationProfile.getColor(modName);
-                        if (modificationMatch.isConfident()) {
+                        if (modificationMatch.getConfident()) {
                             tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
                                     + affectedResidue
                                     + "</span>"

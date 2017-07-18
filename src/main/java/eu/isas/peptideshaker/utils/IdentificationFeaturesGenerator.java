@@ -2886,7 +2886,7 @@ public class IdentificationFeaturesGenerator {
 
                 if (!ProteinMatch.isDecoy(proteinKey)) {
                     probabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, probabilities);
-                    if (!probabilities.isHidden()) {
+                    if (!probabilities.getHidden()) {
                         double score = probabilities.getProteinProbabilityScore();
                         int nPeptides = -proteinMatch.getPeptideMatchesKeys().size();
                         int nSpectra = -getNSpectra(proteinKey);
@@ -3016,7 +3016,7 @@ public class IdentificationFeaturesGenerator {
             for (String proteinKey : identificationFeaturesCache.getProteinList()) {
                 if (!ProteinMatch.isDecoy(proteinKey)) {
                     psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                    if (!psParameter.isHidden()) {
+                    if (!psParameter.getHidden()) {
                         proteinListAfterHiding.add(proteinKey);
                         if (psParameter.getMatchValidationLevel().isValidated()) {
                             nValidatedProteins++;
@@ -3111,7 +3111,7 @@ public class IdentificationFeaturesGenerator {
                 String peptideKey = peptideMatch.getKey();
                 psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 
-                if (!psParameter.isHidden()) {
+                if (!psParameter.getHidden()) {
                     double peptideProbabilityScore = psParameter.getPeptideProbabilityScore();
 
                     if (!peptideMap.containsKey(peptideProbabilityScore)) {
@@ -3196,7 +3196,7 @@ public class IdentificationFeaturesGenerator {
                 String spectrumKey = spectrumMatch.getKey();
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
-                if (!psParameter.isHidden()) {
+                if (!psParameter.getHidden()) {
                     if (psParameter.getMatchValidationLevel().isValidated()) {
                         nValidatedPsms++;
                     }

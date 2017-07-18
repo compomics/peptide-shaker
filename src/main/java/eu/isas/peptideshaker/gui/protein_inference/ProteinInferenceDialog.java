@@ -156,7 +156,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         try {
             psParameter = (PSParameter) identification.getProteinMatchParameter(inspectedMatch, psParameter);
             // the index should be set in the design according to the PSParameter class static fields!
-            groupClassJComboBox.setSelectedIndex(psParameter.getProteinInferenceClass());
+            groupClassJComboBox.setSelectedIndex(psParameter.getProteinInferenceGroupClass());
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
@@ -785,7 +785,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             return;
         }
         if (!inspectedMatch.getMainMatch().equals(previousMainMatch)
-                || groupClassJComboBox.getSelectedIndex() != psParameter.getProteinInferenceClass()) {
+                || groupClassJComboBox.getSelectedIndex() != psParameter.getProteinInferenceGroupClass()) {
             try {
                 psParameter.setProteinInferenceClass(groupClassJComboBox.getSelectedIndex());
                 identification.updateProteinMatchParameter(inspectedMatch.getKey(), psParameter);

@@ -230,7 +230,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 return DisplayPreferences.LOADING_MESSAGE;
                             }
                         }
-                        return psParameter.isStarred();
+                        return psParameter.getStarred();
                     case 2:
                         psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB && !isScrolling);
                         if (psParameter == null) {
@@ -241,7 +241,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 return DisplayPreferences.LOADING_MESSAGE;
                             }
                         }
-                        return psParameter.getProteinInferenceClass();
+                        return psParameter.getProteinInferenceGroupClass();
                     case 3:
                         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey, useDB && !isScrolling);
                         if (proteinMatch == null) {

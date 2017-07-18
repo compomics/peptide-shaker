@@ -389,7 +389,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                         try {
                             psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
 
-                            if (psParameter.getFractions() != null && psParameter.getFractions().contains(fraction)) {
+                            if (psParameter.getFractionScore() != null && psParameter.getFractionScore().contains(fraction)) {
                                 if (psParameter.getMatchValidationLevel().isValidated()) {
 
                                     String peptideSequence = Peptide.getSequence(peptideKey);
@@ -1370,7 +1370,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
                     try {
                         PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, new PSParameter());
-                        if (!psParameter.isStarred()) {
+                        if (!psParameter.getStarred()) {
                             peptideShakerGUI.getStarHider().starProtein(proteinKey);
                         } else {
                             peptideShakerGUI.getStarHider().unStarProtein(proteinKey);

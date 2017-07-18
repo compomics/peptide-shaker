@@ -219,9 +219,6 @@ public class PeptideShaker {
         waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")", true, true);
         waitingHandler.appendReportEndLine();
 
-        objectsCache = new ObjectsCache();
-        objectsCache.setAutomatedMemoryManagement(true);
-
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
         analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification(getIdentificationReference()));
 
@@ -671,123 +668,118 @@ public class PeptideShaker {
             waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
         }
 
-        for (String spectrumFileName : identification.getSpectrumFiles()) {
+        PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, null, true, waitingHandler);
+        while (psmIterator.hasNext()) {
 
-            while (psmIterator.hasNext()) {
+            SpectrumMatch spectrumMatch = psmIterator.next();
+            String spectrumKey = spectrumMatch.getKey();
+            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getAssumptionsMap();
 
-                SpectrumMatch spectrumMatch = psmIterator.next();
-                String spectrumKey = spectrumMatch.getKey();
-                HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = identification.getAssumptions(spectrumKey);
+            HashMap<Double, ArrayList<PSParameter>> pepToParameterMap = new HashMap<Double, ArrayList<PSParameter>>();
 
-                HashMap<Double, ArrayList<PSParameter>> pepToParameterMap = new HashMap<Double, ArrayList<PSParameter>>();
+            for (int searchEngine : assumptionsMap.keySet()) {
 
-                for (int searchEngine : assumptionsMap.keySet()) {
+                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> seMapping = assumptionsMap.get(searchEngine);
+                ArrayList<Double> eValues = new ArrayList<Double>(seMapping.keySet());
+                Collections.sort(eValues);
+                double previousP = 0;
+                ArrayList<PSParameter> previousAssumptionsParameters = new ArrayList<PSParameter>();
+                SpectrumIdentificationAssumption previousAssumption = null;
 
-                    HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> seMapping = assumptionsMap.get(searchEngine);
-                    ArrayList<Double> eValues = new ArrayList<Double>(seMapping.keySet());
-                    Collections.sort(eValues);
-                    double previousP = 0;
-                    ArrayList<PSParameter> previousAssumptionsParameters = new ArrayList<PSParameter>();
-                    SpectrumIdentificationAssumption previousAssumption = null;
+                for (double eValue : eValues) {
 
-                    for (double eValue : eValues) {
+                    for (SpectrumIdentificationAssumption assumption : seMapping.get(eValue)) {
+                        PSParameter psParameter = new PSParameter();
+                        psParameter = (PSParameter) assumption.getUrParam(psParameter);
+                        if (psParameter == null) {
+                            psParameter = new PSParameter();
+                        }
 
-                        for (SpectrumIdentificationAssumption assumption : seMapping.get(eValue)) {
-                            PSParameter psParameter = new PSParameter();
-                            psParameter = (PSParameter) assumption.getUrParam(psParameter);
-                            if (psParameter == null) {
-                                psParameter = new PSParameter();
+                        if (sequenceFactory.concatenatedTargetDecoy()) {
+
+                            double newP = inputMap.getProbability(searchEngine, eValue);
+                            double pep = previousP;
+
+                            if (newP > previousP) {
+                                pep = newP;
+                                previousP = newP;
                             }
 
-                            if (sequenceFactory.concatenatedTargetDecoy()) {
+                            psParameter.setSearchEngineProbability(pep);
 
-                                double newP = inputMap.getProbability(searchEngine, eValue);
-                                double pep = previousP;
-
-                                if (newP > previousP) {
-                                    pep = newP;
-                                    previousP = newP;
-                                }
-
-                                psParameter.setSearchEngineProbability(pep);
-
-                                ArrayList<PSParameter> pSParameters = pepToParameterMap.get(pep);
-                                if (pSParameters == null) {
-                                    pSParameters = new ArrayList<PSParameter>(1);
-                                    pepToParameterMap.put(pep, pSParameters);
-                                }
-                                pSParameters.add(psParameter);
-
-                                if (previousAssumption != null) {
-                                    boolean same = false;
-                                    if ((assumption instanceof PeptideAssumption) && (previousAssumption instanceof PeptideAssumption)) {
-                                        Peptide newPeptide = ((PeptideAssumption) assumption).getPeptide();
-                                        Peptide previousPeptide = ((PeptideAssumption) previousAssumption).getPeptide();
-                                        if (newPeptide.isSameSequenceAndModificationStatus(previousPeptide, sequenceMatchingPreferences)) {
-                                            same = true;
-                                        }
-                                    } else if ((assumption instanceof TagAssumption) && (previousAssumption instanceof TagAssumption)) {
-                                        Tag newTag = ((TagAssumption) assumption).getTag();
-                                        Tag previousTag = ((TagAssumption) previousAssumption).getTag();
-                                        if (newTag.isSameSequenceAndModificationStatusAs(previousTag, sequenceMatchingPreferences)) {
-                                            same = true;
-                                        }
-                                    }
-
-                                    if (!same) {
-                                        for (PSParameter previousParameter : previousAssumptionsParameters) {
-                                            double deltaPEP = pep - previousParameter.getSearchEngineProbability();
-                                            previousParameter.setAlgorithmDeltaPEP(deltaPEP);
-                                        }
-                                        previousAssumptionsParameters.clear();
-                                    }
-                                }
-                                previousAssumption = assumption;
-                                previousAssumptionsParameters.add(psParameter);
-
-                            } else {
-                                psParameter.setSearchEngineProbability(1.0);
+                            ArrayList<PSParameter> pSParameters = pepToParameterMap.get(pep);
+                            if (pSParameters == null) {
+                                pSParameters = new ArrayList<PSParameter>(1);
+                                pepToParameterMap.put(pep, pSParameters);
                             }
+                            pSParameters.add(psParameter);
 
-                            assumption.addUrParam(psParameter);
+                            if (previousAssumption != null) {
+                                boolean same = false;
+                                if ((assumption instanceof PeptideAssumption) && (previousAssumption instanceof PeptideAssumption)) {
+                                    Peptide newPeptide = ((PeptideAssumption) assumption).getPeptide();
+                                    Peptide previousPeptide = ((PeptideAssumption) previousAssumption).getPeptide();
+                                    if (newPeptide.isSameSequenceAndModificationStatus(previousPeptide, sequenceMatchingPreferences)) {
+                                        same = true;
+                                    }
+                                } else if ((assumption instanceof TagAssumption) && (previousAssumption instanceof TagAssumption)) {
+                                    Tag newTag = ((TagAssumption) assumption).getTag();
+                                    Tag previousTag = ((TagAssumption) previousAssumption).getTag();
+                                    if (newTag.isSameSequenceAndModificationStatusAs(previousTag, sequenceMatchingPreferences)) {
+                                        same = true;
+                                    }
+                                }
+
+                                if (!same) {
+                                    for (PSParameter previousParameter : previousAssumptionsParameters) {
+                                        double deltaPEP = pep - previousParameter.getSearchEngineProbability();
+                                        previousParameter.setAlgorithmDeltaPEP(deltaPEP);
+                                    }
+                                    previousAssumptionsParameters.clear();
+                                }
+                            }
+                            previousAssumption = assumption;
+                            previousAssumptionsParameters.add(psParameter);
+
+                        } else {
+                            psParameter.setSearchEngineProbability(1.0);
                         }
-                    }
 
-                    for (PSParameter previousParameter : previousAssumptionsParameters) {
-                        double deltaPEP = 1 - previousParameter.getSearchEngineProbability();
-                        previousParameter.setAlgorithmDeltaPEP(deltaPEP);
+                        assumption.addUrParam(psParameter);
                     }
                 }
 
-                // Compute the delta pep score accross all search engines
-                Double previousPEP = null;
-                ArrayList<PSParameter> previousParameters = new ArrayList<PSParameter>();
-                ArrayList<Double> peps = new ArrayList<Double>(pepToParameterMap.keySet());
-                Collections.sort(peps);
-                for (double pep : peps) {
-                    if (previousPEP != null) {
-                        for (PSParameter previousParameter : previousParameters) {
-                            double delta = pep - previousPEP;
-                            previousParameter.setDeltaPEP(delta);
-                        }
-                    }
-                    previousParameters = pepToParameterMap.get(pep);
-                    previousPEP = pep;
+                for (PSParameter previousParameter : previousAssumptionsParameters) {
+                    double deltaPEP = 1 - previousParameter.getSearchEngineProbability();
+                    previousParameter.setAlgorithmDeltaPEP(deltaPEP);
                 }
-                for (PSParameter previousParameter : previousParameters) {
-                    double delta = 1 - previousParameter.getSearchEngineProbability();
-                    previousParameter.setDeltaPEP(delta);
-                }
+            }
 
-                identification.updateAssumptions(spectrumKey, assumptionsMap);
-
-                if (waitingHandler != null) {
-                    waitingHandler.increaseSecondaryProgressCounter();
-                    if (waitingHandler.isRunCanceled()) {
-                        return;
+            // Compute the delta pep score accross all search engines
+            Double previousPEP = null;
+            ArrayList<PSParameter> previousParameters = new ArrayList<PSParameter>();
+            ArrayList<Double> peps = new ArrayList<Double>(pepToParameterMap.keySet());
+            Collections.sort(peps);
+            for (double pep : peps) {
+                if (previousPEP != null) {
+                    for (PSParameter previousParameter : previousParameters) {
+                        double delta = pep - previousPEP;
+                        previousParameter.setDeltaPEP(delta);
                     }
+                }
+                previousParameters = pepToParameterMap.get(pep);
+                previousPEP = pep;
+            }
+            for (PSParameter previousParameter : previousParameters) {
+                double delta = 1 - previousParameter.getSearchEngineProbability();
+                previousParameter.setDeltaPEP(delta);
+            }
+
+            if (waitingHandler != null) {
+                waitingHandler.increaseSecondaryProgressCounter();
+                if (waitingHandler.isRunCanceled()) {
+                    return;
                 }
             }
         }
@@ -820,7 +812,7 @@ public class PeptideShaker {
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, false, waitingHandler);
+            PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
 
             while (psmIterator.hasNext()) {
 

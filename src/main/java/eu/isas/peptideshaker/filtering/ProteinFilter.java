@@ -189,7 +189,7 @@ public class ProteinFilter extends MatchFilter {
             case proteinInference:
                 psParameter = new PSParameter();
                 psParameter = (PSParameter) identification.getProteinMatchParameter(matchKey, psParameter);
-                Integer pi = psParameter.getProteinInferenceClass();
+                Integer pi = psParameter.getProteinInferenceGroupClass();
                 return filterItemComparator.passes(input, pi.toString());
             case validationStatus:
                 psParameter = new PSParameter();
@@ -200,7 +200,7 @@ public class ProteinFilter extends MatchFilter {
                 psParameter = new PSParameter();
                 psParameter = (PSParameter) identification.getProteinMatchParameter(matchKey, psParameter);
                 String starred;
-                if (psParameter.isStarred()) {
+                if (psParameter.getStarred()) {
                     starred = FilterItemComparator.trueFalse[0];
                 } else {
                     starred = FilterItemComparator.trueFalse[1];

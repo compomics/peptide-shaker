@@ -1493,7 +1493,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
                     try {
                         PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, new PSParameter());
-                        if (!psParameter.isStarred()) {
+                        if (!psParameter.getStarred()) {
                             peptideShakerGUI.getStarHider().starProtein(proteinKey);
                         } else {
                             peptideShakerGUI.getStarHider().unStarProtein(proteinKey);
@@ -1535,7 +1535,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     try {
                         String peptideKey = peptideTableMap.get(getPeptideIndex(row));
                         PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, new PSParameter());
-                        if (!psParameter.isStarred()) {
+                        if (!psParameter.getStarred()) {
                             peptideShakerGUI.getStarHider().starPeptide(peptideKey);
                         } else {
                             peptideShakerGUI.getStarHider().unStarPeptide(peptideKey);
@@ -2627,7 +2627,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     PeptideMatch currentMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
                     probabilities = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, probabilities);
 
-                    if (!probabilities.isHidden()) {
+                    if (!probabilities.getHidden()) {
 
                         // find and add the peptide start and end indexes
                         int peptideStart = 0;
@@ -2641,12 +2641,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                             peptideShakerGUI.catchException(e);
                             e.printStackTrace();
                         }
-                        int proteinInferenceType = probabilities.getProteinInferenceClass();
+                        int proteinInferenceType = probabilities.getProteinInferenceGroupClass();
 
                         // @TODO: should be replaced by a table model!!!
                         ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
                             index + 1,
-                            probabilities.isStarred(),
+                            probabilities.getStarred(),
                             proteinInferenceType,
                             peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(currentMatch, true, true, true),
                             peptideStart,

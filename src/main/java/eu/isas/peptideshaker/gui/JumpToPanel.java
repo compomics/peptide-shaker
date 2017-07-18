@@ -477,7 +477,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                                 peptideShakerGUI.catchException(e);
                                                 return;
                                             }
-                                            if (!psParameter.isHidden()) {
+                                            if (!psParameter.getHidden()) {
                                                 if (peptideKey.startsWith(matchingInput)) {
                                                     possibilities.get(jumpType).add(peptideKey);
                                                     types.get(jumpType).add(Type.PEPTIDE);

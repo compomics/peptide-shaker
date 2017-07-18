@@ -78,14 +78,8 @@ public class CpsExporter {
             // set the experiment parameters
             PeptideShakerSettings peptideShakerSettings = new PeptideShakerSettings(shotgunProtocol, identificationParameters, spectrumCountingPreferences,
                     projectDetails, filterPreferences, displayPreferences, metrics, geneMaps, identificationFeaturesCache);
-            ObjectsDB objectsDB = identification.getIdentificationDB().getObjectsDB();
-            if (!objectsDB.hasTable(CpsParent.settingsTableName)) {
-                objectsDB.addTable(CpsParent.settingsTableName);
-            }
-            if (objectsDB.inDB(CpsParent.settingsTableName, PeptideShakerSettings.nameInCpsSettingsTable, false)) {
-                objectsDB.updateObject(CpsParent.settingsTableName, PeptideShakerSettings.nameInCpsSettingsTable, peptideShakerSettings, false);
-            } else {
-                objectsDB.insertObject(CpsParent.settingsTableName, PeptideShakerSettings.nameInCpsSettingsTable, peptideShakerSettings, false);
+            if (!identification.contains(PeptideShakerSettings.nameInCpsSettingsTable)) {
+                identification.addObject(PeptideShakerSettings.nameInCpsSettingsTable, peptideShakerSettings);
             }
 
             // save the objects in cache
@@ -120,7 +114,7 @@ public class CpsExporter {
             }
 
         } finally {
-            // Restaure the project navigability
+            // Restore the project navigability
             objectsCache.setReadOnly(false);
             identificationFeaturesCache.setReadOnly(false);
             if (!identification.isConnectionActive()) {

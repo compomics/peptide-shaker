@@ -268,7 +268,7 @@ public class AssumptionFilter extends MatchFilter {
                 psParameter = new PSParameter();
                 psParameter = (PSParameter) identification.getPeptideMatchParameter(spectrumKey, psParameter);
                 String starred;
-                if (psParameter.isStarred()) {
+                if (psParameter.getStarred()) {
                     starred = FilterItemComparator.trueFalse[0];
                 } else {
                     starred = FilterItemComparator.trueFalse[1];

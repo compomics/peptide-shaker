@@ -213,17 +213,6 @@ public class TagMapper {
 
         tagMatcher.clearCache();
         waitingHandler.increaseSecondaryProgressCounter();
-
-        // free memory if needed and possible
-        if (sequenceMatchingPreferences.getPeptideMapperType() == PeptideMapperType.tree) {
-            if (MemoryConsumptionStatus.memoryUsed() > 0.8 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
-                ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(0.5, null);
-            }
-            ProteinTree proteinTree = (ProteinTree) sequenceFactory.getDefaultPeptideMapper();
-            if (MemoryConsumptionStatus.memoryUsed() > 0.9 && proteinTree.getNodesInCache() > 0) {
-                proteinTree.reduceNodeCacheSize(0.5);
-            }
-        }
     }
 
     /**
@@ -260,7 +249,7 @@ public class TagMapper {
 
                 for (int aa : aminoAcidPattern.getModificationIndexes()) {
                     for (ModificationMatch modificationMatch : aminoAcidPattern.getModificationsAt(aa)) {
-                        if (modificationMatch.isVariable()) {
+                        if (modificationMatch.getVariable()) {
                             if (advocateId == Advocate.pepnovo.getIndex()) {
                                 String pepnovoPtmName = modificationMatch.getTheoreticPtm();
                                 PepnovoParameters pepnovoParameters = (PepnovoParameters) searchParameters.getIdentificationAlgorithmParameter(advocateId);
@@ -301,7 +290,7 @@ public class TagMapper {
 
                 for (int aa : aminoAcidSequence.getModificationIndexes()) {
                     for (ModificationMatch modificationMatch : aminoAcidSequence.getModificationsAt(aa)) {
-                        if (modificationMatch.isVariable()) {
+                        if (modificationMatch.getVariable()) {
                             if (advocateId == Advocate.pepnovo.getIndex()) {
                                 String pepnovoPtmName = modificationMatch.getTheoreticPtm();
                                 PepnovoParameters pepnovoParameters = (PepnovoParameters) searchParameters.getIdentificationAlgorithmParameter(advocateId);

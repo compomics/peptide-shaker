@@ -137,7 +137,7 @@ public class PeptideFractionTableModel extends DefaultTableModel {
                 PSParameter pSParameter = new PSParameter();
                 String peptideKey = peptideKeys.get(row);
                 pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
-                if (pSParameter.getFractions() != null && pSParameter.getFractions().contains(fraction)) {
+                if (pSParameter.getFractionScore() != null && pSParameter.getFractionScore().contains(fraction)) {
                     return pSParameter.getFractionConfidence(fraction);
                 } else {
                     return 0.0;

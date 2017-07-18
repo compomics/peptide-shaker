@@ -2015,7 +2015,7 @@ public class PtmPanel extends javax.swing.JPanel {
                             try {
                                 String peptideKey = getSelectedPeptide(false);
                                 PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, new PSParameter());
-                                if (!psParameter.isStarred()) {
+                                if (!psParameter.getStarred()) {
                                     peptideShakerGUI.getStarHider().starPeptide(peptideKey);
                                 } else {
                                     peptideShakerGUI.getStarHider().unStarPeptide(peptideKey);
@@ -2107,7 +2107,7 @@ public class PtmPanel extends javax.swing.JPanel {
                             try {
                                 String peptideKey = getSelectedPeptide(true);
                                 PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, new PSParameter());
-                                if (!psParameter.isStarred()) {
+                                if (!psParameter.getStarred()) {
                                     peptideShakerGUI.getStarHider().starPeptide(peptideKey);
                                 } else {
                                     peptideShakerGUI.getStarHider().unStarPeptide(peptideKey);
@@ -2142,7 +2142,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(false));
                     String psmKey = peptideMatch.getSpectrumMatchesKeys().get(selectedPsmsTable.convertRowIndexToModel(row));
                     PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(psmKey, new PSParameter());
-                    if (!psParameter.isStarred()) {
+                    if (!psParameter.getStarred()) {
                         peptideShakerGUI.getStarHider().starPsm(psmKey, peptideShakerGUI.getSpectrumAnnotator());
                     } else {
                         peptideShakerGUI.getStarHider().unStarPsm(psmKey, peptideShakerGUI.getSpectrumAnnotator());
@@ -2530,7 +2530,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(true));
                 String psmKey = peptideMatch.getSpectrumMatchesKeys().get(relatedPsmsTable.convertRowIndexToModel(row));
                 PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(psmKey, new PSParameter());
-                if (!psParameter.isStarred()) {
+                if (!psParameter.getStarred()) {
                     peptideShakerGUI.getStarHider().starPsm(psmKey, peptideShakerGUI.getSpectrumAnnotator());
                 } else {
                     peptideShakerGUI.getStarHider().unStarPsm(psmKey, peptideShakerGUI.getSpectrumAnnotator());
@@ -3581,7 +3581,7 @@ public class PtmPanel extends javax.swing.JPanel {
                             probabilities = (PSParameter) identification.getPeptideMatchParameter(peptideKey, probabilities);
                             double p = probabilities.getPeptideProbability();
 
-                            if (!probabilities.isHidden()) {
+                            if (!probabilities.getHidden()) {
 
                                 if (!scoreToPeptideMap.containsKey(p)) {
                                     scoreToPeptideMap.put(p, new ArrayList<String>());
@@ -3722,7 +3722,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     }
                     double p = probabilities.getPeptideProbability();
 
-                    if (!probabilities.isHidden()) {
+                    if (!probabilities.getHidden()) {
 
                         if (!scoreToKeyMap.containsKey(p)) {
                             scoreToKeyMap.put(p, new ArrayList<String>());
@@ -4260,11 +4260,11 @@ public class PtmPanel extends javax.swing.JPanel {
                     case 1:
                         probabilities = new PSParameter();
                         probabilities = (PSParameter) identification.getPeptideMatchParameter(displayedPeptides.get(row), probabilities);
-                        return probabilities.isStarred();
+                        return probabilities.getStarred();
                     case 2:
                         probabilities = new PSParameter();
                         probabilities = (PSParameter) identification.getPeptideMatchParameter(displayedPeptides.get(row), probabilities);
-                        return probabilities.getProteinInferenceClass();
+                        return probabilities.getProteinInferenceGroupClass();
                     case 3:
                         String peptideKey = displayedPeptides.get(row);
                         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -4359,11 +4359,11 @@ public class PtmPanel extends javax.swing.JPanel {
                     case 1:
                         probabilities = new PSParameter();
                         probabilities = (PSParameter) identification.getPeptideMatchParameter(relatedPeptides.get(row), probabilities);
-                        return probabilities.isStarred();
+                        return probabilities.getStarred();
                     case 2:
                         probabilities = new PSParameter();
                         probabilities = (PSParameter) identification.getPeptideMatchParameter(relatedPeptides.get(row), probabilities);
-                        return probabilities.getProteinInferenceClass();
+                        return probabilities.getProteinInferenceGroupClass();
                     case 3:
                         String peptideKey = relatedPeptides.get(row);
                         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -4486,7 +4486,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     case 1:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(relatedTable)).getSpectrumMatchesKeys().get(row);
                         probabilities = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, probabilities);
-                        return probabilities.isStarred();
+                        return probabilities.getStarred();
                     case 2:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(relatedTable)).getSpectrumMatchesKeys().get(row);
                         return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(identification.getSpectrumMatch(spectrumKey), true, true, true);

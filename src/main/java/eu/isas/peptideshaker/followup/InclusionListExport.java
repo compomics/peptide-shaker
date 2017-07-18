@@ -88,7 +88,7 @@ public class InclusionListExport {
                     String proteinMatchKey = proteinMatch.getKey();
                     psParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, psParameter);
 
-                    if (!proteinFilters.contains(psParameter.getProteinInferenceClass())) {
+                    if (!proteinFilters.contains(psParameter.getProteinInferenceGroupClass())) {
 
                         ArrayList<String> peptideMatches = new ArrayList<String>();
 
@@ -99,7 +99,7 @@ public class InclusionListExport {
                                 for (PeptideFilterType filterType : peptideFilters) {
                                     String sequence = Peptide.getSequence(peptideKey);
                                     if (filterType == PeptideFilterType.degenerated) {
-                                        if (psParameter.getProteinInferenceClass() != PSParameter.NOT_GROUP) {
+                                        if (psParameter.getProteinInferenceGroupClass() != PSParameter.NOT_GROUP) {
                                             passesFilter = false;
                                             break;
                                         }

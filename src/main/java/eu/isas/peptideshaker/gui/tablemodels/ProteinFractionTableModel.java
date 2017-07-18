@@ -161,7 +161,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
                 PSParameter psParameter = new PSParameter();
                 String proteinKey = proteinKeys.get(row);
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                if (psParameter.getFractions() != null && psParameter.getFractions().contains(fraction)) {
+                if (psParameter.getFractionScore() != null && psParameter.getFractionScore().contains(fraction)) {
                     return psParameter.getFractionConfidence(fraction);
                 } else {
                     return 0.0;
