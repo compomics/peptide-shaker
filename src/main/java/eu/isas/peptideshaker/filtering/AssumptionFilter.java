@@ -235,7 +235,7 @@ public class AssumptionFilter extends MatchFilter {
                 Peptide peptide = peptideAssumption.getPeptide();
                 AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
                 SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-                HashMap<Integer, ArrayList<IonMatch>> matches = peptideSpectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide, true);
+                HashMap<Integer, ArrayList<IonMatch>> matches = peptideSpectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
                 double nCovered = 0;
                 int nAA = peptide.getSequence().length();
                 for (int i = 0; i <= nAA; i++) {

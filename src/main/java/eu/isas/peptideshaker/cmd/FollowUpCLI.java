@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
-import com.compomics.util.exceptions.exception_handlers.CommandLineExceptionHandler;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
@@ -38,10 +37,6 @@ public class FollowUpCLI extends CpsParent {
      * PeptideShaker processes.
      */
     private WaitingHandler waitingHandler;
-    /**
-     * The exception handler.
-     */
-    private CommandLineExceptionHandler commandLineExceptionHandler = new CommandLineExceptionHandler();
     /**
      * The PTM factory.
      */
@@ -125,11 +120,9 @@ public class FollowUpCLI extends CpsParent {
         try {
             if (followUpCLIInputBean.getZipFile() != null) {
                 inputFilePath = followUpCLIInputBean.getZipFile().getAbsolutePath();
-                waitingHandler.appendReport("Loading PeptideShaker project " + inputFilePath + ".", true, true);
                 loadCpsFromZipFile(followUpCLIInputBean.getZipFile(), PeptideShaker.getMatchesFolder(), waitingHandler);
             } else if (followUpCLIInputBean.getCpsFile() != null) {
                 inputFilePath = followUpCLIInputBean.getCpsFile().getAbsolutePath();
-                waitingHandler.appendReport("Loading PeptideShaker project " + inputFilePath + ".", true, true);
                 cpsFile = followUpCLIInputBean.getCpsFile();
                 loadCpsFile(PeptideShaker.getMatchesFolder(), waitingHandler);
             } else {
@@ -155,7 +148,6 @@ public class FollowUpCLI extends CpsParent {
 
         // load fasta file
         try {
-            waitingHandler.appendReport("Loading protein database " + identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getName() + ".", true, true);
             if (!loadFastaFile(waitingHandler)) {
                 waitingHandler.appendReport("The FASTA file was not found. Please provide its location in the command line parameters.", true, true);
                 try {
@@ -166,6 +158,7 @@ public class FollowUpCLI extends CpsParent {
                 }
                 return 1;
             }
+            waitingHandler.appendReport("Protein database " + identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getName() + ".", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the fasta file.", true, true);
             e.printStackTrace();
@@ -215,7 +208,6 @@ public class FollowUpCLI extends CpsParent {
         // recalibrate spectra
         if (followUpCLIInputBean.recalibrationNeeded()) {
             try {
-                waitingHandler.appendReport("Recalibrating spectra.", true, true);
                 CLIExportMethods.recalibrateSpectra(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
                 waitingHandler.appendReport("Recalibration process completed.", true, true);
             } catch (Exception e) {
@@ -228,7 +220,6 @@ public class FollowUpCLI extends CpsParent {
         // export spectra
         if (followUpCLIInputBean.spectrumExportNeeded()) {
             try {
-                waitingHandler.appendReport("Exporting spectra.", true, true);
                 CLIExportMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingPreferences());
                 waitingHandler.appendReport("Spectrum export completed.", true, true);
             } catch (Exception e) {
@@ -241,7 +232,6 @@ public class FollowUpCLI extends CpsParent {
         // export protein accessions
         if (followUpCLIInputBean.accessionExportNeeded()) {
             try {
-                waitingHandler.appendReport("Exporting protein accessions.", true, true);
                 CLIExportMethods.exportAccessions(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterPreferences);
                 waitingHandler.appendReport("Protein accessions export completed.", true, true);
             } catch (Exception e) {
@@ -254,7 +244,6 @@ public class FollowUpCLI extends CpsParent {
         // export protein details
         if (followUpCLIInputBean.fastaExportNeeded()) {
             try {
-                waitingHandler.appendReport("Exporting protein details.", true, true);
                 CLIExportMethods.exportFasta(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterPreferences);
                 waitingHandler.appendReport("Protein details export completed.", true, true);
             } catch (Exception e) {
@@ -267,7 +256,6 @@ public class FollowUpCLI extends CpsParent {
         // progenesis export
         if (followUpCLIInputBean.progenesisExportNeeded()) {
             try {
-                waitingHandler.appendReport("Writing progenesis export.", true, true);
                 CLIExportMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingPreferences());
                 waitingHandler.appendReport("Progenesis export completed.", true, true);
             } catch (Exception e) {
@@ -280,7 +268,6 @@ public class FollowUpCLI extends CpsParent {
         // PepNovo training export
         if (followUpCLIInputBean.pepnovoTrainingExportNeeded()) {
             try {
-                waitingHandler.appendReport("Writing pepnovo training files.", true, true);
                 CLIExportMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
                 waitingHandler.appendReport("PepNovo training export completed.", true, true);
             } catch (Exception e) {
@@ -293,22 +280,9 @@ public class FollowUpCLI extends CpsParent {
         // inclusion list export
         if (followUpCLIInputBean.inclusionListNeeded()) {
             try {
-                waitingHandler.appendReport("Writing inclusion list.", true, true);
                 CLIExportMethods.exportInclusionList(followUpCLIInputBean, identification, identificationFeaturesGenerator, identificationParameters.getSearchParameters(), waitingHandler, filterPreferences);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while generating the inclusion list.", true, true);
-                e.printStackTrace();
-                waitingHandler.setRunCanceled();
-            }
-        }
-
-        // Ms2pip export
-        if (followUpCLIInputBean.isMs2pipNeeded()) {
-            try {
-                waitingHandler.appendReport("Exporting ms2pip features.", true, true);
-                CLIExportMethods.exportMs2pipFeatures(followUpCLIInputBean, identification, identificationParameters, commandLineExceptionHandler, waitingHandler);
-            } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while generating the ms2pip features file.", true, true);
                 e.printStackTrace();
                 waitingHandler.setRunCanceled();
             }

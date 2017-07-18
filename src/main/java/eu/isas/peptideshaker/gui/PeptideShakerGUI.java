@@ -136,7 +136,6 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import net.jimmc.jshortcut.JShellLink;
-import org.apache.commons.math.MathException;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
@@ -5763,26 +5762,19 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * occurred while casting the database input in the desired match class
      * @throws InterruptedException thrown whenever a threading issue occurred
      * while interacting with the database
-     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
-    public void exportAnnotatedSpectrum() throws IOException, SQLException, ClassNotFoundException, InterruptedException, MathException {
+    public void exportAnnotatedSpectrum() throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
         HashMap<String, ArrayList<SpectrumIdentificationAssumption>> selectedAssumptions = null;
 
-        switch (selectedTabIndex) {
-            case OVER_VIEW_TAB_INDEX:
-                selectedAssumptions = overviewPanel.getSelectedIdentificationAssumptions();
-                break;
-            case SPECTRUM_ID_TAB_INDEX:
-                selectedAssumptions = spectrumIdentificationPanel.getSelectedIdentificationAssumptions();
-                break;
-            case MODIFICATIONS_TAB_INDEX:
-                selectedAssumptions = ptmPanel.getSelectedIdentificationAssumptions();
-                break;
-            default:
-                break;
+        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+            selectedAssumptions = overviewPanel.getSelectedIdentificationAssumptions();
+        } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
+            selectedAssumptions = spectrumIdentificationPanel.getSelectedIdentificationAssumptions();
+        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+            selectedAssumptions = ptmPanel.getSelectedIdentificationAssumptions();
         }
 
         if (selectedAssumptions != null && !selectedAssumptions.isEmpty()) {

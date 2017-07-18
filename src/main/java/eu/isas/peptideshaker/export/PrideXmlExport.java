@@ -26,6 +26,7 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Annotati
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
+import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
@@ -48,7 +49,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -256,10 +256,8 @@ public class PrideXmlExport {
      * occurred while deserializing an object
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred
-     * @throws org.apache.commons.math.MathException exception thrown if a math
-     * exception occurred when estimating the noise level in spectra
      */
-    public void createPrideXmlFile(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException, MathException {
+    public void createPrideXmlFile(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         // the experiment start tag
         writeExperimentCollectionStartTag();
@@ -349,10 +347,8 @@ public class PrideXmlExport {
      * occurred while deserializing an object
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred
-     * @throws org.apache.commons.math.MathException exception thrown if a math
-     * exception occurred when estimating the noise level in spectra
      */
-    private void writePsms(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException, MathException {
+    private void writePsms(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter proteinProbabilities = new PSParameter();
@@ -394,13 +390,13 @@ public class PrideXmlExport {
 
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
 
-        ProteinMatch proteinMatch;
-        while ((proteinMatch = proteinMatchesIterator.next()) != null) {
+        while (proteinMatchesIterator.hasNext()) {
 
             if (waitingHandler.isRunCanceled()) {
                 break;
             }
 
+            ProteinMatch proteinMatch = proteinMatchesIterator.next();
             String proteinKey = proteinMatch.getKey();
 
             proteinProbabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinProbabilities);
@@ -415,25 +411,25 @@ public class PrideXmlExport {
 
             PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, true, parameters, waitingHandler);
 
-            PeptideMatch peptideMatch;
-            while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+            while (peptideMatchesIterator.hasNext()) {
 
                 if (waitingHandler.isRunCanceled()) {
                     break;
                 }
 
+                PeptideMatch peptideMatch = peptideMatchesIterator.next();
                 String peptideKey = peptideMatch.getKey();
                 peptideProbabilities = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptideProbabilities);
 
                 PsmIterator psmIterator = identification.getPsmIterator(peptideMatch.getSpectrumMatchesKeys(), parameters, true, waitingHandler);
 
-                SpectrumMatch spectrumMatch;
-                while ((spectrumMatch = psmIterator.next()) != null) {
+                while (psmIterator.hasNext()) {
 
                     if (waitingHandler.isRunCanceled()) {
                         break;
                     }
 
+                    SpectrumMatch spectrumMatch = psmIterator.next();
                     String spectrumKey = spectrumMatch.getKey();
                     psmProbabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psmProbabilities);
                     PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
@@ -730,17 +726,15 @@ public class PrideXmlExport {
      * reading/writing a file
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
      * occurred while reading the mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math
-     * exception occurred when estimating the noise level in spectra
      */
-    private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException, MathException {
+    private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
         PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
         Peptide peptide = peptideAssumption.getPeptide();
         AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
         MSnSpectrum spectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey()));
         SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-        ArrayList<IonMatch> matches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide, false);
+        ArrayList<IonMatch> matches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
         for (IonMatch annotation : matches) {
             writeFragmentIon(annotation);
         }
@@ -860,13 +854,12 @@ public class PrideXmlExport {
      * Writes the spectra in the mzData format.
      *
      * @param progressDialog a progress dialog to display progress to the user
-     *
+     * 
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
      * occurred while reading the mzML file
-     * @throws InterruptedException exception thrown if the thread is
-     * interrupted
+     * @throws InterruptedException exception thrown if the thread is interrupted
      */
     private void writeMzData(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, InterruptedException {
 
@@ -893,13 +886,12 @@ public class PrideXmlExport {
      * Writes all spectra in the mzData format.
      *
      * @param progressDialog a progress dialog to display progress to the user
-     *
+     * 
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
      * occurred while reading the mzML file
-     * @throws InterruptedException exception thrown if the thread is
-     * interrupted
+     * @throws InterruptedException exception thrown if the thread is interrupted
      */
     private void writeSpectra(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, InterruptedException {
 
@@ -950,12 +942,11 @@ public class PrideXmlExport {
      *
      * @param spectrum the spectrum
      * @param matchExists boolean indicating whether the match exists
-     * @param spectrumCounter index of the
-     *
+     * @param spectrumCounter index of the 
+     * 
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
-     * @throws InterruptedException exception thrown if the thread is
-     * interrupted
+     * @throws InterruptedException exception thrown if the thread is interrupted
      */
     private void writeSpectrum(MSnSpectrum spectrum, boolean matchExists, long spectrumCounter) throws IOException, InterruptedException {
 

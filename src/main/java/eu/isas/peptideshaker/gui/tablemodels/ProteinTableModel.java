@@ -103,7 +103,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * @param exceptionHandler an exception handler catching exceptions
      * @param proteinKeys the keys of the protein matches to display
      */
-    public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
+    public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps, 
             DisplayFeaturesGenerator displayFeaturesGenerator, ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
@@ -127,7 +127,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * @param exceptionHandler an exception handler catching exceptions
      * @param proteinKeys the keys of the protein matches to display
      */
-    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
+    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps, 
             DisplayFeaturesGenerator displayFeaturesGenerator, ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
@@ -499,8 +499,8 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
             proteinMatchesIterator.setBatchSize(batchSize);
 
             int i = 0;
-            ProteinMatch proteinMatch;
-            while ((proteinMatch = proteinMatchesIterator.next()) != null) {
+            while (proteinMatchesIterator.hasNext()) {
+                ProteinMatch proteinMatch = proteinMatchesIterator.next();
                 String proteinKey = proteinMatch.getKey();
                 if (waitingHandler.isRunCanceled()) {
                     return rows.get(i);

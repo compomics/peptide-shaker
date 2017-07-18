@@ -146,10 +146,8 @@ public class FastaExport {
 
                     ArrayList<String> proteinMatches = identificationFeaturesGenerator.getValidatedProteins(waitingHandler, filterPreferences);
                     ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(proteinMatches, null, false, null, false, null, waitingHandler);
-
-                    ProteinMatch proteinMatch;
-                    while ((proteinMatch = proteinMatchesIterator.next()) != null) {
-
+                    while (proteinMatchesIterator.hasNext()) {
+                        ProteinMatch proteinMatch = proteinMatchesIterator.next();
                         ArrayList<String> accessions = new ArrayList<String>();
                         if (exportType == ExportType.validated_main_accession) {
                             accessions.add(proteinMatch.getMainMatch());

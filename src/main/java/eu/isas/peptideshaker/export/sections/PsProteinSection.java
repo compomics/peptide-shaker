@@ -1,6 +1,8 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.Util;
+import com.compomics.util.experiment.biology.genes.GeneFactory;
+import com.compomics.util.experiment.biology.genes.go.GoMapping;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
@@ -154,8 +156,7 @@ public class PsProteinSection {
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(
                 keys, parameters, peptideSection != null, parameters, peptideSection != null, parameters, waitingHandler); // @TODO: find a better way to know if we need psms
 
-        ProteinMatch proteinMatch;
-        while ((proteinMatch = proteinMatchesIterator.next()) != null) {
+        while (proteinMatchesIterator.hasNext()) {
 
             if (waitingHandler != null) {
                 if (waitingHandler.isRunCanceled()) {
@@ -164,6 +165,7 @@ public class PsProteinSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
+            ProteinMatch proteinMatch = proteinMatchesIterator.next();
             String proteinKey = proteinMatch.getKey();
 
             if (decoys || !ProteinMatch.isDecoy(proteinKey)) {

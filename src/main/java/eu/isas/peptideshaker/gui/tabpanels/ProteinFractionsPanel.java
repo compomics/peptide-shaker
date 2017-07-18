@@ -271,10 +271,10 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                 // update the table model
                 if (proteinTable.getModel() instanceof ProteinTableModel && ((ProteinTableModel) proteinTable.getModel()).isInstantiated()) {
-                    ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
+                    ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), 
                             peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                 } else {
-                    ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
+                    ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), 
                             peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                     proteinTable.setModel(proteinTableModel);
                 }
@@ -396,7 +396,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                                     boolean includePeptide = false;
 
-                                    DigestionPreferences digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionPreferences();
+                                        DigestionPreferences digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionPreferences();
                                     if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected() || digestionPreferences.getCleavagePreference() != DigestionPreferences.CleavagePreference.enzyme) {
                                         includePeptide = true;
                                     } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
@@ -760,18 +760,18 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null, null); // @TODO: add waiting handler?
             //proteinMatchesIterator.setBatchSize(20); // @TODO: add?
 
-            try {
-                ProteinMatch proteinMatch;
-                while ((proteinMatch = proteinMatchesIterator.next()) != null) {
+            while (proteinMatchesIterator.hasNext()) {
+                try {
+                    ProteinMatch proteinMatch = proteinMatchesIterator.next();
                     if (proteinMatch.getPeptideMatchesKeys().contains(peptideKey)) {
                         proteinKey = proteinMatch.getKey();
                         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
                         break;
                     }
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                    return;
                 }
-            } catch (Exception e) {
-                peptideShakerGUI.catchException(e);
-                return;
             }
         }
 

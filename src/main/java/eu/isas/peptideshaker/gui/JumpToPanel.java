@@ -136,7 +136,7 @@ public class JumpToPanel extends javax.swing.JPanel {
      * Updates the item selection in the selected tab.
      */
     public void updateSelectionInTab() {
-
+        
         indexLabel.setForeground(Color.BLACK);
 
         if (types.get(jumpType).get(currentSelection.get(jumpType)) == Type.PROTEIN) {
@@ -211,7 +211,7 @@ public class JumpToPanel extends javax.swing.JPanel {
      * @param key the key of the item
      * @param itemType the type of the item
      * @return the description of an item
-     *
+     * 
      * @throws SQLException thrown if an SQLException occurs
      * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      * @throws IOException thrown if an IOException occurs
@@ -489,10 +489,10 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(secondaryCandidates, null, false, null, null); // @TODO: waiting handler?
 
-                                        try {
-                                            PeptideMatch peptideMatch;
-                                            while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+                                        while (peptideMatchesIterator.hasNext()) {
 
+                                            try {
+                                                PeptideMatch peptideMatch = peptideMatchesIterator.next();
                                                 String peptideKey = peptideMatch.getKey();
                                                 ArrayList<String> proteins = peptideMatch.getTheoreticPeptide().getParentProteinsNoRemapping();
                                                 if (proteins != null) {
@@ -504,10 +504,10 @@ public class JumpToPanel extends javax.swing.JPanel {
                                                         }
                                                     }
                                                 }
+                                            } catch (Exception e) {
+                                                peptideShakerGUI.catchException(e);
+                                                return;
                                             }
-                                        } catch (Exception e) {
-                                            peptideShakerGUI.catchException(e);
-                                            return;
                                         }
                                     }
                                 } else {

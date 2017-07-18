@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -77,12 +76,10 @@ public class SwathExport {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math
-     * exception occurred when estimating the noise level in spectra
      */
     public static void writeSwathExport(File destinationFile, Identification identification, ExportType exportType, WaitingHandler waitingHandler,
             ArrayList<String> targetedPTMs, AnnotationSettings annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, SequenceMatchingPreferences ptmSequenceMatchingPreferences)
-            throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
+            throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (exportType == ExportType.confident_ptms) {
             if (targetedPTMs == null || targetedPTMs.isEmpty()) {
@@ -146,9 +143,9 @@ public class SwathExport {
 
                     PsmIterator psmIterator = identification.getPsmIterator(mgfFile, parameters, false, waitingHandler);
 
-                    SpectrumMatch spectrumMatch;
-                    while ((spectrumMatch = psmIterator.next()) != null) {
+                    while (psmIterator.hasNext()) {
 
+                        SpectrumMatch spectrumMatch = psmIterator.next();
                         String spectrumKey = spectrumMatch.getKey();
 
                         if (identification.matchExists(spectrumKey)) {
@@ -272,12 +269,10 @@ public class SwathExport {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math
-     * exception occurred when estimating the noise level in spectra
      */
     private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences,
             SequenceMatchingPreferences ptmSequenceMatchingPreferences, AnnotationSettings annotationPreferences, PeptideSpectrumAnnotator spectrumAnnotator)
-            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         writePsm(writer, spectrumKey, null, identification, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, annotationPreferences, spectrumAnnotator);
     }
 
@@ -308,13 +303,11 @@ public class SwathExport {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math
-     * exception occurred when estimating the noise level in spectra
      */
     private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification,
             SequenceMatchingPreferences sequenceMatchingPreferences, SequenceMatchingPreferences ptmSequenceMatchingPreferences,
             AnnotationSettings annotationPreferences, PeptideSpectrumAnnotator spectrumAnnotator)
-            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
         PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
@@ -339,7 +332,7 @@ public class SwathExport {
             SpecificAnnotationSettings specificAnnotationPreferences
                     = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), bestAssumption, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
             ArrayList<IonMatch> matches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
-                    (MSnSpectrum) spectrum, bestAssumption.getPeptide(), false);
+                    (MSnSpectrum) spectrum, bestAssumption.getPeptide());
 
             for (IonMatch ionMatch : matches) {
 

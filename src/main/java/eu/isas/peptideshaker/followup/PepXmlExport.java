@@ -417,9 +417,8 @@ public class PepXmlExport {
 
         PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, parameters, true, null);
 
-            SpectrumMatch spectrumMatch;
-            while ((spectrumMatch = psmIterator.next()) != null) {
-                
+        while (psmIterator.hasNext()) {
+            SpectrumMatch spectrumMatch = psmIterator.next();
             String spectrumKey = spectrumMatch.getKey();
             String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
             StringBuilder spectrumQueryStart = new StringBuilder();

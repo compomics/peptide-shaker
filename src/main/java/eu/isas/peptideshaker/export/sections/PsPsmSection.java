@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -122,12 +121,11 @@ public class PsPsmSection {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             IdentificationParameters identificationParameters, ArrayList<String> keys,
             String linePrefix, int nSurroundingAA, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
-            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
+            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -173,8 +171,7 @@ public class PsPsmSection {
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, new ArrayList<String>(
                     psmMap.get(spectrumFile)), parameters, !identificationAlgorithmMatchesFeatures.isEmpty(), waitingHandler);
 
-            SpectrumMatch spectrumMatch;
-            while ((spectrumMatch = psmIterator.next()) != null) {
+            while (psmIterator.hasNext()) {
 
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
@@ -183,6 +180,7 @@ public class PsPsmSection {
                     waitingHandler.increaseSecondaryProgressCounter();
                 }
 
+                SpectrumMatch spectrumMatch = psmIterator.next();
                 String spectrumKey = spectrumMatch.getKey();
 
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);

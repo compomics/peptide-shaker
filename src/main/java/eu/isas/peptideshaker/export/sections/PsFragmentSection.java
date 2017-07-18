@@ -24,7 +24,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -101,11 +100,10 @@ public class PsFragmentSection {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
     public void writeSection(String spectrumKey, SpectrumIdentificationAssumption spectrumIdentificationAssumption, IdentificationParameters identificationParameters,
             String linePrefix, WaitingHandler waitingHandler) throws IOException, SQLException,
-            ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
+            ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);

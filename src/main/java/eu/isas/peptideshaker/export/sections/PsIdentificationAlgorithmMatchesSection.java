@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.export.sections;
 
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.AminoAcid;
 import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.Peptide;
@@ -32,6 +33,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.parameters.PSParameter;
+import eu.isas.peptideshaker.scoring.psm_scoring.PsmScorer;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -39,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -127,12 +128,11 @@ public class PsIdentificationAlgorithmMatchesSection {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             IdentificationParameters identificationParameters, ArrayList<String> keys,
             String linePrefix, int nSurroundingAA, WaitingHandler waitingHandler) throws IOException, SQLException,
-            ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
+            ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -186,8 +186,7 @@ public class PsIdentificationAlgorithmMatchesSection {
 
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, new ArrayList<String>(psmMap.get(spectrumFile)), null, true, waitingHandler); //@TODO: make an assumptions iterator?
 
-            SpectrumMatch spectrumMatch;
-            while ((spectrumMatch = psmIterator.next()) != null) {
+            while (psmIterator.hasNext()) {
 
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
@@ -196,6 +195,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                     waitingHandler.increaseSecondaryProgressCounter();
                 }
 
+                SpectrumMatch spectrumMatch = psmIterator.next();
 
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
@@ -347,13 +347,12 @@ public class PsIdentificationAlgorithmMatchesSection {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
     public static String getPeptideAssumptionFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix, int nSurroundingAA,
             PeptideAssumption peptideAssumption, String spectrumKey, PSParameter psParameter, PsIdentificationAlgorithmMatchesFeature exportFeature,
             WaitingHandler waitingHandler) throws IOException, SQLException,
-            ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
+            ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         switch (exportFeature) {
             case rank:
@@ -475,7 +474,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                 AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
                 SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
                 ArrayList<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
-                        (MSnSpectrum) spectrum, peptide, false);
+                        (MSnSpectrum) spectrum, peptide);
                 for (IonMatch ionMatch : matches) {
                     coveredIntensity += ionMatch.peak.intensity;
                 }

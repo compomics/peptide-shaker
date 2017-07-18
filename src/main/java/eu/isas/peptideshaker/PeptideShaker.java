@@ -675,9 +675,9 @@ public class PeptideShaker {
 
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, null, true, waitingHandler);
 
-            SpectrumMatch spectrumMatch;
-            while ((spectrumMatch = psmIterator.next()) != null) {
+            while (psmIterator.hasNext()) {
 
+                SpectrumMatch spectrumMatch = psmIterator.next();
                 String spectrumKey = spectrumMatch.getKey();
                 HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = identification.getAssumptions(spectrumKey);
 
@@ -822,9 +822,9 @@ public class PeptideShaker {
 
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, false, waitingHandler);
 
-            SpectrumMatch spectrumMatch;
-            while ((spectrumMatch = psmIterator.next()) != null) {
+            while (psmIterator.hasNext()) {
 
+                SpectrumMatch spectrumMatch = psmIterator.next();
                 String spectrumKey = spectrumMatch.getKey();
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 

@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -63,10 +62,9 @@ public class TrainingExport {
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
     public static void exportPepnovoTrainingFiles(File destinationFolder, Identification identification, IdentificationParameters identificationParameters,
-            boolean recalibrate, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException, MathException {
+            boolean recalibrate, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
         exportPepnovoTrainingFiles(destinationFolder, identification, identificationParameters, null, null, recalibrate, waitingHandler);
     }
 
@@ -97,10 +95,9 @@ public class TrainingExport {
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level in spectra
      */
     public static void exportPepnovoTrainingFiles(File destinationFolder, Identification identification, IdentificationParameters identificationParameters, Double fdr, Double fnr,
-            boolean recalibrate, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException, MathException {
+            boolean recalibrate, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         SpectrumRecalibrator spectrumRecalibrator = new SpectrumRecalibrator();

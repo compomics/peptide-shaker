@@ -172,8 +172,8 @@ public class IdentificationFeaturesGenerator {
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
         PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, parameters, false, null);
-        SpectrumMatch spectrumMatch;
-        while ((spectrumMatch = psmIterator.next()) != null) {
+        while (psmIterator.hasNext()) {
+            SpectrumMatch spectrumMatch = psmIterator.next();
             PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
             if (peptideAssumption != null) {
                 String spectrumKey = spectrumMatch.getKey();
@@ -443,9 +443,8 @@ public class IdentificationFeaturesGenerator {
         // iterate the peptides and store the coverage for each peptide validation level
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, false, null, null);
 
-        PeptideMatch peptideMatch;
-        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
-
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             String peptideKey = peptideMatch.getKey();
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
             String peptideSequence = Peptide.getSequence(peptideKey);
@@ -1101,9 +1100,8 @@ public class IdentificationFeaturesGenerator {
 
             // iterate the peptides and store the coverage for each peptide validation level
             PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, false, parameters, null);
-            PeptideMatch peptideMatch;
-            while ((peptideMatch = peptideMatchesIterator.next()) != null) {
-
+            while (peptideMatchesIterator.hasNext()) {
+                PeptideMatch peptideMatch = peptideMatchesIterator.next();
                 String peptideKey = peptideMatch.getKey();
                 psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                 if (psParameter.getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel()) {
@@ -1558,8 +1556,8 @@ public class IdentificationFeaturesGenerator {
         int cpt = 0;
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null, false, null, null);
-        PeptideMatch peptideMatch;
-        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             if (identification.isUniqueInDatabase(peptideMatch.getTheoreticPeptide())) {
                 cpt++;
             }
@@ -1624,8 +1622,8 @@ public class IdentificationFeaturesGenerator {
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, false, null, null);
-        PeptideMatch peptideMatch;
-        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             if (identification.isUniqueInDatabase(peptideMatch.getTheoreticPeptide())) {
                 String peptideKey = peptideMatch.getKey();
                 psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
@@ -1692,8 +1690,8 @@ public class IdentificationFeaturesGenerator {
         int cpt = 0;
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null, false, null, null);
-        PeptideMatch peptideMatch;
-        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             if (getNValidatedProteinGroups(peptideMatch.getTheoreticPeptide()) == 1) {
                 cpt++;
             }
@@ -1758,8 +1756,8 @@ public class IdentificationFeaturesGenerator {
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, false, null, null);
-        PeptideMatch peptideMatch;
-        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             if (getNValidatedProteinGroups(peptideMatch.getTheoreticPeptide()) == 1) {
                 String peptideKey = peptideMatch.getKey();
                 psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
@@ -2013,8 +2011,8 @@ public class IdentificationFeaturesGenerator {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null, false, null, null);
-        PeptideMatch peptideMatch;
-        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             result += peptideMatch.getSpectrumCount();
         }
 
@@ -2146,8 +2144,8 @@ public class IdentificationFeaturesGenerator {
         parameters.add(psParameter);
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null, false, parameters, null);
-        PeptideMatch peptideMatch;
-        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 if (psParameter.getMatchValidationLevel().isValidated()) {
@@ -2188,8 +2186,8 @@ public class IdentificationFeaturesGenerator {
         parameters.add(psParameter);
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null, false, parameters, null);
-        PeptideMatch peptideMatch;
-        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
@@ -2881,9 +2879,9 @@ public class IdentificationFeaturesGenerator {
             parameters.add(psParameter);
             ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
 
-            ProteinMatch proteinMatch;
-            while ((proteinMatch = proteinMatchesIterator.next()) != null) {
+            while (proteinMatchesIterator.hasNext()) {
 
+                ProteinMatch proteinMatch = proteinMatchesIterator.next();
                 String proteinKey = proteinMatch.getKey();
 
                 if (!ProteinMatch.isDecoy(proteinKey)) {
@@ -3108,8 +3106,8 @@ public class IdentificationFeaturesGenerator {
 
             // iterate the peptides and store the coverage for each peptide validation level
             PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, false, parameters, null);
-            PeptideMatch peptideMatch;
-            while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+            while (peptideMatchesIterator.hasNext()) {
+                PeptideMatch peptideMatch = peptideMatchesIterator.next();
                 String peptideKey = peptideMatch.getKey();
                 psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 
@@ -3192,9 +3190,9 @@ public class IdentificationFeaturesGenerator {
 
             PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, parameters, false, null);
 
-            SpectrumMatch spectrumMatch;
-            while ((spectrumMatch = psmIterator.next()) != null) {
+            while (psmIterator.hasNext()) {
 
+                SpectrumMatch spectrumMatch = psmIterator.next();
                 String spectrumKey = spectrumMatch.getKey();
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
