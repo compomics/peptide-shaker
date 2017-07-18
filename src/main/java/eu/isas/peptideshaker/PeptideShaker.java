@@ -810,31 +810,29 @@ public class PeptideShaker {
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
 
-        for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
 
-            while (psmIterator.hasNext()) {
+        while (psmIterator.hasNext()) {
 
-                SpectrumMatch spectrumMatch = psmIterator.next();
-                String spectrumKey = spectrumMatch.getKey();
-                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+            SpectrumMatch spectrumMatch = psmIterator.next();
+            String spectrumKey = spectrumMatch.getKey();
+            String parameterKey = spectrumKey + "_" + psParameter.getParameterKey();
+            psParameter = (PSParameter) identification.retrieveObject(parameterKey);
 
-                if (sequenceFactory.concatenatedTargetDecoy()) {
-                    Integer charge = new Integer(psParameter.getSpecificMapKey());
-                    String fileName = Spectrum.getSpectrumFile(spectrumKey);
-                    psParameter.setPsmProbability(matchesValidator.getPsmMap().getProbability(fileName, charge, psParameter.getPsmProbabilityScore()));
-                } else {
-                    psParameter.setPsmProbability(1.0);
-                }
+            if (sequenceFactory.concatenatedTargetDecoy()) {
+                Integer charge = new Integer(psParameter.getSpecificMapKey());
+                String fileName = Spectrum.getSpectrumFile(spectrumKey);
+                psParameter.setPsmProbability(matchesValidator.getPsmMap().getProbability(fileName, charge, psParameter.getPsmProbabilityScore()));
+            } else {
+                psParameter.setPsmProbability(1.0);
+            }
 
-                identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
-                identification.buildPeptidesAndProteins(spectrumKey, sequenceMatchingPreferences);
+            identification.buildPeptidesAndProteins(spectrumKey, sequenceMatchingPreferences);
 
-                waitingHandler.increaseSecondaryProgressCounter();
-                if (waitingHandler.isRunCanceled()) {
-                    return;
-                }
+            waitingHandler.increaseSecondaryProgressCounter();
+            if (waitingHandler.isRunCanceled()) {
+                return;
             }
         }
 

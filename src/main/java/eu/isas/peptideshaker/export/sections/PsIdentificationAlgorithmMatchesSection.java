@@ -140,39 +140,11 @@ public class PsIdentificationAlgorithmMatchesSection {
             writeHeader();
         }
 
-        HashMap<String, HashSet<String>> psmMap = new HashMap<String, HashSet<String>>();
-
-        if (keys == null) {
-            psmMap = identification.getSpectrumIdentificationMap();
-        } else {
-            for (String key : keys) {
-                String fileName = Spectrum.getSpectrumFile(key);
-                if (!psmMap.containsKey(fileName)) {
-                    psmMap.put(fileName, new HashSet<String>());
-                }
-                psmMap.get(fileName).add(key);
-            }
-        }
 
         PSParameter psParameter = new PSParameter();
         int line = 1;
 
-        int totalSize = 0;
-
-        for (String spectrumFile : psmMap.keySet()) {
-            totalSize += psmMap.get(spectrumFile).size();
-        }
-
-        // get the spectrum keys
-        ArrayList<String> spectrumKeys = new ArrayList<String>();
-
-        for (String spectrumFile : psmMap.keySet()) {
-            for (String spectrumKey : psmMap.get(spectrumFile)) {
-                if (!spectrumKeys.contains(spectrumKey)) {
-                    spectrumKeys.add(spectrumKey);
-                }
-            }
-        }
+        int totalSize = identification.getNumber(SpectrumMatch.class.getSimpleName());
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Exporting. Please Wait...");
@@ -180,85 +152,82 @@ public class PsIdentificationAlgorithmMatchesSection {
             waitingHandler.setMaxSecondaryProgressCounter(totalSize);
         }
 
-        for (String spectrumFile : psmMap.keySet()) {
+        PsmIterator psmIterator = identification.getPsmIterator(waitingHandler); //@TODO: make an assumptions iterator?
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, new ArrayList<String>(psmMap.get(spectrumFile)), null, true, waitingHandler); //@TODO: make an assumptions iterator?
+        while (psmIterator.hasNext()) {
 
-            while (psmIterator.hasNext()) {
-
-                if (waitingHandler != null) {
-                    if (waitingHandler.isRunCanceled()) {
-                        return;
-                    }
-                    waitingHandler.increaseSecondaryProgressCounter();
+            if (waitingHandler != null) {
+                if (waitingHandler.isRunCanceled()) {
+                    return;
                 }
+                waitingHandler.increaseSecondaryProgressCounter();
+            }
 
-                SpectrumMatch spectrumMatch = psmIterator.next();
+            SpectrumMatch spectrumMatch = psmIterator.next();
 
-                if (waitingHandler != null) {
-                    if (waitingHandler.isRunCanceled()) {
-                        return;
-                    }
+            if (waitingHandler != null) {
+                if (waitingHandler.isRunCanceled()) {
+                    return;
                 }
+            }
 
-                String spectrumKey = spectrumMatch.getKey();
+            String spectrumKey = spectrumMatch.getKey();
 
-                HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getAssumptionsMap();
 
-                for (int advocateId : assumptions.keySet()) {
+            for (int advocateId : assumptions.keySet()) {
 
-                    HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateId);
-                    ArrayList<Double> scores = new ArrayList<Double>(advocateAssumptions.keySet());
-                    Collections.sort(scores);
+                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateId);
+                ArrayList<Double> scores = new ArrayList<Double>(advocateAssumptions.keySet());
+                Collections.sort(scores);
 
-                    for (double score : scores) {
-                        for (SpectrumIdentificationAssumption assumption : advocateAssumptions.get(score)) {
+                for (double score : scores) {
+                    for (SpectrumIdentificationAssumption assumption : advocateAssumptions.get(score)) {
 
-                            boolean firstFeature = true;
+                        boolean firstFeature = true;
 
-                            if (indexes) {
-                                if (linePrefix != null) {
-                                    writer.write(linePrefix);
-                                }
-                                writer.write(line + "");
+                        if (indexes) {
+                            if (linePrefix != null) {
+                                writer.write(linePrefix);
+                            }
+                            writer.write(line + "");
+                            firstFeature = false;
+                        }
+
+                        for (PsIdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature : matchExportFeatures) {
+                            if (!firstFeature) {
+                                writer.addSeparator();
+                            } else {
                                 firstFeature = false;
                             }
-
-                            for (PsIdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature : matchExportFeatures) {
-                                if (!firstFeature) {
-                                    writer.addSeparator();
-                                } else {
-                                    firstFeature = false;
-                                }
-                                psParameter = (PSParameter) assumption.getUrParam(psParameter);
-                                String feature;
-                                if (assumption instanceof PeptideAssumption) {
-                                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                    feature = getPeptideAssumptionFeature(identification, identificationFeaturesGenerator,
-                                            identificationParameters, keys, linePrefix, nSurroundingAA,
-                                            peptideAssumption, spectrumKey, psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
-                                } else if (assumption instanceof TagAssumption) {
-                                    TagAssumption tagAssumption = (TagAssumption) assumption;
-                                    feature = getTagAssumptionFeature(identification, identificationFeaturesGenerator,
-                                            identificationParameters, keys, linePrefix, tagAssumption, spectrumKey, psParameter,
-                                            identificationAlgorithmMatchesFeature, waitingHandler);
-                                } else {
-                                    throw new IllegalArgumentException("Spectrum identification assumption of type " + assumption.getClass() + " not supported.");
-                                }
-                                writer.write(feature);
+                            psParameter = (PSParameter) assumption.getUrParam(psParameter);
+                            String feature;
+                            if (assumption instanceof PeptideAssumption) {
+                                PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                                feature = getPeptideAssumptionFeature(identification, identificationFeaturesGenerator,
+                                        identificationParameters, keys, linePrefix, nSurroundingAA,
+                                        peptideAssumption, spectrumKey, psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
+                            } else if (assumption instanceof TagAssumption) {
+                                TagAssumption tagAssumption = (TagAssumption) assumption;
+                                feature = getTagAssumptionFeature(identification, identificationFeaturesGenerator,
+                                        identificationParameters, keys, linePrefix, tagAssumption, spectrumKey, psParameter,
+                                        identificationAlgorithmMatchesFeature, waitingHandler);
+                            } else {
+                                throw new IllegalArgumentException("Spectrum identification assumption of type " + assumption.getClass() + " not supported.");
                             }
-                            writer.addSeparator();
-                            if (fragmentSection != null) {
-                                String fractionPrefix = "";
-                                if (linePrefix != null) {
-                                    fractionPrefix += linePrefix;
-                                }
-                                fractionPrefix += line + ".";
-                                fragmentSection.writeSection(spectrumMatch.getKey(), assumption, identificationParameters, fractionPrefix, null);
-                            }
-                            line++;
-                            writer.newLine();
+                            writer.write(feature);
                         }
+                        writer.addSeparator();
+                        if (fragmentSection != null) {
+                            String fractionPrefix = "";
+                            if (linePrefix != null) {
+                                fractionPrefix += linePrefix;
+                            }
+                            fractionPrefix += line + ".";
+                            fragmentSection.writeSection(spectrumMatch.getKey(), assumption, identificationParameters, fractionPrefix, null);
+                        }
+                        line++;
+                        writer.newLine();
                     }
                 }
             }
