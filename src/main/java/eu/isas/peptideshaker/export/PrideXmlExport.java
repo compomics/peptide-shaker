@@ -388,7 +388,7 @@ public class PrideXmlExport {
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(new PSParameter());
 
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
 
         while (proteinMatchesIterator.hasNext()) {
 
@@ -398,8 +398,8 @@ public class PrideXmlExport {
 
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
             String proteinKey = proteinMatch.getKey();
-
-            proteinProbabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinProbabilities);
+            String parameterKey = proteinKey + "_" + proteinProbabilities.getParameterKey();
+            proteinProbabilities = (PSParameter)identification.retrieveObject(parameterKey);
             double confidenceThreshold;
 
             br.write(getCurrentTabSpace() + "<GelFreeIdentification>" + lineBreak);
@@ -409,7 +409,7 @@ public class PrideXmlExport {
             br.write(getCurrentTabSpace() + "<Accession>" + proteinMatch.getMainMatch() + "</Accession>" + lineBreak);
             br.write(getCurrentTabSpace() + "<Database>" + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDatabaseType() + "</Database>" + lineBreak);
 
-            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, true, parameters, waitingHandler);
+            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), waitingHandler);
 
             while (peptideMatchesIterator.hasNext()) {
 
@@ -419,9 +419,10 @@ public class PrideXmlExport {
 
                 PeptideMatch peptideMatch = peptideMatchesIterator.next();
                 String peptideKey = peptideMatch.getKey();
-                peptideProbabilities = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptideProbabilities);
+                String parameterPepKey = peptideKey + "_" + peptideProbabilities.getParameterKey();
+                peptideProbabilities = (PSParameter) identification.retrieveObject(parameterPepKey);
 
-                PsmIterator psmIterator = identification.getPsmIterator(peptideMatch.getSpectrumMatchesKeys(), parameters, true, waitingHandler);
+                PsmIterator psmIterator = identification.getPsmIterator(peptideMatch.getSpectrumMatchesKeys(), waitingHandler);
 
                 while (psmIterator.hasNext()) {
 
@@ -431,7 +432,8 @@ public class PrideXmlExport {
 
                     SpectrumMatch spectrumMatch = psmIterator.next();
                     String spectrumKey = spectrumMatch.getKey();
-                    psmProbabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psmProbabilities);
+                    String parameterSpectrumKey = spectrumKey + "_" + psmProbabilities.getParameterKey();
+                    psmProbabilities = (PSParameter) identification.retrieveObject(parameterSpectrumKey);
                     PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
                     Peptide tempPeptide = bestAssumption.getPeptide();
 
@@ -466,7 +468,7 @@ public class PrideXmlExport {
                     // Get scores
                     HashMap<Integer, Double> eValues = new HashMap<Integer, Double>();
                     Double mascotScore = null, msAmandaScore = null;
-                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getAssumptionsMap();
                     for (int se : assumptions.keySet()) {
                         HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> seMap = assumptions.get(se);
                         for (double eValue : seMap.keySet()) {
@@ -683,7 +685,7 @@ public class PrideXmlExport {
             br.write(getCurrentTabSpace() + "<userParam name=\"Protein Validation\" value=\"" + matchValidationLevel + "\" />" + lineBreak);
             String otherProteins = "";
             boolean first = true;
-            for (String otherAccession : proteinMatch.getTheoreticProteinsAccessions()) {
+            for (String otherAccession : proteinMatch.getTheoreticProtein()) {
                 if (!otherAccession.equals(proteinMatch.getMainMatch())) {
                     if (first) {
                         first = false;
