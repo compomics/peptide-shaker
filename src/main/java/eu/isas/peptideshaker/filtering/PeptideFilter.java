@@ -95,12 +95,13 @@ public class PeptideFilter extends MatchFilter {
             throw new IllegalArgumentException("Filter item " + itemName + "not recognized as peptide filter item.");
         }
         String input = value.toString();
+        PeptideMatch peptideMatch;
         switch (filterItem) {
             case proteinAccession:
-                PeptideMatch peptideMatch = identification.getPeptideMatch(matchKey);
+                peptideMatch = (PeptideMatch)identification.retrieveObject(matchKey);
                 return filterItemComparator.passes(input, peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences()));
             case proteinDescription:
-                peptideMatch = identification.getPeptideMatch(matchKey);
+                peptideMatch = (PeptideMatch)identification.retrieveObject(matchKey);
                 ArrayList<String> accessions = peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
                 ArrayList<String> descriptions = new ArrayList<String>();
                 for (String accession : accessions) {
@@ -111,7 +112,7 @@ public class PeptideFilter extends MatchFilter {
             case sequence:
                 return filterItemComparator.passes(input, Peptide.getSequence(matchKey));
             case ptm:
-                peptideMatch = identification.getPeptideMatch(matchKey);
+                peptideMatch = (PeptideMatch)identification.retrieveObject(matchKey);
                 ArrayList<String> ptms;
                 PSPtmScores psPtmScores = new PSPtmScores();
                 psPtmScores = (PSPtmScores) peptideMatch.getUrParam(psPtmScores);
@@ -122,7 +123,7 @@ public class PeptideFilter extends MatchFilter {
                 }
                 return filterItemComparator.passes(input, ptms);
             case nPSMs:
-                peptideMatch = identification.getPeptideMatch(matchKey);
+                peptideMatch = (PeptideMatch)identification.retrieveObject(matchKey);
                 Integer nPsms = peptideMatch.getSpectrumCount();
                 return filterItemComparator.passes(input, nPsms.toString());
             case nValidatedPSMs:
@@ -133,22 +134,22 @@ public class PeptideFilter extends MatchFilter {
                 return filterItemComparator.passes(input, nPsms.toString());
             case confidence:
                 PSParameter psParameter = new PSParameter();
-                psParameter = (PSParameter) identification.getPeptideMatchParameter(matchKey, psParameter);
+                psParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(matchKey)).getUrParam(psParameter);
                 Double confidence = psParameter.getProteinConfidence();
                 return filterItemComparator.passes(input, confidence.toString());
             case proteinInference:
                 psParameter = new PSParameter();
-                psParameter = (PSParameter) identification.getPeptideMatchParameter(matchKey, psParameter);
+                psParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(matchKey)).getUrParam(psParameter);
                 Integer pi = psParameter.getProteinInferenceGroupClass();
                 return filterItemComparator.passes(input, pi.toString());
             case validationStatus:
                 psParameter = new PSParameter();
-                psParameter = (PSParameter) identification.getPeptideMatchParameter(matchKey, psParameter);
+                psParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(matchKey)).getUrParam(psParameter);
                 Integer validation = psParameter.getMatchValidationLevel().getIndex();
                 return filterItemComparator.passes(input, validation.toString());
             case stared:
                 psParameter = new PSParameter();
-                psParameter = (PSParameter) identification.getPeptideMatchParameter(matchKey, psParameter);
+                psParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(matchKey)).getUrParam(psParameter);
                 String starred;
                 if (psParameter.getStarred()) {
                     starred = FilterItemComparator.trueFalse[0];
