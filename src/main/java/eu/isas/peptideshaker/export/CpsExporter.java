@@ -82,13 +82,6 @@ public class CpsExporter {
                 identification.addObject(PeptideShakerSettings.nameInCpsSettingsTable, peptideShakerSettings);
             }
 
-            // save the objects in cache
-            objectsCache.saveCache(waitingHandler, emptyCache);
-            objectsCache.setReadOnly(true);
-
-            // close connection
-            identification.close();
-
             // transfer all files in the match directory
             if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
                 waitingHandler.setPrimaryProgressCounterIndeterminate(true);
@@ -117,7 +110,6 @@ public class CpsExporter {
 
         } finally {
             // Restore the project navigability
-            objectsCache.setReadOnly(false);
             identificationFeaturesCache.setReadOnly(false);
             /*
             if (!identification.isConnectionActive()) {
