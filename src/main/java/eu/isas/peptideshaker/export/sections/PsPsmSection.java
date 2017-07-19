@@ -161,7 +161,7 @@ public class PsPsmSection {
 
             SpectrumMatch spectrumMatch = psmIterator.next();
             String spectrumKey = spectrumMatch.getKey();
-            psParameter = (PSParameter)spectrumMatch.getParameters();
+            psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
 
             if (!validatedOnly || psParameter.getMatchValidationLevel().isValidated()) {
 
@@ -285,7 +285,7 @@ public class PsPsmSection {
                 }
                 for (String proteinGroup : proteinGroupsList) {
                     if (identification.getProteinIdentification().contains(proteinGroup)) {
-                        psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinGroup)).getParameters();
+                        psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinGroup)).getUrParam(psParameter);
                         if (proteins.length() > 0) {
                             proteins.append("; ");
                         }
@@ -323,7 +323,7 @@ public class PsPsmSection {
                 }
                 for (String proteinGroup : proteinGroupsList) {
                     if (identification.getProteinIdentification().contains(proteinGroup)) {
-                        psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinGroup)).getParameters();
+                        psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinGroup)).getUrParam(psParameter);
                         if (psParameter.getMatchValidationLevel().getIndex() > bestProteinValidationLevel.getIndex()) {
                             bestProteinValidationLevel = psParameter.getMatchValidationLevel();
                         }

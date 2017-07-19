@@ -151,7 +151,7 @@ public class PsPeptideSection {
             }
 
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            psParameter = (PSParameter)peptideMatch.getParameters();
+            psParameter = (PSParameter)peptideMatch.getUrParam(psParameter);
 
             if (!validatedOnly || psParameter.getMatchValidationLevel().isValidated()) {
 
@@ -266,7 +266,7 @@ public class PsPeptideSection {
                 }
                 for (String proteinGroup : proteinGroupsList) {
                     if (identification.getProteinIdentification().contains(proteinGroup)) {
-                        psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinGroup)).getParameters();
+                        psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinGroup)).getUrParam(psParameter);
                         if (proteins.length() > 0) {
                             proteins.append("; ");
                         }
@@ -297,7 +297,7 @@ public class PsPeptideSection {
                 }
                 for (String proteinGroup : proteinGroupsList) {
                     if (identification.getProteinIdentification().contains(proteinGroup)) {
-                        psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinGroup)).getParameters();
+                        psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinGroup)).getUrParam(psParameter);
                         if (psParameter.getMatchValidationLevel().getIndex() > bestProteinValidationLevel.getIndex()) {
                             bestProteinValidationLevel = psParameter.getMatchValidationLevel();
                         }

@@ -1325,7 +1325,7 @@ public class MzIdentMLExport {
             br.write(getCurrentTabSpace() + "<ProteinAmbiguityGroup id=\"" + proteinGroupId + "\">" + lineBreak);
             tabCounter++;
 
-            psParameter = (PSParameter)proteinMatch.getParameters();
+            psParameter = (PSParameter)proteinMatch.getUrParam(psParameter);
 
             String mainAccession = proteinMatch.getMainMatch();
 
@@ -1446,8 +1446,8 @@ public class MzIdentMLExport {
         PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
 
         if (bestPeptideAssumption != null) {
-
-            PSParameter psmParameter = (PSParameter)spectrumMatch.getParameters();
+            PSParameter psmParameter = new PSParameter();
+            psmParameter = (PSParameter)spectrumMatch.getUrParam(psmParameter);
             int rank = 1; // @TODO: should not be hardcoded?
             String spectrumIdentificationItemKey = "SII_" + psmIndex + "_" + rank;
             spectrumIds.put(psmKey, spectrumIdentificationItemKey);
@@ -1685,8 +1685,8 @@ public class MzIdentMLExport {
                             }
                         }
                     }
-
-                    PSParameter peptideParameter = (PSParameter)peptideMatch.getParameters();
+                    PSParameter peptideParameter = new PSParameter();
+                    peptideParameter = (PSParameter)peptideMatch.getUrParam(psmParameter);
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002469", "PeptideShaker peptide confidence", peptideParameter.getPeptideConfidence() + ""));
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002468", "PeptideShaker peptide score", peptideParameter.getPeptideScore() + ""));
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002500", "peptide passes threshold", peptideParameter.getMatchValidationLevel().isValidated() + ""));

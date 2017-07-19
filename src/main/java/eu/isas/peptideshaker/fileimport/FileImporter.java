@@ -911,7 +911,7 @@ public class FileImporter {
             // remap wrong spectrum file names
             if (spectrumFactory.getSpectrumFileFromIdName(fileName) != null) {
                 fileName = spectrumFactory.getSpectrumFileFromIdName(fileName).getName();
-                spectrumMatch.setKey(Spectrum.getSpectrumKey(fileName, spectrumTitle));
+                spectrumMatch.setKey(fileName, spectrumTitle);
                 spectrumKey = spectrumMatch.getKey();
             }
 
@@ -953,11 +953,11 @@ public class FileImporter {
                 }
                 spectrumTitle = spectrumFactory.getSpectrumTitle(fileName, spectrumNumber);
                 spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
-                spectrumMatch.setKey(spectrumKey);
+                spectrumMatch.setKey(fileName, spectrumTitle);
                 if (!spectrumFactory.spectrumLoaded(spectrumKey)) {
                     spectrumTitle = spectrumNumber + "";
                     spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
-                    spectrumMatch.setKey(spectrumKey);
+                    spectrumMatch.setKey(fileName, spectrumTitle);
                     if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
                         String errorMessage = "Spectrum \'" + oldTitle + "\' number " + spectrumTitle + " not found in file " + fileName + ".";
                         waitingHandler.appendReport(errorMessage, true, true);

@@ -108,40 +108,98 @@ public class TrainingExport {
 
         int progress = 1;
 
-        for (String fileName : spectrumFactory.getMgfFileNames()) {
-
-            if (recalibrate) {
-                if (waitingHandler != null) {
-                    if (waitingHandler.isRunCanceled()) {
-                        break;
-                    }
-
-                    waitingHandler.setWaitingText("Recalibrating Spectra. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ")");
-                    waitingHandler.setSecondaryProgressCounter(0);
-                    waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-                    waitingHandler.setMaxSecondaryProgressCounter(2 * spectrumFactory.getNSpectra(fileName));
-                }
-
-                spectrumRecalibrator.estimateErrors(fileName, identification, identificationParameters, waitingHandler);
-            }
-
-            PSParameter psParameter = new PSParameter();
-            identification.loadSpectrumMatchParameters(fileName, psParameter, waitingHandler, true);
-
+        if (recalibrate) {
             if (waitingHandler != null) {
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
-                waitingHandler.setWaitingText("Selecting Good PSMs. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ")");
-                // reset the progress bar
-                waitingHandler.resetSecondaryProgressCounter();
-                waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(fileName).size());
+
+                waitingHandler.setWaitingText("Recalibrating Spectra. Please Wait...");
+                waitingHandler.setSecondaryProgressCounter(0);
+                waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+                waitingHandler.setMaxSecondaryProgressCounter(2 * spectrumFactory.getNSpectra(fileName));
             }
 
-            ArrayList<String> keys = new ArrayList<String>();
+            spectrumRecalibrator.estimateErrors(fileName, identification, identificationParameters, waitingHandler);
+        }
+
+        PSParameter psParameter = new PSParameter();
+        identification.loadSpectrumMatchParameters(fileName, psParameter, waitingHandler, true);
+        
+        SpectrumMatch spectrumMatch = null;
+        spectrumMatch.getUrParam(psParameter);
+        
+
+        if (waitingHandler != null) {
+            if (waitingHandler.isRunCanceled()) {
+                return;
+            }
+            waitingHandler.setWaitingText("Selecting Good PSMs. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ")");
+            // reset the progress bar
+            waitingHandler.resetSecondaryProgressCounter();
+            waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(fileName).size());
+        }
+
+        ArrayList<String> keys = new ArrayList<String>();
+        for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {
+
+            String spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
+            if (identification.matchExists(spectrumKey)) {
+                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                Integer charge = new Integer(psParameter.getSpecificMapKey());
+                String spectrumFile = Spectrum.getSpectrumFile(spectrumKey);
+                Double fdrThreshold = getFdrThreshold(psmTargetDecoyMap, charge, spectrumTitle, fdr);
+                double confidenceLevel = getHighConfidenceThreshold(psmTargetDecoyMap, charge, spectrumFile, fdrThreshold);
+                if (psParameter.getPsmConfidence() >= confidenceLevel) {
+                    keys.add(spectrumKey);
+                }
+            }
+            if (waitingHandler != null) {
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
+                waitingHandler.increaseSecondaryProgressCounter();
+            }
+        }
+        if (waitingHandler != null) {
+            if (waitingHandler.isRunCanceled()) {
+                return;
+            }
+            waitingHandler.setWaitingText("Loading PSMs. Please Wait... (" + progress + "/"
+                    + spectrumFactory.getMgfFileNames().size() + ")");
+        }
+        identification.loadSpectrumMatches(keys, waitingHandler, true);
+
+        if (waitingHandler != null) {
+            if (waitingHandler.isRunCanceled()) {
+                return;
+            }
+            waitingHandler.setWaitingText("Exporting PepNovo Training Files. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ").");
+            // reset the progress bar
+            waitingHandler.resetSecondaryProgressCounter();
+            waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(fileName).size());
+        }
+
+        File file = new File(destinationFolder, getGoodSetFileName(fileName));
+        BufferedWriter writerGood = new BufferedWriter(new FileWriter(file));
+        file = new File(destinationFolder, getBadSetFileName(fileName));
+        BufferedWriter writerBad = new BufferedWriter(new FileWriter(file));
+        BufferedWriter writerRecalibration = null;
+        if (recalibrate) {
+            file = new File(destinationFolder, RecalibrationExporter.getRecalibratedFileName(fileName));
+            writerRecalibration = new BufferedWriter(new FileWriter(file));
+        }
+
+        try {
             for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {
 
                 String spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
+
+                MSnSpectrum spectrum = null;
+                if (recalibrate) {
+                    spectrum = spectrumRecalibrator.recalibrateSpectrum(fileName, spectrumTitle, true, true);
+                    spectrum.writeMgf(writerRecalibration);
+                }
                 if (identification.matchExists(spectrumKey)) {
                     psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                     Integer charge = new Integer(psParameter.getSpecificMapKey());
@@ -149,9 +207,26 @@ public class TrainingExport {
                     Double fdrThreshold = getFdrThreshold(psmTargetDecoyMap, charge, spectrumTitle, fdr);
                     double confidenceLevel = getHighConfidenceThreshold(psmTargetDecoyMap, charge, spectrumFile, fdrThreshold);
                     if (psParameter.getPsmConfidence() >= confidenceLevel) {
-                        keys.add(spectrumKey);
+                        if (spectrum == null) {
+                            spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
+                        }
+                        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                        if (spectrumMatch.getBestPeptideAssumption() != null) {
+                            String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
+                            HashMap<String, String> tags = new HashMap<String, String>();
+                            tags.put("SEQ", sequence);
+                            spectrum.writeMgf(writerGood, tags);
+                        }
+                    }
+                    confidenceLevel = getLowConfidenceThreshold(psmTargetDecoyMap, charge, spectrumFile, fnr, fdrThreshold);
+                    if (psParameter.getPsmConfidence() <= confidenceLevel) {
+                        if (spectrum == null) {
+                            spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
+                        }
+                        spectrum.writeMgf(writerBad);
                     }
                 }
+
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
                         return;
@@ -159,90 +234,16 @@ public class TrainingExport {
                     waitingHandler.increaseSecondaryProgressCounter();
                 }
             }
-            if (waitingHandler != null) {
-                if (waitingHandler.isRunCanceled()) {
-                    return;
-                }
-                waitingHandler.setWaitingText("Loading PSMs. Please Wait... (" + progress + "/"
-                        + spectrumFactory.getMgfFileNames().size() + ")");
+        } finally {
+            writerBad.close();
+            writerGood.close();
+            if (writerRecalibration != null) {
+                writerRecalibration.close();
             }
-            identification.loadSpectrumMatches(keys, waitingHandler, true);
-
-            if (waitingHandler != null) {
-                if (waitingHandler.isRunCanceled()) {
-                    return;
-                }
-                waitingHandler.setWaitingText("Exporting PepNovo Training Files. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ").");
-                // reset the progress bar
-                waitingHandler.resetSecondaryProgressCounter();
-                waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(fileName).size());
-            }
-
-            File file = new File(destinationFolder, getGoodSetFileName(fileName));
-            BufferedWriter writerGood = new BufferedWriter(new FileWriter(file));
-            file = new File(destinationFolder, getBadSetFileName(fileName));
-            BufferedWriter writerBad = new BufferedWriter(new FileWriter(file));
-            BufferedWriter writerRecalibration = null;
-            if (recalibrate) {
-                file = new File(destinationFolder, RecalibrationExporter.getRecalibratedFileName(fileName));
-                writerRecalibration = new BufferedWriter(new FileWriter(file));
-            }
-
-            try {
-                for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {
-
-                    String spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
-
-                    MSnSpectrum spectrum = null;
-                    if (recalibrate) {
-                        spectrum = spectrumRecalibrator.recalibrateSpectrum(fileName, spectrumTitle, true, true);
-                        spectrum.writeMgf(writerRecalibration);
-                    }
-                    if (identification.matchExists(spectrumKey)) {
-                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                        Integer charge = new Integer(psParameter.getSpecificMapKey());
-                        String spectrumFile = Spectrum.getSpectrumFile(spectrumKey);
-                        Double fdrThreshold = getFdrThreshold(psmTargetDecoyMap, charge, spectrumTitle, fdr);
-                        double confidenceLevel = getHighConfidenceThreshold(psmTargetDecoyMap, charge, spectrumFile, fdrThreshold);
-                        if (psParameter.getPsmConfidence() >= confidenceLevel) {
-                            if (spectrum == null) {
-                                spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
-                            }
-                            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                            if (spectrumMatch.getBestPeptideAssumption() != null) {
-                                String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
-                                HashMap<String, String> tags = new HashMap<String, String>();
-                                tags.put("SEQ", sequence);
-                                spectrum.writeMgf(writerGood, tags);
-                            }
-                        }
-                        confidenceLevel = getLowConfidenceThreshold(psmTargetDecoyMap, charge, spectrumFile, fnr, fdrThreshold);
-                        if (psParameter.getPsmConfidence() <= confidenceLevel) {
-                            if (spectrum == null) {
-                                spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
-                            }
-                            spectrum.writeMgf(writerBad);
-                        }
-                    }
-
-                    if (waitingHandler != null) {
-                        if (waitingHandler.isRunCanceled()) {
-                            return;
-                        }
-                        waitingHandler.increaseSecondaryProgressCounter();
-                    }
-                }
-            } finally {
-                writerBad.close();
-                writerGood.close();
-                if (writerRecalibration != null) {
-                    writerRecalibration.close();
-                }
-            }
-
-            spectrumRecalibrator.clearErrors(fileName);
-            progress++;
         }
+
+        spectrumRecalibrator.clearErrors(fileName);
+        progress++;
     }
 
     /**

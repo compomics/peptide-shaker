@@ -19,7 +19,6 @@ import com.compomics.util.experiment.identification.identification_parameters.to
 import com.compomics.util.experiment.identification.identification_parameters.tool_specific.XtandemParameters;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
@@ -35,8 +34,6 @@ import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
-import com.compomics.util.experiment.identification.protein_inference.PeptideMapperType;
-import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.experiment.io.identifications.idfilereaders.NovorIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.OnyaseIdfileReader;
 import com.compomics.util.preferences.ProcessingPreferences;
@@ -343,10 +340,6 @@ public class PsmImporter {
     private void importPsm(SpectrumMatch spectrumMatch, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
             throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
-        // free memory if needed
-        if (MemoryConsumptionStatus.memoryUsed() > 0.9 && !peptideShakerCache.isEmpty()) {
-            peptideShakerCache.reduceMemoryConsumption(0.5, null);
-        }
 
         nPSMs++;
 
@@ -355,7 +348,7 @@ public class PsmImporter {
         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> matchAssumptions = spectrumMatch.getAssumptionsMap();
         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> rawDbAssumptions = null;
         if (fileReader.hasDeNovoTags()) { // for now only de novo results are stored in the database at this point
-            rawDbAssumptions = identification.getRawAssumptions(spectrumKey);
+            rawDbAssumptions = ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getRawAssumptions();
         }
 
         if (matchAssumptions == null && rawDbAssumptions == null) {

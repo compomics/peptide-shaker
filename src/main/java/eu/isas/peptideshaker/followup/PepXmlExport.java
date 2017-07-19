@@ -414,11 +414,18 @@ public class PepXmlExport {
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
+        
+        ArrayList<String> spectrumTitles = spectrumFactory.getSpectrumTitles(spectrumFile);
+        for (String spectrumTitle : spectrumTitles) {
+            String spectrumKey = Spectrum.getSpectrumKey(spectrumFile, spectrumTitle);
+            String spectrumTitle2 = Spectrum.getSpectrumTitle(spectrumKey);
+        }
 
         PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, parameters, true, null);
 
         while (psmIterator.hasNext()) {
             SpectrumMatch spectrumMatch = psmIterator.next();
+            spectrumMatch.getKey()
             String spectrumKey = spectrumMatch.getKey();
             String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
             StringBuilder spectrumQueryStart = new StringBuilder();

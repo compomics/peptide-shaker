@@ -97,7 +97,7 @@ public class AssumptionFilter extends MatchFilter {
     @Override
     public boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, String spectrumKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
-        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+        SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(spectrumKey);
         PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
         return isValidated(itemName, filterItemComparator, value, spectrumKey, peptideAssumption, identification, identificationFeaturesGenerator, identificationParameters, peptideSpectrumAnnotator);
     }
@@ -256,17 +256,17 @@ public class AssumptionFilter extends MatchFilter {
                 return filterItemComparator.passes(input, Spectrum.getSpectrumFile(spectrumKey));
             case confidence:
                 PSParameter psParameter = new PSParameter();
-                psParameter = (PSParameter) identification.getPeptideMatchParameter(spectrumKey, psParameter);
+                psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(psParameter);
                 Double confidence = psParameter.getProteinConfidence();
                 return filterItemComparator.passes(input, confidence.toString());
             case validationStatus:
                 psParameter = new PSParameter();
-                psParameter = (PSParameter) identification.getPeptideMatchParameter(spectrumKey, psParameter);
+                psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(psParameter);
                 Integer validation = psParameter.getMatchValidationLevel().getIndex();
                 return filterItemComparator.passes(input, validation.toString());
             case stared:
                 psParameter = new PSParameter();
-                psParameter = (PSParameter) identification.getPeptideMatchParameter(spectrumKey, psParameter);
+                psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(psParameter);
                 String starred;
                 if (psParameter.getStarred()) {
                     starred = FilterItemComparator.trueFalse[0];
