@@ -12,8 +12,6 @@ import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.exceptions.exception_handlers.CommandLineExceptionHandler;
-import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
-import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
@@ -464,8 +462,6 @@ public class FileImporter {
 
                 identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
-                connectToIdDb(identification);
-
                 waitingHandler.increasePrimaryProgressCounter();
 
                 if (!waitingHandler.isRunCanceled()) {
@@ -612,25 +608,6 @@ public class FileImporter {
             }
 
             return 0;
-        }
-
-        /**
-         * Establishes a connection to the identification database.
-         *
-         * @param identification the identifications
-         *
-         * @throws IOException thrown of IOException occurs exception thrown
-         * whenever an error occurred while reading or writing a file
-         * @throws SQLException thrown of SQLException occurs exception thrown
-         * whenever an error occurred while interacting with the database
-         * @throws java.lang.ClassNotFoundException exception thrown whenever an
-         * error occurred while deserializing an object
-         * @throws java.lang.InterruptedException exception thrown whenever a
-         * threading error occurred while establishing the connection
-         */
-        private void connectToIdDb(Identification identification) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-            String dbFolder = PeptideShaker.getMatchesFolder().getAbsolutePath();
-            identification.establishConnection(dbFolder, true, peptideShaker.getCache());
         }
 
         /**
@@ -789,15 +766,7 @@ public class FileImporter {
                             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                             double share = ((double) 1073741824) / (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
                             share = Math.min(share, 1);
-                            peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
                             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-                        }
-                        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-                        if (sequenceMatchingPreferences.getPeptideMapperType() == PeptideMapperType.tree) {
-                            ProteinTree proteinTree = (ProteinTree) sequenceFactory.getDefaultPeptideMapper();
-                            if (!MemoryConsumptionStatus.halfGbFree() && proteinTree.getNodesInCache() > 0) {
-                                proteinTree.reduceNodeCacheSize(0.5);
-                            }
                         }
                         projectDetails.addIdentificationFiles(idFile);
 
