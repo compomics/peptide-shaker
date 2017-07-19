@@ -152,7 +152,7 @@ public class ProteinFilter extends MatchFilter {
                 coverage = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
                 return filterItemComparator.passes(input, coverage.toString());
             case ptm:
-                ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);
+                ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(matchKey);
                 ArrayList<String> ptms;
                 PSPtmScores psPtmScores = new PSPtmScores();
                 psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
@@ -163,7 +163,7 @@ public class ProteinFilter extends MatchFilter {
                 }
                 return filterItemComparator.passes(input, ptms);
             case nPeptides:
-                proteinMatch = identification.getProteinMatch(matchKey);
+                proteinMatch = (ProteinMatch)identification.retrieveObject(matchKey);
                 Integer nPeptides = proteinMatch.getPeptideCount();
                 return filterItemComparator.passes(input, nPeptides.toString());
             case nValidatedPeptides:
@@ -183,22 +183,22 @@ public class ProteinFilter extends MatchFilter {
                 return filterItemComparator.passes(input, nPsms.toString());
             case confidence:
                 PSParameter psParameter = new PSParameter();
-                psParameter = (PSParameter) identification.getProteinMatchParameter(matchKey, psParameter);
+                psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(matchKey)).getUrParam(psParameter);
                 Double confidence = psParameter.getProteinConfidence();
                 return filterItemComparator.passes(input, confidence.toString());
             case proteinInference:
                 psParameter = new PSParameter();
-                psParameter = (PSParameter) identification.getProteinMatchParameter(matchKey, psParameter);
+                psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(matchKey)).getUrParam(psParameter);
                 Integer pi = psParameter.getProteinInferenceGroupClass();
                 return filterItemComparator.passes(input, pi.toString());
             case validationStatus:
                 psParameter = new PSParameter();
-                psParameter = (PSParameter) identification.getProteinMatchParameter(matchKey, psParameter);
+                psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(matchKey)).getUrParam(psParameter);
                 Integer validation = psParameter.getMatchValidationLevel().getIndex();
                 return filterItemComparator.passes(input, validation.toString());
             case stared:
                 psParameter = new PSParameter();
-                psParameter = (PSParameter) identification.getProteinMatchParameter(matchKey, psParameter);
+                psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(matchKey)).getUrParam(psParameter);
                 String starred;
                 if (psParameter.getStarred()) {
                     starred = FilterItemComparator.trueFalse[0];
