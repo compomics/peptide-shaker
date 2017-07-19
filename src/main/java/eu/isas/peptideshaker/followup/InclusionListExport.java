@@ -77,23 +77,20 @@ public class InclusionListExport {
                     waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size());
                 }
 
-                PSParameter psParameter = new PSParameter();
-                ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-                parameters.add(psParameter);
-                ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
+                PSParameter psParameter;
+                ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
 
                 while (proteinMatchesIterator.hasNext()) {
 
                     ProteinMatch proteinMatch = proteinMatchesIterator.next();
-                    String proteinMatchKey = proteinMatch.getKey();
-                    psParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, psParameter);
+                    psParameter = (PSParameter)proteinMatch.getParameters();
 
                     if (!proteinFilters.contains(psParameter.getProteinInferenceGroupClass())) {
 
                         ArrayList<String> peptideMatches = new ArrayList<String>();
 
                         for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-                            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+                            psParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(peptideKey)).getParameters();
                             if (psParameter.getMatchValidationLevel().isValidated()) {
                                 boolean passesFilter = true;
                                 for (PeptideFilterType filterType : peptideFilters) {
@@ -141,10 +138,10 @@ public class InclusionListExport {
 
                         if (!peptideMatches.isEmpty()) {
                             for (String peptideKey : peptideMatches) {
-                                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                                PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(peptideKey);
                                 ArrayList<String> validatedPsms = new ArrayList<String>();
                                 for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
-                                    psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                                    psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getParameters();
                                     if (psParameter.getMatchValidationLevel().isValidated()) {
                                         validatedPsms.add(spectrumKey);
                                     }
@@ -155,7 +152,7 @@ public class InclusionListExport {
                                         retentionTimes.add(spectrumFactory.getPrecursor(spectrumKey).getRt());
                                     }
                                     for (String spectrumKey : validatedPsms) {
-                                        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                                        SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(spectrumKey);
                                         if (spectrumMatch.getBestPeptideAssumption() != null) {
                                             String line = getInclusionListLine(spectrumMatch, retentionTimes, rtWindow, exportFormat, searchParameters);
                                             b.write(line);
