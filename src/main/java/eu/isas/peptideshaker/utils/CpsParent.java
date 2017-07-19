@@ -89,10 +89,6 @@ public class CpsParent extends UserPreferencesParent {
      */
     protected ProteomicAnalysis proteomicAnalysis;
     /**
-     * The cache used to store objects.
-     */
-    protected ObjectsCache objectsCache;
-    /**
      * The filter preferences.
      */
     protected FilterPreferences filterPreferences = new FilterPreferences();
@@ -237,13 +233,9 @@ public class CpsParent extends UserPreferencesParent {
 
         // Get identification and restore connection
         identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        objectsCache = new ObjectsCache();
-        objectsCache.setAutomatedMemoryManagement(true);
-        objectsCache.setReadOnly(false);
-        identification.restoreConnection(dbFolder.getAbsolutePath(), false, objectsCache);
 
         // Get PeptideShaker settings
-        PeptideShakerSettings experimentSettings = cpsFileImporter.getPeptideShakerSettings(identification.getIdentificationDB().getObjectsDB());
+        PeptideShakerSettings experimentSettings = cpsFileImporter.getPeptideShakerSettings(identification.getObjectsDB());
         identificationParameters = experimentSettings.getIdentificationParameters();
         spectrumCountingPreferences = experimentSettings.getSpectrumCountingPreferences();
         projectDetails = experimentSettings.getProjectDetails();
@@ -309,8 +301,7 @@ public class CpsParent extends UserPreferencesParent {
     public void saveProject(WaitingHandler waitingHandler, boolean emptyCache) throws IOException, SQLException, ArchiveException, ClassNotFoundException, InterruptedException {
         CpsExporter.saveAs(cpsFile, waitingHandler, experiment, identification, shotgunProtocol, identificationParameters,
                 spectrumCountingPreferences, projectDetails, filterPreferences, metrics, geneMaps,
-                identificationFeaturesGenerator.getIdentificationFeaturesCache(),
-                objectsCache, emptyCache, displayPreferences, dbFolder);
+                identificationFeaturesGenerator.getIdentificationFeaturesCache(), emptyCache, displayPreferences, dbFolder);
 
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);
@@ -477,15 +468,6 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Returns the objects database used for this project.
-     *
-     * @return the objects database used for this project
-     */
-    public ObjectsDB getObjectsDB() {
-        return identification.getIdentificationDB().getObjectsDB(); //@TODO: avoid using the identification object.
-    }
-
-    /**
      * Returns the identification object.
      *
      * @return the identification object
@@ -576,15 +558,6 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Returns the object cache.
-     *
-     * @return the object cache
-     */
-    public ObjectsCache getObjectsCache() {
-        return objectsCache;
-    }
-
-    /**
      * Returns the filter preferences.
      *
      * @return the filter preferences
@@ -658,15 +631,6 @@ public class CpsParent extends UserPreferencesParent {
      */
     public void setGeneMaps(GeneMaps geneMaps) {
         this.geneMaps = geneMaps;
-    }
-
-    /**
-     * Sets the objects cache.
-     *
-     * @param objectsCache the objects cache
-     */
-    public void setObjectsCache(ObjectsCache objectsCache) {
-        this.objectsCache = objectsCache;
     }
 
     /**
