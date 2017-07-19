@@ -101,6 +101,7 @@ public class CpsExporter {
             }
 
             // tar everything in the current cps file
+            /*
             if (waitingHandler == null || !waitingHandler.isRunCanceled()) {
                 File logFolder = new File(objectsDB.getPath(), "log");
                 HashSet<String> exceptions = new HashSet<String>(1);
@@ -112,14 +113,17 @@ public class CpsExporter {
                 }
                 TarUtils.tarFolderContent(dbFolder, destinationFile, exceptions, waitingHandler);
             }
+            */
 
         } finally {
             // Restore the project navigability
             objectsCache.setReadOnly(false);
             identificationFeaturesCache.setReadOnly(false);
+            /*
             if (!identification.isConnectionActive()) {
                 identification.restoreConnection(dbFolder.getAbsolutePath(), false, objectsCache);
             }
+            */
         }
     }
 }

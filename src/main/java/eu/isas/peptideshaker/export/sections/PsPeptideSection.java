@@ -6,7 +6,6 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
-import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -152,9 +151,7 @@ public class PsPeptideSection {
             }
 
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            String peptideKey = peptideMatch.getKey();
-            String parameterKey = peptideKey + "_" + psParameter.getParameterKey();
-            psParameter = (PSParameter) identification.retrieveObject(parameterKey);
+            psParameter = (PSParameter)peptideMatch.getParameters();
 
             if (!validatedOnly || psParameter.getMatchValidationLevel().isValidated()) {
 
@@ -267,11 +264,9 @@ public class PsPeptideSection {
                 if (proteinGroupsList.size() > 1) {
                     identification.loadObjects(proteinGroupsList, waitingHandler, false);
                 }
-                psParameter = new PSParameter();
                 for (String proteinGroup : proteinGroupsList) {
                     if (identification.getProteinIdentification().contains(proteinGroup)) {
-                        String parameterKey = proteinGroup + "_" + psParameter.getParameterKey();
-                        psParameter = (PSParameter)identification.retrieveObject(parameterKey);
+                        psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinGroup)).getParameters();
                         if (proteins.length() > 0) {
                             proteins.append("; ");
                         }
@@ -300,11 +295,9 @@ public class PsPeptideSection {
                 if (proteinGroupsList.size() > 1) {
                     identification.loadObjects(proteinGroupsList, waitingHandler, false);
                 }
-                psParameter = new PSParameter();
                 for (String proteinGroup : proteinGroupsList) {
                     if (identification.getProteinIdentification().contains(proteinGroup)) {
-                        String parameterKey = proteinGroup + "_" + psParameter.getParameterKey();
-                        psParameter = (PSParameter)identification.retrieveObject(parameterKey);
+                        psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinGroup)).getParameters();
                         if (psParameter.getMatchValidationLevel().getIndex() > bestProteinValidationLevel.getIndex()) {
                             bestProteinValidationLevel = psParameter.getMatchValidationLevel();
                         }

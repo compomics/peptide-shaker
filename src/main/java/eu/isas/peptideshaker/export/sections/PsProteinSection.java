@@ -168,8 +168,7 @@ public class PsProteinSection {
             String proteinKey = proteinMatch.getKey();
 
             if (decoys || !ProteinMatch.isDecoy(proteinKey)) {
-                String parameterKey = proteinKey + "_" + psParameter.getParameterKey();
-                psParameter = (PSParameter)identification.retrieveObject(parameterKey);
+                psParameter = (PSParameter)proteinMatch.getParameters();
 
                 if (!validatedOnly || psParameter.getMatchValidationLevel().isValidated()) {
 

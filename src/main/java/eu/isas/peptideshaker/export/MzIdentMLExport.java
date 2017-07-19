@@ -572,7 +572,7 @@ public class MzIdentMLExport {
         // set up the spectrum key to peptide key map
         spectrumKeyToPeptideKeyMap = new HashMap<String, String>();
 
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters, waitingHandler);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(waitingHandler);
 
         while (peptideMatchesIterator.hasNext()) {
 
@@ -631,7 +631,7 @@ public class MzIdentMLExport {
         int peptideEvidenceCounter = 0;
 
         // re-iterate the peptides to get peptide to protein mapping
-        peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters, waitingHandler);
+        peptideMatchesIterator = identification.getPeptideMatchesIterator(waitingHandler);
 
         while (peptideMatchesIterator.hasNext()) {
 
@@ -1263,22 +1263,14 @@ public class MzIdentMLExport {
         int psmCount = 0;
 
         // iterate the spectrum files
-        for (String spectrumFileName : identification.getSpectrumFiles()) {
+        PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        while (psmIterator.hasNext()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, true, waitingHandler);
+            SpectrumMatch spectrumMatch = psmIterator.next();
+            String spectrumKey = spectrumMatch.getKey();
 
-            while (psmIterator.hasNext()) {
-
-                SpectrumMatch spectrumMatch = psmIterator.next();
-                String spectrumKey = spectrumMatch.getKey();
-
-                writeSpectrumIdentificationResult(spectrumKey, ++psmCount);
-                waitingHandler.increasePrimaryProgressCounter();
-
-                if (waitingHandler.isRunCanceled()) {
-                    break;
-                }
-            }
+            writeSpectrumIdentificationResult(spectrumKey, ++psmCount);
+            waitingHandler.increasePrimaryProgressCounter();
 
             if (waitingHandler.isRunCanceled()) {
                 break;
@@ -1321,7 +1313,7 @@ public class MzIdentMLExport {
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
 
         while (proteinMatchesIterator.hasNext()) {
 
@@ -1333,20 +1325,20 @@ public class MzIdentMLExport {
             br.write(getCurrentTabSpace() + "<ProteinAmbiguityGroup id=\"" + proteinGroupId + "\">" + lineBreak);
             tabCounter++;
 
-            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinGroupKey, psParameter);
+            psParameter = (PSParameter)proteinMatch.getParameters();
 
             String mainAccession = proteinMatch.getMainMatch();
 
-            for (int j = 0; j < proteinMatch.getTheoreticProteinsAccessions().size(); j++) {
+            for (int j = 0; j < proteinMatch.getTheoreticProtein().size(); j++) {
 
-                String accession = proteinMatch.getTheoreticProteinsAccessions().get(j);
+                String accession = proteinMatch.getTheoreticProtein().get(j);
 
                 br.write(getCurrentTabSpace() + "<ProteinDetectionHypothesis id=\"" + proteinGroupId + "_" + (j + 1) + "\" dBSequence_ref=\"" + accession
                         + "\" passThreshold=\"" + psParameter.getMatchValidationLevel().isValidated() + "\">" + lineBreak);
                 tabCounter++;
 
-                ArrayList<String> peptideMatches = identification.getProteinMatch(proteinGroupKey).getPeptideMatchesKeys();
-                PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(peptideMatches, null, false, null, waitingHandler);
+                ArrayList<String> peptideMatches = ((ProteinMatch)identification.retrieveObject(proteinGroupKey)).getPeptideMatchesKeys();
+                PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(peptideMatches, waitingHandler);
 
                 while (peptideMatchesIterator.hasNext()) {
 
@@ -1439,7 +1431,7 @@ public class MzIdentMLExport {
     private void writeSpectrumIdentificationResult(String psmKey, int psmIndex)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
-        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
+        SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(psmKey);
         String spectrumTitle = Spectrum.getSpectrumTitle(psmKey);
         String spectrumFileName = Spectrum.getSpectrumFile(psmKey);
         String spectrumIdentificationResultItemKey = "SIR_" + psmIndex;
@@ -1455,7 +1447,7 @@ public class MzIdentMLExport {
 
         if (bestPeptideAssumption != null) {
 
-            PSParameter psmParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter());
+            PSParameter psmParameter = (PSParameter)spectrumMatch.getParameters();
             int rank = 1; // @TODO: should not be hardcoded?
             String spectrumIdentificationItemKey = "SII_" + psmIndex + "_" + rank;
             spectrumIds.put(psmKey, spectrumIdentificationItemKey);
@@ -1635,7 +1627,7 @@ public class MzIdentMLExport {
                 case v1_2:
 
                     PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
-                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                    PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(peptideKey);
                     PSPtmScores psPtmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
 
                     if (psPtmScores != null) {
@@ -1694,7 +1686,7 @@ public class MzIdentMLExport {
                         }
                     }
 
-                    PSParameter peptideParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psmParameter);
+                    PSParameter peptideParameter = (PSParameter)peptideMatch.getParameters();
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002469", "PeptideShaker peptide confidence", peptideParameter.getPeptideConfidence() + ""));
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002468", "PeptideShaker peptide score", peptideParameter.getPeptideScore() + ""));
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002500", "peptide passes threshold", peptideParameter.getMatchValidationLevel().isValidated() + ""));
@@ -1763,7 +1755,7 @@ public class MzIdentMLExport {
             // add the individual search engine results
             Double mascotScore = null, msAmandaScore = null;
             HashMap<Integer, Double> scores = new HashMap<Integer, Double>();
-            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(psmKey);
+            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = ((SpectrumMatch)identification.retrieveObject(psmKey)).getAssumptionsMap();
             for (Integer tempAdvocate : assumptions.keySet()) {
                 HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateMap = assumptions.get(tempAdvocate);
                 for (double eValue : advocateMap.keySet()) {

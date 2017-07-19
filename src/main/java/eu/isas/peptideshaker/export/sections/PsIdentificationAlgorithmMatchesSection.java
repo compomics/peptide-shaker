@@ -38,7 +38,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -415,11 +414,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                     return "0";
                 }
             case hidden:
-                if (psParameter.getHidden()) {
-                    return "1";
-                } else {
-                    return "0";
-                }
+                return psParameter.getHidden() ? "1" : "0";
             case identification_charge:
                 return peptideAssumption.getIdentificationCharge().toString();
             case isotope:
@@ -560,11 +555,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             case spectrum_title:
                 return Spectrum.getSpectrumTitle(spectrumKey);
             case starred:
-                if (psParameter.getStarred()) {
-                    return "1";
-                } else {
-                    return "0";
-                }
+                return psParameter.getStarred() ? "1" : "0";
             case theoretical_mass:
                 return peptideAssumption.getPeptide().getMass() + "";
             case validated:
@@ -921,11 +912,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             case decoy:
                 return "";
             case hidden:
-                if (psParameter.getHidden()) {
-                    return "1";
-                } else {
-                    return "0";
-                }
+                return psParameter.getHidden() ? "1" : "0";
             case identification_charge:
                 return tagAssumption.getIdentificationCharge().toString();
             case isotope:
@@ -969,11 +956,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             case spectrum_title:
                 return Spectrum.getSpectrumTitle(spectrumKey);
             case starred:
-                if (psParameter.getStarred()) {
-                    return "1";
-                } else {
-                    return "0";
-                }
+                return psParameter.getStarred() ? "1" :"0";
             case theoretical_mass:
                 return tagAssumption.getTag().getMass() + "";
             case validated:
