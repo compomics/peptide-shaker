@@ -111,7 +111,7 @@ public class FastaExport {
                 if (exportType == ExportType.non_validated) {
 
                     PSParameter psParameter = new PSParameter();
-                    identification.loadProteinMatchParameters(psParameter, waitingHandler, false);
+                    identification.loadObjects(ProteinMatch.class.getSimpleName(), waitingHandler, false);
 
                     for (String accession : sequenceFactory.getAccessions()) {
 
@@ -119,18 +119,16 @@ public class FastaExport {
 
                             ArrayList<String> matches = new ArrayList<String>(identification.getProteinMap().get(accession));
 
-                            if (matches != null) {
-                                boolean validated = false;
-                                for (String match : matches) {
-                                    psParameter = (PSParameter) identification.getProteinMatchParameter(match, psParameter);
-                                    if (psParameter.getMatchValidationLevel().isValidated()) {
-                                        validated = true;
-                                        break;
-                                    }
+                            boolean validated = false;
+                            for (String match : matches) {
+                                psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(match)).getParameters();
+                                if (psParameter.getMatchValidationLevel().isValidated()) {
+                                    validated = true;
+                                    break;
                                 }
-                                if (!validated) {
-                                    writeAccession(b, accession, sequenceFactory, accessionOnly);
-                                }
+                            }
+                            if (!validated) {
+                                writeAccession(b, accession, sequenceFactory, accessionOnly);
                             }
                         }
                         if (waitingHandler != null) {
@@ -145,14 +143,14 @@ public class FastaExport {
                     ArrayList<String> exported = new ArrayList<String>();
 
                     ArrayList<String> proteinMatches = identificationFeaturesGenerator.getValidatedProteins(waitingHandler, filterPreferences);
-                    ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(proteinMatches, null, false, null, false, null, waitingHandler);
+                    ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(proteinMatches, waitingHandler);
                     while (proteinMatchesIterator.hasNext()) {
                         ProteinMatch proteinMatch = proteinMatchesIterator.next();
                         ArrayList<String> accessions = new ArrayList<String>();
                         if (exportType == ExportType.validated_main_accession) {
                             accessions.add(proteinMatch.getMainMatch());
                         } else if (exportType == ExportType.validated_all_accessions) {
-                            accessions.addAll(proteinMatch.getTheoreticProteinsAccessions());
+                            accessions.addAll(proteinMatch.getTheoreticProtein());
                         }
                         for (String accession : accessions) {
                             if (!exported.contains(accession)) {
