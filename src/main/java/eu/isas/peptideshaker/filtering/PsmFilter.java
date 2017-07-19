@@ -4,6 +4,8 @@ import com.compomics.util.experiment.filtering.FilterItemComparator;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.filtering.items.AssumptionFilterItem;
@@ -96,17 +98,18 @@ public class PsmFilter extends MatchFilter {
         switch (filterItem) {
             case confidence:
                 PSParameter psParameter = new PSParameter();
-                psParameter = (PSParameter) identification.getPeptideMatchParameter(matchKey, psParameter);
+                psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(matchKey)).getUrParam(psParameter);
+                
                 Double confidence = psParameter.getProteinConfidence();
                 return filterItemComparator.passes(input, confidence.toString());
             case validationStatus:
                 psParameter = new PSParameter();
-                psParameter = (PSParameter) identification.getPeptideMatchParameter(matchKey, psParameter);
+                psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(matchKey)).getUrParam(psParameter);
                 Integer validation = psParameter.getMatchValidationLevel().getIndex();
                 return filterItemComparator.passes(input, validation.toString());
             case stared:
                 psParameter = new PSParameter();
-                psParameter = (PSParameter) identification.getPeptideMatchParameter(matchKey, psParameter);
+                psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(matchKey)).getUrParam(psParameter);
                 String starred;
                 if (psParameter.getStarred()) {
                     starred = FilterItemComparator.trueFalse[0];
