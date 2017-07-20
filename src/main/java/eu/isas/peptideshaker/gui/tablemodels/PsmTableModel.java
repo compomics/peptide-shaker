@@ -179,11 +179,12 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                 String psmKey = psmKeys.get(viewIndex);
                 boolean useDB = !isSelfUpdating();
 
+                SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(psmKey);
                 switch (column) {
                     case 0:
                         return viewIndex + 1;
                     case 1:
-                        PSParameter psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB && !isScrolling);
+                        PSParameter psParameter = (PSParameter)spectrumMatch.getUrParam(new PSParameter());
                         if (psParameter == null) {
                             if (isScrolling()) {
                                 return null;
@@ -194,7 +195,6 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                         }
                         return psParameter.getStarred();
                     case 2:
-                        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey, useDB && !isScrolling);
                         if (spectrumMatch == null) {
                             if (isScrolling()) {
                                 return null;
@@ -204,10 +204,9 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                             }
                         }
 
-                        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(psmKey);
+                        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = spectrumMatch.getAssumptionsMap();
                         return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftware(spectrumMatch, assumptions, identificationParameters.getSequenceMatchingPreferences(), inputMap.getInputAlgorithmsSorted().size());
                     case 3:
-                        spectrumMatch = identification.getSpectrumMatch(psmKey, useDB && !isScrolling);
                         if (spectrumMatch == null) {
                             if (isScrolling()) {
                                 return null;
@@ -218,7 +217,6 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                         }
                         return displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true);
                     case 4:
-                        spectrumMatch = identification.getSpectrumMatch(psmKey, useDB && !isScrolling);
                         if (spectrumMatch == null) {
                             if (isScrolling()) {
                                 return null;
@@ -235,7 +233,6 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                             throw new IllegalArgumentException("No best assumption found for spectrum " + psmKey + ".");
                         }
                     case 5:
-                        spectrumMatch = identification.getSpectrumMatch(psmKey, useDB && !isScrolling);
                         if (spectrumMatch == null) {
                             if (isScrolling()) {
                                 return null;
@@ -254,7 +251,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                             throw new IllegalArgumentException("No best assumption found for spectrum " + psmKey + ".");
                         }
                     case 6:
-                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB && !isScrolling);
+                        psParameter = (PSParameter)spectrumMatch.getUrParam(new PSParameter());
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
@@ -273,7 +270,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                             return null;
                         }
                     case 7:
-                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB && !isScrolling);
+                        psParameter = (PSParameter)spectrumMatch.getUrParam(new PSParameter());
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
@@ -343,8 +340,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
 
             ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
             parameters.add(new PSParameter());
-            PsmIterator psmIterator = identification.getPsmIterator(tempPsmKeys, parameters, true, waitingHandler);
-            psmIterator.setBatchSize(batchSize);
+            PsmIterator psmIterator = identification.getPsmIterator(tempPsmKeys, waitingHandler);
 
             int i = 0;
             while (psmIterator.hasNext()) {
@@ -370,12 +366,12 @@ public class PsmTableModel extends SelfUpdatingTableModel {
             if (column == 1
                     || column == 6
                     || column == 7) {
-                identification.loadSpectrumMatchParameters(psmKeys, new PSParameter(), waitingHandler, false);
+                identification.loadObjects(psmKeys, waitingHandler, false);
             } else if (column == 2
                     || column == 3
                     || column == 4
                     || column == 5) {
-                identification.loadSpectrumMatches(psmKeys, waitingHandler, false);
+                identification.loadObjects(psmKeys, waitingHandler, false);
             }
         } catch (Exception e) {
             catchException(e);
