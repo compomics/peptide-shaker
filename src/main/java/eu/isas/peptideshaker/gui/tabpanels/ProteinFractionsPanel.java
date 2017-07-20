@@ -4,6 +4,7 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -25,8 +26,12 @@ import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
@@ -283,7 +288,17 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 showSparkLines(peptideShakerGUI.showSparklines());
                 ((DefaultTableModel) proteinTable.getModel()).fireTableDataChanged();
 
-                updateSelection();
+                try {
+                    updateSelection();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ProteinFractionsPanel.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(ProteinFractionsPanel.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(ProteinFractionsPanel.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ProteinFractionsPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 proteinTable.requestFocus();
 
                 setUpTableHeaderToolTips();
@@ -358,7 +373,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
                 int proteinIndex = tableModel.getViewIndex(currentRow);
                 String proteinKey = proteinKeys.get(proteinIndex);
-                ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                ProteinMatch proteinMatch = (ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(proteinKey);
 
                 try {
                     peptideKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedPeptideKeys(proteinKey);
@@ -387,9 +402,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                     for (String peptideKey : peptideKeys) {
                         try {
-                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
+                            psParameter = (PSParameter)((PeptideMatch)peptideShakerGUI.getIdentification().retrieveObject(peptideKey)).getUrParam(psParameter);
 
-                            if (psParameter.getFractionScore() != null && psParameter.getFractionScore().contains(fraction)) {
+                            if (psParameter.getFractionScore() != null && psParameter.getFractions().contains(fraction)) {
                                 if (psParameter.getMatchValidationLevel().isValidated()) {
 
                                     String peptideSequence = Peptide.getSequence(peptideKey);
@@ -429,11 +444,11 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 }
 
                 psParameter = new PSParameter();
-                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
+                psParameter = (PSParameter)((ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getUrParam(psParameter);
 
                 for (int i = 0; i < fileNames.size(); i++) {
                     String fraction = fileNames.get(i);
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
+                    psParameter = (PSParameter)((ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getUrParam(psParameter);
 
                     if (selectedRows.length == 1) {
                         peptidePlotDataset.addValue(psParameter.getFractionValidatedPeptides(fraction), "Validated Peptides", "" + (i + 1));
@@ -513,7 +528,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 // get the psms per fraction
                 for (int i = 0; i < fileNames.size(); i++) {
                     String fraction = fileNames.get(i);
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
+                    psParameter = (PSParameter)((ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getUrParam(psParameter);
 
                     if (selectedRows.length == 1) {
                         spectrumPlotDataset.addValue(psParameter.getFractionValidatedSpectra(fraction), "Validated Spectra", "" + (i + 1));
@@ -729,7 +744,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     /**
      * Update the selected protein and peptide.
      */
-    public void updateSelection() {
+    public void updateSelection() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         int proteinRow = 0;
         String proteinKey = peptideShakerGUI.getSelectedProteinKey();
@@ -741,7 +756,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 && !psmKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             if (peptideShakerGUI.getIdentification().matchExists(psmKey)) {
                 try {
-                    SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
+                    SpectrumMatch spectrumMatch = (SpectrumMatch)peptideShakerGUI.getIdentification().retrieveObject(psmKey);
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                         peptideKey = peptide.getMatchingKey(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
@@ -757,7 +772,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION) && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
 
-            ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null, null); // @TODO: add waiting handler?
+            ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null); // @TODO: add waiting handler?
             //proteinMatchesIterator.setBatchSize(20); // @TODO: add?
 
             while (proteinMatchesIterator.hasNext()) {
@@ -1369,7 +1384,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 // star/unstar the protein
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
                     try {
-                        PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, new PSParameter());
+                        PSParameter psParameter = (PSParameter)((ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getUrParam(new PSParameter());
                         if (!psParameter.getStarred()) {
                             peptideShakerGUI.getStarHider().starProtein(proteinKey);
                         } else {
@@ -1892,7 +1907,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     /**
      * Hides or displays the score column in the protein table.
      */
-    public void updateScores() {
+    public void updateScores() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ((ProteinTableModel) proteinTable.getModel()).showScores(peptideShakerGUI.getDisplayPreferences().showScores());
         ((DefaultTableModel) proteinTable.getModel()).fireTableStructureChanged();
