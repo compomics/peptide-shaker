@@ -129,16 +129,14 @@ public class ProteinGoTableModel extends DefaultTableModel {
 
             try {
                 String proteinKey = proteins.get(row);
-
+                ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(proteinKey);
                 switch (column) {
                     case 0:
                         return row + 1;
                     case 1:
-                        ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
                         String mainMatch = proteinMatch.getMainMatch();
                         return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(mainMatch);
                     case 2:
-                        proteinMatch = identification.getProteinMatch(proteinKey);
                         String description = "";
                         try {
                             description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription();
@@ -172,7 +170,6 @@ public class ProteinGoTableModel extends DefaultTableModel {
                         return arrrayListDataPoints;
                     case 4:
                         try {
-                            proteinMatch = identification.getProteinMatch(proteinKey);
                             double nConfidentPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentPeptides(proteinKey);
                             double nDoubtfulPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) - nConfidentPeptides;
 
@@ -210,14 +207,14 @@ public class ProteinGoTableModel extends DefaultTableModel {
                             return Double.NaN;
                         }
                     case 7:
-                        PSParameter pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
+                        PSParameter pSParameter = (PSParameter)proteinMatch.getUrParam(new PSParameter());
                         if (peptideShakerGUI.getDisplayPreferences().showScores()) {
                             return pSParameter.getProteinScore();
                         } else {
                             return pSParameter.getProteinConfidence();
                         }
                     case 8:
-                        pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
+                        pSParameter = (PSParameter)proteinMatch.getUrParam(new PSParameter());
                         return pSParameter.getMatchValidationLevel().getIndex();
                     default:
                         return "";
