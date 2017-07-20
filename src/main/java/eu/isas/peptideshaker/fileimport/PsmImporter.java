@@ -662,16 +662,12 @@ public class PsmImporter {
                 }
                 if (firstPeptideHit != null) {
                     checkPeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHit);
-                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> previousAssumptions = identification.getAssumptions(spectrumKey);
-                    identification.addAssumptions(spectrumKey, assumptions, previousAssumptions == null);
                     identification.addObject(spectrumKey, spectrumMatch);
                 }
                 if (firstPeptideHit == null) {
                     // Check if a peptide with no protein can be a good candidate
                     if (firstPeptideHitNoProtein != null) {
                         checkPeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHitNoProtein);
-                        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> previousAssumptions = identification.getAssumptions(spectrumKey);
-                        identification.addAssumptions(spectrumKey, assumptions, previousAssumptions == null);
                         identification.addObject(spectrumKey, spectrumMatch);
                     } else {
                         // Try to find the best tag hit
@@ -683,9 +679,7 @@ public class PsmImporter {
                                     TagAssumption tagAssumption = (TagAssumption) assumption;
                                     firstTagHit = tagAssumption;
                                     checkTagMassErrorsAndCharge(spectrumKey, tagAssumption);
-                                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> previousAssumptions = identification.getAssumptions(spectrumKey);
-                                    identification.addAssumptions(spectrumKey, assumptions, previousAssumptions == null);
-                                    identification.addSpectrumMatch(spectrumMatch);
+                                    identification.addObject(spectrumKey, spectrumMatch);
                                     break;
                                 }
                             }
