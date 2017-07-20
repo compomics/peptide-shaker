@@ -112,7 +112,7 @@ public class SpectrumExporter {
                 }
 
                 // Export the identified spectra
-                PsmIterator psmIterator = identification.getPsmIterator(mgfFile, parameters, false, waitingHandler);
+                PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
                 while (psmIterator.hasNext()) {
 
                     SpectrumMatch spectrumMatch = psmIterator.next();
