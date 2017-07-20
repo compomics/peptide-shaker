@@ -2694,13 +2694,12 @@ public class OutputGenerator {
                                                 writer.write(++proteinCounter + SEPARATOR);
                                             }
 
-                                            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
                                             if (mainAccession) {
                                                 writer.write(proteinMatch.getMainMatch() + SEPARATOR);
                                             }
                                             if (otherAccessions) {
                                                 boolean first = true;
-                                                for (String otherProtein : proteinMatch.getTheoreticProteinsAccessions()) {
+                                                for (String otherProtein : proteinMatch.getTheoreticProtein()) {
                                                     if (!otherProtein.equals(proteinMatch.getMainMatch())) {
                                                         if (first) {
                                                             first = false;
@@ -2863,16 +2862,15 @@ public class OutputGenerator {
                                                 Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                                                 boolean allPeptidesEnzymatic = true;
 
-                                                identification.loadPeptideMatches(peptideKeys, null, true);
-                                                identification.loadPeptideMatchParameters(peptideKeys, peptidePSParameter, null, true);
+                                                identification.loadObjects(peptideKeys, null, true);
                                                 
                                                 DigestionPreferences digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionPreferences();
 
                                                 // see if we have non-tryptic peptides
                                                 for (String peptideKey : peptideKeys) {
-
-                                                    String peptideSequence = identification.getPeptideMatch(peptideKey).getTheoreticPeptide().getSequence();
-                                                    peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter);
+                                                    PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(peptideKey);
+                                                    String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
+                                                    peptidePSParameter = (PSParameter)peptideMatch.getUrParam(peptidePSParameter);
 
                                                     if (peptidePSParameter.getMatchValidationLevel().isValidated()) {
 
@@ -2895,10 +2893,10 @@ public class OutputGenerator {
                                             writer.write(matchValidationLevel.toString());
                                             writer.write(SEPARATOR);
                                             if (includeHidden) {
-                                                writer.write(proteinPSParameter.isHidden() + SEPARATOR);
+                                                writer.write(proteinPSParameter.getHidden() + SEPARATOR);
                                             }
                                             if (!onlyStarred && showStar) {
-                                                writer.write(proteinPSParameter.isStarred() + "");
+                                                writer.write(proteinPSParameter.getStarred() + "");
                                             }
                                             writer.write(lineBreak);
                                         }
@@ -2945,14 +2943,14 @@ public class OutputGenerator {
 
         // find all unique the charges
         try {
-            identification.loadSpectrumMatches(spectrumKeys, null, true);
+            identification.loadObjects(spectrumKeys, null, true);
         } catch (Exception e) {
             e.printStackTrace();
             //ignore caching error
         }
         for (String spectrumKey : spectrumKeys) {
             try {
-                int tempCharge = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey).getBestPeptideAssumption().getIdentificationCharge().value;
+                int tempCharge = ((SpectrumMatch)peptideShakerGUI.getIdentification().retrieveObject(spectrumKey)).getBestPeptideAssumption().getIdentificationCharge().value;
                 if (!charges.contains(tempCharge)) {
                     charges.add(tempCharge);
                 }
@@ -2992,7 +2990,7 @@ public class OutputGenerator {
 
         if (peptide.isModified()) {
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                if ((variablePtms && modificationMatch.isVariable()) || (!variablePtms && !modificationMatch.isVariable())) {
+                if ((variablePtms && modificationMatch.getVariable()) || (!variablePtms && !modificationMatch.getVariable())) {
                     if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
                         modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
                     }
@@ -3049,7 +3047,7 @@ public class OutputGenerator {
 
         if (peptide.isModified()) {
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                if (modificationMatch.isVariable()) {
+                if (modificationMatch.getVariable()) {
                     PTM refPtm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
                     for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
                         if (!modList.contains(equivalentPtm)) {

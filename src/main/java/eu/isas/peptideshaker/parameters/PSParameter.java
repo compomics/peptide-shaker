@@ -648,13 +648,22 @@ public class PSParameter extends IdObject implements UrParameter {
      *
      * @return the fractions where this match was found
      */
-    public Set<String> getFractionScore() {
-        zooActivateRead();
+    public Set<String> getFractions(){
         if (fractionScore != null) {
             return fractionScore.keySet();
         } else {
             return null;
         }
+    }
+
+    /**
+     * Return the fractions where this match was found. Null if not found.
+     *
+     * @return the fractions where this match was found
+     */
+    public HashMap<String, Double> getFractionScore() {
+        zooActivateRead();
+        return fractionScore;
     }
 
     /**
