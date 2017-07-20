@@ -156,7 +156,7 @@ public class ProgenesisExcelExport {
 
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(new PSParameter());
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
 
         while (proteinMatchesIterator.hasNext()) {
 
@@ -171,7 +171,7 @@ public class ProgenesisExcelExport {
 
             int proteinStartRow = currentRow;
 
-            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, true, parameters, waitingHandler);
+            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), waitingHandler);
 
             // print the peptide details
             while (peptideMatchesIterator.hasNext()) {
@@ -249,7 +249,7 @@ public class ProgenesisExcelExport {
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
 
-        PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, parameters, false, waitingHandler);
+        PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, waitingHandler);
 
         while (psmIterator.hasNext()) {
 
@@ -259,7 +259,7 @@ public class ProgenesisExcelExport {
 
             SpectrumMatch spectrumMatch = psmIterator.next();
             String spectrumKey = spectrumMatch.getKey();
-            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+            psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
 
             if (spectrumMatch.getBestPeptideAssumption() != null) { // Should always be the case
 

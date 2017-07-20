@@ -664,7 +664,7 @@ public class PsmImporter {
                     checkPeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHit);
                     HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> previousAssumptions = identification.getAssumptions(spectrumKey);
                     identification.addAssumptions(spectrumKey, assumptions, previousAssumptions == null);
-                    identification.addSpectrumMatch(spectrumMatch);
+                    identification.addObject(spectrumKey, spectrumMatch);
                 }
                 if (firstPeptideHit == null) {
                     // Check if a peptide with no protein can be a good candidate
@@ -672,7 +672,7 @@ public class PsmImporter {
                         checkPeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHitNoProtein);
                         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> previousAssumptions = identification.getAssumptions(spectrumKey);
                         identification.addAssumptions(spectrumKey, assumptions, previousAssumptions == null);
-                        identification.addSpectrumMatch(spectrumMatch);
+                        identification.addObject(spectrumKey, spectrumMatch);
                     } else {
                         // Try to find the best tag hit
                         eValues = new ArrayList<Double>(assumptionsForAdvocate.keySet());
