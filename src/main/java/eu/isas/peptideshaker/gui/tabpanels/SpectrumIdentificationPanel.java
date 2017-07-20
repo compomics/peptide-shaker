@@ -2220,7 +2220,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 if (identification.matchExists(spectrumKey)) {
                     try {
                         DisplayFeaturesGenerator displayFeaturesGenerator = peptideShakerGUI.getDisplayFeaturesGenerator();
-                        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                        SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(spectrumKey);
                         if (spectrumMatch.getBestPeptideAssumption() != null) {
                             String tooltip = displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch);
                             spectrumTable.setToolTipText(tooltip);
@@ -2594,8 +2594,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 double maxMz = spectrumFactory.getMaxMz(fileSelected);
                 try {
                     progressDialog.setTitle("Loading Spectrum Information for " + fileSelected + ". Please Wait..."); // @TODO: problem with progress bar??
-                    identification.loadSpectrumMatchParameters(fileSelected, new PSParameter(), progressDialog, true);
-                    identification.loadSpectrumMatches(fileSelected, progressDialog, true);
+                    identification.loadObjects(fileSelected, progressDialog, true);
                     // update the plots..?
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -2797,7 +2796,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         if (identification.matchExists(spectrumKey)) {
 
             // sort assumptions by tag or peptide -> confidence -> search engine -> peptide sequence
-            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getAssumptionsMap();
             HashMap<Double, HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>>> peptideAssumptionsMap = new HashMap<Double, HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>>>();
             HashMap<Double, HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>>> tagAssumptionsMap = new HashMap<Double, HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>>>();
             PSParameter psParameter = new PSParameter();
@@ -2939,7 +2938,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     String currentSpectrumKey = getSelectedSpectrumKey();
                     if (identification.matchExists(currentSpectrumKey)) {
-                        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(currentSpectrumKey);
+                        SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(currentSpectrumKey);
                         if (spectrumMatch.getBestPeptideAssumption() != null) {
                             charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().toString();
                         } else if (spectrumMatch.getBestTagAssumption() != null) {
@@ -3532,8 +3531,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         if (!identification.matchExists(spectrumKey)) {
                             idSoftwareAgreement = NO_ID;
                         } else {
-                            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+                            SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(spectrumKey);
+                            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = spectrumMatch.getAssumptionsMap();
                             idSoftwareAgreement = isBestPsmEqualForAllIdSoftware(spectrumMatch, assumptions, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences(), advocatesUsed.size());
                         }
                         return idSoftwareAgreement;
@@ -3573,7 +3572,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         }
                     case 7:
                         if (identification.matchExists(spectrumKey)) {
-                            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                            SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(spectrumKey);
                             DisplayFeaturesGenerator displayFeaturesGenerator = peptideShakerGUI.getDisplayFeaturesGenerator();
                             if (spectrumMatch.getBestPeptideAssumption() != null) {
                                 return displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true);
@@ -3585,7 +3584,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         return null;
                     case 8:
                         if (identification.matchExists(spectrumKey)) {
-                            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                            SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(spectrumKey);
                             DisplayFeaturesGenerator displayFeaturesGenerator = peptideShakerGUI.getDisplayFeaturesGenerator();
                             if (spectrumMatch.getBestPeptideAssumption() != null) {
                                 return displayFeaturesGenerator.addDatabaseLinks(spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(
@@ -3595,7 +3594,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         return null;
                     case 9:
                         if (identification.matchExists(spectrumKey)) {
-                            PSParameter pSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, new PSParameter());
+                            PSParameter pSParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(new PSParameter());
                             if (pSParameter != null) {
                                 return pSParameter.getPsmScore();
                             } else {
@@ -3606,7 +3605,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         }
                     case 10:
                         if (identification.matchExists(spectrumKey)) {
-                            PSParameter pSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, new PSParameter());
+                            PSParameter pSParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(new PSParameter());
                             if (pSParameter != null) {
                                 return pSParameter.getPsmConfidence();
                             } else {
@@ -3617,7 +3616,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         }
                     case 11:
                         if (identification.matchExists(spectrumKey)) {
-                            PSParameter pSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, new PSParameter());
+                            PSParameter pSParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(new PSParameter());
                             if (pSParameter != null) {
                                 return pSParameter.getMatchValidationLevel().getIndex();
                             } else {
@@ -3708,9 +3707,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             try {
                 String spectrumKey = getSelectedSpectrumKey();
                 if (identification.matchExists(spectrumKey)) {
-                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                    SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(spectrumKey);
                     PSParameter psParameter = new PSParameter();
-                    psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                    psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
 
                     DisplayFeaturesGenerator displayFeaturesGenerator = peptideShakerGUI.getDisplayFeaturesGenerator();
                     String proteins = "";
@@ -3726,7 +3725,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         throw new IllegalArgumentException("No best hit found for spectrum " + spectrumMatch.getKey());
                     }
 
-                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = spectrumMatch.getAssumptionsMap();
 
                     switch (columnIndex) {
                         case 0:
