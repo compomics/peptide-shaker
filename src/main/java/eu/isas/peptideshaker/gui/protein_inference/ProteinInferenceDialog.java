@@ -813,7 +813,6 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             if (column == 1) {
                 try {
                     inspectedMatch.setMainMatch(accessions.get(row));
-                    identification.updateProteinMatch(inspectedMatch);
                     peptideShakerGUI.getIdentificationFeaturesGenerator().updateCoverableAA(inspectedMatch.getKey());
                     peptideShakerGUI.getIdentificationFeaturesGenerator().updateSequenceCoverage(inspectedMatch.getKey());
                     peptideShakerGUI.getIdentificationFeaturesGenerator().updateObservableCoverage(inspectedMatch.getKey());
@@ -1204,7 +1203,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
             PSParameter pSParameter = new PSParameter();
             try {
-                pSParameter = (PSParameter) identification.getProteinMatchParameter(uniqueMatches.get(row), pSParameter);
+                pSParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(uniqueMatches.get(row))).getUrParam(pSParameter);
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
             }
@@ -1271,7 +1270,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
             PSParameter pSParameter = new PSParameter();
             try {
-                pSParameter = (PSParameter) identification.getProteinMatchParameter(associatedMatches.get(row), pSParameter);
+                pSParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(associatedMatches.get(row))).getUrParam(pSParameter);
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
             }
