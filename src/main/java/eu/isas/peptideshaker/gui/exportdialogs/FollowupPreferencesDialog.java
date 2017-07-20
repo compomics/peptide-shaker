@@ -797,13 +797,13 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         PSParameter psParameter = new PSParameter();
                         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
                         parameters.add(psParameter);
-                        PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(parameters, false, null, progressDialog);
+                        PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
 
                         while (peptideMatchesIterator.hasNext()) {
 
                             PeptideMatch peptideMatch = peptideMatchesIterator.next();
                             String peptideKey = peptideMatch.getKey();
-                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
+                            psParameter = (PSParameter)peptideMatch.getUrParam(psParameter);
 
                             // write the peptide node
                             if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
@@ -820,9 +820,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                 // write the protein node
                                 if (!proteinsAdded.contains(protein)) {
                                     proteinsAdded.add(protein);
-                                    ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(protein);
+                                    ProteinMatch proteinMatch = (ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(protein);
                                     if (proteinMatch != null) {
-                                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(protein, psParameter);
+                                        psParameter = (PSParameter)proteinMatch.getUrParam(psParameter);
 
                                         if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
                                             nodeWriter.write("create n={id:'" + protein + "', name:'" + protein + "', type:'Protein'};\n");
