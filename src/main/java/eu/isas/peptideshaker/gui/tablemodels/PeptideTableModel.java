@@ -204,12 +204,13 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
             }
 
             String peptideKey = peptideKeys.get(viewIndex);
+            PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(peptideKey);
 
             switch (column) {
                 case 0:
                     return viewIndex + 1;
                 case 1:
-                    PSParameter psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB && !isScrolling);
+                    PSParameter psParameter = (PSParameter)peptideMatch.getUrParam(new PSParameter());
                     if (psParameter == null) {
                         if (isScrolling()) {
                             return null;
@@ -220,7 +221,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     }
                     return psParameter.getStarred();
                 case 2:
-                    psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB && !isScrolling);
+                    psParameter = (PSParameter)peptideMatch.getUrParam(new PSParameter());
                     if (psParameter == null) {
                         if (isScrolling()) {
                             return null;
@@ -231,7 +232,6 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     }
                     return psParameter.getProteinInferenceGroupClass();
                 case 3:
-                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey, useDB && !isScrolling);
                     if (peptideMatch == null) {
                         if (isScrolling()) {
                             return null;
@@ -264,7 +264,6 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     if (isScrolling) {
                         return null;
                     }
-                    peptideMatch = identification.getPeptideMatch(peptideKey, useDB);
                     if (!useDB
                             && (peptideMatch == null || !identificationFeaturesGenerator.nValidatedSpectraForPeptideInCache(peptideKey))
                             && (peptideMatch == null || !identification.peptideDetailsInCache(peptideKey))) {
@@ -283,7 +282,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
                     return arrrayListDataPoints;
                 case 6:
-                    psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB && !isScrolling);
+                    psParameter = (PSParameter)peptideMatch.getUrParam(new PSParameter());
                     if (psParameter == null) {
                         if (isScrolling) {
                             return null;
@@ -302,7 +301,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                         return null;
                     }
                 case 7:
-                    psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB && !isScrolling);
+                    psParameter = (PSParameter)peptideMatch.getUrParam(new PSParameter());
                     if (psParameter == null) {
                         if (isScrolling) {
                             return null;
@@ -376,9 +375,8 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
         try {
             ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
             parameters.add(new PSParameter());
-            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(tempKeys, parameters, true, parameters, waitingHandler);
-            peptideMatchesIterator.setBatchSize(batchSize);
-
+            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(tempKeys, waitingHandler);
+            
             int i = 0;
             while (peptideMatchesIterator.hasNext()) {
                 PeptideMatch peptideMatch = peptideMatchesIterator.next();
@@ -407,11 +405,11 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     || column == 2
                     || column == 6
                     || column == 7) {
-                identification.loadPeptideMatchParameters(peptideKeys, new PSParameter(), waitingHandler, false);
+                identification.loadObjects(peptideKeys, waitingHandler, false);
             } else if (column == 3
                     || column == 4
                     || column == 5) {
-                identification.loadPeptideMatches(peptideKeys, waitingHandler, false);
+                identification.loadObjects(peptideKeys, waitingHandler, false);
             }
         } catch (Exception e) {
             catchException(e);
