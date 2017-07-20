@@ -358,16 +358,9 @@ public class PsmImporter {
                     = new HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>>(Math.max(matchAssumptions.size(), rawDbAssumptions.size()));
             getAssumptions(matchAssumptions, combinedAssumptions);
             getAssumptions(rawDbAssumptions, combinedAssumptions);
-            spectrumMatch.removeAssumptions();
-            identification.removeRawAssumptions(spectrumKey);
-            importAssumptions(spectrumMatch, combinedAssumptions, peptideSpectrumAnnotator, waitingHandler);
-        } else if (matchAssumptions != null) {
-            spectrumMatch.removeAssumptions();
-            importAssumptions(spectrumMatch, matchAssumptions, peptideSpectrumAnnotator, waitingHandler);
-        } else if (rawDbAssumptions != null) {
-            identification.removeRawAssumptions(spectrumKey);
-            importAssumptions(spectrumMatch, rawDbAssumptions, peptideSpectrumAnnotator, waitingHandler);
+            spectrumMatch.setAssumptionMap(combinedAssumptions);
         }
+        importAssumptions(spectrumMatch, peptideSpectrumAnnotator, waitingHandler);
 
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -425,7 +418,7 @@ public class PsmImporter {
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
      */
-    private void importAssumptions(SpectrumMatch spectrumMatch, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
+    private void importAssumptions(SpectrumMatch spectrumMatch, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
             throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         PeptideAssumptionFilter peptideAssumptionFilter = identificationParameters.getPeptideAssumptionFilter();
@@ -437,13 +430,15 @@ public class PsmImporter {
         String spectrumFileName = Spectrum.getSpectrumFile(spectrumKey);
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
 
+        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = spectrumMatch.getAssumptionsMap();
+        
         for (HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> assumptionsForAdvocate : assumptions.values()) {
             for (ArrayList<SpectrumIdentificationAssumption> assumptionsAtScore : assumptionsForAdvocate.values()) {
                 nSecondary += assumptionsAtScore.size();
             }
         }
-
-        for (int advocateId : assumptions.keySet()) {
+     
+        for (int advocateId : spectrumMatch.getAssumptionsMap().keySet()) {
 
             if (advocateId == Advocate.xtandem.getIndex()) {
                 verifyXTandemPtms();

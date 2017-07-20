@@ -410,22 +410,9 @@ public class PepXmlExport {
      * encountered while reading an mzML file
      */
     private void writeSpectrumQueries(SimpleXmlWriter sw, Identification identification, IdentificationParameters identificationParameters, String spectrumFile, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
-
-        PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-        parameters.add(psParameter);
-        
-        ArrayList<String> spectrumTitles = spectrumFactory.getSpectrumTitles(spectrumFile);
-        for (String spectrumTitle : spectrumTitles) {
-            String spectrumKey = Spectrum.getSpectrumKey(spectrumFile, spectrumTitle);
-            String spectrumTitle2 = Spectrum.getSpectrumTitle(spectrumKey);
-        }
-
-        PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, parameters, true, null);
-
+        PsmIterator psmIterator = identification.getPsmIterator(waitingHandler, "spectrumFile == '" + spectrumFile + "'");
         while (psmIterator.hasNext()) {
             SpectrumMatch spectrumMatch = psmIterator.next();
-            spectrumMatch.getKey()
             String spectrumKey = spectrumMatch.getKey();
             String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
             StringBuilder spectrumQueryStart = new StringBuilder();
@@ -475,12 +462,12 @@ public class PepXmlExport {
         // PeptideShaker hit
         PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
         if (peptideAssumption != null) {
-            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+            psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(psParameter);
             writeSearchHit(sw, identificationParameters, peptideAssumption, precursorMz, psParameter, true);
         }
 
         // Search engines results
-        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumMatch.getKey());
+        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = ((SpectrumMatch)identification.retrieveObject(spectrumMatch.getKey())).getAssumptionsMap();
         for (HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> scoreMap : assumptions.values()) {
             for (ArrayList<SpectrumIdentificationAssumption> spectrumIdentificationAssumptions : scoreMap.values()) {
                 for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : spectrumIdentificationAssumptions) {
@@ -610,12 +597,10 @@ public class PepXmlExport {
             searchScore.append("<search_score name=\"PSM confidence\" value=\"").append(psParameter.getPsmConfidence()).append("\"/>");
             sw.writeLine(searchScore.toString());
         } else {
-            if (peptideAssumption.getRawScore() != null) {
-                StringBuilder searchScore = new StringBuilder();
-                searchScore.append("<search_score name=\"Identification algorithm raw score\" value=\"").append(peptideAssumption.getRawScore()).append("\"/>");
-                sw.writeLine(searchScore.toString());
-            }
             StringBuilder searchScore = new StringBuilder();
+            searchScore.append("<search_score name=\"Identification algorithm raw score\" value=\"").append(peptideAssumption.getRawScore()).append("\"/>");
+            sw.writeLine(searchScore.toString());
+            searchScore = new StringBuilder();
             searchScore.append("<search_score name=\"Identification algorithm score\" value=\"").append(peptideAssumption.getScore()).append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();

@@ -77,20 +77,20 @@ public class InclusionListExport {
                     waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size());
                 }
 
-                PSParameter psParameter;
+                PSParameter psParameter = new PSParameter();
                 ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
 
                 while (proteinMatchesIterator.hasNext()) {
 
                     ProteinMatch proteinMatch = proteinMatchesIterator.next();
-                    psParameter = (PSParameter)proteinMatch.getParameters();
+                    psParameter = (PSParameter)proteinMatch.getUrParam(psParameter);
 
                     if (!proteinFilters.contains(psParameter.getProteinInferenceGroupClass())) {
 
                         ArrayList<String> peptideMatches = new ArrayList<String>();
 
                         for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-                            psParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(peptideKey)).getParameters();
+                            psParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(peptideKey)).getUrParam(psParameter);
                             if (psParameter.getMatchValidationLevel().isValidated()) {
                                 boolean passesFilter = true;
                                 for (PeptideFilterType filterType : peptideFilters) {
@@ -141,7 +141,7 @@ public class InclusionListExport {
                                 PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(peptideKey);
                                 ArrayList<String> validatedPsms = new ArrayList<String>();
                                 for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
-                                    psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getParameters();
+                                    psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(psParameter);
                                     if (psParameter.getMatchValidationLevel().isValidated()) {
                                         validatedPsms.add(spectrumKey);
                                     }

@@ -121,7 +121,7 @@ public class FastaExport {
 
                             boolean validated = false;
                             for (String match : matches) {
-                                psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(match)).getParameters();
+                                psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(match)).getUrParam(psParameter);
                                 if (psParameter.getMatchValidationLevel().isValidated()) {
                                     validated = true;
                                     break;

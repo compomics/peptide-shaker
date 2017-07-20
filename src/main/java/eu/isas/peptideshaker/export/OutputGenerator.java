@@ -23,6 +23,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.preferences.DigestionPreferences;
 import com.compomics.util.preferences.PTMScoringPreferences;
@@ -39,14 +40,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -317,8 +314,6 @@ public class OutputGenerator {
 
                         progressDialog.setTitle("Loading Protein Matches. Please Wait...");
                         identification.loadObjects(ProteinMatch.class.getSimpleName(), progressDialog, true);
-                        progressDialog.setTitle("Loading Protein Details. Please Wait...");
-                        identification.loadObjects(PSParameter.class.getSimpleName(), progressDialog, true);
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         progressDialog.setMaxPrimaryProgressCounter(proteinKeys.size());
@@ -333,8 +328,8 @@ public class OutputGenerator {
                             if (progressDialog.isRunCanceled()) {
                                 break;
                             }
-                            String parameterKey = proteinKey + "_" + proteinPSParameter.getParameterKey();
-                            proteinPSParameter = (PSParameter) identification.retrieveObject(parameterKey);
+
+                            proteinPSParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinKey)).getUrParam(proteinPSParameter);
 
                             if (!ProteinMatch.isDecoy(proteinKey) || !onlyValidated) {
                                 if ((onlyValidated && proteinPSParameter.getMatchValidationLevel().isValidated()) || !onlyValidated) {
@@ -441,20 +436,14 @@ public class OutputGenerator {
                                                 boolean allPeptidesEnzymatic = true;
 
                                                 identification.loadObjects(peptideKeys, null, true);
-                                                ArrayList<String> peptideParameterKeys = new ArrayList<String>(peptideKeys.size());
-                                                for (int i = 0; i < peptideKeys.size(); ++i){
-                                                    peptideParameterKeys.add(peptideKeys.get(i) + "_" + peptidePSParameter.getParameterKey());
-                                                }
-                                                identification.loadObjects(peptideParameterKeys, null, true);
 
                                                 DigestionPreferences digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionPreferences();
 
                                                 // see if we have non-tryptic peptides
-                                                for (int i = 0; i < peptideKeys.size(); ++i) {
-                                                    String peptideKey = peptideKeys.get(i);
-                                                    String peptideParameterKey = peptideParameterKeys.get(i);
-                                                    String peptideSequence = ((PeptideMatch)identification.retrieveObject(peptideKey)).getTheoreticPeptide().getSequence();
-                                                    peptidePSParameter = (PSParameter)identification.retrieveObject(peptideParameterKey);
+                                                for (String peptideKey : peptideKeys) {
+                                                    PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(peptideKey);
+                                                    String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
+                                                    peptidePSParameter = (PSParameter)peptideMatch.getUrParam(peptidePSParameter);
 
                                                     if (peptidePSParameter.getMatchValidationLevel().isValidated()) {
 
@@ -786,17 +775,13 @@ public class OutputGenerator {
                         // @TODO: try to batch load the spectra? as this would speed up the export...
                         progressDialog.setTitle("Loading Peptide Matches. Please Wait...");
                         identification.loadObjects(PeptideMatch.class.getSimpleName(), progressDialog, true);
-                        progressDialog.setTitle("Loading Peptide Details. Please Wait...");
-                        identification.loadObjects(PSParameter.class.getSimpleName(), progressDialog, true);
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         progressDialog.setMaxPrimaryProgressCounter(peptideKeys.size());
                         progressDialog.setValue(0);
                         progressDialog.setTitle("Copying to File. Please Wait...");
 
-                        for (int i = 0; i < peptideKeys.size(); ++i) {
-                            String peptideKey = peptideKeys.get(i);
-                            String peptideParameterKey = peptideKey + "_" + peptidePSParameter.getParameterKey();
+                        for (String peptideKey : peptideKeys) {
 
                             if (progressDialog.isRunCanceled()) {
                                 break;
@@ -804,7 +789,7 @@ public class OutputGenerator {
 
                             boolean shared = false;
                             PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(peptideKey);
-                            peptidePSParameter = (PSParameter)identification.retrieveObject(peptideParameterKey);
+                            peptidePSParameter = (PSParameter)peptideMatch.getUrParam(peptidePSParameter);
 
                             if (!peptideMatch.getTheoreticPeptide().isDecoy(sequenceMatchingPreferences) || !onlyValidated) {
                                 if ((onlyValidated && peptidePSParameter.getMatchValidationLevel().isValidated()) || !onlyValidated) {
@@ -1046,11 +1031,9 @@ public class OutputGenerator {
                                                     int cpt = 0;
 
                                                     // @TODO: replace with: peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);?
-                                                    ArrayList<String> spectrumMatchParameterKeys = new ArrayList<String>(peptideMatch.getSpectrumMatchesKeys().size());
-                                                    for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) spectrumMatchParameterKeys.add(spectrumKey + "_" + secondaryPSParameter.getParameterKey());
-                                                    identification.loadObjects(spectrumMatchParameterKeys, null, true);
-                                                    for (String spectrumParameterKey : spectrumMatchParameterKeys) {
-                                                        secondaryPSParameter = (PSParameter) identification.retrieveObject(spectrumParameterKey);
+                                                    identification.loadObjects(peptideMatch.getSpectrumMatchesKeys(), null, true);
+                                                    for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
+                                                        secondaryPSParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(secondaryPSParameter);
                                                         if (secondaryPSParameter.getMatchValidationLevel().isValidated()) {
                                                             cpt++;
                                                         }
@@ -1290,8 +1273,8 @@ public class OutputGenerator {
                         PSParameter psParameter = new PSParameter();
                         int psmCounter = 0;
 
-                        /*
                         HashMap<String, HashSet<String>> spectrumKeys = new HashMap<String, HashSet<String>>();
+                        /*
                         if (psmKeys == null) {
                             spectrumKeys = identification.getSpectrumIdentificationMap();
                         } else {
@@ -1309,28 +1292,24 @@ public class OutputGenerator {
                         //if (psmKeys == null) {
                             progressDialog.setTitle("Copying Spectrum Matches to File. Please Wait...");
                             identification.loadObjects(SpectrumMatch.class.getSimpleName(), progressDialog, true);
-                            progressDialog.setTitle("Copying Spectrum Matches Details to File. Please Wait...");
-                            identification.loadObjects(PSParameter.class.getSimpleName(), progressDialog, true);
                         /*} else {
-                            progressDialog.setTitle("Copying Spectrum Matches to File. Please Wait...");
+                            progressDialog.setTitle("Copying Spectrum Matches to File. Please Wait... (" + ++fileCounter + "/" + spectrumKeys.size() + ")");
                             identification.loadSpectrumMatches(new ArrayList<String>(spectrumKeys.get(spectrumFile)), progressDialog, true);
-                            progressDialog.setTitle("Copying Spectrum Matches Details to File. Please Wait...");
+                            progressDialog.setTitle("Copying Spectrum Matches Details to File. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
                             identification.loadSpectrumMatchParameters(new ArrayList<String>(spectrumKeys.get(spectrumFile)), psParameter, progressDialog, true);
-                        }
-                        */
+                        }*/
 
                         progressDialog.setMaxPrimaryProgressCounter(identification.getNumber(SpectrumMatch.class.getSimpleName()));
                         progressDialog.setValue(0);
-                        PsmIterator spectrumIterator = identification.getPsmIterator(progressDialog);
-                        while (spectrumIterator.hasNext()){
-                        //for (String psmKey : spectrumKeys.get(spectrumFile)) {
+                        PsmIterator psmIterator = identification.getPsmIterator(progressDialog);
+                        while (psmIterator.hasNext()) {
 
                             if (progressDialog.isRunCanceled()) {
                                 break;
                             }
 
-                            SpectrumMatch spectrumMatch = spectrumIterator.next();
-                            psParameter = (PSParameter)spectrumMatch.getParameters();
+                            SpectrumMatch spectrumMatch = psmIterator.next();
+                            psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
                             PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
 
                             if (!bestAssumption.getPeptide().isDecoy(identificationParameters.getSequenceMatchingPreferences()) || !onlyValidated) {
@@ -1532,7 +1511,7 @@ public class OutputGenerator {
                                                 writer.write(SEPARATOR);
                                             }
                                             if (file) {
-                                                writer.write(spectrumFile + SEPARATOR);
+                                                writer.write(spectrumMatch.getSpectrumFile() + SEPARATOR);
                                             }
                                             if (title) {
                                                 writer.write(Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR);
@@ -1575,15 +1554,7 @@ public class OutputGenerator {
                                 }
                             }
                             progressDialog.increasePrimaryProgressCounter();
-                        } catch (SQLException ex) {
-                        Logger.getLogger(OutputGenerator.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(OutputGenerator.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(OutputGenerator.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(OutputGenerator.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                        }
                         writer.close();
 
                         boolean processCancelled = progressDialog.isRunCanceled();
@@ -1726,215 +1697,207 @@ public class OutputGenerator {
                         PSParameter psParameter = new PSParameter();
                         int psmCounter = 0;
 
-                        HashMap<String, HashSet<String>> spectrumKeys = identification.getSpectrumIdentificationMap();
+                        progressDialog.setTitle("Loading Spectrum Matches. Please Wait...");
+                        identification.loadObjects(SpectrumMatch.class.getSimpleName(), progressDialog, true);
+                        progressDialog.setTitle("Copying Spectrum Matches Phospho Details to File. Please Wait...");
+                        progressDialog.setMaxPrimaryProgressCounter(identification.getNumber(SpectrumMatch.class.getSimpleName()));
+                        progressDialog.setValue(0);
 
-                        int fileCounter = 0;
+                        PsmIterator psmIterator = identification.getPsmIterator(progressDialog);
+                        while (psmIterator.hasNext()) {
 
-                        for (String spectrumFile : spectrumKeys.keySet()) {
+                            if (progressDialog.isRunCanceled()) {
+                                break;
+                            }
 
-                            progressDialog.setTitle("Loading Spectrum Matches. Please Wait... (" + ++fileCounter + "/" + spectrumKeys.size() + ")");
-                            identification.loadSpectrumMatches(spectrumFile, progressDialog, true);
-                            progressDialog.setTitle("Loading Spectrum Matches Details. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
-                            identification.loadSpectrumMatchParameters(spectrumFile, psParameter, progressDialog, true);
-                            progressDialog.setTitle("Copying Spectrum Matches Phospho Details to File. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
-                            progressDialog.setMaxPrimaryProgressCounter(spectrumKeys.get(spectrumFile).size());
-                            progressDialog.setValue(0);
+                            SpectrumMatch spectrumMatch = psmIterator.next();
+                            psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
+                            PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
 
-                            for (String psmKey : spectrumKeys.get(spectrumFile)) {
+                            writer.write(++psmCounter + SEPARATOR);
 
-                                if (progressDialog.isRunCanceled()) {
-                                    break;
+                            String proteinAccessions = "";
+                            String proteinDescriptions = "";
+
+                            for (String protein : bestAssumption.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
+                                if (!proteinAccessions.equals("")) {
+                                    proteinAccessions += ", ";
+                                    proteinDescriptions += "; ";
                                 }
-
-                                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
-                                psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, psParameter);
-                                PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
-
-                                writer.write(++psmCounter + SEPARATOR);
-
-                                String proteinAccessions = "";
-                                String proteinDescriptions = "";
-
-                                for (String protein : bestAssumption.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
-                                    if (!proteinAccessions.equals("")) {
-                                        proteinAccessions += ", ";
-                                        proteinDescriptions += "; ";
-                                    }
-                                    proteinAccessions += protein;
-                                    proteinDescriptions += sequenceFactory.getHeader(protein).getSimpleProteinDescription();
-                                }
-                                writer.write(proteinAccessions + SEPARATOR);
-                                writer.write(proteinDescriptions + SEPARATOR);
-                                String sequence = bestAssumption.getPeptide().getSequence();
-                                writer.write(sequence + SEPARATOR);
-                                Peptide peptide = bestAssumption.getPeptide();
-                                HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>(peptide.getNModifications());
-                                if (peptide.isModified()) {
-                                    for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                        if (modificationMatch.getVariable()) {
-                                            if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                                                modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
-                                            }
-                                            modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
+                                proteinAccessions += protein;
+                                proteinDescriptions += sequenceFactory.getHeader(protein).getSimpleProteinDescription();
+                            }
+                            writer.write(proteinAccessions + SEPARATOR);
+                            writer.write(proteinDescriptions + SEPARATOR);
+                            String sequence = bestAssumption.getPeptide().getSequence();
+                            writer.write(sequence + SEPARATOR);
+                            Peptide peptide = bestAssumption.getPeptide();
+                            HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>(peptide.getNModifications());
+                            if (peptide.isModified()) {
+                                for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                                    if (modificationMatch.getVariable()) {
+                                        if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
+                                            modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
                                         }
+                                        modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                                     }
                                 }
-                                boolean first = true, first2;
-                                ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
-                                Collections.sort(mods);
-                                for (String mod : mods) {
-                                    if (first) {
-                                        first = false;
+                            }
+                            boolean first = true, first2;
+                            ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
+                            Collections.sort(mods);
+                            for (String mod : mods) {
+                                if (first) {
+                                    first = false;
+                                } else {
+                                    writer.write(", ");
+                                }
+                                first2 = true;
+                                writer.write(mod + "(");
+                                for (int aa : modMap.get(mod)) {
+                                    if (first2) {
+                                        first2 = false;
                                     } else {
                                         writer.write(", ");
                                     }
-                                    first2 = true;
-                                    writer.write(mod + "(");
-                                    for (int aa : modMap.get(mod)) {
-                                        if (first2) {
-                                            first2 = false;
-                                        } else {
-                                            writer.write(", ");
-                                        }
-                                        writer.write(aa + "");
-                                    }
-                                    writer.write(")");
+                                    writer.write(aa + "");
                                 }
-                                writer.write(SEPARATOR);
-                                int nPhospho = 0;
-                                ArrayList<String> modList = new ArrayList<String>();
-                                peptide = bestAssumption.getPeptide();
-                                if (peptide.isModified()) {
-                                    for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                        if (modificationMatch.getVariable()) {
-                                            String ptmName = modificationMatch.getTheoreticPtm();
-                                            if (ptmName.contains("phospho")) {
-                                                nPhospho++;
-                                            }
-                                            PTM refPtm = ptmFactory.getPTM(ptmName);
-                                            for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
-                                                if (!modList.contains(equivalentPtm)) {
-                                                    modList.add(equivalentPtm);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                Collections.sort(modList);
-                                PSPtmScores ptmScores = new PSPtmScores();
-                                first = true;
-                                StringBuilder dLocalizations = new StringBuilder();
-                                StringBuilder probabilisticLocalizations = new StringBuilder();
-                                String mdLocation = "";
-                                String mdScore = "";
-                                String[] split = sequence.split("[STY]");
-                                int nSites = split.length - 1;
-                                ArrayList<String> phosphoNames = new ArrayList<String>();
-
-                                for (String mod : modList) {
-                                    if (mod.contains("phospho")) {
-                                        phosphoNames.add(mod);
-                                        if (spectrumMatch.getUrParam(ptmScores) != null) {
-                                            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                            if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                                PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                                                ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
-                                                Collections.sort(sites);
-                                                for (Integer site : sites) {
-                                                    if (probabilisticLocalizations.length() > 0) {
-                                                        probabilisticLocalizations.append(", ");
-                                                    }
-                                                    probabilisticLocalizations.append(site.toString()).append(": ").append(ptmScoring.getProbabilisticScore(site));
-                                                }
-                                                sites = new ArrayList<Integer>(ptmScoring.getDSites());
-                                                Collections.sort(sites);
-                                                for (Integer site : sites) {
-                                                    if (dLocalizations.length() > 0) {
-                                                        dLocalizations.append(", ");
-                                                    }
-                                                    dLocalizations.append(site.toString()).append(": ").append(ptmScoring.getDeltaScore(site));
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                if (algorithms.size() == 1 && algorithms.get(0) == Advocate.mascot.getIndex()) {
-                                    if (!phosphoNames.isEmpty()) {
-                                        PeptideAssumption mascotAssumption = null;
-                                        double bestScore = 0;
-                                        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(psmKey);
-                                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> mascotMap = assumptions.get(Advocate.mascot.getIndex());
-                                        if (mascotMap != null) {
-                                            ArrayList<SpectrumIdentificationAssumption> mascotAssumptions = new ArrayList<SpectrumIdentificationAssumption>();
-                                            for (ArrayList<SpectrumIdentificationAssumption> peptideAssumptionList : mascotMap.values()) {
-                                                mascotAssumptions.addAll(peptideAssumptionList);
-                                                for (SpectrumIdentificationAssumption assumption : peptideAssumptionList) {
-                                                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                                    double mascotScore = peptideAssumption.getRawScore();
-                                                    if (mascotScore > bestScore) {
-                                                        mascotAssumption = peptideAssumption;
-                                                        bestScore = mascotScore;
-                                                    }
-                                                }
-                                            }
-                                            if (mascotAssumption != null) {
-                                                Peptide mascotPeptide = mascotAssumption.getPeptide();
-                                                Double score = MDScore.getMDScore(mascotAssumptions, mascotPeptide, phosphoNames, identificationParameters.getSequenceMatchingPreferences(), 2);
-                                                if (score != null) {
-                                                    mdScore = score.toString();
-                                                }
-                                                ArrayList<Integer> sites = new ArrayList<Integer>();
-                                                if (mascotPeptide.isModified()) {
-                                                    for (ModificationMatch modificationMatch : mascotPeptide.getModificationMatches()) {
-                                                        if (modificationMatch.getTheoreticPtm().contains("phospho")) {
-                                                            sites.add(modificationMatch.getModificationSite());
-                                                        }
-                                                    }
-                                                }
-                                                Collections.sort(sites);
-                                                for (int site : sites) {
-                                                    if (!mdLocation.equals("")) {
-                                                        mdLocation += ", ";
-                                                    }
-                                                    mdLocation += site;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
-                                    writer.write(probabilisticLocalizations + SEPARATOR);
-                                }
-                                writer.write(dLocalizations + SEPARATOR);
-                                if (algorithms.size() == 1 && algorithms.get(0) == Advocate.mascot.getIndex()) {
-                                    writer.write(mdLocation + SEPARATOR);
-                                    writer.write(mdScore + SEPARATOR);
-                                }
-                                writer.write(nPhospho + SEPARATOR);
-                                writer.write(nSites + SEPARATOR);
-                                writer.write(spectrumFile + SEPARATOR);
-                                writer.write(Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR);
-                                Precursor prec = spectrumFactory.getPrecursor(spectrumMatch.getKey());
-                                writer.write(prec.getMz() + SEPARATOR);
-                                writer.write(bestAssumption.getIdentificationCharge().value + SEPARATOR);
-                                writer.write(prec.getRt() + SEPARATOR);
-                                writer.write(bestAssumption.getPeptide().getMass() + SEPARATOR);
-                                SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
-                                writer.write(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()) + SEPARATOR);
-                                writer.write(bestAssumption.getIsotopeNumber(prec.getMz(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()) + SEPARATOR);
-                                writer.write(psParameter.getPsmConfidence() + SEPARATOR);
-                                MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
-                                writer.write(matchValidationLevel.toString());
-                                writer.write(SEPARATOR);
-                                if (bestAssumption.getPeptide().isDecoy(identificationParameters.getSequenceMatchingPreferences())) {
-                                    writer.write(1 + SEPARATOR);
-                                } else {
-                                    writer.write(0 + SEPARATOR);
-                                }
-                                writer.write(lineBreak);
-                                progressDialog.increasePrimaryProgressCounter();
+                                writer.write(")");
                             }
+                            writer.write(SEPARATOR);
+                            int nPhospho = 0;
+                            ArrayList<String> modList = new ArrayList<String>();
+                            peptide = bestAssumption.getPeptide();
+                            if (peptide.isModified()) {
+                                for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                                    if (modificationMatch.getVariable()) {
+                                        String ptmName = modificationMatch.getTheoreticPtm();
+                                        if (ptmName.contains("phospho")) {
+                                            nPhospho++;
+                                        }
+                                        PTM refPtm = ptmFactory.getPTM(ptmName);
+                                        for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
+                                            if (!modList.contains(equivalentPtm)) {
+                                                modList.add(equivalentPtm);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            Collections.sort(modList);
+                            PSPtmScores ptmScores = new PSPtmScores();
+                            first = true;
+                            StringBuilder dLocalizations = new StringBuilder();
+                            StringBuilder probabilisticLocalizations = new StringBuilder();
+                            String mdLocation = "";
+                            String mdScore = "";
+                            String[] split = sequence.split("[STY]");
+                            int nSites = split.length - 1;
+                            ArrayList<String> phosphoNames = new ArrayList<String>();
+
+                            for (String mod : modList) {
+                                if (mod.contains("phospho")) {
+                                    phosphoNames.add(mod);
+                                    if (spectrumMatch.getUrParam(ptmScores) != null) {
+                                        ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                                        if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                                            PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                                            ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
+                                            Collections.sort(sites);
+                                            for (Integer site : sites) {
+                                                if (probabilisticLocalizations.length() > 0) {
+                                                    probabilisticLocalizations.append(", ");
+                                                }
+                                                probabilisticLocalizations.append(site.toString()).append(": ").append(ptmScoring.getProbabilisticScore(site));
+                                            }
+                                            sites = new ArrayList<Integer>(ptmScoring.getDSites());
+                                            Collections.sort(sites);
+                                            for (Integer site : sites) {
+                                                if (dLocalizations.length() > 0) {
+                                                    dLocalizations.append(", ");
+                                                }
+                                                dLocalizations.append(site.toString()).append(": ").append(ptmScoring.getDeltaScore(site));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (algorithms.size() == 1 && algorithms.get(0) == Advocate.mascot.getIndex()) {
+                                if (!phosphoNames.isEmpty()) {
+                                    PeptideAssumption mascotAssumption = null;
+                                    double bestScore = 0;
+                                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = spectrumMatch.getAssumptionsMap();
+                                    HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> mascotMap = assumptions.get(Advocate.mascot.getIndex());
+                                    if (mascotMap != null) {
+                                        ArrayList<SpectrumIdentificationAssumption> mascotAssumptions = new ArrayList<SpectrumIdentificationAssumption>();
+                                        for (ArrayList<SpectrumIdentificationAssumption> peptideAssumptionList : mascotMap.values()) {
+                                            mascotAssumptions.addAll(peptideAssumptionList);
+                                            for (SpectrumIdentificationAssumption assumption : peptideAssumptionList) {
+                                                PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                                                double mascotScore = peptideAssumption.getRawScore();
+                                                if (mascotScore > bestScore) {
+                                                    mascotAssumption = peptideAssumption;
+                                                    bestScore = mascotScore;
+                                                }
+                                            }
+                                        }
+                                        if (mascotAssumption != null) {
+                                            Peptide mascotPeptide = mascotAssumption.getPeptide();
+                                            Double score = MDScore.getMDScore(mascotAssumptions, mascotPeptide, phosphoNames, identificationParameters.getSequenceMatchingPreferences(), 2);
+                                            if (score != null) {
+                                                mdScore = score.toString();
+                                            }
+                                            ArrayList<Integer> sites = new ArrayList<Integer>();
+                                            if (mascotPeptide.isModified()) {
+                                                for (ModificationMatch modificationMatch : mascotPeptide.getModificationMatches()) {
+                                                    if (modificationMatch.getTheoreticPtm().contains("phospho")) {
+                                                        sites.add(modificationMatch.getModificationSite());
+                                                    }
+                                                }
+                                            }
+                                            Collections.sort(sites);
+                                            for (int site : sites) {
+                                                if (!mdLocation.equals("")) {
+                                                    mdLocation += ", ";
+                                                }
+                                                mdLocation += site;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
+                                writer.write(probabilisticLocalizations + SEPARATOR);
+                            }
+                            writer.write(dLocalizations + SEPARATOR);
+                            if (algorithms.size() == 1 && algorithms.get(0) == Advocate.mascot.getIndex()) {
+                                writer.write(mdLocation + SEPARATOR);
+                                writer.write(mdScore + SEPARATOR);
+                            }
+                            writer.write(nPhospho + SEPARATOR);
+                            writer.write(nSites + SEPARATOR);
+                            writer.write(spectrumMatch.getSpectrumFile() + SEPARATOR);
+                            writer.write(Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR);
+                            Precursor prec = spectrumFactory.getPrecursor(spectrumMatch.getKey());
+                            writer.write(prec.getMz() + SEPARATOR);
+                            writer.write(bestAssumption.getIdentificationCharge().value + SEPARATOR);
+                            writer.write(prec.getRt() + SEPARATOR);
+                            writer.write(bestAssumption.getPeptide().getMass() + SEPARATOR);
+                            SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
+                            writer.write(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()) + SEPARATOR);
+                            writer.write(bestAssumption.getIsotopeNumber(prec.getMz(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()) + SEPARATOR);
+                            writer.write(psParameter.getPsmConfidence() + SEPARATOR);
+                            MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
+                            writer.write(matchValidationLevel.toString());
+                            writer.write(SEPARATOR);
+                            if (bestAssumption.getPeptide().isDecoy(identificationParameters.getSequenceMatchingPreferences())) {
+                                writer.write(1 + SEPARATOR);
+                            } else {
+                                writer.write(0 + SEPARATOR);
+                            }
+                            writer.write(lineBreak);
+                            progressDialog.increasePrimaryProgressCounter();
                         }
                         writer.close();
                         try {
@@ -1977,9 +1940,7 @@ public class OutputGenerator {
                         int proteinCounter = 0;
 
                         progressDialog.setTitle("Loading Protein Matches. Please Wait...");
-                        identification.loadProteinMatches(progressDialog, true);
-                        progressDialog.setTitle("Loading Protein Details. Please Wait...");
-                        identification.loadProteinMatchParameters(proteinPSParameter, progressDialog, true);
+                        identification.loadObjects(ProteinMatch.class.getSimpleName(), progressDialog, true);
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         progressDialog.setMaxPrimaryProgressCounter(identification.getProteinIdentification().size());
@@ -1991,16 +1952,16 @@ public class OutputGenerator {
                             if (progressDialog.isRunCanceled()) {
                                 break;
                             }
+                            ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(proteinKey);
 
-                            proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinPSParameter);
+                            proteinPSParameter = (PSParameter)proteinMatch.getUrParam(proteinPSParameter);
 
                             writer.write(++proteinCounter + SEPARATOR);
 
-                            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
                             String accession = proteinMatch.getMainMatch();
                             writer.write(accession + SEPARATOR);
                             boolean first = true;
-                            for (String otherProtein : proteinMatch.getTheoreticProteinsAccessions()) {
+                            for (String otherProtein : proteinMatch.getTheoreticProtein()) {
                                 if (!otherProtein.equals(accession)) {
                                     if (first) {
                                         first = false;
@@ -2337,6 +2298,8 @@ public class OutputGenerator {
                         } else {
                             progressDialog.setMaxPrimaryProgressCounter(identification.getSpectrumIdentificationSize());
                         }
+                        
+                        /*
                         HashMap<String, HashSet<String>> spectrumKeys = new HashMap<String, HashSet<String>>();
                         if (psmKeys == null) {
                             spectrumKeys = identification.getSpectrumIdentificationMap();
@@ -2349,138 +2312,139 @@ public class OutputGenerator {
                                 spectrumKeys.get(spectrumFile).add(spectrumKey);
                             }
                         }
-                        for (String spectrumFile : spectrumKeys.keySet()) {
-                            if (psmKeys == null) {
-                                identification.loadSpectrumMatches(spectrumFile, progressDialog, true);
-                                identification.loadSpectrumMatchParameters(spectrumFile, psParameter, progressDialog, true);
-                            } else {
-                                identification.loadSpectrumMatches(new ArrayList<String>(spectrumKeys.get(spectrumFile)), progressDialog, true);
-                                identification.loadSpectrumMatchParameters(new ArrayList<String>(spectrumKeys.get(spectrumFile)), psParameter, progressDialog, true);
+                        */
+                        
+                        //if (psmKeys == null) {
+                            identification.loadObjects(SpectrumMatch.class.getSimpleName(), progressDialog, true);
+                        /*} else {
+                            identification.loadSpectrumMatches(new ArrayList<String>(spectrumKeys.get(spectrumFile)), progressDialog, true);
+                            identification.loadSpectrumMatchParameters(new ArrayList<String>(spectrumKeys.get(spectrumFile)), psParameter, progressDialog, true);
+                        }*/
+                        PsmIterator psmIterator = identification.getPsmIterator(progressDialog);
+                        while (psmIterator.hasNext()) {
+
+                            if (progressDialog.isRunCanceled()) {
+                                return;
                             }
-                            for (String spectrumKey : spectrumKeys.get(spectrumFile)) {
 
-                                if (progressDialog.isRunCanceled()) {
-                                    break;
-                                }
+                            SpectrumMatch spectrumMatch = psmIterator.next();
+                            psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
 
-                                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                            if (!onlyValidated || psParameter.getMatchValidationLevel().isValidated()) {
+                                HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = spectrumMatch.getAssumptionsMap();
+                                for (int se : assumptions.keySet()) {
+                                    HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> seMap = assumptions.get(se);
+                                    ArrayList<Double> eValues = new ArrayList<Double>(seMap.keySet());
+                                    Collections.sort(eValues);
+                                    rank = 1;
+                                    for (double eValue : eValues) {
+                                        for (SpectrumIdentificationAssumption assumption : seMap.get(eValue)) {
+                                            if (assumption instanceof PeptideAssumption) {
+                                                PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                                                writer.write(Advocate.getAdvocate(se).getName() + SEPARATOR);
+                                                writer.write(rank + SEPARATOR);
+                                                if (accession || proteinDescription) {
 
-                                if (!onlyValidated || psParameter.getMatchValidationLevel().isValidated()) {
-                                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
-                                    for (int se : assumptions.keySet()) {
-                                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> seMap = assumptions.get(se);
-                                        ArrayList<Double> eValues = new ArrayList<Double>(seMap.keySet());
-                                        Collections.sort(eValues);
-                                        rank = 1;
-                                        for (double eValue : eValues) {
-                                            for (SpectrumIdentificationAssumption assumption : seMap.get(eValue)) {
-                                                if (assumption instanceof PeptideAssumption) {
-                                                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                                    writer.write(Advocate.getAdvocate(se).getName() + SEPARATOR);
-                                                    writer.write(rank + SEPARATOR);
-                                                    if (accession || proteinDescription) {
+                                                    String proteinAccessions = "";
+                                                    String proteinDescriptions = "";
 
-                                                        String proteinAccessions = "";
-                                                        String proteinDescriptions = "";
-
-                                                        boolean first = true;
-                                                        for (String protein : peptideAssumption.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
-                                                            if (first) {
-                                                                first = false;
-                                                            } else {
-                                                                if (accession) {
-                                                                    proteinAccessions += ", ";
-                                                                }
-                                                                if (proteinDescription) {
-                                                                    proteinDescriptions += "; ";
-                                                                }
-                                                            }
+                                                    boolean first = true;
+                                                    for (String protein : peptideAssumption.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
+                                                        if (first) {
+                                                            first = false;
+                                                        } else {
                                                             if (accession) {
-                                                                proteinAccessions += protein;
+                                                                proteinAccessions += ", ";
                                                             }
                                                             if (proteinDescription) {
-                                                                proteinDescriptions += sequenceFactory.getHeader(protein).getSimpleProteinDescription();
+                                                                proteinDescriptions += "; ";
                                                             }
                                                         }
                                                         if (accession) {
-                                                            writer.write(proteinAccessions + SEPARATOR);
+                                                            proteinAccessions += protein;
                                                         }
                                                         if (proteinDescription) {
-                                                            writer.write(proteinDescriptions + SEPARATOR);
+                                                            proteinDescriptions += sequenceFactory.getHeader(protein).getSimpleProteinDescription();
                                                         }
                                                     }
-                                                    if (sequence) {
-                                                        writer.write(peptideAssumption.getPeptide().getSequence() + SEPARATOR);
+                                                    if (accession) {
+                                                        writer.write(proteinAccessions + SEPARATOR);
                                                     }
-                                                    if (modifications) {
-                                                        boolean first = true;
-                                                        Peptide peptide = peptideAssumption.getPeptide();
-                                                        if (peptide.isModified()) {
-                                                            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                                                if (modificationMatch.getVariable()) {
-                                                                    if (first) {
-                                                                        first = false;
-                                                                    } else {
-                                                                        writer.write(", ");
-                                                                    }
-                                                                    String modName = modificationMatch.getTheoreticPtm();
-                                                                    writer.write(modName + "(" + modificationMatch.getModificationSite() + ")");
+                                                    if (proteinDescription) {
+                                                        writer.write(proteinDescriptions + SEPARATOR);
+                                                    }
+                                                }
+                                                if (sequence) {
+                                                    writer.write(peptideAssumption.getPeptide().getSequence() + SEPARATOR);
+                                                }
+                                                if (modifications) {
+                                                    boolean first = true;
+                                                    Peptide peptide = peptideAssumption.getPeptide();
+                                                    if (peptide.isModified()) {
+                                                        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                                                            if (modificationMatch.getVariable()) {
+                                                                if (first) {
+                                                                    first = false;
+                                                                } else {
+                                                                    writer.write(", ");
                                                                 }
+                                                                String modName = modificationMatch.getTheoreticPtm();
+                                                                writer.write(modName + "(" + modificationMatch.getModificationSite() + ")");
                                                             }
+                                                        }
+                                                    }
+                                                    writer.write(SEPARATOR);
+                                                }
+                                                if (file) {
+                                                    writer.write(Spectrum.getSpectrumFile(spectrumMatch.getKey()) + SEPARATOR);
+                                                }
+                                                if (title) {
+                                                    writer.write(Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR);
+                                                }
+                                                if (precursor) {
+                                                    Precursor prec = spectrumFactory.getPrecursor(spectrumMatch.getKey());
+                                                    writer.write(prec.getMz() + SEPARATOR);
+                                                    writer.write(peptideAssumption.getIdentificationCharge().value + SEPARATOR);
+                                                    writer.write(prec.getRt() + SEPARATOR);
+                                                    writer.write(peptideAssumption.getPeptide().getMass() + SEPARATOR);
+                                                    SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
+                                                    writer.write(peptideAssumption.getDeltaMass(prec.getMz(),
+                                                            peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()) + SEPARATOR);
+                                                    writer.write(peptideAssumption.getIsotopeNumber(prec.getMz(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()) + SEPARATOR);
+                                                }
+                                                if (scores) {
+                                                    for (Integer advocateIndex : peptideShakerGUI.getProjectDetails().getIdentificationAlgorithms()) {
+                                                        if (se == advocateIndex) {
+                                                            writer.write("" + eValue);
                                                         }
                                                         writer.write(SEPARATOR);
                                                     }
-                                                    if (file) {
-                                                        writer.write(Spectrum.getSpectrumFile(spectrumMatch.getKey()) + SEPARATOR);
-                                                    }
-                                                    if (title) {
-                                                        writer.write(Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR);
-                                                    }
-                                                    if (precursor) {
-                                                        Precursor prec = spectrumFactory.getPrecursor(spectrumMatch.getKey());
-                                                        writer.write(prec.getMz() + SEPARATOR);
-                                                        writer.write(peptideAssumption.getIdentificationCharge().value + SEPARATOR);
-                                                        writer.write(prec.getRt() + SEPARATOR);
-                                                        writer.write(peptideAssumption.getPeptide().getMass() + SEPARATOR);
-                                                        SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
-                                                        writer.write(peptideAssumption.getDeltaMass(prec.getMz(),
-                                                                peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()) + SEPARATOR);
-                                                        writer.write(peptideAssumption.getIsotopeNumber(prec.getMz(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()) + SEPARATOR);
-                                                    }
-                                                    if (scores) {
-                                                        for (Integer advocateIndex : peptideShakerGUI.getProjectDetails().getIdentificationAlgorithms()) {
-                                                            if (se == advocateIndex) {
-                                                                writer.write("" + eValue);
-                                                            }
-                                                            writer.write(SEPARATOR);
-                                                        }
-                                                    }
-                                                    if (confidence) {
-                                                        psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
-                                                        writer.write(psParameter.getSearchEngineConfidence() + SEPARATOR);
-                                                    }
-                                                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), identificationParameters.getSequenceMatchingPreferences())) {
-                                                        writer.write(1 + SEPARATOR);
-                                                    } else {
-                                                        writer.write(0 + SEPARATOR);
-                                                    }
-                                                    if (peptideAssumption.getPeptide().isDecoy(identificationParameters.getSequenceMatchingPreferences())) {
-                                                        writer.write(1 + SEPARATOR);
-                                                    } else {
-                                                        writer.write(0 + SEPARATOR);
-                                                    }
-                                                    writer.write(lineBreak);
-                                                    rank++;
                                                 }
+                                                if (confidence) {
+                                                    psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
+                                                    writer.write(psParameter.getSearchEngineConfidence() + SEPARATOR);
+                                                }
+                                                if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), identificationParameters.getSequenceMatchingPreferences())) {
+                                                    writer.write(1 + SEPARATOR);
+                                                } else {
+                                                    writer.write(0 + SEPARATOR);
+                                                }
+                                                if (peptideAssumption.getPeptide().isDecoy(identificationParameters.getSequenceMatchingPreferences())) {
+                                                    writer.write(1 + SEPARATOR);
+                                                } else {
+                                                    writer.write(0 + SEPARATOR);
+                                                }
+                                                writer.write(lineBreak);
+                                                rank++;
                                             }
                                         }
                                     }
                                 }
-
-                                progressDialog.setValue(++progress);
                             }
+
+                            progressDialog.setValue(++progress);
                         }
+                        
 
                         writer.close();
 
@@ -2704,22 +2668,23 @@ public class OutputGenerator {
                         int proteinCounter = 0;
 
                         progressDialog.setTitle("Loading Protein Matches. Please Wait...");
-                        identification.loadProteinMatches(progressDialog, true);
-                        progressDialog.setTitle("Loading Protein Details. Please Wait...");
-                        identification.loadProteinMatchParameters(proteinPSParameter, progressDialog, true);
+                        identification.loadObjects(ProteinMatch.class.getSimpleName(), progressDialog, true);
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         progressDialog.setMaxPrimaryProgressCounter(proteinKeys.size());
                         progressDialog.setValue(0);
                         progressDialog.setTitle("Copying to File. Please Wait...");
 
-                        for (String proteinKey : proteinKeys) {
+                        ProteinMatchesIterator pmIterator = identification.getProteinMatchesIterator(proteinKeys, progressDialog);
+                        while (pmIterator.hasNext()) {
 
                             if (progressDialog.isRunCanceled()) {
                                 break;
                             }
 
-                            proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinPSParameter);
+                            ProteinMatch proteinMatch = pmIterator.next();
+                            String proteinKey = proteinMatch.getKey();
+                            proteinPSParameter = (PSParameter)proteinMatch.getUrParam(proteinPSParameter);
 
                             if (!ProteinMatch.isDecoy(proteinKey) || !onlyValidated) {
                                 if ((onlyValidated && proteinPSParameter.getMatchValidationLevel().isValidated()) || !onlyValidated) {
@@ -2798,7 +2763,7 @@ public class OutputGenerator {
 
                                             if (nPeptidesPerFraction) {
                                                 for (String fraction : fractionFileNames) {
-                                                    if (proteinPSParameter.getFractionScore() != null && proteinPSParameter.getFractionScore().contains(fraction)
+                                                    if (proteinPSParameter.getFractions() != null && proteinPSParameter.getFractions().contains(fraction)
                                                             && proteinPSParameter.getFractionValidatedPeptides(fraction) != null) {
                                                         writer.write(proteinPSParameter.getFractionValidatedPeptides(fraction) + SEPARATOR);
                                                     } else {
@@ -2808,7 +2773,7 @@ public class OutputGenerator {
                                             }
                                             if (nSpectraPerFraction) {
                                                 for (String fraction : fractionFileNames) {
-                                                    if (proteinPSParameter.getFractionScore() != null && proteinPSParameter.getFractionScore().contains(fraction)
+                                                    if (proteinPSParameter.getFractions() != null && proteinPSParameter.getFractions().contains(fraction)
                                                             && proteinPSParameter.getFractionValidatedSpectra(fraction) != null) {
                                                         writer.write(proteinPSParameter.getFractionValidatedSpectra(fraction) + SEPARATOR);
                                                     } else {
@@ -2818,7 +2783,7 @@ public class OutputGenerator {
                                             }
                                             if (precursorIntensities) {
                                                 for (String fraction : fractionFileNames) {
-                                                    if (proteinPSParameter.getFractionScore() != null && proteinPSParameter.getFractionScore().contains(fraction)
+                                                    if (proteinPSParameter.getFractions() != null && proteinPSParameter.getFractions().contains(fraction)
                                                             && proteinPSParameter.getPrecursorIntensityAveragePerFraction(fraction) != null) {
                                                         writer.write(proteinPSParameter.getPrecursorIntensityAveragePerFraction(fraction) + SEPARATOR);
                                                     } else {
@@ -2832,7 +2797,7 @@ public class OutputGenerator {
                                                 double minMwRangePeptides = Double.MAX_VALUE;
 
                                                 for (String fraction : fractionFileNames) {
-                                                    if (proteinPSParameter.getFractionScore() != null && proteinPSParameter.getFractionScore().contains(fraction)
+                                                    if (proteinPSParameter.getFractions() != null && proteinPSParameter.getFractions().contains(fraction)
                                                             && proteinPSParameter.getFractionValidatedPeptides(fraction) != null
                                                             && proteinPSParameter.getFractionValidatedPeptides(fraction) > 0) {
 
@@ -2864,7 +2829,7 @@ public class OutputGenerator {
                                                 double minMwRangeSpectra = Double.MAX_VALUE;
 
                                                 for (String fraction : fractionFileNames) {
-                                                    if (proteinPSParameter.getFractionScore() != null && proteinPSParameter.getFractionScore().contains(fraction)
+                                                    if (proteinPSParameter.getFractions() != null && proteinPSParameter.getFractions().contains(fraction)
                                                             && proteinPSParameter.getFractionValidatedSpectra(fraction) != null
                                                             && proteinPSParameter.getFractionValidatedSpectra(fraction) > 0) {
 
@@ -2930,10 +2895,10 @@ public class OutputGenerator {
                                             writer.write(matchValidationLevel.toString());
                                             writer.write(SEPARATOR);
                                             if (includeHidden) {
-                                                writer.write(proteinPSParameter.getHidden() + SEPARATOR);
+                                                writer.write(proteinPSParameter.isHidden() + SEPARATOR);
                                             }
                                             if (!onlyStarred && showStar) {
-                                                writer.write(proteinPSParameter.getStarred() + "");
+                                                writer.write(proteinPSParameter.isStarred() + "");
                                             }
                                             writer.write(lineBreak);
                                         }
@@ -3027,7 +2992,7 @@ public class OutputGenerator {
 
         if (peptide.isModified()) {
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                if ((variablePtms && modificationMatch.getVariable()) || (!variablePtms && !modificationMatch.getVariable())) {
+                if ((variablePtms && modificationMatch.isVariable()) || (!variablePtms && !modificationMatch.isVariable())) {
                     if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
                         modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
                     }
@@ -3084,7 +3049,7 @@ public class OutputGenerator {
 
         if (peptide.isModified()) {
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                if (modificationMatch.getVariable()) {
+                if (modificationMatch.isVariable()) {
                     PTM refPtm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
                     for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
                         if (!modList.contains(equivalentPtm)) {
