@@ -292,7 +292,7 @@ public class RunMzDeviation {
             waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(spectrumFileName).size());
         }
 
-        PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, false, waitingHandler);
+        PsmIterator psmIterator = identification.getPsmIterator(waitingHandler, "spectrumFile == '" + spectrumFileName + "'");
 
         while (psmIterator.hasNext()) {
 
@@ -303,7 +303,7 @@ public class RunMzDeviation {
             SpectrumMatch spectrumMatch = psmIterator.next();
             String spectrumKey = spectrumMatch.getKey();
 
-            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+            psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
 
             if (psParameter.getMatchValidationLevel().isValidated()) {
 
