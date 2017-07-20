@@ -1839,8 +1839,6 @@ public class QCPanel extends javax.swing.JPanel {
                 nonValidatedDecoyValues = new ArrayList<Double>();
 
                 PSParameter psmParameter = new PSParameter();
-                ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-                parameters.add(psmParameter);
                 PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
 
                 while (peptideMatchesIterator.hasNext()) {
@@ -1906,8 +1904,6 @@ public class QCPanel extends javax.swing.JPanel {
                 nonValidatedDecoyValues = new ArrayList<Double>();
 
                 PSParameter psmParameter = new PSParameter();
-                ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-                parameters.add(psmParameter);
                 PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
 
                 while (peptideMatchesIterator.hasNext()) {
@@ -1975,8 +1971,6 @@ public class QCPanel extends javax.swing.JPanel {
                 nonValidatedDecoyValues = new ArrayList<Double>();
 
                 PSParameter psmParameter = new PSParameter();
-                ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-                parameters.add(psmParameter);
                 PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
 
                 while (peptideMatchesIterator.hasNext()) {
@@ -2035,8 +2029,6 @@ public class QCPanel extends javax.swing.JPanel {
 
         try {
             PSParameter psmParameter = new PSParameter();
-            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-            parameters.add(psmParameter);
 
             maxValue = Double.MIN_VALUE;
             Identification identification = peptideShakerGUI.getIdentification();
@@ -2248,8 +2240,6 @@ public class QCPanel extends javax.swing.JPanel {
         HashMap<String, Integer> notValidatedPtmMap = new HashMap<String, Integer>(ptmNames.size());
 
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-        parameters.add(psParameter);
 
         ArrayList<String> modifiedPeptides = new ArrayList<String>(identification.getPeptideIdentification().size());
         for (String peptideKey : identification.getPeptideIdentification()) {
@@ -2357,8 +2347,7 @@ public class QCPanel extends javax.swing.JPanel {
         HashMap<String, Integer> possibleSitesMap = new HashMap<String, Integer>(ptmNames.size());
 
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-        parameters.add(psParameter);
+        
 
         progressDialog.setPrimaryProgressCounterIndeterminate(false);
         progressDialog.setMaxPrimaryProgressCounter(identification.getPeptideIdentification().size());
@@ -2369,7 +2358,7 @@ public class QCPanel extends javax.swing.JPanel {
         while (peptideMatchesIterator.hasNext()) {
 
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            String peptideKey = peptideMatch.getKey();
+            
             psParameter = (PSParameter)peptideMatch.getUrParam(psParameter);
             if (psParameter.getMatchValidationLevel().isValidated()) {
                 Peptide peptide = peptideMatch.getTheoreticPeptide();
@@ -2465,8 +2454,6 @@ public class QCPanel extends javax.swing.JPanel {
         HashMap<String, Integer> possiblyModifiedPeptidesMap = new HashMap<String, Integer>(ptmNames.size());
 
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-        parameters.add(psParameter);
 
         progressDialog.setPrimaryProgressCounterIndeterminate(false);
         progressDialog.setMaxPrimaryProgressCounter(identification.getPeptideIdentification().size());
@@ -2477,7 +2464,6 @@ public class QCPanel extends javax.swing.JPanel {
         while (peptideMatchesIterator.hasNext()) {
 
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            String peptideKey = peptideMatch.getKey();
             psParameter = (PSParameter)peptideMatch.getUrParam(psParameter);
             if (psParameter.getMatchValidationLevel().isValidated()) {
                 Peptide peptide = peptideMatch.getTheoreticPeptide();
