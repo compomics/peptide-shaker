@@ -216,12 +216,13 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
             try {
                 boolean useDB = !isSelfUpdating();
                 String proteinKey = proteinKeys.get(viewIndex);
-
+                ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(proteinKey);
+                        
                 switch (column) {
                     case 0:
                         return viewIndex + 1;
                     case 1:
-                        PSParameter psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB && !isScrolling);
+                        PSParameter psParameter = (PSParameter)proteinMatch.getUrParam(new PSParameter());
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
@@ -232,7 +233,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         }
                         return psParameter.getStarred();
                     case 2:
-                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB && !isScrolling);
+                        psParameter = (PSParameter)proteinMatch.getUrParam(new PSParameter());
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
@@ -243,7 +244,6 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         }
                         return psParameter.getProteinInferenceGroupClass();
                     case 3:
-                        ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey, useDB && !isScrolling);
                         if (proteinMatch == null) {
                             if (isScrolling) {
                                 return null;
@@ -258,7 +258,6 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             return proteinMatch.getMainMatch();
                         }
                     case 4:
-                        proteinMatch = identification.getProteinMatch(proteinKey, useDB && !isScrolling);
                         if (proteinMatch == null) {
                             if (isScrolling) {
                                 return null;
@@ -280,7 +279,6 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         }
                         return description;
                     case 5:
-                        proteinMatch = identification.getProteinMatch(proteinKey, useDB && !isScrolling);
                         if (proteinMatch == null) {
                             if (isScrolling) {
                                 return null;
@@ -300,7 +298,6 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         if (isScrolling) {
                             return null;
                         }
-                        proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                         if (!useDB && (!identificationFeaturesGenerator.sequenceCoverageInCache(proteinKey)
                                 || !identificationFeaturesGenerator.observableCoverageInCache(proteinKey))
                                 && (proteinMatch == null || !identification.proteinDetailsInCache(proteinKey))) {
@@ -334,7 +331,6 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         if (isScrolling) {
                             return null;
                         }
-                        proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                         if (!useDB && (proteinMatch == null
                                 || !identificationFeaturesGenerator.nValidatedPeptidesInCache(proteinKey)
                                 && !identification.proteinDetailsInCache(proteinKey))) {
@@ -354,7 +350,6 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         if (isScrolling) {
                             return null;
                         }
-                        proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                         if (!useDB
                                 && (!identificationFeaturesGenerator.nValidatedSpectraInCache(proteinKey)
                                 || !identificationFeaturesGenerator.nSpectraInCache(proteinKey))
@@ -376,7 +371,6 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         if (isScrolling) {
                             return null;
                         }
-                        proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                         if (!useDB && !identificationFeaturesGenerator.spectrumCountingInCache(proteinKey)
                                 && (proteinMatch == null || !identification.proteinDetailsInCache(proteinKey))) {
                             dataMissingAtRow(row);
@@ -387,7 +381,6 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         if (isScrolling) {
                             return null;
                         }
-                        proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                         if (!useDB && proteinMatch == null) {
                             dataMissingAtRow(row);
                             return DisplayPreferences.LOADING_MESSAGE;
@@ -400,7 +393,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             return null;
                         }
                     case 11:
-                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB && !isScrolling);
+                        psParameter = (PSParameter)proteinMatch.getUrParam(new PSParameter());
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
@@ -419,7 +412,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             return null;
                         }
                     case 12:
-                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB && !isScrolling);
+                        psParameter = (PSParameter)proteinMatch.getUrParam(new PSParameter());
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
@@ -495,9 +488,8 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
             ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
             parameters.add(new PSParameter());
 
-            ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(tempKeys, parameters, true, parameters, true, parameters, waitingHandler);
-            proteinMatchesIterator.setBatchSize(batchSize);
-
+            ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(tempKeys, waitingHandler);
+            
             int i = 0;
             while (proteinMatchesIterator.hasNext()) {
                 ProteinMatch proteinMatch = proteinMatchesIterator.next();
@@ -549,7 +541,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     || column == 2
                     || column == 11
                     || column == 12) {
-                identification.loadProteinMatchParameters(proteinKeys, new PSParameter(), waitingHandler, false);
+                identification.loadObjects(proteinKeys, waitingHandler, false);
             } else if (column == 3
                     || column == 4
                     || column == 5
@@ -558,7 +550,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     || column == 8
                     || column == 9
                     || column == 10) {
-                identification.loadProteinMatches(proteinKeys, waitingHandler, false);
+                identification.loadObjects(proteinKeys, waitingHandler, false);
             }
         } catch (Exception e) {
             catchException(e);
