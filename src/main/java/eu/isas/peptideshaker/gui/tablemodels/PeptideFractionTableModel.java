@@ -126,31 +126,28 @@ public class PeptideFractionTableModel extends DefaultTableModel {
     public Object getValueAt(int row, int column) {
 
         try {
+            String peptideKey = peptideKeys.get(row);
+            PeptideMatch peptideMatch = (PeptideMatch)peptideShakerGUI.getIdentification().retrieveObject(peptideKey);
             if (column == 0) {
                 return row + 1;
             } else if (column == 1) {
-                String peptideKey = peptideKeys.get(row);
-                PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
                 return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
             } else if (column > 1 && column - 2 < fileNames.size()) {
                 String fraction = fileNames.get(column - 2);
                 PSParameter pSParameter = new PSParameter();
-                String peptideKey = peptideKeys.get(row);
-                pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
-                if (pSParameter.getFractionScore() != null && pSParameter.getFractionScore().contains(fraction)) {
+                pSParameter = (PSParameter)peptideMatch.getUrParam(pSParameter);
+                if (pSParameter.getFractionScore() != null && pSParameter.getFractions().contains(fraction)) {
                     return pSParameter.getFractionConfidence(fraction);
                 } else {
                     return 0.0;
                 }
             } else if (column == fileNames.size() + 2) {
-                String peptideKey = peptideKeys.get(row);
                 PSParameter pSParameter = new PSParameter();
-                pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
+                pSParameter = (PSParameter)peptideMatch.getUrParam(pSParameter);
                 return pSParameter.getPeptideConfidence();
             } else if (column == fileNames.size() + 3) {
-                String peptideKey = peptideKeys.get(row);
                 PSParameter pSParameter = new PSParameter();
-                pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
+                pSParameter = (PSParameter)peptideMatch.getUrParam(pSParameter);
                 return pSParameter.getMatchValidationLevel().getIndex();
             } else {
                 return "";
