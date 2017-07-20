@@ -391,13 +391,13 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 PSParameter psParameter = new PSParameter();
                                 ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
                                 parameters.add(psParameter);
-                                ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, false, null, false, null, progressDialog);
+                                ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(progressDialog);
 
                                 while (proteinMatchesIterator.hasNext()) {
 
                                     ProteinMatch proteinMatch = proteinMatchesIterator.next();
                                     String proteinKey = proteinMatch.getKey();
-                                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
+                                    psParameter = (PSParameter)proteinMatch.getUrParam(psParameter);
 
                                     if (psParameter.getMatchValidationLevel().isValidated() && !ProteinMatch.isDecoy(proteinKey) && !psParameter.getHidden()) {
 
@@ -2151,9 +2151,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                         }
 
                         ArrayList<String> proteinKeysList = new ArrayList<String>(proteinKeys);
-                        identification.loadProteinMatches(proteinKeysList, progressDialog, false);
-                        identification.loadProteinMatchParameters(proteinKeysList, new PSParameter(), progressDialog, false);
-
+                        identification.loadObjects(proteinKeysList, progressDialog, false);
+                        
                         // update the table
                         if (proteinTable.getModel() instanceof ProteinGoTableModel) {
                             ((ProteinGoTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI, proteinKeysList);
@@ -2173,7 +2172,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             PSParameter psParameter = new PSParameter();
 
                             for (String proteinKey : proteinKeys) {
-                                psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+                                psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinKey)).getUrParam(psParameter);
                                 MatchValidationLevel level = psParameter.getMatchValidationLevel();
 
                                 if (level == MatchValidationLevel.confident) {
