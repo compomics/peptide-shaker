@@ -142,13 +142,12 @@ public class ProteinFractionTableModel extends DefaultTableModel {
     public Object getValueAt(int row, int column) {
 
         try {
+            ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(proteinKeys.get(row));
             if (column == 0) {
                 return row + 1;
             } else if (column == 1) {
-                ProteinMatch proteinMatch = identification.getProteinMatch(proteinKeys.get(row));
                 return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(proteinMatch.getMainMatch());
             } else if (column == 2) {
-                ProteinMatch proteinMatch = identification.getProteinMatch(proteinKeys.get(row));
                 String description = "";
                 try {
                     description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription();
@@ -159,15 +158,13 @@ public class ProteinFractionTableModel extends DefaultTableModel {
             } else if (column > 2 && column - 3 < fileNames.size()) {
                 String fraction = fileNames.get(column - 3);
                 PSParameter psParameter = new PSParameter();
-                String proteinKey = proteinKeys.get(row);
-                psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                if (psParameter.getFractionScore() != null && psParameter.getFractionScore().contains(fraction)) {
+                psParameter = (PSParameter)proteinMatch.getUrParam(psParameter);
+                if (psParameter.getFractionScore() != null && psParameter.getFractions().contains(fraction)) {
                     return psParameter.getFractionConfidence(fraction);
                 } else {
                     return 0.0;
                 }
             } else if (column == fileNames.size() + 3) {
-                ProteinMatch proteinMatch = identification.getProteinMatch(proteinKeys.get(row));
                 String mainMatch = proteinMatch.getMainMatch();
                 Protein currentProtein = sequenceFactory.getProtein(mainMatch);
                 if (currentProtein != null) {
@@ -177,14 +174,13 @@ public class ProteinFractionTableModel extends DefaultTableModel {
                 }
             } else if (column == fileNames.size() + 4) {
                 String proteinKey = proteinKeys.get(row);
-                PSParameter pSParameter = new PSParameter();
-                pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, pSParameter);
-                return pSParameter.getProteinConfidence();
+                PSParameter psParameter = new PSParameter();
+                psParameter = (PSParameter)proteinMatch.getUrParam(psParameter);
+                return psParameter.getProteinConfidence();
             } else if (column == fileNames.size() + 5) {
-                String proteinKey = proteinKeys.get(row);
-                PSParameter pSParameter = new PSParameter();
-                pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, pSParameter);
-                return pSParameter.getMatchValidationLevel().getIndex();
+                PSParameter psParameter = new PSParameter();
+                psParameter = (PSParameter)proteinMatch.getUrParam(psParameter);
+                return psParameter.getMatchValidationLevel().getIndex();
             } else {
                 return "";
             }
