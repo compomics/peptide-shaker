@@ -25,13 +25,6 @@ public class PeptideShakerSettings extends IdObject implements UrParameter {
      */
     static final long serialVersionUID = -3531908843597367812L;
     /**
-     * The initial processing preferences.
-     *
-     * @deprecated replaced by utilities processing preferences and fraction
-     * preferences
-     */
-    private PSProcessingPreferences processingPreferences;
-    /**
      * The identification parameters.
      */
     private IdentificationParameters identificationParameters;
@@ -116,6 +109,7 @@ public class PeptideShakerSettings extends IdObject implements UrParameter {
      * @return the identification parameters
      */
     public IdentificationParameters getIdentificationParameters() {
+        zooActivateRead();
         return identificationParameters;
     }
 
@@ -125,6 +119,8 @@ public class PeptideShakerSettings extends IdObject implements UrParameter {
      * @param identificationParameters the identification parameters
      */
     public void setIdentificationParameters(IdentificationParameters identificationParameters) {
+        zooActivateWrite();
+        setModified(true);
         this.identificationParameters = identificationParameters;
     }
 
@@ -134,16 +130,30 @@ public class PeptideShakerSettings extends IdObject implements UrParameter {
      * @return the spectrum counting preferences of the project
      */
     public SpectrumCountingPreferences getSpectrumCountingPreferences() {
+        zooActivateRead();
         return spectrumCountingPreferences;
     }
-
+    
+    public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences){
+        zooActivateWrite();
+        setModified(true);
+        this.spectrumCountingPreferences = spectrumCountingPreferences;
+    }
+    
     /**
      * Returns the project details.
      *
      * @return the project details
      */
     public ProjectDetails getProjectDetails() {
+        zooActivateRead();
         return projectDetails;
+    }
+    
+    public void setProjectDetails(ProjectDetails projectDetails){
+        zooActivateWrite();
+        setModified(true);
+        this.projectDetails = projectDetails;
     }
 
     /**
@@ -152,7 +162,14 @@ public class PeptideShakerSettings extends IdObject implements UrParameter {
      * @return the GUI display preferences
      */
     public FilterPreferences getFilterPreferences() {
+        zooActivateRead();
         return filterPreferences;
+    }
+    
+    public void setFilterPreferences(FilterPreferences filterPreferences){
+        zooActivateWrite();
+        setModified(true);
+        this.filterPreferences = filterPreferences;
     }
 
     /**
@@ -161,7 +178,14 @@ public class PeptideShakerSettings extends IdObject implements UrParameter {
      * @return the GUI display preferences
      */
     public DisplayPreferences getDisplayPreferences() {
+        zooActivateRead();
         return displayPreferences;
+    }
+    
+    public void setDisplayPreferences(DisplayPreferences displayPreferences){
+        zooActivateWrite();
+        setModified(true);
+        this.displayPreferences = displayPreferences;
     }
 
     /**
@@ -170,6 +194,7 @@ public class PeptideShakerSettings extends IdObject implements UrParameter {
      * @return information about the protocol used
      */
     public ShotgunProtocol getShotgunProtocol() {
+        zooActivateRead();
         return shotgunProtocol;
     }
 
@@ -179,16 +204,9 @@ public class PeptideShakerSettings extends IdObject implements UrParameter {
      * @param shotgunProtocol information about the protocol used
      */
     public void setShotgunProtocol(ShotgunProtocol shotgunProtocol) {
+        zooActivateWrite();
+        setModified(true);
         this.shotgunProtocol = shotgunProtocol;
-    }
-
-    /**
-     * Returns the initial processing preferences.
-     *
-     * @return the initial processing preferences
-     */
-    public PSProcessingPreferences getProcessingPreferences() {
-        return processingPreferences;
     }
 
     /**
@@ -197,11 +215,19 @@ public class PeptideShakerSettings extends IdObject implements UrParameter {
      * @return the metrics saved when loading the files
      */
     public Metrics getMetrics() {
+        zooActivateRead();
         if (metrics == null) {
             metrics = new Metrics();
         }
         return metrics;
     }
+    
+    public void setMetrics(Metrics metrics){
+        zooActivateWrite();
+        setModified(true);
+        this.metrics = metrics;
+    }
+    
 
     /**
      * Returns the gene maps.
@@ -209,10 +235,17 @@ public class PeptideShakerSettings extends IdObject implements UrParameter {
      * @return the gene maps
      */
     public GeneMaps getGeneMaps() {
+        zooActivateRead();
         if (geneMaps == null) {
             geneMaps = new GeneMaps();
         }
         return geneMaps;
+    }
+    
+    public void setGeneMaps(GeneMaps geneMaps){
+        zooActivateWrite();
+        setModified(true);
+        this.geneMaps = geneMaps;
     }
 
     /**
@@ -223,7 +256,14 @@ public class PeptideShakerSettings extends IdObject implements UrParameter {
      * @return the identification features cache
      */
     public IdentificationFeaturesCache getIdentificationFeaturesCache() {
+        zooActivateRead();
         return identificationFeaturesCache;
+    }
+    
+    public void setIdentificationFeaturesCache(IdentificationFeaturesCache identificationFeaturesCache){
+        zooActivateWrite();
+        setModified(true);
+        this.identificationFeaturesCache = identificationFeaturesCache;
     }
 
     @Override

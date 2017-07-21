@@ -120,18 +120,8 @@ public class BestMatchSelection {
 
         PeptideAssumptionFilter idFilter = identificationParameters.getPeptideAssumptionFilter();
 
-        // Keep a map of the spectrum keys grouped by peptide
-        HashMap<String, ArrayList<String>> orderedPsmMap = null;
-        if (MemoryConsumptionStatus.memoryUsed() < 0.8) {
-            orderedPsmMap = new HashMap<String, ArrayList<String>>(identification.getNumber(SpectrumMatch.class.getSimpleName()));
-        }
 
         PSParameter psParameter = new PSParameter();
-
-        HashMap<String, ArrayList<String>> keysMap = null;
-        if (orderedPsmMap != null) {
-            keysMap = new HashMap<String, ArrayList<String>>();
-        }
 
         PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
 
@@ -489,16 +479,6 @@ public class BestMatchSelection {
 
                     spectrumMatch.setBestPeptideAssumption(psAssumption);
 
-                    if (orderedPsmMap != null) {
-                        String peptideKey = psPeptide.getMatchingKey(sequenceMatchingPreferences);
-                        ArrayList<String> spectrumKeys = keysMap.get(peptideKey);
-                        if (spectrumKeys == null) {
-                            spectrumKeys = new ArrayList<String>();
-                            keysMap.put(peptideKey, spectrumKeys);
-                        }
-                        spectrumKeys.add(spectrumKey);
-                    }
-
                     psParameter = new PSParameter();
                     psParameter.setSpectrumProbabilityScore(retainedP);
 
@@ -538,22 +518,6 @@ public class BestMatchSelection {
             if (waitingHandler.isRunCanceled()) {
                 return;
             }
-        }
-
-        if (orderedPsmMap != null) {
-            ArrayList<String> orderedKeys = new ArrayList<String>(identification.getSpectrumIdentification(spectrumFileName).size());
-            for (ArrayList<String> keys : keysMap.values()) {
-                orderedKeys.addAll(keys);
-            }
-            orderedPsmMap.put(spectrumFileName, orderedKeys);
-
-            if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
-                orderedPsmMap = null;
-            }
-        }
-
-        if (orderedPsmMap != null) {
-            metrics.setOrderedSpectrumKeys(orderedPsmMap);
         }
 
         // the protein count map is no longer needed

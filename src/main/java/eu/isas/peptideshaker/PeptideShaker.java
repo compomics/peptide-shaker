@@ -151,6 +151,10 @@ public class PeptideShaker {
      * Object used to monitor the duration of the project creation.
      */
     private Duration projectCreationDuration;
+    /**
+     * Connection to the database
+     */
+    private ObjectsDB objectsDB;
 
     /**
      * Empty constructor for instantiation purposes.

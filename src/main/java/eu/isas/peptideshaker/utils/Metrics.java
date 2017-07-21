@@ -113,11 +113,6 @@ public class Metrics implements Serializable {
      */
     private NonSymmetricalNormalDistribution peptideLengthDistribution = null;
     /**
-     * Map of the spectrum keys grouped per peptide. Spectrum file name &gt;
-     * list of keys.
-     */
-    private HashMap<String, ArrayList<String>> orderedSpectrumKeys;
-    /**
      * The sum of all spectrum counting indexes.
      */
     private Double totalSpectrumCounting = null;
@@ -568,34 +563,6 @@ public class Metrics implements Serializable {
      */
     public void setPeptideLengthDistribution(NonSymmetricalNormalDistribution peptideLengthDistribution) {
         this.peptideLengthDistribution = peptideLengthDistribution;
-    }
-
-    /**
-     * Returns the spectrum keys grouped per peptide. 
-     *
-     * @return the grouped spectrum keys
-     */
-    public HashMap<String, ArrayList<String>> getOrderedSpectrumKeys() {
-        return orderedSpectrumKeys;
-    }
-
-    /**
-     * Sets the grouped spectrum keys.
-     *
-     * @param orderedSpectrumKeys the grouped spectrum keys
-     */
-    public void setOrderedSpectrumKeys(HashMap<String, ArrayList<String>> orderedSpectrumKeys) {
-        this.orderedSpectrumKeys = orderedSpectrumKeys;
-    }
-
-    /**
-     * Removes the grouped spectrum keys from the Metrics.
-     */
-    public void clearSpectrumKeys() {
-        if (orderedSpectrumKeys != null) {
-            orderedSpectrumKeys.clear();
-        }
-        orderedSpectrumKeys = null;
     }
 
     /**

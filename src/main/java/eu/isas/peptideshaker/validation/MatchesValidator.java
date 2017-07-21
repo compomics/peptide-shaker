@@ -245,8 +245,6 @@ public class MatchesValidator {
             throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-        parameters.add(psParameter);
         ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
 
         if (waitingHandler != null) {
@@ -257,8 +255,6 @@ public class MatchesValidator {
                     + identification.getPeptideIdentification().size()
                     + 2 * identification.getSpectrumIdentificationSize());
         }
-
-        HashMap<String, ArrayList<String>> spectrumKeysMap = metrics.getOrderedSpectrumKeys();
 
         // validate the spectrum matches
         if (inputMap != null) {
