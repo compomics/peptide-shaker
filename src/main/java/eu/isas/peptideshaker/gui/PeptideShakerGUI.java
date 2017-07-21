@@ -2319,8 +2319,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                         // update the basic protein annotation
                         if (selectedIndex == ANNOTATION_TAB_INDEX) {
-                            if (getIdentification().getProteinMatch(selectedProteinKey) != null) {
-                                annotationPanel.updateBasicProteinAnnotation(getIdentification().getProteinMatch(selectedProteinKey).getMainMatch());
+                            ProteinMatch proteinMatch = (ProteinMatch)getIdentification().retrieveObject(selectedProteinKey);
+                            if (proteinMatch != null) {
+                                annotationPanel.updateBasicProteinAnnotation(proteinMatch.getMainMatch());
                             }
                         }
 
@@ -4074,7 +4075,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     /**
      * Updates the selected items in the currently opened tab.
      */
-    public void updateSelectionInCurrentTab() {
+    public void updateSelectionInCurrentTab() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
         if (selectedIndex == OVER_VIEW_TAB_INDEX) {
@@ -4512,7 +4513,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             PsmPTMMap psmPTMMap = psMaps.getPsmPTMMap();
             PtmScorer ptmScorer = new PtmScorer(psmPTMMap);
             Identification identification = getIdentification();
-            ProteinMatch proteinMatch = identification.getProteinMatch(selectedProteinKey);
+            ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(selectedProteinKey);
             ptmScorer.scorePTMs(identification, proteinMatch, getIdentificationParameters(), false, null);
         } catch (Exception e) {
             catchException(e);
@@ -6295,24 +6296,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-     * Sets the objects cache in use
-     *
-     * @param objectsCache the objects cache
-     */
-    public void setCache(ObjectsCache objectsCache) {
-        cpsParent.setObjectsCache(objectsCache);
-    }
-
-    /**
-     * Returns the objects cache in use
-     *
-     * @return the objects cache
-     */
-    public ObjectsCache getCache() {
-        return cpsParent.getObjectsCache();
-    }
-
-    /**
      * Sets the new mgf file selected.
      *
      * @param mgfFile the name of the new mgf file
@@ -6673,7 +6656,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         String psmKey = PeptideShakerGUI.NO_SELECTION;
 
         try {
-            PeptideMatch peptideMatch = getIdentification().getPeptideMatch(peptideKey);
+            PeptideMatch peptideMatch = (PeptideMatch)getIdentification().retrieveObject(peptideKey);
             ArrayList<String> psmKeys;
 
             try {
@@ -6715,7 +6698,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         String peptideKey = PeptideShakerGUI.NO_SELECTION;
 
         try {
-            ProteinMatch proteinMatch = getIdentification().getProteinMatch(proteinKey);
+            ProteinMatch proteinMatch = (ProteinMatch)getIdentification().retrieveObject(proteinKey);
             ArrayList<String> peptideKeys;
 
             try {
