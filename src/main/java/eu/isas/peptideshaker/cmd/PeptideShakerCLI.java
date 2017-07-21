@@ -760,9 +760,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             // the identification feature generator
             identificationFeaturesGenerator = peptideShaker.getIdentificationFeaturesGenerator();
 
-            // the cache used for identification
-            objectsCache = peptideShaker.getCache();
-
             if (waitingHandler instanceof WaitingDialog) {
                 projectDetails.setReport(((WaitingDialog) waitingHandler).getReport(null));
                 ((WaitingDialog) waitingHandler).setRunNotFinished();
