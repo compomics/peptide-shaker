@@ -690,7 +690,7 @@ public class PtmScorer {
         // Map confident sites
         while (psmIterator.hasNext()) {
             SpectrumMatch spectrumMatch = psmIterator.next();
-            psParameter = (PSParameter)spectrumMatch.getParameters();
+            psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
             PSPtmScores psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
 
             for (String ptmName : psmScores.getScoredPTMs()) {
@@ -805,7 +805,7 @@ public class PtmScorer {
             while (psmIterator.hasNext()) {
                 SpectrumMatch spectrumMatch = psmIterator.next();
                 String spectrumKey = spectrumMatch.getKey();
-                psParameter = (PSParameter)spectrumMatch.getParameters();
+                psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
                 PSPtmScores psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
 
                 for (int representativeSite : psmScores.getRepresentativeSites()) {
@@ -1256,7 +1256,7 @@ public class PtmScorer {
         while (peptideMatchesIterator.hasNext()) {
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
             String peptideKey = peptideMatch.getKey();
-            psParameter = (PSParameter)peptideMatch.getParameters();
+            psParameter = (PSParameter)peptideMatch.getUrParam(psParameter);
             if (psParameter.getMatchValidationLevel().isValidated() && Peptide.isModified(peptideKey)) {
                 String peptideSequence = Peptide.getSequence(peptideKey);
                 if (peptideMatch.getUrParam(new PSPtmScores()) == null || scorePeptides) {
@@ -1497,7 +1497,7 @@ public class PtmScorer {
             scorePTMs(identification, proteinMatch, identificationParameters, false, waitingHandler);
 
             if (metrics != null) {
-                psParameter = (PSParameter)proteinMatch.getParameters();
+                psParameter = (PSParameter)proteinMatch.getUrParam(psParameter);
                 if (psParameter.getMatchValidationLevel().isValidated()) {
                     nValidatedProteins++;
                     if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
