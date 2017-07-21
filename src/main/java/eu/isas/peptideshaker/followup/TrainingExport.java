@@ -110,6 +110,10 @@ public class TrainingExport {
 
         int progress = 1;
         
+        
+        // HashMap for mapping files to the spectra
+        // TODO: may be there is a more elegant way to retrieve the aggregated information
+        // from all spectrumMatches than to iterate through all of them
         HashMap<String, ArrayList<String>> fileNames = new HashMap<String, ArrayList<String>>();
         PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
         while(psmIterator.hasNext()){
