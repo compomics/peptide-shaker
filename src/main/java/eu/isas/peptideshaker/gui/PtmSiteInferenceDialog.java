@@ -90,7 +90,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         double ptmMass = ptm.getMass();
 
         try {
-            peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+            peptideMatch = (PeptideMatch)peptideShakerGUI.getIdentification().retrieveObject(peptideKey);
             Peptide peptide = peptideMatch.getTheoreticPeptide();
             peptidePtmScore = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
             if (peptidePtmScore != null) {
@@ -116,7 +116,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 }
             }
 
-            PsmIterator psmIterator = peptideShakerGUI.getIdentification().getPsmIterator(peptideMatch.getSpectrumMatchesKeys(), null, false, null);
+            PsmIterator psmIterator = peptideShakerGUI.getIdentification().getPsmIterator(peptideMatch.getSpectrumMatchesKeys(), null);
             while (psmIterator.hasNext()) {
                 psms.add(psmIterator.next());
             }
@@ -135,7 +135,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         // set the modification tooltip
         try {
             String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(
-                    peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey));
+                    (PeptideMatch)peptideShakerGUI.getIdentification().retrieveObject(peptideKey));
             sequenceLabel.setToolTipText(tooltip);
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
@@ -591,7 +591,6 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
             try {
                 // save changes in the peptide match
                 Identification identification = peptideShakerGUI.getIdentification();
-                identification.updatePeptideMatch(peptideMatch);
 
                 // update protein level PTM scoring
                 ArrayList<String> proteins = peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
@@ -608,7 +607,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                         }
                     }
                     if (candidate) {
-                        ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                        ProteinMatch proteinMatch = (ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(proteinKey);
                         if (proteins.contains(proteinMatch.getMainMatch())) {
                             try {
                                 ptmScorer.scorePTMs(identification, proteinMatch, peptideShakerGUI.getIdentificationParameters(), false, null);
