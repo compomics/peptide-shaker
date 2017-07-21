@@ -189,10 +189,10 @@ public class JumpToPanel extends javax.swing.JPanel {
             }
         }
         if (!proteinKeys.isEmpty()) {
-            identification.loadProteinMatches(proteinKeys, null, false);
+            identification.loadObjects(proteinKeys, null, false);
         }
         if (!peptideKeys.isEmpty()) {
-            identification.loadPeptideMatches(peptideKeys, null, false);
+            identification.loadObjects(peptideKeys, null, false);
         }
 
         ArrayList<String> descriptions = new ArrayList<String>();
@@ -221,7 +221,7 @@ public class JumpToPanel extends javax.swing.JPanel {
         Identification identification = peptideShakerGUI.getIdentification();
         switch (itemType) {
             case PROTEIN:
-                ProteinMatch proteinMatch = identification.getProteinMatch(key);
+                ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(key);
                 String mainMatch = proteinMatch.getMainMatch();
                 String description = sequenceFactory.getHeader(mainMatch).getSimpleProteinDescription();
                 String result = mainMatch;
@@ -236,7 +236,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                 result += " - " + description;
                 return result;
             case PEPTIDE:
-                PeptideMatch peptideMatch = identification.getPeptideMatch(key);
+                PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(key);
                 return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
             case SPECTRUM:
                 return Spectrum.getSpectrumTitle(key) + " (" + Spectrum.getSpectrumFile(key) + ")";
@@ -467,12 +467,12 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                         // pre-caching
                                         PSParameter psParameter = new PSParameter();
-                                        identification.loadPeptideMatchParameters(psParameter, null, false);
+                                        identification.loadObjects(PeptideMatch.class.getSimpleName(), null, false);
                                         String matchingInput = AminoAcid.getMatchingSequence(input, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
 
                                         for (String peptideKey : identification.getPeptideIdentification()) {
                                             try {
-                                                psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+                                                psParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(peptideKey)).getUrParam(psParameter);
                                             } catch (Exception e) {
                                                 peptideShakerGUI.catchException(e);
                                                 return;
@@ -487,7 +487,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                             }
                                         }
 
-                                        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(secondaryCandidates, null, false, null, null); // @TODO: waiting handler?
+                                        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(secondaryCandidates, null); // @TODO: waiting handler?
 
                                         while (peptideMatchesIterator.hasNext()) {
 
