@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A Jump To panel for use in the menu bar in the main frame.
@@ -135,7 +137,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * Updates the item selection in the selected tab.
      */
-    public void updateSelectionInTab() {
+    public void updateSelectionInTab() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         
         indexLabel.setForeground(Color.BLACK);
 
@@ -599,7 +601,17 @@ public class JumpToPanel extends javax.swing.JPanel {
         } else {
             currentSelection.put(jumpType, currentSelection.get(jumpType) - 1);
         }
-        updateSelectionInTab();
+        try {
+            updateSelectionInTab();
+        } catch (SQLException ex) {
+            Logger.getLogger(JumpToPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(JumpToPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(JumpToPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(JumpToPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_previousButtonActionPerformed
 
     /**
@@ -613,7 +625,17 @@ public class JumpToPanel extends javax.swing.JPanel {
         } else {
             currentSelection.put(jumpType, currentSelection.get(jumpType) + 1);
         }
-        updateSelectionInTab();
+        try {
+            updateSelectionInTab();
+        } catch (SQLException ex) {
+            Logger.getLogger(JumpToPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(JumpToPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(JumpToPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(JumpToPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_nextButtonActionPerformed
 
     /**
