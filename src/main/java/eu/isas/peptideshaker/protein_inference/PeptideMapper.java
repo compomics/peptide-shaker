@@ -12,9 +12,7 @@ import com.compomics.util.experiment.identification.identification_parameters.Pt
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.protein_inference.PeptideMapperType;
-import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
-import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.memory.MemoryConsumptionStatus;
@@ -346,10 +344,6 @@ public class PeptideMapper {
         }
 
         int peptideMapKeyLength = 2;
-        if (sequenceMatchingPreferences.getPeptideMapperType() == PeptideMapperType.tree) {
-            ProteinTree proteinTree = (ProteinTree) SequenceFactory.getInstance().getDefaultPeptideMapper();
-            peptideMapKeyLength = proteinTree.getInitialTagSize();
-        }
         int rankMax = 3;
         HashMap<String, LinkedList<Peptide>> peptideMap = new HashMap<String, LinkedList<Peptide>>(8000);
 
@@ -360,7 +354,7 @@ public class PeptideMapper {
             HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> rawDbAssumptions = null;
 
             if (fileReader.hasDeNovoTags()) { // for now only de novo results are stored in the database at this point
-                rawDbAssumptions = identification.getRawAssumptions(spectrumKey);
+                rawDbAssumptions = ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getRawAssumptions();
             }
             HashSet<Integer> algorithms = new HashSet<Integer>();
             if (matchAssumptions != null) {
