@@ -244,7 +244,6 @@ public class MatchesValidator {
             SpectrumCountingPreferences spectrumCountingPreferences, ProcessingPreferences processingPreferences)
             throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
-        PSParameter psParameter = new PSParameter();
         ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
 
         if (waitingHandler != null) {

@@ -1,8 +1,7 @@
 package eu.isas.peptideshaker.utils;
 
-import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.db.ObjectsDB;
-import com.compomics.util.experiment.MsExperiment;
+import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Sample;
@@ -11,6 +10,7 @@ import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.filehandling.TempFilesManager;
@@ -73,10 +73,6 @@ public class CpsParent extends UserPreferencesParent {
      */
     protected GeneMaps geneMaps;
     /**
-     * The MS experiment class.
-     */
-    protected MsExperiment experiment;
-    /**
      * The sample.
      */
     protected Sample sample;
@@ -116,6 +112,10 @@ public class CpsParent extends UserPreferencesParent {
      * The name of the table to use to store PeptideShaker experiment settings.
      */
     public static final String settingsTableName = "PeptideShaker_experiment_settings";
+    /**
+     * All parameters of a project
+     */
+    public ProjectParameters projectParameters;
 
     /**
      * Empty constructor for instantiation purposes.
@@ -169,7 +169,7 @@ public class CpsParent extends UserPreferencesParent {
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         if (!waitingHandler.isRunCanceled()) {
             for (File file : destinationFolder.listFiles()) {
-                if (file.getName().toLowerCase().endsWith(".cpsx")) {
+                if (file.getName().toLowerCase().endsWith(".psDB")) {
                     cpsFile = file;
                     loadCpsFile(dbFolder, waitingHandler);
                     return;
@@ -198,39 +198,18 @@ public class CpsParent extends UserPreferencesParent {
      */
     public void loadCpsFile(File dbFolder, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, SQLException, InterruptedException, ArchiveException {
 
-        CpsFileImporter cpsFileImporter = new CpsFileImporter(cpsFile, dbFolder, waitingHandler);
-
         // close any open connection to an identification database
         if (identification != null) {
             identification.close();
         }
+        else {
+            ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), cpsFile.getName(), false);
+            PeptideShakerSettings peptideShakerSettings = (PeptideShakerSettings) objectsDB.retrieveObject(CpsParent.settingsTableName);
+            identification = new Ms2Identification();
+            // create ident
+        }
 
-        // Get the experiment data
-        experiment = cpsFileImporter.getExperiment();
-        ArrayList<Sample> samples = cpsFileImporter.getSamples();
-        if (samples == null || samples.isEmpty()) {
-            throw new IllegalArgumentException("No sample found for the experiment " + experiment.getReference());
-        }
-        sample = samples.get(0);
-        if (samples.size() > 1) {
-            String message = samples.size() + " samples found in experiment " + experiment.getReference() + ", sample " + sample.getReference() + " selected by default.";
-            if (waitingHandler != null) {
-                waitingHandler.appendReport(message, true, true);
-            }
-        }
-        ArrayList<Integer> replicates = cpsFileImporter.getReplicates(sample);
-        if (replicates == null || replicates.isEmpty()) {
-            throw new IllegalArgumentException("No replicate found for the sample " + sample.getReference() + " of experiment " + experiment.getReference());
-        }
-        replicateNumber = replicates.get(0);
-        if (replicates.size() > 1) {
-            if (waitingHandler != null) {
-                waitingHandler.appendReport(replicates.size() + " replicates found in sample " + sample.getReference()
-                        + " of experiment " + experiment.getReference() + ", replicate " + sample.getReference() + " selected by default.", true, true);
-            }
-        }
-        proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
-
+        
         // Get identification and restore connection
         identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 

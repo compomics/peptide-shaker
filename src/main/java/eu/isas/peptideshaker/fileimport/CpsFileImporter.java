@@ -75,7 +75,6 @@ public class CpsFileImporter {
      */
     public PeptideShakerSettings getPeptideShakerSettings(ObjectsDB objectsDB) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         PeptideShakerSettings peptideShakerSettings = (PeptideShakerSettings) objectsDB.retrieveObject(CpsParent.settingsTableName);
-        peptideShakerSettings.getIdentificationParameters().getSearchParameters().getDigestionPreferences(); // Backward compatibility check
         return peptideShakerSettings;
     }
 
