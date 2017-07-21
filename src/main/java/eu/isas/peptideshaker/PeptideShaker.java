@@ -9,7 +9,6 @@ import com.compomics.util.experiment.identification.protein_sequences.SequenceFa
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.software.CompomicsWrapper;
-import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ProjectParameters;
@@ -25,7 +24,6 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.io.ConfigurationFile;
-import com.compomics.util.memory.MemoryConsumptionStatus;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.messages.FeedBack;
@@ -58,7 +56,6 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -219,9 +216,9 @@ public class PeptideShaker {
         
         
             
-        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-
-        String dbName = projectParameters.getProjectUniqueName() + df.format(projectParameters.getCreationTime());
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
+        String dbName = projectParameters.getProjectUniqueName() + df.format(projectParameters.getCreationTime()) + ".psDB";
+        System.out.println(PeptideShaker.getMatchesFolder().getAbsolutePath());
         objectsDB = new ObjectsDB(PeptideShaker.getMatchesFolder().getAbsolutePath(), dbName);
         identification = new Ms2Identification(projectParameters.getProjectUniqueName(), objectsDB);
 

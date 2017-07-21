@@ -2592,13 +2592,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                 fileSelected = (String) fileNamesCmb.getSelectedItem();
                 double maxMz = spectrumFactory.getMaxMz(fileSelected);
-                try {
+                /*try {
                     progressDialog.setTitle("Loading Spectrum Information for " + fileSelected + ". Please Wait..."); // @TODO: problem with progress bar??
                     identification.loadObjects(fileSelected, progressDialog, true);
                     // update the plots..?
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
-                }
+                }*/
                 progressDialog.setPrimaryProgressCounterIndeterminate(true);
                 if (!progressDialog.isRunCanceled()) {
                     Integer nValidated = inputMap.getPeptideShakerHits(fileSelected);

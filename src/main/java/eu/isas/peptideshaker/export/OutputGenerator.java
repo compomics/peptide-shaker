@@ -313,7 +313,7 @@ public class OutputGenerator {
                         int proteinCounter = 0;
 
                         progressDialog.setTitle("Loading Protein Matches. Please Wait...");
-                        identification.loadObjects(ProteinMatch.class.getSimpleName(), progressDialog, true);
+                        identification.loadObjects(ProteinMatch.class, progressDialog, true);
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         progressDialog.setMaxPrimaryProgressCounter(proteinKeys.size());
@@ -774,7 +774,7 @@ public class OutputGenerator {
 
                         // @TODO: try to batch load the spectra? as this would speed up the export...
                         progressDialog.setTitle("Loading Peptide Matches. Please Wait...");
-                        identification.loadObjects(PeptideMatch.class.getSimpleName(), progressDialog, true);
+                        identification.loadObjects(PeptideMatch.class, progressDialog, true);
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         progressDialog.setMaxPrimaryProgressCounter(peptideKeys.size());
@@ -1291,7 +1291,7 @@ public class OutputGenerator {
                         */
                         //if (psmKeys == null) {
                             progressDialog.setTitle("Copying Spectrum Matches to File. Please Wait...");
-                            identification.loadObjects(SpectrumMatch.class.getSimpleName(), progressDialog, true);
+                            identification.loadObjects(SpectrumMatch.class, progressDialog, true);
                         /*} else {
                             progressDialog.setTitle("Copying Spectrum Matches to File. Please Wait... (" + ++fileCounter + "/" + spectrumKeys.size() + ")");
                             identification.loadSpectrumMatches(new ArrayList<String>(spectrumKeys.get(spectrumFile)), progressDialog, true);
@@ -1299,7 +1299,7 @@ public class OutputGenerator {
                             identification.loadSpectrumMatchParameters(new ArrayList<String>(spectrumKeys.get(spectrumFile)), psParameter, progressDialog, true);
                         }*/
 
-                        progressDialog.setMaxPrimaryProgressCounter(identification.getNumber(SpectrumMatch.class.getSimpleName()));
+                        progressDialog.setMaxPrimaryProgressCounter(identification.getNumber(SpectrumMatch.class));
                         progressDialog.setValue(0);
                         PsmIterator psmIterator = identification.getPsmIterator(progressDialog);
                         while (psmIterator.hasNext()) {
@@ -1698,9 +1698,9 @@ public class OutputGenerator {
                         int psmCounter = 0;
 
                         progressDialog.setTitle("Loading Spectrum Matches. Please Wait...");
-                        identification.loadObjects(SpectrumMatch.class.getSimpleName(), progressDialog, true);
+                        identification.loadObjects(SpectrumMatch.class, progressDialog, true);
                         progressDialog.setTitle("Copying Spectrum Matches Phospho Details to File. Please Wait...");
-                        progressDialog.setMaxPrimaryProgressCounter(identification.getNumber(SpectrumMatch.class.getSimpleName()));
+                        progressDialog.setMaxPrimaryProgressCounter(identification.getNumber(SpectrumMatch.class));
                         progressDialog.setValue(0);
 
                         PsmIterator psmIterator = identification.getPsmIterator(progressDialog);
@@ -1940,7 +1940,7 @@ public class OutputGenerator {
                         int proteinCounter = 0;
 
                         progressDialog.setTitle("Loading Protein Matches. Please Wait...");
-                        identification.loadObjects(ProteinMatch.class.getSimpleName(), progressDialog, true);
+                        identification.loadObjects(ProteinMatch.class, progressDialog, true);
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         progressDialog.setMaxPrimaryProgressCounter(identification.getProteinIdentification().size());
@@ -2315,7 +2315,7 @@ public class OutputGenerator {
                         */
                         
                         //if (psmKeys == null) {
-                            identification.loadObjects(SpectrumMatch.class.getSimpleName(), progressDialog, true);
+                            identification.loadObjects(SpectrumMatch.class, progressDialog, true);
                         /*} else {
                             identification.loadSpectrumMatches(new ArrayList<String>(spectrumKeys.get(spectrumFile)), progressDialog, true);
                             identification.loadSpectrumMatchParameters(new ArrayList<String>(spectrumKeys.get(spectrumFile)), psParameter, progressDialog, true);
@@ -2668,7 +2668,7 @@ public class OutputGenerator {
                         int proteinCounter = 0;
 
                         progressDialog.setTitle("Loading Protein Matches. Please Wait...");
-                        identification.loadObjects(ProteinMatch.class.getSimpleName(), progressDialog, true);
+                        identification.loadObjects(ProteinMatch.class, progressDialog, true);
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         progressDialog.setMaxPrimaryProgressCounter(proteinKeys.size());

@@ -111,7 +111,7 @@ public class FastaExport {
                 if (exportType == ExportType.non_validated) {
 
                     PSParameter psParameter = new PSParameter();
-                    identification.loadObjects(ProteinMatch.class.getSimpleName(), waitingHandler, false);
+                    identification.loadObjects(ProteinMatch.class, waitingHandler, false);
 
                     for (String accession : sequenceFactory.getAccessions()) {
 

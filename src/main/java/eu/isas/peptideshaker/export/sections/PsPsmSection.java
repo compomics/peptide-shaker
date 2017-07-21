@@ -136,7 +136,7 @@ public class PsPsmSection {
 
 
         int line = 1;
-        int totalSize = identification.getNumber(SpectrumMatch.class.getSimpleName());
+        int totalSize = identification.getNumber(SpectrumMatch.class);
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Exporting. Please Wait...");

@@ -469,7 +469,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                         // pre-caching
                                         PSParameter psParameter = new PSParameter();
-                                        identification.loadObjects(PeptideMatch.class.getSimpleName(), null, false);
+                                        identification.loadObjects(PeptideMatch.class, null, false);
                                         String matchingInput = AminoAcid.getMatchingSequence(input, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
 
                                         for (String peptideKey : identification.getPeptideIdentification()) {

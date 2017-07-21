@@ -23,7 +23,6 @@ import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
-import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PeptideVariantsPreferences;
@@ -623,6 +622,9 @@ public class FileImporter {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
             waitingHandler.appendReport("Parsing " + idFile.getName() + ".", true, true);
 
+            
+            
+            
             IdfileReader fileReader = null;
             try {
                 fileReader = readerFactory.getFileReader(idFile);
