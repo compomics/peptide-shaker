@@ -22,14 +22,12 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
-import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
 import com.compomics.util.experiment.identification.amino_acid_tags.matchers.TagMatcher;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.experiment.identification.protein_inference.PeptideMapperType;
 import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
-import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.FileNotFoundException;
@@ -209,7 +207,7 @@ public class TagMapper {
             }
         }
 
-        identification.addRawAssumptions(spectrumKey, assumptionsMap);
+        ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getRawAssumptions().putAll(assumptionsMap);
 
         tagMatcher.clearCache();
         waitingHandler.increaseSecondaryProgressCounter();
