@@ -222,10 +222,6 @@ public class PSExportFactory implements ExportFactory {
      * @param exportFormat the format of export to use
      * @param experiment the experiment corresponding to this project (mandatory
      * for the Project section)
-     * @param sample the sample of the project (mandatory for the Project
-     * section)
-     * @param replicateNumber the replicate number of the project (mandatory for
-     * the Project section)
      * @param projectDetails the project details (mandatory for the Project
      * section)
      * @param identification the identification (mandatory for the Protein,
@@ -262,7 +258,7 @@ public class PSExportFactory implements ExportFactory {
      * an exception occurred while estimating the theoretical coverage of a
      * protein
      */
-    public static void writeExport(ExportScheme exportScheme, File destinationFile, ExportFormat exportFormat, String experiment, String sample, int replicateNumber,
+    public static void writeExport(ExportScheme exportScheme, File destinationFile, ExportFormat exportFormat, String experiment,
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
             ArrayList<String> proteinKeys, ArrayList<String> peptideKeys, ArrayList<String> psmKeys,
             String proteinMatchKey, int nSurroundingAA, IdentificationParameters identificationParameters,
@@ -388,13 +384,11 @@ public class PSExportFactory implements ExportFactory {
      * project details
      *
      * @param experiment the experiment of the project
-     * @param sample the sample of the project
-     * @param replicate the replicate number
      * @param exportName the name of the report type
      * @return the default file name for the export
      */
-    public static String getDefaultReportName(String experiment, String sample, int replicate, String exportName) {
-        return experiment + "_" + sample + "_" + replicate + "_" + exportName + ".txt";
+    public static String getDefaultReportName(String experiment, String exportName) {
+        return experiment + "_" + exportName + ".txt";
     }
 
     /**

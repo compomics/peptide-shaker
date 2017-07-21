@@ -280,7 +280,7 @@ public class CLIExportMethods {
      * an exception occurred while estimating the theoretical coverage of a
      * protein
      */
-    public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, String sample, int replicateNumber,
+    public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment,
             ProjectDetails projectDetails, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             IdentificationParameters identificationParameters, int nSurroundingAA, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
             throws IOException, SQLException, ClassNotFoundException,
@@ -289,10 +289,10 @@ public class CLIExportMethods {
         PSExportFactory exportFactory = PSExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
         String reportName = reportType.replaceAll(" ", "_");
-        File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultReportName(experiment, sample, replicateNumber, reportName));
+        File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultReportName(experiment, reportName));
 
         //@TODO: allow format selection
-        PSExportFactory.writeExport(exportScheme, reportFile, ExportFormat.text, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator, geneMaps,
+        PSExportFactory.writeExport(exportScheme, reportFile, ExportFormat.text, experiment, projectDetails, identification, identificationFeaturesGenerator, geneMaps,
                 null, null, null, null, nSurroundingAA, identificationParameters, spectrumCountingPreferences, waitingHandler);
     }
 

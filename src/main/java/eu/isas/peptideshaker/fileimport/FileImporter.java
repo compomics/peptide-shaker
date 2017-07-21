@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.fileimport;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import eu.isas.peptideshaker.gui.MgfFilesNotFoundDialog;
-import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
@@ -20,7 +19,6 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
-import com.compomics.util.experiment.identification.protein_inference.PeptideMapperType;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
@@ -61,10 +59,6 @@ public class FileImporter {
      * the associated calculations.
      */
     private PeptideShaker peptideShaker;
-    /**
-     * The current proteomicAnalysis.
-     */
-    private ProteomicAnalysis proteomicAnalysis;
     /**
      * A dialog to display feedback to the user.
      */
@@ -111,11 +105,10 @@ public class FileImporter {
      * @param identificationParameters the identification parameters
      * @param metrics metrics of the dataset to be saved for the GUI
      */
-    public FileImporter(PeptideShaker identificationShaker, WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis,
+    public FileImporter(PeptideShaker identificationShaker, WaitingHandler waitingHandler,
             IdentificationParameters identificationParameters, Metrics metrics) {
         this.peptideShaker = identificationShaker;
         this.waitingHandler = waitingHandler;
-        this.proteomicAnalysis = proteomicAnalysis;
         this.identificationParameters = identificationParameters;
         this.metrics = metrics;
         if (waitingHandler instanceof WaitingDialog) {

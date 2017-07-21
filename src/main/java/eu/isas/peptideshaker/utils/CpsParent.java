@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.experiment.ProjectParameters;
-import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
@@ -18,10 +17,8 @@ import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.preferences.FractionSettings;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.preferences.ProteinInferencePreferences;
 import eu.isas.peptideshaker.export.CpsExporter;
-import eu.isas.peptideshaker.fileimport.CpsFileImporter;
 import eu.isas.peptideshaker.parameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
@@ -72,18 +69,6 @@ public class CpsParent extends UserPreferencesParent {
      * The gene maps.
      */
     protected GeneMaps geneMaps;
-    /**
-     * The sample.
-     */
-    protected Sample sample;
-    /**
-     * The replicate number.
-     */
-    protected int replicateNumber;
-    /**
-     * The proteomic analysis.
-     */
-    protected ProteomicAnalysis proteomicAnalysis;
     /**
      * The filter preferences.
      */
@@ -202,19 +187,13 @@ public class CpsParent extends UserPreferencesParent {
         if (identification != null) {
             identification.close();
         }
-        else {
-            ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), cpsFile.getName(), false);
-            PeptideShakerSettings peptideShakerSettings = (PeptideShakerSettings) objectsDB.retrieveObject(CpsParent.settingsTableName);
-            identification = new Ms2Identification();
-            // create ident
-        }
-
         
-        // Get identification and restore connection
-        identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-
+        ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), cpsFile.getName(), false);
+        PeptideShakerSettings experimentSettings = (PeptideShakerSettings)objectsDB.retrieveObject(PeptideShakerSettings.nameInCpsSettingsTable);
+        projectParameters = (ProjectParameters)objectsDB.retrieveObject(ProjectParameters.nameForDatabase);
+        identification = new Ms2Identification(projectParameters.getProjectUniqueName(), objectsDB);
+        
         // Get PeptideShaker settings
-        PeptideShakerSettings experimentSettings = cpsFileImporter.getPeptideShakerSettings(identification.getObjectsDB());
         identificationParameters = experimentSettings.getIdentificationParameters();
         spectrumCountingPreferences = experimentSettings.getSpectrumCountingPreferences();
         projectDetails = experimentSettings.getProjectDetails();
@@ -232,13 +211,6 @@ public class CpsParent extends UserPreferencesParent {
         FractionSettings fractionSettings = identificationParameters.getFractionSettings();
         if (fractionSettings == null) {
             fractionSettings = new FractionSettings();
-        }
-        PSProcessingPreferences deprecatedProcessingPreferences = experimentSettings.getProcessingPreferences();
-        if (deprecatedProcessingPreferences != null) {
-            Double fractionMw = deprecatedProcessingPreferences.getProteinConfidenceMwPlots();
-            if (fractionMw != null) {
-                fractionSettings.setProteinConfidenceMwPlots(fractionMw);
-            }
         }
 
         // Set up caches
@@ -278,7 +250,7 @@ public class CpsParent extends UserPreferencesParent {
      * threading error occurred while saving the project
      */
     public void saveProject(WaitingHandler waitingHandler, boolean emptyCache) throws IOException, SQLException, ArchiveException, ClassNotFoundException, InterruptedException {
-        CpsExporter.saveAs(cpsFile, waitingHandler, experiment, identification, shotgunProtocol, identificationParameters,
+        CpsExporter.saveAs(cpsFile, waitingHandler, identification, shotgunProtocol, identificationParameters,
                 spectrumCountingPreferences, projectDetails, filterPreferences, metrics, geneMaps,
                 identificationFeaturesGenerator.getIdentificationFeaturesCache(), emptyCache, displayPreferences, dbFolder);
 
@@ -501,42 +473,6 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Returns the experiment object.
-     *
-     * @return the experiment object
-     */
-    public MsExperiment getExperiment() {
-        return experiment;
-    }
-
-    /**
-     * Returns the sample.
-     *
-     * @return the sample
-     */
-    public Sample getSample() {
-        return sample;
-    }
-
-    /**
-     * Returns the replicate number.
-     *
-     * @return the replicate number
-     */
-    public int getReplicateNumber() {
-        return replicateNumber;
-    }
-
-    /**
-     * Returns the proteomics analysis object.
-     *
-     * @return the proteomics analysis object
-     */
-    public ProteomicAnalysis getProteomicAnalysis() {
-        return proteomicAnalysis;
-    }
-
-    /**
      * Returns the filter preferences.
      *
      * @return the filter preferences
@@ -658,21 +594,6 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Sets the project.
-     *
-     * @param experiment the experiment
-     * @param sample the sample
-     * @param replicateNumber the replicate number
-     */
-    public void setProject(MsExperiment experiment, Sample sample, int replicateNumber) {
-        this.experiment = experiment;
-        this.sample = sample;
-        this.replicateNumber = replicateNumber;
-        proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
-        identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-    }
-
-    /**
      * Sets the default preferences.
      */
     public void setDefaultPreferences() {
@@ -758,9 +679,7 @@ public class CpsParent extends UserPreferencesParent {
         if (projectDetails != null && getIdentification() != null) {
 
             report = "<html><br>";
-            report += "<b>Experiment</b>: " + experiment.getReference() + "<br>";
-            report += "<b>Sample:</b> " + sample.getReference() + "<br>";
-            report += "<b>Replicate number:</b> " + replicateNumber + "<br><br>";
+            report += "<b>Experiment</b>: " + projectParameters.getProjectUniqueName() + "<br>";
 
             if (projectDetails.getCreationDate() != null) {
                 report += "<b>Creation Date:</b> " + projectDetails.getCreationDate() + "<br><br>";

@@ -12,8 +12,7 @@ import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.MsExperiment;
-import com.compomics.util.experiment.ProteomicAnalysis;
+import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.*;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
@@ -56,8 +55,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -72,7 +73,7 @@ public class PeptideShaker {
     /**
      * The experiment conducted.
      */
-    private MsExperiment experiment;
+    private ProjectParameters projectParameters;
     /**
      * The sample analyzed.
      */
@@ -153,9 +154,13 @@ public class PeptideShaker {
      */
     private Duration projectCreationDuration;
     /**
-     * Connection to the database
+     * Connection to the database.
      */
     private ObjectsDB objectsDB;
+    /**
+     * The identification object.
+     */
+    private Identification identification;
 
     /**
      * Empty constructor for instantiation purposes.
@@ -167,14 +172,10 @@ public class PeptideShaker {
      * Constructor without mass specification. Calculation will be done on new
      * maps which will be retrieved as compomics utilities parameters.
      *
-     * @param experiment the experiment conducted
-     * @param sample the sample analyzed
-     * @param replicateNumber the replicate number
+     * @param projectParameters the experiment conducted
      */
-    public PeptideShaker(MsExperiment experiment, Sample sample, int replicateNumber) {
-        this.experiment = experiment;
-        this.sample = sample;
-        this.replicateNumber = replicateNumber;
+    public PeptideShaker(ProjectParameters projectParameters) {
+        this.projectParameters = projectParameters;
         PsmSpecificMap psmMap = new PsmSpecificMap();
         PeptideSpecificMap peptideMap = new PeptideSpecificMap();
         ProteinMap proteinMap = new ProteinMap();
@@ -186,15 +187,11 @@ public class PeptideShaker {
     /**
      * Constructor with map specifications.
      *
-     * @param experiment the experiment conducted
-     * @param sample the sample analyzed
-     * @param replicateNumber the replicate number
+     * @param projectParameters the experiment conducted
      * @param psMaps the peptide shaker maps
      */
-    public PeptideShaker(MsExperiment experiment, Sample sample, int replicateNumber, PSMaps psMaps) {
-        this.experiment = experiment;
-        this.sample = sample;
-        this.replicateNumber = replicateNumber;
+    public PeptideShaker(ProjectParameters projectParameters, PSMaps psMaps) {
+        this.projectParameters = projectParameters;
         matchesValidator = new MatchesValidator(psMaps.getPsmSpecificMap(), psMaps.getPeptideSpecificMap(), psMaps.getProteinMap());
         ptmScorer = new PtmScorer(psMaps.getPsmPTMMap());
     }
@@ -221,15 +218,11 @@ public class PeptideShaker {
         projectCreationDuration = new Duration();
         projectCreationDuration.start();
 
-        waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")", true, true);
+        waitingHandler.appendReport("Import process for " + projectParameters.getProjectUniqueName(), true, true);
         waitingHandler.appendReportEndLine();
-        
-        // DK TODO: open connection to database
 
-        ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
-        analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification(getIdentificationReference()));
 
-        fileImporter = new FileImporter(this, waitingHandler, analysis, identificationParameters, metrics);
+        fileImporter = new FileImporter(this, waitingHandler, identificationParameters, metrics);
         fileImporter.importFiles(idFiles, spectrumFiles, processingPreferences, spectrumCountingPreferences, projectDetails, backgroundThread);
     }
 
@@ -273,7 +266,7 @@ public class PeptideShaker {
             ProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails)
             throws Exception {
 
-        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, metrics, spectrumCountingPreferences);
 
         if (!objectsCache.memoryCheck() && memoryWarning) {

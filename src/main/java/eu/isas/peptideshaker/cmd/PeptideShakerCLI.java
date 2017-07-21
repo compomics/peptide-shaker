@@ -4,7 +4,6 @@ import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.util.Util;
 import com.compomics.util.db.DerbyUtil;
-import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.ShotgunProtocol;
@@ -21,6 +20,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.cli.identification_parameters.IdentificationParametersInputBean;
+import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
@@ -344,7 +344,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     int nSurroundingAAs = 2; //@TODO: this shall not be hard coded //peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides()
                     for (String reportType : reportCLIInputBean.getReportTypes()) {
                         try {
-                            CLIExportMethods.exportReport(reportCLIInputBean, reportType, experiment.getReference(), sample.getReference(), replicateNumber, projectDetails, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, nSurroundingAAs, spectrumCountingPreferences, waitingHandler);
+                            CLIExportMethods.exportReport(reportCLIInputBean, reportType, projectParameters.getProjectUniqueName(), projectDetails, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, nSurroundingAAs, spectrumCountingPreferences, waitingHandler);
                         } catch (Exception e) {
                             waitingHandler.appendReport("An error occurred while exporting the " + reportType + ".", true, true);
                             e.printStackTrace();
@@ -517,14 +517,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     public void createProject() throws IOException, FileNotFoundException, ClassNotFoundException {
 
         // define new project references
-        experiment = new MsExperiment(cliInputBean.getiExperimentID());
-        sample = new Sample(cliInputBean.getiSampleID());
-        replicateNumber = cliInputBean.getReplicate();
-
-        // create the analysis set of this PeptideShaker process
-        SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(replicateNumber));
-        experiment.addAnalysisSet(sample, analysisSet);
-
+        projectParameters = new ProjectParameters(cliInputBean.getiExperimentID());
+        
         // set the project details
         projectDetails = new ProjectDetails();
         projectDetails.setCreationDate(new Date());
@@ -729,7 +723,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
         
         // create a shaker which will perform the analysis
-        PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
+        PeptideShaker peptideShaker = new PeptideShaker(projectParameters);
 
         // import the files
         peptideShaker.importFiles(waitingHandler, identificationFiles, spectrumFiles,
