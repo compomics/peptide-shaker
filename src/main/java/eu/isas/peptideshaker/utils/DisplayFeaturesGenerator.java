@@ -764,7 +764,7 @@ public class DisplayFeaturesGenerator {
             boolean allPeptides, SearchParameters searchParameters, boolean enzymatic)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
-        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(proteinMatchKey);
         Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
         String sequence = currentProtein.getSequence();
 
@@ -804,7 +804,7 @@ public class DisplayFeaturesGenerator {
             residueAnnotation.put(j, new ArrayList<ResidueAnnotation>(annotations));
         }
 
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null, false, null, null); // @TODO: add waiting handler?
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null); // @TODO: add waiting handler?
         while (peptideMatchesIterator.hasNext()) {
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
             String peptideKey = peptideMatch.getKey();
