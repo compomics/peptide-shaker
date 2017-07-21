@@ -138,10 +138,6 @@ public class PeptideShaker {
      */
     private IdentificationFeaturesGenerator identificationFeaturesGenerator;
     /**
-     * A cache where the objects will be saved.
-     */
-    private ObjectsCache objectsCache;
-    /**
      * List of warnings collected while working on the data.
      */
     private HashMap<String, FeedBack> warnings = new HashMap<String, FeedBack>();
@@ -213,26 +209,24 @@ public class PeptideShaker {
      */
     public void importFiles(WaitingHandler waitingHandler, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             IdentificationParameters identificationParameters, ProjectDetails projectDetails,
-            ProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, boolean backgroundThread) {
+            ProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, boolean backgroundThread) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         projectCreationDuration = new Duration();
         projectCreationDuration.start();
 
         waitingHandler.appendReport("Import process for " + projectParameters.getProjectUniqueName(), true, true);
         waitingHandler.appendReportEndLine();
+        
+        
+            
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 
+        String dbName = projectParameters.getProjectUniqueName() + df.format(projectParameters.getCreationTime());
+        objectsDB = new ObjectsDB(PeptideShaker.getMatchesFolder().getAbsolutePath(), dbName);
+        identification = new Ms2Identification(projectParameters.getProjectUniqueName(), objectsDB);
 
         fileImporter = new FileImporter(this, waitingHandler, identificationParameters, metrics);
         fileImporter.importFiles(idFiles, spectrumFiles, processingPreferences, spectrumCountingPreferences, projectDetails, backgroundThread);
-    }
-
-    /**
-     * Returns the object cache.
-     *
-     * @return the object cache
-     */
-    public ObjectsCache getCache() {
-        return objectsCache;
     }
 
     /**
@@ -241,7 +235,7 @@ public class PeptideShaker {
      * @return a String identifying the identification under process
      */
     public String getIdentificationReference() {
-        return Identification.getDefaultReference(experiment.getReference(), sample.getReference(), replicateNumber);
+        return Identification.getDefaultReference(projectParameters.getProjectUniqueName());
     }
 
     /**
@@ -269,12 +263,6 @@ public class PeptideShaker {
         
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, metrics, spectrumCountingPreferences);
 
-        if (!objectsCache.memoryCheck() && memoryWarning) {
-            waitingHandler.appendReport("PeptideShaker is encountering memory issues! See http://compomics.github.io/projects/peptide-shaker.html for help.", true, true);
-            waitingHandler.appendReport("You can edit the memory given to the tool via the \"Edit\" > \"Java Settings\" menu.", true, true);
-            waitingHandler.appendReport("See http://compomics.github.io/projects/peptide-shaker.html for help.", true, true);
-            memoryWarning = false;
-        }
         if (waitingHandler.isRunCanceled()) {
             return;
         }
@@ -335,9 +323,6 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
-            metrics.clearSpectrumKeys();
-        }
 
         if (sequenceFactory.concatenatedTargetDecoy()) {
             waitingHandler.appendReport("Computing PSM probabilities.", true, true);
@@ -360,9 +345,6 @@ public class PeptideShaker {
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
-        }
-        if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
-            metrics.clearSpectrumKeys();
         }
 
         if (ptmScoringPreferences.isEstimateFlr()) {
@@ -387,10 +369,7 @@ public class PeptideShaker {
                 return;
             }
         }
-
-        if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
-            metrics.clearSpectrumKeys();
-        }
+        
         waitingHandler.appendReport("Saving probabilities, building peptides and proteins.", true, true);
         attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(identificationParameters.getSequenceMatchingPreferences(), waitingHandler); // @TODO: this is very slow if memory is full!!
         waitingHandler.increasePrimaryProgressCounter();
@@ -478,7 +457,6 @@ public class PeptideShaker {
         }
         matchesValidator.validateIdentifications(identification, metrics, geneMaps, waitingHandler, exceptionHandler, identificationParameters, identificationFeaturesGenerator, inputMap, spectrumCountingPreferences, processingPreferences);
         waitingHandler.increasePrimaryProgressCounter();
-        metrics.clearSpectrumKeys();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
@@ -647,7 +625,6 @@ public class PeptideShaker {
      * @throws InterruptedException thrown if an InterruptedException occurs
      */
     public void proteinMapChanged(WaitingHandler waitingHandler, FractionSettings fractionSettings) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         matchesValidator.attachProteinProbabilities(identification, metrics, waitingHandler, fractionSettings);
     }
 
@@ -660,8 +637,6 @@ public class PeptideShaker {
      * @param waitingHandler the handler displaying feedback to the user
      */
     private void attachAssumptionsProbabilities(InputMap inputMap, SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler) throws Exception {
-
-        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -801,8 +776,6 @@ public class PeptideShaker {
 
         waitingHandler.setWaitingText("Attaching Spectrum Probabilities - Building Peptides and Proteins. Please Wait...");
 
-        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
@@ -855,6 +828,10 @@ public class PeptideShaker {
      */
     public GeneMaps getGeneMaps() {
         return geneMaps;
+    }
+    
+    public Identification getIdentification(){
+        return identification;
     }
 
     /**

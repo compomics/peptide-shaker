@@ -3,11 +3,9 @@ package eu.isas.peptideshaker.utils;
 import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
@@ -546,6 +544,14 @@ public class CpsParent extends UserPreferencesParent {
      */
     public void setGeneMaps(GeneMaps geneMaps) {
         this.geneMaps = geneMaps;
+    }
+    
+    public ProjectParameters getProjectParameters(){
+        return projectParameters;
+    }
+    
+    public void setProject(ProjectParameters projectParameters){
+        this.projectParameters = projectParameters;
     }
 
     /**

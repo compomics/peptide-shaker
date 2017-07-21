@@ -237,7 +237,7 @@ public class ProjectExportDialog extends javax.swing.JDialog {
         if (peptideShakerGUI.getProjectDetails().getPrideExperimentTitle() != null) {
             titleJTextField.setText(peptideShakerGUI.getProjectDetails().getPrideExperimentTitle());
         } else {
-            titleJTextField.setText(peptideShakerGUI.getExperiment().getReference());
+            titleJTextField.setText(peptideShakerGUI.getProjectParameters().getProjectUniqueName());
         }
 
         labelJTextField.setText(peptideShakerGUI.getProjectDetails().getPrideExperimentLabel());

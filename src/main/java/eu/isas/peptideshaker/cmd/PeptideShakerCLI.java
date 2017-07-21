@@ -4,16 +4,12 @@ import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.util.Util;
 import com.compomics.util.db.DerbyUtil;
-import com.compomics.util.experiment.ProteomicAnalysis;
-import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
-import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -514,7 +510,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * @throws ClassNotFoundException if aClassNotFoundException
      * ClassNotFoundException occurs
      */
-    public void createProject() throws IOException, FileNotFoundException, ClassNotFoundException {
+    public void createProject() throws IOException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException {
 
         // define new project references
         projectParameters = new ProjectParameters(cliInputBean.getiExperimentID());
@@ -742,8 +738,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         if (!waitingHandler.isRunCanceled()) {
 
             // identification as created by PeptideShaker
-            ProteomicAnalysis tempProteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
-            identification = tempProteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+            identification = peptideShaker.getIdentification();
 
             // metrics saved while processing the data
             metrics = peptideShaker.getMetrics();

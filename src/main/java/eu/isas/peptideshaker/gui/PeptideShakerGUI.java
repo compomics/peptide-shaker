@@ -21,10 +21,7 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.Util;
 import com.compomics.util.db.DerbyUtil;
-import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.MsExperiment;
-import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.*;
 import com.compomics.util.experiment.biology.Ion.IonType;
@@ -74,6 +71,7 @@ import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.software.settings.gui.PathSettingsDialog;
 import com.compomics.util.FileAndFileFilter;
+import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.filtering.Filter;
@@ -676,12 +674,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     /**
      * Sets the project.
      *
-     * @param experiment the experiment
-     * @param sample the sample
-     * @param replicateNumber the replicate number
+     * @param projectParameters the experiment
      */
-    public void setProject(MsExperiment experiment, Sample sample, int replicateNumber) {
-        cpsParent.setProject(experiment, sample, replicateNumber);
+    public void setProject(ProjectParameters projectParameters) {
+        cpsParent.setProject(projectParameters);
         updateFrameTitle();
     }
 
@@ -711,8 +707,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * Add the experiment title to the frame title.
      */
     public void updateFrameTitle() {
-        if (getExperiment() != null) {
-            this.setTitle("PeptideShaker " + PeptideShaker.getVersion() + " - " + getExperiment().getReference() + " (Sample: " + getSample().getReference() + ", Replicate: " + getReplicateNumber() + ")");
+        if (getProjectParameters() != null) {
+            this.setTitle("PeptideShaker " + PeptideShaker.getVersion() + " - " + getProjectParameters().getProjectUniqueName());
         } else {
             this.setTitle("PeptideShaker " + PeptideShaker.getVersion());
         }
@@ -1975,9 +1971,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void newJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newJMenuItemActionPerformed
 
-        if (!dataSaved && getExperiment() != null) {
+        if (!dataSaved && getProjectParameters() != null) {
             int value = JOptionPane.showConfirmDialog(this,
-                    "Do you want to save the changes to " + getExperiment().getReference() + "?",
+                    "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName()+ "?",
                     "Unsaved Changes",
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
@@ -2428,9 +2424,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void openJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJMenuItemActionPerformed
 
-        if (!dataSaved && getExperiment() != null) {
+        if (!dataSaved && getProjectParameters()!= null) {
             int value = JOptionPane.showConfirmDialog(this,
-                    "Do you want to save the changes to " + getExperiment().getReference() + "?",
+                    "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName()+ "?",
                     "Unsaved Changes",
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
@@ -3806,26 +3802,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @return the experiment
      */
-    public MsExperiment getExperiment() {
-        return cpsParent.getExperiment();
-    }
-
-    /**
-     * Returns the sample.
-     *
-     * @return the sample
-     */
-    public Sample getSample() {
-        return cpsParent.getSample();
-    }
-
-    /**
-     * Returns the replicate number.
-     *
-     * @return the replicateNumber
-     */
-    public int getReplicateNumber() {
-        return cpsParent.getReplicateNumber();
+    public ProjectParameters getProjectParameters() {
+        return cpsParent.getProjectParameters();
     }
 
     /**
@@ -3906,15 +3884,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences) {
         cpsParent.setSpectrumCountingPreferences(spectrumCountingPreferences);
-    }
-
-    /**
-     * Returns the displayed proteomicAnalysis.
-     *
-     * @return the displayed proteomicAnalysis
-     */
-    public ProteomicAnalysis getProteomicanalysis() {
-        return cpsParent.getProteomicAnalysis();
     }
 
     /**
@@ -4687,10 +4656,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             this.setExtendedState(Frame.MAXIMIZED_BOTH);
         }
 
-        if (!dataSaved && getExperiment() != null) {
+        if (!dataSaved && getProjectParameters() != null) {
 
             int value = JOptionPane.showConfirmDialog(this,
-                    "Do you want to save the changes to " + getExperiment().getReference() + "?",
+                    "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName()+ "?",
                     "Unsaved Changes",
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
@@ -4782,10 +4751,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             this.setExtendedState(Frame.MAXIMIZED_BOTH);
         }
 
-        if (!dataSaved && getExperiment() != null) {
+        if (!dataSaved && getProjectParameters() != null) {
 
             int value = JOptionPane.showConfirmDialog(this,
-                    "Do you want to save the changes to " + getExperiment().getReference() + "?",
+                    "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName()+ "?",
                     "Unsaved Changes",
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
@@ -5150,9 +5119,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                     boolean open = true;
 
-                    if (!dataSaved && getExperiment() != null) {
+                    if (!dataSaved && getProjectParameters() != null) {
                         int value = JOptionPane.showConfirmDialog(temp,
-                                "Do you want to save the changes to " + getExperiment().getReference() + "?",
+                                "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName()+ "?",
                                 "Unsaved Changes",
                                 JOptionPane.YES_NO_CANCEL_OPTION,
                                 JOptionPane.QUESTION_MESSAGE);
@@ -6313,7 +6282,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * file
      */
     public void saveProjectAs(boolean closeWhenDone, boolean aExportToZipWhenDone) {
-        File selectedFile = getUserSelectedFile(cpsParent.getExperiment().getReference() + ".cpsx", ".cpsx", "Compomics Peptide Shaker format (*.cpsx)", "Save As...", false);
+        File selectedFile = getUserSelectedFile(cpsParent.getProjectParameters().getProjectUniqueName()+ ".psDB", ".psDB", "Peptide Shaker Database format (*.psDB)", "Save As...", false);
         cpsParent.setCpsFile(selectedFile);
         if (selectedFile != null) {
             saveProject(closeWhenDone, aExportToZipWhenDone);
@@ -6491,9 +6460,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         boolean open = true;
 
-        if (!dataSaved && getExperiment() != null) {
+        if (!dataSaved && getProjectParameters() != null) {
             int value = JOptionPane.showConfirmDialog(this,
-                    "Do you want to save the changes to " + getExperiment().getReference() + "?",
+                    "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName()+ "?",
                     "Unsaved Changes",
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE);

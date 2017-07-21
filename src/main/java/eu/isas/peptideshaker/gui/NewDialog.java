@@ -5,9 +5,7 @@ import com.compomics.util.gui.filehandling.FileSelectionDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.MsExperiment;
-import com.compomics.util.experiment.ProteomicAnalysis;
-import com.compomics.util.experiment.SampleAnalysisSet;
+import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -46,11 +44,14 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.io.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A dialog for selecting the files to load.
@@ -68,10 +69,6 @@ public class NewDialog extends javax.swing.JDialog {
      * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-    /**
-     * The experiment conducted.
-     */
-    private MsExperiment experiment = null;
     /**
      * The sample analyzed.
      */
@@ -704,19 +701,15 @@ public class NewDialog extends javax.swing.JDialog {
             peptideShakerGUI.updateNotesNotificationCounter();
             peptideShakerGUI.resetDisplayFeaturesGenerator();
             peptideShakerGUI.setSpectrumCountingPreferences(spectrumCountingPreferences);
-
-            experiment = new MsExperiment(projectNameIdTxt.getText().trim());
-            sample = new Sample(sampleNameIdtxt.getText().trim());
-            replicateNumber = getReplicateNumber();
-            SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(replicateNumber));
-            experiment.addAnalysisSet(sample, analysisSet);
+            
+            ProjectParameters projectParameters = new ProjectParameters(projectNameIdTxt.getText().trim());
 
             // incrementing the counter for a new PeptideShaker start run via GUI
             if (peptideShakerGUI.getUtilitiesUserPreferences().isAutoUpdate()) {
                 Util.sendGAUpdate("UA-36198780-1", "startrun-gui", "peptide-shaker-" + PeptideShaker.getVersion());
             }
 
-            peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
+            peptideShaker = new PeptideShaker(projectParameters);
 
             ArrayList<String> tips;
             try {
@@ -759,7 +752,17 @@ public class NewDialog extends javax.swing.JDialog {
             // load the identification files
             if (idFiles.size() > 0) {
                 needDialog = true;
-                importIdentificationFiles(waitingDialog);
+                try {
+                    importIdentificationFiles(waitingDialog);
+                } catch (SQLException ex) {
+                    Logger.getLogger(NewDialog.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(NewDialog.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(NewDialog.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(NewDialog.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
             if (needDialog) {
@@ -783,7 +786,7 @@ public class NewDialog extends javax.swing.JDialog {
                     }
                 }
 
-                peptideShakerGUI.setProject(experiment, sample, replicateNumber);
+                peptideShakerGUI.setProject(projectParameters);
                 peptideShakerGUI.setMetrics(peptideShaker.getMetrics());
                 peptideShakerGUI.setGeneMaps(peptideShaker.getGeneMaps());
                 peptideShakerGUI.setIdentificationFeaturesGenerator(peptideShaker.getIdentificationFeaturesGenerator());
@@ -796,9 +799,7 @@ public class NewDialog extends javax.swing.JDialog {
 
                 // close the database
                 try {
-                    ProteomicAnalysis proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
-                    Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-                    identification.close();
+                    peptideShaker.getIdentification().close();
                 } catch (Exception e) {
                     System.out.println("Failed to close the database!");
                     e.printStackTrace();
@@ -1645,7 +1646,7 @@ public class NewDialog extends javax.swing.JDialog {
      *
      * @param waitingDialog a dialog to display feedback to the user
      */
-    private void importIdentificationFiles(WaitingDialog waitingDialog) {
+    private void importIdentificationFiles(WaitingDialog waitingDialog) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         peptideShaker.importFiles(waitingDialog, idFiles, spectrumFiles,
                 identificationParameters, projectDetails, processingPreferences, spectrumCountingPreferences, true);
     }

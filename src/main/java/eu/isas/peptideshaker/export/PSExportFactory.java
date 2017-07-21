@@ -291,7 +291,7 @@ public class PSExportFactory implements ExportFactory {
                 section.writeSection(identification, identificationFeaturesGenerator, identificationParameters, peptideKeys, nSurroundingAA, "", exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
             } else if (sectionName.equals(PsProjectFeature.type)) {
                 PsProjectSection section = new PsProjectSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(experiment, sample, replicateNumber, projectDetails, waitingHandler);
+                section.writeSection(experiment, projectDetails, waitingHandler);
             } else if (sectionName.equals(PsProteinFeature.type)) {
                 PsProteinSection section = new PsProteinSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
                 section.writeSection(identification, identificationFeaturesGenerator, geneMaps, identificationParameters, psmKeys, nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);

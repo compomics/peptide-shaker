@@ -111,7 +111,7 @@
                                   <Component id="descriptionJScrollPane" alignment="0" max="32767" attributes="0"/>
                                   <Component id="projectJTextField" alignment="0" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
-                                      <Component id="titleJTextField" pref="462" max="32767" attributes="0"/>
+                                      <Component id="titleJTextField" max="32767" attributes="0"/>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Component id="experimentLabel" min="-2" pref="39" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>

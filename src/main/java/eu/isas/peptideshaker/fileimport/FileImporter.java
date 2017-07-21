@@ -101,7 +101,6 @@ public class FileImporter {
      * @param identificationShaker the identification shaker which will load the
      * data into the maps and do the preliminary calculations
      * @param waitingHandler The handler displaying feedback to the user
-     * @param proteomicAnalysis The current proteomic analysis
      * @param identificationParameters the identification parameters
      * @param metrics metrics of the dataset to be saved for the GUI
      */
@@ -453,7 +452,7 @@ public class FileImporter {
                 waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                 waitingHandler.appendReport("Establishing local database connection.", true, true);
 
-                identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+                identification = peptideShaker.getIdentification();
 
                 waitingHandler.increasePrimaryProgressCounter();
 
@@ -620,7 +619,7 @@ public class FileImporter {
          */
         public void importPsms(File idFile) throws FileNotFoundException, IOException, SAXException, MzMLUnmarshallerException, IllegalArgumentException, Exception, OutOfMemoryError {
 
-            identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+            identification = identification = peptideShaker.getIdentification();
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
             waitingHandler.appendReport("Parsing " + idFile.getName() + ".", true, true);
 
@@ -725,7 +724,7 @@ public class FileImporter {
                         waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                         waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);
 
-                        PsmImporter psmImporter = new PsmImporter(peptideShaker.getCache(), identificationParameters, processingPreferences, fileReader, idFile, identification,
+                        PsmImporter psmImporter = new PsmImporter(identificationParameters, processingPreferences, fileReader, idFile, identification,
                                 inputMap, proteinCount, singleProteinList, exceptionHandler);
                         psmImporter.importPsms(idFileSpectrumMatches, processingPreferences.getnThreads(), waitingHandler);
 
@@ -752,6 +751,7 @@ public class FileImporter {
                         }
 
                         // Free at least 0.5GB for the next parser if not anymore available
+                        /*
                         if (!MemoryConsumptionStatus.halfGbFree() && !peptideShaker.getCache().isEmpty()) {
                             waitingHandler.appendReport("PeptideShaker is encountering memory issues! "
                                     + "See http://compomics.github.io/projects/peptide-shaker.html for help.", true, true);
@@ -760,7 +760,7 @@ public class FileImporter {
                             double share = ((double) 1073741824) / (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
                             share = Math.min(share, 1);
                             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-                        }
+                        }*/
                         projectDetails.addIdentificationFiles(idFile);
 
                         int psmsRejected = psmImporter.getPsmsRejected();

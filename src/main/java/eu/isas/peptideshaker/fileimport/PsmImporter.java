@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.fileimport;
 
 import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
-import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -30,7 +29,6 @@ import com.compomics.util.experiment.io.identifications.idfilereaders.PepxmlIdfi
 import com.compomics.util.experiment.io.identifications.idfilereaders.TideIdfileReader;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
@@ -76,10 +74,6 @@ public class PsmImporter {
      * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-    /**
-     * The object cache to use when encountering memory issues.
-     */
-    private ObjectsCache peptideShakerCache;
     /**
      * Indicates whether the check for X!Tandem modifications was done.
      */
@@ -208,10 +202,9 @@ public class PsmImporter {
      * @param singleProteinList list of one hit wonders for this project
      * @param exceptionHandler handler for exceptions
      */
-    public PsmImporter(ObjectsCache peptideShakerCache, IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences, IdfileReader fileReader, File idFile,
+    public PsmImporter(IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences, IdfileReader fileReader, File idFile,
             Identification identification, InputMap inputMap, HashMap<String, Integer> proteinCount, HashSet<String> singleProteinList,
             ExceptionHandler exceptionHandler) {
-        this.peptideShakerCache = peptideShakerCache;
         this.identificationParameters = identificationParameters;
         this.processingPreferences = processingPreferences;
         this.fileReader = fileReader;

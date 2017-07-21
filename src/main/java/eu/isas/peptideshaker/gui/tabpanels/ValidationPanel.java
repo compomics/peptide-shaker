@@ -3019,7 +3019,7 @@ public class ValidationPanel extends javax.swing.JPanel {
 
                 PSMaps pSMaps = new PSMaps();
                 pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-                PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
+                PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters(), pSMaps);
 
                 try {
                     miniShaker.spectrumMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters());
@@ -3069,7 +3069,7 @@ public class ValidationPanel extends javax.swing.JPanel {
 
                 PSMaps pSMaps = new PSMaps();
                 pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-                PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
+                PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters(), pSMaps);
 
                 try {
                     miniShaker.peptideMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getIdentificationParameters());
@@ -3120,7 +3120,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                 try {
                     PSMaps pSMaps = new PSMaps();
                     pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-                    PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
+                    PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters(), pSMaps);
 
                     miniShaker.proteinMapChanged(progressDialog, peptideShakerGUI.getIdentificationParameters().getFractionSettings());
                     modifiedMaps.put(0, false);

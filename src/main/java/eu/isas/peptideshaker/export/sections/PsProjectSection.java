@@ -70,7 +70,7 @@ public class PsProjectSection {
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file
      */
-    public void writeSection(String experiment, String sample, int replicateNumber, ProjectDetails projectDetails, WaitingHandler waitingHandler) throws IOException {
+    public void writeSection(String experiment, ProjectDetails projectDetails, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -105,12 +105,6 @@ public class PsProjectSection {
                     break;
                 case peptide_shaker:
                     writer.write(projectDetails.getPeptideShakerVersion());
-                    break;
-                case replicate:
-                    writer.write(replicateNumber + "");
-                    break;
-                case sample:
-                    writer.write(sample);
                     break;
                 case identification_algorithms:
                     ArrayList<Integer> advocatesIds = projectDetails.getIdentificationAlgorithms();

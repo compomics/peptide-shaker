@@ -30,7 +30,7 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
         super(peptideShakerGUI, true);
         initComponents();
         this.peptideShakerGUI = peptideShakerGUI;
-        setTitle("Project Properties - " + peptideShakerGUI.getExperiment().getReference());
+        setTitle("Project Properties - " + peptideShakerGUI.getProjectParameters().getProjectUniqueName());
         setUpGui();
     }
 
