@@ -181,8 +181,11 @@ public class BestMatchSelection {
 
                                     bestPeptideFound = true;
 
+                                    System.out.println("param before: " + (psParameter != null));
                                     psParameter = (PSParameter) peptideAssumption1.getUrParam(psParameter);
                                     double p;
+                                    
+                                    System.out.println("param there: " + (psParameter != null));
 
                                     if (multiSE && sequenceFactory.concatenatedTargetDecoy()) {
                                         p = psParameter.getSearchEngineProbability();

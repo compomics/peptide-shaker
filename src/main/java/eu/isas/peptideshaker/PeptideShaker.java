@@ -308,6 +308,8 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        
+        
 
         waitingHandler.appendReport("Selecting best peptide per spectrum.", true, true);
         BestMatchSelection bestMatchSelection = new BestMatchSelection(identification, proteinCount, matchesValidator, metrics);
@@ -645,8 +647,7 @@ public class PeptideShaker {
         while (psmIterator.hasNext()) {
 
             SpectrumMatch spectrumMatch = psmIterator.next();
-            String spectrumKey = spectrumMatch.getKey();
-            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getAssumptionsMap();
+            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = spectrumMatch.getAssumptionsMap();
 
             HashMap<Double, ArrayList<PSParameter>> pepToParameterMap = new HashMap<Double, ArrayList<PSParameter>>();
 
@@ -787,8 +788,7 @@ public class PeptideShaker {
 
             SpectrumMatch spectrumMatch = psmIterator.next();
             String spectrumKey = spectrumMatch.getKey();
-            String parameterKey = spectrumKey + "_" + psParameter.getParameterKey();
-            psParameter = (PSParameter) identification.retrieveObject(parameterKey);
+            psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
 
             if (sequenceFactory.concatenatedTargetDecoy()) {
                 Integer charge = new Integer(psParameter.getSpecificMapKey());

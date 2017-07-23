@@ -398,8 +398,7 @@ public class PrideXmlExport {
 
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
             String proteinKey = proteinMatch.getKey();
-            String parameterKey = proteinKey + "_" + proteinProbabilities.getParameterKey();
-            proteinProbabilities = (PSParameter)identification.retrieveObject(parameterKey);
+            proteinProbabilities = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinKey)).getUrParam(proteinProbabilities);
             double confidenceThreshold;
 
             br.write(getCurrentTabSpace() + "<GelFreeIdentification>" + lineBreak);
@@ -419,8 +418,7 @@ public class PrideXmlExport {
 
                 PeptideMatch peptideMatch = peptideMatchesIterator.next();
                 String peptideKey = peptideMatch.getKey();
-                String parameterPepKey = peptideKey + "_" + peptideProbabilities.getParameterKey();
-                peptideProbabilities = (PSParameter) identification.retrieveObject(parameterPepKey);
+                peptideProbabilities = (PSParameter)((PeptideMatch)identification.retrieveObject(peptideKey)).getUrParam(proteinProbabilities);
 
                 PsmIterator psmIterator = identification.getPsmIterator(peptideMatch.getSpectrumMatchesKeys(), waitingHandler);
 
@@ -432,8 +430,7 @@ public class PrideXmlExport {
 
                     SpectrumMatch spectrumMatch = psmIterator.next();
                     String spectrumKey = spectrumMatch.getKey();
-                    String parameterSpectrumKey = spectrumKey + "_" + psmProbabilities.getParameterKey();
-                    psmProbabilities = (PSParameter) identification.retrieveObject(parameterSpectrumKey);
+                    psmProbabilities = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(proteinProbabilities);
                     PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
                     Peptide tempPeptide = bestAssumption.getPeptide();
 
