@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.utils;
 
+import com.compomics.util.BlobObject;
+import com.compomics.util.Util;
 import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.ShotgunProtocol;
@@ -30,8 +32,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import org.apache.commons.compress.archivers.ArchiveException;
 
@@ -185,9 +189,18 @@ public class CpsParent extends UserPreferencesParent {
         if (identification != null) {
             identification.close();
         }
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
+        String dbName = "tempDB-" + df.format(new Date()) + ".psDB";
         
-        ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), cpsFile.getName(), false);
-        PeptideShakerSettings experimentSettings = (PeptideShakerSettings)objectsDB.retrieveObject(PeptideShakerSettings.nameInCpsSettingsTable);
+        File destinationFile = new File(dbFolder.getAbsolutePath(), dbName);
+        
+        Util.copyFile(cpsFile, destinationFile);
+        System.out.println(cpsFile.getAbsolutePath());
+        
+        ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), destinationFile.getName(), false);
+        BlobObject blobObject = (BlobObject)objectsDB.retrieveObject(PeptideShakerSettings.nameInCpsSettingsTable);
+        PeptideShakerSettings experimentSettings = (PeptideShakerSettings)blobObject.unBlob();        
+        
         projectParameters = (ProjectParameters)objectsDB.retrieveObject(ProjectParameters.nameForDatabase);
         identification = new Ms2Identification(projectParameters.getProjectUniqueName(), objectsDB);
         
@@ -195,21 +208,12 @@ public class CpsParent extends UserPreferencesParent {
         identificationParameters = experimentSettings.getIdentificationParameters();
         spectrumCountingPreferences = experimentSettings.getSpectrumCountingPreferences();
         projectDetails = experimentSettings.getProjectDetails();
-        HashMap<Integer, Advocate> userAdvocateMapping = projectDetails.getUserAdvocateMapping();
-        if (userAdvocateMapping != null) {
-            Advocate.setUserAdvocates(userAdvocateMapping);
-        }
         metrics = experimentSettings.getMetrics();
         geneMaps = experimentSettings.getGeneMaps();
         filterPreferences = experimentSettings.getFilterPreferences();
         displayPreferences = experimentSettings.getDisplayPreferences();
         shotgunProtocol = experimentSettings.getShotgunProtocol();
 
-        // Backward compatibility for the fraction settings
-        FractionSettings fractionSettings = identificationParameters.getFractionSettings();
-        if (fractionSettings == null) {
-            fractionSettings = new FractionSettings();
-        }
 
         // Set up caches
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, metrics, spectrumCountingPreferences);

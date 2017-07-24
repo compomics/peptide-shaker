@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.export;
 
+import com.compomics.util.BlobObject;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
@@ -68,10 +69,11 @@ public class CpsExporter {
             projectDetails.setUserAdvocateMapping(Advocate.getUserAdvocates());
 
             // set the experiment parameters
-            PeptideShakerSettings peptideShakerSettings = new PeptideShakerSettings(shotgunProtocol, identificationParameters, spectrumCountingPreferences,
-                    projectDetails, filterPreferences, displayPreferences, metrics, geneMaps, identificationFeaturesCache);
             if (!identification.contains(PeptideShakerSettings.nameInCpsSettingsTable)) {
-                identification.addObject(PeptideShakerSettings.nameInCpsSettingsTable, peptideShakerSettings);
+                PeptideShakerSettings peptideShakerSettings = new PeptideShakerSettings(shotgunProtocol, identificationParameters, spectrumCountingPreferences,
+                    projectDetails, filterPreferences, displayPreferences, metrics, geneMaps, identificationFeaturesCache);
+                BlobObject blobObject = new BlobObject(peptideShakerSettings);
+                identification.addObject(PeptideShakerSettings.nameInCpsSettingsTable, blobObject);
             }
 
             // transfer all files in the match directory
@@ -81,9 +83,9 @@ public class CpsExporter {
             }
 
             if (waitingHandler == null || !waitingHandler.isRunCanceled()) {
-                identification.close();
+                identification.getObjectsDB().close(false);
                 Util.copyFile(identification.getObjectsDB().getDbFile(), destinationFile);
-                identification.getObjectsDB().establishConnection();
+                identification.getObjectsDB().establishConnection(false);
             }
 
         } finally {

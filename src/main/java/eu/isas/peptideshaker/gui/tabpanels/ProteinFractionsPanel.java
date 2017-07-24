@@ -1928,10 +1928,12 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
     /**
      * Deactivates the self updating tables.
+     * 
+     * @param selfUpdating boolean indicating whether the tables should update their content
      */
-    public void deactivateSelfUpdatingTableModels() {
+    public void selfUpdating(boolean selfUpdating) {
         if (proteinTable.getModel() instanceof SelfUpdatingTableModel) {
-            ((SelfUpdatingTableModel) proteinTable.getModel()).setSelfUpdating(false);
+            ((SelfUpdatingTableModel) proteinTable.getModel()).setSelfUpdating(selfUpdating);
         }
     }
 }

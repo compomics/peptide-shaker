@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
+import com.compomics.util.IdObject;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import java.io.Serializable;
 
@@ -9,7 +10,7 @@ import java.io.Serializable;
  *
  * @author Marc Vaudel
  */
-public class TargetDecoyResults implements Serializable {
+public class TargetDecoyResults extends IdObject implements Serializable {
 
     /**
      * Serial version UID for post-serialization compatibility.
@@ -53,10 +54,6 @@ public class TargetDecoyResults implements Serializable {
      */
     private double scoreLimit;
     /**
-     * The corresponding log score limit.
-     */
-    private double logScoreLimit;
-    /**
      * A boolean indicating that everything was validated.
      */
     private Boolean noValidated = false;
@@ -83,6 +80,7 @@ public class TargetDecoyResults implements Serializable {
      * estimators were used
      */
     public boolean isClassicalEstimators() {
+        zooActivateRead();
         return classicalEstimators;
     }
 
@@ -93,6 +91,7 @@ public class TargetDecoyResults implements Serializable {
      * probabilistic estimators should be used
      */
     public void setClassicalEstimators(boolean classicalEstimators) {
+        zooActivateWrite();
         this.classicalEstimators = classicalEstimators;
     }
 
@@ -102,6 +101,7 @@ public class TargetDecoyResults implements Serializable {
      * @return a boolean indicating whether a classical validation was used
      */
     public boolean isClassicalValidation() {
+        zooActivateRead();
         return classicalValidation;
     }
 
@@ -112,6 +112,7 @@ public class TargetDecoyResults implements Serializable {
      * validation was used
      */
     public void setClassicalValidation(boolean classicalValidation) {
+        zooActivateWrite();
         this.classicalValidation = classicalValidation;
     }
 
@@ -121,6 +122,7 @@ public class TargetDecoyResults implements Serializable {
      * @return the confidence limit
      */
     public Double getConfidenceLimit() {
+        zooActivateRead();
         return confidenceLimit;
     }
 
@@ -130,6 +132,7 @@ public class TargetDecoyResults implements Serializable {
      * @param confidenceLimit the confidence limit
      */
     public void setConfidenceLimit(double confidenceLimit) {
+        zooActivateWrite();
         this.confidenceLimit = confidenceLimit;
     }
 
@@ -139,6 +142,7 @@ public class TargetDecoyResults implements Serializable {
      * @return the FDR limit
      */
     public Double getFdrLimit() {
+        zooActivateRead();
         return fdrLimit;
     }
 
@@ -148,6 +152,7 @@ public class TargetDecoyResults implements Serializable {
      * @param fdrLimit the FDR limit
      */
     public void setFdrLimit(double fdrLimit) {
+        zooActivateWrite();
         this.fdrLimit = fdrLimit;
     }
 
@@ -157,6 +162,7 @@ public class TargetDecoyResults implements Serializable {
      * @return the FNR limit
      */
     public double getFnrLimit() {
+        zooActivateRead();
         return fnrLimit;
     }
 
@@ -166,6 +172,7 @@ public class TargetDecoyResults implements Serializable {
      * @param fnrLimit the FNR limit
      */
     public void setFnrLimit(double fnrLimit) {
+        zooActivateWrite();
         this.fnrLimit = fnrLimit;
     }
 
@@ -175,6 +182,7 @@ public class TargetDecoyResults implements Serializable {
      * @return the estimated number of false positives
      */
     public double getnFP() {
+        zooActivateRead();
         return nFP;
     }
 
@@ -184,6 +192,7 @@ public class TargetDecoyResults implements Serializable {
      * @param nFP the estimated number of false positives
      */
     public void setnFP(double nFP) {
+        zooActivateWrite();
         this.nFP = nFP;
     }
 
@@ -193,6 +202,7 @@ public class TargetDecoyResults implements Serializable {
      * @return the estimated number of retained True positives
      */
     public double getnTP() {
+        zooActivateRead();
         return n - nFP;
     }
 
@@ -202,6 +212,7 @@ public class TargetDecoyResults implements Serializable {
      * @param n the estimated number of retained True positives
      */
     public void setn(double n) {
+        zooActivateWrite();
         this.n = n;
     }
 
@@ -211,6 +222,7 @@ public class TargetDecoyResults implements Serializable {
      * @return the estimated total number of True positives
      */
     public double getnTPTotal() {
+        zooActivateRead();
         return nTPTotal;
     }
 
@@ -220,6 +232,7 @@ public class TargetDecoyResults implements Serializable {
      * @param nTPTotal the estimated total number of True positives
      */
     public void setnTPTotal(double nTPTotal) {
+        zooActivateWrite();
         this.nTPTotal = nTPTotal;
     }
 
@@ -229,6 +242,7 @@ public class TargetDecoyResults implements Serializable {
      * @return the number of retained hits
      */
     public double getN() {
+        zooActivateRead();
         return n;
     }
 
@@ -238,6 +252,7 @@ public class TargetDecoyResults implements Serializable {
      * @return the score limit obtained with the current validation settings
      */
     public double getScoreLimit() {
+        zooActivateRead();
         return scoreLimit;
     }
 
@@ -247,6 +262,7 @@ public class TargetDecoyResults implements Serializable {
      * @return the score limit obtained with the current validation settings
      */
     public double getLogScoreLimit() {
+        zooActivateRead();
         return PSParameter.getScore(scoreLimit);
     }
 
@@ -257,6 +273,7 @@ public class TargetDecoyResults implements Serializable {
      * settings
      */
     public void setScoreLimit(double scoreLimit) {
+        zooActivateWrite();
         this.scoreLimit = scoreLimit;
     }
 
@@ -266,6 +283,7 @@ public class TargetDecoyResults implements Serializable {
      * @return a boolean indicating that everything was validated
      */
     public boolean noValidated() {
+        zooActivateRead();
         return (noValidated != null) && noValidated;
     }
 
@@ -276,6 +294,7 @@ public class TargetDecoyResults implements Serializable {
      * validated
      */
     public void setNoValidated(boolean validateAll) {
+        zooActivateWrite();
         this.noValidated = validateAll;
     }
 
@@ -285,6 +304,7 @@ public class TargetDecoyResults implements Serializable {
      * @return the type of input
      */
     public Integer getInputType() {
+        zooActivateRead();
         if (inputType == null) {
             inputType = 1;
         }
@@ -297,6 +317,7 @@ public class TargetDecoyResults implements Serializable {
      * @param inputType the input type
      */
     public void setInputType(Integer inputType) {
+        zooActivateWrite();
         this.inputType = inputType;
     }
 
@@ -306,6 +327,7 @@ public class TargetDecoyResults implements Serializable {
      * @return the user input
      */
     public Double getUserInput() {
+        zooActivateRead();
         if (userInput == null) {
             userInput = 1.0;
         }
@@ -318,6 +340,7 @@ public class TargetDecoyResults implements Serializable {
      * @param userInput the user input
      */
     public void setUserInput(Double userInput) {
+        zooActivateWrite();
         this.userInput = userInput;
     }
 }

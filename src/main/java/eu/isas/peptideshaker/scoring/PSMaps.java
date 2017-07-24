@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.scoring;
 
+import com.compomics.util.IdObject;
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.maps.PeptideSpecificMap;
@@ -13,7 +14,7 @@ import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
  *
  * @author Marc Vaudel
  */
-public class PSMaps implements UrParameter {
+public class PSMaps extends IdObject implements UrParameter {
 
     /**
      * Serial version UID for post-serialization compatibility.
@@ -69,6 +70,7 @@ public class PSMaps implements UrParameter {
      * @return the peptide map
      */
     public PeptideSpecificMap getPeptideSpecificMap() {
+        zooActivateRead();
         return PeptideSpecificMap;
     }
 
@@ -78,6 +80,7 @@ public class PSMaps implements UrParameter {
      * @return the PSM map
      */
     public PsmSpecificMap getPsmSpecificMap() {
+        zooActivateRead();
         return PsmSpecificMap;
     }
 
@@ -87,6 +90,7 @@ public class PSMaps implements UrParameter {
      * @return the protein map
      */
     public ProteinMap getProteinMap() {
+        zooActivateRead();
         return proteinMap;
     }
 
@@ -96,6 +100,7 @@ public class PSMaps implements UrParameter {
      * @return the target decoy map of all search engine scores
      */
     public InputMap getInputMap() {
+        zooActivateRead();
         return inputMap;
     }
 
@@ -105,6 +110,7 @@ public class PSMaps implements UrParameter {
      * @return the PSM level PTM scoring map
      */
     public PsmPTMMap getPsmPTMMap() {
+        zooActivateRead();
         return psmPTMMap;
     }
 
@@ -114,6 +120,7 @@ public class PSMaps implements UrParameter {
      * @param psmPTMMap the PSM level PTM scoring map
      */
     public void setPsmPTMMap(PsmPTMMap psmPTMMap) {
+        zooActivateWrite();
         this.psmPTMMap = psmPTMMap;
     }
 

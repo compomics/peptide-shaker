@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.cmd;
 import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.util.Util;
-import com.compomics.util.db.DerbyUtil;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
@@ -376,15 +375,13 @@ public class ReportCLI extends CpsParent {
      * @throws SQLException thrown if an exception occurred while closing the connection to a database
      * @throws java.lang.InterruptedException if a threading exception occurred
      */
-    public void closePeptideShaker() throws IOException, SQLException, InterruptedException {
+    public void closePeptideShaker() throws IOException, SQLException, InterruptedException, ClassNotFoundException {
 
         SpectrumFactory.getInstance().closeFiles();
         SequenceFactory.getInstance().closeFile();
         identification.close();
 
         File matchFolder = PeptideShaker.getMatchesFolder();
-
-        DerbyUtil.closeConnection();
 
         File[] tempFiles = matchFolder.listFiles();
 

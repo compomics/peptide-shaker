@@ -2185,11 +2185,6 @@ public class IdentificationFeaturesGenerator {
             for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
                 psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(psParameter);
                 
-                System.out.println(spectrumKey + " " + (psParameter != null));
-                if (psParameter == null){
-                    System.out.println("Error: <<<<<<<<<<<<<<<<<<<<<<<");
-                }
-                
                 
                 if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                     result++;

@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
+import com.compomics.util.IdObject;
 import com.compomics.util.waiting.WaitingHandler;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.HashSet;
  *
  * @author Marc Vaudel
  */
-public class TargetDecoyMap implements Serializable {
+public class TargetDecoyMap extends IdObject {
 
     /**
      * Serial version UID for post-serialization compatibility.
@@ -22,20 +22,6 @@ public class TargetDecoyMap implements Serializable {
      * The hit map containing the indexed target/decoy points.
      */
     private HashMap<Double, TargetDecoyPoint> hitMap = new HashMap<Double, TargetDecoyPoint>();
-    /**
-     * The estimated number of true positives in the bin centered on a given
-     * score.
-     *
-     * @deprecated not used anymore
-     */
-    private HashMap<Double, Double> nTP;
-    /**
-     * The estimated number of false positives in the bin centered on a given
-     * score.
-     *
-     * @deprecated not used anymore
-     */
-    private HashMap<Double, Double> nFP;
     /**
      * The scores imported in the map.
      */
@@ -90,6 +76,7 @@ public class TargetDecoyMap implements Serializable {
      * @return the estimated posterior error probability
      */
     public Double getProbability(double score) {
+        zooActivateRead();
         TargetDecoyPoint point = hitMap.get(score);
         if (point != null) {
             return point.p;
@@ -118,6 +105,7 @@ public class TargetDecoyMap implements Serializable {
      * @return the number of target hits found at the given score
      */
     public int getNTarget(double score) {
+        zooActivateRead();
         return hitMap.get(score).nTarget;
     }
 
@@ -138,6 +126,7 @@ public class TargetDecoyMap implements Serializable {
      * @param isDecoy boolean indicating whether the hit is decoy
      */
     public void put(Double score, boolean isDecoy) {
+        zooActivateWrite();
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
         if (targetDecoyPoint == null) {
             targetDecoyPoint = createTargetDecoyPoint(score);
@@ -158,6 +147,7 @@ public class TargetDecoyMap implements Serializable {
      * @return the target decoy point of the map at the given score
      */
     public synchronized TargetDecoyPoint createTargetDecoyPoint(Double score) {
+        zooActivateRead();
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
         if (targetDecoyPoint == null) {
             targetDecoyPoint = new TargetDecoyPoint();
@@ -174,6 +164,7 @@ public class TargetDecoyMap implements Serializable {
      * @param isDecoy boolean indicating whether the hit is decoy
      */
     public void remove(Double score, boolean isDecoy) {
+        zooActivateWrite();
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
         if (!isDecoy) {
             targetDecoyPoint.decreaseTarget();
@@ -186,6 +177,7 @@ public class TargetDecoyMap implements Serializable {
      * Removes empty points and clears dependent metrics if needed.
      */
     public synchronized void cleanUp() {
+        zooActivateWrite();
         boolean removed = false;
         HashSet<Double> currentScores = new HashSet<Double>(hitMap.keySet());
         for (Double score : currentScores) {
@@ -208,6 +200,7 @@ public class TargetDecoyMap implements Serializable {
      * and above will be skipped for Nmax.
      */
     private void estimateNs() {
+        zooActivateRead();
         if (scores == null) {
             estimateScores();
         }
@@ -260,6 +253,7 @@ public class TargetDecoyMap implements Serializable {
      * @param waitingHandler the handler displaying feedback to the user
      */
     public void estimateProbabilities(WaitingHandler waitingHandler) {
+        zooActivateRead();
 
         if (scores == null) {
             estimateScores();
@@ -333,6 +327,7 @@ public class TargetDecoyMap implements Serializable {
      * @return the Nmax metric
      */
     public int getnMax() {
+        zooActivateRead();
         if (nmax == null) {
             estimateNs();
         }
@@ -345,6 +340,7 @@ public class TargetDecoyMap implements Serializable {
      * @return the minimal FDR which can be achieved in this dataset
      */
     public Double getMinFdr() {
+        zooActivateRead();
         return minFDR;
     }
 
@@ -368,6 +364,7 @@ public class TargetDecoyMap implements Serializable {
      * @return the number of target hits before the first decoy hit
      */
     public Integer getnTargetOnly() {
+        zooActivateRead();
         return nTargetOnly;
     }
 
@@ -375,6 +372,7 @@ public class TargetDecoyMap implements Serializable {
      * Sorts the scores implemented in this map.
      */
     private void estimateScores() {
+        zooActivateRead();
         scores = new ArrayList<Double>(hitMap.keySet());
         Collections.sort(scores);
     }
@@ -385,6 +383,7 @@ public class TargetDecoyMap implements Serializable {
      * @return the sorted scores implemented in this map.
      */
     public ArrayList<Double> getScores() {
+        zooActivateRead();
         if (scores == null) {
             estimateScores();
         }
@@ -397,6 +396,7 @@ public class TargetDecoyMap implements Serializable {
      * @param anOtherMap another target/decoy map
      */
     public void addAll(TargetDecoyMap anOtherMap) {
+        zooActivateWrite();
         for (double score : anOtherMap.getScores()) {
             for (int i = 0; i < anOtherMap.getNDecoy(score); i++) {
                 put(score, true);
@@ -418,6 +418,7 @@ public class TargetDecoyMap implements Serializable {
      * @return a boolean indicating if a suspicious input was detected
      */
     public boolean suspiciousInput(Double initialFDR) {
+        zooActivateRead();
         if (nmax == null) {
             estimateNs();
         }
@@ -433,6 +434,7 @@ public class TargetDecoyMap implements Serializable {
      * @return the current target decoy results
      */
     public TargetDecoyResults getTargetDecoyResults() {
+        zooActivateRead();
         return targetDecoyResults;
     }
 
@@ -442,6 +444,7 @@ public class TargetDecoyMap implements Serializable {
      * @return the target decoy series
      */
     public TargetDecoySeries getTargetDecoySeries() {
+        zooActivateRead();
         return new TargetDecoySeries(hitMap);
     }
 
@@ -451,6 +454,7 @@ public class TargetDecoyMap implements Serializable {
      * @return the window size used for pep estimation
      */
     public int getWindowSize() {
+        zooActivateRead();
         if (windowSize == null) {
             windowSize = getnMax();
         }
@@ -463,6 +467,7 @@ public class TargetDecoyMap implements Serializable {
      * @param windowSize the window size used for pep estimation
      */
     public void setWindowSize(int windowSize) {
+        zooActivateWrite();
         this.windowSize = windowSize;
     }
 
@@ -472,6 +477,7 @@ public class TargetDecoyMap implements Serializable {
      * @return the size of the map
      */
     public int getMapSize() {
+        zooActivateRead();
         return hitMap.size();
     }
 }

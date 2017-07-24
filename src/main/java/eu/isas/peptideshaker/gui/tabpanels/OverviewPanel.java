@@ -491,6 +491,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 -peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPrecursorAccuracy(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPrecursorAccuracy(), // @TODO: how to handle negative values..?
                 peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("m/z Error").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
+        
+        System.out.println("ttt: " + (peptideShakerGUI != null));
+        System.out.println("ttt: " + (peptideShakerGUI.getIdentification() != null));
+        System.out.println("ttt: " + (((PSMaps)peptideShakerGUI.getIdentification().getUrParam(new PSMaps())) != null));
+        System.out.println("ttt: " + (((PSMaps)peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap() != null));
+        
         psmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                 (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() - 30);
@@ -6224,16 +6230,18 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
     /**
      * Deactivates the self updating tables.
+     * 
+     * @param selfUpdating boolean indicating whether the tables should update their content
      */
-    public void deactivateSelfUpdatingTableModels() {
+    public void selfUpdating(boolean selfUpdating) {
         if (proteinTable.getModel() instanceof SelfUpdatingTableModel) {
-            ((SelfUpdatingTableModel) proteinTable.getModel()).setSelfUpdating(false);
+            ((SelfUpdatingTableModel) proteinTable.getModel()).setSelfUpdating(selfUpdating);
         }
         if (peptideTable.getModel() instanceof SelfUpdatingTableModel) {
-            ((SelfUpdatingTableModel) peptideTable.getModel()).setSelfUpdating(false);
+            ((SelfUpdatingTableModel) peptideTable.getModel()).setSelfUpdating(selfUpdating);
         }
         if (psmTable.getModel() instanceof SelfUpdatingTableModel) {
-            ((SelfUpdatingTableModel) psmTable.getModel()).setSelfUpdating(false);
+            ((SelfUpdatingTableModel) psmTable.getModel()).setSelfUpdating(selfUpdating);
         }
     }
 }

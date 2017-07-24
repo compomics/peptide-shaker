@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.parameters;
 import com.compomics.util.IdObject;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
-import com.compomics.util.preferences.PSProcessingPreferences;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
@@ -12,13 +11,14 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
 import eu.isas.peptideshaker.utils.Metrics;
+import java.io.Serializable;
 
 /**
  * This class will be used to save all settings needed in PeptideShaker.
  *
  * @author Marc Vaudel
  */
-public class PeptideShakerSettings extends IdObject implements UrParameter {
+public class PeptideShakerSettings extends IdObject implements UrParameter, Serializable {
 
     /**
      * Serial version UID for post-serialization compatibility.

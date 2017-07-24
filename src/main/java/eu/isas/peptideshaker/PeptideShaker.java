@@ -218,7 +218,7 @@ public class PeptideShaker {
             
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
         String dbName = projectParameters.getProjectUniqueName() + df.format(projectParameters.getCreationTime()) + ".psDB";
-        System.out.println(PeptideShaker.getMatchesFolder().getAbsolutePath());
+        
         objectsDB = new ObjectsDB(PeptideShaker.getMatchesFolder().getAbsolutePath(), dbName);
         identification = new Ms2Identification(projectParameters.getProjectUniqueName(), objectsDB);
         identification.addObject(ProjectParameters.nameForDatabase, projectParameters);
@@ -553,9 +553,6 @@ public class PeptideShaker {
             }
         }
         
-        
-        ProjectParameters ttt = (ProjectParameters)objectsDB.retrieveObject(ProjectParameters.nameForDatabase);
-        System.out.println(ttt.getProjectUniqueName());
 
         waitingHandler.appendReport(report, true, true);
         waitingHandler.appendReportEndLine();

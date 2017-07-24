@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.cmd;
 import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.util.Util;
-import com.compomics.util.db.DerbyUtil;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
@@ -785,7 +784,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         try {
-            DerbyUtil.closeConnection();
         } catch (Exception e) {
             e.printStackTrace();
         }

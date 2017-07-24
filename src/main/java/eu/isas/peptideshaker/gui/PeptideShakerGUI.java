@@ -20,7 +20,6 @@ import com.compomics.software.dialogs.ReporterSetupDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.Util;
-import com.compomics.util.db.DerbyUtil;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.*;
@@ -407,9 +406,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             TITLED_BORDER_HORIZONTAL_PADDING_HTML = "&nbsp;&nbsp;&nbsp;";
         }
 
-        // turn off the derby log file
-        DerbyUtil.disableDerbyLog();
-
         // create the gene mappping folder if not set
         GeneFactory geneFactory = GeneFactory.getInstance();
         try {
@@ -594,7 +590,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             quantifyMenuItem.setVisible(false); // @TODO: re-enable later?
             jSeparator2.setVisible(false); // @TODO: re-enable later?
             reporterPreferencesJMenuItem.setVisible(false); // @TODO: re-enable later?
-            
+
             exportPrideMenuItem.setVisible(false); // disable the pride xml export
 
             notesButton.setVisible(false); // @TODO: re-enable later?
@@ -1973,7 +1969,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         if (!dataSaved && getProjectParameters() != null) {
             int value = JOptionPane.showConfirmDialog(this,
-                    "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName()+ "?",
+                    "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName() + "?",
                     "Unsaved Changes",
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
@@ -2315,7 +2311,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                         // update the basic protein annotation
                         if (selectedIndex == ANNOTATION_TAB_INDEX) {
-                            ProteinMatch proteinMatch = (ProteinMatch)getIdentification().retrieveObject(selectedProteinKey);
+                            ProteinMatch proteinMatch = (ProteinMatch) getIdentification().retrieveObject(selectedProteinKey);
                             if (proteinMatch != null) {
                                 annotationPanel.updateBasicProteinAnnotation(proteinMatch.getMainMatch());
                             }
@@ -2424,9 +2420,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void openJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJMenuItemActionPerformed
 
-        if (!dataSaved && getProjectParameters()!= null) {
+        if (!dataSaved && getProjectParameters() != null) {
             int value = JOptionPane.showConfirmDialog(this,
-                    "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName()+ "?",
+                    "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName() + "?",
                     "Unsaved Changes",
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
@@ -3814,7 +3810,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public Identification getIdentification() {
         return cpsParent.getIdentification();
     }
-    
+
     public void setIdentification(Identification identification) {
         this.cpsParent.setIdentification(identification);
     }
@@ -4207,8 +4203,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             if (matchFolder.exists()) {
 
-                DerbyUtil.closeConnection();
-
                 File[] tempFiles = matchFolder.listFiles();
 
                 if (tempFiles != null) {
@@ -4486,7 +4480,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             PsmPTMMap psmPTMMap = psMaps.getPsmPTMMap();
             PtmScorer ptmScorer = new PtmScorer(psmPTMMap);
             Identification identification = getIdentification();
-            ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(selectedProteinKey);
+            ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(selectedProteinKey);
             ptmScorer.scorePTMs(identification, proteinMatch, getIdentificationParameters(), false, null);
         } catch (Exception e) {
             catchException(e);
@@ -4663,7 +4657,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         if (!dataSaved && getProjectParameters() != null) {
 
             int value = JOptionPane.showConfirmDialog(this,
-                    "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName()+ "?",
+                    "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName() + "?",
                     "Unsaved Changes",
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
@@ -4713,10 +4707,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             @Override
             public void run() {
                 try {
+
                     // turn off the self updating table models
-                    overviewPanel.deactivateSelfUpdatingTableModels();
-                    proteinFractionsPanel.deactivateSelfUpdatingTableModels();
-                    proteinStructurePanel.deactivateSelfUpdatingTableModels();
+                    // @TODO: put in a separate function
+                    overviewPanel.selfUpdating(false);
+                    proteinFractionsPanel.selfUpdating(false);
+                    proteinStructurePanel.selfUpdating(false);
 
                     // close the files and save the user preferences
                     if (!progressDialog.isRunCanceled()) {
@@ -4758,7 +4754,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         if (!dataSaved && getProjectParameters() != null) {
 
             int value = JOptionPane.showConfirmDialog(this,
-                    "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName()+ "?",
+                    "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName() + "?",
                     "Unsaved Changes",
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
@@ -5125,7 +5121,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                     if (!dataSaved && getProjectParameters() != null) {
                         int value = JOptionPane.showConfirmDialog(temp,
-                                "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName()+ "?",
+                                "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName() + "?",
                                 "Unsaved Changes",
                                 JOptionPane.YES_NO_CANCEL_OPTION,
                                 JOptionPane.QUESTION_MESSAGE);
@@ -6082,6 +6078,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Saving. Please Wait...");
 
+            // turn off the self updating table models
+            // @TODO: put in a separate function
+            overviewPanel.selfUpdating(false);
+            proteinFractionsPanel.selfUpdating(false);
+            proteinStructurePanel.selfUpdating(false);
+
             final PeptideShakerGUI tempRef = this; // needed due to threading issues
 
             new Thread(new Runnable() {
@@ -6143,6 +6145,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         e.printStackTrace();
                         catchException(e);
                     }
+
+                    // turn off the self updating table models back on
+                    // @TODO: put in a separate function
+                    overviewPanel.selfUpdating(true);
+                    proteinFractionsPanel.selfUpdating(true);
+                    proteinStructurePanel.selfUpdating(true);
                 }
             }.start();
         }
@@ -6286,7 +6294,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * file
      */
     public void saveProjectAs(boolean closeWhenDone, boolean aExportToZipWhenDone) {
-        File selectedFile = getUserSelectedFile(cpsParent.getProjectParameters().getProjectUniqueName()+ ".psDB", ".psDB", "Peptide Shaker Database format (*.psDB)", "Save As...", false);
+        File selectedFile = getUserSelectedFile(cpsParent.getProjectParameters().getProjectUniqueName() + ".psDB", ".psDB", "Peptide Shaker Database format (*.psDB)", "Save As...", false);
         cpsParent.setCpsFile(selectedFile);
         if (selectedFile != null) {
             saveProject(closeWhenDone, aExportToZipWhenDone);
@@ -6466,7 +6474,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         if (!dataSaved && getProjectParameters() != null) {
             int value = JOptionPane.showConfirmDialog(this,
-                    "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName()+ "?",
+                    "Do you want to save the changes to " + getProjectParameters().getProjectUniqueName() + "?",
                     "Unsaved Changes",
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
@@ -6629,7 +6637,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         String psmKey = PeptideShakerGUI.NO_SELECTION;
 
         try {
-            PeptideMatch peptideMatch = (PeptideMatch)getIdentification().retrieveObject(peptideKey);
+            PeptideMatch peptideMatch = (PeptideMatch) getIdentification().retrieveObject(peptideKey);
             ArrayList<String> psmKeys;
 
             try {
@@ -6671,7 +6679,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         String peptideKey = PeptideShakerGUI.NO_SELECTION;
 
         try {
-            ProteinMatch proteinMatch = (ProteinMatch)getIdentification().retrieveObject(proteinKey);
+            ProteinMatch proteinMatch = (ProteinMatch) getIdentification().retrieveObject(proteinKey);
             ArrayList<String> peptideKeys;
 
             try {
