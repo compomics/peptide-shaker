@@ -196,6 +196,8 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the peptide score
      */
     public double getPeptideScore() {
+        zooActivateRead();
+        zooActivateRead();
         return getScore(peptideProbabilityScore);
     }
 
@@ -205,6 +207,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the peptide confidence
      */
     public double getPeptideConfidence() {
+        zooActivateRead();
         double confidence = 100.0 * (1 - peptideProbability);
         if (confidence <= 0) {
             confidence = 0;
@@ -264,6 +267,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the protein score
      */
     public double getProteinScore() {
+        zooActivateRead();
         return getScore(proteinProbabilityScore);
     }
 
@@ -273,6 +277,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the protein confidence
      */
     public double getProteinConfidence() {
+        zooActivateRead();
         double confidence = 100.0 * (1 - proteinProbability);
         if (confidence <= 0) {
             confidence = 0;
@@ -381,6 +386,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the search engine confidence
      */
     public double getSearchEngineConfidence() {
+        zooActivateRead();
         double confidence = 100.0 * (1 - searchEngineProbability);
         if (confidence <= 0) {
             confidence = 0;
@@ -440,6 +446,8 @@ public class PSParameter extends IdObject implements UrParameter {
      * @param psmProbabilityScore the new PSM Probabilistic score
      */
     public void setSpectrumProbabilityScore(double psmProbabilityScore) {
+        zooActivateWrite();
+        setModified(true);
         this.psmProbabilityScore = psmProbabilityScore;
     }
 
@@ -449,6 +457,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the PSM score
      */
     public double getPsmScore() {
+        zooActivateRead();
         return getScore(psmProbabilityScore);
     }
 
@@ -458,6 +467,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the PSM confidence
      */
     public double getPsmConfidence() {
+        zooActivateRead();
         double confidence = 100.0 * (1 - psmProbability);
         if (confidence <= 0) {
             confidence = 0;
@@ -545,6 +555,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the group class description
      */
     public String getProteinInferenceClassAsString() {
+        zooActivateRead();
         return getProteinInferenceClassAsString(proteinInferenceGroupClass);
     }
 
@@ -577,6 +588,8 @@ public class PSParameter extends IdObject implements UrParameter {
      * @param groupClass the protein group class
      */
     public void setProteinInferenceClass(int groupClass) {
+        zooActivateWrite();
+        setModified(true);
         this.proteinInferenceGroupClass = groupClass;
     }
 
@@ -618,6 +631,8 @@ public class PSParameter extends IdObject implements UrParameter {
      * @param confidence the confidence
      */
     public void setFractionScore(String fraction, Double confidence) {
+        zooActivateWrite();
+        setModified(true);
         if (fractionScore == null) {
             fractionScore = new HashMap<String, Double>(2);
         }
@@ -637,6 +652,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the fraction score
      */
     public Double getFractionScore(String fraction) {
+        zooActivateRead();
         if (fractionScore == null) {
             return null;
         }
@@ -649,6 +665,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the fractions where this match was found
      */
     public Set<String> getFractions(){
+        zooActivateRead();
         if (fractionScore != null) {
             return fractionScore.keySet();
         } else {
@@ -673,6 +690,8 @@ public class PSParameter extends IdObject implements UrParameter {
      * @param confidence the confidence
      */
     public void setFractionPEP(String fraction, Double confidence) {
+        zooActivateWrite();
+        setModified(true);
         if (fractionPEP == null) {
             fractionPEP = new HashMap<String, Double>(2);
         }
@@ -692,6 +711,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the fraction pep
      */
     public Double getFractionPEP(String fraction) {
+        zooActivateRead();
         if (fractionPEP == null) {
             return null;
         }
@@ -710,6 +730,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the fraction confidence
      */
     public Double getFractionConfidence(String fraction) {
+        zooActivateRead();
         if (fractionPEP == null || fractionPEP.get(fraction) == null) {
             return null;
         }
@@ -723,6 +744,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the number of validated peptides in the given fraction
      */
     public Integer getFractionValidatedPeptides(String fraction) {
+        zooActivateRead();
         if (validatedPeptidesPerFraction != null) {
             return validatedPeptidesPerFraction.get(fraction);
         } else {
@@ -749,6 +771,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the number of validated spectra in the given fraction
      */
     public Integer getFractionValidatedSpectra(String fraction) {
+        zooActivateRead();
         if (validatedSpectraPerFraction != null) {
             return validatedSpectraPerFraction.get(fraction);
         } else {
@@ -774,6 +797,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the precursor intensity in the given fraction
      */
     public ArrayList<Double> getPrecursorIntensityPerFraction(String fraction) {
+        zooActivateRead();
         if (precursorIntensityPerFraction != null) {
             return precursorIntensityPerFraction.get(fraction);
         } else {
@@ -841,6 +865,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the average precursor intensity in the given fraction
      */
     public Double getPrecursorIntensityAveragePerFraction(String fraction) {
+        zooActivateRead();
         if (precursorIntensityAveragePerFraction != null) {
             return precursorIntensityAveragePerFraction.get(fraction);
         } else {
@@ -860,6 +885,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the summed precursor intensity in the given fraction
      */
     public Double getPrecursorIntensitySummedPerFraction(String fraction) {
+        zooActivateRead();
         if (precursorIntensitySummedPerFraction != null) {
             return precursorIntensitySummedPerFraction.get(fraction);
         } else {
@@ -905,6 +931,8 @@ public class PSParameter extends IdObject implements UrParameter {
      * @param validated boolean indicating whether the test was passed
      */
     public void setQcResult(String criterion, boolean validated) {
+        zooActivateWrite();
+        setModified(true);
         if (qcFilters == null) {
             qcFilters = new HashMap<String, Boolean>();
         }
@@ -919,6 +947,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return a boolean indicating whether the test was passed
      */
     public Boolean isQcPassed(String criterion) {
+        zooActivateRead();
         if (qcFilters == null) {
             return null;
         }
@@ -931,6 +960,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the list of qc checks made for this match in a set
      */
     public Set<String> getQcCriteria() {
+        zooActivateRead();
         if (qcFilters == null) {
             return new HashSet<String>();
         }
@@ -946,6 +976,8 @@ public class PSParameter extends IdObject implements UrParameter {
      * Resets the results of the QC filters.
      */
     public void resetQcResults() {
+        zooActivateWrite();
+        setModified(true);
         if (qcFilters == null) {
             qcFilters = new HashMap<String, Boolean>();
         }
@@ -959,6 +991,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * match
      */
     public boolean hasQcFilters() {
+        zooActivateRead();
         return qcFilters != null;
     }
 
@@ -969,6 +1002,8 @@ public class PSParameter extends IdObject implements UrParameter {
      * @param score the value of the score
      */
     public void setIntermediateScore(Integer scoreId, Double score) {
+        zooActivateWrite();
+        setModified(true);
         if (intermediateScores == null) {
             createIntermediateScoreMap();
         }
@@ -985,6 +1020,8 @@ public class PSParameter extends IdObject implements UrParameter {
      * Instantiates the intermediate scores map if null.
      */
     public synchronized void createIntermediateScoreMap() {
+        zooActivateWrite();
+        setModified(true);
         if (intermediateScores == null) {
             intermediateScores = new HashMap<Integer, Double>();
         }
@@ -998,6 +1035,7 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the intermediate score
      */
     public Double getIntermediateScore(int scoreId) {
+        zooActivateRead();
         if (intermediateScores == null) {
             return null;
         }

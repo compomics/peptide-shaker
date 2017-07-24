@@ -3814,6 +3814,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public Identification getIdentification() {
         return cpsParent.getIdentification();
     }
+    
+    public void setIdentification(Identification identification) {
+        this.cpsParent.setIdentification(identification);
+    }
 
     /**
      * Returns the desired spectrum.

@@ -496,10 +496,10 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void openJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJButtonActionPerformed
 
-        String cpsFileFilterDescription = "PeptideShaker (.cpsx)";
+        String cpsFileFilterDescription = "PeptideShaker Database (.psDB)";
         String zipFileFilterDescription = "Zipped PeptideShaker (.zip)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
-        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".cpsx", ".zip"},
+        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".psDB", ".zip"},
                 new String[]{cpsFileFilterDescription, zipFileFilterDescription}, "Open PeptideShaker Project", lastSelectedFolderPath, null, true, false, false, 0);
 
         if (selectedFileAndFilter != null) {
@@ -512,7 +512,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 peptideShakerGUI.setVisible(true);
                 peptideShakerGUI.importPeptideShakerZipFile(selectedFile);
                 dispose();
-            } else if (selectedFile.getName().endsWith(".cpsx")) {
+            } else if (selectedFile.getName().endsWith(".psDB")) {
                 setVisible(false);
                 peptideShakerGUI.setVisible(true);
                 peptideShakerGUI.importPeptideShakerFile(selectedFile);
@@ -522,7 +522,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 lastSelectedFolder.setLastSelectedFolder(selectedFile.getAbsolutePath());
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cpsx).", "Unsupported File.", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.psDB).", "Unsupported File.", JOptionPane.WARNING_MESSAGE);
             }
         }
     }//GEN-LAST:event_openJButtonActionPerformed

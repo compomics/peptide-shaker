@@ -14,7 +14,6 @@ import com.compomics.util.experiment.identification.matches_iterators.PsmIterato
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
@@ -24,6 +23,7 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Specific
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.utils.Metrics;
 import eu.isas.peptideshaker.validation.MatchesValidator;
@@ -128,9 +128,17 @@ public class BestMatchSelection {
         while (psmIterator.hasNext()) {
 
             SpectrumMatch advocateMatch = psmIterator.next();
+            
+            
+            // since the spectra should not be removed any more from the database,
+            // every instance gets a dummy PSParameter to avoid crashes in the
+            // according PeptideShaker process
+            PSParameter dummyParameter = new PSParameter();
+            dummyParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
+            advocateMatch.addUrParam(dummyParameter);
+            
             String spectrumKey = advocateMatch.getKey();
-            String spectrumFile = advocateMatch.getSpectrumFile();
-            String spectrumTitle = advocateMatch.getSpectrumTitle();
+                    
 
             // map of the peptide first hits for this spectrum: score -> max protein count -> max search engine votes -> amino acids annotated -> min mass deviation -> peptide sequence
             HashMap<Double, HashMap<Integer, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>>>> peptideAssumptions
@@ -181,11 +189,8 @@ public class BestMatchSelection {
 
                                     bestPeptideFound = true;
 
-                                    System.out.println("param before: " + (psParameter != null));
                                     psParameter = (PSParameter) peptideAssumption1.getUrParam(psParameter);
                                     double p;
-                                    
-                                    System.out.println("param there: " + (psParameter != null));
 
                                     if (multiSE && sequenceFactory.concatenatedTargetDecoy()) {
                                         p = psParameter.getSearchEngineProbability();
@@ -325,7 +330,10 @@ public class BestMatchSelection {
                 }
             }
 
-            SpectrumMatch spectrumMatch = new SpectrumMatch(spectrumFile, spectrumTitle);
+            //SpectrumMatch spectrumMatch = new SpectrumMatch(spectrumFile, spectrumTitle);
+            
+            SpectrumMatch spectrumMatch = advocateMatch;
+            
             if (!peptideAssumptions.isEmpty()) {
 
                 PeptideAssumption bestPeptideAssumption = null;

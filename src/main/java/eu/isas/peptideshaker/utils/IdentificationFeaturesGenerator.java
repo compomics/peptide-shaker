@@ -1122,6 +1122,7 @@ public class IdentificationFeaturesGenerator {
                                         // protein deleted due to protein inference issue and not deleted from the map in versions earlier than 0.14.6
                                         System.out.println("Non-existing protein key in protein map: " + proteinKey);
                                         e.printStackTrace();
+                                        System.exit(1);
                                     }
                                 }
                             }
@@ -2183,6 +2184,13 @@ public class IdentificationFeaturesGenerator {
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
             for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
                 psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(psParameter);
+                
+                System.out.println(spectrumKey + " " + (psParameter != null));
+                if (psParameter == null){
+                    System.out.println("Error: <<<<<<<<<<<<<<<<<<<<<<<");
+                }
+                
+                
                 if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                     result++;
                 }

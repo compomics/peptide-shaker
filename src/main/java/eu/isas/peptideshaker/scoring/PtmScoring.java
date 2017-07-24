@@ -61,6 +61,12 @@ public class PtmScoring implements Serializable {
     private HashMap<Integer, Integer> ptmLocationAtAA;
 
     /**
+     * Default constructor Constructor.
+     */
+    public PtmScoring() {
+    }
+
+    /**
      * Constructor.
      *
      * @param ptmName the name of the PTM of interest.

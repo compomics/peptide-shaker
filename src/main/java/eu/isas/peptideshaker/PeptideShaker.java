@@ -221,6 +221,7 @@ public class PeptideShaker {
         System.out.println(PeptideShaker.getMatchesFolder().getAbsolutePath());
         objectsDB = new ObjectsDB(PeptideShaker.getMatchesFolder().getAbsolutePath(), dbName);
         identification = new Ms2Identification(projectParameters.getProjectUniqueName(), objectsDB);
+        identification.addObject(ProjectParameters.nameForDatabase, projectParameters);
 
         fileImporter = new FileImporter(this, waitingHandler, identificationParameters, metrics);
         fileImporter.importFiles(idFiles, spectrumFiles, processingPreferences, spectrumCountingPreferences, projectDetails, backgroundThread);
@@ -263,6 +264,7 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        
 
         PsmScoringPreferences psmScoringPreferences = identificationParameters.getPsmScoringPreferences();
 
@@ -550,6 +552,10 @@ public class PeptideShaker {
                 //addWarning(new FeedBack(FeedBack.FeedBackType.WARNING, "Non robust statistical estimations", new ArrayList<String>(), detailedReport)); // @TODO: re-add later
             }
         }
+        
+        
+        ProjectParameters ttt = (ProjectParameters)objectsDB.retrieveObject(ProjectParameters.nameForDatabase);
+        System.out.println(ttt.getProjectUniqueName());
 
         waitingHandler.appendReport(report, true, true);
         waitingHandler.appendReportEndLine();
@@ -778,27 +784,23 @@ public class PeptideShaker {
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-        parameters.add(psParameter);
-
 
         PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
 
         while (psmIterator.hasNext()) {
 
             SpectrumMatch spectrumMatch = psmIterator.next();
-            String spectrumKey = spectrumMatch.getKey();
             psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
 
             if (sequenceFactory.concatenatedTargetDecoy()) {
                 Integer charge = new Integer(psParameter.getSpecificMapKey());
-                String fileName = Spectrum.getSpectrumFile(spectrumKey);
+                String fileName = spectrumMatch.getSpectrumFile();
                 psParameter.setPsmProbability(matchesValidator.getPsmMap().getProbability(fileName, charge, psParameter.getPsmProbabilityScore()));
             } else {
                 psParameter.setPsmProbability(1.0);
             }
 
-            identification.buildPeptidesAndProteins(spectrumKey, sequenceMatchingPreferences);
+            identification.buildPeptidesAndProteins(spectrumMatch, sequenceMatchingPreferences);
 
             waitingHandler.increaseSecondaryProgressCounter();
             if (waitingHandler.isRunCanceled()) {
