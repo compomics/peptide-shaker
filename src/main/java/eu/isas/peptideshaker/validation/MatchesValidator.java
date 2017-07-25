@@ -156,6 +156,7 @@ public class MatchesValidator {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.resetSecondaryProgressCounter();
         waitingHandler.setMaxSecondaryProgressCounter(totalProgress);
+        
 
         for (String mapKey : peptideMap.getKeys()) {
             if (waitingHandler.isRunCanceled()) {

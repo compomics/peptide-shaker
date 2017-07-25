@@ -558,7 +558,10 @@ public class PeptideShaker {
         waitingHandler.appendReportEndLine();
         waitingHandler.appendReportEndLine();
         identification.addUrParam(new PSMaps(matchesValidator.getPsmMap(), matchesValidator.getPeptideMap(), matchesValidator.getProteinMap(), inputMap, ptmScorer.getPsmPTMMap()));
+        identification.getObjectsDB().dumpToDB();
         waitingHandler.setRunFinished();
+        
+        
     }
 
     /**
