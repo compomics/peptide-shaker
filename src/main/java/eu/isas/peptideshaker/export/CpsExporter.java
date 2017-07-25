@@ -13,6 +13,7 @@ import eu.isas.peptideshaker.preferences.FilterPreferences;
 import eu.isas.peptideshaker.parameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
 import eu.isas.peptideshaker.utils.Metrics;
 import java.io.*;
@@ -68,13 +69,20 @@ public class CpsExporter {
             // save the user advocates
             projectDetails.setUserAdvocateMapping(Advocate.getUserAdvocates());
 
-            // set the experiment parameters
+            // add all necessary data and parameters into the db for export
             if (!identification.contains(PeptideShakerSettings.nameInCpsSettingsTable)) {
                 PeptideShakerSettings peptideShakerSettings = new PeptideShakerSettings(shotgunProtocol, identificationParameters, spectrumCountingPreferences,
                     projectDetails, filterPreferences, displayPreferences, metrics, geneMaps, identificationFeaturesCache);
                 BlobObject blobObject = new BlobObject(peptideShakerSettings);
                 identification.addObject(PeptideShakerSettings.nameInCpsSettingsTable, blobObject);
             }
+            PSMaps psMaps = new PSMaps();
+            String psMapsIdentKey = psMaps.getParameterKey() + "_identification";
+            if (!identification.contains(psMapsIdentKey)){
+                identification.addObject(psMapsIdentKey, identification.getUrParam(psMaps));
+            }
+            
+            
 
             // transfer all files in the match directory
             if (waitingHandler != null && !waitingHandler.isRunCanceled()) {

@@ -28,6 +28,7 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCou
 import eu.isas.peptideshaker.preferences.UserPreferences;
 import eu.isas.peptideshaker.preferences.UserPreferencesParent;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
+import eu.isas.peptideshaker.scoring.PSMaps;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -203,6 +204,10 @@ public class CpsParent extends UserPreferencesParent {
         
         projectParameters = (ProjectParameters)objectsDB.retrieveObject(ProjectParameters.nameForDatabase);
         identification = new Ms2Identification(projectParameters.getProjectUniqueName(), objectsDB);
+        
+        PSMaps psMaps = new PSMaps();
+        psMaps = (PSMaps)objectsDB.retrieveObject(psMaps.getParameterKey() + "_identification");
+        identification.addUrParam(psMaps);
         
         // Get PeptideShaker settings
         identificationParameters = experimentSettings.getIdentificationParameters();
