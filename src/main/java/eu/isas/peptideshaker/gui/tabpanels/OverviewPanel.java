@@ -492,11 +492,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("m/z Error").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
         
-        System.out.println("ttt: " + (peptideShakerGUI != null));
-        System.out.println("ttt: " + (peptideShakerGUI.getIdentification() != null));
-        System.out.println("ttt: " + (((PSMaps)peptideShakerGUI.getIdentification().getUrParam(new PSMaps())) != null));
-        System.out.println("ttt: " + (((PSMaps)peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap() != null));
-        
         psmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                 (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() - 30);

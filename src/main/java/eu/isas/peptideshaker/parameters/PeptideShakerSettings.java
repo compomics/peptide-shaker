@@ -120,7 +120,6 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
      */
     public void setIdentificationParameters(IdentificationParameters identificationParameters) {
         zooActivateWrite();
-        setModified(true);
         this.identificationParameters = identificationParameters;
     }
 
@@ -136,7 +135,6 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
     
     public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences){
         zooActivateWrite();
-        setModified(true);
         this.spectrumCountingPreferences = spectrumCountingPreferences;
     }
     
@@ -152,7 +150,6 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
     
     public void setProjectDetails(ProjectDetails projectDetails){
         zooActivateWrite();
-        setModified(true);
         this.projectDetails = projectDetails;
     }
 
@@ -168,7 +165,6 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
     
     public void setFilterPreferences(FilterPreferences filterPreferences){
         zooActivateWrite();
-        setModified(true);
         this.filterPreferences = filterPreferences;
     }
 
@@ -184,7 +180,6 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
     
     public void setDisplayPreferences(DisplayPreferences displayPreferences){
         zooActivateWrite();
-        setModified(true);
         this.displayPreferences = displayPreferences;
     }
 
@@ -205,7 +200,6 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
      */
     public void setShotgunProtocol(ShotgunProtocol shotgunProtocol) {
         zooActivateWrite();
-        setModified(true);
         this.shotgunProtocol = shotgunProtocol;
     }
 
@@ -224,7 +218,6 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
     
     public void setMetrics(Metrics metrics){
         zooActivateWrite();
-        setModified(true);
         this.metrics = metrics;
     }
     
@@ -244,7 +237,6 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
     
     public void setGeneMaps(GeneMaps geneMaps){
         zooActivateWrite();
-        setModified(true);
         this.geneMaps = geneMaps;
     }
 
@@ -262,7 +254,6 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
     
     public void setIdentificationFeaturesCache(IdentificationFeaturesCache identificationFeaturesCache){
         zooActivateWrite();
-        setModified(true);
         this.identificationFeaturesCache = identificationFeaturesCache;
     }
 

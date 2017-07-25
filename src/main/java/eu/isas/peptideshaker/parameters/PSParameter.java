@@ -163,7 +163,6 @@ public class PSParameter extends IdObject implements UrParameter {
     
     public void setGroupClass(int groupClass){
         zooActivateWrite();
-        setModified(true);
         this.proteinInferenceGroupClass = groupClass;
     }
 
@@ -176,7 +175,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setPeptideProbability(double peptideProbability) {
         zooActivateWrite();
-        setModified(true);
         this.peptideProbability = peptideProbability;
     }
 
@@ -196,7 +194,6 @@ public class PSParameter extends IdObject implements UrParameter {
      * @return the peptide score
      */
     public double getPeptideScore() {
-        zooActivateRead();
         zooActivateRead();
         return getScore(peptideProbabilityScore);
     }
@@ -224,7 +221,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setPeptideProbabilityScore(double peptideProbabilityScore) {
         zooActivateWrite();
-        setModified(true);
         this.peptideProbabilityScore = peptideProbabilityScore;
     }
 
@@ -247,7 +243,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setProteinProbability(double proteinProbability) {
         zooActivateWrite();
-        setModified(true);
         this.proteinProbability = proteinProbability;
     }
 
@@ -294,7 +289,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setProteinProbabilityScore(double proteinProbabilityScore) {
         zooActivateWrite();
-        setModified(true);
         this.proteinProbabilityScore = proteinProbabilityScore;
     }
 
@@ -318,7 +312,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setSearchEngineProbability(double searchEngineProbability) {
         zooActivateWrite();
-        setModified(true);
         this.searchEngineProbability = searchEngineProbability;
     }
 
@@ -347,7 +340,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setAlgorithmDeltaPEP(Double deltaPEP) {
         zooActivateWrite();
-        setModified(true);
         this.algorithmDeltaPEP = deltaPEP;
     }
 
@@ -376,7 +368,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setDeltaPEP(Double deltaPEP) {
         zooActivateWrite();
-        setModified(true);
         this.deltaPEP = deltaPEP;
     }
 
@@ -413,19 +404,16 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setPsmProbability(double psmProbability) {
         zooActivateWrite();
-        setModified(true);
         this.psmProbability = psmProbability;
     }
     
     public void setPsmProbabilityScore(double psmProbabilityScore) {
         zooActivateWrite();
-        setModified(true);
         this.psmProbabilityScore = psmProbabilityScore;
     }
     
     public void setQcFilters(HashMap<String, Boolean> qcFilters){
         zooActivateWrite();
-        setModified(true);
         this.qcFilters = qcFilters;
     }
 
@@ -447,7 +435,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setSpectrumProbabilityScore(double psmProbabilityScore) {
         zooActivateWrite();
-        setModified(true);
         this.psmProbabilityScore = psmProbabilityScore;
     }
 
@@ -492,7 +479,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setMatchValidationLevel(MatchValidationLevel matchValidationLevel) {
         zooActivateWrite();
-        setModified(true);
         this.matchValidationLevel = matchValidationLevel;
     }
 
@@ -503,7 +489,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setHidden(boolean hidden) {
         zooActivateWrite();
-        setModified(true);
         this.hidden = hidden;
     }
 
@@ -524,7 +509,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setStarred(boolean starred) {
         zooActivateWrite();
-        setModified(true);
         this.starred = starred;
     }
 
@@ -589,7 +573,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setProteinInferenceClass(int groupClass) {
         zooActivateWrite();
-        setModified(true);
         this.proteinInferenceGroupClass = groupClass;
     }
 
@@ -620,7 +603,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setSpecificMapKey(String specificMapKey) {
         zooActivateWrite();
-        setModified(true);
         this.specificMapKey = specificMapKey;
     }
 
@@ -632,7 +614,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setFractionScore(String fraction, Double confidence) {
         zooActivateWrite();
-        setModified(true);
         if (fractionScore == null) {
             fractionScore = new HashMap<String, Double>(2);
         }
@@ -641,7 +622,6 @@ public class PSParameter extends IdObject implements UrParameter {
     
     public void setFractionScore(HashMap<String, Double> fractionScore){
         zooActivateWrite();
-        setModified(true);
         this.fractionScore = fractionScore;
     }
 
@@ -691,7 +671,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setFractionPEP(String fraction, Double confidence) {
         zooActivateWrite();
-        setModified(true);
         if (fractionPEP == null) {
             fractionPEP = new HashMap<String, Double>(2);
         }
@@ -700,7 +679,6 @@ public class PSParameter extends IdObject implements UrParameter {
     
     public void setFractionPEP(HashMap<String, Double> fractionPEP){
         zooActivateWrite();
-        setModified(true);
         this.fractionPEP = fractionPEP;
     }
 
@@ -760,7 +738,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setValidatedPeptidesPerFraction(HashMap<String, Integer> validatedPeptidesPerFraction) {
         zooActivateWrite();
-        setModified(true);
         this.validatedPeptidesPerFraction = validatedPeptidesPerFraction;
     }
 
@@ -786,7 +763,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setValidatedSpectraPepFraction(HashMap<String, Integer> validatedSpectraPerFraction) {
         zooActivateWrite();
-        setModified(true);
         this.validatedSpectraPerFraction = validatedSpectraPerFraction;
     }
 
@@ -813,14 +789,12 @@ public class PSParameter extends IdObject implements UrParameter {
     
     public void setPrecursorIntensityAveragePerFraction(HashMap<String, Double> precursorIntensityAveragePerFraction) {
         zooActivateWrite();
-        setModified(true);
         this.precursorIntensityAveragePerFraction = precursorIntensityAveragePerFraction;
     }
     
     
     public void setPrecursorIntensitySummedPerFraction(HashMap<String, Double> precursorIntensitySummedPerFraction) {
         zooActivateWrite();
-        setModified(true);
         this.precursorIntensitySummedPerFraction = precursorIntensitySummedPerFraction;
     }
 
@@ -831,7 +805,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setPrecursorIntensityPerFraction(HashMap<String, ArrayList<Double>> precursorIntensityPerFraction) {
         zooActivateWrite();
-        setModified(true);
         this.precursorIntensityPerFraction = precursorIntensityPerFraction;
 
         // calculate the average precursor intensities
@@ -920,7 +893,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setManualValidation(Boolean manualValidation) {
         zooActivateWrite();
-        setModified(true);
         this.manualValidation = manualValidation;
     }
 
@@ -932,7 +904,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setQcResult(String criterion, boolean validated) {
         zooActivateWrite();
-        setModified(true);
         if (qcFilters == null) {
             qcFilters = new HashMap<String, Boolean>();
         }
@@ -977,7 +948,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void resetQcResults() {
         zooActivateWrite();
-        setModified(true);
         if (qcFilters == null) {
             qcFilters = new HashMap<String, Boolean>();
         }
@@ -1003,7 +973,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public void setIntermediateScore(Integer scoreId, Double score) {
         zooActivateWrite();
-        setModified(true);
         if (intermediateScores == null) {
             createIntermediateScoreMap();
         }
@@ -1012,7 +981,6 @@ public class PSParameter extends IdObject implements UrParameter {
     
     public void setIntermediateScores(HashMap<Integer, Double> intermediateScores){
         zooActivateWrite();
-        setModified(true);
         this.intermediateScores = intermediateScores;
     }
     
@@ -1021,7 +989,6 @@ public class PSParameter extends IdObject implements UrParameter {
      */
     public synchronized void createIntermediateScoreMap() {
         zooActivateWrite();
-        setModified(true);
         if (intermediateScores == null) {
             intermediateScores = new HashMap<Integer, Double>();
         }
