@@ -29,21 +29,21 @@ public class PsmSpecificMap extends IdObject implements Serializable {
     /**
      * The map of the PSM target/decoy maps indexed by the PSM charge.
      */
-    private HashMap<Integer, TargetDecoyMap> psmsMaps = new HashMap<Integer, TargetDecoyMap>();
+    private HashMap<Integer, TargetDecoyMap> psmsMaps = new HashMap<>();
     /**
      * The map of the PSM target/decoy maps indexed by the PSM file and charge.
      */
-    private HashMap<Integer, HashMap<String, TargetDecoyMap>> fileSpecificPsmsMaps = new HashMap<Integer, HashMap<String, TargetDecoyMap>>();
+    private HashMap<Integer, HashMap<String, TargetDecoyMap>> fileSpecificPsmsMaps = new HashMap<>();
     /**
      * Map used to group charges together in order to ensure statistical.
      * relevance.
      */
-    private HashMap<Integer, Integer> grouping = new HashMap<Integer, Integer>();
+    private HashMap<Integer, Integer> grouping = new HashMap<>();
     /**
      * Map used to group charges together in order to ensure statistical.
      * relevance grouped per file.
      */
-    private HashMap<Integer, ArrayList<String>> fileSpecificGrouping = new HashMap<Integer, ArrayList<String>>();
+    private HashMap<Integer, ArrayList<String>> fileSpecificGrouping = new HashMap<>();
 
     /**
      * Constructor.
@@ -151,7 +151,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
         int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
         HashMap<String, TargetDecoyMap> fileMapping = fileSpecificPsmsMaps.get(charge);
         if (fileMapping == null) {
-            fileMapping = new HashMap<String, TargetDecoyMap>();
+            fileMapping = new HashMap<>();
             fileSpecificPsmsMaps.put(charge, fileMapping);
         }
         String file = Spectrum.getSpectrumFile(spectrumMatch.getKey());
@@ -176,7 +176,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
         Collections.sort(charges);
         int ref = 0;
         for (Integer charge : charges) {
-            ArrayList<String> nonSignificantFiles = new ArrayList<String>();
+            ArrayList<String> nonSignificantFiles = new ArrayList<>();
             TargetDecoyMap tempMap = new TargetDecoyMap();
             for (String file : fileSpecificPsmsMaps.get(charge).keySet()) {
                 TargetDecoyMap targetDecoyMap = fileSpecificPsmsMaps.get(charge).get(file);
@@ -283,9 +283,9 @@ public class PsmSpecificMap extends IdObject implements Serializable {
     public ArrayList<Integer> getPossibleCharges() {
         zooActivateRead();
         if (fileSpecificPsmsMaps != null) {
-            return new ArrayList<Integer>(fileSpecificPsmsMaps.keySet());
+            return new ArrayList<>(fileSpecificPsmsMaps.keySet());
         } else {
-            return new ArrayList<Integer>(grouping.keySet());
+            return new ArrayList<>(grouping.keySet());
         }
     }
 
@@ -296,7 +296,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      */
     public ArrayList<Integer> getChargesFromGroupedFiles() {
         zooActivateRead();
-        return new ArrayList<Integer>(psmsMaps.keySet());
+        return new ArrayList<>(psmsMaps.keySet());
     }
 
     /**
@@ -306,7 +306,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      */
     public HashSet<Integer> getGroupedCharges() {
         zooActivateRead();
-        HashSet<Integer> result = new HashSet<Integer>();
+        HashSet<Integer> result = new HashSet<>();
         for (int charge : psmsMaps.keySet()) {
             Integer correctedCharge = grouping.get(charge);
             if (correctedCharge == null) {
@@ -324,18 +324,18 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      */
     public HashMap<Integer, ArrayList<Integer>> getChargeGroupingMap() {
         zooActivateRead();
-        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>(4);
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<>(4);
         for (Integer charge : getChargesFromGroupedFiles()) {
             Integer correctedCharge = getCorrectedCharge(charge);
             if (!correctedCharge.equals(charge)) {
                 ArrayList<Integer> secondaryCharges = result.get(correctedCharge);
                 if (secondaryCharges == null) {
-                    secondaryCharges = new ArrayList<Integer>(1);
+                    secondaryCharges = new ArrayList<>(1);
                     result.put(correctedCharge, secondaryCharges);
                 }
                 secondaryCharges.add(charge);
             } else if (!result.containsKey(charge)) {
-                result.put(charge, new ArrayList<Integer>(1));
+                result.put(charge, new ArrayList<>(1));
             }
         }
         return result;
@@ -353,10 +353,10 @@ public class PsmSpecificMap extends IdObject implements Serializable {
         if (fileSpecificPsmsMaps != null) {
             HashMap<String, TargetDecoyMap> chargeMap = fileSpecificPsmsMaps.get(charge);
             if (chargeMap != null) {
-                return new ArrayList<String>(chargeMap.keySet());
+                return new ArrayList<>(chargeMap.keySet());
             }
         }
-        return new ArrayList<String>(0);
+        return new ArrayList<>(0);
     }
 
     /**
@@ -385,7 +385,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      */
     public ArrayList<TargetDecoyMap> getTargetDecoyMaps() {
         zooActivateRead();
-        ArrayList<TargetDecoyMap> result = new ArrayList<TargetDecoyMap>();
+        ArrayList<TargetDecoyMap> result = new ArrayList<>();
         for (int charge : fileSpecificPsmsMaps.keySet()) {
             ArrayList<String> nonSignificantFiles = fileSpecificGrouping.get(charge);
             for (String file : fileSpecificPsmsMaps.get(charge).keySet()) {

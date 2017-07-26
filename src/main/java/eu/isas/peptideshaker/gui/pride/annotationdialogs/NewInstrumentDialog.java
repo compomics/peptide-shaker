@@ -643,7 +643,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
      */
     private void okJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okJButtonActionPerformed
 
-        ArrayList<CvTerm> cvTerms = new ArrayList<CvTerm>();
+        ArrayList<CvTerm> cvTerms = new ArrayList<>();
 
         for (int i = 0; i < analyzerCvTermsJTable.getRowCount(); i++) {
             cvTerms.add(new CvTerm(
@@ -704,7 +704,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
      */
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         dispose();
-        prideExportDialog.deleteInstrument(new Instrument(nameJTextField.getText(), null, null, new ArrayList<CvTerm>()));
+        prideExportDialog.deleteInstrument(new Instrument(nameJTextField.getText(), null, null, new ArrayList<>()));
     }//GEN-LAST:event_deleteButtonActionPerformed
 
      /**

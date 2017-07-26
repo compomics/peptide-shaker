@@ -149,13 +149,13 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
         columnToolTips.add(null);
 
         // insert the species from file
-        speciesMap = new HashMap<String, String>();
+        speciesMap = new HashMap<>();
 
         try {
             InputStream stream = getClass().getResource("/prideDefaults/species.txt").openStream();
             InputStreamReader streamReader = new InputStreamReader(stream);
             BufferedReader b = new BufferedReader(streamReader);
-            Vector<String> species = new Vector<String>();
+            Vector<String> species = new Vector<>();
             species.add("--- Select ---");
             String line;
 
@@ -183,13 +183,13 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
         }
 
         // insert the tissue types from file
-        tissueMap = new HashMap<String, String>();
+        tissueMap = new HashMap<>();
 
         try {
             InputStream stream = getClass().getResource("/prideDefaults/tissue.txt").openStream();
             InputStreamReader streamReader = new InputStreamReader(stream);
             BufferedReader b = new BufferedReader(streamReader);
-            Vector<String> tissue = new Vector<String>();
+            Vector<String> tissue = new Vector<>();
             tissue.add("--- Select ---");
             String line;
 
@@ -212,13 +212,13 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
         }
 
         // insert the cell types from file
-        cellTypeMap = new HashMap<String, String>();
+        cellTypeMap = new HashMap<>();
 
         try {
             InputStream stream = getClass().getResource("/prideDefaults/cell_type.txt").openStream();
             InputStreamReader streamReader = new InputStreamReader(stream);
             BufferedReader b = new BufferedReader(streamReader);
-            Vector<String> cellType = new Vector<String>();
+            Vector<String> cellType = new Vector<>();
             cellType.add("--- Select ---");
             String line;
 
@@ -697,7 +697,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
 
-        ArrayList<CvTerm> cvTerms = new ArrayList<CvTerm>();
+        ArrayList<CvTerm> cvTerms = new ArrayList<>();
 
         // add species
         if (speciesJComboBox.getSelectedIndex() > 0
@@ -794,7 +794,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      */
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         dispose();
-        prideExportDialog.deleteSample(new Sample(sampleNameJTextField.getText(), new ArrayList<CvTerm>()));
+        prideExportDialog.deleteSample(new Sample(sampleNameJTextField.getText(), new ArrayList<>()));
     }//GEN-LAST:event_deleteButtonActionPerformed
 
      /**

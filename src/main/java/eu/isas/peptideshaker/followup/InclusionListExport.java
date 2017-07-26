@@ -87,7 +87,7 @@ public class InclusionListExport {
 
                     if (!proteinFilters.contains(psParameter.getProteinInferenceGroupClass())) {
 
-                        ArrayList<String> peptideMatches = new ArrayList<String>();
+                        ArrayList<String> peptideMatches = new ArrayList<>();
 
                         for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
                             psParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(peptideKey)).getUrParam(psParameter);
@@ -139,7 +139,7 @@ public class InclusionListExport {
                         if (!peptideMatches.isEmpty()) {
                             for (String peptideKey : peptideMatches) {
                                 PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(peptideKey);
-                                ArrayList<String> validatedPsms = new ArrayList<String>();
+                                ArrayList<String> validatedPsms = new ArrayList<>();
                                 for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
                                     psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(psParameter);
                                     if (psParameter.getMatchValidationLevel().isValidated()) {
@@ -147,7 +147,7 @@ public class InclusionListExport {
                                     }
                                 }
                                 if (!validatedPsms.isEmpty()) {
-                                    ArrayList<Double> retentionTimes = new ArrayList<Double>();
+                                    ArrayList<Double> retentionTimes = new ArrayList<>();
                                     for (String spectrumKey : validatedPsms) {
                                         retentionTimes.add(spectrumFactory.getPrecursor(spectrumKey).getRt());
                                     }

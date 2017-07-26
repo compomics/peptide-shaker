@@ -22,7 +22,7 @@ public class PSPtmScores implements UrParameter {
      * A map containing all scores indexed by the modification of interest for a
      * peptide or a PSM.
      */
-    private HashMap<String, PtmScoring> ptmMap = new HashMap<String, PtmScoring>();
+    private HashMap<String, PtmScoring> ptmMap = new HashMap<>();
     /**
      * A list of all modification sites confidently localized on a sequence in a
      * map: site &gt; PTM names.
@@ -87,7 +87,7 @@ public class PSPtmScores implements UrParameter {
      * @return a list of scored modifications
      */
     public ArrayList<String> getScoredPTMs() {
-        return new ArrayList<String>(ptmMap.keySet());
+        return new ArrayList<>(ptmMap.keySet());
     }
 
     /**
@@ -100,11 +100,11 @@ public class PSPtmScores implements UrParameter {
 
         // add the PTM to the site map
         if (mainModificationSites == null) {
-            mainModificationSites = new HashMap<Integer, ArrayList<String>>(1);
+            mainModificationSites = new HashMap<>(1);
         }
         ArrayList<String> ptms = mainModificationSites.get(modificationSite);
         if (ptms == null) {
-            ptms = new ArrayList<String>(1);
+            ptms = new ArrayList<>(1);
             mainModificationSites.put(modificationSite, ptms);
         }
         if (!ptms.contains(ptmName)) {
@@ -112,11 +112,11 @@ public class PSPtmScores implements UrParameter {
         }
         // add the site to the PTM map
         if (confidentModificationsByPTM == null) {
-            confidentModificationsByPTM = new HashMap<String, ArrayList<Integer>>(1);
+            confidentModificationsByPTM = new HashMap<>(1);
         }
         ArrayList<Integer> ptmSites = confidentModificationsByPTM.get(ptmName);
         if (ptmSites == null) {
-            ptmSites = new ArrayList<Integer>(1);
+            ptmSites = new ArrayList<>(1);
             confidentModificationsByPTM.put(ptmName, ptmSites);
         }
         if (!ptmSites.contains(modificationSite)) {
@@ -135,13 +135,13 @@ public class PSPtmScores implements UrParameter {
         if (ambiguousModificationsByPTM != null) {
             HashMap<Integer, ArrayList<Integer>> modificationSites = ambiguousModificationsByPTM.get(ptmName);
             if (modificationSites != null) {
-                HashSet<Integer> representativeSites = new HashSet<Integer>(modificationSites.keySet());
+                HashSet<Integer> representativeSites = new HashSet<>(modificationSites.keySet());
                 for (Integer representativeSite : representativeSites) {
                     ArrayList<Integer> secondarySites = modificationSites.get(representativeSite);
                     if (representativeSite == modificationSite || secondarySites.contains(modificationSite)) {
                         modificationSites.remove(representativeSite);
                         HashMap<Integer, ArrayList<String>> secondarySitesAtAa = ambiguousModificationsByRepresentativeSite.get(representativeSite);
-                        HashSet<Integer> secondarySiteList = new HashSet<Integer>(secondarySitesAtAa.keySet());
+                        HashSet<Integer> secondarySiteList = new HashSet<>(secondarySitesAtAa.keySet());
                         for (Integer site : secondarySiteList) {
                             ArrayList<String> ptmList = secondarySitesAtAa.get(site);
                             ptmList.remove(ptmName);
@@ -171,13 +171,13 @@ public class PSPtmScores implements UrParameter {
      */
     public void addAmbiguousModificationSites(int representativeSite, HashMap<Integer, ArrayList<String>> possibleModifications) {
         if (ambiguousModificationsByRepresentativeSite == null) {
-            ambiguousModificationsByRepresentativeSite = new HashMap<Integer, HashMap<Integer, ArrayList<String>>>();
-            ambiguousModificationsByPTM = new HashMap<String, HashMap<Integer, ArrayList<Integer>>>();
+            ambiguousModificationsByRepresentativeSite = new HashMap<>();
+            ambiguousModificationsByPTM = new HashMap<>();
         }
 
         HashMap<Integer, ArrayList<String>> modificationGroupsAtSite = ambiguousModificationsByRepresentativeSite.get(representativeSite);
         if (modificationGroupsAtSite == null) {
-            modificationGroupsAtSite = new HashMap<Integer, ArrayList<String>>();
+            modificationGroupsAtSite = new HashMap<>();
             ambiguousModificationsByRepresentativeSite.put(representativeSite, modificationGroupsAtSite);
         }
 
@@ -185,7 +185,7 @@ public class PSPtmScores implements UrParameter {
             for (String ptmName : possibleModifications.get(site)) {
                 ArrayList<String> modifications = modificationGroupsAtSite.get(site);
                 if (modifications == null) {
-                    modifications = new ArrayList<String>();
+                    modifications = new ArrayList<>();
                     modificationGroupsAtSite.put(site, modifications);
                 }
                 if (!modifications.contains(ptmName)) {
@@ -198,12 +198,12 @@ public class PSPtmScores implements UrParameter {
         for (String modification : modifications) {
             HashMap<Integer, ArrayList<Integer>> ptmSites = ambiguousModificationsByPTM.get(modification);
             if (ptmSites == null) {
-                ptmSites = new HashMap<Integer, ArrayList<Integer>>();
+                ptmSites = new HashMap<>();
                 ambiguousModificationsByPTM.put(modification, ptmSites);
             }
             ArrayList<Integer> secondarySites = ptmSites.get(representativeSite);
             if (secondarySites == null) {
-                secondarySites = new ArrayList<Integer>();
+                secondarySites = new ArrayList<>();
                 ptmSites.put(representativeSite, secondarySites);
             }
             for (int site : possibleModifications.keySet()) {
@@ -228,8 +228,8 @@ public class PSPtmScores implements UrParameter {
 
         if (ambiguousSites != null) {
 
-            HashMap<Integer, ArrayList<String>> newSites = new HashMap<Integer, ArrayList<String>>();
-            HashSet<Integer> sites = new HashSet<Integer>(ambiguousSites.keySet());
+            HashMap<Integer, ArrayList<String>> newSites = new HashMap<>();
+            HashSet<Integer> sites = new HashSet<>(ambiguousSites.keySet());
 
             for (Integer site : sites) {
 
@@ -237,7 +237,7 @@ public class PSPtmScores implements UrParameter {
 
                 if (modifications.contains(ptmName)) {
 
-                    ArrayList<String> newModifications = new ArrayList<String>();
+                    ArrayList<String> newModifications = new ArrayList<>();
                     newModifications.add(ptmName);
                     newSites.put(site, newModifications);
                     modifications.remove(ptmName);
@@ -261,7 +261,7 @@ public class PSPtmScores implements UrParameter {
                 for (int site : newSites.keySet()) {
                     ArrayList<String> modifications = ambiguousSites.get(site);
                     if (modifications == null) {
-                        modifications = new ArrayList<String>(2);
+                        modifications = new ArrayList<>(2);
                         ambiguousSites.put(site, modifications);
                     }
                     if (!modifications.contains(ptmName)) {
@@ -316,7 +316,7 @@ public class PSPtmScores implements UrParameter {
             result = mainModificationSites.get(site);
         }
         if (result == null) {
-            result = new ArrayList<String>();
+            result = new ArrayList<>();
         }
         return result;
     }
@@ -339,7 +339,7 @@ public class PSPtmScores implements UrParameter {
             }
         }
         if (result == null) {
-            result = new ArrayList<String>();
+            result = new ArrayList<>();
         }
         return result;
     }
@@ -358,7 +358,7 @@ public class PSPtmScores implements UrParameter {
             confidentSites = confidentModificationsByPTM.get(PtmName);
         }
         if (confidentSites == null) {
-            confidentSites = new ArrayList<Integer>();
+            confidentSites = new ArrayList<>();
         }
         return confidentSites;
     }
@@ -378,7 +378,7 @@ public class PSPtmScores implements UrParameter {
             results = ambiguousModificationsByRepresentativeSite.get(representativeSite);
         }
         if (results == null) {
-            results = new HashMap<Integer, ArrayList<String>>();
+            results = new HashMap<>();
         }
         return results;
     }
@@ -396,7 +396,7 @@ public class PSPtmScores implements UrParameter {
             results = ambiguousModificationsByPTM.get(ptmName);
         }
         if (results == null) {
-            results = new HashMap<Integer, ArrayList<Integer>>();
+            results = new HashMap<>();
         }
         return results;
     }
@@ -409,10 +409,10 @@ public class PSPtmScores implements UrParameter {
     public ArrayList<Integer> getConfidentSites() {
         ArrayList<Integer> result = null;
         if (mainModificationSites != null) {
-            result = new ArrayList<Integer>(mainModificationSites.keySet());
+            result = new ArrayList<>(mainModificationSites.keySet());
         }
         if (result == null) {
-            result = new ArrayList<Integer>();
+            result = new ArrayList<>();
         }
         return result;
     }
@@ -425,10 +425,10 @@ public class PSPtmScores implements UrParameter {
     public ArrayList<Integer> getRepresentativeSites() {
         ArrayList<Integer> result = null;
         if (ambiguousModificationsByRepresentativeSite != null) {
-            result = new ArrayList<Integer>(ambiguousModificationsByRepresentativeSite.keySet());
+            result = new ArrayList<>(ambiguousModificationsByRepresentativeSite.keySet());
         }
         if (result == null) {
-            result = new ArrayList<Integer>();
+            result = new ArrayList<>();
         }
         return result;
     }
@@ -441,10 +441,10 @@ public class PSPtmScores implements UrParameter {
     public ArrayList<String> getConfidentlyLocalizedPtms() {
         ArrayList<String> result = null;
         if (confidentModificationsByPTM != null) {
-            result = new ArrayList<String>(confidentModificationsByPTM.keySet());
+            result = new ArrayList<>(confidentModificationsByPTM.keySet());
         }
         if (result == null) {
-            result = new ArrayList<String>();
+            result = new ArrayList<>();
         }
         return result;
     }
@@ -457,10 +457,10 @@ public class PSPtmScores implements UrParameter {
     public ArrayList<String> getAmbiguouslyLocalizedPtms() {
         ArrayList<String> result = null;
         if (ambiguousModificationsByPTM != null) {
-            result = new ArrayList<String>(ambiguousModificationsByPTM.keySet());
+            result = new ArrayList<>(ambiguousModificationsByPTM.keySet());
         }
         if (result == null) {
-            result = new ArrayList<String>();
+            result = new ArrayList<>();
         }
         return result;
     }

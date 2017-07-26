@@ -288,20 +288,20 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
         // set up the reshakeable files
-        reshakeableFiles = new HashMap<String, ArrayList<String>>();
+        reshakeableFiles = new HashMap<>();
 
         // add pride xml and mgf
-        reshakeableFiles.put("RESULT", new ArrayList<String>());
+        reshakeableFiles.put("RESULT", new ArrayList<>());
         reshakeableFiles.get("RESULT").add(".xml");
         reshakeableFiles.get("RESULT").add(".xml.gz");
         reshakeableFiles.get("RESULT").add(".xml.zip");
-        reshakeableFiles.put("PEAK", new ArrayList<String>());
+        reshakeableFiles.put("PEAK", new ArrayList<>());
         reshakeableFiles.get("PEAK").add(MsFormat.mgf.fileNameEnding);
         reshakeableFiles.get("PEAK").add(MsFormat.mgf.fileNameEnding + ".gz");
         reshakeableFiles.get("PEAK").add(MsFormat.mgf.fileNameEnding + ".zip");
 
         // add the raw file formats
-        reshakeableFiles.put("RAW", new ArrayList<String>());
+        reshakeableFiles.put("RAW", new ArrayList<>());
         reshakeableFiles.get("RAW").add(MsFormat.raw.fileNameEnding);
         reshakeableFiles.get("RAW").add(MsFormat.raw.fileNameEnding + ".gz");
         reshakeableFiles.get("RAW").add(MsFormat.raw.fileNameEnding + ".zip");
@@ -329,7 +329,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         reshakeableFiles.get("RAW").add(MsFormat.mz5.fileNameEnding);
 
         // then check for incorrect labeling...
-        reshakeableFiles.put("OTHER", new ArrayList<String>());
+        reshakeableFiles.put("OTHER", new ArrayList<>());
         reshakeableFiles.get("OTHER").add(MsFormat.mgf.fileNameEnding);
         reshakeableFiles.get("OTHER").add(MsFormat.mgf.fileNameEnding + ".gz");
         reshakeableFiles.get("OTHER").add(MsFormat.mgf.fileNameEnding + ".zip");
@@ -338,8 +338,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         reshakeableFiles.get("RAW").add(MsFormat.mgf.fileNameEnding + ".zip");
 
         // the files from which settings can be extracted
-        searchSettingsFiles = new HashMap<String, ArrayList<String>>();
-        searchSettingsFiles.put("RESULT", new ArrayList<String>());
+        searchSettingsFiles = new HashMap<>();
+        searchSettingsFiles.put("RESULT", new ArrayList<>());
         searchSettingsFiles.get("RESULT").add(".xml");
         searchSettingsFiles.get("RESULT").add(".xml.gz");
         searchSettingsFiles.get("RESULT").add(".xml.zip");
@@ -425,7 +425,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 "Reshakeable", null));
 
         // set up the peptide inference color map
-        HashMap<Integer, Color> clusterScoringColorMap = new HashMap<Integer, Color>();
+        HashMap<Integer, Color> clusterScoringColorMap = new HashMap<>();
         clusterScoringColorMap.put(0, peptideShakerGUI.getSparklineColorNotFound());
         clusterScoringColorMap.put(1, peptideShakerGUI.getSparklineColor());
         clusterScoringColorMap.put(2, peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorPossible());
@@ -433,7 +433,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         clusterScoringColorMap.put(4, peptideShakerGUI.getSparklineColorNonValidated());
 
         // set up the peptide inference tooltip map
-        HashMap<Integer, String> clusterScoringTooltipMap = new HashMap<Integer, String>();
+        HashMap<Integer, String> clusterScoringTooltipMap = new HashMap<>();
         clusterScoringTooltipMap.put(0, "Not yet classified");
         clusterScoringTooltipMap.put(1, "High confidence");
         clusterScoringTooltipMap.put(2, "Good confidence");
@@ -443,7 +443,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         projectsTable.getColumn("  ").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColorNotFound(), clusterScoringColorMap, clusterScoringTooltipMap));
         assaysTable.getColumn("  ").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColorNotFound(), clusterScoringColorMap, clusterScoringTooltipMap));
 
-        projectsTableToolTips = new ArrayList<String>();
+        projectsTableToolTips = new ArrayList<>();
         projectsTableToolTips.add(null);
         projectsTableToolTips.add("Project Accession Number");
         projectsTableToolTips.add("Project Title");
@@ -457,7 +457,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         projectsTableToolTips.add("Project Type");
         projectsTableToolTips.add("Confidence Category");
 
-        assaysTableToolTips = new ArrayList<String>();
+        assaysTableToolTips = new ArrayList<>();
         assaysTableToolTips.add(null);
         assaysTableToolTips.add("Assay Accession Number");
         assaysTableToolTips.add("Assay Title");
@@ -471,7 +471,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         assaysTableToolTips.add("Number of Spectra");
         assaysTableToolTips.add("Confidence Category");
 
-        filesTableToolTips = new ArrayList<String>();
+        filesTableToolTips = new ArrayList<>();
         filesTableToolTips.add(null);
         filesTableToolTips.add("Assay Accession Numbers");
         filesTableToolTips.add("File Type");
@@ -495,8 +495,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      */
     private void getClusterAnnotations() {
 
-        projectClusterAnnotation = new HashMap<String, Integer>();
-        assayClusterAnnotation = new HashMap<String, Integer>();
+        projectClusterAnnotation = new HashMap<>();
+        assayClusterAnnotation = new HashMap<>();
 
         File projectAnnotationsFile = new File(PeptideShaker.getJarFilePath() + "/resources/conf/pride/project-annotation.tsv");
 
@@ -1439,7 +1439,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             } else if (column == filesTable.getColumn("Download").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
                     && ((String) filesTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
-                ArrayList<Integer> fileRowIndexes = new ArrayList<Integer>();
+                ArrayList<Integer> fileRowIndexes = new ArrayList<>();
                 fileRowIndexes.add(row);
                 downloadFiles(fileRowIndexes);
             }
@@ -1628,7 +1628,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      */
     private void reshakableCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakableCheckBoxActionPerformed
 
-        List<RowFilter<Object, Object>> filters = new ArrayList<RowFilter<Object, Object>>();
+        List<RowFilter<Object, Object>> filters = new ArrayList<>();
 
         // reshakeble filter
         RowFilter<Object, Object> reshakeableFilter = new RowFilter<Object, Object>() {
@@ -1756,7 +1756,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      * @param evt
      */
     private void downloadAllLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadAllLabelMouseReleased
-        ArrayList<Integer> fileRowIndexes = new ArrayList<Integer>();
+        ArrayList<Integer> fileRowIndexes = new ArrayList<>();
 
         for (int i = 0; i < filesTable.getRowCount(); i++) {
             fileRowIndexes.add(i);
@@ -2280,11 +2280,11 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                 // get the project
                 try {
-                    speciesAll = new ArrayList<String>();
-                    instrumentsAll = new ArrayList<String>();
-                    ptmsAll = new ArrayList<String>();
-                    tissuesAll = new ArrayList<String>();
-                    projectTagsAll = new ArrayList<String>();
+                    speciesAll = new ArrayList<>();
+                    instrumentsAll = new ArrayList<>();
+                    ptmsAll = new ArrayList<>();
+                    tissuesAll = new ArrayList<>();
+                    projectTagsAll = new ArrayList<>();
 
                     ResponseEntity<ProjectDetail> projectDetail = template.getForEntity(url, ProjectDetail.class);
 
@@ -2472,11 +2472,11 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     progressDialog.setMaxPrimaryProgressCounter(numberOfProjects + 1);
                     progressDialog.increasePrimaryProgressCounter();
 
-                    speciesAll = new ArrayList<String>();
-                    instrumentsAll = new ArrayList<String>();
-                    ptmsAll = new ArrayList<String>();
-                    tissuesAll = new ArrayList<String>();
-                    projectTagsAll = new ArrayList<String>();
+                    speciesAll = new ArrayList<>();
+                    instrumentsAll = new ArrayList<>();
+                    ptmsAll = new ArrayList<>();
+                    tissuesAll = new ArrayList<>();
+                    projectTagsAll = new ArrayList<>();
 
                     // load the projects in batches
                     for (int currentPage = 0; currentPage < numberOfPages; currentPage++) {
@@ -2663,7 +2663,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         outputFolder = aWorkingFolder;
         currentSpecies = aSpecies;
 
-        ArrayList<String> tempLinks = new ArrayList<String>();
+        ArrayList<String> tempLinks = new ArrayList<>();
         tempLinks.addAll(selectedSpectrumFileLinks);
         if (selectedSearchSettingsFileLink != null && !tempLinks.contains(selectedSearchSettingsFileLink)) {
             tempLinks.add(selectedSearchSettingsFileLink);
@@ -2706,8 +2706,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     prideSearchParameters.setDigestionPreferences(DigestionPreferences.getDefaultPreferences());
 
                     String prideSearchParametersReport = null;
-                    ArrayList<File> mgfFiles = new ArrayList<File>();
-                    ArrayList<File> rawFiles = new ArrayList<File>();
+                    ArrayList<File> mgfFiles = new ArrayList<>();
+                    ArrayList<File> rawFiles = new ArrayList<>();
                     boolean mgfConversionOk = true;
                     Boolean useLocalFiles = null;
 
@@ -3063,7 +3063,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         Double fragmentIonMassTolerance = null;
         Double peptideIonMassTolerance = null;
         Integer maxMissedCleavages = null;
-        ArrayList<String> enzymes = new ArrayList<String>();
+        ArrayList<String> enzymes = new ArrayList<>();
 
         PrideXmlReader prideXmlReader = new PrideXmlReader(currentPrideDataFile);
 
@@ -3135,8 +3135,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             }
         }
 
-        HashMap<String, Integer> ionTypes = new HashMap<String, Integer>();
-        HashMap<String, Integer> peptideLastResidues = new HashMap<String, Integer>();
+        HashMap<String, Integer> ionTypes = new HashMap<>();
+        HashMap<String, Integer> peptideLastResidues = new HashMap<>();
 
         // get the fragment ion types used
         List<String> ids = prideXmlReader.getIdentIds();
@@ -3677,7 +3677,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         String authString = userName + ":" + password;
         byte[] encodedAuthorisation = Base64.encodeBase64(authString.getBytes());
         headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
-        return new HttpEntity<String>(headers);
+        return new HttpEntity<>(headers);
     }
 
     /**
@@ -3793,7 +3793,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      */
     private String convertPtms(String allPtms, PtmSettings modProfile) {
 
-        ArrayList<String> unknownPtms = new ArrayList<String>();
+        ArrayList<String> unknownPtms = new ArrayList<>();
         String report = "<br><br><b>Post-Translational Modifications:</b>";
 
         if (allPtms != null) {

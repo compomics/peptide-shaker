@@ -54,7 +54,7 @@ public class BestMatchSelection {
      * Map indicating how often a protein was found in a search engine first hit
      * whenever this protein was found more than one time.
      */
-    private HashMap<String, Integer> proteinCount = new HashMap<String, Integer>();
+    private HashMap<String, Integer> proteinCount = new HashMap<>();
     /**
      * The identification object.
      */
@@ -256,11 +256,11 @@ public class BestMatchSelection {
 
                                     HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>> nSeMap = proteinMaxMap.get(nSE);
                                     if (nSeMap == null) {
-                                        nSeMap = new HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>(1);
+                                        nSeMap = new HashMap<>(1);
                                         proteinMaxMap.put(nSE, nSeMap);
-                                        HashMap<Double, HashMap<String, PeptideAssumption>> coverageMap = new HashMap<Double, HashMap<String, PeptideAssumption>>(1);
+                                        HashMap<Double, HashMap<String, PeptideAssumption>> coverageMap = new HashMap<>(1);
                                         nSeMap.put(-1, coverageMap);
-                                        HashMap<String, PeptideAssumption> assumptionMap = new HashMap<String, PeptideAssumption>(1);
+                                        HashMap<String, PeptideAssumption> assumptionMap = new HashMap<>(1);
                                         coverageMap.put(-1.0, assumptionMap);
                                         assumptionMap.put(peptideAssumption1.getPeptide().getSequenceWithLowerCasePtms(), peptideAssumption1);
                                     } else {
@@ -357,13 +357,13 @@ public class BestMatchSelection {
                             for (Integer coverage : coverages) {
 
                                 HashMap<Double, HashMap<String, PeptideAssumption>> coverageMap = nSeMap.get(coverage);
-                                ArrayList<Double> minErrors = new ArrayList<Double>(coverageMap.keySet());
+                                ArrayList<Double> minErrors = new ArrayList<>(coverageMap.keySet());
                                 Collections.sort(minErrors);
 
                                 for (double minError : minErrors) {
 
                                     HashMap<String, PeptideAssumption> bestPeptideAssumptions = coverageMap.get(minError);
-                                    ArrayList<String> sequences = new ArrayList<String>(bestPeptideAssumptions.keySet());
+                                    ArrayList<String> sequences = new ArrayList<>(bestPeptideAssumptions.keySet());
                                     Collections.sort(sequences);
 
                                     for (String sequence : sequences) {
@@ -398,14 +398,14 @@ public class BestMatchSelection {
                     if (multiSE) {
 
                         // try to find the most likely modification localization based on the search engine results
-                        HashMap<PeptideAssumption, ArrayList<Double>> assumptionPEPs = new HashMap<PeptideAssumption, ArrayList<Double>>();
+                        HashMap<PeptideAssumption, ArrayList<Double>> assumptionPEPs = new HashMap<>();
                         String bestAssumptionKey = bestPeptideAssumption.getPeptide().getMatchingKey(sequenceMatchingPreferences);
 
                         for (int searchEngine : assumptions.keySet()) {
 
                             boolean found = false;
                             HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateMap = assumptions.get(searchEngine);
-                            ArrayList<Double> eValues = new ArrayList<Double>(advocateMap.keySet());
+                            ArrayList<Double> eValues = new ArrayList<>(advocateMap.keySet());
                             Collections.sort(eValues);
 
                             for (double eValue : eValues) {
@@ -431,7 +431,7 @@ public class BestMatchSelection {
                                             }
 
                                             if (!found2) {
-                                                ArrayList<Double> peps = new ArrayList<Double>(1);
+                                                ArrayList<Double> peps = new ArrayList<>(1);
                                                 assumptionPEPs.put(peptideAssumption, peps);
                                                 psParameter = (PSParameter) assumption.getUrParam(psParameter);
                                                 peps.add(psParameter.getSearchEngineProbability());
@@ -568,7 +568,7 @@ public class BestMatchSelection {
         }
 
         Integer maxProteins = 0;
-        ArrayList<PeptideAssumption> bestPeptideAssumptions = new ArrayList<PeptideAssumption>(firstHits.size());
+        ArrayList<PeptideAssumption> bestPeptideAssumptions = new ArrayList<>(firstHits.size());
 
         for (PeptideAssumption peptideAssumption : firstHits) {
             Peptide peptide = peptideAssumption.getPeptide();
@@ -593,7 +593,7 @@ public class BestMatchSelection {
             return bestPeptideAssumptions.get(0);
         } else if (!bestPeptideAssumptions.isEmpty()) {
             firstHits = bestPeptideAssumptions;
-            bestPeptideAssumptions = new ArrayList<PeptideAssumption>(firstHits.size());
+            bestPeptideAssumptions = new ArrayList<>(firstHits.size());
         }
 
         MSnSpectrum spectrum = (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey);
@@ -618,7 +618,7 @@ public class BestMatchSelection {
             return bestPeptideAssumptions.get(0);
         } else if (!bestPeptideAssumptions.isEmpty()) {
             firstHits = bestPeptideAssumptions;
-            bestPeptideAssumptions = new ArrayList<PeptideAssumption>(firstHits.size());
+            bestPeptideAssumptions = new ArrayList<>(firstHits.size());
         }
 
         double minMassError = identificationParameters.getPeptideAssumptionFilter().getMaxMzDeviation();
@@ -644,12 +644,12 @@ public class BestMatchSelection {
             bestPeptideAssumptions = firstHits;
         }
 
-        HashMap<String, PeptideAssumption> sequenceToPeptideAssumptionsMap = new HashMap<String, PeptideAssumption>(bestPeptideAssumptions.size());
+        HashMap<String, PeptideAssumption> sequenceToPeptideAssumptionsMap = new HashMap<>(bestPeptideAssumptions.size());
         for (PeptideAssumption peptideAssumption : bestPeptideAssumptions) {
             sequenceToPeptideAssumptionsMap.put(peptideAssumption.getPeptide().getSequence(), peptideAssumption);
         }
 
-        ArrayList<String> sequences = new ArrayList<String>(sequenceToPeptideAssumptionsMap.keySet());
+        ArrayList<String> sequences = new ArrayList<>(sequenceToPeptideAssumptionsMap.keySet());
         Collections.sort(sequences);
         return sequenceToPeptideAssumptionsMap.get(sequences.get(0));
     }

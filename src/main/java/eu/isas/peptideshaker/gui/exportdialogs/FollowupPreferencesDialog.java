@@ -597,7 +597,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             progressDialog.setTitle("Exporting PSMs. Please Wait...");
 
             final int userChoice = psmSelectionComboBox.getSelectedIndex();
-            ArrayList<String> ptms = new ArrayList<String>();
+            ArrayList<String> ptms = new ArrayList<>();
             if (userChoice == 3) {
                 PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings().getAllNotFixedModifications(), true);
                 if (ptmChooser.isCanceled()) {
@@ -624,7 +624,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         if (psmSelectionComboBox.getSelectedIndex() == 4) {
                             ProgenesisExcelExport progenesisExcelExport = new ProgenesisExcelExport(
                                     progressDialog,
-                                    new ArrayList<String>(peptideShakerGUI.getIdentification().getProteinIdentification()),
+                                    new ArrayList<>(peptideShakerGUI.getIdentification().getProteinIdentification()),
                                     peptideShakerGUI.getIdentification(),
                                     finalOutputFile, peptideShakerGUI.getIdentificationParameters());
                             progenesisExcelExport.writeProgenesisExcelExport();
@@ -753,7 +753,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     // gephi: https://gephi.org/users/supported-graph-formats/spreadsheet/
                     // neo4j: http://blog.neo4j.org/2013/03/importing-data-into-neo4j-spreadsheet.html
                     // make a list of the proteins added as nodes, as to not add them more than once
-                    HashSet<String> proteinsAdded = new HashSet<String>();
+                    HashSet<String> proteinsAdded = new HashSet<>();
 
                     try {
                         // write the nodes
@@ -795,7 +795,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
 
                         PSParameter psParameter = new PSParameter();
-                        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+                        ArrayList<UrParameter> parameters = new ArrayList<>(1);
                         parameters.add(psParameter);
                         PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
 

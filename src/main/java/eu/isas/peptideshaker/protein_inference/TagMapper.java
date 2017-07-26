@@ -165,9 +165,9 @@ public class TagMapper {
         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = spectrumMatch.getAssumptionsMap();
         for (Integer advocateId : assumptionsMap.keySet()) {
             HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> algorithmTags = assumptionsMap.get(advocateId);
-            HashSet<Double> scores = new HashSet<Double>(algorithmTags.keySet());
-            HashSet<String> inspectedTags = new HashSet<String>(algorithmTags.size());
-            HashSet<String> peptidesFound = new HashSet<String>(algorithmTags.size());
+            HashSet<Double> scores = new HashSet<>(algorithmTags.keySet());
+            HashSet<String> inspectedTags = new HashSet<>(algorithmTags.size());
+            HashSet<String> peptidesFound = new HashSet<>(algorithmTags.size());
             for (Double score : scores) {
                 ArrayList<SpectrumIdentificationAssumption> tagAssumptions = algorithmTags.get(score);
                 // @TODO: allow the user to extend the tags
@@ -177,7 +177,7 @@ public class TagMapper {
 //                            extendedTagList.add(tagAssumption.reverse(true));
 //                            extendedTagList.add(tagAssumption.reverse(false));
 //                        }
-                ArrayList<SpectrumIdentificationAssumption> newAssumptions = new ArrayList<SpectrumIdentificationAssumption>(tagAssumptions);
+                ArrayList<SpectrumIdentificationAssumption> newAssumptions = new ArrayList<>(tagAssumptions);
                 for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : tagAssumptions) {
                     if (spectrumIdentificationAssumption instanceof TagAssumption) {
                         TagAssumption tagAssumption = (TagAssumption) spectrumIdentificationAssumption;

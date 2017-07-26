@@ -83,9 +83,9 @@ public class PsmImporter {
      */
     private long nPSMs = 0;
     /**
-     * The number of secondary hits.
+     * The total number of hits.
      */
-    private long nSecondary = 0;
+    private long nHitsTotal = 0;
     /**
      * The processing preferences.
      */
@@ -133,7 +133,7 @@ public class PsmImporter {
     /**
      * List of ignored modifications.
      */
-    private ArrayList<Integer> ignoredModifications = new ArrayList<Integer>(2);
+    private ArrayList<Integer> ignoredModifications = new ArrayList<>(2);
     /**
      * The maximal peptide mass error found in ppm.
      */
@@ -158,7 +158,7 @@ public class PsmImporter {
     /**
      * List of charges found.
      */
-    private HashSet<Integer> charges = new HashSet<Integer>();
+    private HashSet<Integer> charges = new HashSet<>();
     /**
      * List of one hit wonders.
      */
@@ -385,14 +385,14 @@ public class PsmImporter {
             HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> algorithmMap = matchAssumptions.get(algorithm);
             HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> combinedAlgorithmMap = combinedAssumptions.get(algorithm);
             if (combinedAlgorithmMap == null) {
-                combinedAlgorithmMap = new HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>(algorithmMap.size());
+                combinedAlgorithmMap = new HashMap<>(algorithmMap.size());
                 combinedAssumptions.put(algorithm, algorithmMap);
             }
             for (Double score : algorithmMap.keySet()) {
                 ArrayList<SpectrumIdentificationAssumption> scoreAssumptions = algorithmMap.get(score);
                 ArrayList<SpectrumIdentificationAssumption> combinedScoreAssumptions = combinedAlgorithmMap.get(score);
                 if (combinedScoreAssumptions == null) {
-                    combinedScoreAssumptions = new ArrayList<SpectrumIdentificationAssumption>(scoreAssumptions.size());
+                    combinedScoreAssumptions = new ArrayList<>(scoreAssumptions.size());
                     combinedAlgorithmMap.put(score, scoreAssumptions);
                 }
                 combinedScoreAssumptions.addAll(scoreAssumptions);
@@ -438,11 +438,10 @@ public class PsmImporter {
 
         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = spectrumMatch.getAssumptionsMap();
         
-        for (HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> assumptionsForAdvocate : assumptions.values()) {
-            for (ArrayList<SpectrumIdentificationAssumption> assumptionsAtScore : assumptionsForAdvocate.values()) {
-                nSecondary += assumptionsAtScore.size();
-            }
-        }
+        nHitsTotal += assumptions.values().stream()
+                .flatMap(assumptionsForAdvocate -> assumptionsForAdvocate.values().stream())
+                .mapToInt(assumptionAtScore -> assumptionAtScore.size())
+                .sum();
      
         for (int advocateId : spectrumMatch.getAssumptionsMap().keySet()) {
 
@@ -492,12 +491,12 @@ public class PsmImporter {
 
                             if (!fixedPtmIssue) {
 
-                                HashMap<Integer, ArrayList<String>> expectedNames = new HashMap<Integer, ArrayList<String>>();
-                                HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<ModificationMatch, ArrayList<String>>();
+                                HashMap<Integer, ArrayList<String>> expectedNames = new HashMap<>();
+                                HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<>();
 
                                 if (peptide.isModified()) {
                                     for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                                        HashMap<Integer, ArrayList<String>> tempNames = new HashMap<Integer, ArrayList<String>>();
+                                        HashMap<Integer, ArrayList<String>> tempNames = new HashMap<>();
                                         if (modMatch.getVariable()) {
                                             String sePTM = modMatch.getTheoreticPtm();
                                             if (fileReader instanceof OMSSAIdfileReader) {
@@ -570,19 +569,17 @@ public class PsmImporter {
                                                 throw new IllegalArgumentException("PTM mapping not implemented for the parsing of " + idFile.getName() + ".");
                                             }
 
-                                            ArrayList<String> allNames = new ArrayList<String>();
+                                            HashSet<String> allNames = new HashSet<>();
                                             for (ArrayList<String> namesAtAA : tempNames.values()) {
                                                 for (String name : namesAtAA) {
-                                                    if (!allNames.contains(name)) {
                                                         allNames.add(name);
-                                                    }
                                                 }
                                             }
-                                            modNames.put(modMatch, allNames);
+                                            modNames.put(modMatch, new ArrayList<>(allNames));
                                             for (int pos : tempNames.keySet()) {
                                                 ArrayList<String> namesAtPosition = expectedNames.get(pos);
                                                 if (namesAtPosition == null) {
-                                                    namesAtPosition = new ArrayList<String>(2);
+                                                    namesAtPosition = new ArrayList<>(2);
                                                     expectedNames.put(pos, namesAtPosition);
                                                 }
                                                 for (String ptmName : tempNames.get(pos)) {
@@ -816,7 +813,7 @@ public class PsmImporter {
                     if (modSite == 1) {
                         ArrayList<String> expectedNamesAtSite = expectedNames.get(modSite);
                         if (expectedNamesAtSite != null) {
-                            ArrayList<String> filteredNamesAtSite = new ArrayList<String>(expectedNamesAtSite.size());
+                            ArrayList<String> filteredNamesAtSite = new ArrayList<>(expectedNamesAtSite.size());
                             for (String ptmName : expectedNamesAtSite) {
                                 PTM ptm = ptmFactory.getPTM(ptmName);
                                 if (Math.abs(ptm.getMass() - refMass) < searchParameters.getFragmentIonAccuracyInDaltons(amountPerAminoAcidResidue * peptideLength)) {
@@ -858,7 +855,7 @@ public class PsmImporter {
                     if (modSite == peptideLength) {
                         ArrayList<String> expectedNamesAtSite = expectedNames.get(modSite);
                         if (expectedNamesAtSite != null) {
-                            ArrayList<String> filteredNamesAtSite = new ArrayList<String>(expectedNamesAtSite.size());
+                            ArrayList<String> filteredNamesAtSite = new ArrayList<>(expectedNamesAtSite.size());
                             for (String ptmName : expectedNamesAtSite) {
                                 PTM ptm = ptmFactory.getPTM(ptmName);
                                 if (Math.abs(ptm.getMass() - refMass) < searchParameters.getFragmentIonAccuracyInDaltons(amountPerAminoAcidResidue * peptideLength)) {
@@ -894,9 +891,9 @@ public class PsmImporter {
             }
 
             // Map the modifications according to search engine localization
-            HashMap<Integer, ArrayList<String>> siteToPtmMap = new HashMap<Integer, ArrayList<String>>(); // Site to ptm name including termini
-            HashMap<Integer, ModificationMatch> siteToMatchMap = new HashMap<Integer, ModificationMatch>(); // Site to Modification match excluding termini
-            HashMap<ModificationMatch, Integer> matchToSiteMap = new HashMap<ModificationMatch, Integer>(); // Modification match to site excluding termini
+            HashMap<Integer, ArrayList<String>> siteToPtmMap = new HashMap<>(); // Site to ptm name including termini
+            HashMap<Integer, ModificationMatch> siteToMatchMap = new HashMap<>(); // Site to Modification match excluding termini
+            HashMap<ModificationMatch, Integer> matchToSiteMap = new HashMap<>(); // Modification match to site excluding termini
             boolean allMapped = true;
 
             for (ModificationMatch modMatch : peptide.getModificationMatches()) {
@@ -907,7 +904,7 @@ public class PsmImporter {
                     boolean terminal = false;
                     ArrayList<String> expectedNamesAtSite = expectedNames.get(modSite);
                     if (expectedNamesAtSite != null) {
-                        ArrayList<String> filteredNamesAtSite = new ArrayList<String>(expectedNamesAtSite.size());
+                        ArrayList<String> filteredNamesAtSite = new ArrayList<>(expectedNamesAtSite.size());
                         ArrayList<String> modificationAtSite = siteToPtmMap.get(modSite);
                         for (String ptmName : expectedNamesAtSite) {
                             PTM ptm = ptmFactory.getPTM(ptmName);
@@ -933,7 +930,7 @@ public class PsmImporter {
                             if (mapped) {
                                 modMatch.setTheoreticPtm(ptmName);
                                 if (modificationAtSite == null) {
-                                    modificationAtSite = new ArrayList<String>(2);
+                                    modificationAtSite = new ArrayList<>(2);
                                     siteToPtmMap.put(modSite, modificationAtSite);
                                 }
                                 modificationAtSite.add(ptmName);
@@ -962,7 +959,7 @@ public class PsmImporter {
                                     modMatch.setTheoreticPtm(bestPtmName);
                                     terminal = true;
                                     if (modificationAtSite == null) {
-                                        modificationAtSite = new ArrayList<String>(2);
+                                        modificationAtSite = new ArrayList<>(2);
                                         siteToPtmMap.put(modSite, modificationAtSite);
                                     }
                                     modificationAtSite.add(bestPtmName);
@@ -987,7 +984,7 @@ public class PsmImporter {
                                     modMatch.setTheoreticPtm(bestPtmName);
                                     terminal = true;
                                     if (modificationAtSite == null) {
-                                        modificationAtSite = new ArrayList<String>(2);
+                                        modificationAtSite = new ArrayList<>(2);
                                         siteToPtmMap.put(modSite, modificationAtSite);
                                     }
                                     modificationAtSite.add(bestPtmName);
@@ -1011,7 +1008,7 @@ public class PsmImporter {
                                 if (bestPtmName != null) {
                                     modMatch.setTheoreticPtm(bestPtmName);
                                     if (modificationAtSite == null) {
-                                        modificationAtSite = new ArrayList<String>(2);
+                                        modificationAtSite = new ArrayList<>(2);
                                         siteToPtmMap.put(modSite, modificationAtSite);
                                     }
                                     modificationAtSite.add(bestPtmName);
@@ -1031,7 +1028,7 @@ public class PsmImporter {
             if (!allMapped) {
 
                 // Try to correct incompatible localizations
-                HashMap<Integer, ArrayList<Integer>> remap = new HashMap<Integer, ArrayList<Integer>>();
+                HashMap<Integer, ArrayList<Integer>> remap = new HashMap<>();
 
                 for (ModificationMatch modMatch : peptide.getModificationMatches()) {
                     if (modMatch.getVariable() && modMatch != nTermModification && modMatch != cTermModification && !matchToSiteMap.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
@@ -1045,7 +1042,7 @@ public class PsmImporter {
                                                 && (!ptm.isNTerm() || nTermModification == null)) {
                                             ArrayList<Integer> ptmSites = remap.get(modSite);
                                             if (ptmSites == null) {
-                                                ptmSites = new ArrayList<Integer>(4);
+                                                ptmSites = new ArrayList<>(4);
                                                 remap.put(modSite, ptmSites);
                                             }
                                             if (!ptmSites.contains(candidateSite)) {
@@ -1074,7 +1071,7 @@ public class PsmImporter {
                                             modMatch.setTheoreticPtm(modName);
                                             modMatch.setModificationSite(modSite);
                                             if (taken == null) {
-                                                taken = new ArrayList<String>(2);
+                                                taken = new ArrayList<>(2);
                                                 siteToPtmMap.put(modSite, taken);
                                             }
                                             taken.add(modName);
@@ -1280,7 +1277,7 @@ public class PsmImporter {
      * @return the number of secondary hits processed
      */
     public long getnSecondary() {
-        return nSecondary;
+        return nHitsTotal;
     }
 
     /**

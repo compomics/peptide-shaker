@@ -615,7 +615,7 @@ public class PSParameter extends IdObject implements UrParameter {
     public void setFractionScore(String fraction, Double confidence) {
         zooActivateWrite();
         if (fractionScore == null) {
-            fractionScore = new HashMap<String, Double>(2);
+            fractionScore = new HashMap<>(2);
         }
         fractionScore.put(fraction, confidence);
     }
@@ -672,7 +672,7 @@ public class PSParameter extends IdObject implements UrParameter {
     public void setFractionPEP(String fraction, Double confidence) {
         zooActivateWrite();
         if (fractionPEP == null) {
-            fractionPEP = new HashMap<String, Double>(2);
+            fractionPEP = new HashMap<>(2);
         }
         fractionPEP.put(fraction, confidence);
     }
@@ -777,7 +777,7 @@ public class PSParameter extends IdObject implements UrParameter {
         if (precursorIntensityPerFraction != null) {
             return precursorIntensityPerFraction.get(fraction);
         } else {
-            return new ArrayList<Double>();
+            return new ArrayList<>();
         }
     }
     
@@ -821,7 +821,7 @@ public class PSParameter extends IdObject implements UrParameter {
             }
 
             if (precursorIntensityAveragePerFraction == null) {
-                precursorIntensityAveragePerFraction = new HashMap<String, Double>(2);
+                precursorIntensityAveragePerFraction = new HashMap<>(2);
             }
             if (sum > 0) {
                 precursorIntensityAveragePerFraction.put(fraction, sum / precursorIntensityPerFraction.get(fraction).size());
@@ -905,7 +905,7 @@ public class PSParameter extends IdObject implements UrParameter {
     public void setQcResult(String criterion, boolean validated) {
         zooActivateWrite();
         if (qcFilters == null) {
-            qcFilters = new HashMap<String, Boolean>();
+            qcFilters = new HashMap<>();
         }
         qcFilters.put(criterion, validated);
     }
@@ -933,7 +933,7 @@ public class PSParameter extends IdObject implements UrParameter {
     public Set<String> getQcCriteria() {
         zooActivateRead();
         if (qcFilters == null) {
-            return new HashSet<String>();
+            return new HashSet<>();
         }
         return qcFilters.keySet();
     }
@@ -949,7 +949,7 @@ public class PSParameter extends IdObject implements UrParameter {
     public void resetQcResults() {
         zooActivateWrite();
         if (qcFilters == null) {
-            qcFilters = new HashMap<String, Boolean>();
+            qcFilters = new HashMap<>();
         }
         qcFilters.clear();
     }
@@ -990,7 +990,7 @@ public class PSParameter extends IdObject implements UrParameter {
     public synchronized void createIntermediateScoreMap() {
         zooActivateWrite();
         if (intermediateScores == null) {
-            intermediateScores = new HashMap<Integer, Double>();
+            intermediateScores = new HashMap<>();
         }
     }
 

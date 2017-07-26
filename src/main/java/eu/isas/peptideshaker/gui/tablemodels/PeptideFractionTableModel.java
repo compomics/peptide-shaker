@@ -31,7 +31,7 @@ public class PeptideFractionTableModel extends DefaultTableModel {
     /**
      * A list of ordered file names.
      */
-    private ArrayList<String> fileNames = new ArrayList<String>();
+    private ArrayList<String> fileNames = new ArrayList<>();
     /**
      * Set to true as soon as the real model is initiated. False means that only 
      * the dummy constructor has been used.
@@ -77,7 +77,7 @@ public class PeptideFractionTableModel extends DefaultTableModel {
         identification = peptideShakerGUI.getIdentification();
         this.peptideKeys = peptideKeys;
 
-        fileNames = new ArrayList<String>();
+        fileNames = new ArrayList<>();
         
         for (String fileName : identification.getSpectrumFiles()) {
             fileNames.add(fileName);

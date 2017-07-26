@@ -339,8 +339,8 @@ public class DisplayFeaturesGenerator {
 
         String peptideSequence = peptide.getSequence();
         HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
-        HashMap<Integer, ArrayList<String>> confidentLocations = new HashMap<Integer, ArrayList<String>>();
-        HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = new HashMap<Integer, ArrayList<String>>();
+        HashMap<Integer, ArrayList<String>> confidentLocations = new HashMap<>();
+        HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = new HashMap<>();
 
         if (ptmScores != null) {
             confidentLocations = getFilteredConfidentModificationsSites(ptmScores, displayedPTMs);
@@ -359,8 +359,8 @@ public class DisplayFeaturesGenerator {
      */
     public String getPeptideModificationTooltipAsHtml(Peptide peptide) {
 
-        HashMap<Integer, ArrayList<String>> confidentModificationSites = new HashMap<Integer, ArrayList<String>>(peptide.getNModifications());
-        HashMap<Integer, ArrayList<String>> representativeModificationSites = new HashMap<Integer, ArrayList<String>>(peptide.getNModifications());
+        HashMap<Integer, ArrayList<String>> confidentModificationSites = new HashMap<>(peptide.getNModifications());
+        HashMap<Integer, ArrayList<String>> representativeModificationSites = new HashMap<>(peptide.getNModifications());
         HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
 
         if (peptide.isModified()) {
@@ -370,12 +370,12 @@ public class DisplayFeaturesGenerator {
                 if (modMatch.getVariable()) {
                     if (modMatch.getConfident()) {
                         if (!confidentModificationSites.containsKey(modSite)) {
-                            confidentModificationSites.put(modSite, new ArrayList<String>());
+                            confidentModificationSites.put(modSite, new ArrayList<>());
                         }
                         confidentModificationSites.get(modSite).add(modName);
                     } else {
                         if (!representativeModificationSites.containsKey(modSite)) {
-                            representativeModificationSites.put(modSite, new ArrayList<String>());
+                            representativeModificationSites.put(modSite, new ArrayList<>());
                         }
                         representativeModificationSites.get(modSite).add(modName);
                     }
@@ -401,7 +401,7 @@ public class DisplayFeaturesGenerator {
             HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations) {
 
         String tooltip = "<html>";
-        ArrayList<String> alreadyAnnotated = new ArrayList<String>();
+        ArrayList<String> alreadyAnnotated = new ArrayList<>();
 
         for (int aa = 1; aa <= peptideSequence.length(); aa++) {
 
@@ -579,9 +579,9 @@ public class DisplayFeaturesGenerator {
      */
     public String getTaggedPeptideSequence(Peptide peptide, PSPtmScores ptmScores, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
         HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
-        HashMap<Integer, ArrayList<String>> confidentLocations = new HashMap<Integer, ArrayList<String>>();
-        HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = new HashMap<Integer, ArrayList<String>>();
-        HashMap<Integer, ArrayList<String>> secondaryAmbiguousLocations = new HashMap<Integer, ArrayList<String>>();
+        HashMap<Integer, ArrayList<String>> confidentLocations = new HashMap<>();
+        HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = new HashMap<>();
+        HashMap<Integer, ArrayList<String>> secondaryAmbiguousLocations = new HashMap<>();
         if (ptmScores != null) {
             confidentLocations = getFilteredConfidentModificationsSites(ptmScores, displayedPTMs);
             representativeAmbiguousLocations = getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayedPTMs);
@@ -602,12 +602,12 @@ public class DisplayFeaturesGenerator {
      * preferences
      */
     public static HashMap<Integer, ArrayList<String>> getFilteredModifications(HashMap<Integer, ArrayList<String>> modificationMap, ArrayList<String> displayedPtms) {
-        HashMap<Integer, ArrayList<String>> result = new HashMap<Integer, ArrayList<String>>();
+        HashMap<Integer, ArrayList<String>> result = new HashMap<>();
         for (int aa : modificationMap.keySet()) {
             for (String ptm : modificationMap.get(aa)) {
                 if (displayedPtms.contains(ptm)) {
                     if (!result.containsKey(aa)) {
-                        result.put(aa, new ArrayList<String>());
+                        result.put(aa, new ArrayList<>());
                     }
                     result.get(aa).add(ptm);
                 }
@@ -627,12 +627,12 @@ public class DisplayFeaturesGenerator {
      * preferences
      */
     public static HashMap<Integer, ArrayList<String>> getFilteredConfidentModificationsSites(PSPtmScores ptmScores, ArrayList<String> displayedPtms) {
-        HashMap<Integer, ArrayList<String>> result = new HashMap<Integer, ArrayList<String>>();
+        HashMap<Integer, ArrayList<String>> result = new HashMap<>();
         for (String ptmName : displayedPtms) {
             for (int confidentSite : ptmScores.getConfidentSitesForPtm(ptmName)) {
                 ArrayList<String> modifications = result.get(confidentSite);
                 if (modifications == null) {
-                    modifications = new ArrayList<String>();
+                    modifications = new ArrayList<>();
                     result.put(confidentSite, modifications);
                 }
                 modifications.add(ptmName);
@@ -652,13 +652,13 @@ public class DisplayFeaturesGenerator {
      * preferences
      */
     public static HashMap<Integer, ArrayList<String>> getFilteredAmbiguousModificationsRepresentativeSites(PSPtmScores ptmScores, ArrayList<String> displayedPtms) {
-        HashMap<Integer, ArrayList<String>> result = new HashMap<Integer, ArrayList<String>>();
+        HashMap<Integer, ArrayList<String>> result = new HashMap<>();
         for (int representativeSite : ptmScores.getRepresentativeSites()) {
             for (String ptmName : ptmScores.getPtmsAtRepresentativeSite(representativeSite)) {
                 if (displayedPtms.contains(ptmName)) {
                     ArrayList<String> modifications = result.get(representativeSite);
                     if (modifications == null) {
-                        modifications = new ArrayList<String>();
+                        modifications = new ArrayList<>();
                         result.put(representativeSite, modifications);
                     }
                     modifications.add(ptmName);
@@ -679,7 +679,7 @@ public class DisplayFeaturesGenerator {
      * preferences
      */
     public static HashMap<Integer, ArrayList<String>> getFilteredAmbiguousModificationsSecondarySites(PSPtmScores ptmScores, ArrayList<String> displayedPtms) {
-        HashMap<Integer, ArrayList<String>> result = new HashMap<Integer, ArrayList<String>>();
+        HashMap<Integer, ArrayList<String>> result = new HashMap<>();
         for (int representativeSite : ptmScores.getRepresentativeSites()) {
             HashMap<Integer, ArrayList<String>> modificationsAtSite = ptmScores.getAmbiguousPtmsAtRepresentativeSite(representativeSite);
             for (int secondarySite : modificationsAtSite.keySet()) {
@@ -688,7 +688,7 @@ public class DisplayFeaturesGenerator {
                         if (displayedPtms.contains(ptmName)) {
                             ArrayList<String> modifications = result.get(representativeSite);
                             if (modifications == null) {
-                                modifications = new ArrayList<String>();
+                                modifications = new ArrayList<>();
                                 result.put(secondarySite, modifications);
                             }
                             modifications.add(ptmName);
@@ -768,7 +768,7 @@ public class DisplayFeaturesGenerator {
         Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
         String sequence = currentProtein.getSequence();
 
-        HashMap<Integer, ArrayList<ResidueAnnotation>> residueAnnotation = new HashMap<Integer, ArrayList<ResidueAnnotation>>(sequence.length());
+        HashMap<Integer, ArrayList<ResidueAnnotation>> residueAnnotation = new HashMap<>(sequence.length());
 
         double[] coverage = identificationFeaturesGenerator.getCoverableAA(proteinMatchKey);
         double lastP = coverage[0];
@@ -782,10 +782,10 @@ public class DisplayFeaturesGenerator {
                 } else if (lastP > 0.01) {
                     annotation += ", possible to cover";
                 }
-                ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
+                ArrayList<ResidueAnnotation> annotations = new ArrayList<>(1);
                 annotations.add(new ResidueAnnotation(annotation, null, false));
                 for (int j = lastIndex; j < i; j++) {
-                    residueAnnotation.put(j, new ArrayList<ResidueAnnotation>(annotations));
+                    residueAnnotation.put(j, new ArrayList<>(annotations));
                 }
                 lastP = p;
                 lastIndex = i;
@@ -798,10 +798,10 @@ public class DisplayFeaturesGenerator {
         } else if (lastP > 0.01) {
             annotation += ", possible to cover";
         }
-        ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
+        ArrayList<ResidueAnnotation> annotations = new ArrayList<>(1);
         annotations.add(new ResidueAnnotation(annotation, null, false));
         for (int j = lastIndex; j < i; j++) {
-            residueAnnotation.put(j, new ArrayList<ResidueAnnotation>(annotations));
+            residueAnnotation.put(j, new ArrayList<>(annotations));
         }
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null); // @TODO: add waiting handler?
@@ -828,7 +828,7 @@ public class DisplayFeaturesGenerator {
                     for (int j = peptideTempStart - 1; j < peptideTempEnd - 1; j++) {
                         annotations = residueAnnotation.get(j);
                         if (annotations == null) {
-                            annotations = new ArrayList<ResidueAnnotation>();
+                            annotations = new ArrayList<>();
                             residueAnnotation.put(j, annotations);
                         } else if (annotations.size() == 1 && !annotations.get(0).isClickable()) {
                             annotations.clear();

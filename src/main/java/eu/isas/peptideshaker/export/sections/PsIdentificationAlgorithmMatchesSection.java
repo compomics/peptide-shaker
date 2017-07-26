@@ -51,7 +51,7 @@ public class PsIdentificationAlgorithmMatchesSection {
     /**
      * The features to export.
      */
-    private final ArrayList<PsIdentificationAlgorithmMatchesFeature> matchExportFeatures = new ArrayList<PsIdentificationAlgorithmMatchesFeature>();
+    private final ArrayList<PsIdentificationAlgorithmMatchesFeature> matchExportFeatures = new ArrayList<>();
     /**
      * The fragment subsection if needed.
      */
@@ -82,7 +82,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @param writer the writer which will write to the file
      */
     public PsIdentificationAlgorithmMatchesSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
-        ArrayList<ExportFeature> fragmentFeatures = new ArrayList<ExportFeature>();
+        ArrayList<ExportFeature> fragmentFeatures = new ArrayList<>();
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsIdentificationAlgorithmMatchesFeature) {
                 PsIdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature = (PsIdentificationAlgorithmMatchesFeature) exportFeature;
@@ -177,7 +177,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             for (int advocateId : assumptions.keySet()) {
 
                 HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateId);
-                ArrayList<Double> scores = new ArrayList<Double>(advocateAssumptions.keySet());
+                ArrayList<Double> scores = new ArrayList<>(advocateAssumptions.keySet());
                 Collections.sort(scores);
 
                 for (double score : scores) {
@@ -245,12 +245,12 @@ public class PsIdentificationAlgorithmMatchesSection {
      */
     private static HashMap<String, ArrayList<Integer>> getModMap(Peptide peptide, boolean variablePtms) {
 
-        HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>(peptide.getNModifications());
+        HashMap<String, ArrayList<Integer>> modMap = new HashMap<>(peptide.getNModifications());
         if (peptide.isModified()) {
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
                 if ((variablePtms && modificationMatch.getVariable()) || (!variablePtms && !modificationMatch.getVariable())) {
                     if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                        modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                        modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<>());
                     }
                     modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                 }
@@ -325,7 +325,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                 return peptideAssumption.getRank() + "";
             case variable_ptms:
                 HashMap<String, ArrayList<Integer>> modMap = getModMap(peptideAssumption.getPeptide(), true);
-                ArrayList<String> modList = new ArrayList<String>(modMap.keySet());
+                ArrayList<String> modList = new ArrayList<>(modMap.keySet());
                 Collections.sort(modList);
 
                 StringBuilder result = new StringBuilder();
@@ -348,7 +348,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                 return result.toString();
             case fixed_ptms:
                 modMap = getModMap(peptideAssumption.getPeptide(), false);
-                modList = new ArrayList<String>(modMap.keySet());
+                modList = new ArrayList<>(modMap.keySet());
                 Collections.sort(modList);
 
                 result = new StringBuilder();
@@ -471,7 +471,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                     }
                     HashMap<Integer, String[]> surroundingAAs = SequenceFactory.getInstance().getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
                             nSurroundingAA, identificationParameters.getSequenceMatchingPreferences());
-                    ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
+                    ArrayList<Integer> starts = new ArrayList<>(surroundingAAs.keySet());
                     Collections.sort(starts);
                     boolean first = true;
                     for (int startAa : starts) {
@@ -496,7 +496,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                     HashMap<Integer, String[]> surroundingAAs
                             = SequenceFactory.getInstance().getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
                                     nSurroundingAA, identificationParameters.getSequenceMatchingPreferences());
-                    ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
+                    ArrayList<Integer> starts = new ArrayList<>(surroundingAAs.keySet());
                     Collections.sort(starts);
                     boolean first = true;
                     for (int startAa : starts) {
@@ -665,7 +665,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                 matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
                 sequence = peptide.getSequence();
                 sequenceLength = sequence.length();
-                HashMap<Integer, boolean[]> ionCoverage = new HashMap<Integer, boolean[]>(6);
+                HashMap<Integer, boolean[]> ionCoverage = new HashMap<>(6);
                 ionCoverage.put(PeptideFragmentIon.A_ION, new boolean[sequenceLength]);
                 ionCoverage.put(PeptideFragmentIon.B_ION, new boolean[sequenceLength]);
                 ionCoverage.put(PeptideFragmentIon.C_ION, new boolean[sequenceLength]);

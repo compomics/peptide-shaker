@@ -145,7 +145,7 @@ public class ProgenesisExport {
                                                 if (exportType == ExportType.validated_psms_peptides) {
                                                     writePsm(writer, spectrumKey, identification, sequenceMatchingPreferences);
                                                 } else {
-                                                    ArrayList<String> accessions = new ArrayList<String>();
+                                                    ArrayList<String> accessions = new ArrayList<>();
                                                     for (String accession : peptide.getParentProteins(sequenceMatchingPreferences)) {
                                                         HashSet<String> groups = identification.getProteinMap().get(accession);
                                                         if (groups != null) {
@@ -270,20 +270,20 @@ public class ProgenesisExport {
             writer.write(bestAssumption.getPeptide().getSequence() + SEPARATOR);
 
             // modifications
-            HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
+            HashMap<String, ArrayList<Integer>> modMap = new HashMap<>();
             Peptide peptide = bestAssumption.getPeptide();
             if (peptide.isModified()) {
                 for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
                     if (modificationMatch.getVariable()) {
                         if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                            modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                            modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<>());
                         }
                         modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                     }
                 }
             }
 
-            ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
+            ArrayList<String> mods = new ArrayList<>(modMap.keySet());
 
             for (int i = 0; i < bestAssumption.getPeptide().getSequence().length() + 1; i++) {
 

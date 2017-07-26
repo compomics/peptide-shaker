@@ -125,7 +125,7 @@ public class PeptideMapper {
             waitingHandler.resetSecondaryProgressCounter();
             waitingHandler.setMaxSecondaryProgressCounter(peptideMap.size());
             waitingHandler.appendReport("Mapping peptides to proteins.", true, true);
-            HashSet<String> keys = new HashSet<String>(peptideMap.keySet());
+            HashSet<String> keys = new HashSet<>(peptideMap.keySet());
             for (String key : keys) {
                 LinkedList<Peptide> peptides = peptideMap.get(key);
                 Iterator<Peptide> peptideIterator = peptides.iterator();
@@ -164,7 +164,7 @@ public class PeptideMapper {
             waitingHandler.resetSecondaryProgressCounter();
             waitingHandler.setMaxSecondaryProgressCounter(peptideMap.size());
             waitingHandler.appendReport("Mapping peptides to proteins.", true, true);
-            HashSet<String> keys = new HashSet<String>(peptideMap.keySet());
+            HashSet<String> keys = new HashSet<>(peptideMap.keySet());
             ExecutorService pool = Executors.newFixedThreadPool(nThreads);
             for (String key : keys) {
                 LinkedList<Peptide> peptides = peptideMap.get(key);
@@ -212,7 +212,7 @@ public class PeptideMapper {
         if (peptideMap != null && !peptideMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(peptideMap.size());
             waitingHandler.appendReport("Mapping peptides to proteins.", true, true);
-            HashSet<String> keys = new HashSet<String>(peptideMap.keySet());
+            HashSet<String> keys = new HashSet<>(peptideMap.keySet());
             ExecutorService pool = Executors.newFixedThreadPool(nThreads);
             for (String key : keys) {
                 LinkedList<Peptide> peptides = peptideMap.get(key);
@@ -330,7 +330,7 @@ public class PeptideMapper {
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         PtmSettings ptmSettings = searchParameters.getPtmSettings();
-        LinkedList<Double> terminalModificationMasses = new LinkedList<Double>();
+        LinkedList<Double> terminalModificationMasses = new LinkedList<>();
         PTMFactory ptmFactory = PTMFactory.getInstance();
 
         for (String ptmName : ptmSettings.getAllModifications()) {
@@ -345,7 +345,7 @@ public class PeptideMapper {
 
         int peptideMapKeyLength = 2;
         int rankMax = 3;
-        HashMap<String, LinkedList<Peptide>> peptideMap = new HashMap<String, LinkedList<Peptide>>(8000);
+        HashMap<String, LinkedList<Peptide>> peptideMap = new HashMap<>(8000);
 
         for (SpectrumMatch spectrumMatch : idFileSpectrumMatches) {
 
@@ -356,7 +356,7 @@ public class PeptideMapper {
             if (fileReader.hasDeNovoTags()) { // for now only de novo results are stored in the database at this point
                 rawDbAssumptions = ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getRawAssumptions();
             }
-            HashSet<Integer> algorithms = new HashSet<Integer>();
+            HashSet<Integer> algorithms = new HashSet<>();
             if (matchAssumptions != null) {
                 algorithms.addAll(matchAssumptions.keySet());
             }
@@ -366,7 +366,7 @@ public class PeptideMapper {
 
             for (Integer algorithm : algorithms) {
 
-                HashSet<Double> scores = new HashSet<Double>();
+                HashSet<Double> scores = new HashSet<>();
                 HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> scoreMap1 = null;
                 HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> scoreMap2 = null;
 
@@ -384,11 +384,11 @@ public class PeptideMapper {
                     }
                 }
 
-                LinkedList<Double> scoresList = new LinkedList<Double>(scores);
+                LinkedList<Double> scoresList = new LinkedList<>(scores);
                 Collections.sort(scoresList);
-                ArrayList<Peptide> bestScoringPeptides = new ArrayList<Peptide>(2);
+                ArrayList<Peptide> bestScoringPeptides = new ArrayList<>(2);
                 int rank = 1;
-                ArrayList<Peptide> terminalModificationPeptides = new ArrayList<Peptide>(2);
+                ArrayList<Peptide> terminalModificationPeptides = new ArrayList<>(2);
 
                 for (Double score : scoresList) {
 
@@ -463,7 +463,7 @@ public class PeptideMapper {
                             LinkedList<Peptide> peptidesForTag = peptideMap.get(subSequence);
 
                             if (peptidesForTag == null) {
-                                peptidesForTag = new LinkedList<Peptide>();
+                                peptidesForTag = new LinkedList<>();
                                 peptideMap.put(subSequence, peptidesForTag);
                             }
 
@@ -483,7 +483,7 @@ public class PeptideMapper {
                             LinkedList<Peptide> peptidesForTag = peptideMap.get(subSequence);
 
                             if (peptidesForTag == null) {
-                                peptidesForTag = new LinkedList<Peptide>();
+                                peptidesForTag = new LinkedList<>();
                                 peptideMap.put(subSequence, peptidesForTag);
                             }
 
@@ -497,7 +497,7 @@ public class PeptideMapper {
 
             if (waitingHandler != null) {
                 if (waitingHandler.isRunCanceled()) {
-                    return new HashMap<String, LinkedList<Peptide>>(0);
+                    return new HashMap<>(0);
                 }
                 waitingHandler.increaseSecondaryProgressCounter();
             }

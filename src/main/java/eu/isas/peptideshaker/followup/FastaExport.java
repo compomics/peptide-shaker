@@ -117,7 +117,7 @@ public class FastaExport {
 
                         if (!sequenceFactory.isDecoyAccession(accession)) {
 
-                            ArrayList<String> matches = new ArrayList<String>(identification.getProteinMap().get(accession));
+                            ArrayList<String> matches = new ArrayList<>(identification.getProteinMap().get(accession));
 
                             boolean validated = false;
                             for (String match : matches) {
@@ -140,13 +140,13 @@ public class FastaExport {
                     }
                 } else {
 
-                    ArrayList<String> exported = new ArrayList<String>();
+                    ArrayList<String> exported = new ArrayList<>();
 
                     ArrayList<String> proteinMatches = identificationFeaturesGenerator.getValidatedProteins(waitingHandler, filterPreferences);
                     ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(proteinMatches, waitingHandler);
                     while (proteinMatchesIterator.hasNext()) {
                         ProteinMatch proteinMatch = proteinMatchesIterator.next();
-                        ArrayList<String> accessions = new ArrayList<String>();
+                        ArrayList<String> accessions = new ArrayList<>();
                         if (exportType == ExportType.validated_main_accession) {
                             accessions.add(proteinMatch.getMainMatch());
                         } else if (exportType == ExportType.validated_all_accessions) {

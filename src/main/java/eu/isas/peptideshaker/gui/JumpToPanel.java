@@ -45,19 +45,19 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * Items matching the criterion for each type.
      */
-    private HashMap<JumpType, ArrayList<String>> possibilities = new HashMap<JumpType, ArrayList<String>>();
+    private HashMap<JumpType, ArrayList<String>> possibilities = new HashMap<>();
     /**
      * Currently selected item.
      */
-    private HashMap<JumpType, Integer> currentSelection = new HashMap<JumpType, Integer>();
+    private HashMap<JumpType, Integer> currentSelection = new HashMap<>();
     /**
      * The text to display by default.
      */
-    private HashMap<JumpType, String> lastInput = new HashMap<JumpType, String>();
+    private HashMap<JumpType, String> lastInput = new HashMap<>();
     /**
      * The text to display by default.
      */
-    private HashMap<JumpType, String> lastLabel = new HashMap<JumpType, String>();
+    private HashMap<JumpType, String> lastLabel = new HashMap<>();
     /**
      * Instance of the sequence factory.
      */
@@ -96,7 +96,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * Type of each possible item.
      */
-    private HashMap<JumpType, ArrayList<Type>> types = new HashMap<JumpType, ArrayList<Type>>();
+    private HashMap<JumpType, ArrayList<Type>> types = new HashMap<>();
 
     /**
      * Creates a new JumpToPanel.
@@ -108,7 +108,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
         this.peptideShakerGUI = peptideShakerGUI;
 
-        welcomeText = new HashMap<JumpType, String>();
+        welcomeText = new HashMap<>();
         welcomeText.put(JumpType.proteinAndPeptides, "(protein or peptide)");
         welcomeText.put(JumpType.spectrum, "(title, m/z or RT)");
         inputTxt.setText(welcomeText.get(jumpType));
@@ -180,8 +180,8 @@ public class JumpToPanel extends javax.swing.JPanel {
         // Some necessary pre-caching
         ArrayList<Type> typeList = types.get(jumpType);
         ArrayList<String> keys = possibilities.get(jumpType),
-                proteinKeys = new ArrayList<String>(),
-                peptideKeys = new ArrayList<String>();
+                proteinKeys = new ArrayList<>(),
+                peptideKeys = new ArrayList<>();
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
             if (typeList.get(i) == Type.PROTEIN) {
@@ -197,7 +197,7 @@ public class JumpToPanel extends javax.swing.JPanel {
             identification.loadObjects(peptideKeys, null, false);
         }
 
-        ArrayList<String> descriptions = new ArrayList<String>();
+        ArrayList<String> descriptions = new ArrayList<>();
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
             Type type = typeList.get(i);
@@ -415,8 +415,8 @@ public class JumpToPanel extends javax.swing.JPanel {
                             nextButtonActionPerformed(null);
                         } else {
                             if (!possibilities.containsKey(jumpType)) {
-                                possibilities.put(jumpType, new ArrayList<String>());
-                                types.put(jumpType, new ArrayList<Type>());
+                                possibilities.put(jumpType, new ArrayList<>());
+                                types.put(jumpType, new ArrayList<>());
                             } else {
                                 possibilities.get(jumpType).clear();
                                 types.get(jumpType).clear();
@@ -465,7 +465,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                     if (validPeptideSequence) {
 
-                                        ArrayList<String> secondaryCandidates = new ArrayList<String>();
+                                        ArrayList<String> secondaryCandidates = new ArrayList<>();
 
                                         // pre-caching
                                         PSParameter psParameter = new PSParameter();

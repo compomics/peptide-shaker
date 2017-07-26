@@ -734,7 +734,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      * factory.
      */
     private void updateReportsList() {
-        exportSchemesNames = new ArrayList<String>();
+        exportSchemesNames = new ArrayList<>();
         exportSchemesNames.addAll(PSExportFactory.getDefaultExportSchemesNames());
         exportSchemesNames.addAll(exportFactory.getUserSchemesNames());
     }

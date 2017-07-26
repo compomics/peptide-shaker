@@ -92,7 +92,7 @@ public class PtmScoring implements Serializable {
     public Set<Integer> getScoredSites() {
         Set<Integer> dSites = getDSites();
         Set<Integer> pSites = getProbabilisticSites();
-        Set<Integer> result = new HashSet<Integer>(dSites.size() + pSites.size());
+        Set<Integer> result = new HashSet<>(dSites.size() + pSites.size());
         result.addAll(dSites);
         result.addAll(pSites);
         return result;
@@ -106,7 +106,7 @@ public class PtmScoring implements Serializable {
      */
     public void setDeltaScore(int site, double score) {
         if (deltaScoresAtAA == null) {
-            deltaScoresAtAA = new HashMap<Integer, Double>(1);
+            deltaScoresAtAA = new HashMap<>(1);
         }
         deltaScoresAtAA.put(site, score);
     }
@@ -137,7 +137,7 @@ public class PtmScoring implements Serializable {
      */
     public void setProbabilisticScore(int site, double score) {
         if (probabilisticScoresAtAA == null) {
-            probabilisticScoresAtAA = new HashMap<Integer, Double>(1);
+            probabilisticScoresAtAA = new HashMap<>(1);
         }
         probabilisticScoresAtAA.put(site, score);
     }
@@ -167,7 +167,7 @@ public class PtmScoring implements Serializable {
      */
     public Set<Integer> getProbabilisticSites() {
         if (probabilisticScoresAtAA == null) {
-            return new HashSet<Integer>(0);
+            return new HashSet<>(0);
         }
         return probabilisticScoresAtAA.keySet();
     }
@@ -180,21 +180,21 @@ public class PtmScoring implements Serializable {
      * @return a list of sites where the probabilistic score was used
      */
     public ArrayList<Integer> getOrderedProbabilisticSites() {
-        HashMap<Double, ArrayList<Integer>> siteMap = new HashMap<Double, ArrayList<Integer>>(1);
+        HashMap<Double, ArrayList<Integer>> siteMap = new HashMap<>(1);
         if (probabilisticScoresAtAA != null) {
             for (int site : probabilisticScoresAtAA.keySet()) {
                 double score = probabilisticScoresAtAA.get(site);
                 ArrayList<Integer> sitesAtAA = siteMap.get(score);
                 if (sitesAtAA == null) {
-                    sitesAtAA = new ArrayList<Integer>();
+                    sitesAtAA = new ArrayList<>();
                     siteMap.put(score, sitesAtAA);
                 }
                 sitesAtAA.add(site);
             }
         }
-        ArrayList<Double> scores = new ArrayList<Double>(siteMap.keySet());
+        ArrayList<Double> scores = new ArrayList<>(siteMap.keySet());
         Collections.sort(scores, Collections.reverseOrder());
-        ArrayList<Integer> result = new ArrayList<Integer>();
+        ArrayList<Integer> result = new ArrayList<>();
         for (double score : scores) {
             ArrayList<Integer> sites = siteMap.get(score);
             if (sites.size() > 2) {
@@ -212,7 +212,7 @@ public class PtmScoring implements Serializable {
      */
     public Set<Integer> getDSites() {
         if (deltaScoresAtAA == null) {
-            return new HashSet<Integer>(0);
+            return new HashSet<>(0);
         }
         return deltaScoresAtAA.keySet();
     }
@@ -225,21 +225,21 @@ public class PtmScoring implements Serializable {
      * @return a list of sites where the D-score was used
      */
     public ArrayList<Integer> getOrderedDSites() {
-        HashMap<Double, ArrayList<Integer>> siteMap = new HashMap<Double, ArrayList<Integer>>(1);
+        HashMap<Double, ArrayList<Integer>> siteMap = new HashMap<>(1);
         if (deltaScoresAtAA != null) {
             for (int site : deltaScoresAtAA.keySet()) {
                 double score = deltaScoresAtAA.get(site);
                 ArrayList<Integer> sitesAtAA = siteMap.get(score);
                 if (sitesAtAA == null) {
-                    sitesAtAA = new ArrayList<Integer>();
+                    sitesAtAA = new ArrayList<>();
                     siteMap.put(score, sitesAtAA);
                 }
                 sitesAtAA.add(site);
             }
         }
-        ArrayList<Double> scores = new ArrayList<Double>(siteMap.keySet());
+        ArrayList<Double> scores = new ArrayList<>(siteMap.keySet());
         Collections.sort(scores, Collections.reverseOrder());
-        ArrayList<Integer> result = new ArrayList<Integer>();
+        ArrayList<Integer> result = new ArrayList<>();
         for (double score : scores) {
             ArrayList<Integer> sites = siteMap.get(score);
             if (sites.size() > 2) {
@@ -270,7 +270,7 @@ public class PtmScoring implements Serializable {
         }
         HashMap<Integer, Integer> map = anotherScore.getPtmLocationAtAA();
         if (ptmLocationAtAA == null) {
-            ptmLocationAtAA = new HashMap<Integer, Integer>(map.size());
+            ptmLocationAtAA = new HashMap<>(map.size());
         }
         for (int otherSite : map.keySet()) {
             Integer currentSiteConfidence = ptmLocationAtAA.get(otherSite);
@@ -291,7 +291,7 @@ public class PtmScoring implements Serializable {
      */
     public void setSiteConfidence(int site, int confidenceLevel) {
         if (ptmLocationAtAA == null) {
-            ptmLocationAtAA = new HashMap<Integer, Integer>(1);
+            ptmLocationAtAA = new HashMap<>(1);
         }
         ptmLocationAtAA.put(site, confidenceLevel);
     }
@@ -303,7 +303,7 @@ public class PtmScoring implements Serializable {
      */
     public HashMap<Integer, Integer> getPtmLocationAtAA() {
         if (ptmLocationAtAA == null) {
-            return new HashMap<Integer, Integer>(0);
+            return new HashMap<>(0);
         }
         return ptmLocationAtAA;
     }
@@ -315,7 +315,7 @@ public class PtmScoring implements Serializable {
      */
     public Set<Integer> getAllPtmLocations() {
         if (ptmLocationAtAA == null) {
-            return new HashSet<Integer>(0);
+            return new HashSet<>(0);
         }
         return ptmLocationAtAA.keySet();
     }
@@ -326,7 +326,7 @@ public class PtmScoring implements Serializable {
      * @return sites of all localized PTMs ordered increasingly
      */
     public ArrayList<Integer> getOrderedPtmLocations() {
-        ArrayList<Integer> result = new ArrayList<Integer>(getAllPtmLocations());
+        ArrayList<Integer> result = new ArrayList<>(getAllPtmLocations());
         Collections.sort(result);
         return result;
     }
@@ -374,7 +374,7 @@ public class PtmScoring implements Serializable {
      * @return the confidently and very confidently localized PTMs
      */
     public ArrayList<Integer> getConfidentPtmLocations() {
-        ArrayList<Integer> result = new ArrayList<Integer>();
+        ArrayList<Integer> result = new ArrayList<>();
         result.addAll(getPtmLocations(CONFIDENT));
         result.addAll(getPtmLocations(VERY_CONFIDENT));
         return result;
@@ -386,7 +386,7 @@ public class PtmScoring implements Serializable {
      * @return the not found, randomly or doubtfully localized PTMs
      */
     public ArrayList<Integer> getSecondaryPtmLocations() {
-        ArrayList<Integer> result = new ArrayList<Integer>();
+        ArrayList<Integer> result = new ArrayList<>();
         result.addAll(getPtmLocations(NOT_FOUND));
         result.addAll(getPtmLocations(RANDOM));
         result.addAll(getPtmLocations(DOUBTFUL));
@@ -402,7 +402,7 @@ public class PtmScoring implements Serializable {
      * @return the PTM locations at the given confidence level
      */
     public ArrayList<Integer> getPtmLocations(int confidenceLevel) {
-        ArrayList<Integer> result = new ArrayList<Integer>(1);
+        ArrayList<Integer> result = new ArrayList<>(1);
         if (ptmLocationAtAA != null) {
             for (int site : ptmLocationAtAA.keySet()) {
                 if (confidenceLevel == ptmLocationAtAA.get(site)) {

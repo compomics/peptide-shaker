@@ -43,7 +43,7 @@ public class PtmTable extends JTable {
     /**
      * The table tooltips.
      */
-    private ArrayList<String> tooltips = new ArrayList<String>();
+    private ArrayList<String> tooltips = new ArrayList<>();
     /**
      * The peptide to display.
      */
@@ -91,7 +91,7 @@ public class PtmTable extends JTable {
         this.spectrumKeys = spectrumKeys;
         this.areaChart = areaChart;
 
-        modificationSites = new ArrayList<Integer>();
+        modificationSites = new ArrayList<>();
 
         if (peptide.isModified()) {
             for (ModificationMatch modMatch : peptide.getModificationMatches()) {
@@ -145,8 +145,8 @@ public class PtmTable extends JTable {
 
         // set up the column headers, types and tooltips
         Vector columnHeaders = new Vector();
-        ArrayList<Class> tempColumnTypes = new ArrayList<Class>();
-        tooltips = new ArrayList<String>();
+        ArrayList<Class> tempColumnTypes = new ArrayList<>();
+        tooltips = new ArrayList<>();
 
         // the index column
         columnHeaders.add(" ");
@@ -388,7 +388,7 @@ public class PtmTable extends JTable {
      */
     private void addAreaChart(PtmtableContent tableContent, int fragmentIonType, int aa, int column) {
 
-        ArrayList<JSparklinesDataSeries> sparkLineDataSeriesAll = new ArrayList<JSparklinesDataSeries>();
+        ArrayList<JSparklinesDataSeries> sparkLineDataSeriesAll = new ArrayList<>();
         ArrayList<Double> data;
         int[] histogram;
         String modification = "";
@@ -405,7 +405,7 @@ public class PtmTable extends JTable {
             }
 
             // add the data points to display to an arraylist 
-            data = new ArrayList<Double>();
+            data = new ArrayList<>();
 
             histogram = tableContent.getHistogram(modCpt, fragmentIonType, aa, 50);
 

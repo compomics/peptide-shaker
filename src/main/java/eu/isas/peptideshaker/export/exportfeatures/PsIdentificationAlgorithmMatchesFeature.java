@@ -85,7 +85,7 @@ public enum PsIdentificationAlgorithmMatchesFeature implements ExportFeature {
 
     @Override
     public ArrayList<ExportFeature> getExportFeatures(boolean includeSubFeatures) {
-        ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
+        ArrayList<ExportFeature> result = new ArrayList<>();
         result.addAll(Arrays.asList(values()));
         if (includeSubFeatures) {
             result.addAll(PsFragmentFeature.values()[0].getExportFeatures(includeSubFeatures));

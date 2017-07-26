@@ -338,7 +338,7 @@ public class PeptideShakerPathPreferences {
      * loading the path configuration
      */
     public static ArrayList<PathKey> getErrorKeys() throws IOException {
-        ArrayList<PathKey> result = new ArrayList<PathKey>();
+        ArrayList<PathKey> result = new ArrayList<>();
         for (PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathKey.values()) {
             String folder = PeptideShakerPathPreferences.getPathPreference(peptideShakerPathKey);
             if (folder != null && !UtilitiesPathPreferences.testPath(folder)) {

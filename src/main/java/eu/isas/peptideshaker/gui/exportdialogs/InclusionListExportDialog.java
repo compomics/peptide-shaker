@@ -416,7 +416,7 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
      * @return the protein filters
      */
     private ArrayList<Integer> getProteinFilters() {
-        ArrayList<Integer> proteinFilters = new ArrayList<Integer>();
+        ArrayList<Integer> proteinFilters = new ArrayList<>();
         if (relatedProteinsCheck.isSelected()) {
             proteinFilters.add(1);
         }
@@ -435,7 +435,7 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
      * @return the peptide filters
      */
     private ArrayList<InclusionListExport.PeptideFilterType> getPeptideFilters() {
-        ArrayList<InclusionListExport.PeptideFilterType> peptideFilters = new ArrayList<InclusionListExport.PeptideFilterType>();
+        ArrayList<InclusionListExport.PeptideFilterType> peptideFilters = new ArrayList<>();
         if (miscleavedCheck.isSelected()) {
             peptideFilters.add(InclusionListExport.PeptideFilterType.miscleaved);
         }

@@ -42,7 +42,7 @@ public class ProjectExport {
             waitingHandler.setWaitingText("Getting FASTA File. Please Wait...");
         }
 
-        ArrayList<String> dataFiles = new ArrayList<String>();
+        ArrayList<String> dataFiles = new ArrayList<>();
         dataFiles.add(fastaFile.getAbsolutePath());
 
         File indexFile = new File(fastaFile.getParentFile(), SequenceFactory.getIndexName(fastaFile.getName()));

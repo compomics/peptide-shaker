@@ -320,7 +320,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         } catch (Exception e) {
                             exceptionHandler.catchException(e);
                         }
-                        ArrayList<Double> doubleValues = new ArrayList<Double>();
+                        ArrayList<Double> doubleValues = new ArrayList<>();
                         doubleValues.add(sequenceCoverageConfident);
                         doubleValues.add(sequenceCoverageDoubtful);
                         doubleValues.add(sequenceCoverageNotValidated);
@@ -340,7 +340,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         double nConfidentPeptides = identificationFeaturesGenerator.getNConfidentPeptides(proteinKey);
                         double nDoubtfulPeptides = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey) - nConfidentPeptides;
 
-                        doubleValues = new ArrayList<Double>();
+                        doubleValues = new ArrayList<>();
                         doubleValues.add(nConfidentPeptides);
                         doubleValues.add(nDoubtfulPeptides);
                         doubleValues.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
@@ -361,7 +361,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         double nDoubtfulSpectra = identificationFeaturesGenerator.getNValidatedSpectra(proteinKey) - nConfidentSpectra;
                         int nSpectra = identificationFeaturesGenerator.getNSpectra(proteinKey);
 
-                        doubleValues = new ArrayList<Double>();
+                        doubleValues = new ArrayList<>();
                         doubleValues.add(nConfidentSpectra);
                         doubleValues.add(nDoubtfulSpectra);
                         doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
@@ -478,14 +478,14 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     @Override
     protected int loadDataForRows(ArrayList<Integer> rows, WaitingHandler waitingHandler) {
 
-        ArrayList<String> tempKeys = new ArrayList<String>();
+        ArrayList<String> tempKeys = new ArrayList<>();
         for (int i : rows) {
             String proteinKey = proteinKeys.get(i);
             tempKeys.add(proteinKey);
         }
 
         try {
-            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+            ArrayList<UrParameter> parameters = new ArrayList<>(1);
             parameters.add(new PSParameter());
 
             ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(tempKeys, waitingHandler);
@@ -603,14 +603,14 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
         proteinTable.getColumn("PI").setMinWidth(37);
 
         // set up the protein inference color map
-        HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
+        HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<>();
         proteinInferenceColorMap.put(PSParameter.NOT_GROUP, sparklineColor);
         proteinInferenceColorMap.put(PSParameter.RELATED, Color.YELLOW);
         proteinInferenceColorMap.put(PSParameter.RELATED_AND_UNRELATED, Color.ORANGE);
         proteinInferenceColorMap.put(PSParameter.UNRELATED, Color.RED);
 
         // set up the protein inference tooltip map
-        HashMap<Integer, String> proteinInferenceTooltipMap = new HashMap<Integer, String>();
+        HashMap<Integer, String> proteinInferenceTooltipMap = new HashMap<>();
         proteinInferenceTooltipMap.put(PSParameter.NOT_GROUP, "Single Protein");
         proteinInferenceTooltipMap.put(PSParameter.RELATED, "Related Proteins");
         proteinInferenceTooltipMap.put(PSParameter.RELATED_AND_UNRELATED, "Related and Unrelated Proteins");
@@ -624,7 +624,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
         if (!SequenceFactory.getInstance().isClosed() && !SequenceFactory.getInstance().concatenatedTargetDecoy()) {
             nonValidatedColor = sparklineColorNotFound;
         }
-        ArrayList<Color> sparklineColors = new ArrayList<Color>();
+        ArrayList<Color> sparklineColors = new ArrayList<>();
         sparklineColors.add(sparklineColor);
         sparklineColors.add(sparklineColorDoubtful);
         sparklineColors.add(nonValidatedColor);

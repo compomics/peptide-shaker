@@ -341,7 +341,7 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
      */
     private void okJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okJButtonActionPerformed
 
-        ArrayList<Contact> contacts = new ArrayList<Contact>();
+        ArrayList<Contact> contacts = new ArrayList<>();
 
         for (int i = 0; i < contactsJTable.getRowCount(); i++) {
             contacts.add(new Contact(
@@ -480,7 +480,7 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
      */
     private void deleteGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteGroupButtonActionPerformed
         dispose();
-        prideExportDialog.deleteContactGroup(new ContactGroup(new ArrayList<Contact>(), groupNameTextField.getText()));
+        prideExportDialog.deleteContactGroup(new ContactGroup(new ArrayList<>(), groupNameTextField.getText()));
     }//GEN-LAST:event_deleteGroupButtonActionPerformed
 
     /**

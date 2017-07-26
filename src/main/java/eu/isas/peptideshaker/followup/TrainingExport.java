@@ -114,12 +114,12 @@ public class TrainingExport {
         // HashMap for mapping files to the spectra
         // TODO: may be there is a more elegant way to retrieve the aggregated information
         // from all spectrumMatches than to iterate through all of them
-        HashMap<String, ArrayList<String>> fileNames = new HashMap<String, ArrayList<String>>();
+        HashMap<String, ArrayList<String>> fileNames = new HashMap<>();
         PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
         while(psmIterator.hasNext()){
             SpectrumMatch spectrumMatch = psmIterator.next();
             String fileName = spectrumMatch.getSpectrumFile();
-            if (!fileNames.containsKey(fileName)) fileNames.put(fileName, new ArrayList<String>());
+            if (!fileNames.containsKey(fileName)) fileNames.put(fileName, new ArrayList<>());
             fileNames.get(fileName).add(spectrumMatch.getKey());
         }
         
@@ -154,7 +154,7 @@ public class TrainingExport {
                 waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(fileName).size());
             }
 
-            ArrayList<String> keys = new ArrayList<String>();
+            ArrayList<String> keys = new ArrayList<>();
             for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {
 
                 String spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
@@ -227,7 +227,7 @@ public class TrainingExport {
                             }
                             if (spectrumMatch.getBestPeptideAssumption() != null) {
                                 String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
-                                HashMap<String, String> tags = new HashMap<String, String>();
+                                HashMap<String, String> tags = new HashMap<>();
                                 tags.put("SEQ", sequence);
                                 spectrum.writeMgf(writerGood, tags);
                             }

@@ -126,7 +126,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 try {
                     tips = Tips.getTips();
                 } catch (Exception e) {
-                    tips = new ArrayList<String>();
+                    tips = new ArrayList<>();
                     // do something here?
                 }
 
@@ -378,7 +378,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 }
 
                 File fastaFile = identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
-                ArrayList<File> spectrumFiles = new ArrayList<File>();
+                ArrayList<File> spectrumFiles = new ArrayList<>();
                 for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
                     File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
                     spectrumFiles.add(spectrumFile);
@@ -521,11 +521,11 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         // get the input files
         ArrayList<File> identificationFilesInput = cliInputBean.getIdFiles();
-        ArrayList<File> dataFolders = new ArrayList<File>();
+        ArrayList<File> dataFolders = new ArrayList<>();
         ArrayList<File> spectrumFiles = cliInputBean.getSpectrumFiles();
 
         // export data from zip files, try to find the search parameter and mgf files
-        ArrayList<File> identificationFiles = new ArrayList<File>();
+        ArrayList<File> identificationFiles = new ArrayList<>();
         IdentificationParameters tempIdentificationParameters = null;
         for (File inputFile : identificationFilesInput) {
 
@@ -615,7 +615,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         // list the spectrum files found
-        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> names = new ArrayList<>();
         for (File spectrumFile : spectrumFiles) {
             names.add(spectrumFile.getName());
         }

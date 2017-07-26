@@ -45,7 +45,7 @@ public class PsInputFilterSection {
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        this.exportFeatures = new ArrayList<PsInputFilterFeature>(exportFeatures.size());
+        this.exportFeatures = new ArrayList<>(exportFeatures.size());
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsInputFilterFeature) {
                 this.exportFeatures.add((PsInputFilterFeature) exportFeature);

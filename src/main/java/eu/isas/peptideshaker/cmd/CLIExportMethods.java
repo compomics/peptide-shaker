@@ -234,7 +234,7 @@ public class CLIExportMethods {
      * occurred while reading an mzML file
      */
     public static void exportInclusionList(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, WaitingHandler waitingHandler, FilterPreferences filterPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
-        ArrayList<InclusionListExport.PeptideFilterType> peptideFilterType = new ArrayList<InclusionListExport.PeptideFilterType>();
+        ArrayList<InclusionListExport.PeptideFilterType> peptideFilterType = new ArrayList<>();
         for (int index : followUpCLIInputBean.getInclusionPeptideFilter()) {
             peptideFilterType.add(InclusionListExport.PeptideFilterType.getTypeFromIndex(index));
         }

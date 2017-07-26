@@ -147,15 +147,15 @@ public class MzIdentMLExport {
     /**
      * The peptide evidence IDs.
      */
-    private HashMap<String, String> pepEvidenceIds = new HashMap<String, String>();
+    private HashMap<String, String> pepEvidenceIds = new HashMap<>();
     /**
      * The spectrum IDs.
      */
-    private HashMap<String, String> spectrumIds = new HashMap<String, String>();
+    private HashMap<String, String> spectrumIds = new HashMap<>();
     /**
      * The spectrum key to parent peptide key map.
      */
-    private HashMap<String, String> spectrumKeyToPeptideKeyMap = new HashMap<String, String>();
+    private HashMap<String, String> spectrumKeyToPeptideKeyMap = new HashMap<>();
     /**
      * Information on the protocol.
      */
@@ -167,7 +167,7 @@ public class MzIdentMLExport {
     /**
      * Map of PTM indexes: PTM mass to index.
      */
-    private HashMap<Double, Integer> ptmIndexMap = new HashMap<Double, Integer>();
+    private HashMap<Double, Integer> ptmIndexMap = new HashMap<>();
     /**
      * The match validation level a protein must have to be included in the
      * export.
@@ -566,11 +566,11 @@ public class MzIdentMLExport {
         iterator.close();
 
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        ArrayList<UrParameter> parameters = new ArrayList<>(1);
         parameters.add(psParameter);
 
         // set up the spectrum key to peptide key map
-        spectrumKeyToPeptideKeyMap = new HashMap<String, String>();
+        spectrumKeyToPeptideKeyMap = new HashMap<>();
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(waitingHandler);
 
@@ -649,9 +649,9 @@ public class MzIdentMLExport {
                 HashMap<Integer, String[]> aaSurrounding = sequenceFactory.getProtein(tempProtein).getSurroundingAA(
                         peptide.getSequence(), 1, sequenceMatchingPreferences);
 
-                ArrayList<Integer> indexes = new ArrayList<Integer>();
-                ArrayList<String> before = new ArrayList<String>();
-                ArrayList<String> after = new ArrayList<String>();
+                ArrayList<Integer> indexes = new ArrayList<>();
+                ArrayList<String> before = new ArrayList<>();
+                ArrayList<String> after = new ArrayList<>();
 
                 if (aaSurrounding.size() == 1) {
                     for (int index : aaSurrounding.keySet()) {
@@ -660,7 +660,7 @@ public class MzIdentMLExport {
                         after.add(aaSurrounding.get(index)[1]);
                     }
                 } else {
-                    ArrayList<Integer> tempIndexes = new ArrayList<Integer>(aaSurrounding.keySet());
+                    ArrayList<Integer> tempIndexes = new ArrayList<>(aaSurrounding.keySet());
                     Collections.sort(tempIndexes);
                     for (int index : tempIndexes) {
                         indexes.add(index);
@@ -1258,7 +1258,7 @@ public class MzIdentMLExport {
 
         writeFragmentationTable();
 
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        ArrayList<UrParameter> parameters = new ArrayList<>(1);
         parameters.add(new PSParameter());
         int psmCount = 0;
 
@@ -1311,7 +1311,7 @@ public class MzIdentMLExport {
         int groupCpt = 0;
 
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        ArrayList<UrParameter> parameters = new ArrayList<>(1);
         parameters.add(psParameter);
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
 
@@ -1495,7 +1495,7 @@ public class MzIdentMLExport {
                 ArrayList<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, bestPeptideAssumption.getPeptide());
 
                 // organize the fragment ions by ion type
-                HashMap<String, HashMap<Integer, ArrayList<IonMatch>>> allFragmentIons = new HashMap<String, HashMap<Integer, ArrayList<IonMatch>>>();
+                HashMap<String, HashMap<Integer, ArrayList<IonMatch>>> allFragmentIons = new HashMap<>();
 
                 for (IonMatch ionMatch : matches) {
 
@@ -1520,10 +1520,10 @@ public class MzIdentMLExport {
                             String fragmentIonName = ionMatch.ion.getName();
 
                             if (!allFragmentIons.containsKey(fragmentIonName)) {
-                                allFragmentIons.put(fragmentIonName, new HashMap<Integer, ArrayList<IonMatch>>());
+                                allFragmentIons.put(fragmentIonName, new HashMap<>());
                             }
                             if (!allFragmentIons.get(fragmentIonName).containsKey(charge)) {
-                                allFragmentIons.get(fragmentIonName).put(charge, new ArrayList<IonMatch>());
+                                allFragmentIons.get(fragmentIonName).put(charge, new ArrayList<>());
                             }
 
                             allFragmentIons.get(fragmentIonName).get(charge).add(ionMatch);
@@ -1636,7 +1636,7 @@ public class MzIdentMLExport {
                         if (peptide.isModified()) {
 
                             ArrayList<String> scoredPtms = psPtmScores.getScoredPTMs();
-                            HashSet<String> ptmsCovered = new HashSet<String>(scoredPtms.size());
+                            HashSet<String> ptmsCovered = new HashSet<>(scoredPtms.size());
                             
                             for (String ptmName : scoredPtms) {
 
@@ -1700,7 +1700,7 @@ public class MzIdentMLExport {
                         if (peptide.isModified()) {
 
                             ArrayList<String> scoredPtms = psPtmScores.getScoredPTMs();
-                            HashSet<String> ptmsCovered = new HashSet<String>(scoredPtms.size());
+                            HashSet<String> ptmsCovered = new HashSet<>(scoredPtms.size());
                             
                             for (String ptmName : scoredPtms) {
 
@@ -1754,7 +1754,7 @@ public class MzIdentMLExport {
 
             // add the individual search engine results
             Double mascotScore = null, msAmandaScore = null;
-            HashMap<Integer, Double> scores = new HashMap<Integer, Double>();
+            HashMap<Integer, Double> scores = new HashMap<>();
             HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = ((SpectrumMatch)identification.retrieveObject(psmKey)).getAssumptionsMap();
             for (Integer tempAdvocate : assumptions.keySet()) {
                 HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateMap = assumptions.get(tempAdvocate);
@@ -1780,7 +1780,7 @@ public class MzIdentMLExport {
                     }
                 }
             }
-            ArrayList<Integer> algorithms = new ArrayList<Integer>(scores.keySet());
+            ArrayList<Integer> algorithms = new ArrayList<>(scores.keySet());
             Collections.sort(algorithms);
             for (int tempAdvocate : algorithms) {
                 double eValue = scores.get(tempAdvocate);

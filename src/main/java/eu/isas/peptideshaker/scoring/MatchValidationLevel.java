@@ -76,7 +76,7 @@ public enum MatchValidationLevel {
      * @return he default map of icons
      */
     public static HashMap<Integer, ImageIcon> getIconMap(Class tempClass) {
-        HashMap<Integer, ImageIcon> icons = new HashMap<Integer, ImageIcon>();
+        HashMap<Integer, ImageIcon> icons = new HashMap<>();
         icons.put(MatchValidationLevel.none.getIndex(), new ImageIcon(tempClass.getResource("/icons/warning.png"))); // @TODO: come up with a separate icon for this one?
         icons.put(MatchValidationLevel.confident.getIndex(), new ImageIcon(tempClass.getResource("/icons/accept.png")));
         icons.put(MatchValidationLevel.not_validated.getIndex(), new ImageIcon(tempClass.getResource("/icons/Error_3.png")));
@@ -119,7 +119,7 @@ public enum MatchValidationLevel {
      * @return he default map of icons
      */
     public static HashMap<Integer, String> getTooltipMap() {
-        HashMap<Integer, String> tooltips = new HashMap<Integer, String>();
+        HashMap<Integer, String> tooltips = new HashMap<>();
         for (MatchValidationLevel matchValidationLevel : getValidationLevels()) {
             tooltips.put(matchValidationLevel.getIndex(), matchValidationLevel.getName());
         }

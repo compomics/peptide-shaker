@@ -93,9 +93,9 @@ public enum PsmFilterItem implements FilterItem {
     public ArrayList<String> getPossibilities() {
         switch (this) {
             case validationStatus:
-                return new ArrayList<String>(Arrays.asList(MatchValidationLevel.getValidationLevelsNames()));
+                return new ArrayList<>(Arrays.asList(MatchValidationLevel.getValidationLevelsNames()));
             case stared:
-                ArrayList<String> starred = new ArrayList<String>(2);
+                ArrayList<String> starred = new ArrayList<>(2);
                 starred.add("Starred");
                 starred.add("Not Starred");
                 return starred;

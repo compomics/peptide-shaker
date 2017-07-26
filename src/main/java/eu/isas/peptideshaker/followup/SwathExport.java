@@ -90,7 +90,7 @@ public class SwathExport {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        ArrayList<UrParameter> parameters = new ArrayList<>(1);
         parameters.add(psParameter);
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
 
@@ -174,7 +174,7 @@ public class SwathExport {
                                                 if (exportType == ExportType.validated_psms_peptides) {
                                                     writePsm(writer, spectrumKey, identification, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, annotationPreferences, spectrumAnnotator);
                                                 } else {
-                                                    ArrayList<String> accessions = new ArrayList<String>();
+                                                    ArrayList<String> accessions = new ArrayList<>();
                                                     for (String accession : peptide.getParentProteins(sequenceMatchingPreferences)) {
                                                         HashSet<String> groups = identification.getProteinMap().get(accession);
                                                         if (groups != null) {

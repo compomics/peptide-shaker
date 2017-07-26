@@ -169,7 +169,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     /**
      * The list of search results.
      */
-    private ArrayList<SpectrumIdentificationAssumption> currentAssumptionsList = new ArrayList<SpectrumIdentificationAssumption>();
+    private ArrayList<SpectrumIdentificationAssumption> currentAssumptionsList = new ArrayList<>();
     /**
      * The main GUI.
      */
@@ -333,14 +333,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchResultsTable.getColumn("Charge").setMinWidth(90);
 
         // set up the psm color map
-        HashMap<Integer, java.awt.Color> softwareAgreementColorMap = new HashMap<Integer, java.awt.Color>();
+        HashMap<Integer, java.awt.Color> softwareAgreementColorMap = new HashMap<>();
         softwareAgreementColorMap.put(AGREEMENT_WITH_MODS, peptideShakerGUI.getSparklineColor()); // id softwares agree with PTM certainty
         softwareAgreementColorMap.put(AGREEMENT, java.awt.Color.CYAN); // id softwares agree on peptide but not ptm certainty
         softwareAgreementColorMap.put(CONFLICT, java.awt.Color.YELLOW); // id softwares don't agree
         softwareAgreementColorMap.put(PARTIALLY_MISSING, java.awt.Color.ORANGE); // some id softwares id'ed some didn't
 
         // set up the psm tooltip map
-        HashMap<Integer, String> idSoftwareTooltipMap = new HashMap<Integer, String>();
+        HashMap<Integer, String> idSoftwareTooltipMap = new HashMap<>();
         idSoftwareTooltipMap.put(AGREEMENT_WITH_MODS, "ID Software Agree");
         idSoftwareTooltipMap.put(AGREEMENT, "ID Software Agree - PTM Certainty Issues");
         idSoftwareTooltipMap.put(CONFLICT, "ID Software Disagree");
@@ -361,7 +361,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) searchResultsTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() - 30);
 
         // set up the psm color map
-        HashMap<Integer, java.awt.Color> idSoftwareSpectrumLevelColorMap = new HashMap<Integer, java.awt.Color>();
+        HashMap<Integer, java.awt.Color> idSoftwareSpectrumLevelColorMap = new HashMap<>();
         idSoftwareSpectrumLevelColorMap.put(AGREEMENT_WITH_MODS, peptideShakerGUI.getSparklineColor()); // id softwares agree with PTM certainty
         idSoftwareSpectrumLevelColorMap.put(AGREEMENT, java.awt.Color.CYAN); // id softwares agree on peptide but not ptm certainty
         idSoftwareSpectrumLevelColorMap.put(CONFLICT, java.awt.Color.YELLOW); // id softwares don't agree
@@ -369,7 +369,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         idSoftwareSpectrumLevelColorMap.put(NO_ID, java.awt.Color.lightGray); // no psm
 
         // set up the psm tooltip map
-        HashMap<Integer, String> idSoftwareSpectrumLevelTooltipMap = new HashMap<Integer, String>();
+        HashMap<Integer, String> idSoftwareSpectrumLevelTooltipMap = new HashMap<>();
         idSoftwareSpectrumLevelTooltipMap.put(AGREEMENT_WITH_MODS, "ID Software Agree");
         idSoftwareSpectrumLevelTooltipMap.put(AGREEMENT, "ID Software Agree - PTM Certainty Issues");
         idSoftwareSpectrumLevelTooltipMap.put(CONFLICT, "ID Software Disagree");
@@ -395,7 +395,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
 
         // set up the table header tooltips
-        idSoftwareTableToolTips = new ArrayList<String>();
+        idSoftwareTableToolTips = new ArrayList<>();
         idSoftwareTableToolTips.add(null);
         idSoftwareTableToolTips.add("Identification Software");
         idSoftwareTableToolTips.add("Validated Peptide Spectrum Matches");
@@ -422,7 +422,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             ((JSparklinesBarChartTableCellRenderer) searchResultsTable.getColumn("Score").getCellRenderer()).showNumberAndChart(
                     true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
 
-            spectrumTableToolTips = new ArrayList<String>();
+            spectrumTableToolTips = new ArrayList<>();
             spectrumTableToolTips.add(null);
             spectrumTableToolTips.add("ID Software Agreement");
             spectrumTableToolTips.add("Spectrum Title");
@@ -436,7 +436,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             spectrumTableToolTips.add("Peptide Spectrum Match Confidence");
             spectrumTableToolTips.add("Validated");
 
-            peptideShakerTableToolTips = new ArrayList<String>();
+            peptideShakerTableToolTips = new ArrayList<>();
             peptideShakerTableToolTips.add(null);
             peptideShakerTableToolTips.add("ID Software Agreement");
             peptideShakerTableToolTips.add("Peptide Sequence");
@@ -445,7 +445,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             peptideShakerTableToolTips.add("Peptide Spectrum Match Confidence");
             peptideShakerTableToolTips.add("Validated");
 
-            idResultsTableToolTips = new ArrayList<String>();
+            idResultsTableToolTips = new ArrayList<>();
             idResultsTableToolTips.add("Peptide Rank");
             idResultsTableToolTips.add("Search Engine / Identification Software");
             idResultsTableToolTips.add("Search Engine Rank / Identification Software Rank");
@@ -458,7 +458,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         } else {
 
             // set up the table header tooltips
-            spectrumTableToolTips = new ArrayList<String>();
+            spectrumTableToolTips = new ArrayList<>();
             spectrumTableToolTips.add(null);
             spectrumTableToolTips.add("ID Software Agreement");
             spectrumTableToolTips.add("Spectrum Title");
@@ -471,7 +471,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             spectrumTableToolTips.add("Peptide Spectrum Match Confidence");
             spectrumTableToolTips.add("Validated");
 
-            peptideShakerTableToolTips = new ArrayList<String>();
+            peptideShakerTableToolTips = new ArrayList<>();
             peptideShakerTableToolTips.add(null);
             peptideShakerTableToolTips.add("ID Software Agreement");
             peptideShakerTableToolTips.add("Peptide Sequence");
@@ -479,7 +479,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             peptideShakerTableToolTips.add("Peptide Spectrum Match Confidence");
             peptideShakerTableToolTips.add("Validated");
 
-            idResultsTableToolTips = new ArrayList<String>();
+            idResultsTableToolTips = new ArrayList<>();
             idResultsTableToolTips.add("Peptide Rank");
             idResultsTableToolTips.add("Search Engine / Identification Software");
             idResultsTableToolTips.add("Search Engine Rank / Identification Software Rank");
@@ -2503,12 +2503,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     PSMaps pSMaps = new PSMaps();
                     pSMaps = (PSMaps) identification.getUrParam(pSMaps);
                     inputMap = pSMaps.getInputMap();
-                    advocatesUsed = new ArrayList<Integer>(inputMap.getInputAlgorithmsSorted());
+                    advocatesUsed = new ArrayList<>(inputMap.getInputAlgorithmsSorted());
                     ArrayList<String> spectrumFileNames = identification.getSpectrumFiles();
                     updateOverviewPlots();
 
                     // update the advocates color legend
-                    ArrayList<Integer> usedAdvocatedAndPeptideShaker = new ArrayList<Integer>();
+                    ArrayList<Integer> usedAdvocatedAndPeptideShaker = new ArrayList<>();
                     usedAdvocatedAndPeptideShaker.addAll(advocatesUsed);
                     if (!usedAdvocatedAndPeptideShaker.contains(Advocate.peptideShaker.getIndex())) {
                         usedAdvocatedAndPeptideShaker.add(Advocate.peptideShaker.getIndex());
@@ -2653,13 +2653,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     public HashMap<String, ArrayList<SpectrumIdentificationAssumption>> getSelectedIdentificationAssumptions() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         int[] selectedRows = searchResultsTable.getSelectedRows();
-        ArrayList<SpectrumIdentificationAssumption> assumptions = new ArrayList<SpectrumIdentificationAssumption>();
+        ArrayList<SpectrumIdentificationAssumption> assumptions = new ArrayList<>();
 
         for (int i = 0; i < searchResultsTable.getSelectedRowCount(); i++) {
             assumptions.add(currentAssumptionsList.get(selectedRows[i]));
         }
 
-        HashMap<String, ArrayList<SpectrumIdentificationAssumption>> result = new HashMap<String, ArrayList<SpectrumIdentificationAssumption>>(selectedRows.length);
+        HashMap<String, ArrayList<SpectrumIdentificationAssumption>> result = new HashMap<>(selectedRows.length);
         String spectrumKey = getSelectedSpectrumKey();
         result.put(spectrumKey, assumptions);
 
@@ -2790,15 +2790,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private void populateIdResultsTable(String spectrumKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
-        currentAssumptionsList = new ArrayList<SpectrumIdentificationAssumption>(8);
-        searchResultsTablePeptideTooltips = new ArrayList<String>(8);
+        currentAssumptionsList = new ArrayList<>(8);
+        searchResultsTablePeptideTooltips = new ArrayList<>(8);
 
         if (identification.matchExists(spectrumKey)) {
 
             // sort assumptions by tag or peptide -> confidence -> search engine -> peptide sequence
             HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getAssumptionsMap();
-            HashMap<Double, HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>>> peptideAssumptionsMap = new HashMap<Double, HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>>>();
-            HashMap<Double, HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>>> tagAssumptionsMap = new HashMap<Double, HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>>>();
+            HashMap<Double, HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>>> peptideAssumptionsMap = new HashMap<>();
+            HashMap<Double, HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>>> tagAssumptionsMap = new HashMap<>();
             PSParameter psParameter = new PSParameter();
 
             for (Integer idSoftware : assumptions.keySet()) {
@@ -2810,18 +2810,18 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             Double confidence = psParameter.getSearchEngineConfidence();
                             HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>> confidenceMap = peptideAssumptionsMap.get(confidence);
                             if (confidenceMap == null) {
-                                confidenceMap = new HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>>(2);
+                                confidenceMap = new HashMap<>(2);
                                 peptideAssumptionsMap.put(confidence, confidenceMap);
                             }
                             HashMap<String, ArrayList<SpectrumIdentificationAssumption>> algorithmMap = confidenceMap.get(idSoftware);
                             if (algorithmMap == null) {
-                                algorithmMap = new HashMap<String, ArrayList<SpectrumIdentificationAssumption>>(2);
+                                algorithmMap = new HashMap<>(2);
                                 confidenceMap.put(idSoftware, algorithmMap);
                             }
                             String sequence = peptideAssumption.getPeptide().getSequenceWithLowerCasePtms();
                             ArrayList<SpectrumIdentificationAssumption> peptideList = algorithmMap.get(sequence);
                             if (peptideList == null) {
-                                peptideList = new ArrayList<SpectrumIdentificationAssumption>(2);
+                                peptideList = new ArrayList<>(2);
                                 algorithmMap.put(sequence, peptideList);
                             }
                             peptideList.add(spectrumIdentificationAssumption);
@@ -2831,18 +2831,18 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             Double confidence = psParameter.getSearchEngineConfidence();
                             HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>> confidenceMap = tagAssumptionsMap.get(confidence);
                             if (confidenceMap == null) {
-                                confidenceMap = new HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>>(2);
+                                confidenceMap = new HashMap<>(2);
                                 tagAssumptionsMap.put(confidence, confidenceMap);
                             }
                             HashMap<String, ArrayList<SpectrumIdentificationAssumption>> algorithmMap = confidenceMap.get(idSoftware);
                             if (algorithmMap == null) {
-                                algorithmMap = new HashMap<String, ArrayList<SpectrumIdentificationAssumption>>(2);
+                                algorithmMap = new HashMap<>(2);
                                 confidenceMap.put(idSoftware, algorithmMap);
                             }
                             String sequence = tagAssumption.getTag().asSequence();
                             ArrayList<SpectrumIdentificationAssumption> tagList = algorithmMap.get(sequence);
                             if (tagList == null) {
-                                tagList = new ArrayList<SpectrumIdentificationAssumption>(2);
+                                tagList = new ArrayList<>(2);
                                 algorithmMap.put(sequence, tagList);
                             }
                             tagList.add(spectrumIdentificationAssumption);
@@ -2853,15 +2853,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
             }
 
-            ArrayList<Double> confidences = new ArrayList<Double>(peptideAssumptionsMap.keySet());
+            ArrayList<Double> confidences = new ArrayList<>(peptideAssumptionsMap.keySet());
             Collections.sort(confidences, Collections.reverseOrder());
             for (Double confidence : confidences) {
                 HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>> confidenceMap = peptideAssumptionsMap.get(confidence);
-                ArrayList<Integer> algorithms = new ArrayList<Integer>(confidenceMap.keySet());
+                ArrayList<Integer> algorithms = new ArrayList<>(confidenceMap.keySet());
                 Collections.sort(algorithms);
                 for (Integer algorithm : algorithms) {
                     HashMap<String, ArrayList<SpectrumIdentificationAssumption>> algorithmMap = confidenceMap.get(algorithm);
-                    ArrayList<String> sequences = new ArrayList<String>(algorithmMap.keySet());
+                    ArrayList<String> sequences = new ArrayList<>(algorithmMap.keySet());
                     Collections.sort(sequences);
                     for (String sequence : sequences) {
                         ArrayList<SpectrumIdentificationAssumption> tempAssumptions = algorithmMap.get(sequence);
@@ -2884,15 +2884,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
             }
 
-            confidences = new ArrayList<Double>(tagAssumptionsMap.keySet());
+            confidences = new ArrayList<>(tagAssumptionsMap.keySet());
             Collections.sort(confidences, Collections.reverseOrder());
             for (Double confidence : confidences) {
                 HashMap<Integer, HashMap<String, ArrayList<SpectrumIdentificationAssumption>>> confidenceMap = tagAssumptionsMap.get(confidence);
-                ArrayList<Integer> algorithms = new ArrayList<Integer>(confidenceMap.keySet());
+                ArrayList<Integer> algorithms = new ArrayList<>(confidenceMap.keySet());
                 Collections.sort(algorithms);
                 for (Integer algorithm : algorithms) {
                     HashMap<String, ArrayList<SpectrumIdentificationAssumption>> algorithmMap = confidenceMap.get(algorithm);
-                    ArrayList<String> sequences = new ArrayList<String>(algorithmMap.keySet());
+                    ArrayList<String> sequences = new ArrayList<>(algorithmMap.keySet());
                     Collections.sort(sequences);
                     for (String sequence : sequences) {
                         currentAssumptionsList.addAll(algorithmMap.get(sequence)); // @TODO: filter the tags as well? and respect the vallidatedPsmsCheckBox value!
@@ -2992,10 +2992,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                             int maxPrecursorCharge = 1;
                             String modifiedSequence = "";
-                            ArrayList<ModificationMatch> allModifications = new ArrayList<ModificationMatch>();
-                            ArrayList<ArrayList<IonMatch>> allAnnotations = new ArrayList<ArrayList<IonMatch>>();
-                            ArrayList<MSnSpectrum> allSpectra = new ArrayList<MSnSpectrum>();
-                            ArrayList<String> selectedIndexes = new ArrayList<String>();
+                            ArrayList<ModificationMatch> allModifications = new ArrayList<>();
+                            ArrayList<ArrayList<IonMatch>> allAnnotations = new ArrayList<>();
+                            ArrayList<MSnSpectrum> allSpectra = new ArrayList<>();
+                            ArrayList<String> selectedIndexes = new ArrayList<>();
 
                             for (int i = 0; i < searchResultsTable.getSelectedRowCount(); i++) {
 
@@ -3363,15 +3363,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     public static int isBestPsmEqualForAllIdSoftware(SpectrumMatch spectrumMatch, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions,
             SequenceMatchingPreferences sequenceMatchingPreferences, Integer numberOfAdvocatesUsed) {
 
-        HashMap<Integer, ArrayList<PeptideAssumption>> peptideAssumptions = new HashMap<Integer, ArrayList<PeptideAssumption>>();
-        ArrayList<Integer> tempUsedAdvocates = new ArrayList<Integer>();
+        HashMap<Integer, ArrayList<PeptideAssumption>> peptideAssumptions = new HashMap<>();
+        ArrayList<Integer> tempUsedAdvocates = new ArrayList<>();
 
         // check which advovates that have results for the given spectrum
         for (Advocate tempAdvocate : Advocate.values()) {
             int advocateIndex = tempAdvocate.getIndex();
             HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(tempAdvocate.getIndex());
             if (advocateAssumptions != null) {
-                ArrayList<Double> eValues = new ArrayList<Double>(advocateAssumptions.keySet());
+                ArrayList<Double> eValues = new ArrayList<>(advocateAssumptions.keySet());
                 Collections.sort(eValues);
 
                 //for (double eValue : eValues) {
@@ -3383,7 +3383,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                         ArrayList<PeptideAssumption> advocatePeptides = peptideAssumptions.get(advocateIndex);
                         if (advocatePeptides == null) {
-                            advocatePeptides = new ArrayList<PeptideAssumption>();
+                            advocatePeptides = new ArrayList<>();
                             peptideAssumptions.put(advocateIndex, advocatePeptides);
                         }
                         advocatePeptides.add(peptideAssumption); // @TODO: only count validated assumptions..?
@@ -3907,8 +3907,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         // The selected file, null for the entire dataset
         String selectedFileName = null; //@TODO: let the user choose the file
 
-        HashMap<Integer, Double> searchEngineValidated = new HashMap<Integer, Double>();
-        HashMap<Integer, Double> searchEngineUniqueContribution = new HashMap<Integer, Double>();
+        HashMap<Integer, Double> searchEngineValidated = new HashMap<>();
+        HashMap<Integer, Double> searchEngineUniqueContribution = new HashMap<>();
         int totalNumberOfSpectra = 0;
 
         if (selectedFileName == null) {
@@ -3965,7 +3965,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 overviewPlotsPanel.add(uniquePsmsPlot);
 
                 // create the number of unassigned plot
-                HashMap<Integer, Double> unassignedAdvocate = new HashMap<Integer, Double>();
+                HashMap<Integer, Double> unassignedAdvocate = new HashMap<>();
                 for (Integer tempAdvocate : advocatesUsed) {
                     if (totalAdvocateId.containsKey(tempAdvocate)) {
                         unassignedAdvocate.put(tempAdvocate, totalNumberOfSpectra - totalAdvocateId.get(tempAdvocate));
@@ -3978,7 +3978,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 overviewPlotsPanel.add(unassignedPsmsPlot);
 
                 // create the id rate plot
-                HashMap<Integer, Double> idRateAdvocate = new HashMap<Integer, Double>();
+                HashMap<Integer, Double> idRateAdvocate = new HashMap<>();
                 for (Integer tempAdvocate : advocatesUsed) {
                     if (totalAdvocateId.containsKey(tempAdvocate)) {
                         idRateAdvocate.put(tempAdvocate, ((double) totalAdvocateId.get(tempAdvocate) / totalNumberOfSpectra) * 100);

@@ -308,11 +308,11 @@ public class FileImporter {
         /**
          * List of the mgf files used.
          */
-        private ArrayList<String> mgfUsed = new ArrayList<String>();
+        private ArrayList<String> mgfUsed = new ArrayList<>();
         /**
          * Map of the missing mgf files indexed by identification file.
          */
-        private HashMap<File, String> missingMgfFiles = new HashMap<File, String>();
+        private HashMap<File, String> missingMgfFiles = new HashMap<>();
         /**
          * The input map.
          */
@@ -336,12 +336,12 @@ public class FileImporter {
         /**
          * List of one hit wonders.
          */
-        private HashSet<String> singleProteinList = new HashSet<String>();
+        private HashSet<String> singleProteinList = new HashSet<>();
         /**
          * Map of proteins found several times with the number of times they
          * appeared as first hit.
          */
-        private HashMap<String, Integer> proteinCount = new HashMap<String, Integer>();
+        private HashMap<String, Integer> proteinCount = new HashMap<>();
         /**
          * The number of first hits.
          */
@@ -375,14 +375,14 @@ public class FileImporter {
                 IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences,
                 SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails) {
 
-            this.idFiles = new ArrayList<File>();
-            HashMap<String, File> filesMap = new HashMap<String, File>();
+            this.idFiles = new ArrayList<>();
+            HashMap<String, File> filesMap = new HashMap<>();
 
             for (File file : idFiles) {
                 filesMap.put(file.getName(), file);
             }
 
-            ArrayList<String> names = new ArrayList<String>(filesMap.keySet());
+            ArrayList<String> names = new ArrayList<>(filesMap.keySet());
             Collections.sort(names);
 
             // Process sequencing files first, they need much more memory. TODO: make something more generic?
@@ -398,7 +398,7 @@ public class FileImporter {
                 }
             }
 
-            this.spectrumFiles = new HashMap<String, File>();
+            this.spectrumFiles = new HashMap<>();
             this.identificationParameters = identificationParameters;
             this.processingPreferences = processingPreferences;
             this.spectrumCountingPreferences = spectrumCountingPreferences;
@@ -497,7 +497,7 @@ public class FileImporter {
                             return 1;
                         }
                         waitingHandler.appendReport("Processing files with the new input.", true, true);
-                        ArrayList<File> filesToProcess = new ArrayList<File>(missingMgfFiles.keySet());
+                        ArrayList<File> filesToProcess = new ArrayList<>(missingMgfFiles.keySet());
 
                         for (String mgfName : missingMgfFiles.values()) {
                             File newFile = spectrumFactory.getSpectrumFileFromIdName(mgfName);

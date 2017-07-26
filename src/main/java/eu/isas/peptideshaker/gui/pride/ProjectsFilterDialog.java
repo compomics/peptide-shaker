@@ -707,7 +707,7 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-        List<RowFilter<Object, Object>> filters = new ArrayList<RowFilter<Object, Object>>();
+        List<RowFilter<Object, Object>> filters = new ArrayList<>();
 
         // project accession filter
         String text = accessionJTextField.getText();

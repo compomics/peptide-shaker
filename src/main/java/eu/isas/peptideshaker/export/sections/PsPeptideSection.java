@@ -41,7 +41,7 @@ public class PsPeptideSection {
     /**
      * The peptide features to export.
      */
-    private ArrayList<PsPeptideFeature> peptideFeatures = new ArrayList<PsPeptideFeature>();
+    private ArrayList<PsPeptideFeature> peptideFeatures = new ArrayList<>();
     /**
      * The PSM subsection if needed.
      */
@@ -68,7 +68,7 @@ public class PsPeptideSection {
      * @param writer the writer which will write to the file
      */
     public PsPeptideSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
-        ArrayList<ExportFeature> psmFeatures = new ArrayList<ExportFeature>();
+        ArrayList<ExportFeature> psmFeatures = new ArrayList<>();
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsPeptideFeature) {
                 peptideFeatures.add((PsPeptideFeature) exportFeature);
@@ -126,7 +126,7 @@ public class PsPeptideSection {
         }
 
         if (keys == null) {
-            keys = new ArrayList<String>(identification.getPeptideIdentification());
+            keys = new ArrayList<>(identification.getPeptideIdentification());
         }
 
         int line = 1;
@@ -259,7 +259,7 @@ public class PsPeptideSection {
             case protein_groups:
                 HashSet<String> proteinGroups = identification.getProteinMatches(peptideMatch.getTheoreticPeptide());
                 proteins = new StringBuilder();
-                ArrayList<String> proteinGroupsList = new ArrayList<String>(proteinGroups);
+                ArrayList<String> proteinGroupsList = new ArrayList<>(proteinGroups);
                 Collections.sort(proteinGroupsList);
                 if (proteinGroupsList.size() > 1) {
                     identification.loadObjects(proteinGroupsList, waitingHandler, false);
@@ -290,7 +290,7 @@ public class PsPeptideSection {
             case best_protein_group_validation:
                 MatchValidationLevel bestProteinValidationLevel = MatchValidationLevel.none;
                 proteinGroups = identification.getProteinMatches(peptideMatch.getTheoreticPeptide());
-                proteinGroupsList = new ArrayList<String>(proteinGroups);
+                proteinGroupsList = new ArrayList<>(proteinGroups);
                 Collections.sort(proteinGroupsList);
                 if (proteinGroupsList.size() > 1) {
                     identification.loadObjects(proteinGroupsList, waitingHandler, false);
@@ -384,7 +384,7 @@ public class PsPeptideSection {
                     }
                     HashMap<Integer, String[]> surroundingAAs = SequenceFactory.getInstance().getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
                             nSurroundingAA, identificationParameters.getSequenceMatchingPreferences());
-                    ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
+                    ArrayList<Integer> starts = new ArrayList<>(surroundingAAs.keySet());
                     Collections.sort(starts);
                     boolean first = true;
                     for (int startAa : starts) {
@@ -409,7 +409,7 @@ public class PsPeptideSection {
                     HashMap<Integer, String[]> surroundingAAs
                             = SequenceFactory.getInstance().getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
                                     nSurroundingAA, identificationParameters.getSequenceMatchingPreferences());
-                    ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
+                    ArrayList<Integer> starts = new ArrayList<>(surroundingAAs.keySet());
                     Collections.sort(starts);
                     boolean first = true;
                     for (int startAa : starts) {
@@ -441,11 +441,11 @@ public class PsPeptideSection {
                 ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
                 if (ptmScores != null) {
                     StringBuilder result = new StringBuilder();
-                    ArrayList<String> modList = new ArrayList<String>(ptmScores.getScoredPTMs());
+                    ArrayList<String> modList = new ArrayList<>(ptmScores.getScoredPTMs());
                     Collections.sort(modList);
                     for (String mod : modList) {
                         PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                        ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
+                        ArrayList<Integer> sites = new ArrayList<>(ptmScoring.getProbabilisticSites());
                         if (!sites.isEmpty()) {
                             Collections.sort(sites);
                             if (result.length() > 0) {
@@ -472,11 +472,11 @@ public class PsPeptideSection {
                 ptmScores = new PSPtmScores();
                 ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
                 if (ptmScores != null) {
-                    ArrayList<String> modList = new ArrayList<String>(ptmScores.getScoredPTMs());
+                    ArrayList<String> modList = new ArrayList<>(ptmScores.getScoredPTMs());
                     Collections.sort(modList);
                     for (String mod : modList) {
                         PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                        ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getDSites());
+                        ArrayList<Integer> sites = new ArrayList<>(ptmScoring.getDSites());
                         if (!sites.isEmpty()) {
                             Collections.sort(sites);
                             if (result.length() > 0) {
@@ -509,7 +509,7 @@ public class PsPeptideSection {
             case ambiguous_modification_sites_number:
                 return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(peptideMatch);
             case confident_phosphosites:
-                ArrayList<String> modifications = new ArrayList<String>();
+                ArrayList<String> modifications = new ArrayList<>();
                 for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.contains("Phospho")) {
                         modifications.add(ptm);
@@ -517,7 +517,7 @@ public class PsPeptideSection {
                 }
                 return identificationFeaturesGenerator.getConfidentPtmSites(peptideMatch, peptideMatch.getTheoreticPeptide().getSequence(), modifications);
             case confident_phosphosites_number:
-                modifications = new ArrayList<String>();
+                modifications = new ArrayList<>();
                 for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.contains("Phospho")) {
                         modifications.add(ptm);
@@ -525,7 +525,7 @@ public class PsPeptideSection {
                 }
                 return identificationFeaturesGenerator.getConfidentPtmSitesNumber(peptideMatch, modifications);
             case ambiguous_phosphosites:
-                modifications = new ArrayList<String>();
+                modifications = new ArrayList<>();
                 for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.contains("Phospho")) {
                         modifications.add(ptm);
@@ -533,7 +533,7 @@ public class PsPeptideSection {
                 }
                 return identificationFeaturesGenerator.getAmbiguousPtmSites(peptideMatch, peptideMatch.getTheoreticPeptide().getSequence(), modifications);
             case ambiguous_phosphosites_number:
-                modifications = new ArrayList<String>();
+                modifications = new ArrayList<>();
                 for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.contains("Phospho")) {
                         modifications.add(ptm);

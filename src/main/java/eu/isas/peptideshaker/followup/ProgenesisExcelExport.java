@@ -154,7 +154,7 @@ public class ProgenesisExcelExport {
         // create the protein header row
         createProteinHeader();
 
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        ArrayList<UrParameter> parameters = new ArrayList<>(1);
         parameters.add(new PSParameter());
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
 
@@ -242,11 +242,11 @@ public class ProgenesisExcelExport {
             }
             proteinAccessionsAsString.append(proteinAccession);
         }
-        ArrayList<String> proteinGroups = new ArrayList<String>(identification.getProteinMatches(peptide));
+        ArrayList<String> proteinGroups = new ArrayList<>(identification.getProteinMatches(peptide));
 
         ArrayList<String> spectrumKeys = peptideMatch.getSpectrumMatchesKeys();
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        ArrayList<UrParameter> parameters = new ArrayList<>(1);
         parameters.add(psParameter);
 
         PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, waitingHandler);

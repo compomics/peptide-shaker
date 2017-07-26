@@ -95,11 +95,11 @@ public class StarHider {
                     progressDialog.setMaxPrimaryProgressCounter(identification.getProteinIdentification().size());
 
                     PSParameter psParameter = new PSParameter();
-                    ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+                    ArrayList<UrParameter> parameters = new ArrayList<>(1);
                     parameters.add(psParameter);
                     ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(progressDialog);
 
-                    ArrayList<StarHiderRunnable> runnables = new ArrayList<StarHiderRunnable>(nThreads);
+                    ArrayList<StarHiderRunnable> runnables = new ArrayList<>(nThreads);
                     for (int i = 1; i <= nThreads && !progressDialog.isRunCanceled(); i++) {
                         StarHiderRunnable starHiderRunnable = new StarHiderRunnable(proteinMatchesIterator, progressDialog, peptideShakerGUI.getExceptionHandler());
                         pool.submit(starHiderRunnable);
@@ -114,14 +114,14 @@ public class StarHider {
                         throw new InterruptedException("Hiding/Starring matches timed out. Please contact the developers.");
                     }
 
-                    HashMap<String, ArrayList<Double>> fractionMW = new HashMap<String, ArrayList<Double>>();
+                    HashMap<String, ArrayList<Double>> fractionMW = new HashMap<>();
                     for (StarHiderRunnable starHiderRunnable : runnables) {
                         HashMap<String, ArrayList<Double>> threadFractionMW = starHiderRunnable.getThreadFractionMW();
                         for (String fraction : threadFractionMW.keySet()) {
                             ArrayList<Double> mws = fractionMW.get(fraction),
                                     threadMws = threadFractionMW.get(fraction);
                             if (mws == null) {
-                                mws = new ArrayList<Double>(threadMws.size());
+                                mws = new ArrayList<>(threadMws.size());
                             }
                             mws.addAll(threadMws);
                         }
@@ -894,7 +894,7 @@ public class StarHider {
         /**
          * The fraction mw map for this thread
          */
-        private HashMap<String, ArrayList<Double>> threadFractionMW = new HashMap<String, ArrayList<Double>>();
+        private HashMap<String, ArrayList<Double>> threadFractionMW = new HashMap<>();
         /**
          * An iterator for the protein matches
          */
@@ -1004,7 +1004,7 @@ public class StarHider {
                                     if (threadFractionMW.containsKey(fraction)) {
                                         threadFractionMW.get(fraction).add(proteinMW);
                                     } else {
-                                        ArrayList<Double> mw = new ArrayList<Double>();
+                                        ArrayList<Double> mw = new ArrayList<>();
                                         mw.add(proteinMW);
                                         threadFractionMW.put(fraction, mw);
                                     }

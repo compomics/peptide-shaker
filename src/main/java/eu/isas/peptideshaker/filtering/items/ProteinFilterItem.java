@@ -113,16 +113,16 @@ public enum ProteinFilterItem implements FilterItem {
     public ArrayList<String> getPossibilities() {
         switch (this) {
             case proteinInference:
-                ArrayList<String> pi = new ArrayList<String>(4);
+                ArrayList<String> pi = new ArrayList<>(4);
                 pi.add(PSParameter.getProteinInferenceClassAsString(PSParameter.NOT_GROUP));
                 pi.add(PSParameter.getProteinInferenceClassAsString(PSParameter.RELATED));
                 pi.add(PSParameter.getProteinInferenceClassAsString(PSParameter.RELATED_AND_UNRELATED));
                 pi.add(PSParameter.getProteinInferenceClassAsString(PSParameter.UNRELATED));
                 return pi;
             case validationStatus:
-                return new ArrayList<String>(Arrays.asList(MatchValidationLevel.getValidationLevelsNames()));
+                return new ArrayList<>(Arrays.asList(MatchValidationLevel.getValidationLevelsNames()));
             case stared:
-                ArrayList<String> starred = new ArrayList<String>(2);
+                ArrayList<String> starred = new ArrayList<>(2);
                 starred.add("Starred");
                 starred.add("Not Starred");
                 return starred;

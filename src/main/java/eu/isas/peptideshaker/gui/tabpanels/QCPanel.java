@@ -1253,7 +1253,7 @@ public class QCPanel extends javax.swing.JPanel {
                     progressDialog.setTitle("Loading Protein QC Plots. Please Wait...");
 
                     DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-                    ArrayList<Double> bins = new ArrayList<Double>();
+                    ArrayList<Double> bins = new ArrayList<>();
 
                     if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
 
@@ -1477,7 +1477,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     try {
                         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-                        ArrayList<Double> bins = new ArrayList<Double>();
+                        ArrayList<Double> bins = new ArrayList<>();
 
                         if (peptideValidatedPsmsJRadioButton.isSelected()) {
 
@@ -1650,7 +1650,7 @@ public class QCPanel extends javax.swing.JPanel {
                     progressDialog.setTitle("Loading PSM QC Plots. Please Wait...");
 
                     DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-                    ArrayList<Double> bins = new ArrayList<Double>();
+                    ArrayList<Double> bins = new ArrayList<>();
 
                     if (psmPrecursorMassErrorJRadioButton.isSelected()) {
 
@@ -1749,11 +1749,11 @@ public class QCPanel extends javax.swing.JPanel {
             PSParameter proteinParameter = new PSParameter();
             maxValue = Double.MIN_VALUE;
 
-            validatedValues = new ArrayList<Double>();
-            validatedDoubtfulValues = new ArrayList<Double>();
-            nonValidatedValues = new ArrayList<Double>();
-            validatedDecoyValues = new ArrayList<Double>();
-            nonValidatedDecoyValues = new ArrayList<Double>();
+            validatedValues = new ArrayList<>();
+            validatedDoubtfulValues = new ArrayList<>();
+            nonValidatedValues = new ArrayList<>();
+            validatedDecoyValues = new ArrayList<>();
+            nonValidatedDecoyValues = new ArrayList<>();
 
             ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(progressDialog);
 
@@ -1778,7 +1778,7 @@ public class QCPanel extends javax.swing.JPanel {
                         sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
-                        sequenceCoverage = new HashMap<Integer, Double>();
+                        sequenceCoverage = new HashMap<>();
                     }
                     Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
                     Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
@@ -1832,11 +1832,11 @@ public class QCPanel extends javax.swing.JPanel {
                 progressDialog.setValue(0);
 
                 // Values for the number of validated PSMs
-                validatedValues = new ArrayList<Double>();
-                validatedDoubtfulValues = new ArrayList<Double>();
-                nonValidatedValues = new ArrayList<Double>();
-                validatedDecoyValues = new ArrayList<Double>();
-                nonValidatedDecoyValues = new ArrayList<Double>();
+                validatedValues = new ArrayList<>();
+                validatedDoubtfulValues = new ArrayList<>();
+                nonValidatedValues = new ArrayList<>();
+                validatedDecoyValues = new ArrayList<>();
+                nonValidatedDecoyValues = new ArrayList<>();
 
                 PSParameter psmParameter = new PSParameter();
                 PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
@@ -1897,11 +1897,11 @@ public class QCPanel extends javax.swing.JPanel {
                 progressDialog.setValue(0);
 
                 // Values for the missed cleavages
-                validatedValues = new ArrayList<Double>();
-                validatedDoubtfulValues = new ArrayList<Double>();
-                nonValidatedValues = new ArrayList<Double>();
-                validatedDecoyValues = new ArrayList<Double>();
-                nonValidatedDecoyValues = new ArrayList<Double>();
+                validatedValues = new ArrayList<>();
+                validatedDoubtfulValues = new ArrayList<>();
+                nonValidatedValues = new ArrayList<>();
+                validatedDecoyValues = new ArrayList<>();
+                nonValidatedDecoyValues = new ArrayList<>();
 
                 PSParameter psmParameter = new PSParameter();
                 PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
@@ -1964,11 +1964,11 @@ public class QCPanel extends javax.swing.JPanel {
                 progressDialog.setValue(0);
 
                 // Values for the peptide length
-                validatedValues = new ArrayList<Double>();
-                validatedDoubtfulValues = new ArrayList<Double>();
-                nonValidatedValues = new ArrayList<Double>();
-                validatedDecoyValues = new ArrayList<Double>();
-                nonValidatedDecoyValues = new ArrayList<Double>();
+                validatedValues = new ArrayList<>();
+                validatedDoubtfulValues = new ArrayList<>();
+                nonValidatedValues = new ArrayList<>();
+                validatedDecoyValues = new ArrayList<>();
+                nonValidatedDecoyValues = new ArrayList<>();
 
                 PSParameter psmParameter = new PSParameter();
                 PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
@@ -2036,11 +2036,11 @@ public class QCPanel extends javax.swing.JPanel {
             if (psmPrecursorMassErrorJRadioButton.isSelected()) {
 
                 // Values for the precursor mass deviation
-                validatedValues = new ArrayList<Double>();
-                validatedDoubtfulValues = new ArrayList<Double>();
-                nonValidatedValues = new ArrayList<Double>();
-                validatedDecoyValues = new ArrayList<Double>();
-                nonValidatedDecoyValues = new ArrayList<Double>();
+                validatedValues = new ArrayList<>();
+                validatedDoubtfulValues = new ArrayList<>();
+                nonValidatedValues = new ArrayList<>();
+                validatedDecoyValues = new ArrayList<>();
+                nonValidatedDecoyValues = new ArrayList<>();
 
                 PsmIterator psmIterator = identification.getPsmIterator(progressDialog);
 
@@ -2088,11 +2088,11 @@ public class QCPanel extends javax.swing.JPanel {
             } else if (psmPrecursorChargeJRadioButton.isSelected()) {
 
                 // Values for the precursor charge
-                validatedValues = new ArrayList<Double>();
-                validatedDoubtfulValues = new ArrayList<Double>();
-                nonValidatedValues = new ArrayList<Double>();
-                validatedDecoyValues = new ArrayList<Double>();
-                nonValidatedDecoyValues = new ArrayList<Double>();
+                validatedValues = new ArrayList<>();
+                validatedDoubtfulValues = new ArrayList<>();
+                nonValidatedValues = new ArrayList<>();
+                validatedDecoyValues = new ArrayList<>();
+                nonValidatedDecoyValues = new ArrayList<>();
 
                 PsmIterator psmIterator = identification.getPsmIterator(progressDialog);
 
@@ -2235,13 +2235,13 @@ public class QCPanel extends javax.swing.JPanel {
         PtmSettings ptmSettings = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings();
 
         ArrayList<String> ptmNames = ptmSettings.getAllNotFixedModifications();
-        HashMap<String, Integer> confidentPtmMap = new HashMap<String, Integer>(ptmNames.size());
-        HashMap<String, Integer> doubtfulPtmMap = new HashMap<String, Integer>(ptmNames.size());
-        HashMap<String, Integer> notValidatedPtmMap = new HashMap<String, Integer>(ptmNames.size());
+        HashMap<String, Integer> confidentPtmMap = new HashMap<>(ptmNames.size());
+        HashMap<String, Integer> doubtfulPtmMap = new HashMap<>(ptmNames.size());
+        HashMap<String, Integer> notValidatedPtmMap = new HashMap<>(ptmNames.size());
 
         PSParameter psParameter = new PSParameter();
 
-        ArrayList<String> modifiedPeptides = new ArrayList<String>(identification.getPeptideIdentification().size());
+        ArrayList<String> modifiedPeptides = new ArrayList<>(identification.getPeptideIdentification().size());
         for (String peptideKey : identification.getPeptideIdentification()) {
             if (Peptide.isModified(peptideKey)) {
                 modifiedPeptides.add(peptideKey);
@@ -2343,8 +2343,8 @@ public class QCPanel extends javax.swing.JPanel {
         SequenceMatchingPreferences ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
 
         ArrayList<String> ptmNames = ptmSettings.getAllNotFixedModifications();
-        HashMap<String, Integer> modifiedSitesMap = new HashMap<String, Integer>(ptmNames.size());
-        HashMap<String, Integer> possibleSitesMap = new HashMap<String, Integer>(ptmNames.size());
+        HashMap<String, Integer> modifiedSitesMap = new HashMap<>(ptmNames.size());
+        HashMap<String, Integer> possibleSitesMap = new HashMap<>(ptmNames.size());
 
         PSParameter psParameter = new PSParameter();
         
@@ -2364,7 +2364,7 @@ public class QCPanel extends javax.swing.JPanel {
                 Peptide peptide = peptideMatch.getTheoreticPeptide();
                 HashMap<String, Integer> peptideModificationsMap = null;
                 if (peptide.getModificationMatches() != null) {
-                    peptideModificationsMap = new HashMap<String, Integer>(peptide.getModificationMatches().size());
+                    peptideModificationsMap = new HashMap<>(peptide.getModificationMatches().size());
                     for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
                         String ptmName = modificationMatch.getTheoreticPtm();
                         Integer occurrence = peptideModificationsMap.get(ptmName);
@@ -2450,8 +2450,8 @@ public class QCPanel extends javax.swing.JPanel {
         SequenceMatchingPreferences ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
 
         ArrayList<String> ptmNames = ptmSettings.getAllNotFixedModifications();
-        HashMap<String, Integer> modifiedPeptidesMap = new HashMap<String, Integer>(ptmNames.size());
-        HashMap<String, Integer> possiblyModifiedPeptidesMap = new HashMap<String, Integer>(ptmNames.size());
+        HashMap<String, Integer> modifiedPeptidesMap = new HashMap<>(ptmNames.size());
+        HashMap<String, Integer> possiblyModifiedPeptidesMap = new HashMap<>(ptmNames.size());
 
         PSParameter psParameter = new PSParameter();
 

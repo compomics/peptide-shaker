@@ -68,7 +68,7 @@ public class PsFragmentSection {
         this.header = header;
         this.writer = writer;
 
-        fragmentFeatures = new ArrayList<PsFragmentFeature>(exportFeatures.size());
+        fragmentFeatures = new ArrayList<>(exportFeatures.size());
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsFragmentFeature) {
                 PsFragmentFeature fragmentFeature = (PsFragmentFeature) exportFeature;
@@ -131,15 +131,15 @@ public class PsFragmentSection {
             throw new UnsupportedOperationException("Export not implemented for spectrum identification of type " + spectrumIdentificationAssumption.getClass() + ".");
         }
 
-        HashMap<Double, ArrayList<IonMatch>> sortedAnnotation = new HashMap<Double, ArrayList<IonMatch>>(annotations.size());
+        HashMap<Double, ArrayList<IonMatch>> sortedAnnotation = new HashMap<>(annotations.size());
         for (IonMatch ionMatch : annotations) {
             double mz = ionMatch.peak.mz;
             if (!sortedAnnotation.containsKey(mz)) {
-                sortedAnnotation.put(mz, new ArrayList<IonMatch>());
+                sortedAnnotation.put(mz, new ArrayList<>());
             }
             sortedAnnotation.get(mz).add(ionMatch);
         }
-        ArrayList<Double> mzs = new ArrayList<Double>(sortedAnnotation.keySet());
+        ArrayList<Double> mzs = new ArrayList<>(sortedAnnotation.keySet());
         Collections.sort(mzs);
 
         int line = 1;

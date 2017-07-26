@@ -94,11 +94,11 @@ public class ValidationPanel extends javax.swing.JPanel {
     /**
      * The PSMs map: # in the list &gt; map key.
      */
-    private HashMap<Integer, HashMap<Integer, String>> psmMap = new HashMap<Integer, HashMap<Integer, String>>();
+    private HashMap<Integer, HashMap<Integer, String>> psmMap = new HashMap<>();
     /**
      * The peptide map: # in the list &gt; map key.
      */
-    private HashMap<Integer, String> peptideMap = new HashMap<Integer, String>();
+    private HashMap<Integer, String> peptideMap = new HashMap<>();
     /**
      * The confidence plot.
      */
@@ -114,19 +114,19 @@ public class ValidationPanel extends javax.swing.JPanel {
     /**
      * The last threshold input.
      */
-    private HashMap<Integer, Double> lastThresholds = new HashMap<Integer, Double>();
+    private HashMap<Integer, Double> lastThresholds = new HashMap<>();
     /**
      * The last threshold type 0 &gt; confidence 1 &gt; FDR 2 &gt; FNR
      */
-    private HashMap<Integer, Integer> lastThresholdTypes = new HashMap<Integer, Integer>();
+    private HashMap<Integer, Integer> lastThresholdTypes = new HashMap<>();
     /**
      * The original threshold input.
      */
-    private HashMap<Integer, Double> originalThresholds = new HashMap<Integer, Double>();
+    private HashMap<Integer, Double> originalThresholds = new HashMap<>();
     /**
      * The original threshold type 0 &gt; confidence 1 &gt; FDR 2 &gt; FNR.
      */
-    private HashMap<Integer, Integer> originalThresholdTypes = new HashMap<Integer, Integer>();
+    private HashMap<Integer, Integer> originalThresholdTypes = new HashMap<>();
     /**
      * The confidence threshold marker.
      */
@@ -134,7 +134,7 @@ public class ValidationPanel extends javax.swing.JPanel {
     /**
      * Map keeping track of probabilities modifications.
      */
-    private HashMap<Integer, Boolean> modifiedMaps = new HashMap<Integer, Boolean>();
+    private HashMap<Integer, Boolean> modifiedMaps = new HashMap<>();
     /**
      * The score log axis.
      */
@@ -2351,7 +2351,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                 }
 
                 PsmSpecificMap psmSpecificMap = pSMaps.getPsmSpecificMap();
-                ArrayList<Integer> foundCharges = new ArrayList<Integer>(4);
+                ArrayList<Integer> foundCharges = new ArrayList<>(4);
                 for (Integer charge : psmSpecificMap.getPossibleCharges()) {
                     for (String file : psmSpecificMap.getFilesAtCharge(charge)) {
                         if (!psmSpecificMap.isFileGrouped(charge, file)) {
@@ -2359,7 +2359,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                             if (progressDialog.isRunCanceled()) {
                                 break;
                             }
-                            HashMap<Integer, String> psmKey = new HashMap<Integer, String>();
+                            HashMap<Integer, String> psmKey = new HashMap<>();
                             psmKey.put(charge, file);
                             psmMap.put(++cpt, psmKey);
                             modifiedMaps.put(cpt, false);
@@ -2370,11 +2370,11 @@ public class ValidationPanel extends javax.swing.JPanel {
                         }
                     }
                 }
-                HashMap<Integer, ArrayList<Integer>> groupedCharges = new HashMap<Integer, ArrayList<Integer>>();
+                HashMap<Integer, ArrayList<Integer>> groupedCharges = new HashMap<>();
                 for (int charge : psmSpecificMap.getChargesFromGroupedFiles()) {
                     int correctedCharge = psmSpecificMap.getCorrectedCharge(charge);
                     if (correctedCharge == charge) {
-                        HashMap<Integer, String> psmKey = new HashMap<Integer, String>();
+                        HashMap<Integer, String> psmKey = new HashMap<>();
                         psmKey.put(charge, null);
                         psmMap.put(++cpt, psmKey);
                         modifiedMaps.put(cpt, false);
@@ -2385,7 +2385,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                     } else {
                         ArrayList<Integer> charges = groupedCharges.get(correctedCharge);
                         if (charges == null) {
-                            charges = new ArrayList<Integer>(4);
+                            charges = new ArrayList<>(4);
                             groupedCharges.put(correctedCharge, charges);
                         }
                         charges.add(charge);
@@ -2418,7 +2418,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                                     ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "PSMs (Other Charge " + charge + ")"});
                                 }
                             } else {
-                                ArrayList<Integer> groupCharges = new ArrayList<Integer>();
+                                ArrayList<Integer> groupCharges = new ArrayList<>();
                                 groupCharges.add(charge);
                                 if (groupedCharges.containsKey(charge)) {
                                     groupCharges.addAll(groupedCharges.get(charge));

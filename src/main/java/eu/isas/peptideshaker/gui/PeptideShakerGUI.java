@@ -323,11 +323,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     /**
      * The charge menus.
      */
-    private HashMap<Integer, JCheckBoxMenuItem> chargeMenus = new HashMap<Integer, JCheckBoxMenuItem>();
+    private HashMap<Integer, JCheckBoxMenuItem> chargeMenus = new HashMap<>();
     /**
      * The neutral loss menus.
      */
-    private HashMap<NeutralLoss, JCheckBoxMenuItem> lossMenus = new HashMap<NeutralLoss, JCheckBoxMenuItem>();
+    private HashMap<NeutralLoss, JCheckBoxMenuItem> lossMenus = new HashMap<>();
     /**
      * The horizontal padding used before and after the text in the titled
      * borders. (Needed to make it look as good in Java 7 as it did in Java
@@ -343,19 +343,19 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     /**
      * The list of already published tweets.
      */
-    private ArrayList<String> publishedTweets = new ArrayList<String>();
+    private ArrayList<String> publishedTweets = new ArrayList<>();
     /**
      * The list of new tweets.
      */
-    private ArrayList<String> newTweets = new ArrayList<String>();
+    private ArrayList<String> newTweets = new ArrayList<>();
     /**
      * The list of current notes to the user.
      */
-    private ArrayList<String> currentNotes = new ArrayList<String>();
+    private ArrayList<String> currentNotes = new ArrayList<>();
     /**
      * The list of current tips to the user.
      */
-    private ArrayList<String> currentTips = new ArrayList<String>();
+    private ArrayList<String> currentTips = new ArrayList<>();
     /**
      * The cps parent used to manage the data.
      */
@@ -372,7 +372,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     /**
      * The list of spectrum files.
      */
-    private ArrayList<File> spectrumFiles = new ArrayList<File>();
+    private ArrayList<File> spectrumFiles = new ArrayList<>();
 
     /**
      * The main method used to start PeptideShaker.
@@ -2040,7 +2040,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private void annotationPreferencesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationPreferencesMenuActionPerformed
         PtmSettings ptmSettings = getIdentificationParameters().getSearchParameters().getPtmSettings();
         ArrayList<NeutralLoss> neutralLosses = IonFactory.getNeutralLosses(ptmSettings);
-        ArrayList<Integer> reporterIons = new ArrayList<Integer>(IonFactory.getReporterIons(ptmSettings));
+        ArrayList<Integer> reporterIons = new ArrayList<>(IonFactory.getReporterIons(ptmSettings));
         AnnotationSettingsDialog annotationSettingsDialog = new AnnotationSettingsDialog(this, getIdentificationParameters().getAnnotationPreferences(),
                 getIdentificationParameters().getSearchParameters().getFragmentIonAccuracy(), neutralLosses, reporterIons, true);
         if (!annotationSettingsDialog.isCanceled()) {
@@ -3113,7 +3113,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         notesDialog.setLocation(PeptideShakerGUI.this.getWidth() - notesDialog.getWidth() - 25 + PeptideShakerGUI.this.getX(),
                 PeptideShakerGUI.this.getHeight() - notesDialog.getHeight() - 25 + PeptideShakerGUI.this.getY());
         notesDialog.setVisible(true);
-        currentNotes = new ArrayList<String>();
+        currentNotes = new ArrayList<>();
         updateNotesNotificationCounter();
     }//GEN-LAST:event_notesButtonMouseReleased
 
@@ -3173,7 +3173,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         notesDialog.setLocation(PeptideShakerGUI.this.getWidth() - notesDialog.getWidth() - 25 + PeptideShakerGUI.this.getX(),
                 PeptideShakerGUI.this.getHeight() - notesDialog.getHeight() - 25 + PeptideShakerGUI.this.getY());
         notesDialog.setVisible(true);
-        currentTips = new ArrayList<String>();
+        currentTips = new ArrayList<>();
         updateTipsNotificationCounter();
     }//GEN-LAST:event_tipsButtonMouseReleased
 
@@ -3341,7 +3341,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public void editPathSettings(WelcomeDialog welcomeDialog) {
         try {
-            HashMap<PathKey, String> pathSettings = new HashMap<PathKey, String>();
+            HashMap<PathKey, String> pathSettings = new HashMap<>();
             for (PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathKey.values()) {
                 pathSettings.put(peptideShakerPathKey, PeptideShakerPathPreferences.getPathPreference(peptideShakerPathKey));
             }
@@ -4285,7 +4285,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void setUpPanels(boolean setupValidationTab) {
 
-        updateNeeded = new HashMap<Integer, Boolean>();
+        updateNeeded = new HashMap<>();
         for (int tabIndex = 0; tabIndex < allTabsJTabbedPane.getTabCount(); tabIndex++) {
             if (tabIndex == VALIDATION_TAB_INDEX) {
                 if (setupValidationTab) {
@@ -4862,7 +4862,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         lossSplitter.setVisible(true);
         lossMenus.clear();
 
-        HashMap<String, NeutralLoss> neutralLosses = new HashMap<String, NeutralLoss>();
+        HashMap<String, NeutralLoss> neutralLosses = new HashMap<>();
 
         // add the general neutral losses
         for (NeutralLoss neutralLoss : IonFactory.getInstance().getDefaultNeutralLosses()) {
@@ -4879,7 +4879,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             }
         }
 
-        ArrayList<String> names = new ArrayList<String>(neutralLosses.keySet());
+        ArrayList<String> names = new ArrayList<>(neutralLosses.keySet());
         Collections.sort(names);
 
         if (neutralLosses.isEmpty()) {
@@ -5000,7 +5000,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     specificAnnotationPreferences.addIonType(IonType.RELATED_ION);
                 }
                 if (reporterIonsCheckMenu.isSelected()) {
-                    ArrayList<Integer> reporterIons = new ArrayList<Integer>(IonFactory.getReporterIons(getIdentificationParameters().getSearchParameters().getPtmSettings()));
+                    ArrayList<Integer> reporterIons = new ArrayList<>(IonFactory.getReporterIons(getIdentificationParameters().getSearchParameters().getPtmSettings()));
                     for (int subtype : reporterIons) {
                         specificAnnotationPreferences.addIonType(IonType.REPORTER_ION, subtype);
                     }
@@ -5410,7 +5410,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     // reset enzymes, ptms and preferences
                     resetPtmFactory();
                     setDefaultPreferences();
-                    setCurentNotes(new ArrayList<String>());
+                    setCurentNotes(new ArrayList<>());
                     updateNotesNotificationCounter();
                     openingExistingProject = true;
 
@@ -5687,7 +5687,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
-        ArrayList<String> selectedSpectra = new ArrayList<String>(1);
+        ArrayList<String> selectedSpectra = new ArrayList<>(1);
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
             selectedSpectra = overviewPanel.getSelectedSpectrumKeys();
@@ -5790,13 +5790,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                     throw new UnsupportedOperationException("Spectrum annotation not implemented for identification assumption of type " + assumption.getClass() + ".");
                                 }
 
-                                HashMap<Double, ArrayList<IonMatch>> annotationMap = new HashMap<Double, ArrayList<IonMatch>>();
+                                HashMap<Double, ArrayList<IonMatch>> annotationMap = new HashMap<>();
                                 if (annotations != null) {
                                     for (IonMatch ionMatch : annotations) {
                                         Double mz = ionMatch.peak.mz;
                                         ArrayList<IonMatch> matchesAtMz = annotationMap.get(mz);
                                         if (matchesAtMz == null) {
-                                            matchesAtMz = new ArrayList<IonMatch>(1);
+                                            matchesAtMz = new ArrayList<>(1);
                                             annotationMap.put(mz, matchesAtMz);
                                         }
                                         matchesAtMz.add(ionMatch);
@@ -5977,7 +5977,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public HashMap<Double, String> getCurrentMassDeltas() {
 
-        HashMap<Double, String> knownMassDeltas = new HashMap<Double, String>();
+        HashMap<Double, String> knownMassDeltas = new HashMap<>();
 
         // add the monoisotopic amino acids masses
         knownMassDeltas.put(AminoAcid.A.getMonoisotopicMass(), "A");
@@ -6182,7 +6182,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public ArrayList<Integer> getCharges() {
         if (getMetrics() == null) {
-            return new ArrayList<Integer>();
+            return new ArrayList<>();
         }
         return getMetrics().getFoundCharges();
     }
@@ -6435,7 +6435,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private ArrayList<String> getNewTweets() {
 
-        ArrayList<String> tweets = new ArrayList<String>();
+        ArrayList<String> tweets = new ArrayList<>();
 
         // set URL
         try {
@@ -6568,7 +6568,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                         File cpsFile = cpsParent.getCpsFile();
                         File fastaFile = PeptideShakerGUI.this.getIdentificationParameters().getProteinInferencePreferences().getProteinSequenceDatabase();
-                        ArrayList<File> spectrumFiles = new ArrayList<File>();
+                        ArrayList<File> spectrumFiles = new ArrayList<>();
                         for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
                             File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
                             spectrumFiles.add(spectrumFile);
@@ -6648,7 +6648,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     psmKeys = peptideMatch.getSpectrumMatchesKeys();
                 } catch (Exception e1) {
                     e1.printStackTrace();
-                    psmKeys = new ArrayList<String>();
+                    psmKeys = new ArrayList<>();
                 }
             }
 
@@ -6690,7 +6690,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     peptideKeys = proteinMatch.getPeptideMatchesKeys();
                 } catch (Exception e1) {
                     e1.printStackTrace();
-                    peptideKeys = new ArrayList<String>();
+                    peptideKeys = new ArrayList<>();
                 }
             }
 

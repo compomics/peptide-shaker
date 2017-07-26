@@ -79,7 +79,7 @@ public enum PsPeptideFeature implements ExportFeature {
 
     @Override
     public ArrayList<ExportFeature> getExportFeatures(boolean includeSubFeatures) {
-        ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
+        ArrayList<ExportFeature> result = new ArrayList<>();
         result.addAll(Arrays.asList(values()));
         if (includeSubFeatures) {
             result.addAll(PsPsmFeature.values()[0].getExportFeatures(includeSubFeatures));

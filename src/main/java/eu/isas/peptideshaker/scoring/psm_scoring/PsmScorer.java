@@ -92,7 +92,7 @@ public class PsmScorer {
 
         ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
         PsmIterator psmIterator = identification.getPsmIterator(null);
-        ArrayList<PsmScorerRunnable> psmScorerRunnables = new ArrayList<PsmScorerRunnable>(processingPreferences.getnThreads());
+        ArrayList<PsmScorerRunnable> psmScorerRunnables = new ArrayList<>(processingPreferences.getnThreads());
         for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
             PsmScorerRunnable runnable = new PsmScorerRunnable(psmIterator, identification, inputMap, identificationParameters, waitingHandler, exceptionHandler);
             psmScorerRunnables.add(runnable);
@@ -107,9 +107,9 @@ public class PsmScorer {
             throw new InterruptedException("PSM scoring timed out. Please contact the developers.");
         }
 
-        ArrayList<HashMap<Double, Integer>> aHistograms = new ArrayList<HashMap<Double, Integer>>(processingPreferences.getnThreads());
-        ArrayList<HashMap<Double, Integer>> bHistograms = new ArrayList<HashMap<Double, Integer>>(processingPreferences.getnThreads());
-        HashMap<String, ArrayList<Integer>> missingValuesMap = new HashMap<String, ArrayList<Integer>>();
+        ArrayList<HashMap<Double, Integer>> aHistograms = new ArrayList<>(processingPreferences.getnThreads());
+        ArrayList<HashMap<Double, Integer>> bHistograms = new ArrayList<>(processingPreferences.getnThreads());
+        HashMap<String, ArrayList<Integer>> missingValuesMap = new HashMap<>();
         for (PsmScorerRunnable runnable : psmScorerRunnables) {
             HashMap<String, ArrayList<Integer>> currentMissingValuesMap = runnable.getMissingEValues();
             missingValuesMap.putAll(currentMissingValuesMap);
@@ -128,7 +128,7 @@ public class PsmScorer {
             if (!bHistogram.isEmpty()) {
                 defaultB = HistogramUtils.getMedianValue(bHistogram);
             }
-            ArrayList<String> spectrumKeys = new ArrayList<String>(missingValuesMap.keySet());
+            ArrayList<String> spectrumKeys = new ArrayList<>(missingValuesMap.keySet());
             psmIterator = identification.getPsmIterator(spectrumKeys, null);
             pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
             for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
@@ -189,7 +189,7 @@ public class PsmScorer {
 
         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = spectrumMatch.getAssumptionsMap();
 
-        ArrayList<Integer> missingEvalue = new ArrayList<Integer>(0);
+        ArrayList<Integer> missingEvalue = new ArrayList<>(0);
 
         for (Integer advocateIndex : assumptions.keySet()) {
 
@@ -204,9 +204,9 @@ public class PsmScorer {
                 ArrayList<PSParameter> hyperScoreParameters = null;
                 ArrayList<Boolean> hyperScoreDecoys = null;
                 if (scoresForAdvocate.contains(PsmScore.hyperScore.index)) {
-                    hyperScores = new ArrayList<Double>(originalAssumptions.size());
-                    hyperScoreParameters = new ArrayList<PSParameter>(originalAssumptions.size());
-                    hyperScoreDecoys = new ArrayList<Boolean>(originalAssumptions.size());
+                    hyperScores = new ArrayList<>(originalAssumptions.size());
+                    hyperScoreParameters = new ArrayList<>(originalAssumptions.size());
+                    hyperScoreDecoys = new ArrayList<>(originalAssumptions.size());
                 }
 
                 for (Double originalScore : originalAssumptions.keySet()) {
@@ -281,7 +281,7 @@ public class PsmScorer {
         int totalProgress = 0;
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             for (int advocateIndex : inputMap.getIntermediateScoreInputAlgorithms(spectrumFileName)) {
-                ArrayList<Integer> scores = new ArrayList<Integer>(); //@TODO: implement scores
+                ArrayList<Integer> scores = new ArrayList<>(); //@TODO: implement scores
                 if (scores.size() > 1) {
                     for (int scoreIndex : scores) {
                         TargetDecoyMap targetDecoyMap = inputMap.getIntermediateScoreMap(spectrumFileName, advocateIndex, scoreIndex);
@@ -297,7 +297,7 @@ public class PsmScorer {
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             for (int advocateIndex : inputMap.getIntermediateScoreInputAlgorithms(spectrumFileName)) {
-                ArrayList<Integer> scores = new ArrayList<Integer>(); //@TODO: implement scores
+                ArrayList<Integer> scores = new ArrayList<>(); //@TODO: implement scores
                 if (scores.size() > 1) {
                     for (int scoreIndex : scores) {
                         TargetDecoyMap targetDecoyMap = inputMap.getIntermediateScoreMap(spectrumFileName, advocateIndex, scoreIndex);
@@ -448,7 +448,7 @@ public class PsmScorer {
         /**
          * Map of the advocates missing a hyperscore e-value for every spectrum.
          */
-        private HashMap<String, ArrayList<Integer>> missingEValues = new HashMap<String, ArrayList<Integer>>();
+        private HashMap<String, ArrayList<Integer>> missingEValues = new HashMap<>();
 
         /**
          * Constructor.

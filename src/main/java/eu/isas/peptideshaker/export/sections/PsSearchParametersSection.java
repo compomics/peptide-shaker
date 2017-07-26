@@ -49,7 +49,7 @@ public class PsSearchParametersSection {
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        searchFeatures = new ArrayList<PsSearchFeature>(exportFeatures.size());
+        searchFeatures = new ArrayList<>(exportFeatures.size());
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsSearchFeature) {
                 searchFeatures.add((PsSearchFeature) exportFeature);

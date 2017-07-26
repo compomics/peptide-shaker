@@ -385,7 +385,7 @@ public class PrideXmlExport {
 
         PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
 
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        ArrayList<UrParameter> parameters = new ArrayList<>(1);
         parameters.add(new PSParameter());
 
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
@@ -463,7 +463,7 @@ public class PrideXmlExport {
                     writeFragmentIons(spectrumMatch);
 
                     // Get scores
-                    HashMap<Integer, Double> eValues = new HashMap<Integer, Double>();
+                    HashMap<Integer, Double> eValues = new HashMap<>();
                     Double mascotScore = null, msAmandaScore = null;
                     HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getAssumptionsMap();
                     for (int se : assumptions.keySet()) {
@@ -488,7 +488,7 @@ public class PrideXmlExport {
                     }
 
                     // PTM scores
-                    ArrayList<String> modifications = new ArrayList<String>();
+                    ArrayList<String> modifications = new ArrayList<>();
 
                     Peptide peptide = bestAssumption.getPeptide();
                     if (peptide.isModified()) {
@@ -519,7 +519,7 @@ public class PrideXmlExport {
                             if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                                 PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
                                 boolean firstSite = true;
-                                ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getDSites());
+                                ArrayList<Integer> sites = new ArrayList<>(ptmScoring.getDSites());
                                 Collections.sort(sites);
                                 for (int site : sites) {
                                     if (firstSite) {
@@ -554,7 +554,7 @@ public class PrideXmlExport {
                                 if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                                     PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
                                     boolean firstSite = true;
-                                    ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
+                                    ArrayList<Integer> sites = new ArrayList<>(ptmScoring.getProbabilisticSites());
                                     Collections.sort(sites);
                                     for (int site : sites) {
                                         if (firstSite) {
@@ -606,11 +606,11 @@ public class PrideXmlExport {
                     //br.write(getCurrentTabSpace() + "<userParam name=\"Identified Charge\" value=\"" + bestAssumption.getIdentificationCharge().value + "\" />" + lineBreak);
 
                     // search engine specific parameters
-                    ArrayList<Integer> searchEngines = new ArrayList<Integer>(eValues.keySet());
+                    ArrayList<Integer> searchEngines = new ArrayList<>(eValues.keySet());
                     Collections.sort(searchEngines);
 
                     // add the search engine e-values
-                    ArrayList<Integer> algorithms = new ArrayList<Integer>(eValues.keySet());
+                    ArrayList<Integer> algorithms = new ArrayList<>(eValues.keySet());
                     Collections.sort(algorithms);
                     for (int tempAdvocate : algorithms) {
                         double eValue = eValues.get(tempAdvocate);
@@ -896,7 +896,7 @@ public class PrideXmlExport {
 
         progressDialog.setTitle("Creating PRIDE XML File. Please Wait...  (Part 1 of 2: Exporting Spectra)");
 
-        spectrumIndexes = new HashMap<String, Long>();
+        spectrumIndexes = new HashMap<>();
 
         long spectrumCounter = 0;
 

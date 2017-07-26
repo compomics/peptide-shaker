@@ -116,7 +116,7 @@ public class IdentificationFeaturesGenerator {
      */
     public void setMassErrorDistribution(String spectrumFile, ArrayList<Double> precursorMzDeviations) {
         if (massErrorDistribution == null) {
-            massErrorDistribution = new HashMap<String, NonSymmetricalNormalDistribution>(1);
+            massErrorDistribution = new HashMap<>(1);
         }
         NonSymmetricalNormalDistribution distribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistributionFromSortedList(precursorMzDeviations);
         massErrorDistribution.put(spectrumFile, distribution);
@@ -167,7 +167,7 @@ public class IdentificationFeaturesGenerator {
      * occurred while reading an mzML file
      */
     private void estimateMassErrorDistribution(String spectrumFile) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
-        ArrayList<Double> precursorMzDeviations = new ArrayList<Double>(512);
+        ArrayList<Double> precursorMzDeviations = new ArrayList<>(512);
         PSParameter psParameter = new PSParameter();
         PsmIterator psmIterator = identification.getPsmIterator(null);
         while (psmIterator.hasNext()) {
@@ -277,11 +277,11 @@ public class IdentificationFeaturesGenerator {
      */
     public ArrayList<String> getFoundModifications() {
         if (metrics == null) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
         ArrayList<String> modifications = metrics.getFoundModifications();
         if (modifications == null) {
-            modifications = new ArrayList<String>();
+            modifications = new ArrayList<>();
             for (String peptideKey : identification.getPeptideIdentification()) {
                 for (String modification : Peptide.getModificationFamily(peptideKey)) {
                     if (!modifications.contains(modification)) {
@@ -319,7 +319,7 @@ public class IdentificationFeaturesGenerator {
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         int[] aaCoverage = getAACoverage(proteinMatchKey);
-        HashMap<Integer, Double> result = new HashMap<Integer, Double>();
+        HashMap<Integer, Double> result = new HashMap<>();
         for (int validationLevel : MatchValidationLevel.getValidationLevelIndexes()) {
             result.put(validationLevel, 0.0);
         }
@@ -432,10 +432,10 @@ public class IdentificationFeaturesGenerator {
         Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
         String sequence = currentProtein.getSequence();
 
-        HashMap<Integer, ArrayList<Integer>> aminoAcids = new HashMap<Integer, ArrayList<Integer>>();
-        HashMap<Integer, boolean[]> coverage = new HashMap<Integer, boolean[]>();
+        HashMap<Integer, ArrayList<Integer>> aminoAcids = new HashMap<>();
+        HashMap<Integer, boolean[]> coverage = new HashMap<>();
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        ArrayList<UrParameter> parameters = new ArrayList<>(1);
         parameters.add(psParameter);
 
         // iterate the peptides and store the coverage for each peptide validation level
@@ -461,7 +461,7 @@ public class IdentificationFeaturesGenerator {
                 if (validationLevelCoverage == null) {
                     validationLevelCoverage = new boolean[sequence.length() + 1];
                     coverage.put(validationLevel, validationLevelCoverage);
-                    levelAminoAcids = new ArrayList<Integer>();
+                    levelAminoAcids = new ArrayList<>();
                     aminoAcids.put(validationLevel, levelAminoAcids);
                 }
                 AminoAcidPattern aminoAcidPattern = AminoAcidPattern.getAminoAcidPatternFromString(peptideSequence);
@@ -483,7 +483,7 @@ public class IdentificationFeaturesGenerator {
         for (int i = 0; i < sequence.length(); i++) {
             result[i] = MatchValidationLevel.none.getIndex();
         }
-        ArrayList<Integer> validationLevels = new ArrayList<Integer>(coverage.keySet());
+        ArrayList<Integer> validationLevels = new ArrayList<>(coverage.keySet());
         Collections.sort(validationLevels, Collections.reverseOrder());
         for (int validationLevel : validationLevels) {
             boolean[] validationLevelCoverage = coverage.get(validationLevel);
@@ -750,7 +750,7 @@ public class IdentificationFeaturesGenerator {
 
         identification.loadObjects(peptideKeys, null, false);
 
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
 
         if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
             // see if we have non-tryptic peptides
@@ -1093,7 +1093,7 @@ public class IdentificationFeaturesGenerator {
             int peptideOccurrence = 0;
 
             PSParameter psParameter = new PSParameter();
-            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+            ArrayList<UrParameter> parameters = new ArrayList<>(1);
             parameters.add(psParameter);
 
             // iterate the peptides and store the coverage for each peptide validation level
@@ -1104,7 +1104,7 @@ public class IdentificationFeaturesGenerator {
                 psParameter = (PSParameter)peptideMatch.getUrParam(psParameter);
                 if (psParameter.getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel()) {
                     String peptideSequence = Peptide.getSequence(peptideKey);
-                    ArrayList<String> possibleProteinMatches = new ArrayList<String>();
+                    ArrayList<String> possibleProteinMatches = new ArrayList<>();
 
                     for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins(sequenceMatchingPreferences)) {
                         if (identification.getProteinMap().get(protein) != null) {
@@ -1350,7 +1350,7 @@ public class IdentificationFeaturesGenerator {
         int cpt = 0;
 
         // batch load the protein parameters
-        identification.loadObjects(new ArrayList<String>(identification.getProteinIdentification()), null, false);
+        identification.loadObjects(new ArrayList<>(identification.getProteinIdentification()), null, false);
 
         for (String proteinKey : identification.getProteinIdentification()) {
             if (!ProteinMatch.isDecoy(proteinKey)) {
@@ -1409,7 +1409,7 @@ public class IdentificationFeaturesGenerator {
         int cpt = 0;
 
         // batch load the protein parameters
-        identification.loadObjects(new ArrayList<String>(identification.getProteinIdentification()), null, false);
+        identification.loadObjects(new ArrayList<>(identification.getProteinIdentification()), null, false);
 
         for (String proteinKey : identification.getProteinIdentification()) {
             if (!ProteinMatch.isDecoy(proteinKey)) {
@@ -1749,7 +1749,7 @@ public class IdentificationFeaturesGenerator {
         int cpt = 0;
 
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        ArrayList<UrParameter> parameters = new ArrayList<>(1);
         parameters.add(psParameter);
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null);
         while (peptideMatchesIterator.hasNext()) {
@@ -2136,7 +2136,7 @@ public class IdentificationFeaturesGenerator {
 
         ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(proteinMatchKey);
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        ArrayList<UrParameter> parameters = new ArrayList<>(1);
         parameters.add(psParameter);
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null);
@@ -2481,7 +2481,7 @@ public class IdentificationFeaturesGenerator {
                 }
                 result.append(ptmName).append(" (");
                 HashMap<Integer, ArrayList<Integer>> sites = psPtmScores.getAmbiguousModificationsSites(ptmName);
-                ArrayList<Integer> representativeSites = new ArrayList<Integer>(sites.keySet());
+                ArrayList<Integer> representativeSites = new ArrayList<>(sites.keySet());
                 Collections.sort(representativeSites);
                 boolean firstRepresentativeSite = true;
                 for (int representativeSite : representativeSites) {
@@ -2563,7 +2563,7 @@ public class IdentificationFeaturesGenerator {
         if (psPtmScores != null) {
 
             Collections.sort(targetedPtms);
-            ArrayList<Integer> sites = new ArrayList<Integer>();
+            ArrayList<Integer> sites = new ArrayList<>();
             for (String ptm : targetedPtms) {
                 for (Integer site : psPtmScores.getConfidentSitesForPtm(ptm)) {
                     if (!sites.contains(site)) {
@@ -2601,7 +2601,7 @@ public class IdentificationFeaturesGenerator {
 
         if (psPtmScores != null) {
 
-            ArrayList<Integer> sites = new ArrayList<Integer>();
+            ArrayList<Integer> sites = new ArrayList<>();
             for (String ptm : targetedPtms) {
                 for (Integer site : psPtmScores.getConfidentSitesForPtm(ptm)) {
                     if (!sites.contains(site)) {
@@ -2632,12 +2632,12 @@ public class IdentificationFeaturesGenerator {
         psPtmScores = (PSPtmScores) match.getUrParam(psPtmScores);
 
         if (psPtmScores != null) {
-            HashMap<Integer, ArrayList<String>> reportPerSite = new HashMap<Integer, ArrayList<String>>();
+            HashMap<Integer, ArrayList<String>> reportPerSite = new HashMap<>();
 
             for (String ptmName : targetedPtms) {
 
                 HashMap<Integer, ArrayList<Integer>> sites = psPtmScores.getAmbiguousModificationsSites(ptmName);
-                ArrayList<Integer> representativeSites = new ArrayList<Integer>(sites.keySet());
+                ArrayList<Integer> representativeSites = new ArrayList<>(sites.keySet());
                 Collections.sort(representativeSites);
 
                 for (int representativeSite : representativeSites) {
@@ -2667,14 +2667,14 @@ public class IdentificationFeaturesGenerator {
 
                     ArrayList<String> reportsAtSite = reportPerSite.get(representativeSite);
                     if (reportsAtSite == null) {
-                        reportsAtSite = new ArrayList<String>();
+                        reportsAtSite = new ArrayList<>();
                         reportPerSite.put(representativeSite, reportsAtSite);
                     }
                     reportsAtSite.add(reportAtSite.toString());
                 }
             }
 
-            ArrayList<Integer> sites = new ArrayList<Integer>(reportPerSite.keySet());
+            ArrayList<Integer> sites = new ArrayList<>(reportPerSite.keySet());
             Collections.sort(sites);
             StringBuilder result = new StringBuilder();
 
@@ -2711,7 +2711,7 @@ public class IdentificationFeaturesGenerator {
         psPtmScores = (PSPtmScores) match.getUrParam(psPtmScores);
 
         if (psPtmScores != null) {
-            ArrayList<Integer> sites = new ArrayList<Integer>();
+            ArrayList<Integer> sites = new ArrayList<>();
 
             for (String ptmName : targetedPtms) {
                 HashMap<Integer, ArrayList<Integer>> ptmAmbiguousSites = psPtmScores.getAmbiguousModificationsSites(ptmName);
@@ -2862,8 +2862,8 @@ public class IdentificationFeaturesGenerator {
 
             // sort the proteins according to the protein score, then number of peptides (inverted), then number of spectra (inverted).
             HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> orderMap
-                    = new HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>>();
-            ArrayList<Double> scores = new ArrayList<Double>();
+                    = new HashMap<>();
+            ArrayList<Double> scores = new ArrayList<>();
             PSParameter probabilities = new PSParameter();
             int maxPeptides = 0, maxSpectra = 0;
             double maxSpectrumCounting = 0, maxMW = 0;
@@ -2918,16 +2918,16 @@ public class IdentificationFeaturesGenerator {
                         }
 
                         if (!orderMap.containsKey(score)) {
-                            orderMap.put(score, new HashMap<Integer, HashMap<Integer, ArrayList<String>>>());
+                            orderMap.put(score, new HashMap<>());
                             scores.add(score);
                         }
 
                         if (!orderMap.get(score).containsKey(nPeptides)) {
-                            orderMap.get(score).put(nPeptides, new HashMap<Integer, ArrayList<String>>());
+                            orderMap.get(score).put(nPeptides, new HashMap<>());
                         }
 
                         if (!orderMap.get(score).get(nPeptides).containsKey(nSpectra)) {
-                            orderMap.get(score).get(nPeptides).put(nSpectra, new ArrayList<String>());
+                            orderMap.get(score).get(nPeptides).put(nSpectra, new ArrayList<>());
                         }
 
                         orderMap.get(score).get(nPeptides).get(nSpectra).add(proteinKey);
@@ -2952,9 +2952,9 @@ public class IdentificationFeaturesGenerator {
                 metrics.setnConfidentProteins(nConfidentProteins);
             }
 
-            ArrayList<String> proteinList = new ArrayList<String>();
+            ArrayList<String> proteinList = new ArrayList<>();
 
-            ArrayList<Double> scoreList = new ArrayList<Double>(orderMap.keySet());
+            ArrayList<Double> scoreList = new ArrayList<>(orderMap.keySet());
             Collections.sort(scoreList);
 
             if (waitingHandler != null) {
@@ -2965,12 +2965,12 @@ public class IdentificationFeaturesGenerator {
 
             for (double currentScore : scoreList) {
 
-                ArrayList<Integer> nPeptideList = new ArrayList<Integer>(orderMap.get(currentScore).keySet());
+                ArrayList<Integer> nPeptideList = new ArrayList<>(orderMap.get(currentScore).keySet());
                 Collections.sort(nPeptideList);
 
                 for (int currentNPeptides : nPeptideList) {
 
-                    ArrayList<Integer> nPsmList = new ArrayList<Integer>(orderMap.get(currentScore).get(currentNPeptides).keySet());
+                    ArrayList<Integer> nPsmList = new ArrayList<>(orderMap.get(currentScore).get(currentNPeptides).keySet());
                     Collections.sort(nPsmList);
 
                     for (int currentNPsms : nPsmList) {
@@ -3000,8 +3000,8 @@ public class IdentificationFeaturesGenerator {
         }
 
         if (hidingNeeded(filterPreferences) || identificationFeaturesCache.getProteinListAfterHiding() == null) {
-            ArrayList<String> proteinListAfterHiding = new ArrayList<String>();
-            ArrayList<String> validatedProteinList = new ArrayList<String>();
+            ArrayList<String> proteinListAfterHiding = new ArrayList<>();
+            ArrayList<String> validatedProteinList = new ArrayList<>();
             PSParameter psParameter = new PSParameter();
             int nValidatedProteins = 0;
             int nConfidentProteins = 0;
@@ -3090,11 +3090,11 @@ public class IdentificationFeaturesGenerator {
         if (!proteinKey.equals(identificationFeaturesCache.getCurrentProteinKey()) || identificationFeaturesCache.getPeptideList() == null) {
 
             ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(proteinKey);
-            HashMap<Double, HashMap<Integer, ArrayList<String>>> peptideMap = new HashMap<Double, HashMap<Integer, ArrayList<String>>>();
+            HashMap<Double, HashMap<Integer, ArrayList<String>>> peptideMap = new HashMap<>();
             int maxSpectrumCount = 0;
 
             PSParameter psParameter = new PSParameter();
-            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+            ArrayList<UrParameter> parameters = new ArrayList<>(1);
             parameters.add(psParameter);
 
             // iterate the peptides and store the coverage for each peptide validation level
@@ -3108,14 +3108,14 @@ public class IdentificationFeaturesGenerator {
                     double peptideProbabilityScore = psParameter.getPeptideProbabilityScore();
 
                     if (!peptideMap.containsKey(peptideProbabilityScore)) {
-                        peptideMap.put(peptideProbabilityScore, new HashMap<Integer, ArrayList<String>>());
+                        peptideMap.put(peptideProbabilityScore, new HashMap<>());
                     }
                     int spectrumCount = -peptideMatch.getSpectrumCount();
                     if (peptideMatch.getSpectrumCount() > maxSpectrumCount) {
                         maxSpectrumCount = peptideMatch.getSpectrumCount();
                     }
                     if (!peptideMap.get(peptideProbabilityScore).containsKey(spectrumCount)) {
-                        peptideMap.get(peptideProbabilityScore).put(spectrumCount, new ArrayList<String>());
+                        peptideMap.get(peptideProbabilityScore).put(spectrumCount, new ArrayList<>());
                     }
                     peptideMap.get(peptideProbabilityScore).get(spectrumCount).add(peptideKey);
                 }
@@ -3123,12 +3123,12 @@ public class IdentificationFeaturesGenerator {
 
             identificationFeaturesCache.setMaxSpectrumCount(maxSpectrumCount);
 
-            ArrayList<Double> scores = new ArrayList<Double>(peptideMap.keySet());
+            ArrayList<Double> scores = new ArrayList<>(peptideMap.keySet());
             Collections.sort(scores);
-            ArrayList<String> peptideList = new ArrayList<String>();
+            ArrayList<String> peptideList = new ArrayList<>();
 
             for (double currentScore : scores) {
-                ArrayList<Integer> nSpectra = new ArrayList<Integer>(peptideMap.get(currentScore).keySet());
+                ArrayList<Integer> nSpectra = new ArrayList<>(peptideMap.get(currentScore).keySet());
                 Collections.sort(nSpectra);
                 for (int currentNPsm : nSpectra) {
                     ArrayList<String> keys = peptideMap.get(currentScore).get(currentNPsm);
@@ -3171,7 +3171,7 @@ public class IdentificationFeaturesGenerator {
         if (!peptideKey.equals(identificationFeaturesCache.getCurrentPeptideKey()) || identificationFeaturesCache.getPsmList() == null || forceUpdate) {
 
             PeptideMatch currentPeptideMatch = (PeptideMatch)identification.retrieveObject(peptideKey);
-            HashMap<Integer, HashMap<Double, ArrayList<String>>> orderingMap = new HashMap<Integer, HashMap<Double, ArrayList<String>>>();
+            HashMap<Integer, HashMap<Double, ArrayList<String>>> orderingMap = new HashMap<>();
             boolean hasRT = sortOnRt;
             double rt = -1;
             int nValidatedPsms = 0;
@@ -3194,7 +3194,7 @@ public class IdentificationFeaturesGenerator {
 
                     int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                     if (!orderingMap.containsKey(charge)) {
-                        orderingMap.put(charge, new HashMap<Double, ArrayList<String>>());
+                        orderingMap.put(charge, new HashMap<>());
                     }
                     if (hasRT) {
                         try {
@@ -3212,7 +3212,7 @@ public class IdentificationFeaturesGenerator {
                         rt = psParameter.getPsmProbabilityScore();
                     }
                     if (!orderingMap.get(charge).containsKey(rt)) {
-                        orderingMap.get(charge).put(rt, new ArrayList<String>());
+                        orderingMap.get(charge).put(rt, new ArrayList<>());
                     }
                     orderingMap.get(charge).get(rt).add(spectrumKey);
                 }
@@ -3220,12 +3220,12 @@ public class IdentificationFeaturesGenerator {
 
             identificationFeaturesCache.setnValidatedPsms(nValidatedPsms);
 
-            ArrayList<Integer> charges = new ArrayList<Integer>(orderingMap.keySet());
+            ArrayList<Integer> charges = new ArrayList<>(orderingMap.keySet());
             Collections.sort(charges);
-            ArrayList<String> psmList = new ArrayList<String>();
+            ArrayList<String> psmList = new ArrayList<>();
 
             for (int currentCharge : charges) {
-                ArrayList<Double> rts = new ArrayList<Double>(orderingMap.get(currentCharge).keySet());
+                ArrayList<Double> rts = new ArrayList<>(orderingMap.get(currentCharge).keySet());
                 Collections.sort(rts);
                 for (double currentRT : rts) {
                     ArrayList<String> tempResult = orderingMap.get(currentCharge).get(currentRT);
@@ -3365,7 +3365,7 @@ public class IdentificationFeaturesGenerator {
         HashSet<String> keys = identification.getProteinMatches(peptide);
         int nValidated = 0;
         PSParameter psParameter = new PSParameter();
-        identification.loadObjects(new ArrayList<String>(keys), null, false);
+        identification.loadObjects(new ArrayList<>(keys), null, false);
         for (String key : keys) {
             psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(key)).getUrParam(psParameter);
             if (psParameter.getMatchValidationLevel().isValidated()) {

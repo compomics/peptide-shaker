@@ -43,11 +43,11 @@ public class PsPsmSection {
     /**
      * The features to export.
      */
-    private ArrayList<PsPsmFeature> psmFeatures = new ArrayList<PsPsmFeature>();
+    private ArrayList<PsPsmFeature> psmFeatures = new ArrayList<>();
     /**
      * The features to export.
      */
-    private ArrayList<PsIdentificationAlgorithmMatchesFeature> identificationAlgorithmMatchesFeatures = new ArrayList<PsIdentificationAlgorithmMatchesFeature>();
+    private ArrayList<PsIdentificationAlgorithmMatchesFeature> identificationAlgorithmMatchesFeatures = new ArrayList<>();
     /**
      * The fragment subsection if needed.
      */
@@ -74,7 +74,7 @@ public class PsPsmSection {
      * @param writer the writer which will write to the file
      */
     public PsPsmSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
-        ArrayList<ExportFeature> fragmentFeatures = new ArrayList<ExportFeature>();
+        ArrayList<ExportFeature> fragmentFeatures = new ArrayList<>();
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsPsmFeature) {
                 psmFeatures.add((PsPsmFeature) exportFeature);
@@ -145,7 +145,7 @@ public class PsPsmSection {
         }
 
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        ArrayList<UrParameter> parameters = new ArrayList<>(1);
         parameters.add(psParameter);
 
         PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
@@ -270,7 +270,7 @@ public class PsPsmSection {
         switch (psmFeature) {
             case protein_groups:
                 ArrayList<String> accessions = spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
-                HashSet<String> proteinGroups = new HashSet<String>(accessions.size());
+                HashSet<String> proteinGroups = new HashSet<>(accessions.size());
                 for (String accession : accessions) {
                     HashSet<String> groups = identification.getProteinMap().get(accession);
                     if (groups != null) {
@@ -278,7 +278,7 @@ public class PsPsmSection {
                     }
                 }
                 StringBuilder proteins = new StringBuilder();
-                ArrayList<String> proteinGroupsList = new ArrayList<String>(proteinGroups);
+                ArrayList<String> proteinGroupsList = new ArrayList<>(proteinGroups);
                 Collections.sort(proteinGroupsList);
                 if (proteinGroupsList.size() > 1) {
                     identification.loadObjects(proteinGroupsList, waitingHandler, false);
@@ -309,14 +309,14 @@ public class PsPsmSection {
             case best_protein_group_validation:
                 MatchValidationLevel bestProteinValidationLevel = MatchValidationLevel.none;
                 accessions = spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
-                proteinGroups = new HashSet<String>(accessions.size());
+                proteinGroups = new HashSet<>(accessions.size());
                 for (String accession : accessions) {
                     HashSet<String> groups = identification.getProteinMap().get(accession);
                     if (groups != null) {
                         proteinGroups.addAll(groups);
                     }
                 }
-                proteinGroupsList = new ArrayList<String>(proteinGroups);
+                proteinGroupsList = new ArrayList<>(proteinGroups);
                 Collections.sort(proteinGroupsList);
                 if (proteinGroupsList.size() > 1) {
                     identification.loadObjects(proteinGroupsList, waitingHandler, false);
@@ -336,11 +336,11 @@ public class PsPsmSection {
                     ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
                     if (ptmScores != null) {
                         StringBuilder result = new StringBuilder();
-                        ArrayList<String> modList = new ArrayList<String>(ptmScores.getScoredPTMs());
+                        ArrayList<String> modList = new ArrayList<>(ptmScores.getScoredPTMs());
                         Collections.sort(modList);
                         for (String mod : modList) {
                             PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                            ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
+                            ArrayList<Integer> sites = new ArrayList<>(ptmScoring.getProbabilisticSites());
                             if (!sites.isEmpty()) {
                                 Collections.sort(sites);
                                 if (result.length() > 0) {
@@ -369,11 +369,11 @@ public class PsPsmSection {
                     PSPtmScores ptmScores = new PSPtmScores();
                     ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
                     if (ptmScores != null) {
-                        ArrayList<String> modList = new ArrayList<String>(ptmScores.getScoredPTMs());
+                        ArrayList<String> modList = new ArrayList<>(ptmScores.getScoredPTMs());
                         Collections.sort(modList);
                         for (String mod : modList) {
                             PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                            ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getDSites());
+                            ArrayList<Integer> sites = new ArrayList<>(ptmScoring.getDSites());
                             if (!sites.isEmpty()) {
                                 Collections.sort(sites);
                                 if (result.length() > 0) {
@@ -462,7 +462,7 @@ public class PsPsmSection {
                 }
                 return "";
             case algorithm_score:
-                HashMap<Integer, PeptideAssumption> assumptionMap = new HashMap<Integer, PeptideAssumption>();
+                HashMap<Integer, PeptideAssumption> assumptionMap = new HashMap<>();
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
                     HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = spectrumMatch.getAssumptionsMap();
                     for (Integer id : assumptionsMap.keySet()) {
@@ -484,7 +484,7 @@ public class PsPsmSection {
                         }
                     }
                 }
-                ArrayList<Integer> ids = new ArrayList<Integer>(assumptionMap.keySet());
+                ArrayList<Integer> ids = new ArrayList<>(assumptionMap.keySet());
                 Collections.sort(ids);
                 StringBuilder result = new StringBuilder();
                 for (int id : ids) {
@@ -538,7 +538,7 @@ public class PsPsmSection {
             case confident_phosphosites:
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
                     String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
-                    ArrayList<String> modifications = new ArrayList<String>();
+                    ArrayList<String> modifications = new ArrayList<>();
                     for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                         if (ptm.toLowerCase().contains("phospho")) {
                             modifications.add(ptm);
@@ -548,7 +548,7 @@ public class PsPsmSection {
                 }
                 return "";
             case confident_phosphosites_number:
-                ArrayList<String> modifications = new ArrayList<String>();
+                ArrayList<String> modifications = new ArrayList<>();
                 for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.toLowerCase().contains("phospho")) {
                         modifications.add(ptm);
@@ -558,7 +558,7 @@ public class PsPsmSection {
             case ambiguous_phosphosites:
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
                     String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
-                    modifications = new ArrayList<String>();
+                    modifications = new ArrayList<>();
                     for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                         if (ptm.toLowerCase().contains("phospho")) {
                             modifications.add(ptm);
@@ -568,7 +568,7 @@ public class PsPsmSection {
                 }
                 return "";
             case ambiguous_phosphosites_number:
-                modifications = new ArrayList<String>();
+                modifications = new ArrayList<>();
                 for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.toLowerCase().contains("phospho")) {
                         modifications.add(ptm);
