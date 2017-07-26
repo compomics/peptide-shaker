@@ -65,15 +65,15 @@ public class PsmImporter {
     /**
      * The protein sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The PTM factory.
      */
-    private PTMFactory ptmFactory = PTMFactory.getInstance();
+    private final PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * Indicates whether the check for X!Tandem modifications was done.
      */
@@ -89,7 +89,7 @@ public class PsmImporter {
     /**
      * The processing preferences.
      */
-    private ProcessingPreferences processingPreferences;
+    private final ProcessingPreferences processingPreferences;
     /**
      * The progress of the import.
      */
@@ -125,15 +125,15 @@ public class PsmImporter {
     /**
      * The id file reader where the PSMs are from.
      */
-    private IdfileReader fileReader;
+    private final IdfileReader fileReader;
     /**
      * The identification file where the PSMs are from.
      */
-    private File idFile;
+    private final File idFile;
     /**
      * List of ignored modifications.
      */
-    private ArrayList<Integer> ignoredModifications = new ArrayList<>(2);
+    private final HashSet<Integer> ignoredModifications = new HashSet<>(2);
     /**
      * The maximal peptide mass error found in ppm.
      */
@@ -154,42 +154,40 @@ public class PsmImporter {
      * The amount added per amino acid residue as part of the reference mass
      * when converting Dalton tolerances to ppm.
      */
-    private double amountPerAminoAcidResidue = 100;
+    private final double amountPerAminoAcidResidue = 100.0;
     /**
      * List of charges found.
      */
-    private HashSet<Integer> charges = new HashSet<>();
+    private final HashSet<Integer> charges = new HashSet<>();
     /**
      * List of one hit wonders.
      */
-    private HashSet<String> singleProteinList;
+    private final HashSet<String> singleProteinList;
     /**
      * Map of proteins found several times with the number of times they
      * appeared as first hit.
      */
-    private HashMap<String, Integer> proteinCount;
+    private final HashMap<String, Integer> proteinCount;
     /**
-     * The database connection.
+     * The identification object database.
      */
-    private Identification identification;
+    private final Identification identification;
     /**
      * The input map.
      */
-    private InputMap inputMap;
+    private final InputMap inputMap;
     /**
      * The exception handler.
      */
-    private ExceptionHandler exceptionHandler;
+    private final ExceptionHandler exceptionHandler;
     /**
      * The identification parameters.
      */
-    private IdentificationParameters identificationParameters;
+    private final IdentificationParameters identificationParameters;
 
     /**
      * Constructor.
      *
-     * @param peptideShakerCache the cache to use when memory issues are
-     * encountered
      * @param identificationParameters the identification parameters
      * @param processingPreferences the processing preferences
      * @param fileReader the reader of the file which the matches are imported
@@ -237,34 +235,6 @@ public class PsmImporter {
      */
     public void importPsms(LinkedList<SpectrumMatch> idFileSpectrumMatches, int nThreads, WaitingHandler waitingHandler)
             throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
-        if (nThreads == 1) {
-            importPsmsSingleThread(idFileSpectrumMatches, waitingHandler);
-        } else {
-            importPsmsMultipleThreads(idFileSpectrumMatches, nThreads, waitingHandler);
-        }
-    }
-
-    /**
-     * Imports PSMs using multiple threads.
-     *
-     * @param idFileSpectrumMatches the PSMs to import
-     * @param nThreads the number of threads to use
-     * @param waitingHandler waiting handler to display progress and allow
-     * canceling the import
-     *
-     * @throws IOException exception thrown whenever an IO exception occurred
-     * while reading or writing to a file
-     * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while
-     * @throws SQLException exception thrown whenever an SQL exception occurred
-     * while interacting with the database
-     * @throws ClassNotFoundException exception thrown whenever an exception
-     * occurred while deserializing an object
-     * @throws MzMLUnmarshallerException exception thrown whenever an exception
-     * occurred while reading an mzML file
-     */
-    public void importPsmsMultipleThreads(LinkedList<SpectrumMatch> idFileSpectrumMatches, int nThreads, WaitingHandler waitingHandler)
-            throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         ExecutorService pool = Executors.newFixedThreadPool(nThreads);
         while (!idFileSpectrumMatches.isEmpty()) {
@@ -279,34 +249,6 @@ public class PsmImporter {
         pool.shutdown();
         if (!pool.awaitTermination(1, TimeUnit.DAYS)) {
             throw new InterruptedException("PSM import timed out. Please contact the developers.");
-        }
-    }
-
-    /**
-     * Imports PSMs using a single thread
-     *
-     * @param idFileSpectrumMatches the PSMs to import
-     * @param waitingHandler waiting handler to display progress and allow
-     * canceling the import
-     *
-     * @throws IOException exception thrown whenever an IO exception occurred
-     * while reading or writing to a file
-     * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while
-     * @throws SQLException exception thrown whenever an SQL exception occurred
-     * while interacting with the database
-     * @throws ClassNotFoundException exception thrown whenever an exception
-     * occurred while deserializing an object
-     * @throws MzMLUnmarshallerException exception thrown whenever an exception
-     * occurred while reading an mzML file
-     */
-    private void importPsmsSingleThread(LinkedList<SpectrumMatch> idFileSpectrumMatches, WaitingHandler waitingHandler)
-            throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
-
-        PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
-        while (!idFileSpectrumMatches.isEmpty()) {
-            SpectrumMatch match = idFileSpectrumMatches.pollLast();
-            importPsm(match, peptideSpectrumAnnotator, waitingHandler);
         }
     }
 
@@ -333,39 +275,33 @@ public class PsmImporter {
     private void importPsm(SpectrumMatch algorithmMatch, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
             throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
-
         nPSMs++;
+
+        importAssumptions(algorithmMatch, peptideSpectrumAnnotator, waitingHandler);
 
         String spectrumKey = algorithmMatch.getKey();
 
-        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> matchAssumptions = algorithmMatch.getAssumptionsMap();
-        
         SpectrumMatch dbMatch = (SpectrumMatch) identification.retrieveObject(spectrumKey);
 
-        if (matchAssumptions == null && dbMatch == null) {
-            
-            throw new IllegalArgumentException("No identification assumption found for PSM " + spectrumKey + ".");
-            
-        } else if (matchAssumptions != null && dbMatch != null) {
-                    
+        if (dbMatch != null) {
+
+            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> newAssumptions = algorithmMatch.getAssumptionsMap();
+
             HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> dbAssumptions = dbMatch.getAssumptionsMap();
 
             HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> combinedAssumptions
-                    = new HashMap<>(Math.max(matchAssumptions.size(), dbAssumptions.size()));
-            
-            mergeAssumptions(matchAssumptions, combinedAssumptions);
+                    = new HashMap<>(Math.max(newAssumptions.size(), dbAssumptions.size()));
+
+            mergeAssumptions(newAssumptions, combinedAssumptions);
             mergeAssumptions(dbAssumptions, combinedAssumptions);
-            
+
             dbMatch.setAssumptionMap(combinedAssumptions);
-            
+
         } else {
-            
-            dbMatch = algorithmMatch;
-            identification.addObject(dbMatch.getKey(), dbMatch);
-            
+
+            identification.addObject(spectrumKey, algorithmMatch);
+
         }
-        
-        importAssumptions(dbMatch, peptideSpectrumAnnotator, waitingHandler);
 
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -375,12 +311,12 @@ public class PsmImporter {
 
     /**
      * Extracts the assumptions and adds them to the provided map.
-     * 
+     *
      * @param matchAssumptions the match assumptions
      * @param combinedAssumptions the combined assumptions
      */
     private void mergeAssumptions(HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> matchAssumptions, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> combinedAssumptions) {
-        
+
         for (Integer algorithm : matchAssumptions.keySet()) {
             HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> algorithmMap = matchAssumptions.get(algorithm);
             HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> combinedAlgorithmMap = combinedAssumptions.get(algorithm);
@@ -437,12 +373,12 @@ public class PsmImporter {
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
 
         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = spectrumMatch.getAssumptionsMap();
-        
+
         nHitsTotal += assumptions.values().stream()
                 .flatMap(assumptionsForAdvocate -> assumptionsForAdvocate.values().stream())
                 .mapToInt(assumptionAtScore -> assumptionAtScore.size())
                 .sum();
-     
+
         for (int advocateId : spectrumMatch.getAssumptionsMap().keySet()) {
 
             if (advocateId == Advocate.xtandem.getIndex()) {
@@ -572,7 +508,7 @@ public class PsmImporter {
                                             HashSet<String> allNames = new HashSet<>();
                                             for (ArrayList<String> namesAtAA : tempNames.values()) {
                                                 for (String name : namesAtAA) {
-                                                        allNames.add(name);
+                                                    allNames.add(name);
                                                 }
                                             }
                                             modNames.put(modMatch, new ArrayList<>(allNames));
@@ -1404,18 +1340,18 @@ public class PsmImporter {
         /**
          * The spectrum match to import.
          */
-        private SpectrumMatch spectrumMatch;
+        private final SpectrumMatch spectrumMatch;
 
         /**
          * The waiting handler.
          */
-        private WaitingHandler waitingHandler;
+        private final WaitingHandler waitingHandler;
 
         /**
          * The peptide spectrum annotator used to annotate spectra for this
          * thread.
          */
-        private PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
+        private final PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
 
         /**
          * Constructor.
