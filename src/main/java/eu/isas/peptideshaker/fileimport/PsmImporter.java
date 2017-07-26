@@ -313,7 +313,7 @@ public class PsmImporter {
     /**
      * Imports a PSM.
      *
-     * @param spectrumMatch the spectrum match to import
+     * @param algorithmMatch the spectrum match to import
      * @param peptideSpectrumAnnotator the spectrum annotator to use to annotate
      * spectra
      * @param waitingHandler waiting handler to display progress and allow
@@ -330,30 +330,42 @@ public class PsmImporter {
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
      */
-    private void importPsm(SpectrumMatch spectrumMatch, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
+    private void importPsm(SpectrumMatch algorithmMatch, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
             throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
 
         nPSMs++;
 
-        String spectrumKey = spectrumMatch.getKey();
+        String spectrumKey = algorithmMatch.getKey();
 
-        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> matchAssumptions = spectrumMatch.getAssumptionsMap();
-        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> rawDbAssumptions = null;
-        if (fileReader.hasDeNovoTags()) { // for now only de novo results are stored in the database at this point
-            rawDbAssumptions = ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getRawAssumptions();
-        }
+        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> matchAssumptions = algorithmMatch.getAssumptionsMap();
+        
+        SpectrumMatch dbMatch = (SpectrumMatch) identification.retrieveObject(spectrumKey);
 
-        if (matchAssumptions == null && rawDbAssumptions == null) {
+        if (matchAssumptions == null && dbMatch == null) {
+            
             throw new IllegalArgumentException("No identification assumption found for PSM " + spectrumKey + ".");
-        } else if (matchAssumptions != null && rawDbAssumptions != null) {
+            
+        } else if (matchAssumptions != null && dbMatch != null) {
+                    
+            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> dbAssumptions = dbMatch.getAssumptionsMap();
+
             HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> combinedAssumptions
-                    = new HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>>(Math.max(matchAssumptions.size(), rawDbAssumptions.size()));
-            getAssumptions(matchAssumptions, combinedAssumptions);
-            getAssumptions(rawDbAssumptions, combinedAssumptions);
-            spectrumMatch.setAssumptionMap(combinedAssumptions);
+                    = new HashMap<>(Math.max(matchAssumptions.size(), dbAssumptions.size()));
+            
+            mergeAssumptions(matchAssumptions, combinedAssumptions);
+            mergeAssumptions(dbAssumptions, combinedAssumptions);
+            
+            dbMatch.setAssumptionMap(combinedAssumptions);
+            
+        } else {
+            
+            dbMatch = algorithmMatch;
+            identification.addObject(dbMatch.getKey(), dbMatch);
+            
         }
-        importAssumptions(spectrumMatch, peptideSpectrumAnnotator, waitingHandler);
+        
+        importAssumptions(dbMatch, peptideSpectrumAnnotator, waitingHandler);
 
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -367,7 +379,8 @@ public class PsmImporter {
      * @param matchAssumptions the match assumptions
      * @param combinedAssumptions the combined assumptions
      */
-    private void getAssumptions(HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> matchAssumptions, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> combinedAssumptions) {
+    private void mergeAssumptions(HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> matchAssumptions, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> combinedAssumptions) {
+        
         for (Integer algorithm : matchAssumptions.keySet()) {
             HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> algorithmMap = matchAssumptions.get(algorithm);
             HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> combinedAlgorithmMap = combinedAssumptions.get(algorithm);
@@ -440,11 +453,11 @@ public class PsmImporter {
             HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> assumptionsForAdvocate = assumptions.get(advocateId);
 
             // Map PTMs
-            HashSet<Double> scores = new HashSet<Double>(assumptionsForAdvocate.keySet());
+            HashSet<Double> scores = new HashSet<>(assumptionsForAdvocate.keySet());
             for (Double eValue : scores) {
 
                 ArrayList<SpectrumIdentificationAssumption> oldAssumptions = assumptionsForAdvocate.get(eValue);
-                ArrayList<SpectrumIdentificationAssumption> newAssumptions = new ArrayList<SpectrumIdentificationAssumption>(oldAssumptions.size());
+                ArrayList<SpectrumIdentificationAssumption> newAssumptions = new ArrayList<>(oldAssumptions.size());
 
                 for (SpectrumIdentificationAssumption assumption : oldAssumptions) {
 
@@ -603,11 +616,11 @@ public class PsmImporter {
             PeptideAssumption firstPeptideHitNoProtein = null;
             TagAssumption firstTagHit = null;
             if (!assumptionsForAdvocate.isEmpty()) {
-                ArrayList<Double> eValues = new ArrayList<Double>(assumptionsForAdvocate.keySet());
+                ArrayList<Double> eValues = new ArrayList<>(assumptionsForAdvocate.keySet());
                 Collections.sort(eValues);
                 for (Double eValue : eValues) {
-                    ArrayList<PeptideAssumption> firstHits = new ArrayList<PeptideAssumption>(1);
-                    ArrayList<PeptideAssumption> firstHitsNoProteins = new ArrayList<PeptideAssumption>(1);
+                    ArrayList<PeptideAssumption> firstHits = new ArrayList<>(1);
+                    ArrayList<PeptideAssumption> firstHitsNoProteins = new ArrayList<>(1);
                     for (SpectrumIdentificationAssumption assumption : assumptionsForAdvocate.get(eValue)) {
                         if (assumption instanceof PeptideAssumption) {
                             PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
@@ -655,16 +668,14 @@ public class PsmImporter {
                 }
                 if (firstPeptideHit != null) {
                     checkPeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHit);
-                    identification.addObject(spectrumKey, spectrumMatch);
                 }
                 if (firstPeptideHit == null) {
                     // Check if a peptide with no protein can be a good candidate
                     if (firstPeptideHitNoProtein != null) {
                         checkPeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHitNoProtein);
-                        identification.addObject(spectrumKey, spectrumMatch);
                     } else {
                         // Try to find the best tag hit
-                        eValues = new ArrayList<Double>(assumptionsForAdvocate.keySet());
+                        eValues = new ArrayList<>(assumptionsForAdvocate.keySet());
                         Collections.sort(eValues);
                         for (Double eValue : eValues) {
                             for (SpectrumIdentificationAssumption assumption : assumptionsForAdvocate.get(eValue)) {
@@ -672,7 +683,6 @@ public class PsmImporter {
                                     TagAssumption tagAssumption = (TagAssumption) assumption;
                                     firstTagHit = tagAssumption;
                                     checkTagMassErrorsAndCharge(spectrumKey, tagAssumption);
-                                    identification.addObject(spectrumKey, spectrumMatch);
                                     break;
                                 }
                             }

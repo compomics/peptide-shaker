@@ -127,35 +127,33 @@ public class BestMatchSelection {
 
         while (psmIterator.hasNext()) {
 
-            SpectrumMatch advocateMatch = psmIterator.next();
-            
+            SpectrumMatch spectrumMatch = psmIterator.next();
             
             // since the spectra should not be removed any more from the database,
             // every instance gets a dummy PSParameter to avoid crashes in the
             // according PeptideShaker process
             PSParameter dummyParameter = new PSParameter();
             dummyParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
-            advocateMatch.addUrParam(dummyParameter);
+            spectrumMatch.addUrParam(dummyParameter);
             
-            String spectrumKey = advocateMatch.getKey();
-                    
+            String spectrumKey = spectrumMatch.getKey();
 
             // map of the peptide first hits for this spectrum: score -> max protein count -> max search engine votes -> amino acids annotated -> min mass deviation -> peptide sequence
             HashMap<Double, HashMap<Integer, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>>>> peptideAssumptions
-                    = new HashMap<Double, HashMap<Integer, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>>>>();
+                    = new HashMap<>();
 
             // map of the tag first hits: score -> assumptions
-            HashMap<Double, ArrayList<TagAssumption>> tagAssumptions = new HashMap<Double, ArrayList<TagAssumption>>();
+            HashMap<Double, ArrayList<TagAssumption>> tagAssumptions = new HashMap<>();
 
-            HashSet<String> identifications = new HashSet<String>();
+            HashSet<String> identifications = new HashSet<>();
 
-            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = advocateMatch.getAssumptionsMap();
+            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = spectrumMatch.getAssumptionsMap();
 
             for (int searchEngine1 : assumptions.keySet()) {
 
                 HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocate1Map = assumptions.get(searchEngine1);
 
-                ArrayList<Double> eValues1 = new ArrayList<Double>(advocate1Map.keySet());
+                ArrayList<Double> eValues1 = new ArrayList<>(advocate1Map.keySet());
                 Collections.sort(eValues1);
 
                 for (Double eValue1 : eValues1) {
@@ -214,7 +212,7 @@ public class BestMatchSelection {
                                             HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocate2Map = assumptions.get(searchEngine2);
 
                                             boolean found = false;
-                                            ArrayList<Double> eValues2 = new ArrayList<Double>(advocate2Map.keySet());
+                                            ArrayList<Double> eValues2 = new ArrayList<>(advocate2Map.keySet());
                                             Collections.sort(eValues2);
 
                                             for (double eValue2 : eValues2) {
@@ -246,13 +244,13 @@ public class BestMatchSelection {
 
                                     HashMap<Integer, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>>> pMap = peptideAssumptions.get(p);
                                     if (pMap == null) {
-                                        pMap = new HashMap<Integer, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>>>(advocate1Map.size());
+                                        pMap = new HashMap<>(advocate1Map.size());
                                         peptideAssumptions.put(p, pMap);
                                     }
 
                                     HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>> proteinMaxMap = pMap.get(proteinMax);
                                     if (proteinMaxMap == null) {
-                                        proteinMaxMap = new HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>>(1);
+                                        proteinMaxMap = new HashMap<>(1);
                                         pMap.put(proteinMax, proteinMaxMap);
                                     }
 
@@ -288,8 +286,8 @@ public class BestMatchSelection {
 
                                         coverageMap = nSeMap.get(nIons);
                                         if (coverageMap == null) {
-                                            coverageMap = new HashMap<Double, HashMap<String, PeptideAssumption>>(1);
-                                            HashMap<String, PeptideAssumption> assumptionMap = new HashMap<String, PeptideAssumption>(1);
+                                            coverageMap = new HashMap<>(1);
+                                            HashMap<String, PeptideAssumption> assumptionMap = new HashMap<>(1);
                                             assumptionMap.put(peptideAssumption1.getPeptide().getSequenceWithLowerCasePtms(), peptideAssumption1);
                                             coverageMap.put(-1.0, assumptionMap);
                                             nSeMap.put(nIons, coverageMap);
@@ -306,7 +304,7 @@ public class BestMatchSelection {
                                             double massError = Math.abs(peptideAssumption1.getDeltaMass(spectrum.getPrecursor().getMz(), searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
                                             assumptionMap = coverageMap.get(massError);
                                             if (assumptionMap == null) {
-                                                assumptionMap = new HashMap<String, PeptideAssumption>(1);
+                                                assumptionMap = new HashMap<>(1);
                                                 coverageMap.put(massError, assumptionMap);
                                             }
                                             assumptionMap.put(peptideAssumption1.getPeptide().getSequenceWithLowerCasePtms(), peptideAssumption1);
@@ -318,7 +316,7 @@ public class BestMatchSelection {
                             TagAssumption tagAssumption = (TagAssumption) assumption1;
                             ArrayList<TagAssumption> assumptionList = tagAssumptions.get(eValue1);
                             if (assumptionList == null) {
-                                assumptionList = new ArrayList<TagAssumption>();
+                                assumptionList = new ArrayList<>();
                                 tagAssumptions.put(eValue1, assumptionList);
                             }
                             assumptionList.add(tagAssumption);
@@ -329,15 +327,11 @@ public class BestMatchSelection {
                     }
                 }
             }
-
-            //SpectrumMatch spectrumMatch = new SpectrumMatch(spectrumFile, spectrumTitle);
-            
-            SpectrumMatch spectrumMatch = advocateMatch;
             
             if (!peptideAssumptions.isEmpty()) {
 
                 PeptideAssumption bestPeptideAssumption = null;
-                ArrayList<Double> ps = new ArrayList<Double>(peptideAssumptions.keySet());
+                ArrayList<Double> ps = new ArrayList<>(peptideAssumptions.keySet());
                 Collections.sort(ps);
                 double retainedP = 0;
 
@@ -345,19 +339,19 @@ public class BestMatchSelection {
 
                     retainedP = p;
                     HashMap<Integer, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>>> pMap = peptideAssumptions.get(p);
-                    ArrayList<Integer> proteinMaxs = new ArrayList<Integer>(pMap.keySet());
+                    ArrayList<Integer> proteinMaxs = new ArrayList<>(pMap.keySet());
                     Collections.sort(proteinMaxs, Collections.reverseOrder());
 
                     for (int proteinMax : proteinMaxs) {
 
                         HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>> proteinMaxMap = pMap.get(proteinMax);
-                        ArrayList<Integer> nSEs = new ArrayList<Integer>(proteinMaxMap.keySet());
+                        ArrayList<Integer> nSEs = new ArrayList<>(proteinMaxMap.keySet());
                         Collections.sort(nSEs, Collections.reverseOrder());
 
                         for (int nSE : nSEs) {
 
                             HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>> nSeMap = proteinMaxMap.get(nSE);
-                            ArrayList<Integer> coverages = new ArrayList<Integer>(nSeMap.keySet());
+                            ArrayList<Integer> coverages = new ArrayList<>(nSeMap.keySet());
                             Collections.sort(coverages, Collections.reverseOrder());
 
                             for (Integer coverage : coverages) {
@@ -475,10 +469,10 @@ public class BestMatchSelection {
 
                     // create a PeptideShaker match based on the best search engine match
                     Peptide sePeptide = bestPeptideAssumption.getPeptide();
-                    ArrayList<String> psProteins = new ArrayList<String>(sePeptide.getParentProteins(sequenceMatchingPreferences));
+                    ArrayList<String> psProteins = new ArrayList<>(sePeptide.getParentProteins(sequenceMatchingPreferences));
                     ArrayList<ModificationMatch> psModificationMatches = null;
                     if (sePeptide.isModified()) {
-                        psModificationMatches = new ArrayList<ModificationMatch>(sePeptide.getNModifications());
+                        psModificationMatches = new ArrayList<>(sePeptide.getNModifications());
                         for (ModificationMatch seModMatch : sePeptide.getModificationMatches()) {
                             psModificationMatches.add(new ModificationMatch(seModMatch.getTheoreticPtm(), seModMatch.getVariable(), seModMatch.getModificationSite()));
                         }
@@ -504,11 +498,11 @@ public class BestMatchSelection {
                         validationMapKey += psAssumption.getIdentificationCharge().value;
                     }
                     psParameter.setSpecificMapKey(validationMapKey);
-                    advocateMatch.addUrParam(psParameter);
+                    spectrumMatch.addUrParam(psParameter);
                 }
             }
             if (!tagAssumptions.isEmpty()) {
-                ArrayList<Double> evalues = new ArrayList<Double>(tagAssumptions.keySet());
+                ArrayList<Double> evalues = new ArrayList<>(tagAssumptions.keySet());
                 Double bestEvalue = Collections.min(evalues);
                 TagAssumption bestAssumption = tagAssumptions.get(bestEvalue).get(0);
                 spectrumMatch.setBestTagAssumption(bestAssumption);
@@ -522,7 +516,7 @@ public class BestMatchSelection {
                     psParameter.setAlgorithmDeltaPEP(matchParameter.getAlgorithmDeltaPEP());
                     psParameter.setDeltaPEP(matchParameter.getDeltaPEP());
                     psParameter.setSpecificMapKey(spectrumMatch.getBestTagAssumption().getIdentificationCharge().value + "");
-                    advocateMatch.addUrParam(psParameter);
+                    spectrumMatch.addUrParam(psParameter);
                 }
             }
             waitingHandler.increaseSecondaryProgressCounter();

@@ -20,9 +20,8 @@ import com.compomics.util.experiment.identification.identifications.Ms2Identific
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.io.ConfigurationFile;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import com.compomics.util.waiting.WaitingHandler;
@@ -71,14 +70,6 @@ public class PeptideShaker {
      * The experiment conducted.
      */
     private ProjectParameters projectParameters;
-    /**
-     * The sample analyzed.
-     */
-    private Sample sample;
-    /**
-     * The replicate number.
-     */
-    private int replicateNumber;
     /**
      * The validator which will take care of the matches validation
      */
@@ -258,6 +249,7 @@ public class PeptideShaker {
             ProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails)
             throws Exception {
 
+        identification.getObjectsDB().commit();
         
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, metrics, spectrumCountingPreferences);
 
@@ -288,6 +280,7 @@ public class PeptideShaker {
             waitingHandler.appendReport("Scoring PSMs.", true, true);
             psmScorer.scorePsms(identification, inputMap, processingPreferences, identificationParameters, waitingHandler);
         }
+        identification.getObjectsDB().commit();
 
         if (sequenceFactory.concatenatedTargetDecoy()) {
             waitingHandler.appendReport("Computing assumptions probabilities.", true, true);
@@ -299,7 +292,11 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
 
+        
+        
+        
         if (sequenceFactory.concatenatedTargetDecoy()) {
             waitingHandler.appendReport("Saving assumptions probabilities.", true, true);
         } else {
@@ -310,10 +307,12 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
         
         
 
         waitingHandler.appendReport("Selecting best peptide per spectrum.", true, true);
+        System.out.println("Selecting best peptide per spectrum.");
         BestMatchSelection bestMatchSelection = new BestMatchSelection(identification, proteinCount, matchesValidator, metrics);
         bestMatchSelection.selectBestHitAndFillPsmMap(inputMap, waitingHandler, identificationParameters);
         IdMatchValidationPreferences idMatchValidationPreferences = identificationParameters.getIdValidationPreferences();
@@ -324,6 +323,13 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
+        
+        
+        
+        
+        
+        System.out.println("num Proteins: " + identification.getNumber(ProteinMatch.class));
 
         if (sequenceFactory.concatenatedTargetDecoy()) {
             waitingHandler.appendReport("Computing PSM probabilities.", true, true);
@@ -334,6 +340,11 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
+        
+        
+        
+        
 
         String report = "Scoring PTMs in PSMs (D-score";
         PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
@@ -347,6 +358,10 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
+        
+        
+        
 
         if (ptmScoringPreferences.isEstimateFlr()) {
             waitingHandler.appendReport("Thresholding PTM localizations.", true, true);
@@ -361,6 +376,10 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
+        
+        
+        
 
         if (ptmScoringPreferences.getAlignNonConfidentPTMs()) {
             waitingHandler.appendReport("Resolving peptide inference issues.", true, true);
@@ -370,13 +389,23 @@ public class PeptideShaker {
                 return;
             }
         }
+        identification.getObjectsDB().commit();
         
+        
+        
+        
+        System.out.println("num Proteins: " + identification.getNumber(ProteinMatch.class));
         waitingHandler.appendReport("Saving probabilities, building peptides and proteins.", true, true);
         attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(identificationParameters.getSequenceMatchingPreferences(), waitingHandler); // @TODO: this is very slow if memory is full!!
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
+        System.out.println("num Proteins: " + identification.getNumber(ProteinMatch.class));
+        
+        
+        
 
         ProteinInference proteinInference = new ProteinInference();
         if (identificationParameters.getProteinInferencePreferences().getSimplifyGroups()) {
@@ -387,6 +416,10 @@ public class PeptideShaker {
                 return;
             }
         }
+        identification.getObjectsDB().commit();
+        
+        
+        
 
         waitingHandler.appendReport("Generating peptide map.", true, true);
         matchesValidator.fillPeptideMaps(identification, metrics, waitingHandler, identificationParameters);
@@ -396,6 +429,10 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
+        
+        
+        
 
         if (sequenceFactory.concatenatedTargetDecoy()) {
             waitingHandler.appendReport("Computing peptide probabilities.", true, true);
@@ -406,6 +443,10 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
+        
+        
+        
 
         waitingHandler.appendReport("Saving peptide probabilities.", true, true);
         matchesValidator.attachPeptideProbabilities(identification, waitingHandler);
@@ -413,6 +454,10 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
+        
+        
+        
 
         waitingHandler.appendReport("Generating protein map.", true, true);
         matchesValidator.fillProteinMap(identification, waitingHandler);
@@ -420,6 +465,10 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
+        
+        
+        
 
         waitingHandler.appendReport("Resolving protein inference issues, inferring peptide and protein PI status.", true, true); // could be slow
         proteinInference.retainBestScoringGroups(identification, metrics, matchesValidator.getProteinMap(), identificationParameters, identificationFeaturesGenerator, waitingHandler);
@@ -427,6 +476,10 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
+        
+        
+        
 
         if (sequenceFactory.concatenatedTargetDecoy()) {
             waitingHandler.appendReport("Correcting protein probabilities.", true, true);
@@ -437,6 +490,10 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
+        
+        
+        
 
         waitingHandler.appendReport("Saving protein probabilities.", true, true);
         matchesValidator.attachProteinProbabilities(identification, metrics, waitingHandler, identificationParameters.getFractionSettings());
@@ -444,6 +501,10 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
+        
+        
+        
 
         if (sequenceFactory.concatenatedTargetDecoy()) {
             if (idMatchValidationPreferences.getDefaultPsmFDR() == 1
@@ -461,6 +522,10 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
+        
+        
+        
 
         waitingHandler.appendReport("Scoring PTMs in peptides.", true, true);
         ptmScorer.scorePeptidePtms(identification, waitingHandler, identificationParameters);
@@ -468,6 +533,10 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
+        
+        
+        
 
         waitingHandler.appendReport("Scoring PTMs in proteins.", true, true);
         ptmScorer.scoreProteinPtms(identification, metrics, waitingHandler, identificationParameters, identificationFeaturesGenerator);
@@ -475,6 +544,10 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        identification.getObjectsDB().commit();
+        
+        
+        
 
         projectCreationDuration.end();
         report = "Identification processing completed (" + projectCreationDuration.toString() + ").";
@@ -558,7 +631,6 @@ public class PeptideShaker {
         waitingHandler.appendReportEndLine();
         waitingHandler.appendReportEndLine();
         identification.addUrParam(new PSMaps(matchesValidator.getPsmMap(), matchesValidator.getPeptideMap(), matchesValidator.getProteinMap(), inputMap, ptmScorer.getPsmPTMMap()));
-        identification.getObjectsDB().dumpToDB();
         waitingHandler.setRunFinished();
         
         
