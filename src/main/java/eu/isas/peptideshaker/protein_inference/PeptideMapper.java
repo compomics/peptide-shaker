@@ -354,7 +354,8 @@ public class PeptideMapper {
             HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> rawDbAssumptions = null;
 
             if (fileReader.hasDeNovoTags()) { // for now only de novo results are stored in the database at this point
-                rawDbAssumptions = ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getRawAssumptions();
+                //rawDbAssumptions = ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getRawAssumptions();
+                rawDbAssumptions = ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getAssumptionsMap(); // TODO: fix it
             }
             HashSet<Integer> algorithms = new HashSet<Integer>();
             if (matchAssumptions != null) {

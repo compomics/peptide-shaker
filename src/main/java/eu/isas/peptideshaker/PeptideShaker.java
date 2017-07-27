@@ -863,9 +863,18 @@ public class PeptideShaker {
 
             SpectrumMatch spectrumMatch = psmIterator.next();
             psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
+            
+            if (spectrumMatch.getBestPeptideAssumption() == null) continue;
 
             if (sequenceFactory.concatenatedTargetDecoy()) {
-                Integer charge = new Integer(psParameter.getSpecificMapKey());
+                Integer charge = null;
+                try {
+                    charge = new Integer(psParameter.getSpecificMapKey());
+                }
+                catch (Exception E){
+                    System.out.println("charge not found: " + spectrumMatch.getKey());
+                }
+                
                 String fileName = spectrumMatch.getSpectrumFile();
                 psParameter.setPsmProbability(matchesValidator.getPsmMap().getProbability(fileName, charge, psParameter.getPsmProbabilityScore()));
             } else {

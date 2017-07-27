@@ -1459,6 +1459,8 @@ public class MatchesValidator {
 
                         String spectrumKey = spectrumMatch.getKey();
                         String spectrumFile = spectrumMatch.getSpectrumFile();
+                        
+                        if (spectrumMatch.getBestPeptideAssumption() == null) continue;
 
                         updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, geneMaps, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey, applyQCFilters);
 

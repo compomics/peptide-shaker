@@ -207,8 +207,6 @@ public class TagMapper {
             }
         }
 
-        ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getRawAssumptions().putAll(assumptionsMap);
-
         tagMatcher.clearCache();
         waitingHandler.increaseSecondaryProgressCounter();
     }

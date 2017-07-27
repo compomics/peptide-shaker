@@ -137,6 +137,10 @@ public class BestMatchSelection {
             spectrumMatch.addUrParam(dummyParameter);
             
             String spectrumKey = spectrumMatch.getKey();
+            
+            
+            
+            
 
             // map of the peptide first hits for this spectrum: score -> max protein count -> max search engine votes -> amino acids annotated -> min mass deviation -> peptide sequence
             HashMap<Double, HashMap<Integer, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>>>> peptideAssumptions
@@ -163,13 +167,13 @@ public class BestMatchSelection {
                     for (SpectrumIdentificationAssumption assumption1 : advocate1Map.get(eValue1)) {
 
                         if (assumption1 instanceof PeptideAssumption) {
+                            
 
                             PeptideAssumption peptideAssumption1 = (PeptideAssumption) assumption1;
                             Peptide peptide1 = peptideAssumption1.getPeptide();
                             String id = peptide1.getKey();
 
                             if (!identifications.contains(id)) {
-
                                 boolean filterPassed1 = true;
                                 if (!peptideAssumptionFilter.validatePeptide(peptide1, sequenceMatchingPreferences, searchParameters.getDigestionPreferences())
                                         || !peptideAssumptionFilter.validateModifications(peptide1, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getPtmSettings())
