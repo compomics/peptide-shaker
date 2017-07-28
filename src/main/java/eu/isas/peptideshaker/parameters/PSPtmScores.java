@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.parameters;
 
+import com.compomics.util.IdObject;
+import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ import java.util.HashSet;
  *
  * @author Marc Vaudel
  */
-public class PSPtmScores implements UrParameter {
+public class PSPtmScores extends IdObject implements UrParameter {
 
     /**
      * Serial version UID for post-serialization compatibility.
@@ -57,6 +59,7 @@ public class PSPtmScores implements UrParameter {
      * @param ptmScoring the corresponding scoring
      */
     public void addPtmScoring(String ptmName, PtmScoring ptmScoring) {
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         ptmMap.put(ptmName, ptmScoring);
     }
 
@@ -68,6 +71,7 @@ public class PSPtmScores implements UrParameter {
      * @return the scoring
      */
     public PtmScoring getPtmScoring(String ptmName) {
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return ptmMap.get(ptmName);
     }
 
@@ -78,6 +82,7 @@ public class PSPtmScores implements UrParameter {
      * @return a boolean indicating whether the modification is in the map
      */
     public boolean containsPtm(String ptmName) {
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return ptmMap.containsKey(ptmName);
     }
 
@@ -87,6 +92,7 @@ public class PSPtmScores implements UrParameter {
      * @return a list of scored modifications
      */
     public ArrayList<String> getScoredPTMs() {
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return new ArrayList<String>(ptmMap.keySet());
     }
 
@@ -97,6 +103,7 @@ public class PSPtmScores implements UrParameter {
      * @param modificationSite the modification site
      */
     public void addConfidentModificationSite(String ptmName, int modificationSite) {
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
 
         // add the PTM to the site map
         if (mainModificationSites == null) {
@@ -131,6 +138,7 @@ public class PSPtmScores implements UrParameter {
      * @param modificationSite the site of interest
      */
     private void removeFromAmbiguousSitesMaps(String ptmName, int modificationSite) {
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         
         if (ambiguousModificationsByPTM != null) {
             HashMap<Integer, ArrayList<Integer>> modificationSites = ambiguousModificationsByPTM.get(ptmName);
@@ -170,6 +178,7 @@ public class PSPtmScores implements UrParameter {
      * PTM name
      */
     public void addAmbiguousModificationSites(int representativeSite, HashMap<Integer, ArrayList<String>> possibleModifications) {
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         if (ambiguousModificationsByRepresentativeSite == null) {
             ambiguousModificationsByRepresentativeSite = new HashMap<Integer, HashMap<Integer, ArrayList<String>>>();
             ambiguousModificationsByPTM = new HashMap<String, HashMap<Integer, ArrayList<Integer>>>();
@@ -223,6 +232,7 @@ public class PSPtmScores implements UrParameter {
      * @param newRepresentativeSite the new representative site
      */
     public void changeRepresentativeSite(String ptmName, Integer originalRepresentativeSite, Integer newRepresentativeSite) {
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
 
         HashMap<Integer, ArrayList<String>> ambiguousSites = ambiguousModificationsByRepresentativeSite.get(originalRepresentativeSite);
 
@@ -292,6 +302,7 @@ public class PSPtmScores implements UrParameter {
      * confident modification site
      */
     public boolean isConfidentModificationSite(int site, String modificationName) {
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         if (mainModificationSites == null) {
             return false;
         }
@@ -311,6 +322,7 @@ public class PSPtmScores implements UrParameter {
      * empty list if none found
      */
     public ArrayList<String> getConfidentModificationsAt(int site) {
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         ArrayList<String> result = null;
         if (mainModificationSites != null) {
             result = mainModificationSites.get(site);
@@ -331,6 +343,7 @@ public class PSPtmScores implements UrParameter {
      * given site
      */
     public ArrayList<String> getPtmsAtRepresentativeSite(int site) {
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         ArrayList<String> result = null;
         if (ambiguousModificationsByRepresentativeSite != null) {
             HashMap<Integer, ArrayList<String>> ptmsAtSite = ambiguousModificationsByRepresentativeSite.get(site);
@@ -353,6 +366,7 @@ public class PSPtmScores implements UrParameter {
      * @return the confident sites for the given PTM
      */
     public ArrayList<Integer> getConfidentSitesForPtm(String PtmName) {
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         ArrayList<Integer> confidentSites = null;
         if (confidentModificationsByPTM != null) {
             confidentSites = confidentModificationsByPTM.get(PtmName);
@@ -373,6 +387,7 @@ public class PSPtmScores implements UrParameter {
      * representative site
      */
     public HashMap<Integer, ArrayList<String>> getAmbiguousPtmsAtRepresentativeSite(int representativeSite) {
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         HashMap<Integer, ArrayList<String>> results = null;
         if (ambiguousModificationsByRepresentativeSite != null) {
             results = ambiguousModificationsByRepresentativeSite.get(representativeSite);
@@ -391,6 +406,7 @@ public class PSPtmScores implements UrParameter {
      * @return the ambiguous modification sites registered for the given PTM
      */
     public HashMap<Integer, ArrayList<Integer>> getAmbiguousModificationsSites(String ptmName) {
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         HashMap<Integer, ArrayList<Integer>> results = null;
         if (ambiguousModificationsByPTM != null) {
             results = ambiguousModificationsByPTM.get(ptmName);
@@ -407,6 +423,7 @@ public class PSPtmScores implements UrParameter {
      * @return a list of all confident modification sites
      */
     public ArrayList<Integer> getConfidentSites() {
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         ArrayList<Integer> result = null;
         if (mainModificationSites != null) {
             result = new ArrayList<Integer>(mainModificationSites.keySet());
@@ -423,6 +440,7 @@ public class PSPtmScores implements UrParameter {
      * @return a list of all representative sites of ambiguously localized PTMs
      */
     public ArrayList<Integer> getRepresentativeSites() {
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         ArrayList<Integer> result = null;
         if (ambiguousModificationsByRepresentativeSite != null) {
             result = new ArrayList<Integer>(ambiguousModificationsByRepresentativeSite.keySet());
@@ -439,6 +457,7 @@ public class PSPtmScores implements UrParameter {
      * @return a list of PTMs presenting at least a confident site
      */
     public ArrayList<String> getConfidentlyLocalizedPtms() {
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         ArrayList<String> result = null;
         if (confidentModificationsByPTM != null) {
             result = new ArrayList<String>(confidentModificationsByPTM.keySet());
@@ -455,6 +474,7 @@ public class PSPtmScores implements UrParameter {
      * @return a list of PTMs presenting at least an ambiguous site
      */
     public ArrayList<String> getAmbiguouslyLocalizedPtms() {
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         ArrayList<String> result = null;
         if (ambiguousModificationsByPTM != null) {
             result = new ArrayList<String>(ambiguousModificationsByPTM.keySet());

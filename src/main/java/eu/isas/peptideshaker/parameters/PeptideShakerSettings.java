@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.parameters;
 
+import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.IdObject;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
@@ -109,7 +110,7 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
      * @return the identification parameters
      */
     public IdentificationParameters getIdentificationParameters() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return identificationParameters;
     }
 
@@ -119,7 +120,7 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
      * @param identificationParameters the identification parameters
      */
     public void setIdentificationParameters(IdentificationParameters identificationParameters) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.identificationParameters = identificationParameters;
     }
 
@@ -129,12 +130,12 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
      * @return the spectrum counting preferences of the project
      */
     public SpectrumCountingPreferences getSpectrumCountingPreferences() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return spectrumCountingPreferences;
     }
     
     public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences){
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.spectrumCountingPreferences = spectrumCountingPreferences;
     }
     
@@ -144,12 +145,12 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
      * @return the project details
      */
     public ProjectDetails getProjectDetails() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return projectDetails;
     }
     
     public void setProjectDetails(ProjectDetails projectDetails){
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.projectDetails = projectDetails;
     }
 
@@ -159,12 +160,12 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
      * @return the GUI display preferences
      */
     public FilterPreferences getFilterPreferences() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return filterPreferences;
     }
     
     public void setFilterPreferences(FilterPreferences filterPreferences){
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.filterPreferences = filterPreferences;
     }
 
@@ -174,12 +175,12 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
      * @return the GUI display preferences
      */
     public DisplayPreferences getDisplayPreferences() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return displayPreferences;
     }
     
     public void setDisplayPreferences(DisplayPreferences displayPreferences){
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.displayPreferences = displayPreferences;
     }
 
@@ -189,7 +190,7 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
      * @return information about the protocol used
      */
     public ShotgunProtocol getShotgunProtocol() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return shotgunProtocol;
     }
 
@@ -199,7 +200,7 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
      * @param shotgunProtocol information about the protocol used
      */
     public void setShotgunProtocol(ShotgunProtocol shotgunProtocol) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.shotgunProtocol = shotgunProtocol;
     }
 
@@ -209,7 +210,7 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
      * @return the metrics saved when loading the files
      */
     public Metrics getMetrics() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         if (metrics == null) {
             metrics = new Metrics();
         }
@@ -217,7 +218,7 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
     }
     
     public void setMetrics(Metrics metrics){
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.metrics = metrics;
     }
     
@@ -228,7 +229,7 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
      * @return the gene maps
      */
     public GeneMaps getGeneMaps() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         if (geneMaps == null) {
             geneMaps = new GeneMaps();
         }
@@ -236,7 +237,7 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
     }
     
     public void setGeneMaps(GeneMaps geneMaps){
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.geneMaps = geneMaps;
     }
 
@@ -248,12 +249,12 @@ public class PeptideShakerSettings extends IdObject implements UrParameter, Seri
      * @return the identification features cache
      */
     public IdentificationFeaturesCache getIdentificationFeaturesCache() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return identificationFeaturesCache;
     }
     
     public void setIdentificationFeaturesCache(IdentificationFeaturesCache identificationFeaturesCache){
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.identificationFeaturesCache = identificationFeaturesCache;
     }
 

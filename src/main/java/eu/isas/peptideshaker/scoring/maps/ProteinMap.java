@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.scoring.maps;
 
+import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.IdObject;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
@@ -52,7 +53,7 @@ public class ProteinMap extends IdObject {
      * @param isDecoy a boolean indicating whether the protein is decoy
      */
     public void addPoint(double probabilityScore, boolean isDecoy) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         proteinMatchMap.put(probabilityScore, isDecoy);
     }
 
@@ -64,7 +65,7 @@ public class ProteinMap extends IdObject {
      * @param isDecoy a boolean indicating whether the protein is decoy
      */
     public void removePoint(double probabilityScore, boolean isDecoy) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         proteinMatchMap.remove(probabilityScore, isDecoy);
     }
 
@@ -72,7 +73,7 @@ public class ProteinMap extends IdObject {
      * Removes empty points and clears dependent metrics if needed.
      */
     public void cleanUp() {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         proteinMatchMap.cleanUp();
     }
 
@@ -84,7 +85,7 @@ public class ProteinMap extends IdObject {
      * @return the posterior error probability
      */
     public double getProbability(double score) {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return proteinMatchMap.getProbability(score);
     }
 
@@ -96,7 +97,7 @@ public class ProteinMap extends IdObject {
      * @return a boolean indicating if a suspicious input was detected
      */
     public boolean suspicousInput(Double minimalFDR) {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return proteinMatchMap.suspiciousInput(minimalFDR);
     }
 
@@ -106,7 +107,7 @@ public class ProteinMap extends IdObject {
      * @return the target decoy map
      */
     public TargetDecoyMap getTargetDecoyMap() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return proteinMatchMap;
     }
 }

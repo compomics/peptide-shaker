@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.ptm;
 
+import com.compomics.util.db.ObjectsDB;
+import com.compomics.util.IdObject;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -62,7 +64,7 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  *
  * @author Marc Vaudel
  */
-public class PtmScorer {
+public class PtmScorer extends IdObject {
 
     /**
      * The PTM factory.
@@ -804,7 +806,6 @@ public class PtmScorer {
             // Map ambiguous sites
             while (psmIterator.hasNext()) {
                 SpectrumMatch spectrumMatch = psmIterator.next();
-                String spectrumKey = spectrumMatch.getKey();
                 psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
                 PSPtmScores psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
 
@@ -904,7 +905,7 @@ public class PtmScorer {
                 }
             }
 
-            HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSites, nRepresentativesMap, inferredSites);;
+            HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSites, nRepresentativesMap, inferredSites);
 
             for (Double ptmMass : representativeToSecondaryMap.keySet()) {
                 HashMap<Integer, HashMap<Integer, ArrayList<String>>> representativesAtMass = representativeToSecondaryMap.get(ptmMass);
@@ -986,6 +987,8 @@ public class PtmScorer {
      * @return a representative to secondary sites map
      */
     private HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> getRepresentativeToSecondaryMap(HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>> ambiguousScoreToSiteMap, HashMap<Double, Integer> nRepresentativesMap, HashMap<Double, HashMap<Integer, ArrayList<String>>> preferentialSites) {
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        
 
         int nMasses = nRepresentativesMap.size();
         HashMap<Double, Integer> nToSelectMap = new HashMap<Double, Integer>(nMasses);
@@ -1042,14 +1045,16 @@ public class PtmScorer {
                     if (preferentialSites != null) {
                         preferentialSitesForPtm = preferentialSites.get(ptmMass);
                     }
-                    Integer toSelect = nToSelectMap.get(ptmMass);
+                    int toSelect = nToSelectMap.get(ptmMass);
+                    /*
                     if (toSelect == null) {
                         toSelect = 0;
-                    }
-                    Integer nSelected = nSelectedMap.get(ptmMass);
+                    }*/
+                    int nSelected = nSelectedMap.get(ptmMass);
+                    /*
                     if (nSelected == null) {
                         nSelected = 0;
-                    }
+                    }*/
                     int nNeeded = toSelect - nSelected;
                     if (nNeeded > 0) {
                         HashSet<Integer> ptmSites = possibleSites.get(ptmMass);
@@ -1190,6 +1195,14 @@ public class PtmScorer {
             Integer nSelected = nSelectedMap.get(ptmMass);
             Integer nToSelect = nToSelectMap.get(ptmMass);
             if (nSelected == null || nSelected < nToSelect) {
+System.out.println("nToSelectMap: " + nToSelect);
+for (double ptmMasss : nToSelectMap.keySet()) System.out.println(ptmMasss + " -> " + nToSelectMap.get(ptmMass));
+System.out.println("nSelectMap: " + nSelected);
+for (double ptmMasss : nSelectedMap.keySet()) System.out.println(ptmMasss + " -> " + nSelectedMap.get(ptmMass));
+double p1 = nToSelectMap.keySet().iterator().next();
+double p2 = nSelectedMap.keySet().iterator().next();
+System.out.println(p1 + " / " + p2 + " / " + (p1 == p2));
+
                 throw new IllegalArgumentException("Not enough representative ptm sites found.");
             } else if (nSelected > nToSelect) {
                 throw new IllegalArgumentException("Selected more representative sites than necessary.");

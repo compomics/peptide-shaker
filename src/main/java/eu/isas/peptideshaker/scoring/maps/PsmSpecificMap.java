@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.scoring.maps;
 
+import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.IdObject;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -57,7 +58,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      * @param waitingHandler the handler displaying feedback to the user
      */
     public void estimateProbabilities(WaitingHandler waitingHandler) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
 
         int max = getMapsSize();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -97,7 +98,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      * @return the probability of the given spectrum match at the given score
      */
     public double getProbability(String file, int charge, double score) {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         boolean groupedFile = false;
         if (fileSpecificGrouping != null) {
             ArrayList<String> groupedFiles = fileSpecificGrouping.get(charge);
@@ -146,7 +147,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      */
     public void addPoint(double probabilityScore, SpectrumMatch spectrumMatch, SequenceMatchingPreferences sequenceMatchingPreferences)
             throws IOException, InterruptedException, SQLException, ClassNotFoundException {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
 
         int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
         HashMap<String, TargetDecoyMap> fileMapping = fileSpecificPsmsMaps.get(charge);
@@ -171,7 +172,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      * @param minimalFDR the minimal FDR which should be achievable
      */
     public void clean(double minimalFDR) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         ArrayList<Integer> charges = new ArrayList(fileSpecificPsmsMaps.keySet());
         Collections.sort(charges);
         int ref = 0;
@@ -223,7 +224,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      * @return the corresponding target decoy map
      */
     public TargetDecoyMap getTargetDecoyMap(int charge, String spectrumFile) {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         if (fileSpecificGrouping != null && spectrumFile != null) {
             ArrayList<String> nonSignificantFiles = fileSpecificGrouping.get(charge);
             if (nonSignificantFiles == null || !nonSignificantFiles.contains(spectrumFile)) {
@@ -250,7 +251,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      * given charge
      */
     public boolean isFileGrouped(int charge, String fileName) {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         if (fileSpecificPsmsMaps == null) {
             return true;
         }
@@ -267,7 +268,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      * not found
      */
     public Integer getCorrectedCharge(int charge) {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         Integer correctedCharge = grouping.get(charge);
         if (correctedCharge == null) {
             return charge;
@@ -281,7 +282,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      * @return the charges found in the map
      */
     public ArrayList<Integer> getPossibleCharges() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         if (fileSpecificPsmsMaps != null) {
             return new ArrayList<Integer>(fileSpecificPsmsMaps.keySet());
         } else {
@@ -295,7 +296,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      * @return a list of charges from grouped files
      */
     public ArrayList<Integer> getChargesFromGroupedFiles() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return new ArrayList<Integer>(psmsMaps.keySet());
     }
 
@@ -305,7 +306,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      * @return a list of grouped charges from grouped files
      */
     public HashSet<Integer> getGroupedCharges() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         HashSet<Integer> result = new HashSet<Integer>();
         for (int charge : psmsMaps.keySet()) {
             Integer correctedCharge = grouping.get(charge);
@@ -323,7 +324,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      * @return the map of grouped charges indexed by representative charge
      */
     public HashMap<Integer, ArrayList<Integer>> getChargeGroupingMap() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>(4);
         for (Integer charge : getChargesFromGroupedFiles()) {
             Integer correctedCharge = getCorrectedCharge(charge);
@@ -349,7 +350,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      * @return the files at the given charge
      */
     public ArrayList<String> getFilesAtCharge(int charge) {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         if (fileSpecificPsmsMaps != null) {
             HashMap<String, TargetDecoyMap> chargeMap = fileSpecificPsmsMaps.get(charge);
             if (chargeMap != null) {
@@ -365,7 +366,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      * @return the overall number of points across all maps.
      */
     public int getMapsSize() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         int result = 0;
         for (TargetDecoyMap targetDecoyMap : psmsMaps.values()) {
             result += targetDecoyMap.getMapSize();
@@ -384,7 +385,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      * @return a list of the target decoy maps used for scoring
      */
     public ArrayList<TargetDecoyMap> getTargetDecoyMaps() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         ArrayList<TargetDecoyMap> result = new ArrayList<TargetDecoyMap>();
         for (int charge : fileSpecificPsmsMaps.keySet()) {
             ArrayList<String> nonSignificantFiles = fileSpecificGrouping.get(charge);
@@ -407,7 +408,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      * @return the maximal precursor charge observed in the identified spectra
      */
     public int getMaxCharge() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         int maxCharge = 0;
         if (fileSpecificPsmsMaps != null) {
             for (int charge : fileSpecificPsmsMaps.keySet()) {

@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.scoring;
 
+import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.IdObject;
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
@@ -70,7 +71,7 @@ public class PSMaps extends IdObject implements UrParameter {
      * @return the peptide map
      */
     public PeptideSpecificMap getPeptideSpecificMap() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return PeptideSpecificMap;
     }
 
@@ -80,7 +81,7 @@ public class PSMaps extends IdObject implements UrParameter {
      * @return the PSM map
      */
     public PsmSpecificMap getPsmSpecificMap() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return PsmSpecificMap;
     }
 
@@ -90,7 +91,7 @@ public class PSMaps extends IdObject implements UrParameter {
      * @return the protein map
      */
     public ProteinMap getProteinMap() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return proteinMap;
     }
 
@@ -100,7 +101,7 @@ public class PSMaps extends IdObject implements UrParameter {
      * @return the target decoy map of all search engine scores
      */
     public InputMap getInputMap() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return inputMap;
     }
 
@@ -110,7 +111,7 @@ public class PSMaps extends IdObject implements UrParameter {
      * @return the PSM level PTM scoring map
      */
     public PsmPTMMap getPsmPTMMap() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return psmPTMMap;
     }
 
@@ -120,7 +121,7 @@ public class PSMaps extends IdObject implements UrParameter {
      * @param psmPTMMap the PSM level PTM scoring map
      */
     public void setPsmPTMMap(PsmPTMMap psmPTMMap) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.psmPTMMap = psmPTMMap;
     }
 

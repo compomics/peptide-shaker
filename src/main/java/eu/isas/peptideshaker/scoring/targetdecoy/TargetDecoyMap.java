@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
+import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.IdObject;
 import com.compomics.util.waiting.WaitingHandler;
 import java.util.ArrayList;
@@ -76,7 +77,7 @@ public class TargetDecoyMap extends IdObject {
      * @return the estimated posterior error probability
      */
     public Double getProbability(double score) {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         TargetDecoyPoint point = hitMap.get(score);
         if (point != null) {
             return point.p;
@@ -105,7 +106,7 @@ public class TargetDecoyMap extends IdObject {
      * @return the number of target hits found at the given score
      */
     public int getNTarget(double score) {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return hitMap.get(score).nTarget;
     }
 
@@ -126,7 +127,7 @@ public class TargetDecoyMap extends IdObject {
      * @param isDecoy boolean indicating whether the hit is decoy
      */
     public void put(Double score, boolean isDecoy) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
         if (targetDecoyPoint == null) {
             targetDecoyPoint = createTargetDecoyPoint(score);
@@ -147,7 +148,7 @@ public class TargetDecoyMap extends IdObject {
      * @return the target decoy point of the map at the given score
      */
     public synchronized TargetDecoyPoint createTargetDecoyPoint(Double score) {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
         if (targetDecoyPoint == null) {
             targetDecoyPoint = new TargetDecoyPoint();
@@ -164,7 +165,7 @@ public class TargetDecoyMap extends IdObject {
      * @param isDecoy boolean indicating whether the hit is decoy
      */
     public void remove(Double score, boolean isDecoy) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
         if (!isDecoy) {
             targetDecoyPoint.decreaseTarget();
@@ -177,7 +178,7 @@ public class TargetDecoyMap extends IdObject {
      * Removes empty points and clears dependent metrics if needed.
      */
     public synchronized void cleanUp() {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         boolean removed = false;
         HashSet<Double> currentScores = new HashSet<Double>(hitMap.keySet());
         for (Double score : currentScores) {
@@ -200,7 +201,7 @@ public class TargetDecoyMap extends IdObject {
      * and above will be skipped for Nmax.
      */
     private void estimateNs() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         if (scores == null) {
             estimateScores();
         }
@@ -253,7 +254,7 @@ public class TargetDecoyMap extends IdObject {
      * @param waitingHandler the handler displaying feedback to the user
      */
     public void estimateProbabilities(WaitingHandler waitingHandler) {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
 
         if (scores == null) {
             estimateScores();
@@ -327,7 +328,7 @@ public class TargetDecoyMap extends IdObject {
      * @return the Nmax metric
      */
     public int getnMax() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         if (nmax == null) {
             estimateNs();
         }
@@ -340,7 +341,7 @@ public class TargetDecoyMap extends IdObject {
      * @return the minimal FDR which can be achieved in this dataset
      */
     public Double getMinFdr() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return minFDR;
     }
 
@@ -364,7 +365,7 @@ public class TargetDecoyMap extends IdObject {
      * @return the number of target hits before the first decoy hit
      */
     public Integer getnTargetOnly() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return nTargetOnly;
     }
 
@@ -372,7 +373,7 @@ public class TargetDecoyMap extends IdObject {
      * Sorts the scores implemented in this map.
      */
     private void estimateScores() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         scores = new ArrayList<Double>(hitMap.keySet());
         Collections.sort(scores);
     }
@@ -383,7 +384,7 @@ public class TargetDecoyMap extends IdObject {
      * @return the sorted scores implemented in this map.
      */
     public ArrayList<Double> getScores() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         if (scores == null) {
             estimateScores();
         }
@@ -396,7 +397,7 @@ public class TargetDecoyMap extends IdObject {
      * @param anOtherMap another target/decoy map
      */
     public void addAll(TargetDecoyMap anOtherMap) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         for (double score : anOtherMap.getScores()) {
             for (int i = 0; i < anOtherMap.getNDecoy(score); i++) {
                 put(score, true);
@@ -418,7 +419,7 @@ public class TargetDecoyMap extends IdObject {
      * @return a boolean indicating if a suspicious input was detected
      */
     public boolean suspiciousInput(Double initialFDR) {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         if (nmax == null) {
             estimateNs();
         }
@@ -434,7 +435,7 @@ public class TargetDecoyMap extends IdObject {
      * @return the current target decoy results
      */
     public TargetDecoyResults getTargetDecoyResults() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return targetDecoyResults;
     }
 
@@ -444,7 +445,7 @@ public class TargetDecoyMap extends IdObject {
      * @return the target decoy series
      */
     public TargetDecoySeries getTargetDecoySeries() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return new TargetDecoySeries(hitMap);
     }
 
@@ -454,7 +455,7 @@ public class TargetDecoyMap extends IdObject {
      * @return the window size used for pep estimation
      */
     public int getWindowSize() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         if (windowSize == null) {
             windowSize = getnMax();
         }
@@ -467,7 +468,7 @@ public class TargetDecoyMap extends IdObject {
      * @param windowSize the window size used for pep estimation
      */
     public void setWindowSize(int windowSize) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.windowSize = windowSize;
     }
 
@@ -477,7 +478,7 @@ public class TargetDecoyMap extends IdObject {
      * @return the size of the map
      */
     public int getMapSize() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return hitMap.size();
     }
 }

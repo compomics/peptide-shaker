@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
+import com.compomics.util.db.ObjectsDB;
 import com.compomics.util.IdObject;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import java.io.Serializable;
@@ -80,7 +81,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * estimators were used
      */
     public boolean isClassicalEstimators() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return classicalEstimators;
     }
 
@@ -91,7 +92,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * probabilistic estimators should be used
      */
     public void setClassicalEstimators(boolean classicalEstimators) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.classicalEstimators = classicalEstimators;
     }
 
@@ -101,7 +102,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @return a boolean indicating whether a classical validation was used
      */
     public boolean isClassicalValidation() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return classicalValidation;
     }
 
@@ -112,7 +113,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * validation was used
      */
     public void setClassicalValidation(boolean classicalValidation) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.classicalValidation = classicalValidation;
     }
 
@@ -122,7 +123,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @return the confidence limit
      */
     public Double getConfidenceLimit() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return confidenceLimit;
     }
 
@@ -132,7 +133,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @param confidenceLimit the confidence limit
      */
     public void setConfidenceLimit(double confidenceLimit) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.confidenceLimit = confidenceLimit;
     }
 
@@ -142,7 +143,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @return the FDR limit
      */
     public Double getFdrLimit() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return fdrLimit;
     }
 
@@ -152,7 +153,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @param fdrLimit the FDR limit
      */
     public void setFdrLimit(double fdrLimit) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.fdrLimit = fdrLimit;
     }
 
@@ -162,7 +163,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @return the FNR limit
      */
     public double getFnrLimit() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return fnrLimit;
     }
 
@@ -172,7 +173,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @param fnrLimit the FNR limit
      */
     public void setFnrLimit(double fnrLimit) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.fnrLimit = fnrLimit;
     }
 
@@ -182,7 +183,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @return the estimated number of false positives
      */
     public double getnFP() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return nFP;
     }
 
@@ -192,7 +193,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @param nFP the estimated number of false positives
      */
     public void setnFP(double nFP) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.nFP = nFP;
     }
 
@@ -202,7 +203,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @return the estimated number of retained True positives
      */
     public double getnTP() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return n - nFP;
     }
 
@@ -212,7 +213,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @param n the estimated number of retained True positives
      */
     public void setn(double n) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.n = n;
     }
 
@@ -222,7 +223,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @return the estimated total number of True positives
      */
     public double getnTPTotal() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return nTPTotal;
     }
 
@@ -232,7 +233,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @param nTPTotal the estimated total number of True positives
      */
     public void setnTPTotal(double nTPTotal) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.nTPTotal = nTPTotal;
     }
 
@@ -242,7 +243,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @return the number of retained hits
      */
     public double getN() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return n;
     }
 
@@ -252,7 +253,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @return the score limit obtained with the current validation settings
      */
     public double getScoreLimit() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return scoreLimit;
     }
 
@@ -262,7 +263,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @return the score limit obtained with the current validation settings
      */
     public double getLogScoreLimit() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return PSParameter.getScore(scoreLimit);
     }
 
@@ -273,7 +274,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * settings
      */
     public void setScoreLimit(double scoreLimit) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.scoreLimit = scoreLimit;
     }
 
@@ -283,7 +284,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @return a boolean indicating that everything was validated
      */
     public boolean noValidated() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return (noValidated != null) && noValidated;
     }
 
@@ -294,7 +295,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * validated
      */
     public void setNoValidated(boolean validateAll) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.noValidated = validateAll;
     }
 
@@ -304,7 +305,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @return the type of input
      */
     public Integer getInputType() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         if (inputType == null) {
             inputType = 1;
         }
@@ -317,7 +318,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @param inputType the input type
      */
     public void setInputType(Integer inputType) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.inputType = inputType;
     }
 
@@ -327,7 +328,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @return the user input
      */
     public Double getUserInput() {
-        zooActivateRead();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         if (userInput == null) {
             userInput = 1.0;
         }
@@ -340,7 +341,7 @@ public class TargetDecoyResults extends IdObject implements Serializable {
      * @param userInput the user input
      */
     public void setUserInput(Double userInput) {
-        zooActivateWrite();
+        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.userInput = userInput;
     }
 }
