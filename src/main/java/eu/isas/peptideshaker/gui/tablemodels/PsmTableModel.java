@@ -333,12 +333,12 @@ public class PsmTableModel extends SelfUpdatingTableModel {
     @Override
     protected int loadDataForRows(ArrayList<Integer> rows, WaitingHandler waitingHandler) {
         try {
-            ArrayList<String> tempPsmKeys = new ArrayList<String>();
+            ArrayList<String> tempPsmKeys = new ArrayList<>();
             for (int i : rows) {
                 tempPsmKeys.add(psmKeys.get(i));
             }
 
-            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+            ArrayList<UrParameter> parameters = new ArrayList<>(1);
             parameters.add(new PSParameter());
             PsmIterator psmIterator = identification.getPsmIterator(tempPsmKeys, waitingHandler);
 

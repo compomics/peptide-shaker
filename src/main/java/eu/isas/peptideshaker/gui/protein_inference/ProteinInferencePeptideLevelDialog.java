@@ -107,7 +107,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         if (proteinMatchKey != null) {
             retainedProteins = Arrays.asList(ProteinMatch.getAccessions(proteinMatchKey));
         } else {
-            retainedProteins = new ArrayList<String>();
+            retainedProteins = new ArrayList<>();
             for (String proteinKey : peptideShakerGUI.getIdentification().getProteinMatches(peptideMatch.getTheoreticPeptide())) {
                 for (String protein : possibleProteins) {
                     if (!retainedProteins.contains(protein) && proteinKey.contains(protein)) {
@@ -206,12 +206,12 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      */
     private void drawGraph() {
 
-        ArrayList<String> nodes = new ArrayList<String>();
-        HashMap<String, ArrayList<String>> edges = new HashMap<String, ArrayList<String>>();
-        HashMap<String, String> nodeProperties = new HashMap<String, String>();
-        HashMap<String, String> edgeProperties = new HashMap<String, String>();
-        HashMap<String, String> nodeToolTips = new HashMap<String, String>();
-        ArrayList<String> selectedNodes = new ArrayList<String>();
+        ArrayList<String> nodes = new ArrayList<>();
+        HashMap<String, ArrayList<String>> edges = new HashMap<>();
+        HashMap<String, String> nodeProperties = new HashMap<>();
+        HashMap<String, String> edgeProperties = new HashMap<>();
+        HashMap<String, String> nodeToolTips = new HashMap<>();
+        ArrayList<String> selectedNodes = new ArrayList<>();
 
         try {
             String peptideNodeName = "Peptide " + peptideMatchKey;
@@ -338,7 +338,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
                 ArrayList<String> tempEdges = edges.get(peptideNodeName);
                 if (tempEdges == null) {
-                    tempEdges = new ArrayList<String>();
+                    tempEdges = new ArrayList<>();
                 }
                 if (!tempEdges.contains(proteinNodeKey)) {
                     tempEdges.add(proteinNodeKey);
@@ -435,7 +435,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 "Enzymatic", "Not Enzymatic"));
 
         // set up the table header tooltips
-        retainedProteinsTableToolTips = new ArrayList<String>();
+        retainedProteinsTableToolTips = new ArrayList<>();
         retainedProteinsTableToolTips.add(null);
         retainedProteinsTableToolTips.add("Protein Accession");
         retainedProteinsTableToolTips.add("Protein Description");
@@ -444,7 +444,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         retainedProteinsTableToolTips.add("Protein Evidence Level");
         retainedProteinsTableToolTips.add("Enzymatic Peptide");
 
-        otherProteinsTableToolTips = new ArrayList<String>();
+        otherProteinsTableToolTips = new ArrayList<>();
         otherProteinsTableToolTips.add(null);
         otherProteinsTableToolTips.add("Protein Accession");
         otherProteinsTableToolTips.add("Protein Description");

@@ -177,7 +177,7 @@ public class ModificationDialog extends javax.swing.JDialog {
      * Loads the list of supported modifications.
      */
     private void loadModifications() {
-        modifications = new ArrayList<String>();
+        modifications = new ArrayList<>();
         for (String ptm : PTMFactory.getInstance().getPTMs()) {
             modifications.add(ptm);
         }

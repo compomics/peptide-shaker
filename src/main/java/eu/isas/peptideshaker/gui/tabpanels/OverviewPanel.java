@@ -142,15 +142,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     /**
      * A list of proteins in the protein table.
      */
-    private ArrayList<String> proteinKeys = new ArrayList<String>();
+    private ArrayList<String> proteinKeys = new ArrayList<>();
     /**
      * A list of the peptides in the peptide table.
      */
-    private ArrayList<String> peptideKeys = new ArrayList<String>();
+    private ArrayList<String> peptideKeys = new ArrayList<>();
     /**
      * A list of PSMs in the PSM table.
      */
-    private ArrayList<String> psmKeys = new ArrayList<String>();
+    private ArrayList<String> psmKeys = new ArrayList<>();
     /**
      * The main GUI.
      */
@@ -287,7 +287,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * Set up the table header tooltips.
      */
     private void setUpTableHeaderToolTips() {
-        proteinTableToolTips = new ArrayList<String>();
+        proteinTableToolTips = new ArrayList<>();
         proteinTableToolTips.add(null);
         proteinTableToolTips.add("Starred");
         proteinTableToolTips.add("Protein Inference Class");
@@ -308,7 +308,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         proteinTableToolTips.add("Validated");
 
-        peptideTableToolTips = new ArrayList<String>();
+        peptideTableToolTips = new ArrayList<>();
         peptideTableToolTips.add(null);
         peptideTableToolTips.add("Starred");
         peptideTableToolTips.add("Protein Inference Class");
@@ -318,7 +318,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         peptideTableToolTips.add("Peptide Confidence");
         peptideTableToolTips.add("Validated");
 
-        psmTableToolTips = new ArrayList<String>();
+        psmTableToolTips = new ArrayList<>();
         psmTableToolTips.add(null);
         psmTableToolTips.add("Starred");
         psmTableToolTips.add("Identification Software Agreement");
@@ -388,14 +388,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         peptideTable.getColumn("PI").setMinWidth(37);
 
         // set up the peptide inference color map
-        HashMap<Integer, Color> peptideInferenceColorMap = new HashMap<Integer, Color>();
+        HashMap<Integer, Color> peptideInferenceColorMap = new HashMap<>();
         peptideInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor());
         peptideInferenceColorMap.put(PSParameter.RELATED, Color.YELLOW);
         peptideInferenceColorMap.put(PSParameter.RELATED_AND_UNRELATED, Color.ORANGE);
         peptideInferenceColorMap.put(PSParameter.UNRELATED, Color.RED);
 
         // set up the peptide inference tooltip map
-        HashMap<Integer, String> peptideInferenceTooltipMap = new HashMap<Integer, String>();
+        HashMap<Integer, String> peptideInferenceTooltipMap = new HashMap<>();
         peptideInferenceTooltipMap.put(PSParameter.NOT_GROUP, "Unique to a single protein");
         peptideInferenceTooltipMap.put(PSParameter.RELATED, "Belongs to a group of related proteins");
         peptideInferenceTooltipMap.put(PSParameter.RELATED_AND_UNRELATED, "Belongs to a group of related and unrelated proteins");
@@ -409,7 +409,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         if (!sequenceFactory.concatenatedTargetDecoy()) {
             nonValidatedColor = peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound();
         }
-        ArrayList<Color> sparklineColors = new ArrayList<Color>();
+        ArrayList<Color> sparklineColors = new ArrayList<>();
         sparklineColors.add(peptideShakerGUI.getSparklineColor());
         sparklineColors.add(peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful());
         sparklineColors.add(nonValidatedColor);
@@ -473,14 +473,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         psmTable.getColumn("ID").setMinWidth(37);
 
         // set up the psm color map
-        HashMap<Integer, java.awt.Color> psmColorMap = new HashMap<Integer, java.awt.Color>();
+        HashMap<Integer, java.awt.Color> psmColorMap = new HashMap<>();
         psmColorMap.put(SpectrumIdentificationPanel.AGREEMENT_WITH_MODS, peptideShakerGUI.getSparklineColor()); // id software agree with PTM certainty
         psmColorMap.put(SpectrumIdentificationPanel.AGREEMENT, java.awt.Color.CYAN); // id software agree on peptide but not ptm certainty
         psmColorMap.put(SpectrumIdentificationPanel.CONFLICT, java.awt.Color.YELLOW); // id software don't agree
         psmColorMap.put(SpectrumIdentificationPanel.PARTIALLY_MISSING, java.awt.Color.ORANGE); // some id software id'ed some didn't
 
         // set up the psm tooltip map
-        HashMap<Integer, String> psmTooltipMap = new HashMap<Integer, String>();
+        HashMap<Integer, String> psmTooltipMap = new HashMap<>();
         psmTooltipMap.put(SpectrumIdentificationPanel.AGREEMENT_WITH_MODS, "ID Software Agree");
         psmTooltipMap.put(SpectrumIdentificationPanel.AGREEMENT, "ID Software Agree - PTM Certainty Issues");
         psmTooltipMap.put(SpectrumIdentificationPanel.CONFLICT, "ID Software Disagree");
@@ -3177,7 +3177,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             panelsShownUponMaximze = null;
         } else {
-            panelsShownUponMaximze = new ArrayList<Boolean>();
+            panelsShownUponMaximze = new ArrayList<>();
             panelsShownUponMaximze.add(displayProteins);
             panelsShownUponMaximze.add(displayPeptidesAndPSMs);
             panelsShownUponMaximze.add(displayCoverage);
@@ -4026,10 +4026,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         if (peptideTable.getSelectedRow() != -1 && displaySpectrum) {
 
             try {
-                ArrayList<String> selectedIndexes = new ArrayList<String>();
+                ArrayList<String> selectedIndexes = new ArrayList<>();
 
                 // get the list of currently selected psms
-                ArrayList<String> selectedPsmKeys = new ArrayList<String>();
+                ArrayList<String> selectedPsmKeys = new ArrayList<>();
 
                 // get the currenly selected rows in the psm table
                 int[] selectedPsmRows = psmTable.getSelectedRows();
@@ -4044,15 +4044,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     selectedIndexes.add((psmIndex + 1) + " " + spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().toString());
                 }
 
-                ArrayList<ArrayList<IonMatch>> allAnnotations = new ArrayList<ArrayList<IonMatch>>();
-                ArrayList<MSnSpectrum> allSpectra = new ArrayList<MSnSpectrum>();
+                ArrayList<ArrayList<IonMatch>> allAnnotations = new ArrayList<>();
+                ArrayList<MSnSpectrum> allSpectra = new ArrayList<>();
                 IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
                 AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
                 DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
-                ArrayList<Peptide> peptides = new ArrayList<Peptide>();
+                ArrayList<Peptide> peptides = new ArrayList<>();
 
                 int maxCharge = 1;
-                ArrayList<ModificationMatch> allModifications = new ArrayList<ModificationMatch>();
+                ArrayList<ModificationMatch> allModifications = new ArrayList<>();
 
                 // iterate the selected psms
                 for (String spectrumKey : selectedPsmKeys) {
@@ -4208,7 +4208,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             currentProteinAccession = proteinAccession;
 
             SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
-            ArrayList<Integer> selectedPeptideStart = new ArrayList<Integer>();
+            ArrayList<Integer> selectedPeptideStart = new ArrayList<>();
             int selectionLength = 0;
 
             if (peptideTable.getSelectedRow() != -1) {
@@ -4248,7 +4248,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 coverageHeight[i] = minHeight + p / maxHeight;
             }
 
-            HashMap<Integer, Color> colors = new HashMap<Integer, Color>();
+            HashMap<Integer, Color> colors = new HashMap<>();
             colors.put(MatchValidationLevel.confident.getIndex(), peptideShakerGUI.getSparklineColor());
             colors.put(MatchValidationLevel.doubtful.getIndex(), peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful());
             colors.put(MatchValidationLevel.not_validated.getIndex(), peptideShakerGUI.getSparklineColorNonValidated());
@@ -4288,11 +4288,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     searchParameters, coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected());
 
             // Dirty fix for a bloc-level annotation
-            HashMap<Integer, ArrayList<ResidueAnnotation>> blocTooltips = new HashMap<Integer, ArrayList<ResidueAnnotation>>();
+            HashMap<Integer, ArrayList<ResidueAnnotation>> blocTooltips = new HashMap<>();
             int aaCpt = 0, blocCpt = 0;
             for (JSparklinesDataSeries jSparklinesDataSeries : sparkLineDataSeriesCoverage) {
                 double sparkLineLength = jSparklinesDataSeries.getData().get(0);
-                ArrayList<ResidueAnnotation> blocAnnotation = new ArrayList<ResidueAnnotation>();
+                ArrayList<ResidueAnnotation> blocAnnotation = new ArrayList<>();
                 for (int j = 0; j < sparkLineLength; j++, aaCpt++) {
                     ArrayList<ResidueAnnotation> aaAnnotation = proteinTooltips.get(aaCpt);
                     if (aaAnnotation != null) {
@@ -4371,7 +4371,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             proteinKey);
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
-                    sequenceCoverage = new HashMap<Integer, Double>();
+                    sequenceCoverage = new HashMap<>();
                 }
                 Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
                 Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
@@ -4424,11 +4424,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
 
                 // get the ptms
-                ArrayList<JSparklinesDataSeries> sparkLineDataSeriesPtm = new ArrayList<JSparklinesDataSeries>();
-                HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips = new HashMap<Integer, ArrayList<ResidueAnnotation>>();
+                ArrayList<JSparklinesDataSeries> sparkLineDataSeriesPtm = new ArrayList<>();
+                HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips = new HashMap<>();
 
                 // we need to add a first empty filler as the coverage table starts at 0
-                ArrayList<Double> data = new ArrayList<Double>();
+                ArrayList<Double> data = new ArrayList<>();
                 data.add(new Double(1));
                 JSparklinesDataSeries sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                 sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
@@ -4441,7 +4441,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 int unmodifiedCounter = 0;
 
                 // get the fixed ptms
-                HashMap<Integer, String> fixedPtms = new HashMap<Integer, String>(); // @TODO: note that this only supports one fixed ptm per residue
+                HashMap<Integer, String> fixedPtms = new HashMap<>(); // @TODO: note that this only supports one fixed ptm per residue
                 DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
 
                 // see if fixed ptms are displayed
@@ -4489,7 +4489,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                         // add the non-modified area
                         if (unmodifiedCounter > 0) {
-                            data = new ArrayList<Double>(1);
+                            data = new ArrayList<>(1);
                             data.add(new Double(unmodifiedCounter));
                             sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                             sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
@@ -4507,11 +4507,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             ptmColor = Color.lightGray;
                         }
 
-                        ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
+                        ArrayList<ResidueAnnotation> annotations = new ArrayList<>(1);
                         annotations.add(new ResidueAnnotation(ptmName + " (" + aa + ")", null, false));
                         proteinTooltips.put(sparkLineDataSeriesPtm.size(), annotations);
 
-                        data = new ArrayList<Double>(1);
+                        data = new ArrayList<>(1);
                         data.add(new Double(1));
                         sparklineDataseriesPtm = new JSparklinesDataSeries(data, ptmColor, null);
                         sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
@@ -4526,7 +4526,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 if (unmodifiedCounter > 0) {
                     // add the remaining non-modified area
-                    data = new ArrayList<Double>();
+                    data = new ArrayList<>();
                     data.add(new Double(unmodifiedCounter));
                     sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                     sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
@@ -4560,11 +4560,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
 
                 // get the ptms
-                ArrayList<JSparklinesDataSeries> sparkLineDataSeriesPtm = new ArrayList<JSparklinesDataSeries>();
-                HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips = new HashMap<Integer, ArrayList<ResidueAnnotation>>();
+                ArrayList<JSparklinesDataSeries> sparkLineDataSeriesPtm = new ArrayList<>();
+                HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips = new HashMap<>();
 
                 // we need to add a first empty filler as the coverage table starts at 0
-                ArrayList<Double> data = new ArrayList<Double>();
+                ArrayList<Double> data = new ArrayList<>();
                 data.add(new Double(1));
                 JSparklinesDataSeries sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                 sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
@@ -4577,7 +4577,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 int unmodifiedCounter = 0;
 
                 // get the fixed ptms
-                HashMap<Integer, String> fixedPtms = new HashMap<Integer, String>(); // @TODO: note that this only supports one fixed ptm per residue
+                HashMap<Integer, String> fixedPtms = new HashMap<>(); // @TODO: note that this only supports one fixed ptm per residue
                 DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
 
                 // see if fixed ptms are displayed
@@ -4625,7 +4625,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                         // add the non-modified area
                         if (unmodifiedCounter > 0) {
-                            data = new ArrayList<Double>(1);
+                            data = new ArrayList<>(1);
                             data.add(new Double(unmodifiedCounter));
                             sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                             sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
@@ -4644,11 +4644,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         }
                         ptmColor = Color.ORANGE; // @TODO: remove when adding the actual peptide variations!
 
-                        ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
+                        ArrayList<ResidueAnnotation> annotations = new ArrayList<>(1);
                         annotations.add(new ResidueAnnotation(ptmName + " (" + aa + ")", null, false));
                         proteinTooltips.put(sparkLineDataSeriesPtm.size(), annotations);
 
-                        data = new ArrayList<Double>(1);
+                        data = new ArrayList<>(1);
                         data.add(new Double(1));
                         sparklineDataseriesPtm = new JSparklinesDataSeries(data, ptmColor, null);
                         sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
@@ -4663,7 +4663,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 if (unmodifiedCounter > 0) {
                     // add the remaining non-modified area
-                    data = new ArrayList<Double>();
+                    data = new ArrayList<>();
                     data.add(new Double(unmodifiedCounter));
                     sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                     sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
@@ -4926,7 +4926,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     } catch (Exception e1) {
                         // just hope the GUI holds...
                         peptideShakerGUI.catchException(e1);
-                        psmKeys = new ArrayList<String>();
+                        psmKeys = new ArrayList<>();
                     }
                 }
 
@@ -5026,7 +5026,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         peptideKeys = proteinMatch.getPeptideMatchesKeys();
                     } catch (Exception e1) {
                         peptideShakerGUI.catchException(e1);
-                        peptideKeys = new ArrayList<String>();
+                        peptideKeys = new ArrayList<>();
                     }
                 }
 
@@ -5241,7 +5241,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     private ArrayList<ArrayList<IonMatch>> getAnnotationsForAllSelectedSpectra() throws MzMLUnmarshallerException {
 
-        ArrayList<ArrayList<IonMatch>> allAnnotations = new ArrayList<ArrayList<IonMatch>>();
+        ArrayList<ArrayList<IonMatch>> allAnnotations = new ArrayList<>();
 
         int[] selectedRows = psmTable.getSelectedRows();
         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
@@ -5284,7 +5284,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     public ArrayList<String> getSelectedSpectrumKeys() {
 
         int[] selectedRows = psmTable.getSelectedRows();
-        ArrayList<String> keys = new ArrayList<String>(selectedRows.length);
+        ArrayList<String> keys = new ArrayList<>(selectedRows.length);
 
         SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
         for (int row : selectedRows) {
@@ -5314,14 +5314,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     public HashMap<String, ArrayList<SpectrumIdentificationAssumption>> getSelectedIdentificationAssumptions() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         int[] selectedRows = psmTable.getSelectedRows();
-        HashMap<String, ArrayList<SpectrumIdentificationAssumption>> results = new HashMap<String, ArrayList<SpectrumIdentificationAssumption>>(selectedRows.length);
+        HashMap<String, ArrayList<SpectrumIdentificationAssumption>> results = new HashMap<>(selectedRows.length);
 
         SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
         for (int row : selectedRows) {
             int psmIndex = tableModel.getViewIndex(row);
             String spectrumKey = psmKeys.get(psmIndex);
             SpectrumMatch spectrumMatch = (SpectrumMatch)peptideShakerGUI.getIdentification().retrieveObject(spectrumKey);
-            ArrayList<SpectrumIdentificationAssumption> assumptions = new ArrayList<SpectrumIdentificationAssumption>(1);
+            ArrayList<SpectrumIdentificationAssumption> assumptions = new ArrayList<>(1);
             assumptions.add(spectrumMatch.getBestPeptideAssumption());
             results.put(spectrumKey, assumptions);
         }
@@ -5340,7 +5340,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     public ArrayList<MSnSpectrum> getSelectedSpectra() throws MzMLUnmarshallerException {
 
         ArrayList<String> spectrumKeys = getSelectedSpectrumKeys();
-        ArrayList<MSnSpectrum> allSpectra = new ArrayList<MSnSpectrum>(spectrumKeys.size());
+        ArrayList<MSnSpectrum> allSpectra = new ArrayList<>(spectrumKeys.size());
         MSnSpectrum tempSpectrum;
 
         for (String spectrumKey : spectrumKeys) {
@@ -5648,7 +5648,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     }
                 } else {
                     boolean first = true;
-                    ArrayList<Integer> indexes = new ArrayList<Integer>(aaSurrounding.keySet());
+                    ArrayList<Integer> indexes = new ArrayList<>(aaSurrounding.keySet());
                     Collections.sort(indexes);
                     for (int index : indexes) {
                         if (first) {

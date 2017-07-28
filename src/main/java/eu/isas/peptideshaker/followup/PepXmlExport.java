@@ -257,7 +257,7 @@ public class PepXmlExport {
         sw.writeLineIncreasedIndent("<sample_enzyme name=\"" + enzyme.getName() + "\" fidelity=\"" + specificity + "\">");
 
         sw.increaseIndent();
-        ArrayList<Character> aaBefore = new ArrayList<Character>(enzyme.getAminoAcidBefore());
+        ArrayList<Character> aaBefore = new ArrayList<>(enzyme.getAminoAcidBefore());
         Collections.sort(aaBefore);
         if (aaBefore != null && !aaBefore.isEmpty()) {
             StringBuilder cut = new StringBuilder(aaBefore.size());
@@ -266,7 +266,7 @@ public class PepXmlExport {
             }
 
             StringBuilder noCut = new StringBuilder(1);
-            ArrayList<Character> restrictionAfter = new ArrayList<Character>(enzyme.getRestrictionAfter());
+            ArrayList<Character> restrictionAfter = new ArrayList<>(enzyme.getRestrictionAfter());
             Collections.sort(restrictionAfter);
             if (restrictionAfter != null && !restrictionAfter.isEmpty()) {
                 for (Character aa : restrictionAfter) {
@@ -275,7 +275,7 @@ public class PepXmlExport {
             }
             sw.writeLine("<specificity cut=\"" + cut + "\" no_cut=\"" + noCut + "\" sense=\"C\"/>");
         }
-        ArrayList<Character> aaAfter = new ArrayList<Character>(enzyme.getAminoAcidAfter());
+        ArrayList<Character> aaAfter = new ArrayList<>(enzyme.getAminoAcidAfter());
         Collections.sort(aaAfter);
         if (aaAfter != null && !aaAfter.isEmpty()) {
             StringBuilder cut = new StringBuilder(aaAfter.size());
@@ -284,7 +284,7 @@ public class PepXmlExport {
             }
 
             StringBuilder noCut = new StringBuilder(1);
-            ArrayList<Character> restrictionBefore = new ArrayList<Character>(enzyme.getRestrictionBefore());
+            ArrayList<Character> restrictionBefore = new ArrayList<>(enzyme.getRestrictionBefore());
             Collections.sort(restrictionBefore);
             if (restrictionBefore != null && !restrictionBefore.isEmpty()) {
                 for (Character aa : restrictionBefore) {
@@ -536,7 +536,7 @@ public class PepXmlExport {
         }
         ArrayList<ModificationMatch> modificationMatches = peptide.getModificationMatches();
         if (modificationMatches != null && !modificationMatches.isEmpty()) {
-            HashMap<Integer, Double> modifiedAminoAcids = new HashMap<Integer, Double>(modificationMatches.size());
+            HashMap<Integer, Double> modifiedAminoAcids = new HashMap<>(modificationMatches.size());
             Double nTermMass = null;
             Double cTermMass = null;
             for (ModificationMatch modificationMatch : modificationMatches) {

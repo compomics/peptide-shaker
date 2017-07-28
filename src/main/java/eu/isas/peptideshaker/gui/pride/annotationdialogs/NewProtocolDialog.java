@@ -511,7 +511,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
 
-        ArrayList<CvTerm> cvTerms = new ArrayList<CvTerm>();
+        ArrayList<CvTerm> cvTerms = new ArrayList<>();
 
         for (int i = 0; i < protocolCvTermsJTable.getRowCount(); i++) {
             cvTerms.add(new CvTerm(
@@ -559,7 +559,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
      */
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         dispose();
-        prideExportDialog.deleteProtocol(new Protocol(protocolNameJTextField.getText(), new ArrayList<CvTerm>()));
+        prideExportDialog.deleteProtocol(new Protocol(protocolNameJTextField.getText(), new ArrayList<>()));
     }//GEN-LAST:event_deleteButtonActionPerformed
 
      /**

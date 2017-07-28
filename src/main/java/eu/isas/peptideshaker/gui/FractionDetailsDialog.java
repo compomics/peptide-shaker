@@ -64,7 +64,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
      */
     private void addData() {
         ArrayList<String> spectrumFiles = peptideShakerGUI.getIdentification().getOrderedSpectrumFileNames();
-        spectrumFileNameMap = new HashMap<String, String>();
+        spectrumFileNameMap = new HashMap<>();
 
         HashMap<String, XYDataPoint> expectedMolecularWeightRanges = peptideShakerGUI.getIdentificationParameters().getFractionSettings().getFractionMolecularWeightRanges();
 
@@ -105,7 +105,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
         // make sure that the scroll panes are see-through
         fractionJScrollPane.getViewport().setOpaque(false);
 
-        tableToolTips = new ArrayList<String>();
+        tableToolTips = new ArrayList<>();
         tableToolTips.add(null);
         tableToolTips.add("Fraction File");
         tableToolTips.add("Expected Lower Molecular Weight For Fraction (kDa)");
@@ -494,8 +494,8 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
      * @param evt the action event
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        ArrayList<String> spectrumFiles = new ArrayList<String>();
-        HashMap<String, XYDataPoint> fractionRanges = new HashMap<String, XYDataPoint>();
+        ArrayList<String> spectrumFiles = new ArrayList<>();
+        HashMap<String, XYDataPoint> fractionRanges = new HashMap<>();
 
         for (int i = 0; i < fractionTable.getRowCount(); i++) {
             String filePath = spectrumFileNameMap.get((String) fractionTable.getValueAt(i, fractionTable.getColumn("Fraction").getModelIndex()));
@@ -551,7 +551,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
 
         if (selectedFile != null) {
 
-            ArrayList<XYDataPoint> lowerAndUpper = new ArrayList<XYDataPoint>();
+            ArrayList<XYDataPoint> lowerAndUpper = new ArrayList<>();
 
             try {
                 FileReader r = new FileReader(selectedFile);

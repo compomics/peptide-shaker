@@ -32,11 +32,11 @@ public class PeptideSpecificMap implements Serializable {
      * The peptide target/decoy maps indexed by the modification profile of the
      * peptide.
      */
-    private HashMap<String, TargetDecoyMap> peptideMaps = new HashMap<String, TargetDecoyMap>();
+    private HashMap<String, TargetDecoyMap> peptideMaps = new HashMap<>();
     /**
      * The indexes of the maps which have been put to the dustbin.
      */
-    private ArrayList<String> groupedMaps = new ArrayList<String>();
+    private ArrayList<String> groupedMaps = new ArrayList<>();
     /**
      * The index of the dustbin.
      */
@@ -122,7 +122,7 @@ public class PeptideSpecificMap implements Serializable {
      * @return a list of keys from maps presenting a suspicious input
      */
     public ArrayList<String> suspiciousInput(Double initialFDR) {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         for (String key : peptideMaps.keySet()) {
             if (!groupedMaps.contains(key) && peptideMaps.get(key).suspiciousInput(initialFDR)) {
                 result.add(key);
@@ -176,7 +176,7 @@ public class PeptideSpecificMap implements Serializable {
         PTMFactory ptmFactory = PTMFactory.getInstance();
         PTM ptm;
         Peptide peptide = peptideMatch.getTheoreticPeptide();
-        ArrayList<Double> modificationMasses = new ArrayList<Double>(peptide.getNModifications());
+        ArrayList<Double> modificationMasses = new ArrayList<>(peptide.getNModifications());
         if (peptide.isModified()) {
             for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
                 if (modificationMatch.getTheoreticPtm() != null && modificationMatch.getVariable()) {
@@ -202,7 +202,7 @@ public class PeptideSpecificMap implements Serializable {
      * @return the statistically retained peptide groups
      */
     public ArrayList<String> getKeys() {
-        ArrayList<String> results = new ArrayList<String>();
+        ArrayList<String> results = new ArrayList<>();
         for (String key : peptideMaps.keySet()) {
             if (!groupedMaps.contains(key)) {
                 results.add(key);

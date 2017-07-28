@@ -31,7 +31,7 @@ public class Tips {
         InputStream stream = (new Tips()).getClass().getResource("/tips.txt").openStream();
         InputStreamReader streamReader = new InputStreamReader(stream);
         BufferedReader b = new BufferedReader(streamReader);
-        ArrayList<String> tips = new ArrayList<String>();
+        ArrayList<String> tips = new ArrayList<>();
         String line;
 
         while ((line = b.readLine()) != null) {

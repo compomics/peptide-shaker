@@ -211,7 +211,7 @@ public class ProteinSequencePanel {
             throw new IllegalArgumentException("Height and length size given to protein coverage panel differ.");
         }
 
-        ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<JSparklinesDataSeries>();
+        ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<>();
 
         int previousIndex = 0;
         int previousColorIndex = aaColorIndex[0];
@@ -225,7 +225,7 @@ public class ProteinSequencePanel {
             //if (newColorIndex != previousColorIndex || newHeight != previousHeight) {
             if (newColorIndex != previousColorIndex) {
                 double length = i - previousIndex;
-                ArrayList<Double> series = new ArrayList<Double>(1);
+                ArrayList<Double> series = new ArrayList<>(1);
                 series.add(length);
                 Color color = colors.get(previousColorIndex);
                 if (color == null) {
@@ -239,7 +239,7 @@ public class ProteinSequencePanel {
             }
         }
         double length = aaHeight.length - previousIndex;
-        ArrayList<Double> series = new ArrayList<Double>(1);
+        ArrayList<Double> series = new ArrayList<>(1);
         series.add(length);
         Color color = colors.get(previousColorIndex);
         if (color == null) {

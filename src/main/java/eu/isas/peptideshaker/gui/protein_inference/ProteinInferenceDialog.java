@@ -60,11 +60,11 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
     /**
      * The detected unique matches (if any).
      */
-    private ArrayList<String> uniqueMatches = new ArrayList<String>();
+    private ArrayList<String> uniqueMatches = new ArrayList<>();
     /**
      * Associated matches presenting the same proteins or a share.
      */
-    private ArrayList<String> associatedMatches = new ArrayList<String>();
+    private ArrayList<String> associatedMatches = new ArrayList<>();
     /**
      * The sequence factory.
      */
@@ -181,12 +181,12 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      */
     private void drawGraph() {
 
-        ArrayList<String> nodes = new ArrayList<String>();
-        HashMap<String, String> nodeProperties = new HashMap<String, String>();
-        HashMap<String, String> edgeProperties = new HashMap<String, String>();
-        HashMap<String, String> nodeToolTips = new HashMap<String, String>();
-        HashMap<String, ArrayList<String>> edges = new HashMap<String, ArrayList<String>>();
-        ArrayList<String> selectedNodes = new ArrayList<String>();
+        ArrayList<String> nodes = new ArrayList<>();
+        HashMap<String, String> nodeProperties = new HashMap<>();
+        HashMap<String, String> edgeProperties = new HashMap<>();
+        HashMap<String, String> nodeToolTips = new HashMap<>();
+        HashMap<String, ArrayList<String>> edges = new HashMap<>();
+        ArrayList<String> selectedNodes = new ArrayList<>();
 
         ArrayList<String> peptideKeys = inspectedMatch.getPeptideMatchesKeys();
 
@@ -318,7 +318,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
                 ArrayList<String> tempEdges = edges.get(peptideNodeName);
                 if (tempEdges == null) {
-                    tempEdges = new ArrayList<String>();
+                    tempEdges = new ArrayList<>();
                 }
                 if (!tempEdges.contains(proteinNodeKey)) {
                     tempEdges.add(proteinNodeKey);
@@ -413,7 +413,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         ((JSparklinesBarChartTableCellRenderer) relatedHitsTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 5);
 
         // set up the table header tooltips
-        candidateProteinsTableToolTips = new ArrayList<String>();
+        candidateProteinsTableToolTips = new ArrayList<>();
         candidateProteinsTableToolTips.add(null);
         candidateProteinsTableToolTips.add("Protein Group Representative");
         candidateProteinsTableToolTips.add("Protein Accession");
@@ -423,13 +423,13 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         candidateProteinsTableToolTips.add("Protein Evidence Level");
         candidateProteinsTableToolTips.add("Contains Enzymatic Peptides");
 
-        uniqueHitsTableToolTips = new ArrayList<String>();
+        uniqueHitsTableToolTips = new ArrayList<>();
         uniqueHitsTableToolTips.add(null);
         uniqueHitsTableToolTips.add("Protein Accession(s)");
         uniqueHitsTableToolTips.add("Protein Confidence");
         uniqueHitsTableToolTips.add("Validated");
 
-        relatedHitsTableToolTips = new ArrayList<String>();
+        relatedHitsTableToolTips = new ArrayList<>();
         relatedHitsTableToolTips.add(null);
         relatedHitsTableToolTips.add("Protein Accession(s)");
         relatedHitsTableToolTips.add("Protein Confidence");
@@ -1212,7 +1212,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 0:
                     return (row + 1);
                 case 1:
-                    return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLinks(new ArrayList<String>(Arrays.asList(ProteinMatch.getAccessions(uniqueMatches.get(row)))));
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLinks(new ArrayList<>(Arrays.asList(ProteinMatch.getAccessions(uniqueMatches.get(row)))));
                 case 2:
                     return pSParameter.getProteinConfidence();
                 case 3:
@@ -1278,7 +1278,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 0:
                     return (row + 1);
                 case 1:
-                    return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLinks(new ArrayList<String>(Arrays.asList(ProteinMatch.getAccessions(associatedMatches.get(row)))));
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLinks(new ArrayList<>(Arrays.asList(ProteinMatch.getAccessions(associatedMatches.get(row)))));
                 case 2:
                     return pSParameter.getProteinConfidence();
                 case 3:

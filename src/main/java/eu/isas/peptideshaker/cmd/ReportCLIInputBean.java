@@ -29,11 +29,11 @@ public class ReportCLIInputBean {
     /**
      * The report types required by the user.
      */
-    private ArrayList<String> reportTypes = new ArrayList<String>();
+    private ArrayList<String> reportTypes = new ArrayList<>();
     /**
      * The documentation types required by the user.
      */
-    private ArrayList<String> documentationTypes = new ArrayList<String>();
+    private ArrayList<String> documentationTypes = new ArrayList<>();
     /**
      * The path settings.
      */

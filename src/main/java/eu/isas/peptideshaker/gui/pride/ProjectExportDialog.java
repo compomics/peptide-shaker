@@ -114,7 +114,7 @@ public class ProjectExportDialog extends javax.swing.JDialog {
      * Insert the reference options in the combo box.
      */
     private void insertReferenceOptions() {
-        insertOptions(new ArrayList<String>(prideObjectsFactory.getReferenceGroups().keySet()),
+        insertOptions(new ArrayList<>(prideObjectsFactory.getReferenceGroups().keySet()),
                 "--- Select a Reference Group ---", "   Create a New Reference Group...", referenceGroupsJComboBox);
     }
 
@@ -122,7 +122,7 @@ public class ProjectExportDialog extends javax.swing.JDialog {
      * Insert the contact options in the combo box.
      */
     private void insertContactOptions() {
-        insertOptions(new ArrayList<String>(prideObjectsFactory.getContactGroups().keySet()),
+        insertOptions(new ArrayList<>(prideObjectsFactory.getContactGroups().keySet()),
                 "--- Select a Contact Group ---", "   Create a New Contact Group...", contactGroupsJComboBox);
     }
 
@@ -130,7 +130,7 @@ public class ProjectExportDialog extends javax.swing.JDialog {
      * Insert the sample options in the combo box.
      */
     private void insertSampleOptions() {
-        insertOptions(new ArrayList<String>(prideObjectsFactory.getSamples().keySet()),
+        insertOptions(new ArrayList<>(prideObjectsFactory.getSamples().keySet()),
                 "--- Select a Sample Set ---", "   Create a New Sample Set...", sampleJComboBox);
     }
 
@@ -138,7 +138,7 @@ public class ProjectExportDialog extends javax.swing.JDialog {
      * Insert the protocol options in the combo box.
      */
     private void insertProtocolOptions() {
-        insertOptions(new ArrayList<String>(prideObjectsFactory.getProtocols().keySet()),
+        insertOptions(new ArrayList<>(prideObjectsFactory.getProtocols().keySet()),
                 "--- Select a Protocol ---", "   Create a New Protocol...", protocolJComboBox);
     }
 
@@ -146,7 +146,7 @@ public class ProjectExportDialog extends javax.swing.JDialog {
      * Insert the instrument options in the combo box.
      */
     private void insertInstrumentOptions() {
-        insertOptions(new ArrayList<String>(prideObjectsFactory.getInstruments().keySet()),
+        insertOptions(new ArrayList<>(prideObjectsFactory.getInstruments().keySet()),
                 "--- Select an Instrument ---", "   Create a New Instrument...", instrumentJComboBox);
     }
 
@@ -218,7 +218,7 @@ public class ProjectExportDialog extends javax.swing.JDialog {
      * @return a boolean indicating that PTMs are configured correctly
      */
     private ArrayList<String> checkModifications() {
-        ArrayList<String> missingTerm = new ArrayList<String>();
+        ArrayList<String> missingTerm = new ArrayList<>();
         PtmToPrideMap ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
         for (String modification : peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings().getAllModifications()) {
             if (!modification.equals(PtmPanel.NO_MODIFICATION) && ptmToPrideMap.getCVTerm(modification) == null) {
@@ -953,7 +953,7 @@ public class ProjectExportDialog extends javax.swing.JDialog {
         ContactGroup tempContactGroup = prideObjectsFactory.getContactGroups().get(selectedContactGroup);
 
         if (tempContactGroup == null) {
-            tempContactGroup = new ContactGroup(new ArrayList<Contact>(), "");
+            tempContactGroup = new ContactGroup(new ArrayList<>(), "");
         }
 
         new NewContactGroupDialog(this, true, tempContactGroup);
@@ -1200,7 +1200,7 @@ public class ProjectExportDialog extends javax.swing.JDialog {
         ReferenceGroup tempReferenceGroup = prideObjectsFactory.getReferenceGroups().get(selectedReferenceGroup);
 
         if (tempReferenceGroup == null) {
-            tempReferenceGroup = new ReferenceGroup(new ArrayList<Reference>(), "");
+            tempReferenceGroup = new ReferenceGroup(new ArrayList<>(), "");
         }
 
         new NewReferenceGroupDialog(this, true, tempReferenceGroup);

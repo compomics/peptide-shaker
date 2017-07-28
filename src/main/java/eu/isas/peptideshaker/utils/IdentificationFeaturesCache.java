@@ -123,19 +123,19 @@ public class IdentificationFeaturesCache implements Serializable {
     /**
      * The cached protein matches for small objects.
      */
-    private ArrayList<String> smallObjectsInCache = new ArrayList<String>();
+    private ArrayList<String> smallObjectsInCache = new ArrayList<>();
     /**
      * The cached protein matches for big objects.
      */
-    private ArrayList<String> bigObjectsInCache = new ArrayList<String>();
+    private ArrayList<String> bigObjectsInCache = new ArrayList<>();
     /**
      * Mapping of the stored big objects.
      */
-    private HashMap<ObjectType, HashMap<String, Object>> bigObjectsCache = new HashMap<ObjectType, HashMap<String, Object>>();
+    private HashMap<ObjectType, HashMap<String, Object>> bigObjectsCache = new HashMap<>();
     /**
      * Mapping of the stored small objects.
      */
-    private HashMap<ObjectType, HashMap<String, Object>> smallObjectsCache = new HashMap<ObjectType, HashMap<String, Object>>();
+    private HashMap<ObjectType, HashMap<String, Object>> smallObjectsCache = new HashMap<>();
     /**
      * The protein list.
      */
@@ -191,7 +191,7 @@ public class IdentificationFeaturesCache implements Serializable {
     public synchronized void removeObjects(ObjectType type) {
         if (!readOnly) {
             String typeKey = getTypeAsString(type);
-            ArrayList<String> toRemove = new ArrayList<String>();
+            ArrayList<String> toRemove = new ArrayList<>();
 
             switch (type) {
                 case coverable_AA_p:
@@ -247,7 +247,7 @@ public class IdentificationFeaturesCache implements Serializable {
                 case AA_coverage:
                 case tryptic_protein:
                     if (!bigObjectsCache.containsKey(type)) {
-                        bigObjectsCache.put(type, new HashMap<String, Object>());
+                        bigObjectsCache.put(type, new HashMap<>());
                     }
 
                     Object oldValue = bigObjectsCache.get(type).put(objectKey, object);
@@ -283,7 +283,7 @@ public class IdentificationFeaturesCache implements Serializable {
                 case unique_peptides:
                 case containsEnzymaticPeptides:
                     if (!smallObjectsCache.containsKey(type)) {
-                        smallObjectsCache.put(type, new HashMap<String, Object>());
+                        smallObjectsCache.put(type, new HashMap<>());
                     }
 
                     oldValue = smallObjectsCache.get(type).put(objectKey, object);

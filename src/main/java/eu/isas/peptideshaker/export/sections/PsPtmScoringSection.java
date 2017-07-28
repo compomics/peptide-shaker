@@ -45,7 +45,7 @@ public class PsPtmScoringSection {
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        ptmScoringFeatures = new ArrayList<PsPtmScoringFeature>(exportFeatures.size());
+        ptmScoringFeatures = new ArrayList<>(exportFeatures.size());
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsPtmScoringFeature) {
                 ptmScoringFeatures.add((PsPtmScoringFeature) exportFeature);

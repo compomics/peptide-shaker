@@ -275,28 +275,28 @@ public class FileImporter {
         /**
          * The identification file reader factory of compomics utilities.
          */
-        private IdfileReaderFactory readerFactory = IdfileReaderFactory.getInstance();
+        private final IdfileReaderFactory readerFactory = IdfileReaderFactory.getInstance();
         /**
          * The list of identification files.
          */
-        private ArrayList<File> idFiles;
+        private final ArrayList<File> idFiles;
         /**
          * A list of spectrum files (can be empty, no spectrum will be
          * imported).
          */
-        private HashMap<String, File> spectrumFiles;
+        private final HashMap<String, File> spectrumFiles;
         /**
          * The processing preferences.
          */
-        private ProcessingPreferences processingPreferences;
+        private final ProcessingPreferences processingPreferences;
         /**
          * The project details
          */
-        private ProjectDetails projectDetails;
+        private final ProjectDetails projectDetails;
         /**
          * The spectrum counting preferences.
          */
-        private SpectrumCountingPreferences spectrumCountingPreferences;
+        private final SpectrumCountingPreferences spectrumCountingPreferences;
         /**
          * The number of retained first hits.
          */
@@ -308,15 +308,15 @@ public class FileImporter {
         /**
          * List of the mgf files used.
          */
-        private ArrayList<String> mgfUsed = new ArrayList<String>();
+        private final ArrayList<String> mgfUsed = new ArrayList<>();
         /**
          * Map of the missing mgf files indexed by identification file.
          */
-        private HashMap<File, String> missingMgfFiles = new HashMap<File, String>();
+        private final HashMap<File, String> missingMgfFiles = new HashMap<>();
         /**
          * The input map.
          */
-        private InputMap inputMap = new InputMap();
+        private final InputMap inputMap = new InputMap();
         /**
          * Boolean indicating whether we can display GUI stuff.
          */
@@ -328,20 +328,20 @@ public class FileImporter {
         /**
          * A peptide to protein mapper.
          */
-        private PeptideMapper peptideMapper;
+        private final PeptideMapper peptideMapper;
         /**
          * A tag to protein mapper.
          */
-        private TagMapper tagMapper = null;
+        private final TagMapper tagMapper;
         /**
          * List of one hit wonders.
          */
-        private HashSet<String> singleProteinList = new HashSet<String>();
+        private final HashSet<String> singleProteinList = new HashSet<>();
         /**
          * Map of proteins found several times with the number of times they
          * appeared as first hit.
          */
-        private HashMap<String, Integer> proteinCount = new HashMap<String, Integer>();
+        private final HashMap<String, Integer> proteinCount = new HashMap<>();
         /**
          * The number of first hits.
          */
@@ -353,7 +353,7 @@ public class FileImporter {
         /**
          * The identification parameters.
          */
-        private IdentificationParameters identificationParameters;
+        private final IdentificationParameters identificationParameters;
 
         /**
          * Constructor for a worker importing matches from a list of files.
@@ -375,14 +375,14 @@ public class FileImporter {
                 IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences,
                 SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails) {
 
-            this.idFiles = new ArrayList<File>();
-            HashMap<String, File> filesMap = new HashMap<String, File>();
+            this.idFiles = new ArrayList<>();
+            HashMap<String, File> filesMap = new HashMap<>();
 
             for (File file : idFiles) {
                 filesMap.put(file.getName(), file);
             }
 
-            ArrayList<String> names = new ArrayList<String>(filesMap.keySet());
+            ArrayList<String> names = new ArrayList<>(filesMap.keySet());
             Collections.sort(names);
 
             // Process sequencing files first, they need much more memory. TODO: make something more generic?
@@ -398,7 +398,7 @@ public class FileImporter {
                 }
             }
 
-            this.spectrumFiles = new HashMap<String, File>();
+            this.spectrumFiles = new HashMap<>();
             this.identificationParameters = identificationParameters;
             this.processingPreferences = processingPreferences;
             this.spectrumCountingPreferences = spectrumCountingPreferences;
@@ -408,10 +408,8 @@ public class FileImporter {
                 this.spectrumFiles.put(file.getName(), file);
             }
 
-            UtilitiesUserPreferences userPreferences = UtilitiesUserPreferences.loadUserPreferences();
-            if (userPreferences.getMemoryPreference() > 2000) {
-                peptideMapper = new PeptideMapper(identificationParameters, waitingHandler, exceptionHandler);
-            }
+            peptideMapper = new PeptideMapper(identificationParameters, waitingHandler, exceptionHandler);
+            tagMapper = new TagMapper(identificationParameters, exceptionHandler);
         }
 
         @Override
@@ -497,7 +495,7 @@ public class FileImporter {
                             return 1;
                         }
                         waitingHandler.appendReport("Processing files with the new input.", true, true);
-                        ArrayList<File> filesToProcess = new ArrayList<File>(missingMgfFiles.keySet());
+                        ArrayList<File> filesToProcess = new ArrayList<>(missingMgfFiles.keySet());
 
                         for (String mgfName : missingMgfFiles.values()) {
                             File newFile = spectrumFactory.getSpectrumFileFromIdName(mgfName);
@@ -622,9 +620,6 @@ public class FileImporter {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
             waitingHandler.appendReport("Parsing " + idFile.getName() + ".", true, true);
 
-            
-            
-            
             IdfileReader fileReader = null;
             try {
                 fileReader = readerFactory.getFileReader(idFile);
@@ -698,30 +693,17 @@ public class FileImporter {
 
                         // if any map spectrum sequencing matches on protein sequences
                         if (fileReader.hasDeNovoTags()) {
-                            if (tagMapper == null) {
-                                tagMapper = new TagMapper(identificationParameters, exceptionHandler);
-                            }
-                            tagMapper.mapTags(fileReader, identification, waitingHandler, processingPreferences.getnThreads());
+                            waitingHandler.resetSecondaryProgressCounter();
+                            waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
+                            waitingHandler.appendReport("Mapping tags to peptides.", true, true);
+                            tagMapper.mapTags(idFileSpectrumMatches, waitingHandler, processingPreferences.getnThreads());
                         }
 
-                        // Batch map the peptides on protein sequences
-                        if (peptideMapper != null && !peptideMapper.isCanceled()) {
-                            try {
-                                // Get map of peptides likely to need protein mapping
-                                waitingHandler.resetSecondaryProgressCounter();
-                                waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
-                                waitingHandler.appendReport("Collecting peptides to map.", true, true);
-                                HashMap<String, LinkedList<Peptide>> peptideMap = PeptideMapper.getPeptideMap(fileReader, idFileSpectrumMatches, identification, identificationParameters, waitingHandler);
-                                if (!peptideMapper.isCanceled()) {
-                                    peptideMapper.mapPeptides(peptideMap, processingPreferences.getnThreads(), waitingHandler);
-                                }
-                                if (peptideMapper.isCanceled()) {
-                                    peptideMap.clear();
-                                }
-                            } catch (OutOfMemoryError e) {
-                                peptideMapper.setCanceled(true);
-                            }
-                        }
+                        // Map the peptides on protein sequences
+                        waitingHandler.resetSecondaryProgressCounter();
+                        waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
+                        waitingHandler.appendReport("Mapping peptides to proteins.", true, true);
+                        peptideMapper.mapPeptides(idFileSpectrumMatches, waitingHandler);
 
                         waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                         waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);

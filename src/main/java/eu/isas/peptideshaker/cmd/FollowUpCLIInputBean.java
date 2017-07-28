@@ -104,7 +104,7 @@ public class FollowUpCLIInputBean {
     /**
      * The Progenesis targeted PTMs.
      */
-    private ArrayList<String> progenesisTargetedPTMs = new ArrayList<String>();
+    private ArrayList<String> progenesisTargetedPTMs = new ArrayList<>();
     /**
      * The path settings.
      */
@@ -201,7 +201,7 @@ public class FollowUpCLIInputBean {
      * @return the given list of modifications
      */
     private ArrayList<String> getModificationNames(String commandLineInput) {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         for (String input : commandLineInput.split(",")) {
             result.add(input.trim().toLowerCase());
         }
@@ -400,7 +400,7 @@ public class FollowUpCLIInputBean {
      */
     public ArrayList<Integer> getInclusionProteinFilter() {
         if (inclusionProteinFilter == null) {
-            inclusionProteinFilter = new ArrayList<Integer>();
+            inclusionProteinFilter = new ArrayList<>();
             inclusionProteinFilter.add(3);
         }
         return inclusionProteinFilter;
@@ -413,7 +413,7 @@ public class FollowUpCLIInputBean {
      */
     public ArrayList<Integer> getInclusionPeptideFilter() {
         if (inclusionPeptideFilter == null) {
-            inclusionPeptideFilter = new ArrayList<Integer>();
+            inclusionPeptideFilter = new ArrayList<>();
             inclusionPeptideFilter.add(0);
             inclusionPeptideFilter.add(1);
             inclusionPeptideFilter.add(2);

@@ -54,7 +54,7 @@ public class ProteinInference {
     /**
      * Map of the most complex groups: key | proteins
      */
-    private HashMap<String, ArrayList<String>> proteinGroupCache = new HashMap<String, ArrayList<String>>(100);
+    private HashMap<String, ArrayList<String>> proteinGroupCache = new HashMap<>(100);
     /**
      * Size of the protein groups cahce
      */
@@ -83,7 +83,7 @@ public class ProteinInference {
             IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
-        ArrayList<String> toRemove = new ArrayList<String>(); 
+        ArrayList<String> toRemove = new ArrayList<>(); 
         int max = identification.getProteinIdentification().size();
 
         if (waitingHandler != null) {
@@ -92,8 +92,8 @@ public class ProteinInference {
             waitingHandler.setMaxSecondaryProgressCounter(max);
         }
 
-        HashSet<String> toDelete = new HashSet<String>();
-        HashMap<String, String> processedKeys = new HashMap<String, String>();
+        HashSet<String> toDelete = new HashSet<>();
+        HashMap<String, String> processedKeys = new HashMap<>();
 
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
         while (proteinMatchesIterator.hasNext()) {
@@ -198,7 +198,7 @@ public class ProteinInference {
         } else {
             sharedAccessions = getProteins(sharedKey);
         }
-        HashSet<String> candidateUnique = new HashSet<String>(1);
+        HashSet<String> candidateUnique = new HashSet<>(1);
         HashSet<String> sharedAccessionsAsSet = null;
 
         for (String accession : sharedAccessions) {
@@ -216,7 +216,7 @@ public class ProteinInference {
                     }
                     if (sharedAccessions.size() >= uniqueAccessions.size()) {
                         if (sharedAccessionsAsSet == null) {
-                            sharedAccessionsAsSet = new HashSet<String>(sharedAccessions);
+                            sharedAccessionsAsSet = new HashSet<>(sharedAccessions);
                         }
                         if (ProteinMatch.contains(sharedAccessionsAsSet, uniqueAccessions) && !keysToDelete.contains(uniqueKey)) {
                             String subGroup = uniqueKey;
@@ -245,7 +245,7 @@ public class ProteinInference {
         String minimalKey = null;
 
         if (!candidateUnique.isEmpty()) {
-            ArrayList<String> keys = new ArrayList<String>(candidateUnique.size());
+            ArrayList<String> keys = new ArrayList<>(candidateUnique.size());
             for (String accession : candidateUnique) {
                 if (!keysToDelete.contains(accession)) {
                     keys.add(accession);
@@ -254,11 +254,11 @@ public class ProteinInference {
 
             if (!keys.isEmpty()) {
                 ProteinMatch match = (ProteinMatch)identification.retrieveObject(sharedKey);
-                HashMap<String, Integer> preferenceReason = new HashMap<String, Integer>();
+                HashMap<String, Integer> preferenceReason = new HashMap<>();
                 for (String key1 : keys) {
                     for (String accession1 : ProteinMatch.getAccessions(key1)) {
                         if (minimalKey == null) {
-                            preferenceReason = new HashMap<String, Integer>();
+                            preferenceReason = new HashMap<>();
                             boolean best = true;
                             for (String key2 : keys) {
                                 if (!key1.equals(key2)) {
@@ -381,7 +381,7 @@ public class ProteinInference {
 
         waitingHandler.setWaitingText("Simplifying Redundant Protein Groups. Please Wait...");
 
-        ArrayList<String> toRemove = new ArrayList<String>();
+        ArrayList<String> toRemove = new ArrayList<>();
         int maxProteinKeyLength = 0;
         ProteinInferencePreferences proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
 
@@ -393,7 +393,7 @@ public class ProteinInference {
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        ArrayList<UrParameter> parameters = new ArrayList<>(1);
         parameters.add(psParameter);
         if (proteinInferencePreferences.getSimplifyGroups() && proteinInferencePreferences.getSimplifyGroupsScore()) {
             ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
@@ -429,7 +429,7 @@ public class ProteinInference {
                                 }
                                 if (sharedAccessions.size() >= uniqueAccessions.size()) {
                                     if (sharedAccessionsAsSet == null) {
-                                        sharedAccessionsAsSet = new HashSet<String>(sharedAccessions);
+                                        sharedAccessionsAsSet = new HashSet<>(sharedAccessions);
                                     }
                                     if (ProteinMatch.contains(sharedAccessionsAsSet, uniqueAccessions)) {
                                         psParameter = (PSParameter)uniqueProteinMatch.getUrParam(psParameter);
@@ -481,7 +481,7 @@ public class ProteinInference {
         // As we go through all protein ids, keep the sorted list of proteins and maxima in the instance of the Metrics class to pass them to the GUI afterwards
         // proteins are sorted according to the protein score, then number of peptides (inverted), then number of spectra (inverted).
         HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> orderMap
-                = new HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>>();
+                = new HashMap<>();
         PSParameter probabilities = new PSParameter();
         double maxMW = 0;
 
@@ -518,15 +518,15 @@ public class ProteinInference {
                     nSpectra -= peptideMatch.getSpectrumCount();
                 }
                 if (!orderMap.containsKey(score)) {
-                    orderMap.put(score, new HashMap<Integer, HashMap<Integer, ArrayList<String>>>());
+                    orderMap.put(score, new HashMap<>());
                 }
 
                 if (!orderMap.get(score).containsKey(nPeptides)) {
-                    orderMap.get(score).put(nPeptides, new HashMap<Integer, ArrayList<String>>());
+                    orderMap.get(score).put(nPeptides, new HashMap<>());
                 }
 
                 if (!orderMap.get(score).get(nPeptides).containsKey(nSpectra)) {
-                    orderMap.get(score).get(nPeptides).put(nSpectra, new ArrayList<String>());
+                    orderMap.get(score).get(nPeptides).put(nSpectra, new ArrayList<>());
                 }
                 orderMap.get(score).get(nPeptides).get(nSpectra).add(proteinKey);
 
@@ -536,7 +536,7 @@ public class ProteinInference {
                 }
             }
 
-            ArrayList<String> accessions = new ArrayList<String>(Arrays.asList(ProteinMatch.getAccessions(proteinKey)));
+            ArrayList<String> accessions = new ArrayList<>(Arrays.asList(ProteinMatch.getAccessions(proteinKey)));
             Collections.sort(accessions);
             String mainKey = accessions.get(0);
 
@@ -662,20 +662,20 @@ public class ProteinInference {
             }
         }
 
-        ArrayList<String> proteinList = new ArrayList<String>();
-        ArrayList<Double> scoreList = new ArrayList<Double>(orderMap.keySet());
+        ArrayList<String> proteinList = new ArrayList<>();
+        ArrayList<Double> scoreList = new ArrayList<>(orderMap.keySet());
         Collections.sort(scoreList);
         int maxPeptides = 0;
         int maxSpectra = 0;
 
         for (double currentScore : scoreList) {
-            ArrayList<Integer> nPeptideList = new ArrayList<Integer>(orderMap.get(currentScore).keySet());
+            ArrayList<Integer> nPeptideList = new ArrayList<>(orderMap.get(currentScore).keySet());
             Collections.sort(nPeptideList);
             if (nPeptideList.get(0) < maxPeptides) {
                 maxPeptides = nPeptideList.get(0);
             }
             for (int currentNPeptides : nPeptideList) {
-                ArrayList<Integer> nPsmList = new ArrayList<Integer>(orderMap.get(currentScore).get(currentNPeptides).keySet());
+                ArrayList<Integer> nPsmList = new ArrayList<>(orderMap.get(currentScore).get(currentNPeptides).keySet());
                 Collections.sort(nPsmList);
                 if (nPsmList.get(0) < maxSpectra) {
                     maxSpectra = nPsmList.get(0);
@@ -723,10 +723,10 @@ public class ProteinInference {
         String description = sequenceFactory.getHeader(proteinAccession).getSimpleProteinDescription();
 
         if (description == null) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
 
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         for (String component : description.split(" ")) {
             if (component.length() > 3) {
                 result.add(component);
@@ -924,7 +924,7 @@ public class ProteinInference {
     private ArrayList<String> getProteins(String groupKey) {
         ArrayList<String> result = proteinGroupCache.get(groupKey);
         if (result == null) {
-            result = new ArrayList<String>(Arrays.asList(ProteinMatch.getAccessions(groupKey)));
+            result = new ArrayList<>(Arrays.asList(ProteinMatch.getAccessions(groupKey)));
             if (result.size() > sizeOfProteinsInCache) {
                 proteinGroupCache.put(groupKey, result);
                 if (proteinGroupCache.size() > cacheSize) {

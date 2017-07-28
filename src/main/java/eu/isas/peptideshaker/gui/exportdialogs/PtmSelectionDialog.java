@@ -34,7 +34,7 @@ public class PtmSelectionDialog extends javax.swing.JDialog {
     public PtmSelectionDialog(java.awt.Frame parent, ArrayList<String> searchedModifications) {
         super(parent, true);
         this.searchedModifications = searchedModifications;
-        selectedModifications = new ArrayList<String>();
+        selectedModifications = new ArrayList<>();
 
         // let's try to find the modifications of interest
         for (String ptm : searchedModifications) {

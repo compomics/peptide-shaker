@@ -625,7 +625,7 @@ public class FilterDialog extends javax.swing.JDialog {
      * @return a list of the parsed keys
      */
     private ArrayList<String> parseAccessions(String text) {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         String[] split = text.split(";"); //todo allow other separators
         for (String part : split) {
             if (!part.trim().equals("")) {
@@ -674,7 +674,7 @@ public class FilterDialog extends javax.swing.JDialog {
 
         public FilterItemsTableModel() {
             if (matchFilter != null) {
-                itemsNames = new ArrayList<String>(matchFilter.getItemsNames());
+                itemsNames = new ArrayList<>(matchFilter.getItemsNames());
                 Collections.sort(itemsNames);
             }
         }

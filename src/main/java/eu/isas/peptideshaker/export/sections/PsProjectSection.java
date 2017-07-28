@@ -47,7 +47,7 @@ public class PsProjectSection {
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        projectFeatures = new ArrayList<PsProjectFeature>(exportFeatures.size());
+        projectFeatures = new ArrayList<>(exportFeatures.size());
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsProjectFeature) {
                 projectFeatures.add((PsProjectFeature) exportFeature);

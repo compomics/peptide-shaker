@@ -24,17 +24,17 @@ public class ProjectDetails implements Serializable {
     /**
      * List of the identification files loaded.
      */
-    private ArrayList<File> identificationFiles = new ArrayList<File>();
+    private ArrayList<File> identificationFiles = new ArrayList<>();
     /**
      * Map of the identification algorithms names and versions used to generate
      * the identification files. identification file name &gt; Advocate Ids &gt;
      * identification algorithm versions used.
      */
-    private HashMap<String, HashMap<String, ArrayList<String>>> identificationAlgorithms = new HashMap<String, HashMap<String, ArrayList<String>>>();
+    private HashMap<String, HashMap<String, ArrayList<String>>> identificationAlgorithms = new HashMap<>();
     /**
      * List of the spectrum files.
      */
-    private HashMap<String, File> spectrumFiles = new HashMap<String, File>();
+    private HashMap<String, File> spectrumFiles = new HashMap<>();
     /**
      * When the project was created.
      */
@@ -180,7 +180,7 @@ public class ProjectDetails implements Serializable {
     public File getSpectrumFile(String fileName) {
         // Compatibility check
         if (spectrumFiles == null) {
-            spectrumFiles = new HashMap<String, File>();
+            spectrumFiles = new HashMap<>();
         }
         return spectrumFiles.get(fileName);
     }
@@ -463,7 +463,7 @@ public class ProjectDetails implements Serializable {
      * of the Advocate class
      */
     public ArrayList<Integer> getIdentificationAlgorithms() {
-        ArrayList<Integer> result = new ArrayList<Integer>();
+        ArrayList<Integer> result = new ArrayList<>();
         for (HashMap<String, ArrayList<String>> advocateVersions : identificationAlgorithms.values()) {
             for (String advocateName : advocateVersions.keySet()) {
                 Advocate advocate = Advocate.getAdvocate(advocateName);
@@ -486,14 +486,14 @@ public class ProjectDetails implements Serializable {
      * @return the different identification algorithm versions used
      */
     public HashMap<String, ArrayList<String>> getAlgorithmNameToVersionsMap() {
-        HashMap<String, ArrayList<String>> algorithmNameToVersionMap = new HashMap<String, ArrayList<String>>();
+        HashMap<String, ArrayList<String>> algorithmNameToVersionMap = new HashMap<>();
         for (HashMap<String, ArrayList<String>> fileMapping : identificationAlgorithms.values()) {
             for (String softwareName : fileMapping.keySet()) {
                 ArrayList<String> newVersions = fileMapping.get(softwareName);
                 if (newVersions != null && !newVersions.isEmpty()) {
                     ArrayList<String> currentVersions = algorithmNameToVersionMap.get(softwareName);
                     if (currentVersions == null) {
-                        currentVersions = new ArrayList<String>(newVersions);
+                        currentVersions = new ArrayList<>(newVersions);
                         algorithmNameToVersionMap.put(softwareName, currentVersions);
                     } else {
                         for (String version : newVersions) {
@@ -532,7 +532,7 @@ public class ProjectDetails implements Serializable {
      */
     public void setIdentificationAlgorithmsForFile(String idFileName, HashMap<String, ArrayList<String>> fileIdentificationAlgorithms) {
         if (identificationAlgorithms == null) {
-            identificationAlgorithms = new HashMap<String, HashMap<String, ArrayList<String>>>();
+            identificationAlgorithms = new HashMap<>();
         }
         identificationAlgorithms.put(idFileName, fileIdentificationAlgorithms);
     }

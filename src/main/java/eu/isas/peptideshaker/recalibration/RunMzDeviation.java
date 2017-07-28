@@ -36,11 +36,11 @@ public class RunMzDeviation {
     /**
      * The precursor slopes.
      */
-    private HashMap<Double, Double> precursorSlopes = new HashMap<Double, Double>();
+    private HashMap<Double, Double> precursorSlopes = new HashMap<>();
     /**
      * The precursor offsets.
      */
-    private HashMap<Double, Double> precursorOffsets = new HashMap<Double, Double>();
+    private HashMap<Double, Double> precursorOffsets = new HashMap<>();
     /**
      * The precursor RT list.
      */
@@ -49,7 +49,7 @@ public class RunMzDeviation {
      * The fragments errors binned by mz and rt. error = experimental value -
      * theoretic (identification) value.
      */
-    private HashMap<Double, HashMap<Double, Double>> fragmentsRtDeviations = new HashMap<Double, HashMap<Double, Double>>();
+    private HashMap<Double, HashMap<Double, Double>> fragmentsRtDeviations = new HashMap<>();
     /**
      * The bin size used for ms2 correction.
      */
@@ -81,7 +81,7 @@ public class RunMzDeviation {
      * @return the list for fragment ion m/z bins
      */
     public ArrayList<Double> getFragmentMZList(double precursorRT) {
-        return new ArrayList<Double>(fragmentsRtDeviations.get(precursorRT).keySet());
+        return new ArrayList<>(fragmentsRtDeviations.get(precursorRT).keySet());
     }
 
     /**
@@ -176,7 +176,7 @@ public class RunMzDeviation {
             }
         }
 
-        ArrayList<Double> mzList = new ArrayList<Double>(fragmentsRtDeviations.get(rtKey1).keySet());
+        ArrayList<Double> mzList = new ArrayList<>(fragmentsRtDeviations.get(rtKey1).keySet());
         Collections.sort(mzList);
         double mzKey1 = mzList.get(0);
         double mzKey2 = mzKey1;
@@ -203,7 +203,7 @@ public class RunMzDeviation {
         double correction12 = fragmentsRtDeviations.get(rtKey1).get(mzKey2);
         double correction1 = correction11 * mzKey1 / (mzKey1 + mzKey2) + correction12 * mzKey2 / (mzKey1 + mzKey2);
 
-        mzList = new ArrayList<Double>(fragmentsRtDeviations.get(rtKey2).keySet());
+        mzList = new ArrayList<>(fragmentsRtDeviations.get(rtKey2).keySet());
         Collections.sort(mzList);
         mzKey1 = mzList.get(0);
         mzKey2 = mzKey1;
@@ -242,7 +242,7 @@ public class RunMzDeviation {
      * @return the recalibrated peak list
      */
     public HashMap<Double, Peak> recalibratePeakList(double precursorRT, HashMap<Double, Peak> originalPeakList) {
-        HashMap<Double, Peak> recalibratedPeakList = new HashMap<Double, Peak>(originalPeakList.size());
+        HashMap<Double, Peak> recalibratedPeakList = new HashMap<>(originalPeakList.size());
 
         for (double mz : originalPeakList.keySet()) {
             double correction = getFragmentMzError(precursorRT, mz);
@@ -279,12 +279,12 @@ public class RunMzDeviation {
         AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
         ms2Bin = 100 * annotationPreferences.getFragmentIonAccuracy();
-        HashMap<Double, HashMap<Double, ArrayList<Double>>> precursorRawMap = new HashMap<Double, HashMap<Double, ArrayList<Double>>>();
-        HashMap<Double, HashMap<Double, ArrayList<Double>>> fragmentRawMap = new HashMap<Double, HashMap<Double, ArrayList<Double>>>();
+        HashMap<Double, HashMap<Double, ArrayList<Double>>> precursorRawMap = new HashMap<>();
+        HashMap<Double, HashMap<Double, ArrayList<Double>>> fragmentRawMap = new HashMap<>();
         HashMap<Double, ArrayList<Double>> spectrumFragmentMap;
 
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        ArrayList<UrParameter> parameters = new ArrayList<>(1);
         parameters.add(psParameter);
 
         if (waitingHandler != null) {
@@ -312,10 +312,10 @@ public class RunMzDeviation {
                 double precursorRT = precursor.getRt();
 
                 if (!precursorRawMap.containsKey(precursorRT)) {
-                    precursorRawMap.put(precursorRT, new HashMap<Double, ArrayList<Double>>());
+                    precursorRawMap.put(precursorRT, new HashMap<>());
                 }
                 if (!precursorRawMap.get(precursorRT).containsKey(precursorMz)) {
-                    precursorRawMap.get(precursorRT).put(precursorMz, new ArrayList<Double>());
+                    precursorRawMap.get(precursorRT).put(precursorMz, new ArrayList<>());
                 }
 
                 PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
@@ -330,7 +330,7 @@ public class RunMzDeviation {
                     SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(currentSpectrum.getSpectrumKey(), bestPeptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
                     ArrayList<IonMatch> ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
                             (MSnSpectrum) currentSpectrum, bestPeptideAssumption.getPeptide());
-                    spectrumFragmentMap = new HashMap<Double, ArrayList<Double>>();
+                    spectrumFragmentMap = new HashMap<>();
 
                     for (IonMatch ionMatch : ionMatches) {
 
@@ -343,14 +343,14 @@ public class RunMzDeviation {
                         double fragmentMzKey = (double) roundedValue * ms2Bin;
 
                         if (!spectrumFragmentMap.containsKey(fragmentMzKey)) {
-                            spectrumFragmentMap.put(fragmentMzKey, new ArrayList<Double>());
+                            spectrumFragmentMap.put(fragmentMzKey, new ArrayList<>());
                         }
 
                         spectrumFragmentMap.get(fragmentMzKey).add(ionMatch.getAbsoluteError());
                     }
 
                     if (!fragmentRawMap.containsKey(precursorRT)) {
-                        fragmentRawMap.put(precursorRT, new HashMap<Double, ArrayList<Double>>());
+                        fragmentRawMap.put(precursorRT, new HashMap<>());
                     }
 
                     for (double key : spectrumFragmentMap.keySet()) {
@@ -360,7 +360,7 @@ public class RunMzDeviation {
                         }
 
                         if (!fragmentRawMap.get(precursorRT).containsKey(key)) {
-                            fragmentRawMap.get(precursorRT).put(key, new ArrayList<Double>());
+                            fragmentRawMap.get(precursorRT).put(key, new ArrayList<>());
                         }
 
                         fragmentRawMap.get(precursorRT).get(key).add(BasicMathFunctions.median(spectrumFragmentMap.get(key)));
@@ -380,14 +380,14 @@ public class RunMzDeviation {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         }
 
-        ArrayList<Double> keys = new ArrayList<Double>(precursorRawMap.keySet());
+        ArrayList<Double> keys = new ArrayList<>(precursorRawMap.keySet());
         if (keys.isEmpty()) {
             throw new IllegalArgumentException("No validated PSM found for file " + spectrumFileName + ".");
         }
         Collections.sort(keys);
         int cpt1 = 0;
-        HashMap<Double, HashMap<Double, ArrayList<Double>>> precursorTempMap = new HashMap<Double, HashMap<Double, ArrayList<Double>>>();
-        HashMap<Double, HashMap<Double, ArrayList<Double>>> fragmentTempMap = new HashMap<Double, HashMap<Double, ArrayList<Double>>>();
+        HashMap<Double, HashMap<Double, ArrayList<Double>>> precursorTempMap = new HashMap<>();
+        HashMap<Double, HashMap<Double, ArrayList<Double>>> fragmentTempMap = new HashMap<>();
 
         for (double rt : keys) {
 
@@ -410,10 +410,10 @@ public class RunMzDeviation {
 
             if (cpt1 > rtBinSize && waitingHandler != null && !waitingHandler.isRunCanceled()) {
 
-                ArrayList<Double> rtList = new ArrayList<Double>(precursorTempMap.keySet());
+                ArrayList<Double> rtList = new ArrayList<>(precursorTempMap.keySet());
                 Collections.sort(rtList);
                 double rtRef = BasicMathFunctions.median(rtList);
-                HashMap<Double, ArrayList<Double>> mzToErrorMap = new HashMap<Double, ArrayList<Double>>();
+                HashMap<Double, ArrayList<Double>> mzToErrorMap = new HashMap<>();
 
                 for (HashMap<Double, ArrayList<Double>> errors : precursorTempMap.values()) {
 
@@ -428,7 +428,7 @@ public class RunMzDeviation {
                         }
 
                         if (!mzToErrorMap.containsKey(mz)) {
-                            mzToErrorMap.put(mz, new ArrayList<Double>());
+                            mzToErrorMap.put(mz, new ArrayList<>());
                         }
 
                         mzToErrorMap.get(mz).addAll(errors.get(mz));
@@ -439,12 +439,12 @@ public class RunMzDeviation {
                     return;
                 }
 
-                ArrayList<Double> mzList = new ArrayList<Double>(mzToErrorMap.keySet());
+                ArrayList<Double> mzList = new ArrayList<>(mzToErrorMap.keySet());
                 Collections.sort(mzList);
-                ArrayList<Double> mz1 = new ArrayList<Double>();
-                ArrayList<Double> mz2 = new ArrayList<Double>();
-                ArrayList<Double> err1 = new ArrayList<Double>();
-                ArrayList<Double> err2 = new ArrayList<Double>();
+                ArrayList<Double> mz1 = new ArrayList<>();
+                ArrayList<Double> mz2 = new ArrayList<>();
+                ArrayList<Double> err1 = new ArrayList<>();
+                ArrayList<Double> err2 = new ArrayList<>();
                 int cpt2 = 0;
 
                 for (double mz : mzList) {
@@ -490,8 +490,8 @@ public class RunMzDeviation {
                 precursorSlopes.put(rtRef, slope);
                 precursorOffsets.put(rtRef, offset);
 
-                fragmentsRtDeviations.put(rtRef, new HashMap<Double, Double>());
-                mzToErrorMap = new HashMap<Double, ArrayList<Double>>();
+                fragmentsRtDeviations.put(rtRef, new HashMap<>());
+                mzToErrorMap = new HashMap<>();
 
                 for (HashMap<Double, ArrayList<Double>> errors : fragmentTempMap.values()) {
                     if (waitingHandler != null && waitingHandler.isRunCanceled()) {
@@ -505,19 +505,19 @@ public class RunMzDeviation {
                         }
 
                         if (!mzToErrorMap.containsKey(mz)) {
-                            mzToErrorMap.put(mz, new ArrayList<Double>());
+                            mzToErrorMap.put(mz, new ArrayList<>());
                         }
 
                         mzToErrorMap.get(mz).addAll(errors.get(mz));
                     }
                 }
 
-                mzList = new ArrayList<Double>(mzToErrorMap.keySet());
+                mzList = new ArrayList<>(mzToErrorMap.keySet());
                 Collections.sort(mzList);
-                mz1 = new ArrayList<Double>();
-                mz2 = new ArrayList<Double>();
-                err1 = new ArrayList<Double>();
-                err2 = new ArrayList<Double>();
+                mz1 = new ArrayList<>();
+                mz2 = new ArrayList<>();
+                err1 = new ArrayList<>();
+                err2 = new ArrayList<>();
                 double mzRef = -1;
 
                 for (double mz : mzList) {
@@ -593,7 +593,7 @@ public class RunMzDeviation {
         if (precursorSlopes.isEmpty()) {
 
             double rtRef = BasicMathFunctions.median(keys);
-            HashMap<Double, ArrayList<Double>> mzToErrorMap = new HashMap<Double, ArrayList<Double>>();
+            HashMap<Double, ArrayList<Double>> mzToErrorMap = new HashMap<>();
 
             for (HashMap<Double, ArrayList<Double>> errors : precursorRawMap.values()) {
 
@@ -608,7 +608,7 @@ public class RunMzDeviation {
                     }
 
                     if (!mzToErrorMap.containsKey(mz)) {
-                        mzToErrorMap.put(mz, new ArrayList<Double>());
+                        mzToErrorMap.put(mz, new ArrayList<>());
                     }
                     mzToErrorMap.get(mz).addAll(errors.get(mz));
                 }
@@ -618,12 +618,12 @@ public class RunMzDeviation {
                 return;
             }
 
-            ArrayList<Double> mzList = new ArrayList<Double>(mzToErrorMap.keySet());
+            ArrayList<Double> mzList = new ArrayList<>(mzToErrorMap.keySet());
             Collections.sort(mzList);
-            ArrayList<Double> mz1 = new ArrayList<Double>();
-            ArrayList<Double> mz2 = new ArrayList<Double>();
-            ArrayList<Double> err1 = new ArrayList<Double>();
-            ArrayList<Double> err2 = new ArrayList<Double>();
+            ArrayList<Double> mz1 = new ArrayList<>();
+            ArrayList<Double> mz2 = new ArrayList<>();
+            ArrayList<Double> err1 = new ArrayList<>();
+            ArrayList<Double> err2 = new ArrayList<>();
             int cpt2 = 0;
 
             for (double mz : mzList) {
@@ -697,7 +697,7 @@ public class RunMzDeviation {
                 return;
             }
 
-            mzToErrorMap = new HashMap<Double, ArrayList<Double>>();
+            mzToErrorMap = new HashMap<>();
 
             for (HashMap<Double, ArrayList<Double>> errors : precursorTempMap.values()) {
 
@@ -712,7 +712,7 @@ public class RunMzDeviation {
                     }
 
                     if (!mzToErrorMap.containsKey(mz)) {
-                        mzToErrorMap.put(mz, new ArrayList<Double>());
+                        mzToErrorMap.put(mz, new ArrayList<>());
                     }
                     mzToErrorMap.get(mz).addAll(errors.get(mz));
                 }
@@ -722,14 +722,14 @@ public class RunMzDeviation {
                 return;
             }
 
-            fragmentsRtDeviations.put(rtRef, new HashMap<Double, Double>());
-            mzList = new ArrayList<Double>(mzToErrorMap.keySet());
+            fragmentsRtDeviations.put(rtRef, new HashMap<>());
+            mzList = new ArrayList<>(mzToErrorMap.keySet());
             Collections.sort(mzList);
             Collections.sort(mzList);
-            mz1 = new ArrayList<Double>();
-            mz2 = new ArrayList<Double>();
-            err1 = new ArrayList<Double>();
-            err2 = new ArrayList<Double>();
+            mz1 = new ArrayList<>();
+            mz2 = new ArrayList<>();
+            err1 = new ArrayList<>();
+            err2 = new ArrayList<>();
 
             for (double mz : mzList) {
 
@@ -755,7 +755,7 @@ public class RunMzDeviation {
             }
 
             if (!mz1.isEmpty()) {
-                mzList = new ArrayList<Double>(fragmentsRtDeviations.get(rtRef).keySet());
+                mzList = new ArrayList<>(fragmentsRtDeviations.get(rtRef).keySet());
                 Collections.sort(mzList);
                 if (!mzList.isEmpty()) {
                     fragmentsRtDeviations.remove(mzList.get(mzList.size() - 1));
@@ -772,7 +772,7 @@ public class RunMzDeviation {
             return;
         }
 
-        precursorRTList = new ArrayList<Double>(precursorSlopes.keySet());
+        precursorRTList = new ArrayList<>(precursorSlopes.keySet());
         Collections.sort(precursorRTList);
     }
 }

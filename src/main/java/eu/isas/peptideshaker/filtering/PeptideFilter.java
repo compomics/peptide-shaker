@@ -103,7 +103,7 @@ public class PeptideFilter extends MatchFilter {
             case proteinDescription:
                 peptideMatch = (PeptideMatch)identification.retrieveObject(matchKey);
                 ArrayList<String> accessions = peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
-                ArrayList<String> descriptions = new ArrayList<String>();
+                ArrayList<String> descriptions = new ArrayList<>();
                 for (String accession : accessions) {
                     Header proteinHeader = SequenceFactory.getInstance().getHeader(accession);
                     descriptions.add(proteinHeader.getDescription());
@@ -119,7 +119,7 @@ public class PeptideFilter extends MatchFilter {
                 if (psPtmScores != null) {
                     ptms = psPtmScores.getScoredPTMs();
                 } else {
-                    ptms = new ArrayList<String>(0);
+                    ptms = new ArrayList<>(0);
                 }
                 return filterItemComparator.passes(input, ptms);
             case nPSMs:

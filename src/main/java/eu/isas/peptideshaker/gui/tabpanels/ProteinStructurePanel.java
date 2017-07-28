@@ -141,7 +141,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
     /**
      * A mapping of the peptide table entries.
      */
-    private HashMap<Integer, String> peptideTableMap = new HashMap<Integer, String>();
+    private HashMap<Integer, String> peptideTableMap = new HashMap<>();
     /**
      * If true Jmol is currently displaying a structure.
      */
@@ -165,7 +165,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
     /**
      * A list of proteins in the protein table.
      */
-    private ArrayList<String> proteinKeys = new ArrayList<String>();
+    private ArrayList<String> proteinKeys = new ArrayList<>();
 
     /**
      * Creates a new ProteinPanel.
@@ -218,7 +218,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      * Set up the table header tooltips.
      */
     private void setUpTableHeaderToolTips() {
-        proteinTableToolTips = new ArrayList<String>();
+        proteinTableToolTips = new ArrayList<>();
         proteinTableToolTips.add(null);
         proteinTableToolTips.add("Starred");
         proteinTableToolTips.add("Protein Inference Class");
@@ -239,7 +239,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         proteinTableToolTips.add("Validated");
 
-        peptideTableToolTips = new ArrayList<String>();
+        peptideTableToolTips = new ArrayList<>();
         peptideTableToolTips.add(null);
         peptideTableToolTips.add("Starred");
         peptideTableToolTips.add("Protein Inference");
@@ -248,14 +248,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         peptideTableToolTips.add("In PDB Sequence");
         peptideTableToolTips.add("Validated");
 
-        pdbTableToolTips = new ArrayList<String>();
+        pdbTableToolTips = new ArrayList<>();
         pdbTableToolTips.add(null);
         pdbTableToolTips.add("PDB Accession Number");
         pdbTableToolTips.add("PDB Title");
         pdbTableToolTips.add("Type of Structure");
         pdbTableToolTips.add("Number of Chains");
 
-        pdbChainsTableToolTips = new ArrayList<String>();
+        pdbChainsTableToolTips = new ArrayList<>();
         pdbChainsTableToolTips.add(null);
         pdbChainsTableToolTips.add("Chain Label");
         pdbChainsTableToolTips.add("Protein-PDB Alignment");
@@ -339,14 +339,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         peptideTable.getTableHeader().setReorderingAllowed(false);
 
         // set up the peptide inference color map
-        HashMap<Integer, Color> peptideInferenceColorMap = new HashMap<Integer, Color>();
+        HashMap<Integer, Color> peptideInferenceColorMap = new HashMap<>();
         peptideInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor());
         peptideInferenceColorMap.put(PSParameter.RELATED, Color.YELLOW);
         peptideInferenceColorMap.put(PSParameter.RELATED_AND_UNRELATED, Color.ORANGE);
         peptideInferenceColorMap.put(PSParameter.UNRELATED, Color.RED);
 
         // set up the peptide inference tooltip map
-        HashMap<Integer, String> peptideInferenceTooltipMap = new HashMap<Integer, String>();
+        HashMap<Integer, String> peptideInferenceTooltipMap = new HashMap<>();
         peptideInferenceTooltipMap.put(PSParameter.NOT_GROUP, "Unique to a single protein");
         peptideInferenceTooltipMap.put(PSParameter.RELATED, "Belongs to a group of related proteins");
         peptideInferenceTooltipMap.put(PSParameter.RELATED_AND_UNRELATED, "Belongs to a group of related and unrelated proteins");
@@ -2585,7 +2585,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      * @return a list of keys of the displayed peptides
      */
     public ArrayList<String> getDisplayedPeptides() {
-        return new ArrayList<String>(peptideTableMap.values());
+        return new ArrayList<>(peptideTableMap.values());
     }
 
     /**
@@ -2607,7 +2607,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                 String proteinMatchKey = proteinKeys.get(proteinIndex);
                 ProteinMatch proteinMatch = (ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(proteinMatchKey);
-                peptideTableMap = new HashMap<Integer, String>();
+                peptideTableMap = new HashMap<>();
 
                 PSParameter probabilities = new PSParameter();
                 int index = 0;
@@ -2623,7 +2623,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     } catch (Exception e1) {
                         peptideShakerGUI.catchException(e1);
                         // ok you are really unlucky... Just hope the GUI holds...
-                        peptideKeys = new ArrayList<String>();
+                        peptideKeys = new ArrayList<>();
                     }
                 }
 
@@ -3103,7 +3103,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         int selectedChainIndex = (Integer) pdbChainsJTable.getValueAt(pdbChainsJTable.getSelectedRow(), 0);
         String currentChain = chains[selectedChainIndex - 1].getBlock();
 
-        peptidePdbArray = new ArrayList<String>();
+        peptidePdbArray = new ArrayList<>();
 
         // iterate the peptide table and highlight the covered areas
         for (int i = 0; i < peptideTable.getRowCount() && !progressDialog.isRunCanceled(); i++) {
@@ -3170,7 +3170,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 peptideShakerGUI.catchException(e);
             }
             if (modifications == null) {
-                modifications = new ArrayList<ModificationMatch>(0);
+                modifications = new ArrayList<>(0);
             }
 
             for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
@@ -3590,9 +3590,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         dm.getDataVector().removeAllElements();
         dm.fireTableDataChanged();
 
-        peptideTableMap = new HashMap<Integer, String>();
+        peptideTableMap = new HashMap<>();
 
-        peptidePdbArray = new ArrayList<String>();
+        peptidePdbArray = new ArrayList<>();
         currentlyDisplayedPdbFile = null;
 
         // empty the jmol panel

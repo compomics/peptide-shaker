@@ -45,7 +45,7 @@ public class PsSpectrumCountingSection {
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        spectrumCountingFeatures = new ArrayList<PsSpectrumCountingFeature>(exportFeatures.size());
+        spectrumCountingFeatures = new ArrayList<>(exportFeatures.size());
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsSpectrumCountingFeature) {
                 spectrumCountingFeatures.add((PsSpectrumCountingFeature) exportFeature);

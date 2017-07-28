@@ -22,27 +22,27 @@ public class FilterPreferences implements Serializable {
     /**
      * The protein star filters.
      */
-    private HashMap<String, ProteinFilter> proteinStarFilters = new HashMap<String, ProteinFilter>();
+    private HashMap<String, ProteinFilter> proteinStarFilters = new HashMap<>();
     /**
      * The protein hide filters.
      */
-    private HashMap<String, ProteinFilter> proteinHideFilters = new HashMap<String, ProteinFilter>();
+    private HashMap<String, ProteinFilter> proteinHideFilters = new HashMap<>();
     /**
      * The peptide star filters.
      */
-    private HashMap<String, PeptideFilter> peptideStarFilters = new HashMap<String, PeptideFilter>();
+    private HashMap<String, PeptideFilter> peptideStarFilters = new HashMap<>();
     /**
      * The peptide hide filters.
      */
-    private HashMap<String, PeptideFilter> peptideHideFilters = new HashMap<String, PeptideFilter>();
+    private HashMap<String, PeptideFilter> peptideHideFilters = new HashMap<>();
     /**
      * The psm star filters.
      */
-    private HashMap<String, PsmFilter> psmStarFilters = new HashMap<String, PsmFilter>();
+    private HashMap<String, PsmFilter> psmStarFilters = new HashMap<>();
     /**
      * The psm hide filters.
      */
-    private HashMap<String, PsmFilter> psmHideFilters = new HashMap<String, PsmFilter>();
+    private HashMap<String, PsmFilter> psmHideFilters = new HashMap<>();
 
     /**
      * Constructors.

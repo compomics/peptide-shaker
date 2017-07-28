@@ -20,7 +20,7 @@ public class UserPreferences implements Serializable {
     /**
      * The recent projects.
      */
-    private ArrayList<String> recentProjects = new ArrayList<String>();
+    private ArrayList<String> recentProjects = new ArrayList<>();
     /**
      * Show/hide sliders.
      */

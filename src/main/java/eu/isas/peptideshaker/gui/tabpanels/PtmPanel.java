@@ -110,7 +110,7 @@ public class PtmPanel extends javax.swing.JPanel {
     /**
      * Map of all peptide keys indexed by their modification status.
      */
-    private HashMap<String, ArrayList<String>> peptideMap = new HashMap<String, ArrayList<String>>();
+    private HashMap<String, ArrayList<String>> peptideMap = new HashMap<>();
     /**
      * The modification name for no modification.
      */
@@ -122,11 +122,11 @@ public class PtmPanel extends javax.swing.JPanel {
     /**
      * The keys of the peptides currently displayed.
      */
-    private ArrayList<String> displayedPeptides = new ArrayList<String>();
+    private ArrayList<String> displayedPeptides = new ArrayList<>();
     /**
      * The keys of the related peptides currently displayed.
      */
-    private ArrayList<String> relatedPeptides = new ArrayList<String>();
+    private ArrayList<String> relatedPeptides = new ArrayList<>();
     /**
      * Boolean indicating whether the related peptide is selected.
      */
@@ -333,14 +333,14 @@ public class PtmPanel extends javax.swing.JPanel {
         label.setHorizontalAlignment(JLabel.CENTER);
 
         // set up the protein inference color map
-        HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
+        HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<>();
         proteinInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor());
         proteinInferenceColorMap.put(PSParameter.RELATED, Color.YELLOW);
         proteinInferenceColorMap.put(PSParameter.RELATED_AND_UNRELATED, Color.ORANGE);
         proteinInferenceColorMap.put(PSParameter.UNRELATED, Color.RED);
 
         // set up the protein inference tooltip map
-        proteinInferenceTooltipMap = new HashMap<Integer, String>();
+        proteinInferenceTooltipMap = new HashMap<>();
         proteinInferenceTooltipMap.put(PSParameter.NOT_GROUP, "Unique to a single protein");
         proteinInferenceTooltipMap.put(PSParameter.RELATED, "Belongs to a group of related proteins");
         proteinInferenceTooltipMap.put(PSParameter.RELATED_AND_UNRELATED, "Belongs to a group of related and unrelated proteins");
@@ -360,7 +360,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 "Starred", null, null));
 
         // set up the PTM confidence color map
-        HashMap<Integer, Color> ptmConfidenceColorMap = new HashMap<Integer, Color>();
+        HashMap<Integer, Color> ptmConfidenceColorMap = new HashMap<>();
         ptmConfidenceColorMap.put(PtmScoring.NOT_FOUND, Color.lightGray);
         ptmConfidenceColorMap.put(PtmScoring.RANDOM, Color.RED);
         ptmConfidenceColorMap.put(PtmScoring.DOUBTFUL, Color.ORANGE);
@@ -368,7 +368,7 @@ public class PtmPanel extends javax.swing.JPanel {
         ptmConfidenceColorMap.put(PtmScoring.VERY_CONFIDENT, peptideShakerGUI.getSparklineColor());
 
         // set up the PTM confidence tooltip map
-        ptmConfidenceTooltipMap = new HashMap<Integer, String>();
+        ptmConfidenceTooltipMap = new HashMap<>();
         ptmConfidenceTooltipMap.put(-1, "(No PTMs)");
         ptmConfidenceTooltipMap.put(PtmScoring.RANDOM, "Random Assignment");
         ptmConfidenceTooltipMap.put(PtmScoring.DOUBTFUL, "Doubtful Assignment");
@@ -420,7 +420,7 @@ public class PtmPanel extends javax.swing.JPanel {
         ptmJTable.getColumn("  ").setCellRenderer(new JSparklinesColorTableCellRenderer());
 
         // set up the table header tooltips
-        selectedPeptidesTableToolTips = new ArrayList<String>();
+        selectedPeptidesTableToolTips = new ArrayList<>();
         selectedPeptidesTableToolTips.add(null);
         selectedPeptidesTableToolTips.add("Starred");
         selectedPeptidesTableToolTips.add("Peptide Inference Class");
@@ -429,7 +429,7 @@ public class PtmPanel extends javax.swing.JPanel {
         selectedPeptidesTableToolTips.add("Peptide Confidence");
         selectedPeptidesTableToolTips.add("Peptide Validated");
 
-        relatedPeptidesTableToolTips = new ArrayList<String>();
+        relatedPeptidesTableToolTips = new ArrayList<>();
         relatedPeptidesTableToolTips.add(null);
         relatedPeptidesTableToolTips.add("Starred");
         relatedPeptidesTableToolTips.add("Peptide Inference Class");
@@ -438,7 +438,7 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptidesTableToolTips.add("Peptide Confidence");
         relatedPeptidesTableToolTips.add("Peptide Validated");
 
-        selectedPsmsTableToolTips = new ArrayList<String>();
+        selectedPsmsTableToolTips = new ArrayList<>();
         selectedPsmsTableToolTips.add(null);
         selectedPsmsTableToolTips.add("Starred");
         selectedPsmsTableToolTips.add("Peptide Sequence");
@@ -447,7 +447,7 @@ public class PtmPanel extends javax.swing.JPanel {
         selectedPsmsTableToolTips.add("Precursor Retention Time");
         selectedPsmsTableToolTips.add("PSM Validated");
 
-        relatedPsmsTableToolTips = new ArrayList<String>();
+        relatedPsmsTableToolTips = new ArrayList<>();
         relatedPsmsTableToolTips.add(null);
         relatedPsmsTableToolTips.add("Starred");
         relatedPsmsTableToolTips.add("Peptide Sequence");
@@ -456,7 +456,7 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPsmsTableToolTips.add("Precursor Retention Time");
         relatedPsmsTableToolTips.add("PSM Validated");
 
-        ptmTableToolTips = new ArrayList<String>();
+        ptmTableToolTips = new ArrayList<>();
         ptmTableToolTips.add("PTM Color");
         ptmTableToolTips.add("PTM Name");
     }
@@ -3155,7 +3155,7 @@ public class PtmPanel extends javax.swing.JPanel {
      * peptides
      */
     public ArrayList<String> getDisplayedProteinMatches() {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         try {
             for (String peptideKey : getDisplayedPeptides()) {
                 ArrayList<String> proteins = ((PeptideMatch)identification.retrieveObject(peptideKey)).getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
@@ -3179,7 +3179,7 @@ public class PtmPanel extends javax.swing.JPanel {
      * @return a list of the keys of the currently displayed peptides
      */
     public ArrayList<String> getDisplayedPeptides() {
-        ArrayList<String> result = new ArrayList<String>(displayedPeptides);
+        ArrayList<String> result = new ArrayList<>(displayedPeptides);
         result.addAll(relatedPeptides);
         return result;
     }
@@ -3190,7 +3190,7 @@ public class PtmPanel extends javax.swing.JPanel {
      * @return a list of the PSM keys of the currently displayed assumptions
      */
     public ArrayList<String> getDisplayedPsms() {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         try {
             for (String peptide : displayedPeptides) {
                 result.addAll(((PeptideMatch)identification.retrieveObject(peptide)).getSpectrumMatchesKeys());
@@ -3248,7 +3248,7 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private void createPeptideMap(ProgressDialogX progressDialogX) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
-        ArrayList<String> notModifiedPeptides = new ArrayList<String>();
+        ArrayList<String> notModifiedPeptides = new ArrayList<>();
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(progressDialogX);
 
         while (peptideMatchesIterator.hasNext()) {
@@ -3258,7 +3258,7 @@ public class PtmPanel extends javax.swing.JPanel {
             Peptide peptide = peptideMatch.getTheoreticPeptide();
 
             boolean modified = false;
-            ArrayList<String> accountedModifications = new ArrayList<String>();
+            ArrayList<String> accountedModifications = new ArrayList<>();
 
             if (peptide.isModified()) {
                 for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
@@ -3269,7 +3269,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                         ArrayList<String> peptideKeysForPtm = peptideMap.get(ptmName);
                         if (peptideKeysForPtm == null) {
-                            peptideKeysForPtm = new ArrayList<String>();
+                            peptideKeysForPtm = new ArrayList<>();
                             peptideMap.put(ptmName, peptideKeysForPtm);
                         }
 
@@ -3557,7 +3557,7 @@ public class PtmPanel extends javax.swing.JPanel {
             spectrumChartJPanel.repaint();
 
             try {
-                HashMap<Double, ArrayList<String>> scoreToPeptideMap = new HashMap<Double, ArrayList<String>>();
+                HashMap<Double, ArrayList<String>> scoreToPeptideMap = new HashMap<>();
                 PSParameter probabilities = new PSParameter();
 
                 if (peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex())) != null) {
@@ -3584,7 +3584,7 @@ public class PtmPanel extends javax.swing.JPanel {
                             if (!probabilities.getHidden()) {
 
                                 if (!scoreToPeptideMap.containsKey(p)) {
-                                    scoreToPeptideMap.put(p, new ArrayList<String>());
+                                    scoreToPeptideMap.put(p, new ArrayList<>());
                                 }
 
                                 scoreToPeptideMap.get(p).add(peptideKey);
@@ -3596,9 +3596,9 @@ public class PtmPanel extends javax.swing.JPanel {
                         return;
                     }
 
-                    ArrayList<Double> scores = new ArrayList<Double>(scoreToPeptideMap.keySet());
+                    ArrayList<Double> scores = new ArrayList<>(scoreToPeptideMap.keySet());
                     Collections.sort(scores);
-                    displayedPeptides = new ArrayList<String>();
+                    displayedPeptides = new ArrayList<>();
 
                     ArrayList<String> tempList;
 
@@ -3617,7 +3617,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         return;
                     }
                 } else {
-                    displayedPeptides = new ArrayList<String>();
+                    displayedPeptides = new ArrayList<>();
                 }
 
                 ((DefaultTableModel) peptidesTable.getModel()).fireTableDataChanged();
@@ -3637,7 +3637,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     modificationProfileRelatedPeptideJPanel.revalidate();
                     modificationProfileRelatedPeptideJPanel.repaint();
 
-                    relatedPeptides = new ArrayList<String>();
+                    relatedPeptides = new ArrayList<>();
                     ((DefaultTableModel) relatedPeptidesTable.getModel()).fireTableDataChanged();
                 }
 
@@ -3693,7 +3693,7 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     public void updateRelatedPeptidesTable(ProgressDialogX progressDialog) {
 
-        HashMap<Double, ArrayList<String>> scoreToKeyMap = new HashMap<Double, ArrayList<String>>();
+        HashMap<Double, ArrayList<String>> scoreToKeyMap = new HashMap<>();
         String peptideKey = displayedPeptides.get((Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1);
         String currentSequence, referenceSequence = Peptide.getSequence(peptideKey);
         PSParameter probabilities = new PSParameter();
@@ -3725,7 +3725,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     if (!probabilities.getHidden()) {
 
                         if (!scoreToKeyMap.containsKey(p)) {
-                            scoreToKeyMap.put(p, new ArrayList<String>());
+                            scoreToKeyMap.put(p, new ArrayList<>());
                         }
 
                         scoreToKeyMap.get(p).add(newKey);
@@ -3739,8 +3739,8 @@ public class PtmPanel extends javax.swing.JPanel {
             progressDialog.setTitle("Sorting Related Peptides. Please Wait...");
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
-            relatedPeptides = new ArrayList<String>();
-            ArrayList<Double> scores = new ArrayList<Double>(scoreToKeyMap.keySet());
+            relatedPeptides = new ArrayList<>();
+            ArrayList<Double> scores = new ArrayList<>(scoreToKeyMap.keySet());
             Collections.sort(scores);
 
             progressDialog.setPrimaryProgressCounterIndeterminate(false);
@@ -3982,7 +3982,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 int identificationChargeFirstPsm = 0;
                 int identificationChargeSecondPsm = 0;
-                ArrayList<ModificationMatch> allModifications = new ArrayList<ModificationMatch>();
+                ArrayList<ModificationMatch> allModifications = new ArrayList<>();
 
                 // get the spectrum annotations
                 PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
@@ -4084,7 +4084,7 @@ public class PtmPanel extends javax.swing.JPanel {
      * @return the modification profile
      */
     private ArrayList<com.compomics.util.gui.protein.ModificationProfile> getModificationProfile(Peptide peptide, PSPtmScores scores) {
-        ArrayList<com.compomics.util.gui.protein.ModificationProfile> profiles = new ArrayList<com.compomics.util.gui.protein.ModificationProfile>();
+        ArrayList<com.compomics.util.gui.protein.ModificationProfile> profiles = new ArrayList<>();
         if (scores != null) {
             for (String ptmName : scores.getScoredPTMs()) {
                 Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings().getColor(ptmName);
@@ -4148,7 +4148,7 @@ public class PtmPanel extends javax.swing.JPanel {
      * @return the keys of the selected PSMs
      */
     private ArrayList<String> getSelectedPsmsKeys(boolean relatedPeptide) {
-        ArrayList<String> psmKey = new ArrayList<String>();
+        ArrayList<String> psmKey = new ArrayList<>();
         try {
             PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(getSelectedPeptide(relatedPeptide));
             if (relatedPeptide) {
@@ -4194,16 +4194,16 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     public HashMap<String, ArrayList<SpectrumIdentificationAssumption>> getSelectedIdentificationAssumptions() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
-        HashMap<String, ArrayList<SpectrumIdentificationAssumption>> result = new HashMap<String, ArrayList<SpectrumIdentificationAssumption>>(2);
+        HashMap<String, ArrayList<SpectrumIdentificationAssumption>> result = new HashMap<>(2);
         for (String spectrumKey : getSelectedPsmsKeys(false)) {
             SpectrumMatch spectrumMatch = (SpectrumMatch)peptideShakerGUI.getIdentification().retrieveObject(spectrumKey);
-            ArrayList<SpectrumIdentificationAssumption> assumptions = new ArrayList<SpectrumIdentificationAssumption>(1);
+            ArrayList<SpectrumIdentificationAssumption> assumptions = new ArrayList<>(1);
             assumptions.add(spectrumMatch.getBestPeptideAssumption());
             result.put(spectrumKey, assumptions);
         }
         for (String spectrumKey : getSelectedPsmsKeys(true)) {
             SpectrumMatch spectrumMatch = (SpectrumMatch)peptideShakerGUI.getIdentification().retrieveObject(spectrumKey);
-            ArrayList<SpectrumIdentificationAssumption> assumptions = new ArrayList<SpectrumIdentificationAssumption>(1);
+            ArrayList<SpectrumIdentificationAssumption> assumptions = new ArrayList<>(1);
             assumptions.add(spectrumMatch.getBestPeptideAssumption());
             result.put(spectrumKey, assumptions);
         }
@@ -4926,8 +4926,8 @@ public class PtmPanel extends javax.swing.JPanel {
 
                         if (ptmScores != null) {
 
-                            HashMap<Integer, Double> dScores = new HashMap<Integer, Double>();
-                            HashMap<Integer, Double> pScores = new HashMap<Integer, Double>();
+                            HashMap<Integer, Double> dScores = new HashMap<>();
+                            HashMap<Integer, Double> pScores = new HashMap<>();
 
                             for (String ptmName : ptmScores.getScoredPTMs()) {
 

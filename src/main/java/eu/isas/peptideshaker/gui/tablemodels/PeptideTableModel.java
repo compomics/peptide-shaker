@@ -275,7 +275,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     double nDoubtfulSpectra = identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideKey) - nConfidentSpectra;
                     int nSpectra = peptideMatch.getSpectrumMatchesKeys().size();
 
-                    ArrayList<Double> doubleValues = new ArrayList<Double>();
+                    ArrayList<Double> doubleValues = new ArrayList<>();
                     doubleValues.add(nConfidentSpectra);
                     doubleValues.add(nDoubtfulSpectra);
                     doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
@@ -364,7 +364,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     @Override
     protected int loadDataForRows(ArrayList<Integer> rows, WaitingHandler waitingHandler) {
 
-        ArrayList<String> tempKeys = new ArrayList<String>();
+        ArrayList<String> tempKeys = new ArrayList<>();
         for (int i : rows) {
             if (i < peptideKeys.size()) {
                 String peptideKey = peptideKeys.get(i);
@@ -373,7 +373,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
         }
 
         try {
-            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+            ArrayList<UrParameter> parameters = new ArrayList<>(1);
             parameters.add(new PSParameter());
             PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(tempKeys, waitingHandler);
             

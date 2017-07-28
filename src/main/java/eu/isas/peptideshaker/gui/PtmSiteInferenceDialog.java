@@ -60,7 +60,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     /**
      * list of PSMs for this peptide.
      */
-    private ArrayList<SpectrumMatch> psms = new ArrayList<SpectrumMatch>();
+    private ArrayList<SpectrumMatch> psms = new ArrayList<>();
     /**
      * Main PTM site selection.
      */
@@ -178,7 +178,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         ptmsTable.getColumn("").setMaxWidth(35);
 
         // set up the PTM confidence color map
-        HashMap<Integer, Color> ptmConfidenceColorMap = new HashMap<Integer, Color>();
+        HashMap<Integer, Color> ptmConfidenceColorMap = new HashMap<>();
         ptmConfidenceColorMap.put(PtmScoring.NOT_FOUND, Color.lightGray);
         ptmConfidenceColorMap.put(PtmScoring.RANDOM, Color.RED);
         ptmConfidenceColorMap.put(PtmScoring.DOUBTFUL, Color.ORANGE);
@@ -186,7 +186,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         ptmConfidenceColorMap.put(PtmScoring.VERY_CONFIDENT, peptideShakerGUI.getSparklineColor());
 
         // set up the PTM confidence tooltip map
-        ptmConfidenceTooltipMap = new HashMap<Integer, String>();
+        ptmConfidenceTooltipMap = new HashMap<>();
         ptmConfidenceTooltipMap.put(PtmScoring.NOT_FOUND, "Not Found");
         ptmConfidenceTooltipMap.put(PtmScoring.RANDOM, "Random Assignment");
         ptmConfidenceTooltipMap.put(PtmScoring.DOUBTFUL, "Doubtful Assignment");
@@ -221,7 +221,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 aa = i + 1;
                 if (mainSelection[i]) {
                     if (!confidentLocations.containsKey(aa)) {
-                        confidentLocations.put(aa, new ArrayList<String>());
+                        confidentLocations.put(aa, new ArrayList<>());
                     }
                     if (!confidentLocations.get(aa).contains(modName)) {
                         confidentLocations.get(aa).add(modName);
@@ -233,7 +233,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 }
                 if (secondarySelection[i]) {
                     if (!representativeAmbiguousLocations.containsKey(aa)) {
-                        representativeAmbiguousLocations.put(aa, new ArrayList<String>());
+                        representativeAmbiguousLocations.put(aa, new ArrayList<>());
                     }
                     if (!representativeAmbiguousLocations.get(aa).contains(modName)) {
                         representativeAmbiguousLocations.get(aa).add(modName);

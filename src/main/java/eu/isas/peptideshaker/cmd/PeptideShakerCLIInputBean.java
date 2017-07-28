@@ -32,7 +32,7 @@ public class PeptideShakerCLIInputBean {
     /**
      * The spectrum files.
      */
-    private ArrayList<File> spectrumFiles = new ArrayList<File>();
+    private ArrayList<File> spectrumFiles = new ArrayList<>();
     /**
      * The identification files.
      */
@@ -280,7 +280,7 @@ public class PeptideShakerCLIInputBean {
      * found
      */
     public static ArrayList<File> getSpectrumFiles(String optionInput) throws FileNotFoundException {
-        ArrayList<String> extentions = new ArrayList<String>();
+        ArrayList<String> extentions = new ArrayList<>();
         extentions.add(".mgf");
         return CommandLineUtils.getFiles(optionInput, extentions);
     }
@@ -295,7 +295,7 @@ public class PeptideShakerCLIInputBean {
      * found
      */
     public static ArrayList<File> getIdentificationFiles(String optionInput) throws FileNotFoundException {
-        ArrayList<String> extentions = new ArrayList<String>();
+        ArrayList<String> extentions = new ArrayList<>();
         extentions.add(".dat");
         extentions.add(".omx");
         extentions.add(".t.xml");

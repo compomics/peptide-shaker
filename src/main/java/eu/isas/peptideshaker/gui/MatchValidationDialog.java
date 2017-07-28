@@ -308,7 +308,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         validationLevelJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         // set up the table header tooltips
-        validationTableToolTips = new ArrayList<String>(3);
+        validationTableToolTips = new ArrayList<>(3);
         validationTableToolTips.add(null);
         validationTableToolTips.add("Quality Test");
         validationTableToolTips.add("Passed");
@@ -490,7 +490,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
          * @param psParameter the PSParameter of the match
          */
         public FiltersTableModel() {
-            qcCriteria = new ArrayList<String>(psParameter.getQcCriteria());
+            qcCriteria = new ArrayList<>(psParameter.getQcCriteria());
             Collections.sort(qcCriteria);
         }
 
@@ -921,7 +921,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
                         if (proteinMatches != null) {
 
-                            identification.loadObjects(new ArrayList<String>(proteinMatches), null, false);
+                            identification.loadObjects(new ArrayList<>(proteinMatches), null, false);
 
                             for (String proteinMatchKey : proteinMatches) {
 
@@ -968,7 +968,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
                                 if (proteinMatches != null) {
 
-                                    identification.loadObjects(new ArrayList<String>(proteinMatches), null, false);
+                                    identification.loadObjects(new ArrayList<>(proteinMatches), null, false);
 
                                     for (String proteinMatchKey : proteinMatches) {
 

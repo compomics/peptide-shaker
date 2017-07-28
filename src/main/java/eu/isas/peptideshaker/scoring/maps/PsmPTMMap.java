@@ -22,12 +22,12 @@ public class PsmPTMMap implements Serializable {
     /**
      * Map of PSM maps.
      */
-    private HashMap<Double, HashMap<Integer, TargetDecoyMap>> psmMaps = new HashMap<Double, HashMap<Integer, TargetDecoyMap>>();
+    private HashMap<Double, HashMap<Integer, TargetDecoyMap>> psmMaps = new HashMap<>();
     /**
      * Map used to group charges together in order to ensure statistical
      * relevance.
      */
-    private HashMap<Double, HashMap<Integer, Integer>> grouping = new HashMap<Double, HashMap<Integer, Integer>>();
+    private HashMap<Double, HashMap<Integer, Integer>> grouping = new HashMap<>();
 
     /**
      * Constructor.
@@ -106,11 +106,11 @@ public class PsmPTMMap implements Serializable {
         HashMap<Integer, TargetDecoyMap> psmMap = psmMaps.get(ptmMass);
         HashMap<Integer, Integer> psmGrouping = grouping.get(ptmMass);
         if (psmMap == null) {
-            psmMap = new HashMap<Integer, TargetDecoyMap>(4);
+            psmMap = new HashMap<>(4);
             psmMaps.put(ptmMass, psmMap);
         }
         if (psmGrouping == null) {
-            psmGrouping = new HashMap<Integer, Integer>(4);
+            psmGrouping = new HashMap<>(4);
             grouping.put(ptmMass, psmGrouping);
         }
         int key = getKey(spectrumMatch);
@@ -131,7 +131,7 @@ public class PsmPTMMap implements Serializable {
      * @return a list of keys from maps presenting a suspicious input
      */
     public HashMap<Double, String> suspiciousInput(Double minimalFDR) {
-        HashMap<Double, String> result = new HashMap<Double, String>();
+        HashMap<Double, String> result = new HashMap<>();
         for (double ptmMass : psmMaps.keySet()) {
             for (Integer key : psmMaps.get(ptmMass).keySet()) {
                 TargetDecoyMap targetDecoyMap = psmMaps.get(ptmMass).get(key);
@@ -165,7 +165,7 @@ public class PsmPTMMap implements Serializable {
                     ref = charge;
                 } else {
                     if (!grouping.containsKey(ptmMass)) {
-                        grouping.put(ptmMass, new HashMap<Integer, Integer>());
+                        grouping.put(ptmMass, new HashMap<>());
                     }
                     grouping.get(ptmMass).put(charge, ref);
                 }
@@ -188,7 +188,7 @@ public class PsmPTMMap implements Serializable {
      * @return a map of the keys: charge &gt; group name
      */
     public HashMap<Integer, String> getKeys(Double ptmMass) {
-        HashMap<Integer, String> result = new HashMap<Integer, String>();
+        HashMap<Integer, String> result = new HashMap<>();
         for (int key : psmMaps.get(ptmMass).keySet()) {
             if (!grouping.get(ptmMass).containsKey(key)) {
                 result.put(key, getGroupKey(ptmMass, key));
@@ -302,6 +302,6 @@ public class PsmPTMMap implements Serializable {
      * @return a list of all modifications loaded in the map
      */
     public ArrayList<Double> getModificationsScored() {
-        return new ArrayList<Double>(psmMaps.keySet());
+        return new ArrayList<>(psmMaps.keySet());
     }
 }

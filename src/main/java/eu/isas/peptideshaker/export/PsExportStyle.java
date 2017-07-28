@@ -28,11 +28,11 @@ public class PsExportStyle implements WorkbookStyle {
     /**
      * Map of the cell styles according to the hierarchical depth.
      */
-    private HashMap<Integer, CellStyle> hierarchicalStyles = new HashMap<Integer, CellStyle>();
+    private HashMap<Integer, CellStyle> hierarchicalStyles = new HashMap<>();
     /**
      * Map of the header styles according to the hierarchical depth.
      */
-    private HashMap<Integer, CellStyle> hierarchicalHeaders = new HashMap<Integer, CellStyle>();
+    private HashMap<Integer, CellStyle> hierarchicalHeaders = new HashMap<>();
     /**
      * Map of the different styles available.
      */

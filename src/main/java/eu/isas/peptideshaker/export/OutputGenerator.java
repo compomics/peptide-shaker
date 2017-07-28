@@ -200,7 +200,7 @@ public class OutputGenerator {
                     if (onlyValidated) {
                         proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(progressDialog, peptideShakerGUI.getFilterPreferences());
                     } else {
-                        proteinKeys = new ArrayList<String>(identification.getProteinIdentification());
+                        proteinKeys = new ArrayList<>(identification.getProteinIdentification());
                     }
                 } else {
                     proteinKeys = aProteinKeys;
@@ -321,7 +321,7 @@ public class OutputGenerator {
                         progressDialog.setTitle("Copying to File. Please Wait...");
 
                         // store the maximal protein set of validated proteins
-                        ArrayList<String> maximalProteinSet = new ArrayList<String>();
+                        ArrayList<String> maximalProteinSet = new ArrayList<>();
 
                         for (String proteinKey : proteinKeys) { // @TODO: replace by batch selection!!!
 
@@ -418,7 +418,7 @@ public class OutputGenerator {
                                                         sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
                                                     } catch (Exception e) {
                                                         peptideShakerGUI.catchException(e);
-                                                        sequenceCoverage = new HashMap<Integer, Double>();
+                                                        sequenceCoverage = new HashMap<>();
                                                     }
                                                     Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
                                                     Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
@@ -654,7 +654,7 @@ public class OutputGenerator {
             }
 
             if (aPeptideKeys == null) {
-                peptideKeys = new ArrayList<String>(identification.getPeptideIdentification());
+                peptideKeys = new ArrayList<>(identification.getPeptideIdentification());
             } else {
                 peptideKeys = aPeptideKeys;
             }
@@ -765,7 +765,7 @@ public class OutputGenerator {
                         PSParameter peptidePSParameter = new PSParameter();
                         PSParameter secondaryPSParameter = new PSParameter();
                         int peptideCounter = 0;
-                        HashMap<String, HashMap<Integer, String[]>> surroundingAAs = new HashMap<String, HashMap<Integer, String[]>>();
+                        HashMap<String, HashMap<Integer, String[]>> surroundingAAs = new HashMap<>();
                         ProteinMatch proteinMatch = null;
                         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
                         PtmSettings ptmProfile = identificationParameters.getSearchParameters().getPtmSettings();
@@ -797,15 +797,15 @@ public class OutputGenerator {
                                         if ((onlyStarred && peptidePSParameter.getStarred()) || !onlyStarred) {
 
                                             Peptide peptide = peptideMatch.getTheoreticPeptide();
-                                            ArrayList<String> possibleProteins = new ArrayList<String>();
-                                            ArrayList<String> orderedProteinsKeys = new ArrayList<String>(); // @TODO: could be merged with one of the other maps perhaps?
+                                            ArrayList<String> possibleProteins = new ArrayList<>();
+                                            ArrayList<String> orderedProteinsKeys = new ArrayList<>(); // @TODO: could be merged with one of the other maps perhaps?
 
                                             if (accession || proteinDescription || surroundings || location || uniqueOnly) {
                                                 if (proteinKey == null) {
                                                     for (String parentProtein : peptide.getParentProteins(sequenceMatchingPreferences)) {
                                                         HashSet<String> tempParentProteins = identification.getProteinMap().get(parentProtein);
                                                         if (tempParentProteins != null) {
-                                                            ArrayList<String> parentProteins = new ArrayList<String>(tempParentProteins);
+                                                            ArrayList<String> parentProteins = new ArrayList<>(tempParentProteins);
                                                             for (String proteinKey : parentProteins) {
                                                                 if (!possibleProteins.contains(proteinKey)) {
                                                                     try {
@@ -840,7 +840,7 @@ public class OutputGenerator {
                                                 if (accession || proteinDescription) {
                                                     String mainMatch, secondaryProteins = "", peptideProteins = "";
                                                     String mainMatchDescription, secondaryProteinsDescriptions = "", peptideProteinDescriptions = "";
-                                                    ArrayList<String> accessions = new ArrayList<String>();
+                                                    ArrayList<String> accessions = new ArrayList<>();
 
                                                     mainMatch = proteinMatch.getMainMatch();
                                                     mainMatchDescription = sequenceFactory.getHeader(mainMatch).getSimpleProteinDescription();
@@ -872,7 +872,7 @@ public class OutputGenerator {
                                                     }
 
                                                     first = true;
-                                                    ArrayList<String> peptideAccessions = new ArrayList<String>(peptide.getParentProteins(sequenceMatchingPreferences));
+                                                    ArrayList<String> peptideAccessions = new ArrayList<>(peptide.getParentProteins(sequenceMatchingPreferences));
                                                     Collections.sort(peptideAccessions);
                                                     for (String key : peptideAccessions) {
                                                         if (shared || !accessions.contains(key)) {
@@ -918,7 +918,7 @@ public class OutputGenerator {
                                                     String subSequence = "";
 
                                                     for (String proteinAccession : orderedProteinsKeys) {
-                                                        ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.get(proteinAccession).keySet());
+                                                        ArrayList<Integer> starts = new ArrayList<>(surroundingAAs.get(proteinAccession).keySet());
                                                         Collections.sort(starts);
                                                         boolean first = true;
                                                         for (int start : starts) {
@@ -949,7 +949,7 @@ public class OutputGenerator {
                                                     String subSequence = "";
 
                                                     for (String proteinAccession : orderedProteinsKeys) {
-                                                        ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.get(proteinAccession).keySet());
+                                                        ArrayList<Integer> starts = new ArrayList<>(surroundingAAs.get(proteinAccession).keySet());
                                                         Collections.sort(starts);
                                                         boolean first = true;
                                                         for (int start : starts) {
@@ -987,7 +987,7 @@ public class OutputGenerator {
                                                     for (String proteinAccession : orderedProteinsKeys) {
                                                         int endAA;
                                                         String sequence = peptide.getSequence();
-                                                        ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.get(proteinAccession).keySet());
+                                                        ArrayList<Integer> starts = new ArrayList<>(surroundingAAs.get(proteinAccession).keySet());
                                                         Collections.sort(starts);
                                                         boolean first = true;
                                                         for (int startAa : starts) {
@@ -1273,7 +1273,7 @@ public class OutputGenerator {
                         PSParameter psParameter = new PSParameter();
                         int psmCounter = 0;
 
-                        HashMap<String, HashSet<String>> spectrumKeys = new HashMap<String, HashSet<String>>();
+                        HashMap<String, HashSet<String>> spectrumKeys = new HashMap<>();
                         /*
                         if (psmKeys == null) {
                             spectrumKeys = identification.getSpectrumIdentificationMap();
@@ -1356,20 +1356,20 @@ public class OutputGenerator {
                                                 writer.write(bestAssumption.getPeptide().getSequence() + SEPARATOR);
                                             }
                                             if (modification) {
-                                                HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
+                                                HashMap<String, ArrayList<Integer>> modMap = new HashMap<>();
                                                 Peptide peptide = bestAssumption.getPeptide();
                                                 if (peptide.isModified()) {
                                                     for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
                                                         if (modificationMatch.getVariable()) {
                                                             if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                                                                modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                                                                modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<>());
                                                             }
                                                             modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                                                         }
                                                     }
                                                 }
                                                 boolean first = true, first2;
-                                                ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
+                                                ArrayList<String> mods = new ArrayList<>(modMap.keySet());
                                                 Collections.sort(mods);
                                                 for (String mod : mods) {
                                                     if (first) {
@@ -1392,7 +1392,7 @@ public class OutputGenerator {
                                                 writer.write(SEPARATOR);
                                             }
                                             if (location) {
-                                                ArrayList<String> modList = new ArrayList<String>();
+                                                ArrayList<String> modList = new ArrayList<>();
                                                 Peptide peptide = bestAssumption.getPeptide();
                                                 if (peptide.isModified()) {
                                                     for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
@@ -1461,7 +1461,7 @@ public class OutputGenerator {
                                                             if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                                                                 PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
                                                                 boolean firstSite = true;
-                                                                ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
+                                                                ArrayList<Integer> sites = new ArrayList<>(ptmScoring.getProbabilisticSites());
                                                                 Collections.sort(sites);
                                                                 for (int site : sites) {
                                                                     if (firstSite) {
@@ -1492,7 +1492,7 @@ public class OutputGenerator {
                                                         if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                                                             PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
                                                             boolean firstSite = true;
-                                                            ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getDSites());
+                                                            ArrayList<Integer> sites = new ArrayList<>(ptmScoring.getDSites());
                                                             Collections.sort(sites);
                                                             for (int site : sites) {
                                                                 if (firstSite) {
@@ -1732,19 +1732,19 @@ public class OutputGenerator {
                             String sequence = bestAssumption.getPeptide().getSequence();
                             writer.write(sequence + SEPARATOR);
                             Peptide peptide = bestAssumption.getPeptide();
-                            HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>(peptide.getNModifications());
+                            HashMap<String, ArrayList<Integer>> modMap = new HashMap<>(peptide.getNModifications());
                             if (peptide.isModified()) {
                                 for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
                                     if (modificationMatch.getVariable()) {
                                         if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                                            modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                                            modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<>());
                                         }
                                         modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                                     }
                                 }
                             }
                             boolean first = true, first2;
-                            ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
+                            ArrayList<String> mods = new ArrayList<>(modMap.keySet());
                             Collections.sort(mods);
                             for (String mod : mods) {
                                 if (first) {
@@ -1766,7 +1766,7 @@ public class OutputGenerator {
                             }
                             writer.write(SEPARATOR);
                             int nPhospho = 0;
-                            ArrayList<String> modList = new ArrayList<String>();
+                            ArrayList<String> modList = new ArrayList<>();
                             peptide = bestAssumption.getPeptide();
                             if (peptide.isModified()) {
                                 for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
@@ -1794,7 +1794,7 @@ public class OutputGenerator {
                             String mdScore = "";
                             String[] split = sequence.split("[STY]");
                             int nSites = split.length - 1;
-                            ArrayList<String> phosphoNames = new ArrayList<String>();
+                            ArrayList<String> phosphoNames = new ArrayList<>();
 
                             for (String mod : modList) {
                                 if (mod.contains("phospho")) {
@@ -1803,7 +1803,7 @@ public class OutputGenerator {
                                         ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                                         if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                                             PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                                            ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
+                                            ArrayList<Integer> sites = new ArrayList<>(ptmScoring.getProbabilisticSites());
                                             Collections.sort(sites);
                                             for (Integer site : sites) {
                                                 if (probabilisticLocalizations.length() > 0) {
@@ -1811,7 +1811,7 @@ public class OutputGenerator {
                                                 }
                                                 probabilisticLocalizations.append(site.toString()).append(": ").append(ptmScoring.getProbabilisticScore(site));
                                             }
-                                            sites = new ArrayList<Integer>(ptmScoring.getDSites());
+                                            sites = new ArrayList<>(ptmScoring.getDSites());
                                             Collections.sort(sites);
                                             for (Integer site : sites) {
                                                 if (dLocalizations.length() > 0) {
@@ -1830,7 +1830,7 @@ public class OutputGenerator {
                                     HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = spectrumMatch.getAssumptionsMap();
                                     HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> mascotMap = assumptions.get(Advocate.mascot.getIndex());
                                     if (mascotMap != null) {
-                                        ArrayList<SpectrumIdentificationAssumption> mascotAssumptions = new ArrayList<SpectrumIdentificationAssumption>();
+                                        ArrayList<SpectrumIdentificationAssumption> mascotAssumptions = new ArrayList<>();
                                         for (ArrayList<SpectrumIdentificationAssumption> peptideAssumptionList : mascotMap.values()) {
                                             mascotAssumptions.addAll(peptideAssumptionList);
                                             for (SpectrumIdentificationAssumption assumption : peptideAssumptionList) {
@@ -1848,7 +1848,7 @@ public class OutputGenerator {
                                             if (score != null) {
                                                 mdScore = score.toString();
                                             }
-                                            ArrayList<Integer> sites = new ArrayList<Integer>();
+                                            ArrayList<Integer> sites = new ArrayList<>();
                                             if (mascotPeptide.isModified()) {
                                                 for (ModificationMatch modificationMatch : mascotPeptide.getModificationMatches()) {
                                                     if (modificationMatch.getTheoreticPtm().contains("phospho")) {
@@ -1909,7 +1909,7 @@ public class OutputGenerator {
                             return;
                         }
 
-                        ArrayList<String> targetedPtms = new ArrayList<String>();
+                        ArrayList<String> targetedPtms = new ArrayList<>();
                         for (String ptm : ptmProfile.getAllNotFixedModifications()) {
                             if (ptm.contains("phospho")) {
                                 targetedPtms.add(ptm);
@@ -1985,7 +1985,7 @@ public class OutputGenerator {
                                     sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
                                 } catch (Exception e) {
                                     peptideShakerGUI.catchException(e);
-                                    sequenceCoverage = new HashMap<Integer, Double>();
+                                    sequenceCoverage = new HashMap<>();
                                 }
                                 Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
                                 Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
@@ -2334,7 +2334,7 @@ public class OutputGenerator {
                                 HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = spectrumMatch.getAssumptionsMap();
                                 for (int se : assumptions.keySet()) {
                                     HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> seMap = assumptions.get(se);
-                                    ArrayList<Double> eValues = new ArrayList<Double>(seMap.keySet());
+                                    ArrayList<Double> eValues = new ArrayList<>(seMap.keySet());
                                     Collections.sort(eValues);
                                     rank = 1;
                                     for (double eValue : eValues) {
@@ -2553,7 +2553,7 @@ public class OutputGenerator {
                     if (onlyValidated) {
                         proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(progressDialog, peptideShakerGUI.getFilterPreferences());
                     } else {
-                        proteinKeys = new ArrayList<String>(identification.getProteinIdentification());
+                        proteinKeys = new ArrayList<>(identification.getProteinIdentification());
                     }
                 } else {
                     proteinKeys = aProteinKeys;
@@ -2594,7 +2594,7 @@ public class OutputGenerator {
                 public void run() {
 
                     try {
-                        ArrayList<String> fractionFileNames = new ArrayList<String>();
+                        ArrayList<String> fractionFileNames = new ArrayList<>();
 
                         for (String fileName : peptideShakerGUI.getIdentification().getOrderedSpectrumFileNames()) {
                             fractionFileNames.add(fileName);
@@ -2748,7 +2748,7 @@ public class OutputGenerator {
                                                         sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
                                                     } catch (Exception e) {
                                                         peptideShakerGUI.catchException(e);
-                                                        sequenceCoverage = new HashMap<Integer, Double>();
+                                                        sequenceCoverage = new HashMap<>();
                                                     }
                                                     Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
                                                     Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
@@ -2939,7 +2939,7 @@ public class OutputGenerator {
         StringBuilder results = new StringBuilder();
 
         ArrayList<String> spectrumKeys = peptideMatch.getSpectrumMatchesKeys();
-        ArrayList<Integer> charges = new ArrayList<Integer>(5);
+        ArrayList<Integer> charges = new ArrayList<>(5);
 
         // find all unique the charges
         try {
@@ -2986,13 +2986,13 @@ public class OutputGenerator {
     public static String getPeptideModificationsAsString(Peptide peptide, boolean variablePtms) {
 
         StringBuilder result = new StringBuilder();
-        HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
+        HashMap<String, ArrayList<Integer>> modMap = new HashMap<>();
 
         if (peptide.isModified()) {
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
                 if ((variablePtms && modificationMatch.getVariable()) || (!variablePtms && !modificationMatch.getVariable())) {
                     if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                        modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                        modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<>());
                     }
                     modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                 }
@@ -3000,7 +3000,7 @@ public class OutputGenerator {
         }
 
         boolean first = true;
-        ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
+        ArrayList<String> mods = new ArrayList<>(modMap.keySet());
         Collections.sort(mods);
 
         for (String mod : mods) {
@@ -3043,7 +3043,7 @@ public class OutputGenerator {
         PTMFactory ptmFactory = PTMFactory.getInstance();
 
         String result = "";
-        ArrayList<String> modList = new ArrayList<String>();
+        ArrayList<String> modList = new ArrayList<>();
 
         if (peptide.isModified()) {
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {

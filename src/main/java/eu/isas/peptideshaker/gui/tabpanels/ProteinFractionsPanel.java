@@ -75,7 +75,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     /**
      * A list of the peptides in the peptide table.
      */
-    private ArrayList<String> peptideKeys = new ArrayList<String>();
+    private ArrayList<String> peptideKeys = new ArrayList<>();
     /**
      * The protein table column header tooltips.
      */
@@ -160,7 +160,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      * Set up the table header tooltips.
      */
     private void setUpTableHeaderToolTips() {
-        proteinTableToolTips = new ArrayList<String>();
+        proteinTableToolTips = new ArrayList<>();
         proteinTableToolTips.add(null);
         proteinTableToolTips.add("Starred");
         proteinTableToolTips.add("Protein Inference Class");
@@ -181,7 +181,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         proteinTableToolTips.add("Validated");
 
-        coverageTableToolTips = new ArrayList<String>();
+        coverageTableToolTips = new ArrayList<>();
         coverageTableToolTips.add(null);
         coverageTableToolTips.add("Fraction");
         coverageTableToolTips.add("Sequence Coverage");
@@ -347,7 +347,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         try {
 
             // @TODO: this method should be split into smaller methods...
-            ArrayList<String> fileNames = new ArrayList<String>();
+            ArrayList<String> fileNames = new ArrayList<>();
 
             for (String fileName : peptideShakerGUI.getIdentification().getOrderedSpectrumFileNames()) {
                 fileNames.add(fileName);
@@ -385,7 +385,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                     } catch (Exception e1) {
                         peptideShakerGUI.catchException(e1);
                         // ok you are really unlucky... Just hope the GUI holds...
-                        peptideKeys = new ArrayList<String>();
+                        peptideKeys = new ArrayList<>();
                     }
                 }
 
@@ -469,7 +469,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                     for (int i = 0; i < fileNames.size(); i++) {
 
                         // create the coverage plot
-                        ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<JSparklinesDataSeries>();
+                        ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<>();
 
                         for (int j = 0; j < currentProteinSequence.length(); j++) {
 
@@ -489,7 +489,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                                 }
                             }
 
-                            ArrayList<Double> data = new ArrayList<Double>();
+                            ArrayList<Double> data = new ArrayList<>();
                             data.add(new Double(sequenceCounter));
 
                             JSparklinesDataSeries sparklineDataseries;
@@ -504,7 +504,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                         }
 
                         ChartPanel coverageChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesCoverage),
-                                new HashMap<Integer, ArrayList<ResidueAnnotation>>(), true, true);
+                                new HashMap<>(), true, true);
 
                         ((DefaultTableModel) coverageTable.getModel()).addRow(new Object[]{(i + 1), fileNames.get(i), coverageChart});
 

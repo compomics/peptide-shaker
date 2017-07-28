@@ -26,7 +26,7 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
     /**
      * Map of the new mgf files indexed by the new ones.
      */
-    private HashMap<String, File> newFiles = new HashMap<String, File>();
+    private HashMap<String, File> newFiles = new HashMap<>();
     /**
      * The list of id files presenting a missing mgf file.
      */
@@ -56,7 +56,7 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
         this.waitingDialog = waitingDialog;
         this.missingFiles = missingFiles;
 
-        idFiles = new ArrayList<File>(missingFiles.keySet());
+        idFiles = new ArrayList<>(missingFiles.keySet());
         lastSelectedFolder = idFiles.get(0).getParentFile();
 
         initComponents();
@@ -158,7 +158,7 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
     private void updateFileList() {
         File[] files = lastSelectedFolder.listFiles();
 
-        ArrayList<String> fileNames = new ArrayList<String>();
+        ArrayList<String> fileNames = new ArrayList<>();
         String fileName;
         boolean found;
         for (File file : files) {

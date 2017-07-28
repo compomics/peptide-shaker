@@ -47,7 +47,7 @@ public class PsAnnotationSection {
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        this.annotationFeatures = new ArrayList<PsAnnotationFeature>(exportFeatures.size());
+        this.annotationFeatures = new ArrayList<>(exportFeatures.size());
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsAnnotationFeature) {
                 annotationFeatures.add((PsAnnotationFeature) exportFeature);

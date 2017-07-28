@@ -56,11 +56,11 @@ public abstract class MatchFilter implements Serializable, Filter {
     /**
      * The key of the manually validated matches.
      */
-    protected ArrayList<String> manualValidation = new ArrayList<String>();
+    protected ArrayList<String> manualValidation = new ArrayList<>();
     /**
      * The exceptions to the rule.
      */
-    protected ArrayList<String> exceptions = new ArrayList<String>();
+    protected ArrayList<String> exceptions = new ArrayList<>();
     /**
      * Name of the manual selection filter.
      */
@@ -68,11 +68,11 @@ public abstract class MatchFilter implements Serializable, Filter {
     /**
      * Map of the comparators to use.
      */
-    protected HashMap<String, FilterItemComparator> comparatorsMap = new HashMap<String, FilterItemComparator>();
+    protected HashMap<String, FilterItemComparator> comparatorsMap = new HashMap<>();
     /**
      * Map of the values to filter on.
      */
-    protected HashMap<String, Object> valuesMap = new HashMap<String, Object>();
+    protected HashMap<String, Object> valuesMap = new HashMap<>();
 
     /**
      * Enum for the type of possible filter.
@@ -352,7 +352,7 @@ public abstract class MatchFilter implements Serializable, Filter {
      * @return the name of the items used to filter
      */
     public HashSet<String> getItemsNames() {
-        return new HashSet<String>(valuesMap.keySet());
+        return new HashSet<>(valuesMap.keySet());
     }
 
     /**

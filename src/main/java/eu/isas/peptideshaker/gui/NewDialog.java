@@ -84,11 +84,11 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * The list of identification files.
      */
-    private ArrayList<File> idFiles = new ArrayList<File>();
+    private ArrayList<File> idFiles = new ArrayList<>();
     /**
      * The XML modification files found.
      */
-    private ArrayList<File> modificationFiles = new ArrayList<File>();
+    private ArrayList<File> modificationFiles = new ArrayList<>();
     /**
      * A file where the input will be stored.
      */
@@ -96,7 +96,7 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * The list of spectrum files.
      */
-    private ArrayList<File> spectrumFiles = new ArrayList<File>();
+    private ArrayList<File> spectrumFiles = new ArrayList<>();
     /**
      * The peptide shaker class which will take care of the pre-processing.
      */
@@ -697,7 +697,7 @@ public class NewDialog extends javax.swing.JDialog {
             projectDetails.setCreationDate(new Date());
             projectDetails.setPeptideShakerVersion(new eu.isas.peptideshaker.utils.Properties().getVersion());
             peptideShakerGUI.setProjectDetails(projectDetails);
-            peptideShakerGUI.setCurentNotes(new ArrayList<String>());
+            peptideShakerGUI.setCurentNotes(new ArrayList<>());
             peptideShakerGUI.updateNotesNotificationCounter();
             peptideShakerGUI.resetDisplayFeaturesGenerator();
             peptideShakerGUI.setSpectrumCountingPreferences(spectrumCountingPreferences);
@@ -715,7 +715,7 @@ public class NewDialog extends javax.swing.JDialog {
             try {
                 tips = Tips.getTips();
             } catch (Exception e) {
-                tips = new ArrayList<String>();
+                tips = new ArrayList<>();
                 // Do something here?
             }
 
@@ -867,7 +867,7 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void clearSpectraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearSpectraActionPerformed
-        spectrumFiles = new ArrayList<File>();
+        spectrumFiles = new ArrayList<>();
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         validateInput();
 }//GEN-LAST:event_clearSpectraActionPerformed
@@ -929,7 +929,7 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void clearIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearIdActionPerformed
-        idFiles = new ArrayList<File>();
+        idFiles = new ArrayList<>();
         idFilesTxt.setText(idFiles.size() + " file(s) selected");
         validateInput();
 }//GEN-LAST:event_clearIdActionPerformed
@@ -1679,7 +1679,7 @@ public class NewDialog extends javax.swing.JDialog {
 
         PtmSettings modificationProfile = searchParameters.getPtmSettings();
 
-        ArrayList<String> missing = new ArrayList<String>();
+        ArrayList<String> missing = new ArrayList<>();
 
         for (String name : modificationProfile.getAllModifications()) {
             if (!ptmFactory.containsPTM(name)) {
@@ -1854,7 +1854,7 @@ public class NewDialog extends javax.swing.JDialog {
      * @return a list of mgf input files
      */
     private ArrayList<String> getMgfFiles(ArrayList<File> searchguiInputFiles) {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         for (File searchguiInputFile : searchguiInputFiles) {
             try {
                 BufferedReader br = new BufferedReader(new FileReader(searchguiInputFile));
@@ -1894,7 +1894,7 @@ public class NewDialog extends javax.swing.JDialog {
         progressDialog.setTitle("Loading Spectrum Files. Please Wait...");
 
         ArrayList<String> neededMgfs = getMgfFiles(inputFiles);
-        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> names = new ArrayList<>();
         String missing = "";
         int nMissing = 0;
         for (File file : spectrumFiles) {
@@ -2098,9 +2098,9 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private void loadIdInputFiles(File[] selectedFiles) {
 
-        HashMap<String, File> parameterFiles = new HashMap<String, File>();
-        ArrayList<File> dataFolders = new ArrayList<File>();
-        ArrayList<File> inputFiles = new ArrayList<File>();
+        HashMap<String, File> parameterFiles = new HashMap<>();
+        ArrayList<File> dataFolders = new ArrayList<>();
+        ArrayList<File> inputFiles = new ArrayList<>();
 
         boolean loadCanceled = false;
 
@@ -2188,9 +2188,9 @@ public class NewDialog extends javax.swing.JDialog {
         if (!loadCanceled) {
 
             File parameterFile = null;
-            ArrayList<String> names = new ArrayList<String>(parameterFiles.keySet());
+            ArrayList<String> names = new ArrayList<>(parameterFiles.keySet());
             if (parameterFiles.size() == 1) {
-                ArrayList<String> fileNames = new ArrayList<String>(parameterFiles.keySet());
+                ArrayList<String> fileNames = new ArrayList<>(parameterFiles.keySet());
                 parameterFile = parameterFiles.get(fileNames.get(0));
             } else if (parameterFiles.size() > 1) {
 
@@ -2216,7 +2216,7 @@ public class NewDialog extends javax.swing.JDialog {
                     parameterFile = parameterFiles.get(names.get(0));
                 } else {
                     setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                    ArrayList<File> parameterFilesList = new ArrayList<File>(parameterFiles.values());
+                    ArrayList<File> parameterFilesList = new ArrayList<>(parameterFiles.values());
                     FileSelectionDialog fileSelection = new FileSelectionDialog(this, parameterFilesList, "Select the wanted SearchGUI parameters file.");
                     if (!fileSelection.isCanceled()) {
                         parameterFile = fileSelection.getSelectedFile();

@@ -49,7 +49,7 @@ public class PsProteinSection {
     /**
      * The protein features to export.
      */
-    private ArrayList<PsProteinFeature> proteinFeatures = new ArrayList<PsProteinFeature>();
+    private ArrayList<PsProteinFeature> proteinFeatures = new ArrayList<>();
     /**
      * The peptide subsection if any.
      */
@@ -78,7 +78,7 @@ public class PsProteinSection {
      * @param writer the writer which will write to the file
      */
     public PsProteinSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
-        ArrayList<ExportFeature> peptideFeatures = new ArrayList<ExportFeature>();
+        ArrayList<ExportFeature> peptideFeatures = new ArrayList<>();
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsProteinFeature) {
                 proteinFeatures.add((PsProteinFeature) exportFeature);
@@ -140,7 +140,7 @@ public class PsProteinSection {
         }
 
         if (keys == null) {
-            keys = new ArrayList<String>(identification.getProteinIdentification());
+            keys = new ArrayList<>(identification.getProteinIdentification());
         }
         int line = 1;
 
@@ -151,7 +151,7 @@ public class PsProteinSection {
         }
 
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        ArrayList<UrParameter> parameters = new ArrayList<>(1);
         parameters.add(psParameter);
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(keys, waitingHandler); // @TODO: find a better way to know if we need psms
 
@@ -359,7 +359,7 @@ public class PsProteinSection {
             case ambiguous_modification_sites_number:
                 return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(proteinMatch);
             case confident_phosphosites:
-                ArrayList<String> modifications = new ArrayList<String>();
+                ArrayList<String> modifications = new ArrayList<>();
                 for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.contains("Phospho")) {
                         modifications.add(ptm);
@@ -370,7 +370,7 @@ public class PsProteinSection {
                 sequence = protein.getSequence();
                 return identificationFeaturesGenerator.getConfidentPtmSites(proteinMatch, sequence, modifications);
             case confident_phosphosites_number:
-                modifications = new ArrayList<String>();
+                modifications = new ArrayList<>();
                 for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.contains("Phospho")) {
                         modifications.add(ptm);
@@ -381,7 +381,7 @@ public class PsProteinSection {
                 mainAccession = proteinMatch.getMainMatch();
                 protein = SequenceFactory.getInstance().getProtein(mainAccession);
                 sequence = protein.getSequence();
-                modifications = new ArrayList<String>();
+                modifications = new ArrayList<>();
                 for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.contains("Phospho")) {
                         modifications.add(ptm);
@@ -389,7 +389,7 @@ public class PsProteinSection {
                 }
                 return identificationFeaturesGenerator.getAmbiguousPtmSites(proteinMatch, sequence, modifications);
             case ambiguous_phosphosites_number:
-                modifications = new ArrayList<String>();
+                modifications = new ArrayList<>();
                 for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
                     if (ptm.contains("Phospho")) {
                         modifications.add(ptm);

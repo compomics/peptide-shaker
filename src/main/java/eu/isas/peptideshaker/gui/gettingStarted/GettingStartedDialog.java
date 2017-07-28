@@ -60,7 +60,7 @@ public class GettingStartedDialog extends javax.swing.JDialog {
      * Setup the getting started panels.
      */
     private void setUpDisplayPanels() {
-        displayPanels = new ArrayList<ImageIconPanel>();
+        displayPanels = new ArrayList<>();
         displayPanels.add(new ImageIconPanel(new ImageIcon(getClass().getResource("/helpFiles/images/introduction.png"))));
         displayPanels.add(new ImageIconPanel(new ImageIcon(getClass().getResource("/helpFiles/images/searchgui.png"))));
         displayPanels.add(new ImageIconPanel(new ImageIcon(getClass().getResource("/helpFiles/images/overview_tab.png"))));

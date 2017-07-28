@@ -68,7 +68,7 @@ public class PSExportFactory implements ExportFactory {
     /**
      * The user export schemes.
      */
-    private HashMap<String, ExportScheme> userSchemes = new HashMap<String, ExportScheme>();
+    private HashMap<String, ExportScheme> userSchemes = new HashMap<>();
     /**
      * Sorted list of the implemented reports.
      */
@@ -124,7 +124,7 @@ public class PSExportFactory implements ExportFactory {
      * @return a list of the implemented user schemes
      */
     public ArrayList<String> getUserSchemesNames() {
-        return new ArrayList<String>(userSchemes.keySet());
+        return new ArrayList<>(userSchemes.keySet());
     }
 
     /**
@@ -159,7 +159,7 @@ public class PSExportFactory implements ExportFactory {
 
     @Override
     public ArrayList<String> getImplementedSections() {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         result.add(PsProteinFeature.type);
         result.add(PsPeptideFeature.type);
         result.add(PsPsmFeature.type);
@@ -199,7 +199,7 @@ public class PSExportFactory implements ExportFactory {
         } else if (sectionName.equals(PsIdentificationAlgorithmMatchesFeature.type)) {
             return PsIdentificationAlgorithmMatchesFeature.values()[0].getExportFeatures(includeSubFeatures);
         }
-        return new ArrayList<ExportFeature>();
+        return new ArrayList<>();
     }
 
     /**
@@ -208,7 +208,7 @@ public class PSExportFactory implements ExportFactory {
      * @return a list of the default export schemes
      */
     public static ArrayList<String> getDefaultExportSchemesNames() {
-        ArrayList<String> result = new ArrayList<String>(getDefaultExportSchemes().keySet());
+        ArrayList<String> result = new ArrayList<>(getDefaultExportSchemes().keySet());
         Collections.sort(result);
         return result;
     }
@@ -423,9 +423,9 @@ public class PSExportFactory implements ExportFactory {
      * Initiates the sorted list of implemented reports.
      */
     private void setUpReportList() {
-        implementedReports = new ArrayList<String>();
+        implementedReports = new ArrayList<>();
         implementedReports.addAll(getDefaultExportSchemesNames());
-        ArrayList<String> userReports = new ArrayList<String>(userSchemes.keySet());
+        ArrayList<String> userReports = new ArrayList<>(userSchemes.keySet());
         Collections.sort(userReports);
         implementedReports.addAll(userReports);
     }
@@ -440,8 +440,8 @@ public class PSExportFactory implements ExportFactory {
         ///////////////////////////
         // Default hierarchical report
         ///////////////////////////
-        HashMap<String, ArrayList<ExportFeature>> exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
-        ArrayList<ExportFeature> sectionContent = new ArrayList<ExportFeature>();
+        HashMap<String, ArrayList<ExportFeature>> exportFeatures = new HashMap<>();
+        ArrayList<ExportFeature> sectionContent = new ArrayList<>();
 
         // protein accessions and protein inferences 
         sectionContent.add(PsProteinFeature.accession);
@@ -538,8 +538,8 @@ public class PSExportFactory implements ExportFactory {
         ///////////////////////////
         // Default protein report
         ///////////////////////////
-        exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
-        sectionContent = new ArrayList<ExportFeature>();
+        exportFeatures = new HashMap<>();
+        sectionContent = new ArrayList<>();
 
         // protein accessions and protein inferences 
         sectionContent.add(PsProteinFeature.accession);
@@ -585,8 +585,8 @@ public class PSExportFactory implements ExportFactory {
         ///////////////////////////
         // Default peptide report
         ///////////////////////////
-        exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
-        sectionContent = new ArrayList<ExportFeature>();
+        exportFeatures = new HashMap<>();
+        sectionContent = new ArrayList<>();
 
         // accessions
         sectionContent.add(PsPeptideFeature.accessions);
@@ -625,8 +625,8 @@ public class PSExportFactory implements ExportFactory {
         ///////////////////////////
         // Default PSM report
         ///////////////////////////
-        exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
-        sectionContent = new ArrayList<ExportFeature>();
+        exportFeatures = new HashMap<>();
+        sectionContent = new ArrayList<>();
 
         // protein accessions
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.accessions);
@@ -672,8 +672,8 @@ public class PSExportFactory implements ExportFactory {
         ///////////////////////////
         // All PSM report
         ///////////////////////////
-        exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
-        sectionContent = new ArrayList<ExportFeature>();
+        exportFeatures = new HashMap<>();
+        sectionContent = new ArrayList<>();
 
         // protein accessions
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.accessions);
@@ -720,8 +720,8 @@ public class PSExportFactory implements ExportFactory {
         ///////////////////////////
         // Default protein phospho report
         ///////////////////////////
-        exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
-        sectionContent = new ArrayList<ExportFeature>();
+        exportFeatures = new HashMap<>();
+        sectionContent = new ArrayList<>();
 
         // protein accessions and protein inferences 
         sectionContent.add(PsProteinFeature.accession);
@@ -767,8 +767,8 @@ public class PSExportFactory implements ExportFactory {
         ///////////////////////////
         // Default peptide phosphorylation report
         ///////////////////////////
-        exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
-        sectionContent = new ArrayList<ExportFeature>();
+        exportFeatures = new HashMap<>();
+        sectionContent = new ArrayList<>();
 
         // accessions
         sectionContent.add(PsPeptideFeature.accessions);
@@ -810,8 +810,8 @@ public class PSExportFactory implements ExportFactory {
         ///////////////////////////
         // Default PSM phosphorylation report
         ///////////////////////////
-        exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
-        sectionContent = new ArrayList<ExportFeature>();
+        exportFeatures = new HashMap<>();
+        sectionContent = new ArrayList<>();
 
         // protein accessions
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.accessions);
@@ -853,11 +853,11 @@ public class PSExportFactory implements ExportFactory {
         ///////////////////////////
         // Certificate of analysis
         ///////////////////////////
-        exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
-        ArrayList<String> sectionsList = new ArrayList<String>();
+        exportFeatures = new HashMap<>();
+        ArrayList<String> sectionsList = new ArrayList<>();
 
         // project details
-        sectionContent = new ArrayList<ExportFeature>();
+        sectionContent = new ArrayList<>();
         sectionsList.add(PsProjectFeature.type);
         sectionContent.add(PsProjectFeature.peptide_shaker);
         sectionContent.add(PsProjectFeature.date);
@@ -893,7 +893,7 @@ public class PSExportFactory implements ExportFactory {
 
         ExportScheme coa = new ExportScheme("Certificate of Analysis", false, sectionsList, exportFeatures, ": ", true, false, 2, true, false, true);
 
-        HashMap<String, ExportScheme> defaultSchemes = new HashMap<String, ExportScheme>();
+        HashMap<String, ExportScheme> defaultSchemes = new HashMap<>();
         defaultSchemes.put(topDownReport.getName(), topDownReport);
         defaultSchemes.put(proteinReport.getName(), proteinReport);
         defaultSchemes.put(peptideReport.getName(), peptideReport);

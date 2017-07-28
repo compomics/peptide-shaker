@@ -98,7 +98,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         spectrumTable.setAutoCreateRowSorter(true);
         searchSettingsTable.setAutoCreateRowSorter(true);
 
-        filesTableToolTips = new ArrayList<String>();
+        filesTableToolTips = new ArrayList<>();
         filesTableToolTips.add(null);
         filesTableToolTips.add("Assay Accession Numbers");
         filesTableToolTips.add("File Type");
@@ -200,7 +200,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         }
 
         // filter the spectrum table
-        List<RowFilter<Object, Object>> spectrumFileFilters = new ArrayList<RowFilter<Object, Object>>();
+        List<RowFilter<Object, Object>> spectrumFileFilters = new ArrayList<>();
 
         // reshakeble filter
         RowFilter<Object, Object> reshakeableFilter = new RowFilter<Object, Object>() {
@@ -224,7 +224,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         }
 
         // filter the search settings table
-        List<RowFilter<Object, Object>> searchSettingsFilesFilters = new ArrayList<RowFilter<Object, Object>>();
+        List<RowFilter<Object, Object>> searchSettingsFilesFilters = new ArrayList<>();
 
         // reshakeble filter
         RowFilter<Object, Object> searchSettingsFilter = new RowFilter<Object, Object>() {
@@ -825,10 +825,10 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
 
-                    ArrayList<String> selectedSpectrumFileLinks = new ArrayList<String>();
-                    ArrayList<String> selectedFileNames = new ArrayList<String>();
+                    ArrayList<String> selectedSpectrumFileLinks = new ArrayList<>();
+                    ArrayList<String> selectedFileNames = new ArrayList<>();
                     String selectedSearchSettingsFileLink = null;
-                    ArrayList<Integer> fileSizes = new ArrayList<Integer>();
+                    ArrayList<Integer> fileSizes = new ArrayList<>();
 
                     for (int i = 0; i < spectrumTable.getRowCount(); i++) {
                         if ((Boolean) spectrumTable.getValueAt(i, spectrumTable.getColumn("  ").getModelIndex())) {

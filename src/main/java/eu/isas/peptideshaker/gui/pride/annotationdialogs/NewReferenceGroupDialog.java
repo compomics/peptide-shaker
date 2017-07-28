@@ -341,7 +341,7 @@ public class NewReferenceGroupDialog extends javax.swing.JDialog {
      */
     private void okJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okJButtonActionPerformed
 
-        ArrayList<Reference> references = new ArrayList<Reference>();
+        ArrayList<Reference> references = new ArrayList<>();
 
         for (int i = 0; i < referencesJTable.getRowCount(); i++) {
             references.add(new Reference(
@@ -480,7 +480,7 @@ public class NewReferenceGroupDialog extends javax.swing.JDialog {
      */
     private void deleteGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteGroupButtonActionPerformed
         dispose();
-        prideExportDialog.deleteReferenceGroup(new ReferenceGroup(new ArrayList<Reference>(), groupNameTextField.getText()));
+        prideExportDialog.deleteReferenceGroup(new ReferenceGroup(new ArrayList<>(), groupNameTextField.getText()));
     }//GEN-LAST:event_deleteGroupButtonActionPerformed
 
     /**

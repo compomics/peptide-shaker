@@ -128,7 +128,7 @@ public class PeptideShaker {
     /**
      * List of warnings collected while working on the data.
      */
-    private HashMap<String, FeedBack> warnings = new HashMap<String, FeedBack>();
+    private HashMap<String, FeedBack> warnings = new HashMap<>();
     /**
      * If true, a warning will be displayed when encountering memory issues.
      */
@@ -727,15 +727,15 @@ public class PeptideShaker {
             SpectrumMatch spectrumMatch = psmIterator.next();
             HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = spectrumMatch.getAssumptionsMap();
 
-            HashMap<Double, ArrayList<PSParameter>> pepToParameterMap = new HashMap<Double, ArrayList<PSParameter>>();
+            HashMap<Double, ArrayList<PSParameter>> pepToParameterMap = new HashMap<>();
 
             for (int searchEngine : assumptionsMap.keySet()) {
 
                 HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> seMapping = assumptionsMap.get(searchEngine);
-                ArrayList<Double> eValues = new ArrayList<Double>(seMapping.keySet());
+                ArrayList<Double> eValues = new ArrayList<>(seMapping.keySet());
                 Collections.sort(eValues);
                 double previousP = 0;
-                ArrayList<PSParameter> previousAssumptionsParameters = new ArrayList<PSParameter>();
+                ArrayList<PSParameter> previousAssumptionsParameters = new ArrayList<>();
                 SpectrumIdentificationAssumption previousAssumption = null;
 
                 for (double eValue : eValues) {
@@ -761,7 +761,7 @@ public class PeptideShaker {
 
                             ArrayList<PSParameter> pSParameters = pepToParameterMap.get(pep);
                             if (pSParameters == null) {
-                                pSParameters = new ArrayList<PSParameter>(1);
+                                pSParameters = new ArrayList<>(1);
                                 pepToParameterMap.put(pep, pSParameters);
                             }
                             pSParameters.add(psParameter);
@@ -809,8 +809,8 @@ public class PeptideShaker {
 
             // Compute the delta pep score accross all search engines
             Double previousPEP = null;
-            ArrayList<PSParameter> previousParameters = new ArrayList<PSParameter>();
-            ArrayList<Double> peps = new ArrayList<Double>(pepToParameterMap.keySet());
+            ArrayList<PSParameter> previousParameters = new ArrayList<>();
+            ArrayList<Double> peps = new ArrayList<>(pepToParameterMap.keySet());
             Collections.sort(peps);
             for (double pep : peps) {
                 if (previousPEP != null) {

@@ -61,15 +61,15 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
     /**
      * The labels of the currently selected nodes.
      */
-    private ArrayList<String> selectedNodes = new ArrayList<String>();
+    private ArrayList<String> selectedNodes = new ArrayList<>();
     /**
      * The labels of the currently selected neighbor nodes.
      */
-    private ArrayList<String> selectedNeighborNodes = new ArrayList<String>();
+    private ArrayList<String> selectedNeighborNodes = new ArrayList<>();
     /**
      * The labels of the currently selected edges.
      */
-    private ArrayList<String> selectedEdges = new ArrayList<String>();
+    private ArrayList<String> selectedEdges = new ArrayList<>();
     /**
      * Set if if the peptide labels are to be shown.
      */
@@ -199,7 +199,7 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
      */
     private VisualizationViewer setUpGraph(JPanel parentPanel) {
 
-        graph = new UndirectedSparseGraph<String, String>();
+        graph = new UndirectedSparseGraph<>();
 
         // add all the nodes
         for (String node : nodes) {
@@ -219,7 +219,7 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
         }
 
         // create the visualization viewer
-        VisualizationViewer<String, String> vv = new VisualizationViewer<String, String>(new FRLayout<String, String>(graph),
+        VisualizationViewer<String, String> vv = new VisualizationViewer<>(new FRLayout<>(graph),
                 new Dimension(parentPanel.getWidth() - 20, parentPanel.getHeight() - 100));
         vv.setBackground(Color.WHITE);
 
@@ -271,7 +271,7 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
         vv.getRenderContext().setEdgeStrokeTransformer(edgeStroke);
 
         // set the mouse interaction mode
-        final DefaultModalGraphMouse<String, Number> graphMouse = new DefaultModalGraphMouse<String, Number>();
+        final DefaultModalGraphMouse<String, Number> graphMouse = new DefaultModalGraphMouse<>();
         graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
         vv.setGraphMouse(graphMouse);
 
@@ -340,8 +340,8 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
      */
     private void updateNodeSelection() {
 
-        selectedNeighborNodes = new ArrayList<String>();
-        selectedEdges = new ArrayList<String>();
+        selectedNeighborNodes = new ArrayList<>();
+        selectedEdges = new ArrayList<>();
 
         // get the list of all neighbors of selected nodes and the edges involved
         for (String node : selectedNodes) {

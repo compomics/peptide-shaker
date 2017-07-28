@@ -702,7 +702,7 @@ public class CpsParent extends UserPreferencesParent {
             for (File idFile : projectDetails.getIdentificationFiles()) {
                 report += idFile.getAbsolutePath() + " - ";
                 HashMap<String, ArrayList<String>> versions = projectDetails.getIdentificationAlgorithmsForFile(idFile.getName());
-                ArrayList<String> software = new ArrayList<String>(versions.keySet());
+                ArrayList<String> software = new ArrayList<>(versions.keySet());
                 Collections.sort(software);
                 boolean first = true;
                 for (String softwareName : software) {

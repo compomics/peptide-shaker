@@ -26,7 +26,7 @@ public class SpectrumRecalibrator {
     /**
      * Map of the runs errors.
      */
-    private HashMap<String, RunMzDeviation> runMzDeviationMap = new HashMap<String, RunMzDeviation>();
+    private HashMap<String, RunMzDeviation> runMzDeviationMap = new HashMap<>();
 
     /**
      * Constructor.

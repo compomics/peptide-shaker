@@ -199,7 +199,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         goPlotsTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 
         // set up the table header tooltips
-        mappingsTableToolTips = new ArrayList<String>();
+        mappingsTableToolTips = new ArrayList<>();
         mappingsTableToolTips.add(null);
         mappingsTableToolTips.add("Gene Ontology Accession");
         mappingsTableToolTips.add("Gene Ontology Term");
@@ -211,7 +211,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         mappingsTableToolTips.add("<html>Hypergeometic Test<br>FDR-Corrected</html>");
         mappingsTableToolTips.add("Selected for Plots");
 
-        proteinTableToolTips = new ArrayList<String>();
+        proteinTableToolTips = new ArrayList<>();
         proteinTableToolTips.add(null);
         proteinTableToolTips.add("Protein Accession Number");
         proteinTableToolTips.add("Protein Description");
@@ -257,7 +257,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         if (!sequenceFactory.concatenatedTargetDecoy()) {
             nonValidatedColor = peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound();
         }
-        ArrayList<Color> sparklineColors = new ArrayList<Color>();
+        ArrayList<Color> sparklineColors = new ArrayList<>();
         sparklineColors.add(peptideShakerGUI.getSparklineColor());
         sparklineColors.add(peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful());
         sparklineColors.add(nonValidatedColor);
@@ -281,7 +281,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         proteinTable.getColumn("  ").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
 
-        sparklineColors = new ArrayList<Color>();
+        sparklineColors = new ArrayList<>();
         sparklineColors.add(peptideShakerGUI.getSparklineColor());
         sparklineColors.add(peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful());
         sparklineColors.add(nonValidatedColor);
@@ -351,7 +351,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                         dm.getDataVector().removeAllElements();
                         dm.fireTableDataChanged();
 
-                        TreeMap<String, Integer> datasetGoTermUsage = new TreeMap<String, Integer>();
+                        TreeMap<String, Integer> datasetGoTermUsage = new TreeMap<>();
 
                         try {
                             progressDialog.setTitle("Importing GO (1/3). Please Wait...");
@@ -389,7 +389,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                 int totalNumberOfGoMappedProteinsInProject = 0;
                                 PSParameter psParameter = new PSParameter();
-                                ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+                                ArrayList<UrParameter> parameters = new ArrayList<>(1);
                                 parameters.add(psParameter);
                                 ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(progressDialog);
 
@@ -428,8 +428,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                 // update the table
                                 Double maxLog2Diff = 0.0;
-                                ArrayList<Integer> indexes = new ArrayList<Integer>();
-                                ArrayList<Double> pValues = new ArrayList<Double>();
+                                ArrayList<Integer> indexes = new ArrayList<>();
+                                ArrayList<Double> pValues = new ArrayList<>();
 
                                 // display the number of go mapped proteins
                                 goProteinCountLabel.setText("[GO Proteins: Ensembl: " + nBackgroundProteins
@@ -493,9 +493,9 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     }
 
                                     // add the data points for the first data series 
-                                    ArrayList<Double> dataAll = new ArrayList<Double>();
+                                    ArrayList<Double> dataAll = new ArrayList<>();
                                     dataAll.add(percentAll);
-                                    ArrayList<Double> dataDataset = new ArrayList<Double>();
+                                    ArrayList<Double> dataDataset = new ArrayList<>();
                                     dataDataset.add(percentDataset);
 
                                     // create a JSparklineDataSeries  
@@ -503,7 +503,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     JSparklinesDataSeries sparklineDataseriesDataset = new JSparklinesDataSeries(dataDataset, peptideShakerGUI.getSparklineColor(), "Dataset");
 
                                     // add the data series to JSparklineDataset 
-                                    ArrayList<JSparklinesDataSeries> sparkLineDataSeries = new ArrayList<JSparklinesDataSeries>();
+                                    ArrayList<JSparklinesDataSeries> sparkLineDataSeries = new ArrayList<>();
                                     sparkLineDataSeries.add(sparklineDataseriesAll);
                                     sparkLineDataSeries.add(sparklineDataseriesDataset);
 
@@ -641,7 +641,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         DefaultCategoryDataset frquencyPlotDataset = new DefaultCategoryDataset();
         DefaultCategoryDataset significancePlotDataset = new DefaultCategoryDataset();
-        ArrayList<Color> significanceColors = new ArrayList<Color>();
+        ArrayList<Color> significanceColors = new ArrayList<>();
         Double maxLog2Diff = 0.0;
 
         for (int i = 0; i < goMappingsTable.getRowCount(); i++) {
@@ -1912,7 +1912,7 @@ public class GOEAPanel extends javax.swing.JPanel {
             Iterator iterator = signChartPanel.getChart().getCategoryPlot().getDomainMarkers(Layer.BACKGROUND).iterator();
 
             // store the keys in a list first to escape a ConcurrentModificationException
-            ArrayList<CategoryMarker> tempMarkers = new ArrayList<CategoryMarker>();
+            ArrayList<CategoryMarker> tempMarkers = new ArrayList<>();
 
             while (iterator.hasNext()) {
                 tempMarkers.add((CategoryMarker) iterator.next());
@@ -1925,7 +1925,7 @@ public class GOEAPanel extends javax.swing.JPanel {
             iterator = distributionChartPanel.getChart().getCategoryPlot().getDomainMarkers(Layer.BACKGROUND).iterator();
 
             // store the keys in a list first to escape a ConcurrentModificationException
-            tempMarkers = new ArrayList<CategoryMarker>();
+            tempMarkers = new ArrayList<>();
 
             while (iterator.hasNext()) {
                 tempMarkers.add((CategoryMarker) iterator.next());
@@ -2140,7 +2140,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                         // get the list of matching proteins
                         GeneMaps geneMaps = peptideShakerGUI.getGeneMaps();
                         HashSet<String> goProteins = geneMaps.getProteinsForGoTerm(selectedGoAccession);
-                        HashSet<String> proteinKeys = new HashSet<String>(goProteins.size());
+                        HashSet<String> proteinKeys = new HashSet<>(goProteins.size());
                         Identification identification = peptideShakerGUI.getIdentification();
                         HashMap<String, HashSet<String>> proteinMap = identification.getProteinMap();
                         for (String goProtein : goProteins) {
@@ -2150,7 +2150,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        ArrayList<String> proteinKeysList = new ArrayList<String>(proteinKeys);
+                        ArrayList<String> proteinKeysList = new ArrayList<>(proteinKeys);
                         identification.loadObjects(proteinKeysList, progressDialog, false);
                         
                         // update the table

@@ -22,7 +22,7 @@ public class TargetDecoyMap extends IdObject {
     /**
      * The hit map containing the indexed target/decoy points.
      */
-    private HashMap<Double, TargetDecoyPoint> hitMap = new HashMap<Double, TargetDecoyPoint>();
+    private HashMap<Double, TargetDecoyPoint> hitMap = new HashMap<>();
     /**
      * The scores imported in the map.
      */
@@ -180,7 +180,7 @@ public class TargetDecoyMap extends IdObject {
     public synchronized void cleanUp() {
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         boolean removed = false;
-        HashSet<Double> currentScores = new HashSet<Double>(hitMap.keySet());
+        HashSet<Double> currentScores = new HashSet<>(hitMap.keySet());
         for (Double score : currentScores) {
             TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
             if (targetDecoyPoint.nTarget == 0
@@ -374,7 +374,7 @@ public class TargetDecoyMap extends IdObject {
      */
     private void estimateScores() {
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        scores = new ArrayList<Double>(hitMap.keySet());
+        scores = new ArrayList<>(hitMap.keySet());
         Collections.sort(scores);
     }
 

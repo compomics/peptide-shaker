@@ -140,12 +140,12 @@ public class FiltersDialog extends javax.swing.JDialog {
      * Update the maps.
      */
     private void updateMaps() {
-        proteinStarFilters = new HashMap<String, ProteinFilter>();
-        proteinHideFilters = new HashMap<String, ProteinFilter>();
-        peptideStarFilters = new HashMap<String, PeptideFilter>();
-        peptideHideFilters = new HashMap<String, PeptideFilter>();
-        psmStarFilters = new HashMap<String, PsmFilter>();
-        psmHideFilters = new HashMap<String, PsmFilter>();
+        proteinStarFilters = new HashMap<>();
+        proteinHideFilters = new HashMap<>();
+        peptideStarFilters = new HashMap<>();
+        peptideHideFilters = new HashMap<>();
+        psmStarFilters = new HashMap<>();
+        psmHideFilters = new HashMap<>();
         proteinStarFilters.putAll(peptideShakerGUI.getFilterPreferences().getProteinStarFilters());
         proteinHideFilters.putAll(peptideShakerGUI.getFilterPreferences().getProteinHideFilters());
         peptideStarFilters.putAll(peptideShakerGUI.getFilterPreferences().getPeptideStarFilters());
@@ -1137,7 +1137,7 @@ public class FiltersDialog extends javax.swing.JDialog {
 
         if (column == 2) {
             String newName = (String) starredProteinsTable.getValueAt(row, column);
-            ArrayList<String> others = new ArrayList<String>();
+            ArrayList<String> others = new ArrayList<>();
             for (int i = 0; i < starredProteinsTable.getRowCount(); i++) {
                 if (i != row) {
                     others.add((String) starredProteinsTable.getValueAt(i, column));
@@ -1668,7 +1668,7 @@ public class FiltersDialog extends javax.swing.JDialog {
 
         if (column == 2) {
             String newName = (String) hiddenProteinsTable.getValueAt(row, column);
-            ArrayList<String> others = new ArrayList<String>();
+            ArrayList<String> others = new ArrayList<>();
             for (int i = 0; i < hiddenProteinsTable.getRowCount(); i++) {
                 if (i != row) {
                     others.add((String) hiddenProteinsTable.getValueAt(i, column));
@@ -1724,7 +1724,7 @@ public class FiltersDialog extends javax.swing.JDialog {
 
         if (column == 2) {
             String newName = (String) starredPeptidesTable.getValueAt(row, column);
-            ArrayList<String> others = new ArrayList<String>();
+            ArrayList<String> others = new ArrayList<>();
             for (int i = 0; i < starredPeptidesTable.getRowCount(); i++) {
                 if (i != row) {
                     others.add((String) starredPeptidesTable.getValueAt(i, column));
@@ -1780,7 +1780,7 @@ public class FiltersDialog extends javax.swing.JDialog {
 
         if (column == 2) {
             String newName = (String) hiddenPeptidesTable.getValueAt(row, column);
-            ArrayList<String> others = new ArrayList<String>();
+            ArrayList<String> others = new ArrayList<>();
             for (int i = 0; i < hiddenPeptidesTable.getRowCount(); i++) {
                 if (i != row) {
                     others.add((String) hiddenPeptidesTable.getValueAt(i, column));
@@ -1836,7 +1836,7 @@ public class FiltersDialog extends javax.swing.JDialog {
 
         if (column == 2) {
             String newName = (String) starredPsmTable.getValueAt(row, column);
-            ArrayList<String> others = new ArrayList<String>();
+            ArrayList<String> others = new ArrayList<>();
             for (int i = 0; i < starredPsmTable.getRowCount(); i++) {
                 if (i != row) {
                     others.add((String) starredPsmTable.getValueAt(i, column));
@@ -1892,7 +1892,7 @@ public class FiltersDialog extends javax.swing.JDialog {
 
         if (column == 2) {
             String newName = (String) hiddenPsmTable.getValueAt(row, column);
-            ArrayList<String> others = new ArrayList<String>();
+            ArrayList<String> others = new ArrayList<>();
             for (int i = 0; i < hiddenPsmTable.getRowCount(); i++) {
                 if (i != row) {
                     others.add((String) hiddenPsmTable.getValueAt(i, column));

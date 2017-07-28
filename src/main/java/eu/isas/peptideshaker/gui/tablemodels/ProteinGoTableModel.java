@@ -161,7 +161,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                         }
-                        ArrayList<Double> doubleValues = new ArrayList<Double>();
+                        ArrayList<Double> doubleValues = new ArrayList<>();
                         doubleValues.add(sequenceCoverageConfident);
                         doubleValues.add(sequenceCoverageDoubtful);
                         doubleValues.add(sequenceCoverageNotValidated);
@@ -173,7 +173,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
                             double nConfidentPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentPeptides(proteinKey);
                             double nDoubtfulPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) - nConfidentPeptides;
 
-                            doubleValues = new ArrayList<Double>();
+                            doubleValues = new ArrayList<>();
                             doubleValues.add(nConfidentPeptides);
                             doubleValues.add(nDoubtfulPeptides);
                             doubleValues.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
@@ -189,7 +189,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
                             double nDoubtfulSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) - nConfidentSpectra;
                             int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
 
-                            doubleValues = new ArrayList<Double>();
+                            doubleValues = new ArrayList<>();
                             doubleValues.add(nConfidentSpectra);
                             doubleValues.add(nDoubtfulSpectra);
                             doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);

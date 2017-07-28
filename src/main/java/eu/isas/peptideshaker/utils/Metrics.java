@@ -42,7 +42,7 @@ public class Metrics implements Serializable {
     /**
      * The charges found in all PSMs (only the best hit per spectrum).
      */
-    private ArrayList<Integer> foundCharges = new ArrayList<Integer>();
+    private ArrayList<Integer> foundCharges = new ArrayList<>();
     /**
      * The maximal amount of peptides in the proteins of the dataset.
      */
@@ -421,7 +421,7 @@ public class Metrics implements Serializable {
         if (fractionPsmMatches != null) {
             return fractionPsmMatches;
         } else {
-            return new HashMap<String, ArrayList<String>>();
+            return new HashMap<>();
         }
     }
 
@@ -456,7 +456,7 @@ public class Metrics implements Serializable {
         if (observedFractionalMassesAll != null) {
             return observedFractionalMassesAll;
         } else {
-            return new HashMap<String, ArrayList<Double>>();
+            return new HashMap<>();
         }
     }
 

@@ -104,7 +104,7 @@ public class ProteinFilter extends MatchFilter {
                 return filterItemComparator.passes(input, ProteinMatch.getAccessions(matchKey));
             case proteinDescription:
                 String[] accessions = ProteinMatch.getAccessions(matchKey);
-                ArrayList<String> descriptions = new ArrayList<String>();
+                ArrayList<String> descriptions = new ArrayList<>();
                 for (String accession : accessions) {
                     Header proteinHeader = SequenceFactory.getInstance().getHeader(accession);
                     descriptions.add(proteinHeader.getDescription());
@@ -112,7 +112,7 @@ public class ProteinFilter extends MatchFilter {
                 return filterItemComparator.passes(input, descriptions);
             case sequence:
                 accessions = ProteinMatch.getAccessions(matchKey);
-                ArrayList<String> sequences = new ArrayList<String>();
+                ArrayList<String> sequences = new ArrayList<>();
                 for (String accession : accessions) {
                     Protein protein = SequenceFactory.getInstance().getProtein(accession);
                     sequences.add(protein.getSequence());
@@ -120,7 +120,7 @@ public class ProteinFilter extends MatchFilter {
                 return filterItemComparator.passes(input, sequences);
             case chromosome:
                 accessions = ProteinMatch.getAccessions(matchKey);
-                ArrayList<String> chromosomes = new ArrayList<String>();
+                ArrayList<String> chromosomes = new ArrayList<>();
                 for (String accession : accessions) {
                     String geneName = SequenceFactory.getInstance().getHeader(accession).getGeneName();
                     String chromosomeNumber = geneMaps.getChromosome(geneName);
@@ -129,14 +129,14 @@ public class ProteinFilter extends MatchFilter {
                 return filterItemComparator.passes(input, chromosomes);
             case gene:
                 accessions = ProteinMatch.getAccessions(matchKey);
-                ArrayList<String> genes = new ArrayList<String>();
+                ArrayList<String> genes = new ArrayList<>();
                 for (String accession : accessions) {
                     String geneName = SequenceFactory.getInstance().getHeader(accession).getGeneName();
                     genes.add(geneName);
                 }
                 return filterItemComparator.passes(input, genes);
             case GO:
-                return filterItemComparator.passes(input, new ArrayList<String>(geneMaps.getGoNamesForProtein(matchKey)));
+                return filterItemComparator.passes(input, new ArrayList<>(geneMaps.getGoNamesForProtein(matchKey)));
             case expectedCoverage:
                 Double coverage = 100 * identificationFeaturesGenerator.getObservableCoverage(matchKey);
                 return filterItemComparator.passes(input, coverage.toString());
@@ -159,7 +159,7 @@ public class ProteinFilter extends MatchFilter {
                 if (psPtmScores != null) {
                     ptms = psPtmScores.getScoredPTMs();
                 } else {
-                    ptms = new ArrayList<String>(0);
+                    ptms = new ArrayList<>(0);
                 }
                 return filterItemComparator.passes(input, ptms);
             case nPeptides:

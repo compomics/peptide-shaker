@@ -20,7 +20,7 @@ public class PathSettingsCLIInputBean {
     /**
      * The specific paths sets for every option.
      */
-    private HashMap<String, String> paths = new HashMap<String, String>();
+    private HashMap<String, String> paths = new HashMap<>();
     /**
      * The folder where to save the logs.
      */
