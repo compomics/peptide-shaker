@@ -405,7 +405,7 @@ public class TagMapper {
                                 mapPtmsForTag(tag, advocateId);
                                 Double refMass = spectrum.getPrecursor().getMassPlusProton(1);
                                 Double fragmentIonAccuracy = searchParameters.getFragmentIonAccuracyInDaltons(refMass);
-                                ArrayList<PeptideProteinMapping> proteinMapping = peptideMapper.getProteinMapping(tag, sequenceMatchingPreferences, fragmentIonAccuracy);
+                                ArrayList<PeptideProteinMapping> proteinMapping = peptideMapper.getProteinMapping(tag, null, sequenceMatchingPreferences, fragmentIonAccuracy);
                                 for (Peptide peptide : PeptideProteinMapping.getPeptides(proteinMapping, sequenceMatchingPreferences)) {
                                     String peptideKey = peptide.getKey();
                                     if (!peptidesFound.contains(peptideKey)) {
