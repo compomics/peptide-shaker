@@ -696,12 +696,12 @@ public class FileImporter {
                             waitingHandler.resetSecondaryProgressCounter();
                             waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                             waitingHandler.appendReport("Mapping tags to peptides.", true, true);
-                            tagMapper.mapTags(idFileSpectrumMatches, waitingHandler, processingPreferences.getnThreads());
+                            tagMapper.mapTags(idFileSpectrumMatches, waitingHandler);
                         }
 
                         // Map the peptides on protein sequences
                         waitingHandler.resetSecondaryProgressCounter();
-                        waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
+                        waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches); // @TODO the progress counter should be initialized on the total number of peptides
                         waitingHandler.appendReport("Mapping peptides to proteins.", true, true);
                         peptideMapper.mapPeptides(idFileSpectrumMatches, waitingHandler);
 
