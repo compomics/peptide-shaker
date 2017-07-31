@@ -380,8 +380,8 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
             peptideMatchesIterator.setBatchSize(batchSize);
 
             int i = 0;
-            while (peptideMatchesIterator.hasNext()) {
-                PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            PeptideMatch peptideMatch;
+            while ((peptideMatch = peptideMatchesIterator.next()) != null) {
                 if (waitingHandler.isRunCanceled()) {
                     return rows.get(i);
                 }

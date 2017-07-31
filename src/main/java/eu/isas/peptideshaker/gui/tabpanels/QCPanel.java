@@ -1756,10 +1756,9 @@ public class QCPanel extends javax.swing.JPanel {
             nonValidatedDecoyValues = new ArrayList<Double>();
 
             ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null, progressDialog);
+            ProteinMatch proteinMatch;
+            while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
-            while (proteinMatchesIterator.hasNext()) {
-
-                ProteinMatch proteinMatch = proteinMatchesIterator.next();
                 String proteinKey = proteinMatch.getKey();
 
                 if (progressDialog.isRunCanceled()) {
@@ -1842,10 +1841,9 @@ public class QCPanel extends javax.swing.JPanel {
                 ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
                 parameters.add(psmParameter);
                 PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(parameters, false, parameters, progressDialog);
+                PeptideMatch peptideMatch;
+                while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-                while (peptideMatchesIterator.hasNext()) {
-
-                    PeptideMatch peptideMatch = peptideMatchesIterator.next();
                     String peptideKey = peptideMatch.getKey();
 
                     if (progressDialog.isRunCanceled()) {
@@ -1909,10 +1907,9 @@ public class QCPanel extends javax.swing.JPanel {
                 ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
                 parameters.add(psmParameter);
                 PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(parameters, false, parameters, progressDialog);
+                PeptideMatch peptideMatch;
+                while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-                while (peptideMatchesIterator.hasNext()) {
-
-                    PeptideMatch peptideMatch = peptideMatchesIterator.next();
                     String peptideKey = peptideMatch.getKey();
 
                     if (progressDialog.isRunCanceled()) {
@@ -1978,10 +1975,9 @@ public class QCPanel extends javax.swing.JPanel {
                 ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
                 parameters.add(psmParameter);
                 PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(parameters, false, parameters, progressDialog);
+                PeptideMatch peptideMatch;
+                while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-                while (peptideMatchesIterator.hasNext()) {
-
-                    PeptideMatch peptideMatch = peptideMatchesIterator.next();
                     String peptideKey = peptideMatch.getKey();
 
                     if (progressDialog.isRunCanceled()) {
@@ -2053,10 +2049,10 @@ public class QCPanel extends javax.swing.JPanel {
                 for (String spectrumFileName : identification.getSpectrumFiles()) {
 
                     PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, false, progressDialog);
+                    SpectrumMatch spectrumMatch;
 
-                    while (psmIterator.hasNext()) {
+                    while ((spectrumMatch = psmIterator.next()) != null) {
 
-                        SpectrumMatch spectrumMatch = psmIterator.next();
                         String spectrumKey = spectrumMatch.getKey();
 
                         if (progressDialog.isRunCanceled()) {
@@ -2107,10 +2103,10 @@ public class QCPanel extends javax.swing.JPanel {
 
                 for (String spectrumFileName : identification.getSpectrumFiles()) {
                     PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, false, progressDialog);
+                    SpectrumMatch spectrumMatch;
 
-                    while (psmIterator.hasNext()) {
+                    while ((spectrumMatch = psmIterator.next()) != null) {
 
-                        SpectrumMatch spectrumMatch = psmIterator.next();
                         String spectrumKey = spectrumMatch.getKey();
 
                         if (progressDialog.isRunCanceled()) {
@@ -2268,10 +2264,10 @@ public class QCPanel extends javax.swing.JPanel {
         progressDialog.setValue(0);
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(modifiedPeptides, parameters, false, null, progressDialog);
+        PeptideMatch peptideMatch;
 
-        while (peptideMatchesIterator.hasNext()) {
+        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             String peptideKey = peptideMatch.getKey();
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
             Peptide peptide = peptideMatch.getTheoreticPeptide();
@@ -2370,10 +2366,10 @@ public class QCPanel extends javax.swing.JPanel {
         progressDialog.setValue(0);
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, null, progressDialog);
+        PeptideMatch peptideMatch;
 
-        while (peptideMatchesIterator.hasNext()) {
-
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+            ;
             String peptideKey = peptideMatch.getKey();
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
             if (psParameter.getMatchValidationLevel().isValidated()) {
@@ -2478,10 +2474,10 @@ public class QCPanel extends javax.swing.JPanel {
         progressDialog.setValue(0);
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, null, progressDialog);
+        PeptideMatch peptideMatch;
 
-        while (peptideMatchesIterator.hasNext()) {
+        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             String peptideKey = peptideMatch.getKey();
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
             if (psParameter.getMatchValidationLevel().isValidated()) {

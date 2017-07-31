@@ -193,7 +193,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true));
-        
+
         proteinTable.getTableHeader().addMouseListener(new MouseAdapter() {
 
             @Override
@@ -2749,10 +2749,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                     // update the table model
                     if (proteinTable.getModel() instanceof ProteinTableModel && ((ProteinTableModel) proteinTable.getModel()).isInstantiated()) {
-                        ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), 
+                        ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
                                 peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                     } else {
-                        ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), 
+                        ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
                                 peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                         proteinTable.setModel(proteinTableModel);
                     }
@@ -3434,19 +3434,19 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION) && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null, null); // @TODO: waiting handler?
             //proteinMatchesIterator.setBatchSize(20); // @TODO: add?
-
-            while (proteinMatchesIterator.hasNext()) {
-                try {
-                    ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            ProteinMatch proteinMatch;
+            try {
+                while ((proteinMatch = proteinMatchesIterator.next()) != null) {
+                    
                     if (proteinMatch.getPeptideMatchesKeys().contains(peptideKey)) {
                         proteinKey = proteinMatch.getKey();
                         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
                         break;
                     }
-                } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                    return;
                 }
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+                return;
             }
         }
 

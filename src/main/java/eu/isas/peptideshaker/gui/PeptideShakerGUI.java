@@ -136,6 +136,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import net.jimmc.jshortcut.JShellLink;
+import org.apache.commons.math.MathException;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
@@ -5762,8 +5763,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * occurred while casting the database input in the desired match class
      * @throws InterruptedException thrown whenever a threading issue occurred
      * while interacting with the database
+     * @throws org.apache.commons.math.MathException exception thrown if a math exception occurred when estimating the noise level 
      */
-    public void exportAnnotatedSpectrum() throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public void exportAnnotatedSpectrum() throws IOException, SQLException, ClassNotFoundException, InterruptedException, MathException {
 
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
