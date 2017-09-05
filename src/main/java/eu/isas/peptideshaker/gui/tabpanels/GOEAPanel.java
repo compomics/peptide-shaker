@@ -20,11 +20,13 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.parameters.identification_parameters.GenePreferencesDialog;
+import com.compomics.util.io.json.JsonMarshaller;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinGoTableModel;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
+import eu.isas.peptideshaker.gui.tabpanels.GOEAPanel.QuickGoTerm.DummyResults;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.awt.BasicStroke;
@@ -36,7 +38,6 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -46,9 +47,6 @@ import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
 import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
 import no.uib.jsparklines.data.ValueAndBooleanDataPoint;
@@ -75,7 +73,6 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer3D;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.Layer;
-import org.w3c.dom.Document;
 
 /**
  * The PeptideShaker GO Enrichment Analysis tab.
@@ -471,23 +468,18 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                     if (goDomain == null) {
 
-                                        // URL a GO Term in OBO xml format
-                                        URL u = new URL("http://www.ebi.ac.uk/QuickGO/GTerm?id=" + goAccession + "&format=oboxml");
+                                        // URL to the JSON file for the given GO term
+                                        URL u = new URL("http://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/" + goAccession);
+                                        
+                                        JsonMarshaller jsonMarshaller = new JsonMarshaller();
+                                        QuickGoTerm result = (QuickGoTerm) jsonMarshaller.fromJson(QuickGoTerm.class, u);
 
-                                        // connect
-                                        HttpURLConnection urlConnection = (HttpURLConnection) u.openConnection();
+                                        // get the domain 
+                                        for (DummyResults tempResult : result.results) {
+                                           goDomain = tempResult.aspect;
+                                        }
 
-                                        // parse an XML document from the connection
-                                        InputStream inputStream = urlConnection.getInputStream();
-                                        Document xml = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
-                                        inputStream.close();
-
-                                        // XPath is here used to locate parts of an XML document
-                                        XPath xpath = XPathFactory.newInstance().newXPath();
-
-                                        // locate the domain
-                                        goDomain = xpath.compile("/obo/term/namespace").evaluate(xml);
-
+                                        // add the domain to the list
                                         goDomains.addDomain(goAccession, goDomain);
                                         goDomainChanged = true;
                                     }
@@ -2217,6 +2209,24 @@ public class GOEAPanel extends javax.swing.JPanel {
                     }
                 }
             }.start();
+        }
+    }
+
+    /**
+     * Dummy class to get the aspect element from a QuickGO term JSON file.
+     */
+    public class QuickGoTerm {
+
+        /**
+         * The array list of the results.
+         */
+        DummyResults results[];
+
+        /**
+         * The aspect object from the results.
+         */
+        public class DummyResults {
+            String aspect;
         }
     }
 }
