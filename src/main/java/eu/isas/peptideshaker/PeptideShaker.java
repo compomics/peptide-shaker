@@ -250,6 +250,7 @@ public class PeptideShaker {
             throws Exception {
 
         identification.getObjectsDB().commit();
+        System.gc();
         
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, metrics, spectrumCountingPreferences);
 
@@ -281,6 +282,7 @@ public class PeptideShaker {
             psmScorer.scorePsms(identification, inputMap, processingPreferences, identificationParameters, waitingHandler);
         }
         identification.getObjectsDB().commit();
+        System.gc();
 
         if (sequenceFactory.concatenatedTargetDecoy()) {
             waitingHandler.appendReport("Computing assumptions probabilities.", true, true);
@@ -293,6 +295,7 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
+        System.gc();
 
         
         
@@ -308,11 +311,11 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
 
         waitingHandler.appendReport("Selecting best peptide per spectrum.", true, true);
-        System.out.println("Selecting best peptide per spectrum.");
         BestMatchSelection bestMatchSelection = new BestMatchSelection(identification, proteinCount, matchesValidator, metrics);
         bestMatchSelection.selectBestHitAndFillPsmMap(inputMap, waitingHandler, identificationParameters);
         IdMatchValidationPreferences idMatchValidationPreferences = identificationParameters.getIdValidationPreferences();
@@ -324,12 +327,11 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
         
         
-        
-        System.out.println("num Proteins: " + identification.getNumber(ProteinMatch.class));
 
         if (sequenceFactory.concatenatedTargetDecoy()) {
             waitingHandler.appendReport("Computing PSM probabilities.", true, true);
@@ -341,6 +343,7 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
         
@@ -359,6 +362,7 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
         
@@ -377,6 +381,7 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
         
@@ -390,11 +395,10 @@ public class PeptideShaker {
             }
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
         
-        
-        System.out.println("num Proteins: " + identification.getNumber(ProteinMatch.class));
         waitingHandler.appendReport("Saving probabilities, building peptides and proteins.", true, true);
         attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(identificationParameters.getSequenceMatchingPreferences(), waitingHandler); // @TODO: this is very slow if memory is full!!
         waitingHandler.increasePrimaryProgressCounter();
@@ -402,7 +406,7 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
-        System.out.println("num Proteins: " + identification.getNumber(ProteinMatch.class));
+        System.gc();
         
         
         
@@ -417,6 +421,7 @@ public class PeptideShaker {
             }
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
         
@@ -430,6 +435,7 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
         
@@ -444,6 +450,7 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
         
@@ -455,6 +462,7 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
         
@@ -466,6 +474,7 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
         
@@ -477,6 +486,7 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
         
@@ -491,6 +501,7 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
         
@@ -502,6 +513,7 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
         
@@ -523,6 +535,7 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
         
@@ -534,6 +547,7 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
         
@@ -545,6 +559,7 @@ public class PeptideShaker {
             return;
         }
         identification.getObjectsDB().commit();
+        System.gc();
         
         
         

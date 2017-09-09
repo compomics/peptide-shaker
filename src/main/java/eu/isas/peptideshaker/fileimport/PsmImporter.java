@@ -1,6 +1,9 @@
 package eu.isas.peptideshaker.fileimport;
 
-import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
+//import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
+//import de.proteinms.xtandemparser.parser.XTandemIdfileReader;
+import com.compomics.util.experiment.io.identification.idfilereaders.MascotIdfileReader;
+import com.compomics.util.experiment.io.identification.idfilereaders.XTandemIdfileReader;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -38,7 +41,6 @@ import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import de.proteinms.omxparser.util.OMSSAIdfileReader;
-import de.proteinms.xtandemparser.parser.XTandemIdfileReader;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.psm_scoring.BestMatchSelection;
 import java.io.File;
