@@ -469,7 +469,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     if (goDomain == null) {
 
                                         // URL to the JSON file for the given GO term
-                                        URL u = new URL("http://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/" + goAccession);
+                                        URL u = new URL("https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/" + goAccession);
                                         
                                         JsonMarshaller jsonMarshaller = new JsonMarshaller();
                                         QuickGoTerm result = (QuickGoTerm) jsonMarshaller.fromJson(QuickGoTerm.class, u);

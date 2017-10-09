@@ -1043,7 +1043,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void webQuickGOLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webQuickGOLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/QuickGO");
+        BareBonesBrowserLaunch.openURL("https://www.ebi.ac.uk/QuickGO");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_webQuickGOLabelMouseClicked
 
