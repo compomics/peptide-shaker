@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.gui.JOptionEditorPane;
@@ -905,7 +904,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void loadQuickGOJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadQuickGOJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/QuickGO/GSearch?q=" + accessionNumberJTextField.getText() + "&what=Protein");
+        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/QuickGO/annotations?geneProductId=" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadQuickGOJButtonActionPerformed
 
@@ -1043,7 +1042,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void webQuickGOLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webQuickGOLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/QuickGO");
+        BareBonesBrowserLaunch.openURL("https://www.ebi.ac.uk/QuickGO");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_webQuickGOLabelMouseClicked
 

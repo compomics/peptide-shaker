@@ -722,7 +722,7 @@ public class DisplayFeaturesGenerator {
      * @return the GO accession web link
      */
     public String getGoAccessionLink(String goAccession) {
-        return "http://www.ebi.ac.uk/QuickGO/GTerm?id=" + goAccession;
+        return "https://www.ebi.ac.uk/QuickGO/GTerm?id=" + goAccession;
     }
 
     /**
