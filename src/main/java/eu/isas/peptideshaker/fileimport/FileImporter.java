@@ -5,30 +5,30 @@ import com.compomics.util.experiment.identification.filtering.PeptideAssumptionF
 import eu.isas.peptideshaker.gui.MgfFilesNotFoundDialog;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.io.identifications.IdfileReader;
-import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
+import com.compomics.util.experiment.io.identification.IdfileReader;
+import com.compomics.util.experiment.io.identification.IdfileReaderFactory;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.exceptions.exception_handlers.CommandLineExceptionHandler;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.exceptions.exception_handlers.WaitingDialogExceptionHandler;
-import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
-import com.compomics.util.preferences.GenePreferences;
-import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.PeptideVariantsPreferences;
-import com.compomics.util.preferences.ProcessingPreferences;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
-import com.compomics.util.preferences.UtilitiesUserPreferences;
+import com.compomics.util.parameters.identification.advanced.GeneParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.parameters.identification.advanced.PeptideVariantsParameters;
+import com.compomics.util.parameters.tools.ProcessingParameters;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
+import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.protein_inference.PeptideMapper;
@@ -129,7 +129,7 @@ public class FileImporter {
      * done in a background thread (GUI mode) or in the current thread (command
      * line mode).
      */
-    public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, ProcessingPreferences processingPreferences,
+    public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, ProcessingParameters processingPreferences,
             SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, boolean backgroundThread) {
 
         IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, identificationParameters, processingPreferences, spectrumCountingPreferences, projectDetails);
@@ -153,7 +153,7 @@ public class FileImporter {
      * @param exceptionHandler handler for exceptions
      * @param fastaFile FASTA file to process
      */
-    public void importSequences(SequenceMatchingPreferences sequenceMatchingPreferences, SearchParameters searchParameters, PeptideVariantsPreferences peptideVariantsPreferences, WaitingHandler waitingHandler,
+    public void importSequences(SequenceMatchingParameters sequenceMatchingPreferences, SearchParameters searchParameters, PeptideVariantsParameters peptideVariantsPreferences, WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler, File fastaFile) {
 
         try {
@@ -168,8 +168,8 @@ public class FileImporter {
             waitingHandler.resetSecondaryProgressCounter();
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
-            UtilitiesUserPreferences userPreferences = UtilitiesUserPreferences.loadUserPreferences();
-            int memoryPreference = userPreferences.getMemoryPreference();
+            UtilitiesUserParameters userPreferences = UtilitiesUserParameters.loadUserParameters();
+            int memoryPreference = userPreferences.getMemoryParameter();
             int nSequences = sequenceFactory.getNSequences();
             int cacheSizeInMb = nSequences * 112 / 1048576; // 112 is the size taken by one protein
             if (!sequenceFactory.isDefaultReversed() || cacheSizeInMb < memoryPreference / 4) {
@@ -261,7 +261,7 @@ public class FileImporter {
      */
     public void importGenes() throws IOException, InterruptedException {
         GeneFactory geneFactory = GeneFactory.getInstance();
-        GenePreferences genePreferences = identificationParameters.getGenePreferences();
+        GeneParameters genePreferences = identificationParameters.getGenePreferences();
         GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, waitingHandler);
         peptideShaker.setGeneMaps(geneMaps);
     }
@@ -288,7 +288,7 @@ public class FileImporter {
         /**
          * The processing preferences.
          */
-        private final ProcessingPreferences processingPreferences;
+        private final ProcessingParameters processingPreferences;
         /**
          * The project details
          */
@@ -372,7 +372,7 @@ public class FileImporter {
          * @param projectDetails the project details
          */
         public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
-                IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences,
+                IdentificationParameters identificationParameters, ProcessingParameters processingPreferences,
                 SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails) {
 
             this.idFiles = new ArrayList<>();
@@ -433,7 +433,7 @@ public class FileImporter {
                     return 1;
                 }
 
-                GenePreferences genePreferences = identificationParameters.getGenePreferences();
+                GeneParameters genePreferences = identificationParameters.getGenePreferences();
                 if (genePreferences.getUseGeneMapping()) {
                     waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                     waitingHandler.appendReport("Importing gene mappings.", true, true);

@@ -1,11 +1,11 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
-import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.export.exportfeatures.PsValidationFeature;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.scoring.maps.PeptideSpecificMap;
@@ -98,7 +98,7 @@ public class PsValidationSection {
         for (PsValidationFeature validationFeature : validationFeatures) {
             switch (validationFeature) {
                 case peptide_accuracy:
-                    PtmSettings ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
+                    ModificationParameters ptmSettings = identificationParameters.getSearchParameters().getModificationParameters();
                     PeptideSpecificMap peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
                     ArrayList<String> peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
@@ -125,7 +125,7 @@ public class PsValidationSection {
                     }
                     break;
                 case peptide_confidence:
-                    ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
+                    ptmSettings = identificationParameters.getSearchParameters().getModificationParameters();
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
@@ -148,7 +148,7 @@ public class PsValidationSection {
                     }
                     break;
                 case peptide_fdr:
-                    ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
+                    ptmSettings = identificationParameters.getSearchParameters().getModificationParameters();
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
@@ -171,7 +171,7 @@ public class PsValidationSection {
                     }
                     break;
                 case peptide_fnr:
-                    ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
+                    ptmSettings = identificationParameters.getSearchParameters().getModificationParameters();
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
@@ -194,7 +194,7 @@ public class PsValidationSection {
                     }
                     break;
                 case peptide_pep:
-                    ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
+                    ptmSettings = identificationParameters.getSearchParameters().getModificationParameters();
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
@@ -217,7 +217,7 @@ public class PsValidationSection {
                     }
                     break;
                 case total_peptide:
-                    ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
+                    ptmSettings = identificationParameters.getSearchParameters().getModificationParameters();
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
@@ -240,7 +240,7 @@ public class PsValidationSection {
                     }
                     break;
                 case validated_peptide:
-                    ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
+                    ptmSettings = identificationParameters.getSearchParameters().getModificationParameters();
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {

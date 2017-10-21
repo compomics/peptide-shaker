@@ -1,10 +1,10 @@
 package eu.isas.peptideshaker.export.sections;
 
-import com.compomics.util.experiment.biology.AminoAcid;
-import com.compomics.util.experiment.biology.Ion;
-import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.Protein;
-import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
+import com.compomics.util.experiment.biology.aminoacids.AminoAcid;
+import com.compomics.util.experiment.biology.ions.Ion;
+import com.compomics.util.experiment.biology.proteins.Peptide;
+import com.compomics.util.experiment.biology.proteins.Protein;
+import com.compomics.util.experiment.biology.ions.impl.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
@@ -19,15 +19,15 @@ import com.compomics.util.experiment.identification.psm_scoring.PsmScore;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.experiment.identification.psm_scoring.PsmScoresEstimator;
-import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
-import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.massspectrometry.spectra.MSnSpectrum;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
-import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
-import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
+import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
@@ -38,6 +38,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -125,11 +126,13 @@ public class PsIdentificationAlgorithmMatchesSection {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             IdentificationParameters identificationParameters, ArrayList<String> keys,
             String linePrefix, int nSurroundingAA, WaitingHandler waitingHandler) throws IOException, SQLException,
-            ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -151,9 +154,10 @@ public class PsIdentificationAlgorithmMatchesSection {
             waitingHandler.setMaxSecondaryProgressCounter(totalSize);
         }
 
-        PsmIterator psmIterator = identification.getPsmIterator(waitingHandler); //@TODO: make an assumptions iterator?
+        PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
 
-        while (psmIterator.hasNext()) {
+        SpectrumMatch spectrumMatch;
+        while ((spectrumMatch = psmIterator.next()) != null) {
 
             if (waitingHandler != null) {
                 if (waitingHandler.isRunCanceled()) {
@@ -162,17 +166,9 @@ public class PsIdentificationAlgorithmMatchesSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
-            SpectrumMatch spectrumMatch = psmIterator.next();
-
-            if (waitingHandler != null) {
-                if (waitingHandler.isRunCanceled()) {
-                    return;
-                }
-            }
-
             String spectrumKey = spectrumMatch.getKey();
 
-            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = ((SpectrumMatch)identification.retrieveObject(spectrumKey)).getAssumptionsMap();
+            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = spectrumMatch.getAssumptionsMap();
 
             for (int advocateId : assumptions.keySet()) {
 
@@ -249,10 +245,10 @@ public class PsIdentificationAlgorithmMatchesSection {
         if (peptide.isModified()) {
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
                 if ((variablePtms && modificationMatch.getVariable()) || (!variablePtms && !modificationMatch.getVariable())) {
-                    if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                        modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<>());
+                    if (!modMap.containsKey(modificationMatch.getModification())) {
+                        modMap.put(modificationMatch.getModification(), new ArrayList<>());
                     }
-                    modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
+                    modMap.get(modificationMatch.getModification()).add(modificationMatch.getModificationSite());
                 }
             }
         }
@@ -313,12 +309,14 @@ public class PsIdentificationAlgorithmMatchesSection {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level
      */
     public static String getPeptideAssumptionFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix, int nSurroundingAA,
             PeptideAssumption peptideAssumption, String spectrumKey, PSParameter psParameter, PsIdentificationAlgorithmMatchesFeature exportFeature,
             WaitingHandler waitingHandler) throws IOException, SQLException,
-            ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         switch (exportFeature) {
             case rank:
@@ -433,8 +431,8 @@ public class PsIdentificationAlgorithmMatchesSection {
                 spectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
                 double coveredIntensity = 0;
                 Peptide peptide = peptideAssumption.getPeptide();
-                AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
-                SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
+                AnnotationParameters annotationPreferences = identificationParameters.getAnnotationPreferences();
+                SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
                 ArrayList<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
                         (MSnSpectrum) spectrum, peptide);
                 for (IonMatch ionMatch : matches) {
@@ -535,13 +533,13 @@ public class PsIdentificationAlgorithmMatchesSection {
                 return start;
             case missed_cleavages:
                 peptide = peptideAssumption.getPeptide();
-                Integer nMissedCleavages = peptide.getNMissedCleavages(identificationParameters.getSearchParameters().getDigestionPreferences());
+                Integer nMissedCleavages = peptide.getNMissedCleavages(identificationParameters.getSearchParameters().getDigestionParameters());
                 if (nMissedCleavages == null) {
                     nMissedCleavages = 0;
                 }
                 return nMissedCleavages + "";
             case modified_sequence:
-                return peptideAssumption.getPeptide().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getPtmSettings(), false, false, true) + "";
+                return peptideAssumption.getPeptide().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getModificationParameters(), false, false, true) + "";
             case spectrum_charge:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getPossibleChargesAsString() + "";
@@ -942,7 +940,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             case missed_cleavages:
                 return "";
             case modified_sequence:
-                return tagAssumption.getTag().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getPtmSettings(), false, false, true, false);
+                return tagAssumption.getTag().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getModificationParameters(), false, false, true, false);
             case spectrum_charge:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getPossibleChargesAsString() + "";

@@ -5,7 +5,7 @@ import com.compomics.util.experiment.filtering.FilterItemComparator;
 import com.compomics.util.gui.utils.user_choice.ListChooser;
 import com.compomics.util.gui.utils.user_choice.list_choosers.PtmChooser;
 import com.compomics.util.gui.utils.user_choice.list_choosers.StringListChooser;
-import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.filtering.MatchFilter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -560,7 +560,7 @@ public class FilterDialog extends javax.swing.JDialog {
         FilterItem filterItem = matchFilter.getFilterItem(itemName);
         ListChooser listChooser = null;
         if (filterItem.isPtm()) {
-            ArrayList<String> ptms = identificationParameters.getSearchParameters().getPtmSettings().getAllModifications();
+            ArrayList<String> ptms = identificationParameters.getSearchParameters().getModificationParameters().getAllModifications();
             if (ptms != null && ptms.size() > 0) {
                 listChooser = new PtmChooser(parentFrame, ptms, false); //@TODO: allow multiple selection
             }

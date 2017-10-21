@@ -7,13 +7,13 @@ import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.experiment.biology.PTM;
-import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.biology.modifications.Modification;
+import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.identification_parameters.IdentificationParametersFactory;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.JOptionEditorPane;
@@ -22,18 +22,18 @@ import com.compomics.util.protein_sequences_manager.gui.SequenceDbDetailsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.messages.FeedBack;
-import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
-import com.compomics.util.gui.parameters.IdentificationParametersEditionDialog;
-import com.compomics.util.gui.parameters.ProcessingPreferencesDialog;
+import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
+import com.compomics.util.gui.parameters.identification.IdentificationParametersEditionDialog;
+import com.compomics.util.gui.parameters.tools.ProcessingParametersDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
-import com.compomics.util.preferences.ProcessingPreferences;
-import com.compomics.util.preferences.ProteinInferencePreferences;
-import com.compomics.util.preferences.UtilitiesUserPreferences;
-import com.compomics.util.preferences.ValidationQCPreferences;
+import com.compomics.util.parameters.tools.ProcessingParameters;
+import com.compomics.util.parameters.identification.advanced.ProteinInferenceParameters;
+import com.compomics.util.parameters.tools.UtilitiesUserParameters;
+import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import com.compomics.util.protein.Header.DatabaseType;
+import com.compomics.util.experiment.io.biology.protein.Header.ProteinDatabase;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ProjectSettingsDialog;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -64,7 +64,7 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * The compomics PTM factory.
      */
-    private PTMFactory ptmFactory = PTMFactory.getInstance();
+    private ModificationFactory ptmFactory = ModificationFactory.getInstance();
     /**
      * The sequence factory.
      */
@@ -112,7 +112,7 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * The processing preferences.
      */
-    private ProcessingPreferences processingPreferences;
+    private ProcessingParameters processingPreferences;
     /**
      * The display preferences.
      */
@@ -149,7 +149,7 @@ public class NewDialog extends javax.swing.JDialog {
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = null;
 
-        processingPreferences = new ProcessingPreferences();
+        processingPreferences = new ProcessingParameters();
 
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -169,7 +169,7 @@ public class NewDialog extends javax.swing.JDialog {
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = welcomeDialog;
 
-        processingPreferences = new ProcessingPreferences();
+        processingPreferences = new ProcessingParameters();
 
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -705,7 +705,7 @@ public class NewDialog extends javax.swing.JDialog {
             ProjectParameters projectParameters = new ProjectParameters(projectNameIdTxt.getText().trim());
 
             // incrementing the counter for a new PeptideShaker start run via GUI
-            if (peptideShakerGUI.getUtilitiesUserPreferences().isAutoUpdate()) {
+            if (peptideShakerGUI.getUtilitiesUserParameters().isAutoUpdate()) {
                 Util.sendGAUpdate("UA-36198780-1", "startrun-gui", "peptide-shaker-" + PeptideShaker.getVersion());
             }
 
@@ -850,7 +850,7 @@ public class NewDialog extends javax.swing.JDialog {
             if (fastaFile != null) {
                 fastaFileTxt.setText(sequenceFactory.getFileName());
                 if (identificationParameters.getProteinInferencePreferences() == null) {
-                    identificationParameters.setProteinInferencePreferences(new ProteinInferencePreferences());
+                    identificationParameters.setProteinInferencePreferences(new ProteinInferenceParameters());
                 }
                 identificationParameters.getProteinInferencePreferences().setProteinSequenceDatabase(fastaFile);
                 identificationParameters.getSearchParameters().setFastaFile(fastaFile);
@@ -1287,9 +1287,9 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editProcessingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editProcessingButtonActionPerformed
-        ProcessingPreferencesDialog processingPreferencesDialog = new ProcessingPreferencesDialog(this, peptideShakerGUI, processingPreferences, true);
+        ProcessingParametersDialog processingPreferencesDialog = new ProcessingParametersDialog(this, peptideShakerGUI, processingPreferences, true);
         if (!processingPreferencesDialog.isCanceled()) {
-            processingPreferences = processingPreferencesDialog.getProcessingPreferences();
+            processingPreferences = processingPreferencesDialog.getProcessingParameters();
             processingTxt.setText(processingPreferences.getnThreads() + " cores");
         }
     }//GEN-LAST:event_editProcessingButtonActionPerformed
@@ -1677,14 +1677,14 @@ public class NewDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, toCheck, "Modification Definition Changed", JOptionPane.WARNING_MESSAGE);
         }
 
-        PtmSettings modificationProfile = searchParameters.getPtmSettings();
+        ModificationParameters modificationProfile = searchParameters.getModificationParameters();
 
         ArrayList<String> missing = new ArrayList<>();
 
         for (String name : modificationProfile.getAllModifications()) {
             if (!ptmFactory.containsPTM(name)) {
                 missing.add(name);
-                PTM ptm = ptmFactory.getPTM(name);
+                Modification ptm = ptmFactory.getModification(name);
                 ptm.getMass();
             } else if (modificationProfile.getColor(name) == null) {
                 modificationProfile.setColor(name, Color.lightGray);
@@ -1721,7 +1721,7 @@ public class NewDialog extends javax.swing.JDialog {
             } else {
                 // look in the database folder
                 try {
-                    UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+                    UtilitiesUserParameters utilitiesUserPreferences = UtilitiesUserParameters.loadUserParameters();
                     File dbFolder = utilitiesUserPreferences.getDbFolder();
                     File newFile = new File(dbFolder, fastaFile.getName());
                     if (newFile.exists()) {
@@ -1772,7 +1772,7 @@ public class NewDialog extends javax.swing.JDialog {
         }
 
         boolean matchesValidationAdded;
-        ValidationQCPreferences validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+        ValidationQcParameters validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
         if (validationQCPreferences == null
                 || validationQCPreferences.getPsmFilters() == null
                 || validationQCPreferences.getPeptideFilters() == null
@@ -1947,7 +1947,7 @@ public class NewDialog extends javax.swing.JDialog {
      * target decoy.
      */
     public void checkFastaFile() {
-        if (sequenceFactory.getCurrentFastaIndex().getMainDatabaseType() != DatabaseType.UniProt) {
+        if (sequenceFactory.getCurrentFastaIndex().getMainDatabaseType() != ProteinDatabase.UniProt) {
             showDataBaseHelpDialog();
         }
         if (!sequenceFactory.concatenatedTargetDecoy()) {
@@ -2035,7 +2035,7 @@ public class NewDialog extends javax.swing.JDialog {
     private void setIdentificationParameters(IdentificationParameters newIdentificationParameters) {
 
         try {
-            ValidationQCPreferences validationQCPreferences = newIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+            ValidationQcParameters validationQCPreferences = newIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
             if (validationQCPreferences == null
                     || validationQCPreferences.getPsmFilters() == null
                     || validationQCPreferences.getPeptideFilters() == null
@@ -2059,7 +2059,7 @@ public class NewDialog extends javax.swing.JDialog {
             settingsComboBox.setModel(new javax.swing.DefaultComboBoxModel(parameterList));
             settingsComboBox.setSelectedItem(identificationParameters.getName());
 
-            ProteinInferencePreferences proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
+            ProteinInferenceParameters proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
             File fastaFile = proteinInferencePreferences.getProteinSequenceDatabase();
             if (fastaFile == null) { // Backward compatibility
                 fastaFile = identificationParameters.getSearchParameters().getFastaFile();

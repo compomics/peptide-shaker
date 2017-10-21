@@ -1,13 +1,13 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.AminoAcidPattern;
-import com.compomics.util.experiment.biology.AminoAcidSequence;
-import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidPattern;
+import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidSequence;
+import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
@@ -16,11 +16,11 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.TagSpectrumAnnotator;
 import com.compomics.util.experiment.identification.amino_acid_tags.TagComponent;
-import com.compomics.util.experiment.biology.MassGap;
-import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
-import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.identification.amino_acid_tags.MassGap;
+import com.compomics.util.experiment.massspectrometry.spectra.MSnSpectrum;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.XYPlottingDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
@@ -51,10 +51,10 @@ import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
-import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
-import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
-import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
+import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
+import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
@@ -2869,7 +2869,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             if (peptideShakerGUI.getIdentificationParameters().getPeptideAssumptionFilter().validatePeptide(
                                     ((PeptideAssumption) tempAssumption).getPeptide(),
                                     peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences(),
-                                    peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionPreferences())) {
+                                    peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionParameters())) {
                                 if (vallidatedPsmsCheckBox.isSelected()) {
                                     psParameter = (PSParameter) tempAssumption.getUrParam(psParameter);
                                     if (psParameter.getMatchValidationLevel().isValidated()) {
@@ -2928,7 +2928,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                 String spectrumKey = getSelectedSpectrumKey();
                 MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-                AnnotationSettings annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
+                AnnotationParameters annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
 
                 // get the selected spectrum
                 if (currentSpectrum != null && currentSpectrum.getMzValuesAsArray().length > 0) {
@@ -2963,18 +2963,18 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     spectrum.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
                     spectrum.setDeltaMassWindow(annotationPreferences.getFragmentIonAccuracy());
                     spectrum.setBorder(null);
-                    spectrum.setDataPointAndLineColor(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakColor(), 0);
-                    spectrum.setPeakWaterMarkColor(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakColor());
-                    spectrum.setPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakWidth());
-                    spectrum.setBackgroundPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakWidth());
+                    spectrum.setDataPointAndLineColor(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumAnnotatedPeakColor(), 0);
+                    spectrum.setPeakWaterMarkColor(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumBackgroundPeakColor());
+                    spectrum.setPeakWidth(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumAnnotatedPeakWidth());
+                    spectrum.setBackgroundPeakWidth(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumBackgroundPeakWidth());
 
                     // add the mirrored spectrum
                     if (searchResultsTable.getSelectedRowCount() == 2) {
                         spectrum.addMirroredSpectrum(
                                 currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesNormalizedAsArray(), precursor.getMz(),
                                 charge, "", false,
-                                peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedMirroredPeakColor(),
-                                peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedMirroredPeakColor());
+                                peptideShakerGUI.getUtilitiesUserParameters().getSpectrumAnnotatedMirroredPeakColor(),
+                                peptideShakerGUI.getUtilitiesUserParameters().getSpectrumAnnotatedMirroredPeakColor());
                     }
                 }
 
@@ -2984,7 +2984,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
                     Integer forwardIon = searchParameters.getForwardIons().get(0);
                     Integer rewindIon = searchParameters.getRewindIons().get(0);
-                    PtmSettings modificationProfile = searchParameters.getPtmSettings();
+                    ModificationParameters modificationProfile = searchParameters.getModificationParameters();
 
                     if (currentSpectrum != null && spectrum != null) {
 
@@ -3007,9 +3007,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     if (currentAssumption instanceof PeptideAssumption) {
                                         PeptideAssumption currentPeptideAssumption = (PeptideAssumption) currentAssumption;
                                         Peptide peptide = currentPeptideAssumption.getPeptide();
-                                        peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationSettings(spectrumKey, currentPeptideAssumption));
+                                        peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationParameters(spectrumKey, currentPeptideAssumption));
                                         peptideShakerGUI.updateAnnotationPreferences();
-                                        SpecificAnnotationSettings specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
+                                        SpecificAnnotationParameters specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
                                         ArrayList<IonMatch> annotations = peptideShakerGUI.getSpectrumAnnotator().getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, peptide);
 
                                         allAnnotations.add(annotations);
@@ -3050,9 +3050,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     } else if (currentAssumption instanceof TagAssumption) {
                                         TagAssumption tagAssumption = (TagAssumption) currentAssumption;
 
-                                        peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationSettings(spectrumKey, tagAssumption));
+                                        peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationParameters(spectrumKey, tagAssumption));
                                         peptideShakerGUI.updateAnnotationPreferences();
-                                        SpecificAnnotationSettings specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
+                                        SpecificAnnotationParameters specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
                                         TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
                                         ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, tagAssumption.getTag());
 
@@ -3097,7 +3097,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                         }
 
                                         modifiedSequence += tagAssumption.getTag().getTaggedModifiedSequence(
-                                                peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), false, false, true, false);
+                                                peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, false);
                                     } else {
                                         throw new UnsupportedOperationException("Spectrum annotation not implemented for identification assumption of type " + currentAssumption.getClass() + ".");
                                     }
@@ -3361,7 +3361,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * @return true if all the used id software agree on the top PSM
      */
     public static int isBestPsmEqualForAllIdSoftware(SpectrumMatch spectrumMatch, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions,
-            SequenceMatchingPreferences sequenceMatchingPreferences, Integer numberOfAdvocatesUsed) {
+            SequenceMatchingParameters sequenceMatchingPreferences, Integer numberOfAdvocatesUsed) {
 
         HashMap<Integer, ArrayList<PeptideAssumption>> peptideAssumptions = new HashMap<>();
         ArrayList<Integer> tempUsedAdvocates = new ArrayList<>();
@@ -3578,7 +3578,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 return displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true);
                             } else if (spectrumMatch.getBestTagAssumption() != null) {
                                 //TODO: include fixed ptms
-                                return spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), true, true, true, false, false);
+                                return spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), true, true, true, false, false);
                             }
                         }
                         return null;
@@ -3719,7 +3719,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         sequence = displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true);
                         peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch);
                     } else if (spectrumMatch.getBestTagAssumption() != null) {
-                        sequence = spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), true, true, true, false, false);
+                        sequence = spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), true, true, true, false, false);
                         peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getTagModificationTooltipAsHtml(spectrumMatch.getBestTagAssumption().getTag());
                     } else {
                         throw new IllegalArgumentException("No best hit found for spectrum " + spectrumMatch.getKey());
@@ -3840,7 +3840,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         return spectrumIdentificationAssumption.getRank();
                     case 3:
                         SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
-                        PtmSettings modificationProfile = searchParameters.getPtmSettings();
+                        ModificationParameters modificationProfile = searchParameters.getModificationParameters();
                         boolean showFixed = false;
                         for (String ptmName : peptideShakerGUI.getDisplayPreferences().getDisplayedPtms()) {
                             if (modificationProfile.getFixedModifications().contains(ptmName)) {
@@ -3853,7 +3853,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         } else if (spectrumIdentificationAssumption instanceof TagAssumption) {
                             TagAssumption tagAssumption = (TagAssumption) spectrumIdentificationAssumption;
                             return tagAssumption.getTag().getTaggedModifiedSequence(
-                                    peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), true, true, true, !showFixed, false);
+                                    peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), true, true, true, !showFixed, false);
                         } else {
                             throw new UnsupportedOperationException("Sequence display not implemented for assumption " + spectrumIdentificationAssumption.getClass() + ".");
                         }

@@ -2,12 +2,12 @@ package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.Util;
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.biology.AminoAcidPattern;
-import com.compomics.util.experiment.biology.AminoAcidSequence;
-import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidPattern;
+import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidSequence;
+import com.compomics.util.experiment.biology.proteins.Peptide;
+import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -16,13 +16,13 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.experiment.identification.amino_acid_tags.TagComponent;
-import com.compomics.util.experiment.biology.MassGap;
+import com.compomics.util.experiment.identification.amino_acid_tags.MassGap;
 import com.compomics.util.gui.TableProperties;
-import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
-import com.compomics.util.preferences.DigestionPreferences;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
-import com.compomics.util.protein.Header;
-import com.compomics.util.protein.Header.DatabaseType;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
+import com.compomics.util.parameters.identification.search.DigestionParameters;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
+import com.compomics.util.experiment.io.biology.protein.Header;
+import com.compomics.util.experiment.io.biology.protein.Header.ProteinDatabase;
 import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
 import eu.isas.peptideshaker.parameters.PSPtmScores;
 import java.awt.Color;
@@ -42,7 +42,7 @@ public class DisplayFeaturesGenerator {
     /**
      * The modification profile containing the colors of the PTMs.
      */
-    private PtmSettings modificationProfile;
+    private ModificationParameters modificationProfile;
     /**
      * The notSelectedRowHtmlTagFontColor.
      */
@@ -67,7 +67,7 @@ public class DisplayFeaturesGenerator {
      * of the PTMs
      * @param exceptionHandler an exception handler to catch exceptions
      */
-    public DisplayFeaturesGenerator(PtmSettings modificationProfile, ExceptionHandler exceptionHandler) {
+    public DisplayFeaturesGenerator(ModificationParameters modificationProfile, ExceptionHandler exceptionHandler) {
         this.modificationProfile = modificationProfile;
         this.exceptionHandler = exceptionHandler;
     }
@@ -88,25 +88,25 @@ public class DisplayFeaturesGenerator {
             if (sequenceFactory.getHeader(proteinAccession) != null) {
 
                 // try to find the database from the SequenceDatabase
-                Header.DatabaseType databaseType = sequenceFactory.getHeader(proteinAccession).getDatabaseType();
+                Header.ProteinDatabase databaseType = sequenceFactory.getHeader(proteinAccession).getDatabaseType();
 
                 // create the database link
                 if (databaseType != null) {
 
                     // @TODO: support more databases
-                    if (databaseType == Header.DatabaseType.IPI || databaseType == Header.DatabaseType.UniProt) {
+                    if (databaseType == Header.ProteinDatabase.IPI || databaseType == Header.ProteinDatabase.UniProt) {
                         accessionNumberWithLink = "<html><a href=\"" + getUniProtAccessionLink(proteinAccession)
                                 + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
                                 + proteinAccession + "</font></a></html>";
-                    } else if (databaseType == Header.DatabaseType.NextProt) {
+                    } else if (databaseType == Header.ProteinDatabase.NextProt) {
                         accessionNumberWithLink = "<html><a href=\"" + getNextProtAccessionLink(proteinAccession)
                                 + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
                                 + proteinAccession + "</font></a></html>";
-                    } else if (databaseType == Header.DatabaseType.NCBI) {
+                    } else if (databaseType == Header.ProteinDatabase.NCBI) {
                         accessionNumberWithLink = "<html><a href=\"" + getNcbiAccessionLink(proteinAccession)
                                 + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
                                 + proteinAccession + "</font></a></html>";
-                    } else if (databaseType == Header.DatabaseType.UniRef) {
+                    } else if (databaseType == Header.ProteinDatabase.UniRef) {
                         // remove the 'UniRefXYZ_' part to get the default UniProt accession
                         String uniProtProteinAccession = proteinAccession.substring(proteinAccession.indexOf("_") + 1);
                         accessionNumberWithLink = "<html><a href=\"" + getUniProtAccessionLink(uniProtProteinAccession)
@@ -145,13 +145,13 @@ public class DisplayFeaturesGenerator {
             try {
                 if (!sequenceFactory.isDecoyAccession(proteinAccession) && sequenceFactory.getHeader(proteinAccession) != null) {
                     // try to find the database from the SequenceDatabase
-                    DatabaseType database = sequenceFactory.getHeader(proteinAccession).getDatabaseType();
+                    ProteinDatabase database = sequenceFactory.getHeader(proteinAccession).getDatabaseType();
 
                     // create the database link
                     if (database != null) {
 
                         // @TODO: support more databases
-                        if (database == DatabaseType.IPI || database == DatabaseType.UniProt) {
+                        if (database == ProteinDatabase.IPI || database == ProteinDatabase.UniProt) {
                             accessionNumberWithLink.append("<a href=\"");
                             accessionNumberWithLink.append(getUniProtAccessionLink(proteinAccession));
                             accessionNumberWithLink.append("\"><font color=\"");
@@ -159,7 +159,7 @@ public class DisplayFeaturesGenerator {
                             accessionNumberWithLink.append("\">");
                             accessionNumberWithLink.append(proteinAccession);
                             accessionNumberWithLink.append("</font></a>, ");
-                        } else if (database == DatabaseType.NextProt) {
+                        } else if (database == ProteinDatabase.NextProt) {
                             accessionNumberWithLink.append("<a href=\"");
                             accessionNumberWithLink.append(getNextProtAccessionLink(proteinAccession));
                             accessionNumberWithLink.append("\"><font color=\"");
@@ -167,7 +167,7 @@ public class DisplayFeaturesGenerator {
                             accessionNumberWithLink.append("\">");
                             accessionNumberWithLink.append(proteinAccession);
                             accessionNumberWithLink.append("</font></a>, ");
-                        } else if (database == DatabaseType.NCBI) {
+                        } else if (database == ProteinDatabase.NCBI) {
                             accessionNumberWithLink.append("<a href=\"");
                             accessionNumberWithLink.append(getNcbiAccessionLink(proteinAccession));
                             accessionNumberWithLink.append("\"><font color=\"");
@@ -175,7 +175,7 @@ public class DisplayFeaturesGenerator {
                             accessionNumberWithLink.append("\">");
                             accessionNumberWithLink.append(proteinAccession);
                             accessionNumberWithLink.append("</font></a>, ");
-                        } else if (database == Header.DatabaseType.UniRef) {
+                        } else if (database == Header.ProteinDatabase.UniRef) {
                             // remove the 'UniRefXYZ_' part to get the default UniProt accession
                             String uniProtProteinAccession = proteinAccession.substring(proteinAccession.indexOf("_") + 1);
                             accessionNumberWithLink.append("<a href=\"");
@@ -317,7 +317,7 @@ public class DisplayFeaturesGenerator {
      */
     public String getPeptideModificationTooltipAsHtml(PeptideMatch peptideMatch) {
         try {
-            Peptide peptide = peptideMatch.getTheoreticPeptide();
+            Peptide peptide = peptideMatch.getPeptide();
             PSPtmScores ptmScores = new PSPtmScores();
             ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
             return getPeptideModificationTooltipAsHtml(peptide, ptmScores);
@@ -365,7 +365,7 @@ public class DisplayFeaturesGenerator {
 
         if (peptide.isModified()) {
             for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                String modName = modMatch.getTheoreticPtm();
+                String modName = modMatch.getModification();
                 int modSite = modMatch.getModificationSite();
                 if (modMatch.getVariable()) {
                     if (modMatch.getConfident()) {
@@ -463,7 +463,7 @@ public class DisplayFeaturesGenerator {
                 for (int site = 1; site <= aminoAcidPattern.length(); site++) {
                     for (ModificationMatch modificationMatch : aminoAcidPattern.getModificationsAt(site)) {
                         String affectedResidue = aminoAcidPattern.asSequence(site - 1);
-                        String modName = modificationMatch.getTheoreticPtm();
+                        String modName = modificationMatch.getModification();
                         Color ptmColor = modificationProfile.getColor(modName);
                         if (modificationMatch.getConfident()) {
                             tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
@@ -483,7 +483,7 @@ public class DisplayFeaturesGenerator {
                 for (int site = 1; site <= aminoAcidSequence.length(); site++) {
                     for (ModificationMatch modificationMatch : aminoAcidSequence.getModificationsAt(site)) {
                         char affectedResidue = aminoAcidSequence.charAt(site - 1);
-                        String modName = modificationMatch.getTheoreticPtm();
+                        String modName = modificationMatch.getModification();
                         Color ptmColor = modificationProfile.getColor(modName);
                         if (modificationMatch.getConfident()) {
                             tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
@@ -529,7 +529,7 @@ public class DisplayFeaturesGenerator {
      */
     public String getTaggedPeptideSequence(PeptideMatch peptideMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
         try {
-            Peptide peptide = peptideMatch.getTheoreticPeptide();
+            Peptide peptide = peptideMatch.getPeptide();
             PSPtmScores ptmScores = new PSPtmScores();
             ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
             return getTaggedPeptideSequence(peptide, ptmScores, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
@@ -759,13 +759,13 @@ public class DisplayFeaturesGenerator {
      * @throws IllegalArgumentException thrown if an IllegalArgumentException
      * occurs
      */
-    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(String proteinMatchKey, SequenceMatchingPreferences sequenceMatchingPreferences,
+    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(String proteinMatchKey, SequenceMatchingParameters sequenceMatchingPreferences,
             IdentificationFeaturesGenerator identificationFeaturesGenerator, Metrics metrics, Identification identification,
             boolean allPeptides, SearchParameters searchParameters, boolean enzymatic)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(proteinMatchKey);
-        Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+        Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getLeadingAccession());
         String sequence = currentProtein.getSequence();
 
         HashMap<Integer, ArrayList<ResidueAnnotation>> residueAnnotation = new HashMap<>(sequence.length());
@@ -805,15 +805,16 @@ public class DisplayFeaturesGenerator {
         }
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null); // @TODO: add waiting handler?
-        while (peptideMatchesIterator.hasNext()) {
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+        PeptideMatch peptideMatch;
+        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+            
             String peptideKey = peptideMatch.getKey();
-            String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
+            String peptideSequence = peptideMatch.getPeptide().getSequence();
             boolean enzymaticPeptide = true;
             if (!allPeptides) {
-                DigestionPreferences digestionPreferences = searchParameters.getDigestionPreferences();
-                if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
-                    enzymatic = currentProtein.isEnzymaticPeptide(peptideMatch.getTheoreticPeptide().getSequence(),
+                DigestionParameters digestionPreferences = searchParameters.getDigestionParameters();
+                if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+                    enzymatic = currentProtein.isEnzymaticPeptide(peptideMatch.getPeptide().getSequence(),
                             digestionPreferences.getEnzymes(), sequenceMatchingPreferences);
                 }
             }

@@ -4,14 +4,14 @@ import com.compomics.software.dialogs.ProteoWizardSetupDialog;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
-import com.compomics.util.experiment.massspectrometry.proteowizard.MsFormat;
+import com.compomics.util.experiment.mass_spectrometry.proteowizard.MsFormat;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.protein_sequences_manager.gui.SequenceDbDetailsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
-import com.compomics.util.preferences.LastSelectedFolder;
-import com.compomics.util.preferences.UtilitiesUserPreferences;
-import com.compomics.util.protein.Header;
+import com.compomics.util.io.file.LastSelectedFolder;
+import com.compomics.util.parameters.tools.UtilitiesUserParameters;
+import com.compomics.util.experiment.io.biology.protein.Header;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -793,7 +793,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
         // check if proteowizard is installed
         boolean proteoWizardFolderOk = true;
-        if (msConvertRequired && prideReShakeGUI.getPeptideShakerGUI().getUtilitiesUserPreferences().getProteoWizardPath() == null) {
+        if (msConvertRequired && prideReShakeGUI.getPeptideShakerGUI().getUtilitiesUserParameters().getProteoWizardPath() == null) {
             proteoWizardFolderOk = editProteoWizardInstallation();
             if (!proteoWizardFolderOk) {
                 JOptionPane.showMessageDialog(this, "ProteoWizard folder not set. Currently supported spectrum formats are mgf and PRIDE XML.", "ProteoWizard Setup Error", JOptionPane.WARNING_MESSAGE);
@@ -1575,7 +1575,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      * target decoy.
      */
     public void checkFastaFile() {
-        if (sequenceFactory.getCurrentFastaIndex().getMainDatabaseType() != Header.DatabaseType.UniProt) {
+        if (sequenceFactory.getCurrentFastaIndex().getMainDatabaseType() != Header.ProteinDatabase.UniProt) {
             showDataBaseHelpDialog();
         }
         if (!sequenceFactory.concatenatedTargetDecoy()) {
@@ -1618,7 +1618,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
                 // reload the user preferences
                 try {
-                    prideReShakeGUI.getPeptideShakerGUI().setUtilitiesUserPreferences(UtilitiesUserPreferences.loadUserPreferences());
+                    prideReShakeGUI.getPeptideShakerGUI().setUtilitiesUserPreferences(UtilitiesUserParameters.loadUserParameters());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null, "An error occurred when reading the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();

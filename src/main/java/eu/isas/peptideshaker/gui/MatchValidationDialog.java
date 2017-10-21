@@ -1,18 +1,18 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.ValidationQCPreferences;
+import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
@@ -207,7 +207,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         TargetDecoyMap targetDecoyMap = peptideSpecificMap.getTargetDecoyMap(peptideSpecificMap.getCorrectedKey(peptideGroupKey));
         String groupName = "";
         if (peptideSpecificMap.getKeys().size() > 1) {
-            groupName += PeptideSpecificMap.getKeyName(identificationParameters.getSearchParameters().getPtmSettings(), peptideGroupKey) + " ";
+            groupName += PeptideSpecificMap.getKeyName(identificationParameters.getSearchParameters().getModificationParameters(), peptideGroupKey) + " ";
         }
         groupName += "Peptides";
         populateGUI(targetDecoyMap, groupName);
@@ -330,7 +330,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     private void populateGUI(TargetDecoyMap targetDecoyMap, String targetDecoyCategory)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
-        ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
 
         // Validation level
         validationLevelJComboBox.setSelectedItem(psParameter.getMatchValidationLevel().getName());
@@ -915,7 +915,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                     ProteinMap proteinMap = pSMaps.getProteinMap();
                     PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(matchKey);
 
-                    for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
+                    for (String accession : peptideMatch.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
 
                         HashSet<String> proteinMatches = identification.getProteinMap().get(accession);
 
@@ -962,7 +962,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                             MatchesValidator.updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, geneMaps, identificationParameters, peptideMap, peptideKey);
                             PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(peptideKey);
 
-                            for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
+                            for (String accession : peptideMatch.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
 
                                 HashSet<String> proteinMatches = identification.getProteinMap().get(accession);
 

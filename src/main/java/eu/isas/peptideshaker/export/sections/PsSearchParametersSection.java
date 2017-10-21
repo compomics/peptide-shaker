@@ -1,13 +1,13 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.Enzyme;
-import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.experiment.biology.enzymes.Enzyme;
+import com.compomics.util.experiment.biology.ions.impl.PeptideFragmentIon;
+import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
-import com.compomics.util.preferences.DigestionPreferences;
+import com.compomics.util.parameters.identification.search.DigestionParameters;
 import eu.isas.peptideshaker.export.exportfeatures.PsSearchFeature;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -100,13 +100,13 @@ public class PsSearchParametersSection {
                     writer.write(fastaFileName);
                     break;
                 case cleavage:
-                    DigestionPreferences digestionPreferences = searchParameters.getDigestionPreferences();
+                    DigestionParameters digestionPreferences = searchParameters.getDigestionParameters();
                     writer.write(digestionPreferences.getCleavagePreference().toString());
                     break;
                 case enzyme:
-                    digestionPreferences = searchParameters.getDigestionPreferences();
+                    digestionPreferences = searchParameters.getDigestionParameters();
                     StringBuilder content = new StringBuilder();
-                    if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+                    if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
                         for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
                             if (content.length() > 0) {
                                 content.append(", ");
@@ -117,9 +117,9 @@ public class PsSearchParametersSection {
                     writer.write(content.toString());
                     break;
                 case mc:
-                    digestionPreferences = searchParameters.getDigestionPreferences();
+                    digestionPreferences = searchParameters.getDigestionParameters();
                     content = new StringBuilder();
-                    if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+                    if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
                         for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
                             String enzymeName = enzyme.getName();
                             if (content.length() > 0) {
@@ -132,15 +132,15 @@ public class PsSearchParametersSection {
                     writer.write(content.toString());
                     break;
                 case specificity:
-                    digestionPreferences = searchParameters.getDigestionPreferences();
+                    digestionPreferences = searchParameters.getDigestionParameters();
                     content = new StringBuilder();
-                    if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+                    if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
                         for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
                             String enzymeName = enzyme.getName();
                             if (content.length() > 0) {
                                 content.append(", ");
                             }
-                            DigestionPreferences.Specificity specificity = digestionPreferences.getSpecificity(enzymeName);
+                            DigestionParameters.Specificity specificity = digestionPreferences.getSpecificity(enzymeName);
                             content.append(specificity);
                         }
                     }
@@ -148,7 +148,7 @@ public class PsSearchParametersSection {
                     break;
                 case fixed_modifications:
                     content = new StringBuilder();
-                    for (String modification : searchParameters.getPtmSettings().getFixedModifications()) {
+                    for (String modification : searchParameters.getModificationParameters().getFixedModifications()) {
                         if (content.length() > 0) {
                             content.append(", ");
                         }
@@ -158,7 +158,7 @@ public class PsSearchParametersSection {
                     break;
                 case variable_modifications:
                     content = new StringBuilder();
-                    for (String modification : searchParameters.getPtmSettings().getVariableModifications()) {
+                    for (String modification : searchParameters.getModificationParameters().getVariableModifications()) {
                         if (content.length() > 0) {
                             content.append(", ");
                         }
@@ -168,7 +168,7 @@ public class PsSearchParametersSection {
                     break;
                 case refinement_variable_modifications:
                     content = new StringBuilder();
-                    for (String modification : searchParameters.getPtmSettings().getRefinementVariableModifications()) {
+                    for (String modification : searchParameters.getModificationParameters().getRefinementVariableModifications()) {
                         if (content.length() > 0) {
                             content.append(", ");
                         }
@@ -178,7 +178,7 @@ public class PsSearchParametersSection {
                     break;
                 case refinement_fixed_modifications:
                     content = new StringBuilder();
-                    for (String modification : searchParameters.getPtmSettings().getRefinementFixedModifications()) {
+                    for (String modification : searchParameters.getModificationParameters().getRefinementFixedModifications()) {
                         if (content.length() > 0) {
                             content.append(", ");
                         }

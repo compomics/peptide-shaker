@@ -1,17 +1,17 @@
 package eu.isas.peptideshaker.export;
 
-import com.compomics.util.experiment.biology.Enzyme;
-import com.compomics.util.experiment.biology.PTM;
-import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.biology.enzymes.Enzyme;
+import com.compomics.util.experiment.biology.modifications.Modification;
+import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.identification.Advocate;
-import com.compomics.util.experiment.identification.protein_sequences.FastaIndex;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.experiment.io.biology.protein.FastaIndex;
+import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
-import com.compomics.util.experiment.identification.ptm.PtmScore;
-import com.compomics.util.preferences.DigestionPreferences;
-import com.compomics.util.preferences.IdMatchValidationPreferences;
-import com.compomics.util.preferences.PTMScoringPreferences;
+import com.compomics.util.experiment.identification.modification.PtmScore;
+import com.compomics.util.parameters.identification.search.DigestionParameters;
+import com.compomics.util.parameters.identification.advanced.IdMatchValidationParameters;
+import com.compomics.util.parameters.identification.advanced.ModificationLocalizationParameters;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -164,7 +164,7 @@ public class PeptideShakerMethods {
      */
     public static String getIdentificationSettings(SearchParameters searchParameters) {
         StringBuilder text = new StringBuilder("The identification settings were as follows: ");
-        DigestionPreferences digestionPreferences = searchParameters.getDigestionPreferences();
+        DigestionParameters digestionPreferences = searchParameters.getDigestionParameters();
         switch (digestionPreferences.getCleavagePreference()) {
             case unSpecific:
                 text.append("No cleavage specificity; ");
@@ -193,8 +193,8 @@ public class PeptideShakerMethods {
                 throw new UnsupportedOperationException("Cleavage of type " + digestionPreferences.getCleavagePreference() + " not supported.");
         }
         text.append(searchParameters.getPrecursorAccuracy()).append(" ").append(searchParameters.getPrecursorAccuracyType()).append(" as MS1 and ").append(searchParameters.getFragmentIonAccuracy()).append(" ").append(searchParameters.getFragmentAccuracyType()).append(" as MS2 tolerances; ");
-        PTMFactory ptmFactory = PTMFactory.getInstance();
-        ArrayList<String> fixedPtmsNames = searchParameters.getPtmSettings().getFixedModifications();
+        ModificationFactory ptmFactory = ModificationFactory.getInstance();
+        ArrayList<String> fixedPtmsNames = searchParameters.getModificationParameters().getFixedModifications();
         if (!fixedPtmsNames.isEmpty()) {
             text.append("fixed modifications: ");
             for (int i = 0; i < fixedPtmsNames.size(); i++) {
@@ -209,7 +209,7 @@ public class PeptideShakerMethods {
                     }
                 }
                 String ptmName = fixedPtmsNames.get(i);
-                PTM ptm = ptmFactory.getPTM(ptmName);
+                Modification ptm = ptmFactory.getModification(ptmName);
                 String sign;
                 if (ptm.getRoundedMass() < 0) {
                     sign = "";
@@ -221,7 +221,7 @@ public class PeptideShakerMethods {
 
             text.append(", ");
         }
-        ArrayList<String> variablePtmsNames = searchParameters.getPtmSettings().getVariableModifications();
+        ArrayList<String> variablePtmsNames = searchParameters.getModificationParameters().getVariableModifications();
         if (!variablePtmsNames.isEmpty()) {
             text.append(" variable modifications: ");
             for (int i = 0; i < variablePtmsNames.size(); i++) {
@@ -236,7 +236,7 @@ public class PeptideShakerMethods {
                     }
                 }
                 String ptmName = variablePtmsNames.get(i);
-                PTM ptm = ptmFactory.getPTM(ptmName);
+                Modification ptm = ptmFactory.getModification(ptmName);
                 String sign;
                 if (ptm.getRoundedMass() < 0) {
                     sign = "-";
@@ -248,7 +248,7 @@ public class PeptideShakerMethods {
 
             text.append(", ");
         }
-        ArrayList<String> refinementFixedPtmsNames = searchParameters.getPtmSettings().getRefinementFixedModifications();
+        ArrayList<String> refinementFixedPtmsNames = searchParameters.getModificationParameters().getRefinementFixedModifications();
         if (!refinementFixedPtmsNames.isEmpty()) {
             text.append("fixed modifications during refinement procedure: ");
             for (int i = 0; i < refinementFixedPtmsNames.size(); i++) {
@@ -263,7 +263,7 @@ public class PeptideShakerMethods {
                     }
                 }
                 String ptmName = refinementFixedPtmsNames.get(i);
-                PTM ptm = ptmFactory.getPTM(ptmName);
+                Modification ptm = ptmFactory.getModification(ptmName);
                 String sign;
                 if (ptm.getRoundedMass() < 0) {
                     sign = "-";
@@ -275,7 +275,7 @@ public class PeptideShakerMethods {
 
             text.append(", ");
         }
-        ArrayList<String> refinementVariablePtmsNames = searchParameters.getPtmSettings().getRefinementVariableModifications();
+        ArrayList<String> refinementVariablePtmsNames = searchParameters.getModificationParameters().getRefinementVariableModifications();
         if (!refinementVariablePtmsNames.isEmpty()) {
             text.append("variable modifications during refinement procedure: ");
             for (int i = 0; i < refinementVariablePtmsNames.size(); i++) {
@@ -290,7 +290,7 @@ public class PeptideShakerMethods {
                     }
                 }
                 String ptmName = refinementVariablePtmsNames.get(i);
-                PTM ptm = ptmFactory.getPTM(ptmName);
+                Modification ptm = ptmFactory.getModification(ptmName);
                 String sign;
                 if (ptm.getRoundedMass() < 0) {
                     sign = "-";
@@ -321,7 +321,7 @@ public class PeptideShakerMethods {
      *
      * @return the validation thresholds used
      */
-    public static String getValidation(IdMatchValidationPreferences idMatchValidationPreferences) {
+    public static String getValidation(IdMatchValidationParameters idMatchValidationPreferences) {
         double psmFDR = idMatchValidationPreferences.getDefaultPsmFDR();
         double peptideFDR = idMatchValidationPreferences.getDefaultPeptideFDR();
         double proteinFDR = idMatchValidationPreferences.getDefaultProteinFDR();
@@ -343,9 +343,9 @@ public class PeptideShakerMethods {
      *
      * @return the PTM scoring methods used
      */
-    public static String getPtmScoring(PTMScoringPreferences ptmScoringPreferences) {
+    public static String getPtmScoring(ModificationLocalizationParameters ptmScoringPreferences) {
         String text = "Post-translational modification localizations were scored using the D-score [PMID 23307401] ";
-        if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
+        if (ptmScoringPreferences.isProbabilisticScoreCalculation()) {
             if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore) {
                 text += "and the A-score [PMID 16964243] ";
             } else if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
@@ -358,7 +358,7 @@ public class PeptideShakerMethods {
             }
         }
         text += "as implemented in the compomics-utilities package [PMID 21385435].";
-        if (ptmScoringPreferences.isProbabilitsticScoreCalculation() && !ptmScoringPreferences.isEstimateFlr()) {
+        if (ptmScoringPreferences.isProbabilisticScoreCalculation() && !ptmScoringPreferences.isEstimateFlr()) {
             if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore) {
                 text += " An A-score above ";
             } else if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {

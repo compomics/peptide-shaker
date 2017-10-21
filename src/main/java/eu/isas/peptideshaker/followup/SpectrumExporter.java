@@ -1,17 +1,17 @@
 package eu.isas.peptideshaker.followup;
 
-import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
-import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.massspectrometry.spectra.MSnSpectrum;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import java.io.BufferedWriter;
@@ -70,7 +70,7 @@ public class SpectrumExporter {
      * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      * occurs
      */
-    public void exportSpectra(File destinationFolder, WaitingHandler waitingHandler, ExportType exportType, SequenceMatchingPreferences sequenceMatchingPreferences)
+    public void exportSpectra(File destinationFolder, WaitingHandler waitingHandler, ExportType exportType, SequenceMatchingParameters sequenceMatchingPreferences)
             throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         PSParameter psParameter = new PSParameter();
@@ -91,18 +91,17 @@ public class SpectrumExporter {
             identification.loadObjects(ProteinMatch.class, waitingHandler, true);
         }
 
-        ArrayList<UrParameter> parameters = new ArrayList<>(1);
-        parameters.add(psParameter);
-        
         // HashMap for mapping files to the spectra
         // TODO: may be there is a more elegant way to retrieve the aggregated information
         // from all spectrumMatches than to iterate through all of them
         HashMap<String, ArrayList<String>> fileNames = new HashMap<>();
         PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
-        while(psmIterator.hasNext()){
-            SpectrumMatch spectrumMatch = psmIterator.next();
+        SpectrumMatch spectrumMatch;
+        while ((spectrumMatch = psmIterator.next()) != null) {
             String fileName = spectrumMatch.getSpectrumFile();
-            if (!fileNames.containsKey(fileName)) fileNames.put(fileName, new ArrayList<>());
+            if (!fileNames.containsKey(fileName)) {
+                fileNames.put(fileName, new ArrayList<>());
+            }
             fileNames.get(fileName).add(spectrumMatch.getKey());
         }
 
@@ -130,9 +129,8 @@ public class SpectrumExporter {
 
                     // Export the identified spectra
                     psmIterator = identification.getPsmIterator(spectraPerFile, waitingHandler);
-                    while (psmIterator.hasNext()) {
+                    while ((spectrumMatch = psmIterator.next()) != null) {
 
-                        SpectrumMatch spectrumMatch = psmIterator.next();
                         String spectrumKey = spectrumMatch.getKey();
 
                         if (shallExport(spectrumMatch, exportType, sequenceMatchingPreferences)) {
@@ -228,13 +226,13 @@ public class SpectrumExporter {
      * @throws InterruptedException thrown if an InterruptedException occurs
      * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
-    private boolean shallExport(SpectrumMatch spectrumMatch, ExportType exportType, SequenceMatchingPreferences sequenceMatchingPreferences)
+    private boolean shallExport(SpectrumMatch spectrumMatch, ExportType exportType, SequenceMatchingParameters sequenceMatchingPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         PSParameter psParameter = new PSParameter();
         String spectrumKey = spectrumMatch.getKey();
-        psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
-        PSParameter psParameterSpectrum = (PSParameter)spectrumMatch.getUrParam(psParameter);
+        psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
+        PSParameter psParameterSpectrum = (PSParameter) spectrumMatch.getUrParam(psParameter);
 
         switch (exportType) {
             case non_validated_psms:
@@ -267,7 +265,7 @@ public class SpectrumExporter {
                     }
                     if (!decoy) {
                         String peptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
-                        psParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(peptideKey)).getUrParam(psParameter);
+                        psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(peptideKey)).getUrParam(psParameter);
                         if (exportType == ExportType.non_validated_peptides || psParameterSpectrum.getMatchValidationLevel().isValidated()) {
                             if (psParameter.getMatchValidationLevel().isValidated()) {
                                 return exportType == ExportType.validated_psms_peptides;
@@ -289,7 +287,7 @@ public class SpectrumExporter {
                     }
                     if (!decoy) {
                         String peptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
-                        psParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(peptideKey)).getUrParam(psParameter);
+                        psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(peptideKey)).getUrParam(psParameter);
                         if (exportType == ExportType.non_validated_proteins
                                 || psParameter.getMatchValidationLevel().isValidated()
                                 && psParameterSpectrum.getMatchValidationLevel().isValidated()) {
@@ -299,7 +297,7 @@ public class SpectrumExporter {
                                 if (proteinKeys != null) {
                                     identification.loadObjects(new ArrayList<>(proteinKeys), null, true);
                                     for (String proteinKey : proteinKeys) {
-                                        psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinKey)).getUrParam(psParameter);
+                                        psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(proteinKey)).getUrParam(psParameter);
                                         if (psParameter.getMatchValidationLevel().isValidated()) {
                                             return exportType == ExportType.validated_psms_peptides_proteins;
                                         }

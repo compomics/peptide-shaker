@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.gui.protein_inference;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
@@ -11,8 +11,8 @@ import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import com.compomics.util.preferences.DigestionPreferences;
-import com.compomics.util.protein.Header;
+import com.compomics.util.parameters.identification.search.DigestionParameters;
+import com.compomics.util.experiment.io.biology.protein.Header;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.parameters.PSParameter;
@@ -115,7 +115,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         try {
             this.inspectedMatch = (ProteinMatch)identification.retrieveObject(inspectedMatch);
-            previousMainMatch = this.inspectedMatch.getMainMatch();
+            previousMainMatch = this.inspectedMatch.getLeadingAccession();
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             this.dispose();
@@ -244,7 +244,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             nodeProperties.put(peptideNodeName, "" + peptideMatchParameter.getMatchValidationLevel().getIndex());
 
             // iterate the proteins
-            ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+            ArrayList<String> possibleProteins = peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
 
             for (String tempProteinAccession : possibleProteins) {
 
@@ -325,9 +325,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
                     Protein protein = sequenceFactory.getProtein(tempProteinAccession);
                     Boolean enzymatic = false;
-                    DigestionPreferences digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionPreferences();
-                    if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
-                        enzymatic = protein.isEnzymaticPeptide(peptideMatch.getTheoreticPeptide().getSequence(),
+                    DigestionParameters digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionParameters();
+                    if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+                        enzymatic = protein.isEnzymaticPeptide(peptideMatch.getPeptide().getSequence(),
                                 digestionPreferences.getEnzymes(),
                                 peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                     }
@@ -785,11 +785,11 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             this.dispose();
             return;
         }
-        if (!inspectedMatch.getMainMatch().equals(previousMainMatch)
+        if (!inspectedMatch.getLeadingAccession().equals(previousMainMatch)
                 || groupClassJComboBox.getSelectedIndex() != psParameter.getProteinInferenceGroupClass()) {
             try {
                 psParameter.setProteinInferenceClass(groupClassJComboBox.getSelectedIndex());
-                peptideShakerGUI.updateMainMatch(inspectedMatch.getMainMatch(), groupClassJComboBox.getSelectedIndex());
+                peptideShakerGUI.updateMainMatch(inspectedMatch.getLeadingAccession(), groupClassJComboBox.getSelectedIndex());
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
             }
@@ -812,7 +812,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
             if (column == 1) {
                 try {
-                    inspectedMatch.setMainMatch(accessions.get(row));
+                    inspectedMatch.setLeadingAccession(accessions.get(row));
                     peptideShakerGUI.getIdentificationFeaturesGenerator().updateCoverableAA(inspectedMatch.getKey());
                     peptideShakerGUI.getIdentificationFeaturesGenerator().updateSequenceCoverage(inspectedMatch.getKey());
                     peptideShakerGUI.getIdentificationFeaturesGenerator().updateObservableCoverage(inspectedMatch.getKey());
@@ -1092,7 +1092,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 0:
                     return (row + 1);
                 case 1:
-                    return inspectedMatch.getMainMatch().equals(accessions.get(row));
+                    return inspectedMatch.getLeadingAccession().equals(accessions.get(row));
                 case 2:
                     return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(accessions.get(row));
                 case 3:
@@ -1100,7 +1100,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                         String description = sequenceFactory.getHeader(accessions.get(row)).getSimpleProteinDescription();
                         // if description is not set, return the accession instead - fix for home made fasta headers
                         if (description == null || description.trim().isEmpty()) {
-                            description = inspectedMatch.getMainMatch();
+                            description = inspectedMatch.getLeadingAccession();
                         }
                         return description;
                     } catch (Exception e) {

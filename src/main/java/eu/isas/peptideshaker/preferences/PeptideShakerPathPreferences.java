@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.preferences;
 
 import com.compomics.software.settings.PathKey;
-import com.compomics.software.settings.UtilitiesPathPreferences;
+import com.compomics.software.settings.UtilitiesPathParameters;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.PSExportFactory;
 import eu.isas.peptideshaker.utils.PsZipUtils;
@@ -134,16 +134,16 @@ public class PeptideShakerPathPreferences {
      * @throws FileNotFoundException thrown if an FileNotFoundException occurs
      */
     public static void loadPathPreferenceFromLine(String line) throws FileNotFoundException, IOException {
-        String id = UtilitiesPathPreferences.getPathID(line);
+        String id = UtilitiesPathParameters.getPathID(line);
         if (id.equals("")) {
             throw new IllegalArgumentException("Impossible to parse path in " + line + ".");
         }
         PeptideShakerPathKey peptideShakerPathKey = PeptideShakerPathKey.getKeyFromId(id);
         if (peptideShakerPathKey == null) {
-            UtilitiesPathPreferences.loadPathPreferenceFromLine(line);
+            UtilitiesPathParameters.loadPathParameterFromLine(line);
         } else {
-            String path = UtilitiesPathPreferences.getPath(line);
-            if (!path.equals(UtilitiesPathPreferences.defaultPath)) {
+            String path = UtilitiesPathParameters.getPath(line);
+            if (!path.equals(UtilitiesPathParameters.defaultPath)) {
                 File file = new File(path);
                 if (!file.exists()) {
                     throw new FileNotFoundException("File " + path + " not found.");
@@ -219,9 +219,9 @@ public class PeptideShakerPathPreferences {
         if (pathKey instanceof PeptideShakerPathKey) {
             PeptideShakerPathKey peptideShakerPathKey = (PeptideShakerPathKey) pathKey;
             PeptideShakerPathPreferences.setPathPreference(peptideShakerPathKey, path);
-        } else if (pathKey instanceof UtilitiesPathPreferences.UtilitiesPathKey) {
-            UtilitiesPathPreferences.UtilitiesPathKey utilitiesPathKey = (UtilitiesPathPreferences.UtilitiesPathKey) pathKey;
-            UtilitiesPathPreferences.setPathPreference(utilitiesPathKey, path);
+        } else if (pathKey instanceof UtilitiesPathParameters.UtilitiesPathKey) {
+            UtilitiesPathParameters.UtilitiesPathKey utilitiesPathKey = (UtilitiesPathParameters.UtilitiesPathKey) pathKey;
+            UtilitiesPathParameters.setPathParameter(utilitiesPathKey, path);
         } else {
             throw new UnsupportedOperationException("Path " + pathKey.getId() + " not implemented.");
         }
@@ -246,7 +246,7 @@ public class PeptideShakerPathPreferences {
             }
             setPathPreference(peptideShakerPathKey, newFile.getAbsolutePath());
         }
-        UtilitiesPathPreferences.setAllPathsIn(path);
+        UtilitiesPathParameters.setAllPathsIn(path);
     }
 
     /**
@@ -276,7 +276,7 @@ public class PeptideShakerPathPreferences {
         for (PeptideShakerPathKey pathKey : PeptideShakerPathKey.values()) {
             writePathToFile(bw, pathKey);
         }
-        UtilitiesPathPreferences.writeConfigurationToFile(bw);
+        UtilitiesPathParameters.writeConfigurationToFile(bw);
     }
 
     /**
@@ -289,34 +289,34 @@ public class PeptideShakerPathPreferences {
      */
     public static void writePathToFile(BufferedWriter bw, PeptideShakerPathKey pathKey) throws IOException {
 
-        bw.write(pathKey.id + UtilitiesPathPreferences.separator);
+        bw.write(pathKey.id + UtilitiesPathParameters.separator);
 
         switch (pathKey) {
             case matchesDirectory:
                 String toWrite = PeptideShaker.getMatchesDirectoryParent();
                 if (toWrite == null) {
-                    toWrite = UtilitiesPathPreferences.defaultPath;
+                    toWrite = UtilitiesPathParameters.defaultPath;
                 }
                 bw.write(toWrite);
                 break;
             case peptideShakerExports:
                 toWrite = PSExportFactory.getSerializationFolder();
                 if (toWrite == null) {
-                    toWrite = UtilitiesPathPreferences.defaultPath;
+                    toWrite = UtilitiesPathParameters.defaultPath;
                 }
                 bw.write(toWrite);
                 break;
             case peptideShakerPreferences:
                 toWrite = PeptideShaker.getUserPreferencesFolder();
                 if (toWrite == null) {
-                    toWrite = UtilitiesPathPreferences.defaultPath;
+                    toWrite = UtilitiesPathParameters.defaultPath;
                 }
                 bw.write(toWrite);
                 break;
             case unzipFolder:
                 toWrite = PsZipUtils.getUnzipParentFolder();
                 if (toWrite == null) {
-                    toWrite = UtilitiesPathPreferences.defaultPath;
+                    toWrite = UtilitiesPathParameters.defaultPath;
                 }
                 bw.write(toWrite);
                 break;
@@ -341,11 +341,11 @@ public class PeptideShakerPathPreferences {
         ArrayList<PathKey> result = new ArrayList<>();
         for (PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathKey.values()) {
             String folder = PeptideShakerPathPreferences.getPathPreference(peptideShakerPathKey);
-            if (folder != null && !UtilitiesPathPreferences.testPath(folder)) {
+            if (folder != null && !UtilitiesPathParameters.testPath(folder)) {
                 result.add(peptideShakerPathKey);
             }
         }
-        result.addAll(UtilitiesPathPreferences.getErrorKeys());
+        result.addAll(UtilitiesPathParameters.getErrorKeys());
         return result;
     }
 }

@@ -1,17 +1,17 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.settings.PathKey;
-import com.compomics.software.settings.UtilitiesPathPreferences;
+import com.compomics.software.settings.UtilitiesPathParameters;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.experiment.biology.EnzymeFactory;
+import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
 import com.compomics.util.experiment.biology.genes.GeneFactory;
-import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.cli.identification_parameters.IdentificationParametersInputBean;
@@ -23,11 +23,11 @@ import com.compomics.util.gui.DummyFrame;
 import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.messages.FeedBack;
-import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import com.compomics.util.preferences.ProcessingPreferences;
-import com.compomics.util.preferences.UtilitiesUserPreferences;
-import com.compomics.util.preferences.ValidationQCPreferences;
+import com.compomics.util.parameters.tools.ProcessingParameters;
+import com.compomics.util.parameters.tools.UtilitiesUserParameters;
+import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
@@ -69,7 +69,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     /**
      * The compomics PTM factory.
      */
-    private PTMFactory ptmFactory;
+    private ModificationFactory ptmFactory;
     /**
      * The enzyme factory.
      */
@@ -77,7 +77,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     /**
      * The utilities user preferences.
      */
-    private UtilitiesUserPreferences utilitiesUserPreferences;
+    private UtilitiesUserParameters utilitiesUserPreferences;
 
     /**
      * Construct a new PeptideShakerCLI runnable. When initialization is
@@ -96,12 +96,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         this.cliInputBean = cliInputBean;
     }
 
-    /**
-     * Calling this method will run the configured PeptideShaker process.
-     *
-     * @throws Exception thrown if an exception occurs
-     */
-    public Object call() throws Exception {
+    @Override
+    public Object call() {
 
         try {
             // get the path settings input
@@ -185,11 +181,11 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
 
             // Load user preferences
-            utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+            utilitiesUserPreferences = UtilitiesUserParameters.loadUserParameters();
 
             // Instantiate factories
             PeptideShaker.instantiateFacories(utilitiesUserPreferences);
-            ptmFactory = PTMFactory.getInstance();
+            ptmFactory = ModificationFactory.getInstance();
             enzymeFactory = EnzymeFactory.getInstance();
 
             // Load resources files
@@ -504,12 +500,15 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * Creates the PeptideShaker project based on the identification files
      * provided in the command line input
      *
-     * @throws FileNotFoundException if a FileNotFoundException occurs
-     * @throws IOException if an IOException occurs
-     * @throws ClassNotFoundException if aClassNotFoundException
-     * ClassNotFoundException occurs
+     * @throws IOException if an error occurs while reading or writing a file
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while casting the database input in the desired match class
+     * @throws SQLException exception thrown whenever an error occurred while
+     * loading an object from the database
+     * @throws InterruptedException thrown whenever a threading issue occurred
+     * while interacting with the database
      */
-    public void createProject() throws IOException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException {
+    public void createProject() throws IOException, ClassNotFoundException, SQLException, InterruptedException {
 
         // define new project references
         projectParameters = new ProjectParameters(cliInputBean.getiExperimentID());
@@ -593,7 +592,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     } else if (nameLowerCase.endsWith(".par")) {
                         try {
                             tempIdentificationParameters = IdentificationParameters.getIdentificationParameters(unzippedFile);
-                            ValidationQCPreferences validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+                            ValidationQcParameters validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
                             if (validationQCPreferences == null
                                     || validationQCPreferences.getPsmFilters() == null
                                     || validationQCPreferences.getPeptideFilters() == null
@@ -636,7 +635,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             identificationParametersInputBean.updateIdentificationParameters();
         }
         identificationParameters = identificationParametersInputBean.getIdentificationParameters();
-        ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
         if (validationQCPreferences == null
                 || validationQCPreferences.getPsmFilters() == null
                 || validationQCPreferences.getPeptideFilters() == null
@@ -700,7 +699,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         // set the processing settings
-        ProcessingPreferences processingPreferences = new ProcessingPreferences();
+        ProcessingParameters processingPreferences = new ProcessingParameters();
         Integer nThreads = cliInputBean.getnThreads();
         if (nThreads != null) {
             processingPreferences.setnThreads(nThreads);
@@ -770,8 +769,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      *
      * @param identification the identification to close
      *
-     * @throws IOException thrown of IOException occurs
-     * @throws SQLException thrown if SQLException occurs
+     * @throws java.io.IOException exception thrown whenever an error occurred while
+     * writing the object
+     * @throws SQLException exception thrown whenever an error occurred while
+     * closing the database connection
      */
     public static void closePeptideShaker(Identification identification) throws IOException, SQLException {
 
@@ -782,12 +783,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        try {
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        
         try {
             File matchFolder = PeptideShaker.getMatchesFolder();
             File[] tempFiles = matchFolder.listFiles();
@@ -858,7 +854,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * Sets the path configuration.
      */
     private void setPathConfiguration() throws IOException {
-        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
+        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathParameters.configurationFileName);
         if (pathConfigurationFile.exists()) {
             PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
         }

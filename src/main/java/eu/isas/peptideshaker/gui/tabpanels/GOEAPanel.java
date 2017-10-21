@@ -19,9 +19,9 @@ import com.compomics.util.gui.XYPlottingDialog.PlottingDialogPlotType;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
-import com.compomics.util.gui.parameters.identification_parameters.GenePreferencesDialog;
-import com.compomics.util.preferences.GenePreferences;
-import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.gui.parameters.identification.advanced.GeneParametersDialog;
+import com.compomics.util.parameters.identification.advanced.GeneParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinGoTableModel;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
@@ -255,11 +255,11 @@ public class GOEAPanel extends javax.swing.JPanel {
         // use a gray color for no decoy searches
         Color nonValidatedColor = peptideShakerGUI.getSparklineColorNonValidated();
         if (!sequenceFactory.concatenatedTargetDecoy()) {
-            nonValidatedColor = peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound();
+            nonValidatedColor = peptideShakerGUI.getUtilitiesUserParameters().getSparklineColorNotFound();
         }
         ArrayList<Color> sparklineColors = new ArrayList<>();
         sparklineColors.add(peptideShakerGUI.getSparklineColor());
-        sparklineColors.add(peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful());
+        sparklineColors.add(peptideShakerGUI.getUtilitiesUserParameters().getSparklineColorDoubtful());
         sparklineColors.add(nonValidatedColor);
 
         proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers));
@@ -283,9 +283,9 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         sparklineColors = new ArrayList<>();
         sparklineColors.add(peptideShakerGUI.getSparklineColor());
-        sparklineColors.add(peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful());
+        sparklineColors.add(peptideShakerGUI.getUtilitiesUserParameters().getSparklineColorDoubtful());
         sparklineColors.add(nonValidatedColor);
-        sparklineColors.add(peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound());
+        sparklineColors.add(peptideShakerGUI.getUtilitiesUserParameters().getSparklineColorNotFound());
 
         JSparklinesArrayListBarChartTableCellRenderer coverageCellRendered = new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumExceptLastNumber);
         coverageCellRendered.showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0.00"));
@@ -358,12 +358,12 @@ public class GOEAPanel extends javax.swing.JPanel {
                             GoMapping backgroundGoMapping = new GoMapping();
                             Integer taxon = null;
                             IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                            GenePreferences genePreferences = identificationParameters.getGenePreferences();
+                            GeneParameters genePreferences = identificationParameters.getGenePreferences();
                             if (genePreferences != null) {
                                 taxon = genePreferences.getSelectedBackgroundSpecies();
                             }
                             if (taxon == null) {
-                                GenePreferencesDialog genePreferencesDialog = new GenePreferencesDialog(peptideShakerGUI, genePreferences, identificationParameters.getSearchParameters(), false);
+                                GeneParametersDialog genePreferencesDialog = new GeneParametersDialog(peptideShakerGUI, genePreferences, identificationParameters.getSearchParameters(), false);
                                 if (!genePreferencesDialog.isCanceled()) {
                                     genePreferences = genePreferencesDialog.getGenePreferences();
                                     identificationParameters.setGenePreferences(genePreferences);
@@ -389,19 +389,17 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                 int totalNumberOfGoMappedProteinsInProject = 0;
                                 PSParameter psParameter = new PSParameter();
-                                ArrayList<UrParameter> parameters = new ArrayList<>(1);
-                                parameters.add(psParameter);
                                 ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(progressDialog);
+                                ProteinMatch proteinMatch;
 
-                                while (proteinMatchesIterator.hasNext()) {
+                                while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
-                                    ProteinMatch proteinMatch = proteinMatchesIterator.next();
                                     String proteinKey = proteinMatch.getKey();
-                                    psParameter = (PSParameter)proteinMatch.getUrParam(psParameter);
+                                    psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
 
                                     if (psParameter.getMatchValidationLevel().isValidated() && !ProteinMatch.isDecoy(proteinKey) && !psParameter.getHidden()) {
 
-                                        String mainMatch = proteinMatch.getMainMatch();
+                                        String mainMatch = proteinMatch.getLeadingAccession();
                                         HashSet<String> goTerms = backgroundGoMapping.getGoAccessions(mainMatch);
                                         if (goTerms != null && !goTerms.isEmpty()) {
                                             totalNumberOfGoMappedProteinsInProject++;
@@ -548,7 +546,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                     ((ValueAndBooleanDataPoint) ((DefaultTableModel) goMappingsTable.getModel()).getValueAt(
                                             indexes.get(0), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(
-                                                    pValues.get(0) < significanceLevel);
+                                            pValues.get(0) < significanceLevel);
                                     ((DefaultTableModel) goMappingsTable.getModel()).setValueAt(new XYDataPoint(pValues.get(0), pValues.get(0)), indexes.get(0),
                                             goMappingsTable.getColumn("p-value").getModelIndex());
 
@@ -2152,7 +2150,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                         ArrayList<String> proteinKeysList = new ArrayList<>(proteinKeys);
                         identification.loadObjects(proteinKeysList, progressDialog, false);
-                        
+
                         // update the table
                         if (proteinTable.getModel() instanceof ProteinGoTableModel) {
                             ((ProteinGoTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI, proteinKeysList);
@@ -2172,7 +2170,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             PSParameter psParameter = new PSParameter();
 
                             for (String proteinKey : proteinKeys) {
-                                psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinKey)).getUrParam(psParameter);
+                                psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(proteinKey)).getUrParam(psParameter);
                                 MatchValidationLevel level = psParameter.getMatchValidationLevel();
 
                                 if (level == MatchValidationLevel.confident) {

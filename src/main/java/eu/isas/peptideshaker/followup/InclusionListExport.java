@@ -1,17 +1,16 @@
 package eu.isas.peptideshaker.followup;
 
-import com.compomics.util.experiment.biology.Enzyme;
-import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.enzymes.Enzyme;
+import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
-import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.experiment.personalization.UrParameter;
-import com.compomics.util.preferences.DigestionPreferences;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
+import com.compomics.util.parameters.identification.search.DigestionParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
@@ -61,121 +60,112 @@ public class InclusionListExport {
             ArrayList<Integer> proteinFilters, ArrayList<PeptideFilterType> peptideFilters, ExportFormat exportFormat, SearchParameters searchParameters, double rtWindow,
             WaitingHandler waitingHandler, FilterPreferences filterPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
-        FileWriter f = new FileWriter(destinationFile);
+        SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+        if (waitingHandler != null) {
+            if (waitingHandler.isRunCanceled()) {
+                return;
+            }
+            waitingHandler.setWaitingText("Inclusion List - Writing File. Please Wait...");
+            waitingHandler.resetSecondaryProgressCounter();
+            waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size());
+        }
 
-        try {
-            BufferedWriter b = new BufferedWriter(f);
-            try {
-                SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+        try (FileWriter f = new FileWriter(destinationFile);
+                BufferedWriter b = new BufferedWriter(f)) {
+
+            PSParameter psParameter = new PSParameter();
+            ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
+            ProteinMatch proteinMatch;
+            while ((proteinMatch = proteinMatchesIterator.next()) != null) {
+
+                psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+
+                if (!proteinFilters.contains(psParameter.getProteinInferenceGroupClass())) {
+
+                    ArrayList<String> peptideMatches = new ArrayList<>();
+
+                    for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
+                        psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(peptideKey)).getUrParam(psParameter);
+                        if (psParameter.getMatchValidationLevel().isValidated()) {
+                            boolean passesFilter = true;
+                            for (PeptideFilterType filterType : peptideFilters) {
+                                String sequence = Peptide.getSequence(peptideKey);
+                                if (filterType == PeptideFilterType.degenerated) {
+                                    if (psParameter.getProteinInferenceGroupClass() != PSParameter.NOT_GROUP) {
+                                        passesFilter = false;
+                                        break;
+                                    }
+                                } else if (filterType == PeptideFilterType.miscleaved) {
+
+                                    Integer peptideMinMissedCleavages = null;
+                                    DigestionParameters digestionPreferences = searchParameters.getDigestionParameters();
+                                    if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+                                        for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
+                                            int tempMissedCleavages = enzyme.getNmissedCleavages(sequence);
+                                            if (peptideMinMissedCleavages == null || tempMissedCleavages < peptideMinMissedCleavages) {
+                                                peptideMinMissedCleavages = tempMissedCleavages;
+                                            }
+                                        }
+                                    }
+                                    if (peptideMinMissedCleavages != null && peptideMinMissedCleavages > 0) {
+                                        passesFilter = false;
+                                        break;
+                                    }
+                                } else if (filterType == PeptideFilterType.reactive) {
+                                    if (sequence.contains("M")
+                                            || sequence.contains("C")
+                                            || sequence.contains("W")
+                                            || sequence.contains("NG")
+                                            || sequence.contains("DG")
+                                            || sequence.contains("QG")
+                                            || sequence.startsWith("N")
+                                            || sequence.startsWith("Q")) {
+                                        passesFilter = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (passesFilter) {
+                                peptideMatches.add(peptideKey);
+                            }
+                        }
+                    }
+
+                    if (!peptideMatches.isEmpty()) {
+                        for (String peptideKey : peptideMatches) {
+                            PeptideMatch peptideMatch = (PeptideMatch) identification.retrieveObject(peptideKey);
+                            ArrayList<String> validatedPsms = new ArrayList<>();
+                            for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
+                                psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(spectrumKey)).getUrParam(psParameter);
+                                if (psParameter.getMatchValidationLevel().isValidated()) {
+                                    validatedPsms.add(spectrumKey);
+                                }
+                            }
+                            if (!validatedPsms.isEmpty()) {
+                                ArrayList<Double> retentionTimes = new ArrayList<>();
+                                for (String spectrumKey : validatedPsms) {
+                                    retentionTimes.add(spectrumFactory.getPrecursor(spectrumKey).getRt());
+                                }
+                                for (String spectrumKey : validatedPsms) {
+                                    SpectrumMatch spectrumMatch = (SpectrumMatch) identification.retrieveObject(spectrumKey);
+                                    if (spectrumMatch.getBestPeptideAssumption() != null) {
+                                        String line = getInclusionListLine(spectrumMatch, retentionTimes, rtWindow, exportFormat, searchParameters);
+                                        b.write(line);
+                                        b.newLine();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
                         return;
                     }
-                    waitingHandler.setWaitingText("Inclusion List - Writing File. Please Wait...");
-                    waitingHandler.resetSecondaryProgressCounter();
-                    waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size());
+                    waitingHandler.increaseSecondaryProgressCounter();
                 }
-
-                PSParameter psParameter = new PSParameter();
-                ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
-
-                while (proteinMatchesIterator.hasNext()) {
-
-                    ProteinMatch proteinMatch = proteinMatchesIterator.next();
-                    psParameter = (PSParameter)proteinMatch.getUrParam(psParameter);
-
-                    if (!proteinFilters.contains(psParameter.getProteinInferenceGroupClass())) {
-
-                        ArrayList<String> peptideMatches = new ArrayList<>();
-
-                        for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-                            psParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(peptideKey)).getUrParam(psParameter);
-                            if (psParameter.getMatchValidationLevel().isValidated()) {
-                                boolean passesFilter = true;
-                                for (PeptideFilterType filterType : peptideFilters) {
-                                    String sequence = Peptide.getSequence(peptideKey);
-                                    if (filterType == PeptideFilterType.degenerated) {
-                                        if (psParameter.getProteinInferenceGroupClass() != PSParameter.NOT_GROUP) {
-                                            passesFilter = false;
-                                            break;
-                                        }
-                                    } else if (filterType == PeptideFilterType.miscleaved) {
-
-                                        Integer peptideMinMissedCleavages = null;
-                                        DigestionPreferences digestionPreferences = searchParameters.getDigestionPreferences();
-                                        if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
-                                            for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
-                                                int tempMissedCleavages = enzyme.getNmissedCleavages(sequence);
-                                                if (peptideMinMissedCleavages == null || tempMissedCleavages < peptideMinMissedCleavages) {
-                                                    peptideMinMissedCleavages = tempMissedCleavages;
-                                                }
-                                            }
-                                        }
-                                        if (peptideMinMissedCleavages != null && peptideMinMissedCleavages > 0) {
-                                            passesFilter = false;
-                                            break;
-                                        }
-                                    } else if (filterType == PeptideFilterType.reactive) {
-                                        if (sequence.contains("M")
-                                                || sequence.contains("C")
-                                                || sequence.contains("W")
-                                                || sequence.contains("NG")
-                                                || sequence.contains("DG")
-                                                || sequence.contains("QG")
-                                                || sequence.startsWith("N")
-                                                || sequence.startsWith("Q")) {
-                                            passesFilter = false;
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (passesFilter) {
-                                    peptideMatches.add(peptideKey);
-                                }
-                            }
-                        }
-
-                        if (!peptideMatches.isEmpty()) {
-                            for (String peptideKey : peptideMatches) {
-                                PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(peptideKey);
-                                ArrayList<String> validatedPsms = new ArrayList<>();
-                                for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
-                                    psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(psParameter);
-                                    if (psParameter.getMatchValidationLevel().isValidated()) {
-                                        validatedPsms.add(spectrumKey);
-                                    }
-                                }
-                                if (!validatedPsms.isEmpty()) {
-                                    ArrayList<Double> retentionTimes = new ArrayList<>();
-                                    for (String spectrumKey : validatedPsms) {
-                                        retentionTimes.add(spectrumFactory.getPrecursor(spectrumKey).getRt());
-                                    }
-                                    for (String spectrumKey : validatedPsms) {
-                                        SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(spectrumKey);
-                                        if (spectrumMatch.getBestPeptideAssumption() != null) {
-                                            String line = getInclusionListLine(spectrumMatch, retentionTimes, rtWindow, exportFormat, searchParameters);
-                                            b.write(line);
-                                            b.newLine();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (waitingHandler != null) {
-                        if (waitingHandler.isRunCanceled()) {
-                            return;
-                        }
-                        waitingHandler.increaseSecondaryProgressCounter();
-                    }
-                }
-            } finally {
-                b.close();
             }
-        } finally {
-            f.close();
         }
     }
 

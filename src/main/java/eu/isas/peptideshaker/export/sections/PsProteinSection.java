@@ -1,9 +1,7 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.genes.GeneFactory;
-import com.compomics.util.experiment.biology.genes.go.GoMapping;
-import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
@@ -16,7 +14,7 @@ import com.compomics.util.experiment.units.UnitOfMeasurement;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
-import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
@@ -151,12 +149,10 @@ public class PsProteinSection {
         }
 
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<>(1);
-        parameters.add(psParameter);
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(keys, waitingHandler); // @TODO: find a better way to know if we need psms
-
-        while (proteinMatchesIterator.hasNext()) {
-
+ProteinMatch proteinMatch;
+        while ((proteinMatch = proteinMatchesIterator.next()) != null) {
+        
             if (waitingHandler != null) {
                 if (waitingHandler.isRunCanceled()) {
                     return;
@@ -164,7 +160,6 @@ public class PsProteinSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
-            ProteinMatch proteinMatch = proteinMatchesIterator.next();
             String proteinKey = proteinMatch.getKey();
 
             if (decoys || !ProteinMatch.isDecoy(proteinKey)) {
@@ -245,12 +240,12 @@ public class PsProteinSection {
 
         switch (tempProteinFeatures) {
             case accession:
-                return proteinMatch.getMainMatch();
+                return proteinMatch.getLeadingAccession();
             case protein_description:
-                return SequenceFactory.getInstance().getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription();
+                return SequenceFactory.getInstance().getHeader(proteinMatch.getLeadingAccession()).getSimpleProteinDescription();
             case ensembl_gene_id:
                 if (!proteinMatch.isDecoy()) {
-                    String geneName = geneMaps.getGeneNameForProtein(proteinMatch.getMainMatch());
+                    String geneName = geneMaps.getGeneNameForProtein(proteinMatch.getLeadingAccession());
                     if (geneName != null) {
                         String ensemblId = geneMaps.getEnsemblId(geneName);
                         if (ensemblId != null) {
@@ -261,7 +256,7 @@ public class PsProteinSection {
                 return "";
             case gene_name:
                 if (!proteinMatch.isDecoy()) {
-                    String geneName = geneMaps.getGeneNameForProtein(proteinMatch.getMainMatch());
+                    String geneName = geneMaps.getGeneNameForProtein(proteinMatch.getLeadingAccession());
                     if (geneName != null) {
                         return geneName;
                     }
@@ -269,7 +264,7 @@ public class PsProteinSection {
                 return "";
             case chromosome:
                 if (!proteinMatch.isDecoy()) {
-                    String geneName = geneMaps.getGeneNameForProtein(proteinMatch.getMainMatch());
+                    String geneName = geneMaps.getGeneNameForProtein(proteinMatch.getLeadingAccession());
                     if (geneName != null) {
                         String chromosome = geneMaps.getChromosome(geneName);
                         if (chromosome != null) {
@@ -307,7 +302,7 @@ public class PsProteinSection {
                 }
                 return result.toString();
             case other_proteins:
-                String mainAccession = proteinMatch.getMainMatch();
+                String mainAccession = proteinMatch.getLeadingAccession();
                 result = new StringBuilder();
                 List<String> otherAccessions = Arrays.asList(ProteinMatch.getAccessions(proteinKey));
                 Collections.sort(otherAccessions);
@@ -345,14 +340,14 @@ public class PsProteinSection {
             case confidence:
                 return psParameter.getProteinConfidence() + "";
             case confident_modification_sites:
-                mainAccession = proteinMatch.getMainMatch();
+                mainAccession = proteinMatch.getLeadingAccession();
                 Protein protein = SequenceFactory.getInstance().getProtein(mainAccession);
                 String sequence = protein.getSequence();
                 return identificationFeaturesGenerator.getConfidentPtmSites(proteinMatch, sequence);
             case confident_modification_sites_number:
                 return identificationFeaturesGenerator.getConfidentPtmSitesNumber(proteinMatch);
             case ambiguous_modification_sites:
-                mainAccession = proteinMatch.getMainMatch();
+                mainAccession = proteinMatch.getLeadingAccession();
                 protein = SequenceFactory.getInstance().getProtein(mainAccession);
                 sequence = protein.getSequence();
                 return identificationFeaturesGenerator.getAmbiguousPtmSites(proteinMatch, sequence);
@@ -360,29 +355,29 @@ public class PsProteinSection {
                 return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(proteinMatch);
             case confident_phosphosites:
                 ArrayList<String> modifications = new ArrayList<>();
-                for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
                     if (ptm.contains("Phospho")) {
                         modifications.add(ptm);
                     }
                 }
-                mainAccession = proteinMatch.getMainMatch();
+                mainAccession = proteinMatch.getLeadingAccession();
                 protein = SequenceFactory.getInstance().getProtein(mainAccession);
                 sequence = protein.getSequence();
                 return identificationFeaturesGenerator.getConfidentPtmSites(proteinMatch, sequence, modifications);
             case confident_phosphosites_number:
                 modifications = new ArrayList<>();
-                for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
                     if (ptm.contains("Phospho")) {
                         modifications.add(ptm);
                     }
                 }
                 return identificationFeaturesGenerator.getConfidentPtmSitesNumber(proteinMatch, modifications);
             case ambiguous_phosphosites:
-                mainAccession = proteinMatch.getMainMatch();
+                mainAccession = proteinMatch.getLeadingAccession();
                 protein = SequenceFactory.getInstance().getProtein(mainAccession);
                 sequence = protein.getSequence();
                 modifications = new ArrayList<>();
-                for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
                     if (ptm.contains("Phospho")) {
                         modifications.add(ptm);
                     }
@@ -390,7 +385,7 @@ public class PsProteinSection {
                 return identificationFeaturesGenerator.getAmbiguousPtmSites(proteinMatch, sequence, modifications);
             case ambiguous_phosphosites_number:
                 modifications = new ArrayList<>();
-                for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
                     if (ptm.contains("Phospho")) {
                         modifications.add(ptm);
                     }
@@ -419,10 +414,10 @@ public class PsProteinSection {
                     return 0 + "";
                 }
             case mw:
-                Double proteinMW = SequenceFactory.getInstance().computeMolecularWeight(proteinMatch.getMainMatch());
+                Double proteinMW = SequenceFactory.getInstance().computeMolecularWeight(proteinMatch.getLeadingAccession());
                 return proteinMW.toString();
             case non_enzymatic:
-                ArrayList<String> nonEnzymatic = identificationFeaturesGenerator.getNonEnzymatic(proteinKey, identificationParameters.getSearchParameters().getDigestionPreferences());
+                ArrayList<String> nonEnzymatic = identificationFeaturesGenerator.getNonEnzymatic(proteinKey, identificationParameters.getSearchParameters().getDigestionParameters());
                 return nonEnzymatic.size() + "";
             case pi:
                 return psParameter.getProteinInferenceClassAsString();

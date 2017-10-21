@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.export.sections;
 
-import com.compomics.util.experiment.biology.PTM;
-import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.biology.modifications.Modification;
+import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
@@ -14,7 +14,7 @@ import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
-import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPsmFeature;
@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -120,11 +121,13 @@ public class PsPsmSection {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             IdentificationParameters identificationParameters, ArrayList<String> keys,
             String linePrefix, int nSurroundingAA, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
-            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -145,12 +148,11 @@ public class PsPsmSection {
         }
 
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<>(1);
-        parameters.add(psParameter);
 
         PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
 
-        while (psmIterator.hasNext()) {
+        SpectrumMatch spectrumMatch;
+        while ((spectrumMatch = psmIterator.next()) != null) {
 
             if (waitingHandler != null) {
                 if (waitingHandler.isRunCanceled()) {
@@ -159,7 +161,6 @@ public class PsPsmSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
-            SpectrumMatch spectrumMatch = psmIterator.next();
             String spectrumKey = spectrumMatch.getKey();
             psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
 
@@ -406,9 +407,9 @@ public class PsPsmSection {
                         Collections.sort(modList);
                         for (String mod : modList) {
 
-                            PTM ptm = PTMFactory.getInstance().getPTM(mod);
+                            Modification ptm = ModificationFactory.getInstance().getModification(mod);
 
-                            if (ptm.getType() == PTM.MODAA) {
+                            if (ptm.getType() == Modification.MODAA) {
 
                                 if (result.length() > 0) {
                                     result.append(", ");
@@ -539,7 +540,7 @@ public class PsPsmSection {
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
                     String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
                     ArrayList<String> modifications = new ArrayList<>();
-                    for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
+                    for (String ptm : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
                         if (ptm.toLowerCase().contains("phospho")) {
                             modifications.add(ptm);
                         }
@@ -549,7 +550,7 @@ public class PsPsmSection {
                 return "";
             case confident_phosphosites_number:
                 ArrayList<String> modifications = new ArrayList<>();
-                for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
                     if (ptm.toLowerCase().contains("phospho")) {
                         modifications.add(ptm);
                     }
@@ -559,7 +560,7 @@ public class PsPsmSection {
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
                     String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
                     modifications = new ArrayList<>();
-                    for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
+                    for (String ptm : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
                         if (ptm.toLowerCase().contains("phospho")) {
                             modifications.add(ptm);
                         }
@@ -569,7 +570,7 @@ public class PsPsmSection {
                 return "";
             case ambiguous_phosphosites_number:
                 modifications = new ArrayList<>();
-                for (String ptm : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
                     if (ptm.toLowerCase().contains("phospho")) {
                         modifications.add(ptm);
                     }

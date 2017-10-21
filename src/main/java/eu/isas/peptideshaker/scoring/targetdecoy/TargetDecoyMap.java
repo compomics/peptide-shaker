@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
-import com.compomics.util.db.ObjectsDB;
-import com.compomics.util.IdObject;
+import com.compomics.util.db.object.ObjectsDB;
+import com.compomics.util.db.object.DbObject;
 import com.compomics.util.waiting.WaitingHandler;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +13,7 @@ import java.util.HashSet;
  *
  * @author Marc Vaudel
  */
-public class TargetDecoyMap extends IdObject {
+public class TargetDecoyMap extends DbObject {
 
     /**
      * Serial version UID for post-serialization compatibility.

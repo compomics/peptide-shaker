@@ -62,8 +62,6 @@ public class PsProjectSection {
      * Writes the desired section.
      *
      * @param experiment the experiment name
-     * @param sample the sample name
-     * @param replicateNumber the replicate number
      * @param projectDetails the details of this project
      * @param waitingHandler the waiting handler
      * 

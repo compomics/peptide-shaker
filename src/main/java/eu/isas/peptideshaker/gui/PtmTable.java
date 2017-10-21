@@ -1,15 +1,19 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.experiment.biology.ions.NeutralLoss;
+import com.compomics.util.experiment.biology.ions.Ion;
+import com.compomics.util.experiment.biology.proteins.Peptide;
+import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.*;
-import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
+import com.compomics.util.experiment.biology.ions.impl.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.ptm.PtmtableContent;
-import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.identification.modification.PtmtableContent;
+import com.compomics.util.experiment.massspectrometry.spectra.MSnSpectrum;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
-import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationSettings;
-import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationSettings;
+import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
+import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -51,7 +55,7 @@ public class PtmTable extends JTable {
     /**
      * The PTM to analyze.
      */
-    private PTM ptm;
+    private Modification ptm;
     /**
      * Number of PTMs.
      */
@@ -83,7 +87,7 @@ public class PtmTable extends JTable {
      * @param areaChart if true an area chart version will be used, false
      * displays bar charts
      */
-    public PtmTable(PeptideShakerGUI peptideShakerGUI, Peptide peptide, PTM ptm, ArrayList<String> spectrumKeys, boolean areaChart) {
+    public PtmTable(PeptideShakerGUI peptideShakerGUI, Peptide peptide, Modification ptm, ArrayList<String> spectrumKeys, boolean areaChart) {
         this.peptideShakerGUI = peptideShakerGUI;
         this.peptide = peptide;
         this.ptm = ptm;
@@ -95,7 +99,7 @@ public class PtmTable extends JTable {
 
         if (peptide.isModified()) {
             for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                if (modMatch.getTheoreticPtm().equals(ptm.getName())) {
+                if (modMatch.getModification().equals(ptm.getName())) {
                     modificationSites.add(modMatch.getModificationSite());
                     nPTM++;
                 }
@@ -153,7 +157,7 @@ public class PtmTable extends JTable {
         tempColumnTypes.add(java.lang.Integer.class);
         tooltips.add("a, b and c ion index");
 
-        AnnotationSettings annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
+        AnnotationParameters annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
 
         if (annotationPreferences.getFragmentIonTypes().contains(PeptideFragmentIon.A_ION)) {
             columnHeaders.add("a");
@@ -281,7 +285,7 @@ public class PtmTable extends JTable {
      */
     private void insertAreaCharts() {
 
-        AnnotationSettings annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
+        AnnotationParameters annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
         PtmtableContent tempContent, tableContent = new PtmtableContent();
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
@@ -289,7 +293,7 @@ public class PtmTable extends JTable {
             try {
                 MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
                 SpectrumMatch spectrumMatch = (SpectrumMatch)peptideShakerGUI.getIdentification().retrieveObject(spectrumKey);
-                peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationSettings(spectrumKey, spectrumMatch.getBestPeptideAssumption()));
+                peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationParameters(spectrumKey, spectrumMatch.getBestPeptideAssumption()));
                 peptideShakerGUI.updateAnnotationPreferences();
                 tempContent = PtmtableContent.getPTMTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences, peptideShakerGUI.getSpecificAnnotationPreferences());
                 tempContent.normalize();
@@ -453,7 +457,7 @@ public class PtmTable extends JTable {
      */
     private void insertBarCharts() {
 
-        AnnotationSettings annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
+        AnnotationParameters annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
         PtmtableContent tempContent, tableContent = new PtmtableContent();
         MSnSpectrum spectrum;
         SpectrumMatch spectrumMatch;
@@ -464,7 +468,7 @@ public class PtmTable extends JTable {
             try {
                 spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
                 spectrumMatch = (SpectrumMatch)peptideShakerGUI.getIdentification().retrieveObject(spectrumKey);
-                peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationSettings(spectrumKey, spectrumMatch.getBestPeptideAssumption()));
+                peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationParameters(spectrumKey, spectrumMatch.getBestPeptideAssumption()));
                 peptideShakerGUI.updateAnnotationPreferences();
                 tempContent = PtmtableContent.getPTMTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences, peptideShakerGUI.getSpecificAnnotationPreferences());
                 tempContent.normalize();

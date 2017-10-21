@@ -1,13 +1,13 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.settings.PathKey;
-import com.compomics.software.settings.UtilitiesPathPreferences;
-import com.compomics.util.experiment.biology.EnzymeFactory;
-import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.software.settings.UtilitiesPathParameters;
+import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
+import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
-import com.compomics.util.preferences.UtilitiesUserPreferences;
+import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import eu.isas.peptideshaker.PeptideShaker;
 import static eu.isas.peptideshaker.cmd.PeptideShakerCLI.redirectErrorStream;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
@@ -40,7 +40,7 @@ public class FollowUpCLI extends CpsParent {
     /**
      * The PTM factory.
      */
-    private PTMFactory ptmFactory;
+    private ModificationFactory ptmFactory;
     /**
      * The enzyme factory.
      */
@@ -48,7 +48,7 @@ public class FollowUpCLI extends CpsParent {
     /**
      * The utilities user preferences.
      */
-    private UtilitiesUserPreferences utilitiesUserPreferences;
+    private UtilitiesUserParameters utilitiesUserPreferences;
 
     /**
      * Construct a new FollowUpCLI runnable from a FollowUpCLI Bean. When
@@ -103,11 +103,11 @@ public class FollowUpCLI extends CpsParent {
         }
 
         // Load user preferences
-        utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+        utilitiesUserPreferences = UtilitiesUserParameters.loadUserParameters();
 
         // Instantiate factories
         PeptideShaker.instantiateFacories(utilitiesUserPreferences);
-        ptmFactory = PTMFactory.getInstance();
+        ptmFactory = ModificationFactory.getInstance();
         enzymeFactory = EnzymeFactory.getInstance();
 
         // Load resources files
@@ -312,7 +312,7 @@ public class FollowUpCLI extends CpsParent {
      * Sets the path configuration.
      */
     private void setPathConfiguration() throws IOException {
-        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
+        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathParameters.configurationFileName);
         if (pathConfigurationFile.exists()) {
             PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
         }

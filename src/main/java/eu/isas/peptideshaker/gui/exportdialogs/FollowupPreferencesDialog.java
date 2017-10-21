@@ -5,14 +5,14 @@ import com.compomics.util.experiment.identification.protein_sequences.SequenceFa
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.utils.user_choice.list_choosers.PtmChooser;
 import com.compomics.util.io.export.ExportWriter;
-import com.compomics.util.preferences.LastSelectedFolder;
+import com.compomics.util.io.file.LastSelectedFolder;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.followup.ProgenesisExcelExport;
 import eu.isas.peptideshaker.followup.FastaExport;
@@ -599,7 +599,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             final int userChoice = psmSelectionComboBox.getSelectedIndex();
             ArrayList<String> ptms = new ArrayList<>();
             if (userChoice == 3) {
-                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings().getAllNotFixedModifications(), true);
+                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getAllNotFixedModifications(), true);
                 if (ptmChooser.isCanceled()) {
                     return;
                 }
@@ -795,34 +795,32 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
 
                         PSParameter psParameter = new PSParameter();
-                        ArrayList<UrParameter> parameters = new ArrayList<>(1);
-                        parameters.add(psParameter);
                         PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
+                        PeptideMatch peptideMatch;
 
-                        while (peptideMatchesIterator.hasNext()) {
+                        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-                            PeptideMatch peptideMatch = peptideMatchesIterator.next();
                             String peptideKey = peptideMatch.getKey();
-                            psParameter = (PSParameter)peptideMatch.getUrParam(psParameter);
+                            psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
 
                             // write the peptide node
                             if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
-                                nodeWriter.write("create n={id:'" + peptideKey + "', name:'" + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), false, false, true, false) + "', type:'Peptide'};\n");
+                                nodeWriter.write("create n={id:'" + peptideKey + "', name:'" + peptideMatch.getPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, false) + "', type:'Peptide'};\n");
                             } else {
                                 nodeWriter.write(peptideKey + "\t"
-                                        + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), false, false, true, false)
-                                        + "\tpeptide" + "\t" + psParameter.getMatchValidationLevel() + "\t" + peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences()) + "\n"); // @TODO: add more information?
+                                        + peptideMatch.getPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, false)
+                                        + "\tpeptide" + "\t" + psParameter.getMatchValidationLevel() + "\t" + peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences()) + "\n"); // @TODO: add more information?
                             }
 
                             // write the peptide to protein edge and the protein nodes
-                            for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                            for (String protein : peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
 
                                 // write the protein node
                                 if (!proteinsAdded.contains(protein)) {
                                     proteinsAdded.add(protein);
-                                    ProteinMatch proteinMatch = (ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(protein);
+                                    ProteinMatch proteinMatch = (ProteinMatch) peptideShakerGUI.getIdentification().retrieveObject(protein);
                                     if (proteinMatch != null) {
-                                        psParameter = (PSParameter)proteinMatch.getUrParam(psParameter);
+                                        psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
 
                                         if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
                                             nodeWriter.write("create n={id:'" + protein + "', name:'" + protein + "', type:'Protein'};\n");

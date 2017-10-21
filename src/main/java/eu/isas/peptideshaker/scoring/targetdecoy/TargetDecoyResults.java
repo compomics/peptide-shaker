@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
-import com.compomics.util.db.ObjectsDB;
-import com.compomics.util.IdObject;
+import com.compomics.util.db.object.ObjectsDB;
+import com.compomics.util.db.object.DbObject;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import java.io.Serializable;
 
@@ -11,7 +11,7 @@ import java.io.Serializable;
  *
  * @author Marc Vaudel
  */
-public class TargetDecoyResults extends IdObject implements Serializable {
+public class TargetDecoyResults extends DbObject implements Serializable {
 
     /**
      * Serial version UID for post-serialization compatibility.

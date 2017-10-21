@@ -1,9 +1,9 @@
 package eu.isas.peptideshaker.followup;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.Enzyme;
-import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.ions.ElementaryIon;
+import com.compomics.util.experiment.biology.enzymes.Enzyme;
+import com.compomics.util.experiment.biology.proteins.Peptide;
+import com.compomics.util.experiment.biology.ions.impl.ElementaryIon;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
@@ -14,12 +14,12 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
-import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
-import com.compomics.util.preferences.DigestionPreferences;
-import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.parameters.identification.search.DigestionParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
@@ -158,13 +158,11 @@ public class ProgenesisExcelExport {
         parameters.add(new PSParameter());
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
 
-        while (proteinMatchesIterator.hasNext()) {
-
-            // get the protein match
-            ProteinMatch proteinMatch = proteinMatchesIterator.next();
+        ProteinMatch proteinMatch;
+        while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
             // insert the protein details
-            insertProteinDetails(proteinMatch.getMainMatch());
+            insertProteinDetails(proteinMatch.getLeadingAccession());
 
             // create peptide header row
             createPeptideHeader();
@@ -174,9 +172,8 @@ public class ProgenesisExcelExport {
             PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), waitingHandler);
 
             // print the peptide details
-            while (peptideMatchesIterator.hasNext()) {
-
-                PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            PeptideMatch peptideMatch;
+            while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
                 // insert peptide data
                 insertPeptideData(peptideMatch);
@@ -233,7 +230,7 @@ public class ProgenesisExcelExport {
      */
     private void insertPeptideData(PeptideMatch peptideMatch) throws Exception {
 
-        Peptide peptide = peptideMatch.getTheoreticPeptide();
+        Peptide peptide = peptideMatch.getPeptide();
         ArrayList<String> proteinAccessions = peptide.getParentProteins(identificationParameters.getSequenceMatchingPreferences());
         StringBuilder proteinAccessionsAsString = new StringBuilder();
         for (String proteinAccession : proteinAccessions) {
@@ -246,20 +243,18 @@ public class ProgenesisExcelExport {
 
         ArrayList<String> spectrumKeys = peptideMatch.getSpectrumMatchesKeys();
         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<>(1);
-        parameters.add(psParameter);
 
         PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, waitingHandler);
+        SpectrumMatch spectrumMatch;
 
-        while (psmIterator.hasNext()) {
+        while ((spectrumMatch = psmIterator.next()) != null) {
 
             if (waitingHandler.isRunCanceled()) {
                 break;
             }
 
-            SpectrumMatch spectrumMatch = psmIterator.next();
             String spectrumKey = spectrumMatch.getKey();
-            psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
+            psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
 
             if (spectrumMatch.getBestPeptideAssumption() != null) { // Should always be the case
 
@@ -349,7 +344,7 @@ public class ProgenesisExcelExport {
                 cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 
                 cell = rowHead.createCell(column++);
-                cell.setCellValue(peptideMatch.getTheoreticPeptide().getMass()
+                cell.setCellValue(peptideMatch.getPeptide().getMass()
                         + ElementaryIon.proton.getTheoreticMass()); // theoretical mass for single charge: MH+ [Da]
                 cell.setCellStyle(peptideRowCellStyle);
                 cell.setCellType(Cell.CELL_TYPE_NUMERIC);
@@ -373,7 +368,7 @@ public class ProgenesisExcelExport {
                 cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 
                 cell = rowHead.createCell(column++);
-                DigestionPreferences digestionPreferences = identificationParameters.getSearchParameters().getDigestionPreferences();
+                DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
                 Integer nMissedCleavages = peptide.getNMissedCleavages(digestionPreferences);
                 if (nMissedCleavages == null) {
                     nMissedCleavages = 0;
@@ -423,7 +418,7 @@ public class ProgenesisExcelExport {
         cell.setCellStyle(borderedCellStyle);
 
         cell = rowHead.createCell(column++);
-        cell.setCellValue("ΔCn");
+        cell.setCellValue("Î”Cn");
         cell.setCellStyle(borderedCellStyle);
 
         cell = rowHead.createCell(column++);
@@ -451,7 +446,7 @@ public class ProgenesisExcelExport {
         cell.setCellStyle(borderedCellStyle);
 
         cell = rowHead.createCell(column++);
-        cell.setCellValue("ΔM [ppm]");
+        cell.setCellValue("Î”M [ppm]");
         cell.setCellStyle(borderedCellStyle);
 
         cell = rowHead.createCell(column++);
@@ -563,7 +558,7 @@ public class ProgenesisExcelExport {
         if (peptide.isModified()) {
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
                 int site = modificationMatch.getModificationSite();
-                String ptmName = modificationMatch.getTheoreticPtm();
+                String ptmName = modificationMatch.getModification();
 
                 if (result.length() > 0) {
                     result.append("; ");

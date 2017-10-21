@@ -1,29 +1,29 @@
 package eu.isas.peptideshaker.protein_inference;
 
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.biology.AminoAcidPattern;
-import com.compomics.util.experiment.biology.AminoAcidSequence;
-import com.compomics.util.experiment.biology.PTM;
-import com.compomics.util.experiment.biology.PTMFactory;
-import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidPattern;
+import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidSequence;
+import com.compomics.util.experiment.biology.modifications.Modification;
+import com.compomics.util.experiment.biology.modifications.ModificationFactory;
+import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
-import com.compomics.util.experiment.identification.identification_parameters.tool_specific.PepnovoParameters;
+import com.compomics.util.parameters.identification.tool_specific.PepnovoParameters;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.experiment.identification.amino_acid_tags.TagComponent;
-import com.compomics.util.experiment.biology.MassGap;
-import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.identification.amino_acid_tags.MassGap;
+import com.compomics.util.experiment.massspectrometry.spectra.MSnSpectrum;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
-import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
+import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -49,7 +49,7 @@ public class TagMapper {
     /**
      * The PTM factory.
      */
-    private PTMFactory ptmFactory = PTMFactory.getInstance();
+    private ModificationFactory ptmFactory = ModificationFactory.getInstance();
     /**
      * The identification parameters.
      */
@@ -118,7 +118,7 @@ public class TagMapper {
 
         com.compomics.util.experiment.identification.protein_inference.PeptideMapper peptideMapper = sequenceFactory.getDefaultPeptideMapper();
         MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
-        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = spectrumMatch.getAssumptionsMap();
         for (int advocateId : assumptionsMap.keySet()) {
@@ -190,7 +190,7 @@ public class TagMapper {
     private void mapPtmsForTag(Tag tag, int advocateId) throws IOException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        PtmSettings modificationProfile = searchParameters.getPtmSettings();
+        ModificationParameters modificationProfile = searchParameters.getModificationParameters();
         // add the fixed PTMs
         ptmFactory.checkFixedModifications(modificationProfile, tag, identificationParameters.getSequenceMatchingPreferences());
 
@@ -204,13 +204,13 @@ public class TagMapper {
                     for (ModificationMatch modificationMatch : aminoAcidPattern.getModificationsAt(aa)) {
                         if (modificationMatch.getVariable()) {
                             if (advocateId == Advocate.direcTag.getIndex()) {
-                                Integer directagIndex = new Integer(modificationMatch.getTheoreticPtm());
+                                Integer directagIndex = new Integer(modificationMatch.getModification());
                                 String utilitiesPtmName = modificationProfile.getVariableModifications().get(directagIndex);
                                 if (utilitiesPtmName == null) {
                                     throw new IllegalArgumentException("DirecTag PTM " + directagIndex + " not recognized.");
                                 }
-                                modificationMatch.setTheoreticPtm(utilitiesPtmName);
-                                PTM ptm = ptmFactory.getPTM(utilitiesPtmName);
+                                modificationMatch.setModification(utilitiesPtmName);
+                                Modification ptm = ptmFactory.getModification(utilitiesPtmName);
                                 if (ptm.getPattern() != null) {
                                     ArrayList<Character> aaAtTarget = ptm.getPattern().getAminoAcidsAtTarget();
                                     if (aaAtTarget.size() > 1) {
@@ -220,13 +220,13 @@ public class TagMapper {
                                     aminoAcidPattern.setTargeted(aaIndex, aaAtTarget);
                                 }
                             } else if (advocateId == Advocate.pepnovo.getIndex()) {
-                                String pepnovoPtmName = modificationMatch.getTheoreticPtm();
+                                String pepnovoPtmName = modificationMatch.getModification();
                                 PepnovoParameters pepnovoParameters = (PepnovoParameters) searchParameters.getIdentificationAlgorithmParameter(advocateId);
                                 String utilitiesPtmName = pepnovoParameters.getUtilitiesPtmName(pepnovoPtmName);
                                 if (utilitiesPtmName == null) {
                                     throw new IllegalArgumentException("PepNovo+ PTM " + pepnovoPtmName + " not recognized.");
                                 }
-                                modificationMatch.setTheoreticPtm(utilitiesPtmName);
+                                modificationMatch.setModification(utilitiesPtmName);
                             } else {
                                 Advocate notImplemented = Advocate.getAdvocate(advocateId);
                                 if (notImplemented == null) {
@@ -245,13 +245,13 @@ public class TagMapper {
                     for (ModificationMatch modificationMatch : aminoAcidSequence.getModificationsAt(aa)) {
                         if (modificationMatch.getVariable()) {
                             if (advocateId == Advocate.pepnovo.getIndex()) {
-                                String pepnovoPtmName = modificationMatch.getTheoreticPtm();
+                                String pepnovoPtmName = modificationMatch.getModification();
                                 PepnovoParameters pepnovoParameters = (PepnovoParameters) searchParameters.getIdentificationAlgorithmParameter(advocateId);
                                 String utilitiesPtmName = pepnovoParameters.getUtilitiesPtmName(pepnovoPtmName);
                                 if (utilitiesPtmName == null) {
                                     throw new IllegalArgumentException("PepNovo+ PTM " + pepnovoPtmName + " not recognized.");
                                 }
-                                modificationMatch.setTheoreticPtm(utilitiesPtmName);
+                                modificationMatch.setModification(utilitiesPtmName);
                             } else if (advocateId == Advocate.direcTag.getIndex()
                                     || advocateId == Advocate.pNovo.getIndex()
                                     || advocateId == Advocate.novor.getIndex()) {

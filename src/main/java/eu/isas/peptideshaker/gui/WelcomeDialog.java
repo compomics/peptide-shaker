@@ -8,14 +8,14 @@ import com.compomics.software.autoupdater.MavenJarFile;
 import com.compomics.software.autoupdater.WebDAO;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.software.dialogs.JavaSettingsDialog;
+import com.compomics.software.dialogs.JavaParametersDialog;
 import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.Util;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
-import com.compomics.util.preferences.LastSelectedFolder;
-import com.compomics.util.preferences.UtilitiesUserPreferences;
+import com.compomics.util.io.file.LastSelectedFolder;
+import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideReshakeGUI;
@@ -72,7 +72,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         }
         
         // incrementing the counter for a new PeptideShaker start
-        if (peptideShakerGUI.getUtilitiesUserPreferences().isAutoUpdate()) {
+        if (peptideShakerGUI.getUtilitiesUserParameters().isAutoUpdate()) {
             Util.sendGAUpdate("UA-36198780-1", "toolstart", "peptide-shaker-" + PeptideShaker.getVersion());
         }
 
@@ -697,8 +697,8 @@ public class WelcomeDialog extends javax.swing.JDialog {
         new Thread(new Runnable() {
             public void run() {
                 // check if searchgui is installed
-                if (peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath() == null
-                        || !(new File(peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath()).exists())) {
+                if (peptideShakerGUI.getUtilitiesUserParameters().getSearchGuiPath() == null
+                        || !(new File(peptideShakerGUI.getUtilitiesUserParameters().getSearchGuiPath()).exists())) {
                     try {
                         SearchGuiSetupDialog searchGuiSetupDialog = new SearchGuiSetupDialog(WelcomeDialog.this, true);
                         boolean canceled = searchGuiSetupDialog.isDialogCanceled();
@@ -715,7 +715,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 } else {
 
                     // check the searchgui version
-                    boolean newVersion = checkForNewSearchGUIVersion(peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath());
+                    boolean newVersion = checkForNewSearchGUIVersion(peptideShakerGUI.getUtilitiesUserParameters().getSearchGuiPath());
                     boolean openReshake = true;
 
                     if (newVersion) {
@@ -728,7 +728,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                             boolean success = downloadSearchGUI();
 
                             if (success) {
-                                peptideShakerGUI.setUtilitiesUserPreferences(UtilitiesUserPreferences.loadUserPreferences());
+                                peptideShakerGUI.setUtilitiesUserPreferences(UtilitiesUserParameters.loadUserParameters());
                             } else {
                                 openReshake = false;
                             }
@@ -829,7 +829,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void javaSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_javaSettingsMenuItemActionPerformed
-        new JavaSettingsDialog(dummyParentFrame, peptideShakerGUI, this, "PeptideShaker", true);
+        new JavaParametersDialog(dummyParentFrame, peptideShakerGUI, this, "PeptideShaker", true);
     }//GEN-LAST:event_javaSettingsMenuItemActionPerformed
 
     /**
@@ -888,7 +888,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void lowMemoryWarningLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lowMemoryWarningLabelMouseReleased
-        new JavaSettingsDialog(dummyParentFrame, peptideShakerGUI, this, "PeptideShaker", true);
+        new JavaParametersDialog(dummyParentFrame, peptideShakerGUI, this, "PeptideShaker", true);
     }//GEN-LAST:event_lowMemoryWarningLabelMouseReleased
 
     /**
@@ -979,7 +979,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         boolean firstTimeInstall = true;
         String installPath = null;
 
-        UtilitiesUserPreferences utilitiesUserPreferences = peptideShakerGUI.getUtilitiesUserPreferences();
+        UtilitiesUserParameters utilitiesUserPreferences = peptideShakerGUI.getUtilitiesUserParameters();
 
         if (utilitiesUserPreferences.getSearchGuiPath() != null) {
             if (new File(utilitiesUserPreferences.getSearchGuiPath()).getParentFile() != null
@@ -1029,7 +1029,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                             downloadLatestZipFromRepo(downloadFolder, "SearchGUI", "eu.isas.searchgui", "SearchGUI", "searchgui.ico",
                                     null, jarRepository, false, true, new GUIFileDAO(), progressDialog);
                         } else {
-                            downloadLatestZipFromRepo(new File(peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath()).toURI().toURL(), "SearchGUI", false,
+                            downloadLatestZipFromRepo(new File(peptideShakerGUI.getUtilitiesUserParameters().getSearchGuiPath()).toURI().toURL(), "SearchGUI", false,
                                     "searchgui.ico", null, jarRepository, false, true, new GUIFileDAO(), progressDialog);
                         }
                     } catch (IOException e) {

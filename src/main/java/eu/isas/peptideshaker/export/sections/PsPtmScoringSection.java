@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.preferences.PTMScoringPreferences;
+import com.compomics.util.parameters.identification.advanced.ModificationLocalizationParameters;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import eu.isas.peptideshaker.export.exportfeatures.PsPtmScoringFeature;
@@ -65,7 +65,7 @@ public class PsPtmScoringSection {
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file
      */
-    public void writeSection(PTMScoringPreferences ptmScoringPreferences, WaitingHandler waitingHandler) throws IOException {
+    public void writeSection(ModificationLocalizationParameters ptmScoringPreferences, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);

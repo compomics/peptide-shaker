@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
-import com.compomics.util.experiment.biology.PTM;
-import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.biology.modifications.Modification;
+import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -30,7 +30,7 @@ public class ModificationDialog extends javax.swing.JDialog {
      * @param modal if the dialog is modal or not
      * @param unknownPTM the unknown modification
      */
-    public ModificationDialog(java.awt.Frame parent, boolean modal, PTM unknownPTM) {
+    public ModificationDialog(java.awt.Frame parent, boolean modal, Modification unknownPTM) {
         super(parent, modal);
         loadModifications();
         initComponents();
@@ -178,7 +178,7 @@ public class ModificationDialog extends javax.swing.JDialog {
      */
     private void loadModifications() {
         modifications = new ArrayList<>();
-        for (String ptm : PTMFactory.getInstance().getPTMs()) {
+        for (String ptm : ModificationFactory.getInstance().getPTMs()) {
             modifications.add(ptm);
         }
         Collections.sort(modifications);

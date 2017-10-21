@@ -2,13 +2,13 @@ package eu.isas.peptideshaker.followup;
 
 import com.compomics.util.Util;
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.biology.AminoAcid;
-import com.compomics.util.experiment.biology.AminoAcidPattern;
-import com.compomics.util.experiment.biology.Atom;
-import com.compomics.util.experiment.biology.Enzyme;
-import com.compomics.util.experiment.biology.PTM;
-import com.compomics.util.experiment.biology.PTMFactory;
-import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.aminoacids.AminoAcid;
+import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidPattern;
+import com.compomics.util.experiment.biology.atoms.Atom;
+import com.compomics.util.experiment.biology.enzymes.Enzyme;
+import com.compomics.util.experiment.biology.modifications.Modification;
+import com.compomics.util.experiment.biology.modifications.ModificationFactory;
+import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
@@ -17,12 +17,11 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.experiment.personalization.UrParameter;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.io.export.xml.SimpleXmlWriter;
-import com.compomics.util.preferences.DigestionPreferences;
-import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.parameters.identification.search.DigestionParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
@@ -51,7 +50,7 @@ public class PepXmlExport {
     /**
      * The PTM factory.
      */
-    private PTMFactory ptmFactory = PTMFactory.getInstance();
+    private ModificationFactory ptmFactory = ModificationFactory.getInstance();
     /**
      * The sequence factory.
      */
@@ -225,10 +224,10 @@ public class PepXmlExport {
 
             sw.writeLine(runStart.toString());
 
-            DigestionPreferences digestionPreferences = identificationParameters.getSearchParameters().getDigestionPreferences();
-            if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+            DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
+            if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
                 for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
-                    DigestionPreferences.Specificity specificity = digestionPreferences.getSpecificity(enzyme.getName());
+                    DigestionParameters.Specificity specificity = digestionPreferences.getSpecificity(enzyme.getName());
                     writeEnzyme(sw, enzyme, specificity);
                 }
             }
@@ -252,7 +251,7 @@ public class PepXmlExport {
      * @throws IOException exception thrown whenever an error is encountered
      * while reading or writing a file
      */
-    private void writeEnzyme(SimpleXmlWriter sw, Enzyme enzyme, DigestionPreferences.Specificity specificity) throws IOException {
+    private void writeEnzyme(SimpleXmlWriter sw, Enzyme enzyme, DigestionParameters.Specificity specificity) throws IOException {
 
         sw.writeLineIncreasedIndent("<sample_enzyme name=\"" + enzyme.getName() + "\" fidelity=\"" + specificity + "\">");
 
@@ -308,12 +307,12 @@ public class PepXmlExport {
     private void writeSearchSummary(SimpleXmlWriter sw, IdentificationParameters identificationParameters) throws IOException {
         sw.writeLine("<search_summary precursor_mass_type=\"monoisotopic\" fragment_mass_type=\"monoisotopic\">");
         sw.increaseIndent();
-        for (String ptmName : identificationParameters.getSearchParameters().getPtmSettings().getFixedModifications()) {
-            PTM ptm = ptmFactory.getPTM(ptmName);
+        for (String ptmName : identificationParameters.getSearchParameters().getModificationParameters().getFixedModifications()) {
+            Modification ptm = ptmFactory.getModification(ptmName);
             sw.writeLine(getPtmLine(ptm, false));
         }
-        for (String ptmName : identificationParameters.getSearchParameters().getPtmSettings().getAllNotFixedModifications()) {
-            PTM ptm = ptmFactory.getPTM(ptmName);
+        for (String ptmName : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
+            Modification ptm = ptmFactory.getModification(ptmName);
             sw.writeLine(getPtmLine(ptm, true));
         }
         sw.writeLineDecreasedIndent("</search_summary>");
@@ -327,11 +326,11 @@ public class PepXmlExport {
      *
      * @return the line for a PTM
      */
-    private String getPtmLine(PTM ptm, boolean variable) {
+    private String getPtmLine(Modification ptm, boolean variable) {
 
         StringBuilder modificationLine = new StringBuilder();
-        int ptmType = ptm.getType();
-        if (ptmType == PTM.MODAA || ptmType == PTM.MODCAA || ptmType == PTM.MODCPAA || ptmType == PTM.MODNAA || ptmType == PTM.MODNPAA) {
+        int ptmType = ptm.getModificationType();
+        if (ptmType == Modification.MODAA || ptmType == Modification.MODCAA || ptmType == Modification.MODCPAA || ptmType == Modification.MODNAA || ptmType == Modification.MODNPAA) {
             modificationLine.append("<aminoacid_modification ");
             AminoAcidPattern aminoAcidPattern = ptm.getPattern();
             modificationLine.append("aminoacid=\"").append(aminoAcidPattern.asSequence()).append("\" ");
@@ -359,10 +358,10 @@ public class PepXmlExport {
                 modificationLine.append("terminus=\"n\" ");
             }
             modificationLine.append("massdiff=\"").append(ptm.getMass()).append("\" ");
-            if (ptmType == PTM.MODC) {
+            if (ptmType == Modification.MODC) {
                 modificationLine.append("protein_terminus=\"c\" ");
             }
-            if (ptmType == PTM.MODN) {
+            if (ptmType == Modification.MODN) {
                 modificationLine.append("protein_terminus=\"n\" ");
             }
             if (ptm.isNTerm()) {
@@ -411,8 +410,8 @@ public class PepXmlExport {
      */
     private void writeSpectrumQueries(SimpleXmlWriter sw, Identification identification, IdentificationParameters identificationParameters, String spectrumFile, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         PsmIterator psmIterator = identification.getPsmIterator(waitingHandler, "spectrumFile == '" + spectrumFile + "'");
-        while (psmIterator.hasNext()) {
-            SpectrumMatch spectrumMatch = psmIterator.next();
+        SpectrumMatch spectrumMatch;
+        while ((spectrumMatch = psmIterator.next()) != null) {
             String spectrumKey = spectrumMatch.getKey();
             String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
             StringBuilder spectrumQueryStart = new StringBuilder();
@@ -540,13 +539,13 @@ public class PepXmlExport {
             Double nTermMass = null;
             Double cTermMass = null;
             for (ModificationMatch modificationMatch : modificationMatches) {
-                PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
-                if (ptm.getType() == PTM.MODN || ptm.getType() == PTM.MODNP) {
+                Modification ptm = ptmFactory.getModification(modificationMatch.getModification());
+                if (ptm.getModificationType() == Modification.MODN || ptm.getModificationType() == Modification.MODNP) {
                     if (nTermMass == null) {
                         nTermMass = Atom.H.getMonoisotopicMass();
                     }
                     nTermMass += ptm.getMass();
-                } else if (ptm.getType() == PTM.MODC || ptm.getType() == PTM.MODCP) {
+                } else if (ptm.getModificationType() == Modification.MODC || ptm.getModificationType() == Modification.MODCP) {
                     if (cTermMass == null) {
                         cTermMass = Atom.H.getMonoisotopicMass() + Atom.O.getMonoisotopicMass();
                     }
@@ -620,7 +619,7 @@ public class PepXmlExport {
             for (ModificationMatch modificationMatch : modificationMatches) {
                 if (modificationMatch.getVariable()) {
                     parameterLine = new StringBuilder();
-                    parameterLine.append("<parameter name=\"ptm\" value=\"").append(modificationMatch.getTheoreticPtm()).append(" (").append(modificationMatch.getModificationSite()).append(")").append("\"/>");
+                    parameterLine.append("<parameter name=\"ptm\" value=\"").append(modificationMatch.getModification()).append(" (").append(modificationMatch.getModificationSite()).append(")").append("\"/>");
                     sw.writeLine(parameterLine.toString());
                 }
             }

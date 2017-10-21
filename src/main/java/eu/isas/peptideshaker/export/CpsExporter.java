@@ -1,13 +1,13 @@
 package eu.isas.peptideshaker.export;
 
-import com.compomics.util.BlobObject;
+import com.compomics.util.db.object.objects.BlobObject;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
 import eu.isas.peptideshaker.parameters.PeptideShakerSettings;

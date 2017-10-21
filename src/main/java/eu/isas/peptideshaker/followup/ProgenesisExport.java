@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.followup;
 
-import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
@@ -9,9 +9,9 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import java.io.BufferedWriter;
@@ -57,7 +57,7 @@ public class ProgenesisExport {
      * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public static void writeProgenesisExport(File destinationFile, Identification identification, ExportType exportType,
-            WaitingHandler waitingHandler, ArrayList<String> targetedPTMs, SequenceMatchingPreferences sequenceMatchingPreferences)
+            WaitingHandler waitingHandler, ArrayList<String> targetedPTMs, SequenceMatchingParameters sequenceMatchingPreferences)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
         if (exportType == ExportType.confident_ptms) {
@@ -66,7 +66,6 @@ public class ProgenesisExport {
             }
         }
 
-        SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         PSParameter psParameter = new PSParameter();
 
         if (exportType == ExportType.validated_psms_peptides || exportType == ExportType.validated_psms_peptides_proteins || exportType == ExportType.confident_ptms) {
@@ -113,9 +112,9 @@ public class ProgenesisExport {
                 }
 
                 PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
-                while (psmIterator.hasNext()) {
+                    SpectrumMatch spectrumMatch;
+                while ((spectrumMatch = psmIterator.next()) != null) {
 
-                    SpectrumMatch spectrumMatch = psmIterator.next();
                     String spectrumKey = spectrumMatch.getKey();
 
                     if (identification.matchExists(spectrumKey)) {
@@ -201,7 +200,7 @@ public class ProgenesisExport {
         boolean found = false, confident = true;
         if (peptide.isModified()) {
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                if (targetedPTMs.contains(modificationMatch.getTheoreticPtm())) {
+                if (targetedPTMs.contains(modificationMatch.getModification())) {
                     found = true;
                     if (!modificationMatch.getConfident()) {
                         confident = false;
@@ -229,7 +228,7 @@ public class ProgenesisExport {
      * @throws InterruptedException thrown if an InterruptedException occurs
      * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
-    private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences)
+    private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification, SequenceMatchingParameters sequenceMatchingPreferences)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         writePsm(writer, spectrumKey, null, identification, sequenceMatchingPreferences);
     }
@@ -252,7 +251,7 @@ public class ProgenesisExport {
      * @throws InterruptedException thrown if an InterruptedException occurs
      * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
-    private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences)
+    private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification, SequenceMatchingParameters sequenceMatchingPreferences)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(spectrumKey);
@@ -275,10 +274,10 @@ public class ProgenesisExport {
             if (peptide.isModified()) {
                 for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
                     if (modificationMatch.getVariable()) {
-                        if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                            modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<>());
+                        if (!modMap.containsKey(modificationMatch.getModification())) {
+                            modMap.put(modificationMatch.getModification(), new ArrayList<>());
                         }
-                        modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
+                        modMap.get(modificationMatch.getModification()).add(modificationMatch.getModificationSite());
                     }
                 }
             }

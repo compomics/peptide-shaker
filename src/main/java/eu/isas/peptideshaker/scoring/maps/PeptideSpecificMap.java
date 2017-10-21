@@ -1,13 +1,13 @@
 package eu.isas.peptideshaker.scoring.maps;
 
-import com.compomics.util.experiment.biology.PTM;
-import com.compomics.util.experiment.biology.PTMFactory;
-import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.modifications.Modification;
+import com.compomics.util.experiment.biology.modifications.ModificationFactory;
+import com.compomics.util.experiment.biology.proteins.Peptide;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
-import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.IOException;
 import java.io.Serializable;
@@ -105,13 +105,13 @@ public class PeptideSpecificMap implements Serializable {
      * @throws IllegalArgumentException thrown if an IllegalArgumentException
      * occurs
      */
-    public void addPoint(double probabilityScore, PeptideMatch peptideMatch, SequenceMatchingPreferences sequenceMatchingPreferences)
+    public void addPoint(double probabilityScore, PeptideMatch peptideMatch, SequenceMatchingParameters sequenceMatchingPreferences)
             throws IOException, InterruptedException, SQLException, ClassNotFoundException {
         String key = getKey(peptideMatch);
         if (!peptideMaps.containsKey(key)) {
             peptideMaps.put(key, new TargetDecoyMap());
         }
-        peptideMaps.get(key).put(probabilityScore, peptideMatch.getTheoreticPeptide().isDecoy(sequenceMatchingPreferences));
+        peptideMaps.get(key).put(probabilityScore, peptideMatch.getPeptide().isDecoy(sequenceMatchingPreferences));
     }
 
     /**
@@ -173,14 +173,14 @@ public class PeptideSpecificMap implements Serializable {
      * @return the corresponding key
      */
     public String getKey(PeptideMatch peptideMatch) {
-        PTMFactory ptmFactory = PTMFactory.getInstance();
-        PTM ptm;
-        Peptide peptide = peptideMatch.getTheoreticPeptide();
+        ModificationFactory ptmFactory = ModificationFactory.getInstance();
+        Modification ptm;
+        Peptide peptide = peptideMatch.getPeptide();
         ArrayList<Double> modificationMasses = new ArrayList<>(peptide.getNModifications());
         if (peptide.isModified()) {
-            for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
-                if (modificationMatch.getTheoreticPtm() != null && modificationMatch.getVariable()) {
-                    ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
+            for (ModificationMatch modificationMatch : peptideMatch.getPeptide().getModificationMatches()) {
+                if (modificationMatch.getModification() != null && modificationMatch.getVariable()) {
+                    ptm = ptmFactory.getModification(modificationMatch.getModification());
                     modificationMasses.add(ptm.getMass());
                 }
             }
@@ -242,7 +242,7 @@ public class PeptideSpecificMap implements Serializable {
      * @param key the key of interest
      * @return an intelligible string for the key of the map
      */
-    public static String getKeyName(PtmSettings modificationProfile, String key) {
+    public static String getKeyName(ModificationParameters modificationProfile, String key) {
 
         if (key.equals("")) {
             return "Unmodified";
@@ -250,7 +250,7 @@ public class PeptideSpecificMap implements Serializable {
             return "Other";
         } else {
 
-            PTMFactory ptmFactory = PTMFactory.getInstance();
+            ModificationFactory ptmFactory = ModificationFactory.getInstance();
             String result = "";
             String[] split = key.split(SEPARATOR);
             boolean shortNames = split.length > 1;
@@ -266,7 +266,7 @@ public class PeptideSpecificMap implements Serializable {
                 try {
                     Double mass = new Double(massString);
                     for (String ptmName : modificationProfile.getAllNotFixedModifications()) {
-                        PTM ptm = ptmFactory.getPTM(ptmName);
+                        Modification ptm = ptmFactory.getModification(ptmName);
                         if (mass == ptm.getMass()) {
                             if (shortNames && ptm.getShortName() != null) {
                                 result += ptm.getShortName();

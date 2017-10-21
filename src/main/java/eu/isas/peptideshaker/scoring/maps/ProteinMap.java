@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.scoring.maps;
 
-import com.compomics.util.db.ObjectsDB;
-import com.compomics.util.IdObject;
+import com.compomics.util.db.object.ObjectsDB;
+import com.compomics.util.db.object.DbObject;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 
@@ -11,7 +11,7 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
  *
  * @author Marc Vaudel
  */
-public class ProteinMap extends IdObject {
+public class ProteinMap extends DbObject {
 
     /**
      * Serial version UID for post-serialization compatibility.

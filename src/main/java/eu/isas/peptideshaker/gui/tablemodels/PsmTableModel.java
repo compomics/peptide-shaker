@@ -3,14 +3,16 @@ package eu.isas.peptideshaker.gui.tablemodels;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.parameters.identification.search.SearchParameters;
+import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
-import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
+import com.compomics.util.general.BoxedObject;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
-import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.parameters.PSParameter;
@@ -21,6 +23,7 @@ import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 /**
  * Table model for a set of peptide to spectrum matches.
@@ -75,7 +78,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
      * displayed instead of the confidence
      * @param exceptionHandler handler for the exceptions
      */
-    public PsmTableModel(Identification identification, DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters, 
+    public PsmTableModel(Identification identification, DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters,
             ArrayList<String> psmKeys, boolean displayScores, ExceptionHandler exceptionHandler) {
         this.identification = identification;
         this.displayFeaturesGenerator = displayFeaturesGenerator;
@@ -100,14 +103,14 @@ public class PsmTableModel extends SelfUpdatingTableModel {
      * @param displayScores boolean indicating whether the scores should be
      * displayed instead of the confidence
      */
-    public void updateDataModel(Identification identification, DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters, 
+    public void updateDataModel(Identification identification, DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters,
             ArrayList<String> psmKeys, boolean displayScores) {
         this.identification = identification;
         this.displayFeaturesGenerator = displayFeaturesGenerator;
         this.identificationParameters = identificationParameters;
         this.psmKeys = psmKeys;
         this.showScores = displayScores;
-        
+
         PSMaps pSMaps = new PSMaps();
         pSMaps = (PSMaps) identification.getUrParam(pSMaps);
         inputMap = pSMaps.getInputMap();
@@ -179,12 +182,12 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                 String psmKey = psmKeys.get(viewIndex);
                 boolean useDB = !isSelfUpdating();
 
-                SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(psmKey);
+                SpectrumMatch spectrumMatch = (SpectrumMatch) identification.retrieveObject(psmKey);
                 switch (column) {
                     case 0:
                         return viewIndex + 1;
                     case 1:
-                        PSParameter psParameter = (PSParameter)spectrumMatch.getUrParam(new PSParameter());
+                        PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(new PSParameter());
                         if (psParameter == null) {
                             if (isScrolling()) {
                                 return null;
@@ -251,7 +254,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                             throw new IllegalArgumentException("No best assumption found for spectrum " + psmKey + ".");
                         }
                     case 6:
-                        psParameter = (PSParameter)spectrumMatch.getUrParam(new PSParameter());
+                        psParameter = (PSParameter) spectrumMatch.getUrParam(new PSParameter());
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
@@ -270,7 +273,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                             return null;
                         }
                     case 7:
-                        psParameter = (PSParameter)spectrumMatch.getUrParam(new PSParameter());
+                        psParameter = (PSParameter) spectrumMatch.getUrParam(new PSParameter());
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
@@ -299,10 +302,10 @@ public class PsmTableModel extends SelfUpdatingTableModel {
             return "";
         }
     }
-    
+
     /**
      * Indicates whether the table content was instantiated.
-     * 
+     *
      * @return a boolean indicating whether the table content was instantiated.
      */
     public boolean isInstantiated() {
@@ -332,25 +335,14 @@ public class PsmTableModel extends SelfUpdatingTableModel {
 
     @Override
     protected int loadDataForRows(ArrayList<Integer> rows, WaitingHandler waitingHandler) {
+
+        ArrayList<String> keys = rows.stream().map(i -> psmKeys.get(i)).collect(Collectors.toCollection(ArrayList::new));
+        
         try {
-            ArrayList<String> tempPsmKeys = new ArrayList<>();
-            for (int i : rows) {
-                tempPsmKeys.add(psmKeys.get(i));
-            }
 
-            ArrayList<UrParameter> parameters = new ArrayList<>(1);
-            parameters.add(new PSParameter());
-            PsmIterator psmIterator = identification.getPsmIterator(tempPsmKeys, waitingHandler);
-
-            int i = 0;
-            while (psmIterator.hasNext()) {
-                psmIterator.next();
-                if (waitingHandler.isRunCanceled()) {
-                    return rows.get(i);
-                }
-                i++;
-            }
+            identification.loadObjects(keys, waitingHandler, false);
             return rows.get(rows.size() - 1);
+
         } catch (SQLNonTransientConnectionException e) {
             // connection has been closed
             return rows.get(0);

@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.software.settings.UtilitiesPathPreferences;
+import com.compomics.software.settings.UtilitiesPathParameters;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -80,11 +80,11 @@ public class PathSettingsCLI {
             try {
                 PeptideShakerPathPreferences.PeptideShakerPathKey peptideShakerPathKey = PeptideShakerPathPreferences.PeptideShakerPathKey.getKeyFromId(id);
                 if (peptideShakerPathKey == null) {
-                    UtilitiesPathPreferences.UtilitiesPathKey utilitiesPathKey = UtilitiesPathPreferences.UtilitiesPathKey.getKeyFromId(id);
+                    UtilitiesPathParameters.UtilitiesPathKey utilitiesPathKey = UtilitiesPathParameters.UtilitiesPathKey.getKeyFromId(id);
                     if (utilitiesPathKey == null) {
                         System.out.println("Path id " + id + " not recognized.");
                     } else {
-                        UtilitiesPathPreferences.setPathPreference(utilitiesPathKey, pathInput.get(id));
+                        UtilitiesPathParameters.setPathParameter(utilitiesPathKey, pathInput.get(id));
                     }
                 } else {
                     PeptideShakerPathPreferences.setPathPreference(peptideShakerPathKey, pathInput.get(id));
@@ -97,7 +97,7 @@ public class PathSettingsCLI {
         }
 
         // Write path file preference
-        File destinationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
+        File destinationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathParameters.configurationFileName);
         try {
             PeptideShakerPathPreferences.writeConfigurationToFile(destinationFile);
         } catch (Exception e) {

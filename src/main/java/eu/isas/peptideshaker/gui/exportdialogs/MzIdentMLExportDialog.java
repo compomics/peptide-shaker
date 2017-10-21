@@ -2,12 +2,12 @@ package eu.isas.peptideshaker.gui.exportdialogs;
 
 import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.Util;
-import com.compomics.util.experiment.io.identifications.MzIdentMLVersion;
+import com.compomics.util.experiment.io.identification.MzIdentMLVersion;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.export.ExportWriter;
-import com.compomics.util.preferences.LastSelectedFolder;
+import com.compomics.util.io.file.LastSelectedFolder;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.MzIdentMLExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;

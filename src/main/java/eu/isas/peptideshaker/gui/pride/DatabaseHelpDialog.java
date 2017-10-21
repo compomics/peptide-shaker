@@ -1,13 +1,13 @@
 package eu.isas.peptideshaker.gui.pride;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.protein_sequences_manager.gui.SequenceDbDetailsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
-import com.compomics.util.preferences.LastSelectedFolder;
-import com.compomics.util.preferences.UtilitiesUserPreferences;
+import com.compomics.util.io.file.LastSelectedFolder;
+import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Color;
 import java.awt.Toolkit;
@@ -318,7 +318,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
 
         LastSelectedFolder lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();
         File startLocation = null;
-        File utilitiesDbFolder = peptideShakerGUI.getUtilitiesUserPreferences().getDbFolder();
+        File utilitiesDbFolder = peptideShakerGUI.getUtilitiesUserParameters().getDbFolder();
         if (utilitiesDbFolder != null && utilitiesDbFolder.exists()) {
             startLocation = utilitiesDbFolder;
         }
@@ -326,7 +326,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
             startLocation = new File(getLastSelectedFolder(lastSelectedFolder));
         }
 
-        UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+        UtilitiesUserParameters utilitiesUserPreferences = UtilitiesUserParameters.loadUserParameters();
         if (utilitiesUserPreferences.getDbFolder() != null && utilitiesUserPreferences.getDbFolder().exists()) {
             startLocation = utilitiesUserPreferences.getDbFolder();
         }
@@ -370,7 +370,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
             targetDecoySettingsButton.setEnabled(true);
 
             // check if the database contains decoys
-            if (!file.getAbsolutePath().endsWith(peptideShakerGUI.getUtilitiesUserPreferences().getTargetDecoyFileNameSuffix() + ".fasta")) {
+            if (!file.getAbsolutePath().endsWith(peptideShakerGUI.getUtilitiesUserParameters().getTargetDecoyFileNameSuffix() + ".fasta")) {
 
                 int value = JOptionPane.showConfirmDialog(this,
                         "The selected FASTA file does not seem to contain decoy sequences.\n"
@@ -630,7 +630,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
 
                     try {
                         String newFasta = fastaInput.substring(0, fastaInput.lastIndexOf("."));
-                        newFasta += peptideShakerGUI.getUtilitiesUserPreferences().getTargetDecoyFileNameSuffix() + ".fasta";
+                        newFasta += peptideShakerGUI.getUtilitiesUserParameters().getTargetDecoyFileNameSuffix() + ".fasta";
                         progressDialog.setTitle("Appending Decoy Sequences. Please Wait...");
                         sequenceFactory.appendDecoySequences(new File(newFasta), progressDialog);
                         databaseSettingsTxt.setText(newFasta);

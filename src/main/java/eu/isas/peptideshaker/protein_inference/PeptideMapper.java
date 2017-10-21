@@ -4,8 +4,8 @@ import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
-import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import java.util.LinkedList;
 
@@ -59,7 +59,7 @@ public class PeptideMapper {
      */
     public void mapPeptides(LinkedList<SpectrumMatch> spectrumMatches, WaitingHandler waitingHandler) {
 
-        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
 
         spectrumMatches.parallelStream()
                 .flatMap(spectrumMatch -> spectrumMatch.getAllAssumptions().stream())

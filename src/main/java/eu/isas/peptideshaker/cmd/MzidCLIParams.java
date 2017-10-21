@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.util.experiment.io.identifications.MzIdentMLVersion;
+import com.compomics.util.experiment.io.identification.MzIdentMLVersion;
 import org.apache.commons.cli.Options;
 
 /**

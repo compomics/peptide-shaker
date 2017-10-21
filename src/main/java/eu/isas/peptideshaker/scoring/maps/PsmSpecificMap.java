@@ -1,11 +1,11 @@
 package eu.isas.peptideshaker.scoring.maps;
 
-import com.compomics.util.db.ObjectsDB;
-import com.compomics.util.IdObject;
+import com.compomics.util.db.object.ObjectsDB;
+import com.compomics.util.db.object.DbObject;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.IOException;
 import java.io.Serializable;
@@ -21,7 +21,7 @@ import java.util.HashSet;
  *
  * @author Marc Vaudel
  */
-public class PsmSpecificMap extends IdObject implements Serializable {
+public class PsmSpecificMap extends DbObject implements Serializable {
 
     /**
      * Serial version UID for post-serialization compatibility.
@@ -145,7 +145,7 @@ public class PsmSpecificMap extends IdObject implements Serializable {
      * @throws IllegalArgumentException thrown if an IllegalArgumentException
      * occurs
      */
-    public void addPoint(double probabilityScore, SpectrumMatch spectrumMatch, SequenceMatchingPreferences sequenceMatchingPreferences)
+    public void addPoint(double probabilityScore, SpectrumMatch spectrumMatch, SequenceMatchingParameters sequenceMatchingPreferences)
             throws IOException, InterruptedException, SQLException, ClassNotFoundException {
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
 

@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.software.settings.UtilitiesPathPreferences;
+import com.compomics.software.settings.UtilitiesPathParameters;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import java.io.File;
 import java.util.HashMap;
@@ -47,7 +47,7 @@ public class PathSettingsCLIInputBean {
                 paths.put(id, aLine.getOptionValue(id));
             }
         }
-        for (UtilitiesPathPreferences.UtilitiesPathKey utilitiesPathKey : UtilitiesPathPreferences.UtilitiesPathKey.values()) {
+        for (UtilitiesPathParameters.UtilitiesPathKey utilitiesPathKey : UtilitiesPathParameters.UtilitiesPathKey.values()) {
             String id = utilitiesPathKey.getId();
             if (aLine.hasOption(id)) {
                 paths.put(id, aLine.getOptionValue(id));

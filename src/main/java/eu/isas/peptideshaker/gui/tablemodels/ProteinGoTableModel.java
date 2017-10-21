@@ -134,12 +134,12 @@ public class ProteinGoTableModel extends DefaultTableModel {
                     case 0:
                         return row + 1;
                     case 1:
-                        String mainMatch = proteinMatch.getMainMatch();
+                        String mainMatch = proteinMatch.getLeadingAccession();
                         return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(mainMatch);
                     case 2:
                         String description = "";
                         try {
-                            description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription();
+                            description = sequenceFactory.getHeader(proteinMatch.getLeadingAccession()).getSimpleProteinDescription();
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                         }

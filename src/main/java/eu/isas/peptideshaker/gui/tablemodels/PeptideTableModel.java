@@ -1,15 +1,17 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.proteins.Peptide;
+import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.personalization.UrParameter;
+import com.compomics.util.general.BoxedObject;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
-import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
@@ -96,8 +98,8 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      * occurs
      * @throws SQLException thrown if an SQLException occurs
      */
-    public PeptideTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
-            DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters, 
+    public PeptideTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters,
             String proteinAccession, ArrayList<String> peptideKeys, boolean displayScores, ExceptionHandler exceptionHandler)
             throws IOException, InterruptedException, ClassNotFoundException, IllegalArgumentException, SQLException {
         this.identification = identification;
@@ -124,8 +126,8 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      * @param showScores boolean indicating whether the scores should be
      * displayed instead of the confidence
      */
-    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
-            DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters, 
+    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters,
             String proteinAccession, ArrayList<String> peptideKeys, boolean showScores) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
@@ -204,13 +206,13 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
             }
 
             String peptideKey = peptideKeys.get(viewIndex);
-            PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(peptideKey);
+            PeptideMatch peptideMatch = (PeptideMatch) identification.retrieveObject(peptideKey);
 
             switch (column) {
                 case 0:
                     return viewIndex + 1;
                 case 1:
-                    PSParameter psParameter = (PSParameter)peptideMatch.getUrParam(new PSParameter());
+                    PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(new PSParameter());
                     if (psParameter == null) {
                         if (isScrolling()) {
                             return null;
@@ -221,7 +223,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     }
                     return psParameter.getStarred();
                 case 2:
-                    psParameter = (PSParameter)peptideMatch.getUrParam(new PSParameter());
+                    psParameter = (PSParameter) peptideMatch.getUrParam(new PSParameter());
                     if (psParameter == null) {
                         if (isScrolling()) {
                             return null;
@@ -282,7 +284,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
                     return arrrayListDataPoints;
                 case 6:
-                    psParameter = (PSParameter)peptideMatch.getUrParam(new PSParameter());
+                    psParameter = (PSParameter) peptideMatch.getUrParam(new PSParameter());
                     if (psParameter == null) {
                         if (isScrolling) {
                             return null;
@@ -301,7 +303,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                         return null;
                     }
                 case 7:
-                    psParameter = (PSParameter)peptideMatch.getUrParam(new PSParameter());
+                    psParameter = (PSParameter) peptideMatch.getUrParam(new PSParameter());
                     if (psParameter == null) {
                         if (isScrolling) {
                             return null;
@@ -330,16 +332,16 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
             return null;
         }
     }
-    
+
     /**
      * Indicates whether the table content was instantiated.
-     * 
+     *
      * @return a boolean indicating whether the table content was instantiated.
      */
     public boolean isInstantiated() {
         return identification != null;
     }
-    
+
     @Override
     public Class getColumnClass(int columnIndex) {
         for (int i = 0; i < getRowCount(); i++) {
@@ -364,35 +366,23 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     @Override
     protected int loadDataForRows(ArrayList<Integer> rows, WaitingHandler waitingHandler) {
 
-        ArrayList<String> tempKeys = new ArrayList<>();
-        for (int i : rows) {
-            if (i < peptideKeys.size()) {
-                String peptideKey = peptideKeys.get(i);
-                tempKeys.add(peptideKey);
-            }
-        }
-
-        try {
-            ArrayList<UrParameter> parameters = new ArrayList<>(1);
-            parameters.add(new PSParameter());
-            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(tempKeys, waitingHandler);
-            
-            int i = 0;
-            while (peptideMatchesIterator.hasNext()) {
-                PeptideMatch peptideMatch = peptideMatchesIterator.next();
-                if (waitingHandler.isRunCanceled()) {
-                    return rows.get(i);
-                }
-                String peptideKey = peptideMatch.getKey();
-                identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideKey);
-                i++;
-            }
-        } catch (SQLNonTransientConnectionException e) {
-            // connection has been closed
-            return rows.get(0);
-        } catch (Exception e) {
-            catchException(e);
-            return rows.get(0);
+        BoxedObject<Integer> rowProcessed = new BoxedObject<>(0);
+        rows.parallelStream()
+                .map(i -> peptideKeys.get(i))
+                .map(key -> ((PeptideMatch) identification.retrieveObject(key, exceptionHandler)))
+                .forEach(peptideMatch -> {
+                    if (peptideMatch != null && !waitingHandler.isRunCanceled()) {
+                        String peptideKey = peptideMatch.getKey();
+                        try {
+                            identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideKey);
+                            rowProcessed.setObject(rowProcessed.getObject() + 1);
+                        } catch (Exception e) {
+                            waitingHandler.setRunCanceled();
+                        }
+                    }
+                });
+        if (waitingHandler.isRunCanceled()) {
+            return rows.get(rowProcessed.getObject());
         }
 
         return rows.get(rows.size() - 1);

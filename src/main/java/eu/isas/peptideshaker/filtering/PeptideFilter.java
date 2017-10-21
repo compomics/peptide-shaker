@@ -1,15 +1,15 @@
 package eu.isas.peptideshaker.filtering;
 
 import com.compomics.util.experiment.filtering.FilterItemComparator;
-import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
-import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.protein.Header;
+import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.experiment.io.biology.protein.Header;
 import eu.isas.peptideshaker.filtering.items.PeptideFilterItem;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSPtmScores;
@@ -99,10 +99,10 @@ public class PeptideFilter extends MatchFilter {
         switch (filterItem) {
             case proteinAccession:
                 peptideMatch = (PeptideMatch)identification.retrieveObject(matchKey);
-                return filterItemComparator.passes(input, peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences()));
+                return filterItemComparator.passes(input, peptideMatch.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences()));
             case proteinDescription:
                 peptideMatch = (PeptideMatch)identification.retrieveObject(matchKey);
-                ArrayList<String> accessions = peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
+                ArrayList<String> accessions = peptideMatch.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
                 ArrayList<String> descriptions = new ArrayList<>();
                 for (String accession : accessions) {
                     Header proteinHeader = SequenceFactory.getInstance().getHeader(accession);

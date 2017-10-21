@@ -1,13 +1,14 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.personalization.UrParameter;
+import com.compomics.util.general.BoxedObject;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.waiting.WaitingHandler;
@@ -22,6 +23,7 @@ import java.sql.SQLNonTransientConnectionException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableColumnModel;
@@ -103,7 +105,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * @param exceptionHandler an exception handler catching exceptions
      * @param proteinKeys the keys of the protein matches to display
      */
-    public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps, 
+    public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
             DisplayFeaturesGenerator displayFeaturesGenerator, ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
@@ -127,7 +129,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * @param exceptionHandler an exception handler catching exceptions
      * @param proteinKeys the keys of the protein matches to display
      */
-    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps, 
+    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
             DisplayFeaturesGenerator displayFeaturesGenerator, ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
@@ -216,13 +218,13 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
             try {
                 boolean useDB = !isSelfUpdating();
                 String proteinKey = proteinKeys.get(viewIndex);
-                ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(proteinKey);
-                        
+                ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinKey);
+
                 switch (column) {
                     case 0:
                         return viewIndex + 1;
                     case 1:
-                        PSParameter psParameter = (PSParameter)proteinMatch.getUrParam(new PSParameter());
+                        PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(new PSParameter());
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
@@ -233,7 +235,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         }
                         return psParameter.getStarred();
                     case 2:
-                        psParameter = (PSParameter)proteinMatch.getUrParam(new PSParameter());
+                        psParameter = (PSParameter) proteinMatch.getUrParam(new PSParameter());
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
@@ -253,9 +255,9 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             }
                         }
                         if (!isScrolling) {
-                            return displayFeaturesGenerator.addDatabaseLink(proteinMatch.getMainMatch());
+                            return displayFeaturesGenerator.addDatabaseLink(proteinMatch.getLeadingAccession());
                         } else {
-                            return proteinMatch.getMainMatch();
+                            return proteinMatch.getLeadingAccession();
                         }
                     case 4:
                         if (proteinMatch == null) {
@@ -268,11 +270,11 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         }
                         String description = null;
                         try {
-                            description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription();
+                            description = sequenceFactory.getHeader(proteinMatch.getLeadingAccession()).getSimpleProteinDescription();
 
                             // if description is not set, return the accession instead - fix for home made fasta headers
                             if (description == null || description.trim().isEmpty()) {
-                                description = proteinMatch.getMainMatch();
+                                description = proteinMatch.getLeadingAccession();
                             }
                         } catch (Exception e) {
                             exceptionHandler.catchException(e);
@@ -287,7 +289,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 return DisplayPreferences.LOADING_MESSAGE;
                             }
                         }
-                        String geneName = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getGeneName();
+                        String geneName = sequenceFactory.getHeader(proteinMatch.getLeadingAccession()).getGeneName();
                         String chromosomeName = geneMaps.getChromosome(geneName);
                         if (chromosomeName == null || chromosomeName.length() == 0) {
                             return new Chromosome(null);
@@ -385,7 +387,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             dataMissingAtRow(row);
                             return DisplayPreferences.LOADING_MESSAGE;
                         }
-                        String mainMatch = proteinMatch.getMainMatch();
+                        String mainMatch = proteinMatch.getLeadingAccession();
                         Protein currentProtein = sequenceFactory.getProtein(mainMatch);
                         if (currentProtein != null) {
                             return sequenceFactory.computeMolecularWeight(mainMatch);
@@ -393,7 +395,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             return null;
                         }
                     case 11:
-                        psParameter = (PSParameter)proteinMatch.getUrParam(new PSParameter());
+                        psParameter = (PSParameter) proteinMatch.getUrParam(new PSParameter());
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
@@ -412,7 +414,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             return null;
                         }
                     case 12:
-                        psParameter = (PSParameter)proteinMatch.getUrParam(new PSParameter());
+                        psParameter = (PSParameter) proteinMatch.getUrParam(new PSParameter());
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
@@ -478,57 +480,29 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     @Override
     protected int loadDataForRows(ArrayList<Integer> rows, WaitingHandler waitingHandler) {
 
-        ArrayList<String> tempKeys = new ArrayList<>();
-        for (int i : rows) {
-            String proteinKey = proteinKeys.get(i);
-            tempKeys.add(proteinKey);
-        }
-
-        try {
-            ArrayList<UrParameter> parameters = new ArrayList<>(1);
-            parameters.add(new PSParameter());
-
-            ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(tempKeys, waitingHandler);
-            
-            int i = 0;
-            while (proteinMatchesIterator.hasNext()) {
-                ProteinMatch proteinMatch = proteinMatchesIterator.next();
-                String proteinKey = proteinMatch.getKey();
-                if (waitingHandler.isRunCanceled()) {
-                    return rows.get(i);
-                }
-                identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
-                if (waitingHandler.isRunCanceled()) {
-                    return rows.get(i);
-                }
-                identificationFeaturesGenerator.getObservableCoverage(proteinKey);
-                if (waitingHandler.isRunCanceled()) {
-                    return rows.get(i);
-                }
-                identificationFeaturesGenerator.getNValidatedPeptides(proteinKey);
-                if (waitingHandler.isRunCanceled()) {
-                    return rows.get(i);
-                }
-                identificationFeaturesGenerator.getNValidatedSpectra(proteinKey);
-                if (waitingHandler.isRunCanceled()) {
-                    return rows.get(i);
-                }
-                identificationFeaturesGenerator.getNSpectra(proteinKey);
-                if (waitingHandler.isRunCanceled()) {
-                    return rows.get(i);
-                }
-                identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
-                if (waitingHandler.isRunCanceled()) {
-                    return rows.get(i);
-                }
-                i++;
-            }
-        } catch (SQLNonTransientConnectionException e) {
-            // connection has been closed
-            return rows.get(rows.size() - 1);
-        } catch (Exception e) {
-            catchException(e);
-            return rows.get(0);
+        BoxedObject<Integer> rowProcessed = new BoxedObject<>(0);
+        rows.parallelStream()
+                .map(i -> proteinKeys.get(i))
+                .map(key -> ((ProteinMatch) identification.retrieveObject(key, exceptionHandler)))
+                .forEach(proteinMatch -> {
+                    if (proteinMatch != null && !waitingHandler.isRunCanceled()) {
+                        String proteinKey = proteinMatch.getKey();
+                        try {
+                            identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
+                            identificationFeaturesGenerator.getObservableCoverage(proteinKey);
+                            identificationFeaturesGenerator.getNValidatedPeptides(proteinKey);
+                            identificationFeaturesGenerator.getNValidatedSpectra(proteinKey);
+                            identificationFeaturesGenerator.getNSpectra(proteinKey);
+                            identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
+                            
+                            rowProcessed.setObject(rowProcessed.getObject() + 1);
+                        } catch (Exception e) {
+                            waitingHandler.setRunCanceled();
+                        }
+                    }
+                });
+        if (waitingHandler.isRunCanceled()) {
+            return rows.get(rowProcessed.getObject());
         }
 
         return rows.get(rows.size() - 1);

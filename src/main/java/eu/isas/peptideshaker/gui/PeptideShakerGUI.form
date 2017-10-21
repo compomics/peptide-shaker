@@ -827,17 +827,6 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportMzIdentMLMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
-                <MenuItem class="javax.swing.JMenuItem" name="exportPrideMenuItem">
-                  <Properties>
-                    <Property name="mnemonic" type="int" value="80"/>
-                    <Property name="text" type="java.lang.String" value="PRIDE XML"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Export the project as PRIDE XML"/>
-                    <Property name="enabled" type="boolean" value="false"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportPrideMenuItemActionPerformed"/>
-                  </Events>
-                </MenuItem>
               </SubComponents>
             </Menu>
           </SubComponents>

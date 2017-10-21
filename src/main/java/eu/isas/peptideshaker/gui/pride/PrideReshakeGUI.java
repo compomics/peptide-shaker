@@ -2,24 +2,24 @@ package eu.isas.peptideshaker.gui.pride;
 
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.Enzyme;
-import com.compomics.util.experiment.biology.EnzymeFactory;
-import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.biology.enzymes.Enzyme;
+import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
+import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.identification.identification_parameters.IdentificationParametersFactory;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
-import com.compomics.util.experiment.io.identifications.MzIdentMLIdfileSearchParametersConverter;
-import com.compomics.util.experiment.massspectrometry.Charge;
-import com.compomics.util.experiment.massspectrometry.proteowizard.MsFormat;
+import com.compomics.util.parameters.identification.search.SearchParameters;
+import com.compomics.util.experiment.io.identification.MzIdentMLIdfileSearchParametersConverter;
+import com.compomics.util.experiment.mass_spectrometry.Charge;
+import com.compomics.util.experiment.mass_spectrometry.proteowizard.MsFormat;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
-import com.compomics.util.gui.parameters.identification_parameters.EnzymeSelectionDialog;
+import com.compomics.util.gui.parameters.identification.pride.EnzymeParametersDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.compression.ZipUtils;
-import com.compomics.util.preferences.LastSelectedFolder;
-import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
-import com.compomics.util.preferences.DigestionPreferences;
-import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.io.file.LastSelectedFolder;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
+import com.compomics.util.parameters.identification.search.DigestionParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.WelcomeDialog;
@@ -159,7 +159,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     /**
      * The PTM factory.
      */
-    private PTMFactory ptmFactory = PTMFactory.getInstance();
+    private ModificationFactory ptmFactory = ModificationFactory.getInstance();
     /**
      * The PRIDE search parameters report.
      */
@@ -428,8 +428,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         HashMap<Integer, Color> clusterScoringColorMap = new HashMap<>();
         clusterScoringColorMap.put(0, peptideShakerGUI.getSparklineColorNotFound());
         clusterScoringColorMap.put(1, peptideShakerGUI.getSparklineColor());
-        clusterScoringColorMap.put(2, peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorPossible());
-        clusterScoringColorMap.put(3, peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful());
+        clusterScoringColorMap.put(2, peptideShakerGUI.getUtilitiesUserParameters().getSparklineColorPossible());
+        clusterScoringColorMap.put(3, peptideShakerGUI.getUtilitiesUserParameters().getSparklineColorDoubtful());
         clusterScoringColorMap.put(4, peptideShakerGUI.getSparklineColorNonValidated());
 
         // set up the peptide inference tooltip map
@@ -2703,7 +2703,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     prideSearchParameters.setFastaFile(new File(database));
 
                     // set digestion preferences to default
-                    prideSearchParameters.setDigestionPreferences(DigestionPreferences.getDefaultPreferences());
+                    prideSearchParameters.setDigestionParameters(DigestionParameters.getDefaultPreferences());
 
                     String prideSearchParametersReport = null;
                     ArrayList<File> mgfFiles = new ArrayList<>();
@@ -2790,13 +2790,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                                     }
                                 }
                             }
-                        } catch (MalformedURLException ex) {
-                            JOptionPane.showMessageDialog(PrideReshakeGUI.this, JOptionEditorPane.getJOptionEditorPane("The file could not be downloaded:<br>"
-                                    + ex.getMessage() + ".<br>"
-                                    + "Please <a href=\"https://github.com/compomics/peptide-shaker/issues\">contact the developers</a>."),
-                                    "Download Error", JOptionPane.ERROR_MESSAGE);
-                            ex.printStackTrace();
-                            currentPrideDataFileUrl = null;
                         } catch (IOException ex) {
                             JOptionPane.showMessageDialog(PrideReshakeGUI.this, JOptionEditorPane.getJOptionEditorPane("The file could not be downloaded:<br>"
                                     + ex.getMessage() + ".<br>"
@@ -2814,7 +2807,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                         if (currentPrideDataFileUrl != null) {
 
-                            if (!new File(peptideShakerGUI.getUtilitiesUserPreferences().getLocalPrideFolder(), currentFileNameOriginal).exists()) {
+                            if (!new File(peptideShakerGUI.getUtilitiesUserParameters().getLocalPrideFolder(), currentFileNameOriginal).exists()) {
 
                                 boolean downloadFile = true;
 
@@ -2856,7 +2849,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                                     }
                                 }
                             } else {
-                                currentPrideDataFile = new File(peptideShakerGUI.getUtilitiesUserPreferences().getLocalPrideFolder(), currentFileNameOriginal);
+                                currentPrideDataFile = new File(peptideShakerGUI.getUtilitiesUserParameters().getLocalPrideFolder(), currentFileNameOriginal);
                             }
 
                             if (progressDialog.isRunCanceled()) {
@@ -2936,7 +2929,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                                         }
 
                                         // add details about the ptms
-                                        prideSearchParametersReport += convertPtms(allPtms, prideSearchParameters.getPtmSettings());
+                                        prideSearchParametersReport += convertPtms(allPtms, prideSearchParameters.getModificationParameters());
                                     }
                                 } else {
                                     prideSearchParametersReport
@@ -3234,8 +3227,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         // set the enzyme
         prideParametersReport += "<br><br><b>Enzyme:</b> ";
 
-        DigestionPreferences prideDigestionPreferences = DigestionPreferences.getDefaultPreferences();
-        prideSearchParameters.setDigestionPreferences(prideDigestionPreferences);
+        DigestionParameters prideDigestionPreferences = DigestionParameters.getDefaultPreferences();
+        prideSearchParameters.setDigestionParameters(prideDigestionPreferences);
 
         if (!enzymes.isEmpty()) {
             if (enzymes.size() == 1) {
@@ -3248,7 +3241,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                     // have the user select the enzyme
-                    EnzymeSelectionDialog enzymeSelectionDialog = new EnzymeSelectionDialog(this, true, enzymes.get(0), true);
+                    EnzymeParametersDialog enzymeSelectionDialog = new EnzymeParametersDialog(this, true, enzymes.get(0), true);
 
                     Enzyme selectedEnzyme = enzymeSelectionDialog.getEnzyme();
                     if (selectedEnzyme != null) {
@@ -3281,7 +3274,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                 // have the user select the enzyme
-                EnzymeSelectionDialog enzymeSelectionDialog = new EnzymeSelectionDialog(this, true, enzymesAsText, true);
+                EnzymeParametersDialog enzymeSelectionDialog = new EnzymeParametersDialog(this, true, enzymesAsText, true);
                 Enzyme selectedEnzyme = enzymeSelectionDialog.getEnzyme();
                 if (selectedEnzyme != null) {
                     prideParametersReport += selectedEnzyme.getName() + "<br>";
@@ -3307,7 +3300,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         }
 
         // set the max missed cleavages
-        if (prideDigestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+        if (prideDigestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
             prideParametersReport += "<b>Maximum Missed Cleavages:</b> ";
             if (maxMissedCleavages != null) {
                 for (Enzyme enzyme : prideDigestionPreferences.getEnzymes()) {
@@ -3348,7 +3341,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
         // map the ptms to utilities ptms
         String allPtms = (String) projectsTable.getValueAt(projectsTable.getSelectedRow(), projectsTable.getColumn("PTMs").getModelIndex());
-        prideParametersReport += convertPtms(allPtms, prideSearchParameters.getPtmSettings());
+        prideParametersReport += convertPtms(allPtms, prideSearchParameters.getModificationParameters());
 
         boolean debugOutput = false;
 
@@ -3791,7 +3784,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      * @param modProfile the modification profile to add the PTMs to
      * @return a string with the conversion details
      */
-    private String convertPtms(String allPtms, PtmSettings modProfile) {
+    private String convertPtms(String allPtms, ModificationParameters modProfile) {
 
         ArrayList<String> unknownPtms = new ArrayList<>();
         String report = "<br><br><b>Post-Translational Modifications:</b>";

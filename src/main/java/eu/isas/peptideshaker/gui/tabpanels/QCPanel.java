@@ -1,11 +1,11 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.Enzyme;
-import com.compomics.util.experiment.biology.PTM;
-import com.compomics.util.experiment.biology.PTMFactory;
-import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.enzymes.Enzyme;
+import com.compomics.util.experiment.biology.modifications.Modification;
+import com.compomics.util.experiment.biology.modifications.ModificationFactory;
+import com.compomics.util.experiment.biology.proteins.Peptide;
+import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -14,19 +14,18 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
-import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.experiment.personalization.UrParameter;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
-import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
+import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
-import com.compomics.util.preferences.DigestionPreferences;
-import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.parameters.identification.search.DigestionParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSParameter;
@@ -134,9 +133,9 @@ public class QCPanel extends javax.swing.JPanel {
         // set the histogram colors
         histogramColors = new Color[5];
         histogramColors[0] = peptideShakerGUI.getSparklineColor(); // Confident True Positives
-        histogramColors[1] = peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful(); // Doubtful True Positives
-        histogramColors[2] = peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorFalsePositives(); // False Positives
-        histogramColors[3] = peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorPossible(); // False Negatives
+        histogramColors[1] = peptideShakerGUI.getUtilitiesUserParameters().getSparklineColorDoubtful(); // Doubtful True Positives
+        histogramColors[2] = peptideShakerGUI.getUtilitiesUserParameters().getSparklineColorFalsePositives(); // False Positives
+        histogramColors[3] = peptideShakerGUI.getUtilitiesUserParameters().getSparklineColorPossible(); // False Negatives
         histogramColors[4] = Color.lightGray; // True Negatives
 
         // make the tabs in the spectrum tabbed pane go from right to left
@@ -1756,10 +1755,10 @@ public class QCPanel extends javax.swing.JPanel {
             nonValidatedDecoyValues = new ArrayList<>();
 
             ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(progressDialog);
+            ProteinMatch proteinMatch;
 
-            while (proteinMatchesIterator.hasNext()) {
+            while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
-                ProteinMatch proteinMatch = proteinMatchesIterator.next();
                 String proteinKey = proteinMatch.getKey();
 
                 if (progressDialog.isRunCanceled()) {
@@ -1784,11 +1783,11 @@ public class QCPanel extends javax.swing.JPanel {
                     Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
                     value = sequenceCoverageConfident + sequenceCoverageDoubtful;
                 } else if (proteinSequenceLengthJRadioButton.isSelected()) {
-                    Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                    Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getLeadingAccession());
                     value = currentProtein.getSequence().length();
                 }
 
-                proteinParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinKey)).getUrParam(proteinParameter);
+                proteinParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(proteinKey)).getUrParam(proteinParameter);
 
                 if (!proteinParameter.getHidden()) {
 
@@ -1838,12 +1837,11 @@ public class QCPanel extends javax.swing.JPanel {
                 validatedDecoyValues = new ArrayList<>();
                 nonValidatedDecoyValues = new ArrayList<>();
 
-                PSParameter psmParameter = new PSParameter();
                 PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
+                PeptideMatch peptideMatch;
 
-                while (peptideMatchesIterator.hasNext()) {
-
-                    PeptideMatch peptideMatch = peptideMatchesIterator.next();
+                while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+                    ;
                     String peptideKey = peptideMatch.getKey();
 
                     if (progressDialog.isRunCanceled()) {
@@ -1859,7 +1857,7 @@ public class QCPanel extends javax.swing.JPanel {
                             break;
                         }
 
-                        spectrumParameter = (PSParameter)((SpectrumMatch)peptideShakerGUI.getIdentification().retrieveObject(spectrumKey)).getUrParam(spectrumParameter);
+                        spectrumParameter = (PSParameter) ((SpectrumMatch) peptideShakerGUI.getIdentification().retrieveObject(spectrumKey)).getUrParam(spectrumParameter);
                         if (spectrumParameter.getMatchValidationLevel().isValidated() && !spectrumParameter.getHidden()) {
                             value = value + 1;
                         }
@@ -1867,11 +1865,11 @@ public class QCPanel extends javax.swing.JPanel {
                     if (value > maxValue) {
                         maxValue = value;
                     }
-                    peptideParameter = (PSParameter)((PeptideMatch)peptideShakerGUI.getIdentification().retrieveObject(peptideKey)).getUrParam(peptideParameter);
+                    peptideParameter = (PSParameter) ((PeptideMatch) peptideShakerGUI.getIdentification().retrieveObject(peptideKey)).getUrParam(peptideParameter);
 
                     if (!peptideParameter.getHidden()) {
 
-                        if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                        if (!peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(value);
@@ -1903,25 +1901,24 @@ public class QCPanel extends javax.swing.JPanel {
                 validatedDecoyValues = new ArrayList<>();
                 nonValidatedDecoyValues = new ArrayList<>();
 
-                PSParameter psmParameter = new PSParameter();
                 PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
+                PeptideMatch peptideMatch;
 
-                while (peptideMatchesIterator.hasNext()) {
+                while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-                    PeptideMatch peptideMatch = peptideMatchesIterator.next();
                     String peptideKey = peptideMatch.getKey();
 
                     if (progressDialog.isRunCanceled()) {
                         break;
                     }
 
-                    peptideParameter = (PSParameter)((PeptideMatch)peptideShakerGUI.getIdentification().retrieveObject(peptideKey)).getUrParam(peptideParameter);
+                    peptideParameter = (PSParameter) ((PeptideMatch) peptideShakerGUI.getIdentification().retrieveObject(peptideKey)).getUrParam(peptideParameter);
 
                     if (!peptideParameter.getHidden()) {
 
                         Double value = null;
-                        DigestionPreferences digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionPreferences();
-                        if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
+                        DigestionParameters digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionParameters();
+                        if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
                             for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
                                 int enzymeMissedCelavages = enzyme.getNmissedCleavages(Peptide.getSequence(peptideKey));
                                 if (value == null || enzymeMissedCelavages < value) {
@@ -1938,7 +1935,7 @@ public class QCPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                        if (!peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(value);
@@ -1970,19 +1967,18 @@ public class QCPanel extends javax.swing.JPanel {
                 validatedDecoyValues = new ArrayList<>();
                 nonValidatedDecoyValues = new ArrayList<>();
 
-                PSParameter psmParameter = new PSParameter();
                 PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
+                PeptideMatch peptideMatch;
 
-                while (peptideMatchesIterator.hasNext()) {
+                while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-                    PeptideMatch peptideMatch = peptideMatchesIterator.next();
                     String peptideKey = peptideMatch.getKey();
 
                     if (progressDialog.isRunCanceled()) {
                         break;
                     }
 
-                    peptideParameter = (PSParameter)((PeptideMatch)peptideShakerGUI.getIdentification().retrieveObject(peptideKey)).getUrParam(peptideParameter);
+                    peptideParameter = (PSParameter) ((PeptideMatch) peptideShakerGUI.getIdentification().retrieveObject(peptideKey)).getUrParam(peptideParameter);
 
                     if (!peptideParameter.getHidden()) {
 
@@ -1993,7 +1989,7 @@ public class QCPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                        if (!peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(length);
@@ -2043,17 +2039,17 @@ public class QCPanel extends javax.swing.JPanel {
                 nonValidatedDecoyValues = new ArrayList<>();
 
                 PsmIterator psmIterator = identification.getPsmIterator(progressDialog);
+                SpectrumMatch spectrumMatch;
 
-                while (psmIterator.hasNext()) {
+                while ((spectrumMatch = psmIterator.next()) != null) {
 
-                    SpectrumMatch spectrumMatch = psmIterator.next();
                     String spectrumKey = spectrumMatch.getKey();
 
                     if (progressDialog.isRunCanceled()) {
                         break;
                     }
 
-                    psmParameter = (PSParameter)spectrumMatch.getUrParam(psmParameter);
+                    psmParameter = (PSParameter) spectrumMatch.getUrParam(psmParameter);
 
                     if (!psmParameter.getHidden() && spectrumMatch.getBestPeptideAssumption() != null) {
 
@@ -2095,17 +2091,17 @@ public class QCPanel extends javax.swing.JPanel {
                 nonValidatedDecoyValues = new ArrayList<>();
 
                 PsmIterator psmIterator = identification.getPsmIterator(progressDialog);
+                SpectrumMatch spectrumMatch;
 
-                while (psmIterator.hasNext()) {
+                while ((spectrumMatch = psmIterator.next()) != null) {
 
-                    SpectrumMatch spectrumMatch = psmIterator.next();
                     String spectrumKey = spectrumMatch.getKey();
 
                     if (progressDialog.isRunCanceled()) {
                         break;
                     }
 
-                    psmParameter = (PSParameter)spectrumMatch.getUrParam(psmParameter);
+                    psmParameter = (PSParameter) spectrumMatch.getUrParam(psmParameter);
 
                     if (!psmParameter.getHidden() && spectrumMatch.getBestPeptideAssumption() != null) {
 
@@ -2232,7 +2228,7 @@ public class QCPanel extends javax.swing.JPanel {
     private DefaultCategoryDataset getPeptideModificationsDataset() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        PtmSettings ptmSettings = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings();
+        ModificationParameters ptmSettings = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters();
 
         ArrayList<String> ptmNames = ptmSettings.getAllNotFixedModifications();
         HashMap<String, Integer> confidentPtmMap = new HashMap<>(ptmNames.size());
@@ -2253,16 +2249,15 @@ public class QCPanel extends javax.swing.JPanel {
         progressDialog.setValue(0);
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(modifiedPeptides, progressDialog);
+        PeptideMatch peptideMatch;
 
-        while (peptideMatchesIterator.hasNext()) {
+        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            String peptideKey = peptideMatch.getKey();
-            psParameter = (PSParameter)peptideMatch.getUrParam(psParameter);
-            Peptide peptide = peptideMatch.getTheoreticPeptide();
+            psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
+            Peptide peptide = peptideMatch.getPeptide();
 
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                String ptmName = modificationMatch.getTheoreticPtm();
+                String ptmName = modificationMatch.getModification();
                 switch (psParameter.getMatchValidationLevel()) {
                     case confident:
                         Integer occurrence = confidentPtmMap.get(ptmName);
@@ -2334,39 +2329,37 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private DefaultCategoryDataset getPeptideModificationEfficiencyDataset() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
-        PTMFactory ptmFactory = PTMFactory.getInstance();
+        ModificationFactory ptmFactory = ModificationFactory.getInstance();
 
         Identification identification = peptideShakerGUI.getIdentification();
         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-        PtmSettings ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
-        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-        SequenceMatchingPreferences ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
+        ModificationParameters ptmSettings = identificationParameters.getSearchParameters().getModificationParameters();
+        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        SequenceMatchingParameters ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
 
         ArrayList<String> ptmNames = ptmSettings.getAllNotFixedModifications();
         HashMap<String, Integer> modifiedSitesMap = new HashMap<>(ptmNames.size());
         HashMap<String, Integer> possibleSitesMap = new HashMap<>(ptmNames.size());
 
         PSParameter psParameter = new PSParameter();
-        
 
         progressDialog.setPrimaryProgressCounterIndeterminate(false);
         progressDialog.setMaxPrimaryProgressCounter(identification.getPeptideIdentification().size());
         progressDialog.setValue(0);
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(progressDialog);
+        PeptideMatch peptideMatch;
 
-        while (peptideMatchesIterator.hasNext()) {
+        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            
-            psParameter = (PSParameter)peptideMatch.getUrParam(psParameter);
+            psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
             if (psParameter.getMatchValidationLevel().isValidated()) {
-                Peptide peptide = peptideMatch.getTheoreticPeptide();
+                Peptide peptide = peptideMatch.getPeptide();
                 HashMap<String, Integer> peptideModificationsMap = null;
                 if (peptide.getModificationMatches() != null) {
                     peptideModificationsMap = new HashMap<>(peptide.getModificationMatches().size());
                     for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                        String ptmName = modificationMatch.getTheoreticPtm();
+                        String ptmName = modificationMatch.getModification();
                         Integer occurrence = peptideModificationsMap.get(ptmName);
                         if (occurrence == null) {
                             peptideModificationsMap.put(ptmName, 1);
@@ -2376,7 +2369,7 @@ public class QCPanel extends javax.swing.JPanel {
                     }
                 }
                 for (String ptmName : ptmSettings.getAllNotFixedModifications()) {
-                    PTM ptm = ptmFactory.getPTM(ptmName);
+                    Modification ptm = ptmFactory.getModification(ptmName);
                     ArrayList<Integer> possibleSites = peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
                     if (!possibleSites.isEmpty()) {
                         if (peptideModificationsMap != null) {
@@ -2441,13 +2434,13 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private DefaultCategoryDataset getPeptideModificationEnrichmentSpecificityDataset() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
-        PTMFactory ptmFactory = PTMFactory.getInstance();
+        ModificationFactory ptmFactory = ModificationFactory.getInstance();
 
         Identification identification = peptideShakerGUI.getIdentification();
         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-        PtmSettings ptmSettings = identificationParameters.getSearchParameters().getPtmSettings();
-        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-        SequenceMatchingPreferences ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
+        ModificationParameters ptmSettings = identificationParameters.getSearchParameters().getModificationParameters();
+        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        SequenceMatchingParameters ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
 
         ArrayList<String> ptmNames = ptmSettings.getAllNotFixedModifications();
         HashMap<String, Integer> modifiedPeptidesMap = new HashMap<>(ptmNames.size());
@@ -2460,15 +2453,15 @@ public class QCPanel extends javax.swing.JPanel {
         progressDialog.setValue(0);
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(progressDialog);
+PeptideMatch peptideMatch;
 
-        while (peptideMatchesIterator.hasNext()) {
+        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            psParameter = (PSParameter)peptideMatch.getUrParam(psParameter);
+            psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
             if (psParameter.getMatchValidationLevel().isValidated()) {
-                Peptide peptide = peptideMatch.getTheoreticPeptide();
+                Peptide peptide = peptideMatch.getPeptide();
                 for (String ptmName : ptmSettings.getAllNotFixedModifications()) {
-                    PTM ptm = ptmFactory.getPTM(ptmName);
+                    Modification ptm = ptmFactory.getModification(ptmName);
                     ArrayList<Integer> possibleSites = peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
                     if (!possibleSites.isEmpty()) {
                         Integer nPossiblePeptides = possiblyModifiedPeptidesMap.get(ptmName);
@@ -2480,7 +2473,7 @@ public class QCPanel extends javax.swing.JPanel {
                         boolean modified = false;
                         if (peptide.getModificationMatches() != null) {
                             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                if (modificationMatch.getTheoreticPtm().equals(ptmName)) {
+                                if (modificationMatch.getModification().equals(ptmName)) {
                                     modified = true;
                                     break;
                                 }

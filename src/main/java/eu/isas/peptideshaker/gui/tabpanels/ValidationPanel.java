@@ -2345,7 +2345,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                         peptideMap.put(++cpt, peptideKey);
                         modifiedMaps.put(cpt, false);
 
-                        String title = PeptideSpecificMap.getKeyName(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings(), peptideKey);
+                        String title = PeptideSpecificMap.getKeyName(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), peptideKey);
                         ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "Peptides (" + title + ")"});
                     }
                 }

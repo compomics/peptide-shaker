@@ -1,21 +1,21 @@
 package eu.isas.peptideshaker.utils;
 
-import com.compomics.util.BlobObject;
+import com.compomics.util.db.object.objects.BlobObject;
 import com.compomics.util.Util;
-import com.compomics.util.db.ObjectsDB;
+import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.identification_parameters.SearchParameters;
+import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.ProteinInferencePreferences;
+import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.parameters.identification.advanced.ProteinInferenceParameters;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.parameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
@@ -299,7 +299,7 @@ public class CpsParent extends UserPreferencesParent {
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
         // Load fasta file
-        ProteinInferencePreferences proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
+        ProteinInferenceParameters proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
         File providedFastaLocation = proteinInferencePreferences.getProteinSequenceDatabase();
         String fastaFileName = providedFastaLocation.getName();
         File projectFolder = cpsFile.getParentFile();

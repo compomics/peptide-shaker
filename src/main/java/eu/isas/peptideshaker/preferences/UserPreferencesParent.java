@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.preferences;
 
-import com.compomics.util.io.SerializationUtils;
+import com.compomics.util.io.file.SerializationUtils;
 import eu.isas.peptideshaker.PeptideShaker;
 import java.io.File;
 

@@ -2,7 +2,7 @@ package eu.isas.peptideshaker.gui.exportdialogs;
 
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.export.ExportWriter;
-import com.compomics.util.preferences.LastSelectedFolder;
+import com.compomics.util.io.file.LastSelectedFolder;
 import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.InclusionListExport.ExportFormat;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;

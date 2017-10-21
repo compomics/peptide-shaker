@@ -1,13 +1,13 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
-import com.compomics.util.experiment.biology.Ion;
-import com.compomics.util.experiment.biology.IonFactory;
-import com.compomics.util.experiment.biology.NeutralLoss;
-import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
+import com.compomics.util.experiment.biology.ions.Ion;
+import com.compomics.util.experiment.biology.ions.IonFactory;
+import com.compomics.util.experiment.biology.ions.NeutralLoss;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.spectrum.IonLabelColorTableModel;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
-import com.compomics.util.preferences.UtilitiesUserPreferences;
+import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Color;
 import java.awt.Toolkit;
@@ -48,7 +48,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
         super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
         iontypes = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().getIonTypes();
-        PtmSettings ptmSettings = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPtmSettings();
+        ModificationParameters ptmSettings = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters();
         neutralLosses = IonFactory.getNeutralLosses(ptmSettings);
         initComponents();
         setUpGui();
@@ -61,12 +61,12 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
      */
     private void setUpGui() {
 
-        annotatedPeakColorPanel.setBackground(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakColor());
-        backgroundPeakColorPanel.setBackground(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakColor());
-        mirroredPeakColorPanel.setBackground(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedMirroredPeakColor());
+        annotatedPeakColorPanel.setBackground(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumAnnotatedPeakColor());
+        backgroundPeakColorPanel.setBackground(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumBackgroundPeakColor());
+        mirroredPeakColorPanel.setBackground(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumAnnotatedMirroredPeakColor());
 
-        annotatedPeakWidthSpinner.setValue(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakWidth());
-        backgroundPeakWidthSpinner.setValue(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakWidth());
+        annotatedPeakWidthSpinner.setValue(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumAnnotatedPeakWidth());
+        backgroundPeakWidthSpinner.setValue(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumBackgroundPeakWidth());
 
         colorsTable.getTableHeader().setReorderingAllowed(false);
 
@@ -393,7 +393,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        UtilitiesUserPreferences.saveUserPreferences(peptideShakerGUI.getUtilitiesUserPreferences());
+        UtilitiesUserParameters.saveUserParameters(peptideShakerGUI.getUtilitiesUserParameters());
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -482,7 +482,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
 
         if (newColor != null) {
             annotatedPeakColorPanel.setBackground(newColor);
-            peptideShakerGUI.getUtilitiesUserPreferences().setSpectrumAnnotatedPeakColor(annotatedPeakColorPanel.getBackground());
+            peptideShakerGUI.getUtilitiesUserParameters().setSpectrumAnnotatedPeakColor(annotatedPeakColorPanel.getBackground());
             peptideShakerGUI.updateSpectrumAnnotations();
             annotatedPeakColorPanel.repaint();
         }
@@ -517,7 +517,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
         if (newColor != null) {
             newColor = new Color(newColor.getRed(), newColor.getGreen(), newColor.getBlue(), 50); // add the default alpha level
             backgroundPeakColorPanel.setBackground(newColor);
-            peptideShakerGUI.getUtilitiesUserPreferences().setSpectrumBackgroundPeakColor(backgroundPeakColorPanel.getBackground());
+            peptideShakerGUI.getUtilitiesUserParameters().setSpectrumBackgroundPeakColor(backgroundPeakColorPanel.getBackground());
             peptideShakerGUI.updateSpectrumAnnotations();
             backgroundPeakColorPanel.repaint();
         }
@@ -529,7 +529,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void annotatedPeakWidthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_annotatedPeakWidthSpinnerStateChanged
-        peptideShakerGUI.getUtilitiesUserPreferences().setSpectrumAnnotatedPeakWidth((Float) annotatedPeakWidthSpinner.getValue());
+        peptideShakerGUI.getUtilitiesUserParameters().setSpectrumAnnotatedPeakWidth((Float) annotatedPeakWidthSpinner.getValue());
         peptideShakerGUI.updateSpectrumAnnotations();
     }//GEN-LAST:event_annotatedPeakWidthSpinnerStateChanged
 
@@ -539,7 +539,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void backgroundPeakWidthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_backgroundPeakWidthSpinnerStateChanged
-        peptideShakerGUI.getUtilitiesUserPreferences().setSpectrumBackgroundPeakWidth((Float) backgroundPeakWidthSpinner.getValue());
+        peptideShakerGUI.getUtilitiesUserParameters().setSpectrumBackgroundPeakWidth((Float) backgroundPeakWidthSpinner.getValue());
         peptideShakerGUI.updateSpectrumAnnotations();
     }//GEN-LAST:event_backgroundPeakWidthSpinnerStateChanged
 
@@ -585,7 +585,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
 
         if (newColor != null) {
             mirroredPeakColorPanel.setBackground(newColor);
-            peptideShakerGUI.getUtilitiesUserPreferences().setSpectrumAnnotatedMirroredPeakColor(mirroredPeakColorPanel.getBackground());
+            peptideShakerGUI.getUtilitiesUserParameters().setSpectrumAnnotatedMirroredPeakColor(mirroredPeakColorPanel.getBackground());
             peptideShakerGUI.updateSpectrumAnnotations();
             annotatedPeakColorPanel.repaint();
         }

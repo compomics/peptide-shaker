@@ -43,12 +43,6 @@ public class SpectrumCountingPreferences implements Serializable {
      */
     private SpectralCountingMethod selectedMethod;
     /**
-     * If true, only validated hits are counted.
-     *
-     * @deprecated use matchValidationLevel
-     */
-    private boolean validatedHits;
-    /**
      * The minimal match validation level to consider as indexed in the
      * MatchValidationLevel enum.
      */
@@ -96,30 +90,12 @@ public class SpectrumCountingPreferences implements Serializable {
     }
 
     /**
-     * Returns true if only validated hits are to be counted.
-     *
-     * @deprecated use the matchValidationLevel
-     *
-     * @return true if only validated hits are to be counted
-     */
-    public boolean isValidatedHits() {
-        return validatedHits;
-    }
-
-    /**
      * Returns the lowest validation level considered as an integer as indexed
      * in the MatchValidationLevel enum.
      *
      * @return the lowest validation level considered
      */
     public Integer getMatchValidationLevel() {
-        if (matchValidationLevel == null) { // Backward compatibility
-            if (validatedHits) {
-                matchValidationLevel = MatchValidationLevel.doubtful.getIndex();
-            } else {
-                matchValidationLevel = MatchValidationLevel.not_validated.getIndex();
-            }
-        }
         return matchValidationLevel;
     }
 

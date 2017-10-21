@@ -5,7 +5,7 @@ import com.compomics.util.Util;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.io.export.ExportScheme;
-import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.export.PeptideShakerMethods;
 import eu.isas.peptideshaker.export.PSExportFactory;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;

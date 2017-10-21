@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
-import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -146,11 +146,11 @@ public class ProteinFractionTableModel extends DefaultTableModel {
             if (column == 0) {
                 return row + 1;
             } else if (column == 1) {
-                return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(proteinMatch.getMainMatch());
+                return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(proteinMatch.getLeadingAccession());
             } else if (column == 2) {
                 String description = "";
                 try {
-                    description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription();
+                    description = sequenceFactory.getHeader(proteinMatch.getLeadingAccession()).getSimpleProteinDescription();
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
@@ -165,7 +165,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
                     return 0.0;
                 }
             } else if (column == fileNames.size() + 3) {
-                String mainMatch = proteinMatch.getMainMatch();
+                String mainMatch = proteinMatch.getLeadingAccession();
                 Protein currentProtein = sequenceFactory.getProtein(mainMatch);
                 if (currentProtein != null) {
                     return sequenceFactory.computeMolecularWeight(mainMatch);

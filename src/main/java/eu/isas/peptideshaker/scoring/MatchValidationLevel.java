@@ -18,11 +18,11 @@ public enum MatchValidationLevel {
      * The index associated to this possibility. The higher the id, the better
      * the confidence.
      */
-    private int index;
+    private final int index;
     /**
      * The name of this possibility.
      */
-    private String name;
+    private final String name;
 
     /**
      * Constructor.

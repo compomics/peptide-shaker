@@ -1,11 +1,11 @@
 package eu.isas.peptideshaker.parameters;
 
-import com.compomics.util.db.ObjectsDB;
-import com.compomics.util.IdObject;
+import com.compomics.util.db.object.ObjectsDB;
+import com.compomics.util.db.object.DbObject;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.personalization.UrParameter;
-import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
@@ -19,7 +19,7 @@ import java.io.Serializable;
  *
  * @author Marc Vaudel
  */
-public class PeptideShakerSettings extends IdObject implements UrParameter, Serializable {
+public class PeptideShakerSettings extends DbObject implements UrParameter, Serializable {
 
     /**
      * Serial version UID for post-serialization compatibility.

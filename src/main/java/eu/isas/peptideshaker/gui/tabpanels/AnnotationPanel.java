@@ -5,7 +5,6 @@ import com.compomics.util.experiment.biology.genes.GeneFactory;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.gui.JOptionEditorPane;
-import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.io.IOException;
 import javax.swing.JOptionPane;
@@ -1137,14 +1136,9 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
                 if (peptideShakerGUI.getIdentification() != null) {
 
-                    OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
-
                     try {
-                        outputGenerator.getProteinsOutput(
-                                null, null, false, true, true, false, false, false,
-                                false, false, false, false, false, false,
-                                false, false, false, false, false, false, 
-                                false, false, false, false, false);
+                        // @TODO: implement standard export
+                        throw new UnsupportedOperationException("Export not implemented.");
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(this, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();

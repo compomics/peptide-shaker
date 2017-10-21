@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.scoring;
 
-import com.compomics.util.db.ObjectsDB;
-import com.compomics.util.IdObject;
+import com.compomics.util.db.object.ObjectsDB;
+import com.compomics.util.db.object.DbObject;
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.maps.PeptideSpecificMap;
@@ -15,7 +15,7 @@ import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
  *
  * @author Marc Vaudel
  */
-public class PSMaps extends IdObject implements UrParameter {
+public class PSMaps extends DbObject implements UrParameter {
 
     /**
      * Serial version UID for post-serialization compatibility.

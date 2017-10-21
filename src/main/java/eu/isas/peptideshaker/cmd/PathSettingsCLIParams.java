@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.software.settings.UtilitiesPathPreferences;
+import com.compomics.software.settings.UtilitiesPathParameters;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import org.apache.commons.cli.Options;
 
@@ -47,7 +47,7 @@ public enum PathSettingsCLIParams {
         for (PeptideShakerPathPreferences.PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathPreferences.PeptideShakerPathKey.values()) {
             aOptions.addOption(peptideShakerPathKey.getId(), true, peptideShakerPathKey.getDescription());
         }
-        for (UtilitiesPathPreferences.UtilitiesPathKey utilitiesPathKey : UtilitiesPathPreferences.UtilitiesPathKey.values()) {
+        for (UtilitiesPathParameters.UtilitiesPathKey utilitiesPathKey : UtilitiesPathParameters.UtilitiesPathKey.values()) {
             aOptions.addOption(utilitiesPathKey.getId(), true, utilitiesPathKey.getDescription());
         }
     }
@@ -72,7 +72,7 @@ public enum PathSettingsCLIParams {
         for (PeptideShakerPathPreferences.PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathPreferences.PeptideShakerPathKey.values()) {
             output += "-" + String.format(formatter, peptideShakerPathKey.getId()) + " " + peptideShakerPathKey.getDescription() + System.getProperty("line.separator");
         }
-        for (UtilitiesPathPreferences.UtilitiesPathKey utilitiesPathKey : UtilitiesPathPreferences.UtilitiesPathKey.values()) {
+        for (UtilitiesPathParameters.UtilitiesPathKey utilitiesPathKey : UtilitiesPathParameters.UtilitiesPathKey.values()) {
             output += "-" + String.format(formatter, utilitiesPathKey.getId()) + " " + utilitiesPathKey.getDescription() + System.getProperty("line.separator");
         }
 

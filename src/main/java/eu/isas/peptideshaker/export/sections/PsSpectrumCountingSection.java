@@ -5,6 +5,7 @@ import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import eu.isas.peptideshaker.export.exportfeatures.PsSpectrumCountingFeature;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -106,11 +107,7 @@ public class PsSpectrumCountingSection {
                     }
                     break;
                 case validated:
-                    if (spectrumCountingPreferences.isValidatedHits()) {
-                        writer.write("Yes");
-                    } else {
-                        writer.write("No");
-                    }
+                    writer.write(MatchValidationLevel.getMatchValidationLevel(spectrumCountingPreferences.getMatchValidationLevel()).getName());
                     break;
                 default:
                     writer.write("Not implemented");

@@ -1,9 +1,9 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.AminoAcidPattern;
-import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidPattern;
+import com.compomics.util.experiment.biology.proteins.Peptide;
+import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -13,10 +13,9 @@ import com.compomics.util.gui.genes.GeneDetailsDialog;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
-import eu.isas.peptideshaker.export.OutputGenerator;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
-import com.compomics.util.preferences.DigestionPreferences;
+import com.compomics.util.parameters.identification.search.DigestionParameters;
 import eu.isas.peptideshaker.gui.FractionDetailsDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanel;
@@ -30,8 +29,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
@@ -208,7 +205,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         }
 
         ProteinTableModel.setProteinTableProperties(proteinTable, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(),
-                peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful(),
+                peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getUtilitiesUserParameters().getSparklineColorDoubtful(),
                 peptideShakerGUI.getScoreAndConfidenceDecimalFormat(), this.getClass(), maxProteinKeyLength);
 
         if (selectedRow != -1) {
@@ -276,10 +273,10 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                 // update the table model
                 if (proteinTable.getModel() instanceof ProteinTableModel && ((ProteinTableModel) proteinTable.getModel()).isInstantiated()) {
-                    ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), 
+                    ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
                             peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                 } else {
-                    ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), 
+                    ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
                             peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                     proteinTable.setModel(proteinTableModel);
                 }
@@ -288,17 +285,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 showSparkLines(peptideShakerGUI.showSparklines());
                 ((DefaultTableModel) proteinTable.getModel()).fireTableDataChanged();
 
-                try {
-                    updateSelection();
-                } catch (SQLException ex) {
-                    Logger.getLogger(ProteinFractionsPanel.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(ProteinFractionsPanel.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(ProteinFractionsPanel.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(ProteinFractionsPanel.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                updateSelection();
                 proteinTable.requestFocus();
 
                 setUpTableHeaderToolTips();
@@ -373,7 +360,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
                 int proteinIndex = tableModel.getViewIndex(currentRow);
                 String proteinKey = proteinKeys.get(proteinIndex);
-                ProteinMatch proteinMatch = (ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(proteinKey);
+                ProteinMatch proteinMatch = (ProteinMatch) peptideShakerGUI.getIdentification().retrieveObject(proteinKey);
 
                 try {
                     peptideKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedPeptideKeys(proteinKey);
@@ -390,8 +377,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 }
 
                 // get the current protein and protein sequence
-                Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-                String currentProteinSequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
+                Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getLeadingAccession());
+                String currentProteinSequence = sequenceFactory.getProtein(proteinMatch.getLeadingAccession()).getSequence();
 
                 int[][] coverage = new int[fileNames.size()][currentProteinSequence.length() + 1];
 
@@ -402,7 +389,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                     for (String peptideKey : peptideKeys) {
                         try {
-                            psParameter = (PSParameter)((PeptideMatch)peptideShakerGUI.getIdentification().retrieveObject(peptideKey)).getUrParam(psParameter);
+                            psParameter = (PSParameter) ((PeptideMatch) peptideShakerGUI.getIdentification().retrieveObject(peptideKey)).getUrParam(psParameter);
 
                             if (psParameter.getFractionScore() != null && psParameter.getFractions().contains(fraction)) {
                                 if (psParameter.getMatchValidationLevel().isValidated()) {
@@ -411,8 +398,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                                     boolean includePeptide = false;
 
-                                        DigestionPreferences digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionPreferences();
-                                    if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected() || digestionPreferences.getCleavagePreference() != DigestionPreferences.CleavagePreference.enzyme) {
+                                    DigestionParameters digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionParameters();
+                                    if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected() || digestionPreferences.getCleavagePreference() != DigestionParameters.CleavagePreference.enzyme) {
                                         includePeptide = true;
                                     } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence,
@@ -444,17 +431,17 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 }
 
                 psParameter = new PSParameter();
-                psParameter = (PSParameter)((ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getUrParam(psParameter);
+                psParameter = (PSParameter) ((ProteinMatch) peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getUrParam(psParameter);
 
                 for (int i = 0; i < fileNames.size(); i++) {
                     String fraction = fileNames.get(i);
-                    psParameter = (PSParameter)((ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getUrParam(psParameter);
+                    psParameter = (PSParameter) ((ProteinMatch) peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getUrParam(psParameter);
 
                     if (selectedRows.length == 1) {
                         peptidePlotDataset.addValue(psParameter.getFractionValidatedPeptides(fraction), "Validated Peptides", "" + (i + 1));
                     } else {
-                        peptidePlotDataset.addValue(psParameter.getFractionValidatedPeptides(fraction), proteinMatch.getMainMatch()
-                                + ": " + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription(), "" + (i + 1));
+                        peptidePlotDataset.addValue(psParameter.getFractionValidatedPeptides(fraction), proteinMatch.getLeadingAccession()
+                                + ": " + sequenceFactory.getHeader(proteinMatch.getLeadingAccession()).getSimpleProteinDescription(), "" + (i + 1));
                     }
                 }
 
@@ -528,16 +515,16 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 // get the psms per fraction
                 for (int i = 0; i < fileNames.size(); i++) {
                     String fraction = fileNames.get(i);
-                    psParameter = (PSParameter)((ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getUrParam(psParameter);
+                    psParameter = (PSParameter) ((ProteinMatch) peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getUrParam(psParameter);
 
                     if (selectedRows.length == 1) {
                         spectrumPlotDataset.addValue(psParameter.getFractionValidatedSpectra(fraction), "Validated Spectra", "" + (i + 1));
                         intensityPlotDataset.addValue(psParameter.getPrecursorIntensitySummedPerFraction(fraction), "Summed Intensity", "" + (i + 1));
                     } else {
-                        spectrumPlotDataset.addValue(psParameter.getFractionValidatedSpectra(fraction), proteinMatch.getMainMatch()
-                                + ": " + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription(), "" + (i + 1));
-                        intensityPlotDataset.addValue(psParameter.getPrecursorIntensitySummedPerFraction(fraction), proteinMatch.getMainMatch()
-                                + ": " + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription(), "" + (i + 1));
+                        spectrumPlotDataset.addValue(psParameter.getFractionValidatedSpectra(fraction), proteinMatch.getLeadingAccession()
+                                + ": " + sequenceFactory.getHeader(proteinMatch.getLeadingAccession()).getSimpleProteinDescription(), "" + (i + 1));
+                        intensityPlotDataset.addValue(psParameter.getPrecursorIntensitySummedPerFraction(fraction), proteinMatch.getLeadingAccession()
+                                + ": " + sequenceFactory.getHeader(proteinMatch.getLeadingAccession()).getSimpleProteinDescription(), "" + (i + 1));
                     }
                 }
             }
@@ -744,68 +731,63 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     /**
      * Update the selected protein and peptide.
      */
-    public void updateSelection() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public void updateSelection() {
 
-        int proteinRow = 0;
-        String proteinKey = peptideShakerGUI.getSelectedProteinKey();
-        String peptideKey = peptideShakerGUI.getSelectedPeptideKey();
-        String psmKey = peptideShakerGUI.getSelectedPsmKey();
+        try {
 
-        if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION)
-                && peptideKey.equals(PeptideShakerGUI.NO_SELECTION)
-                && !psmKey.equals(PeptideShakerGUI.NO_SELECTION)) {
-            if (peptideShakerGUI.getIdentification().matchExists(psmKey)) {
-                try {
-                    SpectrumMatch spectrumMatch = (SpectrumMatch)peptideShakerGUI.getIdentification().retrieveObject(psmKey);
+            int proteinRow = 0;
+            String proteinKey = peptideShakerGUI.getSelectedProteinKey();
+            String peptideKey = peptideShakerGUI.getSelectedPeptideKey();
+            String psmKey = peptideShakerGUI.getSelectedPsmKey();
+
+            if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION)
+                    && peptideKey.equals(PeptideShakerGUI.NO_SELECTION)
+                    && !psmKey.equals(PeptideShakerGUI.NO_SELECTION)) {
+                if (peptideShakerGUI.getIdentification().matchExists(psmKey)) {
+                    SpectrumMatch spectrumMatch = (SpectrumMatch) peptideShakerGUI.getIdentification().retrieveObject(psmKey);
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                         peptideKey = peptide.getMatchingKey(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                     }
-                } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                    return;
+                } else {
+                    peptideShakerGUI.resetSelectedItems();
                 }
-            } else {
-                peptideShakerGUI.resetSelectedItems();
             }
-        }
 
-        if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION) && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
+            if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION) && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
 
-            ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null); // @TODO: add waiting handler?
-            //proteinMatchesIterator.setBatchSize(20); // @TODO: add?
-
-            while (proteinMatchesIterator.hasNext()) {
-                try {
-                    ProteinMatch proteinMatch = proteinMatchesIterator.next();
+                ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null); // @TODO: add waiting handler?
+                //proteinMatchesIterator.setBatchSize(20); // @TODO: add?
+                ProteinMatch proteinMatch;
+                while ((proteinMatch = proteinMatchesIterator.next()) != null) {
                     if (proteinMatch.getPeptideMatchesKeys().contains(peptideKey)) {
                         proteinKey = proteinMatch.getKey();
                         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
                         break;
                     }
-                } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                    return;
                 }
             }
-        }
 
-        if (!proteinKey.equals(PeptideShakerGUI.NO_SELECTION)) {
-            proteinRow = getProteinRow(proteinKey);
-        }
+            if (!proteinKey.equals(PeptideShakerGUI.NO_SELECTION)) {
+                proteinRow = getProteinRow(proteinKey);
+            }
 
-        if (proteinKeys.isEmpty()) {
-            // For the silly people like me who happen to hide all proteins
-            clearData();
+            if (proteinKeys.isEmpty()) {
+                // For the silly people like me who happen to hide all proteins
+                clearData();
+                return;
+            }
+
+            if (proteinRow == -1) {
+                peptideShakerGUI.resetSelectedItems();
+            } else if (proteinTable.getSelectedRow() != proteinRow) {
+                proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
+                proteinTable.scrollRectToVisible(proteinTable.getCellRect(proteinRow, 0, false));
+                proteinTableKeyReleased(null);
+            }
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
             return;
-        }
-
-        if (proteinRow == -1) {
-            peptideShakerGUI.resetSelectedItems();
-        } else if (proteinTable.getSelectedRow() != proteinRow) {
-            proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
-            proteinTable.scrollRectToVisible(proteinTable.getCellRect(proteinRow, 0, false));
-            proteinTableKeyReleased(null);
         }
     }
 
@@ -1384,7 +1366,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 // star/unstar the protein
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
                     try {
-                        PSParameter psParameter = (PSParameter)((ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getUrParam(new PSParameter());
+                        PSParameter psParameter = (PSParameter) ((ProteinMatch) peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getUrParam(new PSParameter());
                         if (!psParameter.getStarred()) {
                             peptideShakerGUI.getStarHider().starProtein(proteinKey);
                         } else {
@@ -1858,14 +1840,10 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         if (tableIndex == TableIndex.PROTEIN_TABLE) {
 
-            OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
-
             if (tableIndex == TableIndex.PROTEIN_TABLE) {
                 ArrayList<String> selectedProteins = getDisplayedProteins();
-                outputGenerator.getProteinsOutput(
-                        null, selectedProteins, true, false, true, true, true,
-                        true, true, true, true, false, true,
-                        true, true, true, true, true, false, true, false, false, false, true, true);
+                        // @TODO: implement standard export
+                        throw new UnsupportedOperationException("Export not implemented.");
             }
         }
     }
@@ -1928,8 +1906,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
     /**
      * Deactivates the self updating tables.
-     * 
-     * @param selfUpdating boolean indicating whether the tables should update their content
+     *
+     * @param selfUpdating boolean indicating whether the tables should update
+     * their content
      */
     public void selfUpdating(boolean selfUpdating) {
         if (proteinTable.getModel() instanceof SelfUpdatingTableModel) {

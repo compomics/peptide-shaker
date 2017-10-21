@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.filtering.items;
 
 import com.compomics.util.experiment.filtering.FilterItem;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.util.ArrayList;
 import java.util.Arrays;

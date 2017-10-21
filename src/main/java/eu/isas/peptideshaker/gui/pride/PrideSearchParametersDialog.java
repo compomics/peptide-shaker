@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.gui.pride;
 import com.compomics.software.ToolFactory;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.preferences.UtilitiesUserPreferences;
+import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -203,7 +203,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
 
         // check if we have a valid SearchGUI location.
         try {
-            UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+            UtilitiesUserParameters utilitiesUserPreferences = UtilitiesUserParameters.loadUserParameters();
             if (utilitiesUserPreferences.getSearchGuiPath() == null || !(new File(utilitiesUserPreferences.getSearchGuiPath()).exists())) {
                 SearchGuiSetupDialog searchGuiSetupDialog = new SearchGuiSetupDialog(prideReShakeGUI, true);
                 openSearchGUI = !searchGuiSetupDialog.isDialogCanceled();

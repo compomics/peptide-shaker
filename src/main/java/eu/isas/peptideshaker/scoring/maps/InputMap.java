@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.scoring.maps;
 
 import com.compomics.util.experiment.identification.Advocate;
-import com.compomics.util.preferences.PsmScoringPreferences;
+import com.compomics.util.parameters.identification.advanced.PsmScoringParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.io.Serializable;
@@ -617,7 +617,7 @@ public class InputMap implements Serializable {
      * protein
      * @param psmScoringPreferences the psm scoring preferences
      */
-    public void setIntermediateScore(String fileName, Integer advocateIndex, Integer scoreIndex, Double score, boolean decoy, PsmScoringPreferences psmScoringPreferences) {
+    public void setIntermediateScore(String fileName, Integer advocateIndex, Integer scoreIndex, Double score, boolean decoy, PsmScoringParameters psmScoringPreferences) {
         HashMap<Integer, HashMap<Integer, TargetDecoyMap>> advocateMap = intermediateScores.get(fileName);
         if (advocateMap == null) {
             advocateMap = createIntermediateScoreMap(fileName);
@@ -678,7 +678,7 @@ public class InputMap implements Serializable {
      *
      * @return the target-decoy map
      */
-    private synchronized TargetDecoyMap createTargetDecoyMap(Integer scoreIndex, HashMap<Integer, TargetDecoyMap> scoreMap, PsmScoringPreferences psmScoringPreferences) {
+    private synchronized TargetDecoyMap createTargetDecoyMap(Integer scoreIndex, HashMap<Integer, TargetDecoyMap> scoreMap, PsmScoringParameters psmScoringPreferences) {
         TargetDecoyMap targetDecoyMap = scoreMap.get(scoreIndex);
         if (targetDecoyMap == null) {
             targetDecoyMap = new TargetDecoyMap(psmScoringPreferences.getDecoysInFirstBin());

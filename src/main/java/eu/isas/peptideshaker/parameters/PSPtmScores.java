@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.parameters;
 
-import com.compomics.util.IdObject;
-import com.compomics.util.db.ObjectsDB;
+import com.compomics.util.db.object.DbObject;
+import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.HashSet;
  *
  * @author Marc Vaudel
  */
-public class PSPtmScores extends IdObject implements UrParameter {
+public class PSPtmScores extends DbObject implements UrParameter {
 
     /**
      * Serial version UID for post-serialization compatibility.

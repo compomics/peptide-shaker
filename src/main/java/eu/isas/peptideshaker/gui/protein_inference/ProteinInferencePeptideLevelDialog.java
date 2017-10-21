@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.gui.protein_inference;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -10,8 +10,8 @@ import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import com.compomics.util.preferences.DigestionPreferences;
-import com.compomics.util.protein.Header;
+import com.compomics.util.parameters.identification.search.DigestionParameters;
+import com.compomics.util.experiment.io.biology.protein.Header;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.parameters.PSParameter;
@@ -101,14 +101,14 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml((PeptideMatch)peptideShakerGUI.getIdentification().retrieveObject(peptideMatchKey));
         peptideSequenceLabel.setToolTipText(tooltip);
 
-        ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+        ArrayList<String> possibleProteins = peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
         List<String> retainedProteins;
 
         if (proteinMatchKey != null) {
             retainedProteins = Arrays.asList(ProteinMatch.getAccessions(proteinMatchKey));
         } else {
             retainedProteins = new ArrayList<>();
-            for (String proteinKey : peptideShakerGUI.getIdentification().getProteinMatches(peptideMatch.getTheoreticPeptide())) {
+            for (String proteinKey : peptideShakerGUI.getIdentification().getProteinMatches(peptideMatch.getPeptide())) {
                 for (String protein : possibleProteins) {
                     if (!retainedProteins.contains(protein) && proteinKey.contains(protein)) {
                         retainedProteins.add(protein);
@@ -267,7 +267,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             peptideTooltip = "<html>" + peptideTooltip + "<br><br>" + matchValidationLevel + "</html>";
             nodeToolTips.put(peptideNodeName, peptideTooltip);
 
-            ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+            ArrayList<String> possibleProteins = peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
 
             for (String tempProteinAccession : possibleProteins) {
 
@@ -345,9 +345,9 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
                     Protein protein = sequenceFactory.getProtein(tempProteinAccession);
                     Boolean enzymatic = false;
-                    DigestionPreferences digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionPreferences();
-                    if (digestionPreferences.getCleavagePreference() == DigestionPreferences.CleavagePreference.enzyme) {
-                        enzymatic = protein.isEnzymaticPeptide(peptideMatch.getTheoreticPeptide().getSequence(),
+                    DigestionParameters digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionParameters();
+                    if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+                        enzymatic = protein.isEnzymaticPeptide(peptideMatch.getPeptide().getSequence(),
                                 digestionPreferences.getEnzymes(),
                                 peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                     }
