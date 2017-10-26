@@ -22,11 +22,11 @@ public class SpectrumRecalibrator {
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * Map of the runs errors.
      */
-    private HashMap<String, RunMzDeviation> runMzDeviationMap = new HashMap<>();
+    private final HashMap<String, RunMzDeviation> runMzDeviationMap = new HashMap<>();
 
     /**
      * Constructor.

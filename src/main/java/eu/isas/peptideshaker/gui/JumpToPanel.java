@@ -41,35 +41,35 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * Instance of the main GUI class.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * Items matching the criterion for each type.
      */
-    private HashMap<JumpType, ArrayList<String>> possibilities = new HashMap<>();
+    private final HashMap<JumpType, ArrayList<String>> possibilities = new HashMap<>();
     /**
      * Currently selected item.
      */
-    private HashMap<JumpType, Integer> currentSelection = new HashMap<>();
+    private final HashMap<JumpType, Integer> currentSelection = new HashMap<>();
     /**
      * The text to display by default.
      */
-    private HashMap<JumpType, String> lastInput = new HashMap<>();
+    private final HashMap<JumpType, String> lastInput = new HashMap<>();
     /**
      * The text to display by default.
      */
-    private HashMap<JumpType, String> lastLabel = new HashMap<>();
+    private final HashMap<JumpType, String> lastLabel = new HashMap<>();
     /**
      * Instance of the sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The text to display by default.
      */
-    private HashMap<JumpType, String> welcomeText;
+    private final HashMap<JumpType, String> welcomeText;
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * The spectrum file inspected when jumping to spectra.
      */
@@ -82,7 +82,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * The time to wait between keys typed before updating the search.
      */
-    private int waitingTime = 1000;
+    private final int waitingTime = 1000;
 
     /**
      * Type of item selected.
@@ -96,7 +96,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * Type of each possible item.
      */
-    private HashMap<JumpType, ArrayList<Type>> types = new HashMap<>();
+    private final HashMap<JumpType, ArrayList<Type>> types = new HashMap<>();
 
     /**
      * Creates a new JumpToPanel.

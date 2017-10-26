@@ -20,7 +20,7 @@ public class ProteinMap extends DbObject {
     /**
      * The protein target/decoy map.
      */
-    private TargetDecoyMap proteinMatchMap = new TargetDecoyMap();
+    private final TargetDecoyMap proteinMatchMap = new TargetDecoyMap();
 
     /**
      * Constructor.

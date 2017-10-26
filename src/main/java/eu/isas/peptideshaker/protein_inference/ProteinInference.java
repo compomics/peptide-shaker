@@ -50,15 +50,15 @@ public class ProteinInference {
     /**
      * The protein sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * Map of the most complex groups: key | proteins
      */
-    private HashMap<String, ArrayList<String>> proteinGroupCache = new HashMap<>(100);
+    private final HashMap<String, ArrayList<String>> proteinGroupCache = new HashMap<>(100);
     /**
      * Size of the protein groups cahce
      */
-    private int cacheSize = 100;
+    private final int cacheSize = 100;
     /**
      * The minimal group size to include a protein in the cache
      */

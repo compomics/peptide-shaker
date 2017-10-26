@@ -47,7 +47,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     /**
      * The main GUI.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * A simple progress dialog.
      */

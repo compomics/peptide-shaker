@@ -105,11 +105,11 @@ public class PtmPanel extends javax.swing.JPanel {
     /**
      * The main GUI.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * Map of all peptide keys indexed by their modification status.
      */
-    private HashMap<String, ArrayList<String>> peptideMap = new HashMap<>();
+    private final HashMap<String, ArrayList<String>> peptideMap = new HashMap<>();
     /**
      * The modification name for no modification.
      */
@@ -146,7 +146,7 @@ public class PtmPanel extends javax.swing.JPanel {
     /**
      * The PTM factory.
      */
-    private ModificationFactory ptmFactory = ModificationFactory.getInstance();
+    private final ModificationFactory ptmFactory = ModificationFactory.getInstance();
 
     /**
      * Creates a new PTM tab.
@@ -3690,96 +3690,7 @@ public class PtmPanel extends javax.swing.JPanel {
      *
      * @param progressDialog a progress dialog
      */
-    public void updateRelatedPeptidesTable(ProgressDialogX progressDialog) {
-
-        HashMap<Double, ArrayList<String>> scoreToKeyMap = new HashMap<>();
-        String peptideKey = displayedPeptides.get((Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1);
-        String currentSequence, referenceSequence = Peptide.getSequence(peptideKey);
-        PSParameter probabilities = new PSParameter();
-
-        progressDialog.setPrimaryProgressCounterIndeterminate(false);
-        progressDialog.setValue(0);
-        progressDialog.setMaxPrimaryProgressCounter(identification.getPeptideIdentification().size());
-
-        for (String newKey : identification.getPeptideIdentification()) {
-
-            if (progressDialog.isRunCanceled()) {
-                break;
-            }
-
-            progressDialog.increasePrimaryProgressCounter();
-
-            currentSequence = Peptide.getSequence(newKey);
-
-            if (currentSequence.contains(referenceSequence) || referenceSequence.contains(currentSequence)) {
-
-                if (!newKey.equals(peptideKey)) {
-                    try {
-                        probabilities = (PSParameter) ((PeptideMatch) identification.retrieveObject(newKey)).getUrParam(probabilities);
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
-                    double p = probabilities.getPeptideProbability();
-
-                    if (!probabilities.getHidden()) {
-
-                        if (!scoreToKeyMap.containsKey(p)) {
-                            scoreToKeyMap.put(p, new ArrayList<>());
-                        }
-
-                        scoreToKeyMap.get(p).add(newKey);
-                    }
-                }
-            }
-        }
-
-        if (!progressDialog.isRunCanceled()) {
-
-            progressDialog.setTitle("Sorting Related Peptides. Please Wait...");
-            progressDialog.setPrimaryProgressCounterIndeterminate(true);
-
-            relatedPeptides = new ArrayList<>();
-            ArrayList<Double> scores = new ArrayList<>(scoreToKeyMap.keySet());
-            Collections.sort(scores);
-
-            progressDialog.setPrimaryProgressCounterIndeterminate(false);
-            progressDialog.setValue(0);
-            progressDialog.setMaxPrimaryProgressCounter(scores.size());
-
-            for (Double score : scores) {
-                relatedPeptides.addAll(scoreToKeyMap.get(score));
-                progressDialog.increasePrimaryProgressCounter();
-            }
-
-            ((DefaultTableModel) relatedPeptidesTable.getModel()).fireTableDataChanged();
-
-            if (relatedPeptides.size() > 0) {
-                relatedPeptidesTable.setRowSelectionInterval(0, 0);
-                relatedPeptidesTable.scrollRectToVisible(relatedPeptidesTable.getCellRect(0, 0, false));
-                updateModificationProfiles(progressDialog);
-            } else {
-                modificationProfileRelatedPeptideJPanel.removeAll();
-            }
-
-            // invoke later to give time for components to update
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    // set the preferred size of the accession column
-                    int peptideTableWidth = peptideShakerGUI.getPreferredColumnWidth(peptidesTable, peptidesTable.getColumn("Sequence").getModelIndex(), 1);
-                    int relatedPeptideWidth = peptideShakerGUI.getPreferredColumnWidth(relatedPeptidesTable, relatedPeptidesTable.getColumn("Sequence").getModelIndex(), 1);
-
-                    int width = Math.max(peptideTableWidth, relatedPeptideWidth);
-
-                    peptidesTable.getColumn("Sequence").setMinWidth(width);
-                    relatedPeptidesTable.getColumn("Sequence").setMinWidth(width);
-                }
-            });
-
-            ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Related Peptides ("
-                    + relatedPeptidesTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
-            relatedPeptidesPanel.repaint();
-        }
-    }
+    public void updateRelatedPeptidesTable(ProgressDialogX progressDialog) 
 
     /**
      * Update the selected peptides PSM table.

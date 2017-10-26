@@ -53,12 +53,12 @@ public class Ms2pipExport {
     /**
      * A handler for the exceptions.
      */
-    private ExceptionHandler exceptionHandler;
+    private final ExceptionHandler exceptionHandler;
     /**
      * A waiting handler providing feedback to the user and allowing canceling
      * the process.
      */
-    private WaitingHandler waitingHandler;
+    private final WaitingHandler waitingHandler;
     /**
      * The end of line separator.
      */
@@ -86,7 +86,7 @@ public class Ms2pipExport {
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * Array of buffered writers for the target files.
      */
@@ -345,31 +345,31 @@ public class Ms2pipExport {
         /**
          * The identification object containing the PSMs.
          */
-        private Identification identification;
+        private final Identification identification;
         /**
          * The iterator to go through the PSMs.
          */
-        private PsmIterator psmIterator;
+        private final PsmIterator psmIterator;
         /**
          * The spectrum annotator.
          */
-        private PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
+        private final PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
         /**
          * The spectrum annotation settings.
          */
-        private AnnotationParameters annotationSettings;
+        private final AnnotationParameters annotationSettings;
         /**
          * the sequence matching preferences.
          */
-        private SequenceMatchingParameters sequenceMatchingPreferences;
+        private final SequenceMatchingParameters sequenceMatchingPreferences;
         /**
          * The PTM sequence matching preferences.
          */
-        private SequenceMatchingParameters ptmSequenceMatchingPreferences;
+        private final SequenceMatchingParameters ptmSequenceMatchingPreferences;
         /**
          * The ms2pip features generator.
          */
-        private FeaturesGenerator featuresGenerator;
+        private final FeaturesGenerator featuresGenerator;
 
         /**
          * Constructor.

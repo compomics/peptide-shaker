@@ -45,19 +45,19 @@ public class ProgenesisExcelExport {
     /**
      * The waiting handler.
      */
-    private WaitingHandler waitingHandler;
+    private final WaitingHandler waitingHandler;
     /**
      * The protein keys.
      */
-    private ArrayList<String> proteinKeys;
+    private final ArrayList<String> proteinKeys;
     /**
      * The corresponding identification.
      */
-    private Identification identification;
+    private final Identification identification;
     /**
      * The output file.
      */
-    private File outputFile;
+    private final File outputFile;
     /**
      * The workbook.
      */
@@ -73,11 +73,11 @@ public class ProgenesisExcelExport {
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * The row in the Excel file that is currently being written to.
      */
@@ -85,7 +85,7 @@ public class ProgenesisExcelExport {
     /**
      * The identification parameters.
      */
-    private IdentificationParameters identificationParameters;
+    private final IdentificationParameters identificationParameters;
 
     /**
      * Constructor.

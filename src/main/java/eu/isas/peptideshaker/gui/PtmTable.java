@@ -43,7 +43,7 @@ public class PtmTable extends JTable {
     /**
      * Instance of the main GUI class
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * The table tooltips.
      */
@@ -51,11 +51,11 @@ public class PtmTable extends JTable {
     /**
      * The peptide to display.
      */
-    private Peptide peptide;
+    private final Peptide peptide;
     /**
      * The PTM to analyze.
      */
-    private Modification ptm;
+    private final Modification ptm;
     /**
      * Number of PTMs.
      */
@@ -63,7 +63,7 @@ public class PtmTable extends JTable {
     /**
      * The spectrum keys.
      */
-    private ArrayList<String> spectrumKeys;
+    private final ArrayList<String> spectrumKeys;
     /**
      * If true, area charts are used, false results in bar charts.
      */
@@ -75,7 +75,7 @@ public class PtmTable extends JTable {
     /**
      * A list of the modification site indexes.
      */
-    private ArrayList<Integer> modificationSites;
+    private final ArrayList<Integer> modificationSites;
 
     /**
      * Constructor.

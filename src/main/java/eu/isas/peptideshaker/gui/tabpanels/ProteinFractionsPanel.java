@@ -64,7 +64,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     /**
      * A reference to the main PeptideShakerGUI.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * The list of protein keys.
      */
@@ -88,7 +88,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * True if the fraction order has been okey'ed by the user.
      */

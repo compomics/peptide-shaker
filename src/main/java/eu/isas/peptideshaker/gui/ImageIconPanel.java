@@ -15,7 +15,7 @@ public class ImageIconPanel extends JPanel {
     /**
      * The image icon to display.
      */
-    private ImageIcon imageIcon;
+    private final ImageIcon imageIcon;
 
     /**
      * Create a new ImageIconPanel.

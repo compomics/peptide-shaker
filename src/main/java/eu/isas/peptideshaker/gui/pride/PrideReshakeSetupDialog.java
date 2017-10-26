@@ -45,7 +45,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
     /**
      * The PrideReshakeGUI parent.
      */
-    private PrideReshakeGUI prideReShakeGUI;
+    private final PrideReshakeGUI prideReShakeGUI;
     /**
      * The files table column header tooltips.
      */
@@ -57,7 +57,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * True if a file is currently being downloaded.
      */
@@ -65,7 +65,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
     /**
      * The last selected folder.
      */
-    private LastSelectedFolder lastSelectedFolder;
+    private final LastSelectedFolder lastSelectedFolder;
 
     /**
      * Creates a new PrideReshakeSetupDialog.

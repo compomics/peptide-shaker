@@ -27,7 +27,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
     /**
      * The PeptideShakerGUI parent.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * The table column header tooltips.
      */

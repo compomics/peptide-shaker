@@ -48,15 +48,15 @@ public class PsmScorer {
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * The protein sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The psm scores estimator to use when socring the psms.
      */
-    private PsmScoresEstimator psmScoresEstimator = new PsmScoresEstimator();
+    private final PsmScoresEstimator psmScoresEstimator = new PsmScoresEstimator();
 
     /**
      * Scores the PSMs contained in an identification object.
@@ -419,39 +419,39 @@ public class PsmScorer {
         /**
          * An iterator for the PSMs.
          */
-        private PsmIterator psmIterator;
+        private final PsmIterator psmIterator;
         /**
          * The identification.
          */
-        private Identification identification;
+        private final Identification identification;
         /**
          * The input map
          */
-        private InputMap inputMap;
+        private final InputMap inputMap;
         /**
          * The identification parameters.
          */
-        private IdentificationParameters identificationParameters;
+        private final IdentificationParameters identificationParameters;
         /**
          * The waiting handler.
          */
-        private WaitingHandler waitingHandler;
+        private final WaitingHandler waitingHandler;
         /**
          * Handler for the exceptions.
          */
-        private ExceptionHandler exceptionHandler;
+        private final ExceptionHandler exceptionHandler;
         /**
          * The peptide spectrum annotator.
          */
-        private PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
+        private final PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
         /**
          * The object used to estimate the hyper score.
          */
-        private HyperScore hyperScore = new HyperScore();
+        private final HyperScore hyperScore = new HyperScore();
         /**
          * Map of the advocates missing a hyperscore e-value for every spectrum.
          */
-        private HashMap<String, ArrayList<Integer>> missingEValues = new HashMap<>();
+        private final HashMap<String, ArrayList<Integer>> missingEValues = new HashMap<>();
 
         /**
          * Constructor.
@@ -529,39 +529,39 @@ public class PsmScorer {
         /**
          * An iterator for the PSMs.
          */
-        private PsmIterator psmIterator;
+        private final PsmIterator psmIterator;
         /**
          * The identification.
          */
-        private Identification identification;
+        private final Identification identification;
         /**
          * The input map
          */
-        private InputMap inputMap;
+        private final InputMap inputMap;
         /**
          * The identification parameters.
          */
-        private IdentificationParameters identificationParameters;
+        private final IdentificationParameters identificationParameters;
         /**
          * The waiting handler.
          */
-        private WaitingHandler waitingHandler;
+        private final WaitingHandler waitingHandler;
         /**
          * Handler for the exceptions.
          */
-        private ExceptionHandler exceptionHandler;
+        private final ExceptionHandler exceptionHandler;
         /**
          * Map of the advocates missing a hyperscore e-value for every spectrum.
          */
-        private HashMap<String, ArrayList<Integer>> missingEValues;
+        private final HashMap<String, ArrayList<Integer>> missingEValues;
         /**
          * Default values for the a coefficient.
          */
-        private Double defaultA;
+        private final Double defaultA;
         /**
          * Default values for the b coefficient.
          */
-        private Double defaultB;
+        private final Double defaultB;
 
         /**
          * Constructor.

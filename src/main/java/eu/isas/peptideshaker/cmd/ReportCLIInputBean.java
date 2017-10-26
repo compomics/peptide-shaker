@@ -29,15 +29,15 @@ public class ReportCLIInputBean {
     /**
      * The report types required by the user.
      */
-    private ArrayList<String> reportTypes = new ArrayList<>();
+    private final ArrayList<String> reportTypes = new ArrayList<>();
     /**
      * The documentation types required by the user.
      */
-    private ArrayList<String> documentationTypes = new ArrayList<>();
+    private final ArrayList<String> documentationTypes = new ArrayList<>();
     /**
      * The path settings.
      */
-    private PathSettingsCLIInputBean pathSettingsCLIInputBean;
+    private final PathSettingsCLIInputBean pathSettingsCLIInputBean;
 
     /**
      * Construct a FollowUpCLIInputBean from an Apache CLI instance.

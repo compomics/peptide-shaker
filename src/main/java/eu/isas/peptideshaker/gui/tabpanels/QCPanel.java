@@ -60,16 +60,16 @@ public class QCPanel extends javax.swing.JPanel {
     /**
      * The main PeptideShaker GUI.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * color for the plots (validated targets, validated decoy, non validated
      * target, non validated decoy).
      */
-    private Color[] histogramColors;
+    private final Color[] histogramColors;
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * A simple progress dialog.
      */

@@ -116,7 +116,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
     /**
      * The PeptideShaker main frame.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * The Jmol panel.
      */
@@ -160,7 +160,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
     /**
      * The sequence factory
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * A list of proteins in the protein table.
      */
@@ -2968,7 +2968,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         /**
          * The JmolViewer.
          */
-        private JmolViewer viewer;
+        private final JmolViewer viewer;
         /**
          * The current size of the JPanel.
          */

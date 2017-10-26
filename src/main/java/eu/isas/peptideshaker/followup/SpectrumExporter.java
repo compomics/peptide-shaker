@@ -34,15 +34,15 @@ public class SpectrumExporter {
     /**
      * The identification.
      */
-    private Identification identification;
+    private final Identification identification;
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
     /**
      * Constructor.

@@ -22,15 +22,15 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
     /**
      * Map of the missing mgf files indexed by ID file.
      */
-    private HashMap<File, String> missingFiles;
+    private final HashMap<File, String> missingFiles;
     /**
      * Map of the new mgf files indexed by the new ones.
      */
-    private HashMap<String, File> newFiles = new HashMap<>();
+    private final HashMap<String, File> newFiles = new HashMap<>();
     /**
      * The list of id files presenting a missing mgf file.
      */
-    private ArrayList<File> idFiles;
+    private final ArrayList<File> idFiles;
     /**
      * The last selected folder.
      */
@@ -38,11 +38,11 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
     /**
      * The waiting dialog.
      */
-    private WaitingDialog waitingDialog;
+    private final WaitingDialog waitingDialog;
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
     /**
      * Creates a new MgfFilesNotFoundDialog.

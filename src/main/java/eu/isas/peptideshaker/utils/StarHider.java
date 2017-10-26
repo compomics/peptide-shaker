@@ -40,11 +40,11 @@ public class StarHider {
     /**
      * PeptideShakerGUI instance.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The progress dialog.
      */
@@ -117,14 +117,7 @@ public class StarHider {
                     HashMap<String, ArrayList<Double>> fractionMW = new HashMap<>();
                     for (StarHiderRunnable starHiderRunnable : runnables) {
                         HashMap<String, ArrayList<Double>> threadFractionMW = starHiderRunnable.getThreadFractionMW();
-                        for (String fraction : threadFractionMW.keySet()) {
-                            ArrayList<Double> mws = fractionMW.get(fraction),
-                                    threadMws = threadFractionMW.get(fraction);
-                            if (mws == null) {
-                                mws = new ArrayList<>(threadMws.size());
-                            }
-                            mws.addAll(threadMws);
-                        }
+                        for (String fraction : threadFractionMW.keySet()) 
                     }
 
                     // set the observed fractional molecular weights per fraction

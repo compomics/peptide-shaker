@@ -23,7 +23,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The main GUI class.
      */

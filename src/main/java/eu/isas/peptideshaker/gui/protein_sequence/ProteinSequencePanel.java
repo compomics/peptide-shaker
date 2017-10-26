@@ -31,7 +31,7 @@ public class ProteinSequencePanel {
     /**
      * The background color for the plot.
      */
-    private Color backgroundColor;
+    private final Color backgroundColor;
     /**
      * The reference line width.
      */

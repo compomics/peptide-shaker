@@ -19,11 +19,11 @@ public class GettingStartedDialog extends javax.swing.JDialog {
     /**
      * A reference to PeptideShakerGUI.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * A reference to the WelcomeDialog, can be null.
      */
-    private WelcomeDialog welcomeDialog;
+    private final WelcomeDialog welcomeDialog;
     /**
      * The panels containing the getting started information.
      */

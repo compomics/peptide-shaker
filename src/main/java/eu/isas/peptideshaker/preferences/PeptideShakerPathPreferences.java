@@ -46,20 +46,20 @@ public class PeptideShakerPathPreferences {
         /**
          * The key used to refer to this path.
          */
-        private String id;
+        private final String id;
         /**
          * The description of the path usage.
          */
-        private String description;
+        private final String description;
         /**
          * The default sub directory or file to use in case all paths should be
          * included in a single directory.
          */
-        private String defaultSubDirectory;
+        private final String defaultSubDirectory;
         /**
          * Indicates whether the path should be a folder.
          */
-        private boolean isDirectory;
+        private final boolean isDirectory;
 
         /**
          * Constructor.

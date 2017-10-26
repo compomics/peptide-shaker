@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.waiting.WaitingHandler;
@@ -42,7 +41,7 @@ public class PsPeptideSection {
     /**
      * The peptide features to export.
      */
-    private ArrayList<PsPeptideFeature> peptideFeatures = new ArrayList<>();
+    private final ArrayList<PsPeptideFeature> peptideFeatures = new ArrayList<>();
     /**
      * The PSM subsection if needed.
      */
@@ -50,15 +49,15 @@ public class PsPeptideSection {
     /**
      * Boolean indicating whether the line shall be indexed.
      */
-    private boolean indexes;
+    private final boolean indexes;
     /**
      * Boolean indicating whether column headers shall be included.
      */
-    private boolean header;
+    private final boolean header;
     /**
      * The writer used to send the output to file.
      */
-    private ExportWriter writer;
+    private final ExportWriter writer;
 
     /**
      * Constructor.

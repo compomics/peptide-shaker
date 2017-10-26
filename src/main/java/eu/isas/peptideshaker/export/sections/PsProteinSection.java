@@ -47,7 +47,7 @@ public class PsProteinSection {
     /**
      * The protein features to export.
      */
-    private ArrayList<PsProteinFeature> proteinFeatures = new ArrayList<>();
+    private final ArrayList<PsProteinFeature> proteinFeatures = new ArrayList<>();
     /**
      * The peptide subsection if any.
      */
@@ -55,15 +55,15 @@ public class PsProteinSection {
     /**
      * Boolean indicating whether the line shall be indexed.
      */
-    private boolean indexes;
+    private final boolean indexes;
     /**
      * Boolean indicating whether column headers shall be included.
      */
-    private boolean header;
+    private final boolean header;
     /**
      * The writer used to send the output to file.
      */
-    private ExportWriter writer;
+    private final ExportWriter writer;
 
     /**
      * Constructor.

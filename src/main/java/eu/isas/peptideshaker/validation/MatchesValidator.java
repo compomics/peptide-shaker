@@ -82,11 +82,11 @@ public class MatchesValidator {
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * The protein sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
     /**
      * Constructor.
@@ -134,79 +134,7 @@ public class MatchesValidator {
      */
     public void validateIdentifications(Identification identification, Metrics metrics, GeneMaps geneMaps, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler,
             IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator, InputMap inputMap,
-            SpectrumCountingPreferences spectrumCountingPreferences, ProcessingParameters processingPreferences) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
-
-        IdMatchValidationParameters validationPreferences = identificationParameters.getIdValidationPreferences();
-
-        waitingHandler.setWaitingText("Finding FDR Thresholds. Please Wait...");
-
-        TargetDecoyMap currentMap = proteinMap.getTargetDecoyMap();
-        TargetDecoyResults currentResults = currentMap.getTargetDecoyResults();
-        currentResults.setInputType(1);
-        currentResults.setUserInput(validationPreferences.getDefaultProteinFDR());
-        currentResults.setClassicalEstimators(true);
-        currentResults.setClassicalValidation(true);
-        currentResults.setFdrLimit(validationPreferences.getDefaultProteinFDR());
-        currentMap.getTargetDecoySeries().getFDRResults(currentResults);
-
-        ArrayList<TargetDecoyMap> psmMaps = psmMap.getTargetDecoyMaps(),
-                inputMaps = inputMap.getTargetDecoyMaps();
-
-        int totalProgress = peptideMap.getKeys().size() + psmMaps.size() + inputMap.getNalgorithms();
-        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-        waitingHandler.resetSecondaryProgressCounter();
-        waitingHandler.setMaxSecondaryProgressCounter(totalProgress);
-
-        for (String mapKey : peptideMap.getKeys()) {
-            if (waitingHandler.isRunCanceled()) {
-                return;
-            }
-            waitingHandler.increaseSecondaryProgressCounter();
-            currentMap = peptideMap.getTargetDecoyMap(mapKey);
-            currentResults = currentMap.getTargetDecoyResults();
-            currentResults.setInputType(1);
-            currentResults.setUserInput(validationPreferences.getDefaultPeptideFDR());
-            currentResults.setClassicalEstimators(true);
-            currentResults.setClassicalValidation(true);
-            currentResults.setFdrLimit(validationPreferences.getDefaultPeptideFDR());
-            currentMap.getTargetDecoySeries().getFDRResults(currentResults);
-        }
-
-        for (TargetDecoyMap targetDecoyMap : psmMaps) {
-            if (waitingHandler.isRunCanceled()) {
-                return;
-            }
-            waitingHandler.increaseSecondaryProgressCounter();
-            currentResults = targetDecoyMap.getTargetDecoyResults();
-            currentResults.setInputType(1);
-            currentResults.setUserInput(validationPreferences.getDefaultPsmFDR());
-            currentResults.setClassicalEstimators(true);
-            currentResults.setClassicalValidation(true);
-            currentResults.setFdrLimit(validationPreferences.getDefaultPsmFDR());
-            targetDecoyMap.getTargetDecoySeries().getFDRResults(currentResults);
-        }
-
-        for (TargetDecoyMap targetDecoyMap : inputMaps) {
-            if (waitingHandler.isRunCanceled()) {
-                return;
-            }
-            waitingHandler.increaseSecondaryProgressCounter();
-            currentResults = targetDecoyMap.getTargetDecoyResults();
-            currentResults.setInputType(1);
-            currentResults.setUserInput(validationPreferences.getDefaultPsmFDR());
-            currentResults.setClassicalEstimators(true);
-            currentResults.setClassicalValidation(true);
-            currentResults.setFdrLimit(validationPreferences.getDefaultPsmFDR());
-            targetDecoyMap.getTargetDecoySeries().getFDRResults(currentResults);
-        }
-
-        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-
-        validateIdentifications(identification, metrics, geneMaps, inputMap, waitingHandler, exceptionHandler,
-                identificationFeaturesGenerator, identificationParameters, spectrumCountingPreferences, processingPreferences);
-
-        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-    }
+            SpectrumCountingPreferences spectrumCountingPreferences, ProcessingParameters processingPreferences) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException 
 
     /**
      * This method validates the identification matches of an identification

@@ -52,12 +52,12 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
     /**
      * The nodes.
      */
-    private ArrayList<String> nodes;
+    private final ArrayList<String> nodes;
     /**
      * The edges: the keys are the node labels and the elements the list of
      * objects.
      */
-    private HashMap<String, ArrayList<String>> edges;
+    private final HashMap<String, ArrayList<String>> edges;
     /**
      * The labels of the currently selected nodes.
      */
@@ -85,11 +85,11 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
     /**
      * The node properties: the keys are the node names.
      */
-    private HashMap<String, String> nodeProperties;
+    private final HashMap<String, String> nodeProperties;
     /**
      * The node tooltips: the keys are the node names.
      */
-    private HashMap<String, String> nodeToolTips;
+    private final HashMap<String, String> nodeToolTips;
     /**
      * The graph.
      */
@@ -101,23 +101,23 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
     /**
      * The parent dialog.
      */
-    private JDialog parentDialog;
+    private final JDialog parentDialog;
     /**
      * The parent panel.
      */
-    private JPanel parentPanel;
+    private final JPanel parentPanel;
     /**
      * The normal icon.
      */
-    private Image normalIcon;
+    private final Image normalIcon;
     /**
      * The waiting icon.
      */
-    private Image waitingIcon;
+    private final Image waitingIcon;
     /**
      * The last folder opened by the user.
      */
-    private LastSelectedFolder lastSelectedFolder;
+    private final LastSelectedFolder lastSelectedFolder;
 
     /**
      * Creates a new ProteinInferenceGraphPanel.
@@ -429,7 +429,7 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
     /**
      * The stroke type for the edges.
      */
-    private Transformer<String, Stroke> edgeStroke = new Transformer<String, Stroke>() {
+    private final Transformer<String, Stroke> edgeStroke = new Transformer<String, Stroke>() {
         float dash[] = {10.0f};
 
         public Stroke transform(String s) {

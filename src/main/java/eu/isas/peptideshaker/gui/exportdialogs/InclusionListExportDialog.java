@@ -24,7 +24,7 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
     /**
      * References to the follow up export dialog.
      */
-    private FollowupPreferencesDialog followupPreferencesDialog;
+    private final FollowupPreferencesDialog followupPreferencesDialog;
     /**
      * A simple progress dialog.
      */
@@ -32,7 +32,7 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
     /**
      * The export format.
      */
-    private ExportFormat exportFormat;
+    private final ExportFormat exportFormat;
 
     /**
      * Creates a new InclusionListExportDialog.

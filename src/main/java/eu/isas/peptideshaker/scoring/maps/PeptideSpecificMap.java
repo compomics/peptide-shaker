@@ -32,11 +32,11 @@ public class PeptideSpecificMap implements Serializable {
      * The peptide target/decoy maps indexed by the modification profile of the
      * peptide.
      */
-    private HashMap<String, TargetDecoyMap> peptideMaps = new HashMap<>();
+    private final HashMap<String, TargetDecoyMap> peptideMaps = new HashMap<>();
     /**
      * The indexes of the maps which have been put to the dustbin.
      */
-    private ArrayList<String> groupedMaps = new ArrayList<>();
+    private final ArrayList<String> groupedMaps = new ArrayList<>();
     /**
      * The index of the dustbin.
      */

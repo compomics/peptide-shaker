@@ -27,11 +27,11 @@ public class PrideWebServiceTest extends TestCase {
     /**
      * The data format.
      */
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     /**
      * Test is escaped in offline mode.
      */
-    private static boolean offline = true;
+    private static final boolean offline = true;
 
     /**
      * Test the PRIDE web service access.

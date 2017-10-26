@@ -39,12 +39,12 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
     /**
      * The PeptideShakerGUI main class.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * If true, the created mzid file will be validated against the mzid 1.1
      * schema.
      */
-    private boolean validateMzIdentML = false; // just takes too long if switched on...
+    private final boolean validateMzIdentML = false; // just takes too long if switched on...
     /**
      * The version of mzIdentML to use.
      */

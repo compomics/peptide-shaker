@@ -12,7 +12,7 @@ public class SaveDialog extends javax.swing.JDialog {
     /**
      * The PeptideShaker parent frame.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
 
     /**
      * Create a new SaveDialog.

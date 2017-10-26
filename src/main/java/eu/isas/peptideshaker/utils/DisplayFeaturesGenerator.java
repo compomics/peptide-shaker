@@ -42,15 +42,15 @@ public class DisplayFeaturesGenerator {
     /**
      * The modification profile containing the colors of the PTMs.
      */
-    private ModificationParameters modificationProfile;
+    private final ModificationParameters modificationProfile;
     /**
      * The notSelectedRowHtmlTagFontColor.
      */
-    private String notSelectedRowHtmlTagFontColor = TableProperties.getNotSelectedRowHtmlTagFontColor();
+    private final String notSelectedRowHtmlTagFontColor = TableProperties.getNotSelectedRowHtmlTagFontColor();
     /**
      * The exception handler used to catch exceptions.
      */
-    private ExceptionHandler exceptionHandler;
+    private final ExceptionHandler exceptionHandler;
     /**
      * List of PTMs to display.
      */
@@ -58,7 +58,7 @@ public class DisplayFeaturesGenerator {
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
     /**
      * Constructor

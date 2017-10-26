@@ -23,11 +23,11 @@ public class AnnotationPanel extends javax.swing.JPanel {
     /**
      * The PeptideShakerGUI parent.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
     /**
      * Creates a new AnnotationPanel.

@@ -153,7 +153,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     /**
      * The main GUI.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * The protein table column header tooltips.
      */
@@ -169,7 +169,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The sequence coverage chart.
      */
@@ -189,11 +189,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     /**
      * The location of the divider showing or hiding the spectrum sub plots.
      */
-    private int spectrumSubPlotDividerLocation = 80;
+    private final int spectrumSubPlotDividerLocation = 80;
     /**
      * The location of the divider showing or hiding the coverage plot.
      */
-    private int coveragePanelDividerLocation = 82;
+    private final int coveragePanelDividerLocation = 82;
 
     /**
      * Creates a new OverviewPanel.

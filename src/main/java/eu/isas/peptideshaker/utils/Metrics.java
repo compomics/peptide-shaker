@@ -42,7 +42,7 @@ public class Metrics implements Serializable {
     /**
      * The charges found in all PSMs (only the best hit per spectrum).
      */
-    private ArrayList<Integer> foundCharges = new ArrayList<>();
+    private final ArrayList<Integer> foundCharges = new ArrayList<>();
     /**
      * The maximal amount of peptides in the proteins of the dataset.
      */

@@ -24,7 +24,7 @@ public class ProjectDetails implements Serializable {
     /**
      * List of the identification files loaded.
      */
-    private ArrayList<File> identificationFiles = new ArrayList<>();
+    private final ArrayList<File> identificationFiles = new ArrayList<>();
     /**
      * Map of the identification algorithms names and versions used to generate
      * the identification files. identification file name &gt; Advocate Ids &gt;

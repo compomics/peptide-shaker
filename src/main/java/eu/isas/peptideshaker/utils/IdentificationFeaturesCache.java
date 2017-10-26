@@ -123,19 +123,19 @@ public class IdentificationFeaturesCache implements Serializable {
     /**
      * The cached protein matches for small objects.
      */
-    private ArrayList<String> smallObjectsInCache = new ArrayList<>();
+    private final ArrayList<String> smallObjectsInCache = new ArrayList<>();
     /**
      * The cached protein matches for big objects.
      */
-    private ArrayList<String> bigObjectsInCache = new ArrayList<>();
+    private final ArrayList<String> bigObjectsInCache = new ArrayList<>();
     /**
      * Mapping of the stored big objects.
      */
-    private HashMap<ObjectType, HashMap<String, Object>> bigObjectsCache = new HashMap<>();
+    private final HashMap<ObjectType, HashMap<String, Object>> bigObjectsCache = new HashMap<>();
     /**
      * Mapping of the stored small objects.
      */
-    private HashMap<ObjectType, HashMap<String, Object>> smallObjectsCache = new HashMap<>();
+    private final HashMap<ObjectType, HashMap<String, Object>> smallObjectsCache = new HashMap<>();
     /**
      * The protein list.
      */

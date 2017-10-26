@@ -482,7 +482,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         /**
          * The ordered QC criteria.
          */
-        private ArrayList<String> qcCriteria;
+        private final ArrayList<String> qcCriteria;
 
         /**
          * Constructor.

@@ -78,7 +78,7 @@ public class ValidationPanel extends javax.swing.JPanel {
     /**
      * The main peptide shaker GUI.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * The default line width for the line plots.
      */
@@ -94,15 +94,15 @@ public class ValidationPanel extends javax.swing.JPanel {
     /**
      * The PSMs map: # in the list &gt; map key.
      */
-    private HashMap<Integer, HashMap<Integer, String>> psmMap = new HashMap<>();
+    private final HashMap<Integer, HashMap<Integer, String>> psmMap = new HashMap<>();
     /**
      * The peptide map: # in the list &gt; map key.
      */
-    private HashMap<Integer, String> peptideMap = new HashMap<>();
+    private final HashMap<Integer, String> peptideMap = new HashMap<>();
     /**
      * The confidence plot.
      */
-    private XYPlot confidencePlot = new XYPlot();
+    private final XYPlot confidencePlot = new XYPlot();
     /**
      * The target/decoy plot.
      */
@@ -110,43 +110,43 @@ public class ValidationPanel extends javax.swing.JPanel {
     /**
      * The benefit/cost plot.
      */
-    private XYPlot costBenefitPlot = new XYPlot();
+    private final XYPlot costBenefitPlot = new XYPlot();
     /**
      * The last threshold input.
      */
-    private HashMap<Integer, Double> lastThresholds = new HashMap<>();
+    private final HashMap<Integer, Double> lastThresholds = new HashMap<>();
     /**
      * The last threshold type 0 &gt; confidence 1 &gt; FDR 2 &gt; FNR
      */
-    private HashMap<Integer, Integer> lastThresholdTypes = new HashMap<>();
+    private final HashMap<Integer, Integer> lastThresholdTypes = new HashMap<>();
     /**
      * The original threshold input.
      */
-    private HashMap<Integer, Double> originalThresholds = new HashMap<>();
+    private final HashMap<Integer, Double> originalThresholds = new HashMap<>();
     /**
      * The original threshold type 0 &gt; confidence 1 &gt; FDR 2 &gt; FNR.
      */
-    private HashMap<Integer, Integer> originalThresholdTypes = new HashMap<>();
+    private final HashMap<Integer, Integer> originalThresholdTypes = new HashMap<>();
     /**
      * The confidence threshold marker.
      */
-    private ValueMarker confidenceMarker = new ValueMarker(1);
+    private final ValueMarker confidenceMarker = new ValueMarker(1);
     /**
      * Map keeping track of probabilities modifications.
      */
-    private HashMap<Integer, Boolean> modifiedMaps = new HashMap<>();
+    private final HashMap<Integer, Boolean> modifiedMaps = new HashMap<>();
     /**
      * The score log axis.
      */
-    private NumberAxis scoreAxis;
+    private final NumberAxis scoreAxis;
     /**
      * The highlighting to use for FNR.
      */
-    private Color fnrHighlightColor = new Color(0, 255, 0, 15);
+    private final Color fnrHighlightColor = new Color(0, 255, 0, 15);
     /**
      * The highlighting to use for FDR.
      */
-    private Color fdrHighlightColor = new Color(255, 0, 0, 15);
+    private final Color fdrHighlightColor = new Color(255, 0, 0, 15);
 
     /**
      * Create a new StatsPanel.

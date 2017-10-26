@@ -68,7 +68,7 @@ public class MzidCLIInputBean {
     /**
      * The path settings.
      */
-    private PathSettingsCLIInputBean pathSettingsCLIInputBean;
+    private final PathSettingsCLIInputBean pathSettingsCLIInputBean;
     /**
      * The version of mzIdentML file to use, 1.1 by default.
      */

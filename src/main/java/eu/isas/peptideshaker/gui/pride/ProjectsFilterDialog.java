@@ -29,11 +29,11 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
     /**
      * The projects table.
      */
-    private JTable projectsTable;
+    private final JTable projectsTable;
     /**
      * The PrideReshakeGUI parent frame.
      */
-    private PrideReshakeGUI prideReShakeGUI;
+    private final PrideReshakeGUI prideReShakeGUI;
     /**
      * Counts the number of times the users has pressed a key on the keyboard in
      * the search field.
@@ -42,7 +42,7 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
     /**
      * The time to wait between keys typed before updating the search.
      */
-    private int waitingTime = 1000;
+    private final int waitingTime = 1000;
 
     /**
      * Creates a new ProjectsFilterDialog.

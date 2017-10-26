@@ -27,7 +27,7 @@ public class RecalibrationExporter {
      * The debug mode exports the ion distributions and the titles of the
      * processed spectra.
      */
-    private static boolean debug = false;
+    private static final boolean debug = false;
     /**
      * Suffix for the mgf file containing all recalibrated spectra.
      */

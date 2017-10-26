@@ -28,7 +28,7 @@ public class FiltersDialog extends javax.swing.JDialog {
     /**
      * The main GUI.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * The protein star filters.
      */

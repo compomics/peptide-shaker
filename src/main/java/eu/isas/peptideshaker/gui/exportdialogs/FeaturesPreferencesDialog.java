@@ -28,7 +28,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     /**
      * PeptideShaker main GUI.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * A simple progress dialog.
      */
@@ -36,7 +36,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     /**
      * The export factory.
      */
-    private PSExportFactory exportFactory = PSExportFactory.getInstance();
+    private final PSExportFactory exportFactory = PSExportFactory.getInstance();
     /**
      * List of the available export schemes.
      */

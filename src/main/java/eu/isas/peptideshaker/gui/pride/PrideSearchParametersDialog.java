@@ -17,31 +17,31 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
     /**
      * Reference to the main frame.
      */
-    private PrideReshakeGUI prideReShakeGUI;
+    private final PrideReshakeGUI prideReShakeGUI;
     /**
      * The extracted search parameters file.
      */
-    private File prideSearchParametersFile;
+    private final File prideSearchParametersFile;
     /**
      * The mgf files.
      */
-    private ArrayList<File> mgfFiles;
+    private final ArrayList<File> mgfFiles;
     /**
      * The raw files.
      */
-    private ArrayList<File> rawFiles;
+    private final ArrayList<File> rawFiles;
     /**
      * The species for the PRIDE project.
      */
-    private String species;
+    private final String species;
     /**
      * The species type for the PRIDE project.
      */
-    private String speciesType;
+    private final String speciesType;
     /**
      * The PeptideShaker project name.
      */
-    private String psProjectName;
+    private final String psProjectName;
 
     /**
      * Creates a new PrideSearchParametersDialog.

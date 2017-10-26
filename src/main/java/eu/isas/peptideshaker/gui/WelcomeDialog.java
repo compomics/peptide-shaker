@@ -41,11 +41,11 @@ public class WelcomeDialog extends javax.swing.JDialog {
     /**
      * The PeptideShaker parent frame.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * A dummy parent frame to be able to show an icon in the task bar.
      */
-    static private DummyFrame dummyParentFrame = new DummyFrame("", "/icons/peptide-shaker.gif");
+    private static final DummyFrame dummyParentFrame = new DummyFrame("", "/icons/peptide-shaker.gif");
     /**
      * The progress dialog.
      */

@@ -173,7 +173,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     /**
      * The main GUI.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * The identification.
      */
@@ -189,7 +189,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * The advocates used.
      */

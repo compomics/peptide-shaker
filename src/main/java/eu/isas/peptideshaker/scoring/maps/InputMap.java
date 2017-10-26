@@ -26,17 +26,17 @@ public class InputMap implements Serializable {
      * Map of the hits as imported. One target/decoy map per identification
      * advocate (referenced by their compomics utilities index).
      */
-    private HashMap<Integer, TargetDecoyMap> inputMap = new HashMap<>();
+    private final HashMap<Integer, TargetDecoyMap> inputMap = new HashMap<>();
     /**
      * Map of the hits per file as imported. advocate index &gt; file name &gt;
      * target decoy map
      */
-    private HashMap<Integer, HashMap<String, TargetDecoyMap>> inputSpecificMap = new HashMap<>();
+    private final HashMap<Integer, HashMap<String, TargetDecoyMap>> inputSpecificMap = new HashMap<>();
     /**
      * Map of the intermediate scores. Name of the file &gt; advocate index &gt;
      * score index
      */
-    private HashMap<String, HashMap<Integer, HashMap<Integer, TargetDecoyMap>>> intermediateScores = new HashMap<>();
+    private final HashMap<String, HashMap<Integer, HashMap<Integer, TargetDecoyMap>>> intermediateScores = new HashMap<>();
     /**
      * Map of the search engine contribution. Advocate Id &gt; Spectrum file
      * name &gt; number of validated hits.

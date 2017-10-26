@@ -37,23 +37,23 @@ public class PsFragmentSection {
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * The features to export.
      */
-    private ArrayList<PsFragmentFeature> fragmentFeatures;
+    private final ArrayList<PsFragmentFeature> fragmentFeatures;
     /**
      * Boolean indicating whether the line shall be indexed.
      */
-    private boolean indexes;
+    private final boolean indexes;
     /**
      * Boolean indicating whether column headers shall be included.
      */
-    private boolean header;
+    private final boolean header;
     /**
      * The writer used to send the output to file.
      */
-    private ExportWriter writer;
+    private final ExportWriter writer;
 
     /**
      * Constructor.

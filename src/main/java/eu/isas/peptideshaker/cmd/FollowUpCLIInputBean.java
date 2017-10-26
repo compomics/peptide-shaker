@@ -91,7 +91,7 @@ public class FollowUpCLIInputBean {
     /**
      * The path settings.
      */
-    private PathSettingsCLIInputBean pathSettingsCLIInputBean;
+    private final PathSettingsCLIInputBean pathSettingsCLIInputBean;
 
     /**
      * Construct a FollowUpCLIInputBean from an Apache CLI instance.

@@ -31,7 +31,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
     /**
      * The PeptideShakerGUI main frame.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * The current species, can be null.
      */
@@ -43,11 +43,11 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The search parameters.
      */
-    private SearchParameters searchParameters;
+    private final SearchParameters searchParameters;
 
     /**
      * Creates a new DatabaseHelpDialog.

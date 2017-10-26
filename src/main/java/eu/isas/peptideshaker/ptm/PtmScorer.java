@@ -69,15 +69,15 @@ public class PtmScorer extends DbObject {
     /**
      * The PTM factory.
      */
-    private ModificationFactory ptmFactory = ModificationFactory.getInstance();
+    private final ModificationFactory ptmFactory = ModificationFactory.getInstance();
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * The protein sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The PSM PTM localization conflict map.
      */
@@ -2092,120 +2092,7 @@ public class PtmScorer extends DbObject {
                         ArrayList<Double> ptmMassesAtScore = new ArrayList<>(dScoreMap.keySet());
                         Collections.sort(ptmMassesAtScore);
 
-                        for (Double ptmMass : ptmMassesAtScore) {
-
-                            ArrayList<ModificationMatch> ptmMatches = modMatchesMap.get(ptmMass);
-                            HashMap<Integer, String> ptmPotentialSites = possiblePositions.get(ptmMass);
-                            HashMap<Integer, ArrayList<String>> ptmConfidentSites = confidentSites.get(ptmMass);
-                            int nPTMs = ptmMatches.size(), nPotentialSites = ptmPotentialSites.size();
-
-                            TargetDecoyMap currentMap = psmPTMMap.getTargetDecoyMap(ptmMass, flrKey);
-                            if (currentMap == null) {
-                                throw new IllegalArgumentException("No FLR map found for PTM of mass " + ptmMass + " in PSMs of charge " + flrKey + ".");
-                            }
-
-                            double doubtfulThreshold;
-
-                            if (ptmScoringPreferences.isEstimateFlr()) {
-                                doubtfulThreshold = -currentMap.getTargetDecoyResults().getScoreLimit();
-                            } else {
-                                doubtfulThreshold = ptmScoringPreferences.getProbabilisticScoreThreshold();
-                            }
-
-                            double randomThreshold = 0;
-
-                            if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
-                                randomThreshold = (100.0 * nPTMs) / ptmPotentialSites.size();
-                            }
-
-                            ArrayList<Integer> sites = dScoreMap.get(ptmMass);
-                            Collections.sort(sites);
-
-                            Integer nAssignedSites = ptmAssignedSitesCount.get(ptmMass);
-                            if (nAssignedSites == null) {
-                                nAssignedSites = 0;
-                            }
-
-                            for (int site : sites) {
-
-                                String modName = ptmPotentialSites.get(site);
-                                PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
-                                if (ptmScoring == null) {
-                                    ptmScoring = new PtmScoring(modName);
-                                    ptmScores.addPtmScoring(modName, ptmScoring);
-                                }
-
-                                ModificationMatch modificationMatch = null;
-
-                                if (nAssignedSites < nPTMs) {
-
-                                    boolean alreadyOccupied = false;
-
-                                    for (ModificationMatch assignedMatch : assignedPtms) {
-                                        if (assignedMatch.getModificationSite() == site) {
-                                            alreadyOccupied = true;
-                                            break;
-                                        }
-                                    }
-
-                                    if (!alreadyOccupied) {
-
-                                        modificationMatch = ptmMatches.get(nAssignedSites);
-                                        modificationMatch.setModificationSite(site);
-                                        modificationMatch.setModification(modName);
-                                        assignedPtms.add(modificationMatch);
-
-                                        if (pScore <= randomThreshold) {
-                                            ptmScoring.setSiteConfidence(site, PtmScoring.RANDOM);
-                                            modificationMatch.setConfident(false);
-                                        } else if (pScore <= doubtfulThreshold) {
-                                            ptmScoring.setSiteConfidence(site, PtmScoring.DOUBTFUL);
-                                            modificationMatch.setConfident(false);
-                                        } else {
-                                            ptmScoring.setSiteConfidence(site, PtmScoring.VERY_CONFIDENT);
-                                            modificationMatch.setConfident(true);
-                                            ArrayList<String> ptmsAtAA = ptmConfidentSites.get(site);
-                                            if (ptmsAtAA == null) {
-                                                ptmsAtAA = new ArrayList<>(1);
-                                                ptmConfidentSites.put(site, ptmsAtAA);
-                                            }
-                                            ptmsAtAA.add(modName);
-                                        }
-                                        nAssignedSites++;
-                                        ptmAssignedSitesCount.put(ptmMass, nAssignedSites);
-                                    }
-                                }
-
-                                if (modificationMatch == null || !modificationMatch.getConfident()) {
-
-                                    HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> pScoreAmbiguousMap = ambiguousScoreToSiteMap.get(pScore);
-                                    if (pScoreAmbiguousMap == null) {
-                                        pScoreAmbiguousMap = new HashMap<>(nPotentialSites);
-                                        ambiguousScoreToSiteMap.put(pScore, pScoreAmbiguousMap);
-                                    }
-
-                                    HashMap<Double, HashMap<Integer, ArrayList<String>>> dScoreAmbiguousMap = pScoreAmbiguousMap.get(dScore);
-                                    if (dScoreAmbiguousMap == null) {
-                                        dScoreAmbiguousMap = new HashMap<>(1);
-                                        pScoreAmbiguousMap.put(dScore, dScoreAmbiguousMap);
-                                    }
-
-                                    HashMap<Integer, ArrayList<String>> massAmbiguousMap = dScoreAmbiguousMap.get(ptmMass);
-                                    if (massAmbiguousMap == null) {
-                                        massAmbiguousMap = new HashMap<>(nPotentialSites);
-                                        dScoreAmbiguousMap.put(ptmMass, massAmbiguousMap);
-                                    }
-
-                                    ArrayList<String> modifications = massAmbiguousMap.get(site);
-                                    if (modifications == null) {
-                                        modifications = new ArrayList<>(1);
-                                        massAmbiguousMap.put(site, modifications);
-                                    }
-
-                                    modifications.add(modName);
-                                }
-                            }
-                        }
+                        for (Double ptmMass : ptmMassesAtScore) 
                     }
                 }
             }

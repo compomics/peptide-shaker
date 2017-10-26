@@ -35,7 +35,7 @@ public class DisplayPreferences implements Serializable {
     /**
      * The displayed PTMs.
      */
-    private HashMap<String, Boolean> displayedPTMs = new HashMap<>();
+    private final HashMap<String, Boolean> displayedPTMs = new HashMap<>();
     /**
      * If true, the ion table is shown as an intensity version, false displays
      * the standard Mascot version.

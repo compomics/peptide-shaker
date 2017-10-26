@@ -21,11 +21,11 @@ public enum PsAnnotationFeature implements ExportFeature {
     /**
      * The title of the feature which will be used for column heading.
      */
-    private String title;
+    private final String title;
     /**
      * The description of the feature.
      */
-    private String description;
+    private final String description;
     /**
      * Indicates whether a feature is for advanced user only.
      */

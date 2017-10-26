@@ -22,12 +22,12 @@ public class PsmPTMMap implements Serializable {
     /**
      * Map of PSM maps.
      */
-    private HashMap<Double, HashMap<Integer, TargetDecoyMap>> psmMaps = new HashMap<>();
+    private final HashMap<Double, HashMap<Integer, TargetDecoyMap>> psmMaps = new HashMap<>();
     /**
      * Map used to group charges together in order to ensure statistical
      * relevance.
      */
-    private HashMap<Double, HashMap<Integer, Integer>> grouping = new HashMap<>();
+    private final HashMap<Double, HashMap<Integer, Integer>> grouping = new HashMap<>();
 
     /**
      * Constructor.

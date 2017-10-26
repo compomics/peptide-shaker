@@ -29,15 +29,15 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
     /**
      * The list of ion types.
      */
-    private HashMap<Ion.IonType, HashSet<Integer>> iontypes;
+    private final HashMap<Ion.IonType, HashSet<Integer>> iontypes;
     /**
      * The list of neutral losses.
      */
-    private ArrayList<NeutralLoss> neutralLosses;
+    private final ArrayList<NeutralLoss> neutralLosses;
     /**
      * A reference to PeptideShakerGUI.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
 
     /**
      * Creates a new SpectrumColorsDialog.

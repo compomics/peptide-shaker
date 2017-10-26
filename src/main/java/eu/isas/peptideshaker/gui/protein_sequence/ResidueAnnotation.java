@@ -10,15 +10,15 @@ public class ResidueAnnotation {
     /**
      * The residue annotation as a string.
      */
-    private String annotation;
+    private final String annotation;
     /**
      * A unique (external) identifier for the annotaton.
      */
-    private String identifier;
+    private final String identifier;
     /**
      * If true the given annotation is clickable.
      */
-    private boolean clickable;
+    private final boolean clickable;
 
     /**
      * Create a new ResidueAnnotation object.

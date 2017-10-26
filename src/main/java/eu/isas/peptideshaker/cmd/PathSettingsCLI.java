@@ -23,7 +23,7 @@ public class PathSettingsCLI {
     /**
      * The input bean containing the user parameters.
      */
-    private PathSettingsCLIInputBean pathSettingsCLIInputBean;
+    private final PathSettingsCLIInputBean pathSettingsCLIInputBean;
     /**
      * Waiting handler used to keep track of the progress.
      */

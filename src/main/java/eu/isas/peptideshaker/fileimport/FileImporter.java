@@ -57,23 +57,23 @@ public class FileImporter {
      * The class which will load the information into the various maps and do
      * the associated calculations.
      */
-    private PeptideShaker peptideShaker;
+    private final PeptideShaker peptideShaker;
     /**
      * A dialog to display feedback to the user.
      */
-    private WaitingHandler waitingHandler;
+    private final WaitingHandler waitingHandler;
     /**
      * An exception handler to handle exceptions.
      */
-    private ExceptionHandler exceptionHandler;
+    private final ExceptionHandler exceptionHandler;
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * If a Mascot dat file is bigger than this size, an indexed parsing will be
      * used.
@@ -82,7 +82,7 @@ public class FileImporter {
     /**
      * Metrics of the dataset picked-up while loading the data.
      */
-    private Metrics metrics;
+    private final Metrics metrics;
     /**
      * The mass tolerance to be used to match PTMs from search engines and
      * expected PTMs. 0.01 by default, as far as I can remember it is the mass
@@ -92,7 +92,7 @@ public class FileImporter {
     /**
      * The identification parameters.
      */
-    private IdentificationParameters identificationParameters;
+    private final IdentificationParameters identificationParameters;
 
     /**
      * Constructor for the importer.

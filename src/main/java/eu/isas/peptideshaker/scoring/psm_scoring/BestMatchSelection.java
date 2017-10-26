@@ -46,11 +46,11 @@ public class BestMatchSelection {
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * Map indicating how often a protein was found in a search engine first hit
      * whenever this protein was found more than one time.
@@ -59,11 +59,11 @@ public class BestMatchSelection {
     /**
      * The identification object.
      */
-    private Identification identification;
+    private final Identification identification;
     /**
      * The validator which will take care of the matches validation.
      */
-    private MatchesValidator matchesValidator;
+    private final MatchesValidator matchesValidator;
     /**
      * Metrics to be picked when loading the identification.
      */

@@ -34,7 +34,7 @@ public class FilterDialog extends javax.swing.JDialog {
     /**
      * The original filter.
      */
-    private MatchFilter matchFilter;
+    private final MatchFilter matchFilter;
     /**
      * The names of the items to display.
      */
@@ -46,7 +46,7 @@ public class FilterDialog extends javax.swing.JDialog {
     /**
      * The identification parameters used for the project.
      */
-    private IdentificationParameters identificationParameters;
+    private final IdentificationParameters identificationParameters;
 
     /**
      * Creates and displays a new dialog.

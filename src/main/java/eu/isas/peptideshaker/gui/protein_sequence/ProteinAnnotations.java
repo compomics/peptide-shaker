@@ -15,7 +15,7 @@ public class ProteinAnnotations implements CategoryToolTipGenerator {
     /**
      * The hashmap of protein annotations.
      */
-    private HashMap<Integer, ArrayList<ResidueAnnotation>> proteinAnnotations;
+    private final HashMap<Integer, ArrayList<ResidueAnnotation>> proteinAnnotations;
 
     /**
      * Create a new ProteinAnnotations object.

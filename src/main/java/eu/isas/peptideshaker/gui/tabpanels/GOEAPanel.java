@@ -91,7 +91,7 @@ public class GOEAPanel extends javax.swing.JPanel {
     /**
      * PeptideShaker GUI parent.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * The GO mappings table column header tooltips.
      */
@@ -99,7 +99,7 @@ public class GOEAPanel extends javax.swing.JPanel {
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The distribution chart panel.
      */

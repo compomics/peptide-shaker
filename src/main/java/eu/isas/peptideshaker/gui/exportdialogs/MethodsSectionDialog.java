@@ -29,7 +29,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
     /**
      * The main PeptideShaker frame.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * A simple progress dialog.
      */

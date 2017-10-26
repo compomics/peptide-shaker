@@ -15,27 +15,27 @@ public class TargetDecoySeries {
     /**
      * The probabilistic score series.
      */
-    private double[] scores;
+    private final double[] scores;
     /**
      * The log transformed probabilistic score series.
      */
-    private double[] scoresLog;
+    private final double[] scoresLog;
     /**
      * The confidence series.
      */
-    private double[] confidence;
+    private final double[] confidence;
     /**
      * The confidence series corresponding to the log score series.
      */
-    private double[] confidenceLog;
+    private final double[] confidenceLog;
     /**
      * The PEP series.
      */
-    private double[] pep;
+    private final double[] pep;
     /**
      * The bin size to use in the histogram.
      */
-    private double binSize = 5;
+    private final double binSize = 5;
     /**
      * The series of bins to use for the target / decoy histogram.
      */
@@ -51,35 +51,35 @@ public class TargetDecoySeries {
     /**
      * The classical FDR.
      */
-    private double[] classicalFDR;
+    private final double[] classicalFDR;
     /**
      * The probabilistic FDR.
      */
-    private double[] probaFDR;
+    private final double[] probaFDR;
     /**
      * The probabilistic FNR.
      */
-    private double[] probaFNR;
+    private final double[] probaFNR;
     /**
      * The benefit (1-FNR).
      */
-    private double[] probaBenefit;
+    private final double[] probaBenefit;
     /**
      * The number of validated target hits.
      */
-    private double[] n;
+    private final double[] n;
     /**
      * The classically estimated number of false positives.
      */
-    private double[] classicalFP;
+    private final double[] classicalFP;
     /**
      * The probabilistically estimated number of false positives.
      */
-    private double[] probaFP;
+    private final double[] probaFP;
     /**
      * Indicates whether the current point is only made of decoy hits.
      */
-    private boolean[] decoy;
+    private final boolean[] decoy;
     /**
      * The probabilistically estimated total number of false positives.
      */

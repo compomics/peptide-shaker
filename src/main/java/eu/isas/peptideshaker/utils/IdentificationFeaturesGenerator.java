@@ -57,15 +57,15 @@ public class IdentificationFeaturesGenerator {
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The compomics PTM factory.
      */
-    private ModificationFactory ptmFactory = ModificationFactory.getInstance();
+    private final ModificationFactory ptmFactory = ModificationFactory.getInstance();
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * The identification features cache where the recently accessed
      * identification features are stored
@@ -74,15 +74,15 @@ public class IdentificationFeaturesGenerator {
     /**
      * The metrics picked-up wile loading the data.
      */
-    private Metrics metrics;
+    private final Metrics metrics;
     /**
      * The identification of interest.
      */
-    private Identification identification;
+    private final Identification identification;
     /**
      * The identification parameters.
      */
-    private IdentificationParameters identificationParameters;
+    private final IdentificationParameters identificationParameters;
     /**
      * The spectrum counting preferences.
      */

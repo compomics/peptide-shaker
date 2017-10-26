@@ -19,19 +19,19 @@ public class PsPtmScoringSection {
     /**
      * The features to export.
      */
-    private ArrayList<PsPtmScoringFeature> ptmScoringFeatures;
+    private final ArrayList<PsPtmScoringFeature> ptmScoringFeatures;
     /**
      * Boolean indicating whether the line shall be indexed.
      */
-    private boolean indexes;
+    private final boolean indexes;
     /**
      * Boolean indicating whether column headers shall be included.
      */
-    private boolean header;
+    private final boolean header;
     /**
      * The writer used to send the output to file.
      */
-    private ExportWriter writer;
+    private final ExportWriter writer;
 
     /**
      * Constructor.

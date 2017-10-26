@@ -68,7 +68,7 @@ public class PSExportFactory implements ExportFactory {
     /**
      * The user export schemes.
      */
-    private HashMap<String, ExportScheme> userSchemes = new HashMap<>();
+    private final HashMap<String, ExportScheme> userSchemes = new HashMap<>();
     /**
      * Sorted list of the implemented reports.
      */

@@ -15,7 +15,7 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
     /**
      * The PeptideShakerGUI.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * The progress dialog.
      */

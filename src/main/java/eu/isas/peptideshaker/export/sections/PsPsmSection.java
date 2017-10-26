@@ -44,11 +44,11 @@ public class PsPsmSection {
     /**
      * The features to export.
      */
-    private ArrayList<PsPsmFeature> psmFeatures = new ArrayList<>();
+    private final ArrayList<PsPsmFeature> psmFeatures = new ArrayList<>();
     /**
      * The features to export.
      */
-    private ArrayList<PsIdentificationAlgorithmMatchesFeature> identificationAlgorithmMatchesFeatures = new ArrayList<>();
+    private final ArrayList<PsIdentificationAlgorithmMatchesFeature> identificationAlgorithmMatchesFeatures = new ArrayList<>();
     /**
      * The fragment subsection if needed.
      */
@@ -56,15 +56,15 @@ public class PsPsmSection {
     /**
      * Boolean indicating whether the line shall be indexed.
      */
-    private boolean indexes;
+    private final boolean indexes;
     /**
      * Boolean indicating whether column headers shall be included.
      */
-    private boolean header;
+    private final boolean header;
     /**
      * The writer used to send the output to file.
      */
-    private ExportWriter writer;
+    private final ExportWriter writer;
 
     /**
      * Constructor.

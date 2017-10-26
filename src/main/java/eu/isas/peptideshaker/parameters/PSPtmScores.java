@@ -24,7 +24,7 @@ public class PSPtmScores extends DbObject implements UrParameter {
      * A map containing all scores indexed by the modification of interest for a
      * peptide or a PSM.
      */
-    private HashMap<String, PtmScoring> ptmMap = new HashMap<>();
+    private final HashMap<String, PtmScoring> ptmMap = new HashMap<>();
     /**
      * A list of all modification sites confidently localized on a sequence in a
      * map: site &gt; PTM names.

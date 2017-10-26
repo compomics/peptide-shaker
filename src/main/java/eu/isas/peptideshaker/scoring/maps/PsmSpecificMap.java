@@ -30,21 +30,21 @@ public class PsmSpecificMap extends DbObject implements Serializable {
     /**
      * The map of the PSM target/decoy maps indexed by the PSM charge.
      */
-    private HashMap<Integer, TargetDecoyMap> psmsMaps = new HashMap<>();
+    private final HashMap<Integer, TargetDecoyMap> psmsMaps = new HashMap<>();
     /**
      * The map of the PSM target/decoy maps indexed by the PSM file and charge.
      */
-    private HashMap<Integer, HashMap<String, TargetDecoyMap>> fileSpecificPsmsMaps = new HashMap<>();
+    private final HashMap<Integer, HashMap<String, TargetDecoyMap>> fileSpecificPsmsMaps = new HashMap<>();
     /**
      * Map used to group charges together in order to ensure statistical.
      * relevance.
      */
-    private HashMap<Integer, Integer> grouping = new HashMap<>();
+    private final HashMap<Integer, Integer> grouping = new HashMap<>();
     /**
      * Map used to group charges together in order to ensure statistical.
      * relevance grouped per file.
      */
-    private HashMap<Integer, ArrayList<String>> fileSpecificGrouping = new HashMap<>();
+    private final HashMap<Integer, ArrayList<String>> fileSpecificGrouping = new HashMap<>();
 
     /**
      * Constructor.

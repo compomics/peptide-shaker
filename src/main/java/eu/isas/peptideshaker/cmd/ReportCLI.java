@@ -33,7 +33,7 @@ public class ReportCLI extends CpsParent {
     /**
      * The report command line options.
      */
-    private ReportCLIInputBean reportCLIInputBean;
+    private final ReportCLIInputBean reportCLIInputBean;
     /**
      * The enzyme factory.
      */
