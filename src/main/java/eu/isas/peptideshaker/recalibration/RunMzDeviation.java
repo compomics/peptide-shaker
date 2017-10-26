@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.recalibration;
 
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
-import com.compomics.util.experiment.massspectrometry.spectra.MSnSpectrum;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Peak;
 import com.compomics.util.experiment.identification.Identification;
@@ -11,20 +10,20 @@ import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
-import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.math.BasicMathFunctions;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
-import java.io.IOException;
-import java.sql.SQLException;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import org.apache.commons.math.MathException;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This class computes the mz deviations for a a given run (i.e. file).
@@ -262,25 +261,16 @@ public class RunMzDeviation {
      *
      * @param spectrumFileName the name of the file of the run
      * @param identification the corresponding identification
+     * @param sequenceProvider a provider for the protein sequences
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler displaying the progress and
      * allowing the user to cancel the process. Can be null
      *
-     * @throws IOException exception thrown whenever an IO exception occurred
-     * while reading or writing to a file
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred while
-     * @throws SQLException exception thrown whenever an SQL exception occurred
-     * while interacting with the database
-     * @throws ClassNotFoundException exception thrown whenever an exception
-     * occurred while deserializing an object
-     * @throws MzMLUnmarshallerException exception thrown whenever an exception
-     * occurred while reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math
-     * exception occurred when estimating the noise level
      */
-    public RunMzDeviation(String spectrumFileName, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
-            throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException, MathException {
+    public RunMzDeviation(String spectrumFileName, Identification identification, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
+            throws InterruptedException {
 
         AnnotationParameters annotationPreferences = identificationParameters.getAnnotationPreferences();
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
@@ -330,10 +320,11 @@ public class RunMzDeviation {
                     double error = bestPeptideAssumption.getDeltaMass(precursorMz, false, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection());
                     precursorRawMap.get(precursorRT).get(precursorMz).add(error);
 
-                    MSnSpectrum currentSpectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
-                    SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(currentSpectrum.getSpectrumKey(), bestPeptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-                    ArrayList<IonMatch> ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
-                            (MSnSpectrum) currentSpectrum, bestPeptideAssumption.getPeptide());
+                    Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumKey);
+                    SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(currentSpectrum.getSpectrumKey(), bestPeptideAssumption, sequenceProvider, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
+                    List<IonMatch> ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
+                            currentSpectrum, bestPeptideAssumption.getPeptide()).collect(Collectors.toList());
+                    
                     spectrumFragmentMap = new HashMap<>();
 
                     for (IonMatch ionMatch : ionMatches) {

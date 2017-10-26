@@ -13,7 +13,6 @@ import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.MzIdentMLExport;
 import eu.isas.peptideshaker.followup.FastaExport;
 import eu.isas.peptideshaker.followup.InclusionListExport;
-import eu.isas.peptideshaker.followup.TrainingExport;
 import eu.isas.peptideshaker.followup.ProgenesisExport;
 import eu.isas.peptideshaker.followup.RecalibrationExporter;
 import eu.isas.peptideshaker.followup.SpectrumExporter;
@@ -60,7 +59,7 @@ public class CLIExportMethods {
      * exception occurred when estimating the noise level
      */
     public static void recalibrateSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification,
-            IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException, MathException {
+            IdentificationParameters identificationParameters, WaitingHandler waitingHandler) {
         File recalibrationFolder = followUpCLIInputBean.getRecalibrationFolder();
         if (!recalibrationFolder.exists()) {
             recalibrationFolder.mkdir();
@@ -184,35 +183,6 @@ public class CLIExportMethods {
         }
         File destinationFile = destinationFileTemp;
         ProgenesisExport.writeProgenesisExport(destinationFile, identification, ProgenesisExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getProgenesisExportTypeIndex()), waitingHandler, followUpCLIInputBean.getProgenesisTargetedPTMs(), sequenceMatchingPreferences);
-    }
-
-    /**
-     * Exports the files needed for the PepNovo training.
-     *
-     * @param followUpCLIInputBean the follow up input bean
-     * @param identification the identification
-     * @param identificationParameters the identification parameters
-     * @param waitingHandler a waiting handler to display progress
-     *
-     * @throws IOException exception thrown whenever an IO exception occurred
-     * while reading or writing to a file
-     * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while interacting with the database
-     * @throws SQLException exception thrown whenever an SQL exception occurred
-     * while interacting with the database
-     * @throws ClassNotFoundException exception thrown whenever an exception
-     * occurred while deserializing an object
-     * @throws MzMLUnmarshallerException exception thrown whenever an exception
-     * occurred while reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math
-     * exception occurred when estimating the noise level
-     */
-    public static void exportPepnovoTrainingFiles(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
-        File destinationFolder = followUpCLIInputBean.getPepnovoTrainingFolder();
-        if (!destinationFolder.exists()) {
-            destinationFolder.mkdir();
-        }
-        TrainingExport.exportPepnovoTrainingFiles(destinationFolder, identification, identificationParameters, followUpCLIInputBean.getPepnovoTrainingFDR(), followUpCLIInputBean.getPepnovoTrainingFNR(), followUpCLIInputBean.isPepnovoTrainingRecalibrate(), waitingHandler);
     }
 
     /**

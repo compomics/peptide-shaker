@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.export;
 
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.waiting.WaitingHandler;
@@ -45,11 +44,6 @@ public class ProjectExport {
         ArrayList<String> dataFiles = new ArrayList<>();
         dataFiles.add(fastaFile.getAbsolutePath());
 
-        File indexFile = new File(fastaFile.getParentFile(), SequenceFactory.getIndexName(fastaFile.getName()));
-        if (indexFile.exists()) {
-            dataFiles.add(indexFile.getAbsolutePath());
-        }
-
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Getting Spectrum Files. Please Wait...");
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -68,7 +62,7 @@ public class ProjectExport {
 
             if (spectrumFile.exists()) {
                 dataFiles.add(spectrumFile.getAbsolutePath());
-                indexFile = new File(spectrumFile.getParentFile(), SpectrumFactory.getIndexName(spectrumFile.getName()));
+                File indexFile = new File(spectrumFile.getParentFile(), SpectrumFactory.getIndexName(spectrumFile.getName()));
                 if (indexFile.exists()) {
                     dataFiles.add(indexFile.getAbsolutePath());
                 }

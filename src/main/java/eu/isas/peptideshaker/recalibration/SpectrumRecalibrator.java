@@ -1,16 +1,15 @@
 package eu.isas.peptideshaker.recalibration;
 
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.massspectrometry.spectra.MSnSpectrum;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Peak;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.HashMap;
-import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -65,26 +64,15 @@ public class SpectrumRecalibrator {
      *
      * @param spectrumFileName the name of the file of the run
      * @param identification the corresponding identification
+     * @param sequenceProvider a provider for the protein sequences
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler displaying the progress and
      * allowing the user to cancel the process. Can be null
      *
-     * @throws IOException exception thrown whenever an IO exception occurred
-     * while reading or writing to a file
-     * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while
-     * @throws SQLException exception thrown whenever an SQL exception occurred
-     * while interacting with the database
-     * @throws ClassNotFoundException exception thrown whenever an exception
-     * occurred while deserializing an object
-     * @throws MzMLUnmarshallerException exception thrown whenever an exception
-     * occurred while reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math
-     * exception occurred when estimating the noise level
+     * @throws InterruptedException exception thrown whenever a thread got interrupted
      */
-    public void estimateErrors(String spectrumFileName, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
-            throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException, MathException {
-        RunMzDeviation fileErrors = new RunMzDeviation(spectrumFileName, identification, identificationParameters, waitingHandler);
+    public void estimateErrors(String spectrumFileName, Identification identification, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws InterruptedException {
+        RunMzDeviation fileErrors = new RunMzDeviation(spectrumFileName, identification, sequenceProvider, identificationParameters, waitingHandler);
         runMzDeviationMap.put(spectrumFileName, fileErrors);
     }
 
@@ -99,20 +87,15 @@ public class SpectrumRecalibrator {
      * shall be recalibrated
      *
      * @return a recalibrated spectrum
-     *
-     * @throws IOException exception thrown whenever an IO exception occurred
-     * while reading or writing to a file
-     * @throws MzMLUnmarshallerException exception thrown whenever an exception
-     * occurred while reading an mzML file
      */
-    public MSnSpectrum recalibrateSpectrum(String fileName, String spectrumTitle, boolean recalibratePrecursor, boolean recalibrateFragmentIons) throws IOException, MzMLUnmarshallerException {
+    public Spectrum recalibrateSpectrum(String fileName, String spectrumTitle, boolean recalibratePrecursor, boolean recalibrateFragmentIons) {
 
         RunMzDeviation runError = runMzDeviationMap.get(fileName);
         if (runError == null) {
             throw new IllegalArgumentException("No m/z deviation statistics found for spectrum file " + fileName + ".");
         }
 
-        MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(fileName, spectrumTitle);
+        Spectrum spectrum = spectrumFactory.getSpectrum(fileName, spectrumTitle);
         Precursor precursor = spectrum.getPrecursor();
         double precursorMz = precursor.getMz();
         double precursorRT = precursor.getRt();
@@ -129,6 +112,6 @@ public class SpectrumRecalibrator {
             peakList = runError.recalibratePeakList(precursorRT, spectrum.getPeakMap());
         }
 
-        return new MSnSpectrum(2, newPrecursor, spectrumTitle, peakList, fileName);
+        return new Spectrum(2, newPrecursor, spectrumTitle, peakList, fileName);
     }
 }

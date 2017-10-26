@@ -6,7 +6,6 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
@@ -379,7 +378,7 @@ public class ReportCLI extends CpsParent {
     public void closePeptideShaker() throws IOException, SQLException, InterruptedException, ClassNotFoundException {
 
         SpectrumFactory.getInstance().closeFiles();
-        SequenceFactory.getInstance().closeFile();
+        
         identification.close();
 
         File matchFolder = PeptideShaker.getMatchesFolder();

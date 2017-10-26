@@ -65,23 +65,6 @@ public class FollowUpCLIInputBean {
      */
     private int progenesisExportTypeIndex = 0;
     /**
-     * The folder where to output the PepNovo training files.
-     */
-    private File pepnovoTrainingFolder = null;
-    /**
-     * Boolean indicating whether the mgf files exported by the PepNovo training
-     * method shall be recalibrated.
-     */
-    private boolean pepnovoTrainingRecalibrate = true;
-    /**
-     * The FDR for the "good spectra" training set.
-     */
-    private Double pepnovoTrainingFDR = null;
-    /**
-     * The FNR for the "bad spectra" training set.
-     */
-    private Double pepnovoTrainingFNR = null;
-    /**
      * The file for inclusion list export.
      */
     private File inclusionFile;
@@ -161,19 +144,6 @@ public class FollowUpCLIInputBean {
                     progenesisTargetedPTMs = getModificationNames(aLine.getOptionValue(FollowUpCLIParams.PROGENESIS_TARGETED_PTMS.id));
                 }
             }
-        }
-        if (aLine.hasOption(FollowUpCLIParams.PEPNOVO_TRAINING_FOLDER.id)) {
-            pepnovoTrainingFolder = new File(aLine.getOptionValue(FollowUpCLIParams.PEPNOVO_TRAINING_FOLDER.id));
-        }
-        if (aLine.hasOption(FollowUpCLIParams.PEPNOVO_TRAINING_RECALIBRATION.id)) {
-            int value = new Integer(aLine.getOptionValue(FollowUpCLIParams.PEPNOVO_TRAINING_RECALIBRATION.id));
-            pepnovoTrainingRecalibrate = value == 1;
-        }
-        if (aLine.hasOption(FollowUpCLIParams.PEPNOVO_TRAINING_FDR.id)) {
-            pepnovoTrainingFDR = new Double(aLine.getOptionValue(FollowUpCLIParams.PEPNOVO_TRAINING_FDR.id));
-        }
-        if (aLine.hasOption(FollowUpCLIParams.PEPNOVO_TRAINING_FNR.id)) {
-            pepnovoTrainingFNR = new Double(aLine.getOptionValue(FollowUpCLIParams.PEPNOVO_TRAINING_FNR.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_FILE.id)) {
             inclusionFile = new File(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_FILE.id));
@@ -330,49 +300,7 @@ public class FollowUpCLIInputBean {
     public ArrayList<String> getProgenesisTargetedPTMs() {
         return progenesisTargetedPTMs;
     }
-
-    /**
-     * Returns the folder set for the export of PepNovo training files.
-     *
-     * @return the folder set for the export of PepNovo training files
-     */
-    public File getPepnovoTrainingFolder() {
-        return pepnovoTrainingFolder;
-    }
-
-    /**
-     * Indicates whether the mgf files exported by the PepNovo export shall be
-     * recalibrated.
-     *
-     * @return a boolean indicating whether the mgf files exported by the
-     * pepnovo export shall be recalibrated
-     */
-    public boolean isPepnovoTrainingRecalibrate() {
-        return pepnovoTrainingRecalibrate;
-    }
-
-    /**
-     * Indicates the FDR set for the "good spectra" set of the PepNovo training
-     * files. Null if not set.
-     *
-     * @return the FDR set for the "good spectra" set of the PepNovo training
-     * files
-     */
-    public Double getPepnovoTrainingFDR() {
-        return pepnovoTrainingFDR;
-    }
-
-    /**
-     * Indicates the FNR set for the "good spectra" set of the PepNovo training
-     * files. Null if not set.
-     *
-     * @return the FNR set for the "good spectra" set of the PepNovo training
-     * files
-     */
-    public Double getPepnovoTrainingFNR() {
-        return pepnovoTrainingFNR;
-    }
-
+    
     /**
      * Returns the file for the inclusion list generation. null if not set.
      *
@@ -487,15 +415,6 @@ public class FollowUpCLIInputBean {
      */
     public boolean progenesisExportNeeded() {
         return progenesisExportFile != null;
-    }
-
-    /**
-     * Indicates whether a PepNovo training export is needed.
-     *
-     * @return whether a PepNovo training export export is needed
-     */
-    public boolean pepnovoTrainingExportNeeded() {
-        return pepnovoTrainingFolder != null;
     }
 
     /**

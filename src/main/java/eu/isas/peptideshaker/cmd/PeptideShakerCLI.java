@@ -10,7 +10,6 @@ import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -192,7 +191,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             loadSpecies();
 
             // Set the gene mappings
-            GeneFactory geneFactory = GeneFactory.getInstance();
+            GeneFactory geneFactory = new GeneFactory();
             geneFactory.initialize(PeptideShaker.getJarFilePath());
 
             // Load the species mapping
@@ -304,19 +303,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                         waitingHandler.setRunCanceled();
                     }
                 }
-
-                // de novo training export
-                if (followUpCLIInputBean.pepnovoTrainingExportNeeded()) {
-                    try {
-                        CLIExportMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
-                        waitingHandler.appendReport("PepNovo training export completed.", true, true);
-                    } catch (Exception e) {
-                        waitingHandler.appendReport("An error occurred while exporting the Pepnovo training file.", true, true);
-                        e.printStackTrace();
-                        waitingHandler.setRunCanceled();
-                    }
-                }
-
             }
 
             // report export if needed
@@ -802,11 +788,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         try {
             SpectrumFactory.getInstance().closeFiles();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            SequenceFactory.getInstance().closeFile();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -26,10 +26,6 @@ public enum FollowUpCLIParams {
     PROGENESIS_FILE("progenesis_file", "Output file for identification results in Progenesis LC-MS compatible format. (Existing files will be overwritten.)", false),
     PROGENESIS_TYPE("progenesis_type", "Type of hits to export to Progenesis. " + ProgenesisExport.ExportType.getCommandLineOptions(), false),
     PROGENESIS_TARGETED_PTMS("progenesis_ptms", "For the progenesis PTM export, the comma separated list of targeted PTMs in a list of PTM names", false),
-    PEPNOVO_TRAINING_FOLDER("pepnovo_training_folder", "Output folder for PepNovo training files. (Existing files will be overwritten.)", false),
-    PEPNOVO_TRAINING_RECALIBRATION("pepnovo_training_recalibration", "Indicate whether the exported mgf files shall be recalibrated. 0: No, 1: Yes (default).", false),
-    PEPNOVO_TRAINING_FDR("pepnovo_training_fdr", "FDR used for the 'good spectra' export. If not set, the validation FDR will be used.", false),
-    PEPNOVO_TRAINING_FNR("pepnovo_training_fnr", "FNR used for the 'bad spectra' export. If not set, the same value as for the 'good spectra' FDR will be used.", false),
     INCLUSION_LIST_FILE("inclusion_list_file", "Output file for an inclusion list of validated hits. (Existing files will be overwritten.)", false),
     INCLUSION_LIST_FORMAT("inclusion_list_format", "Format for the inclusion list. " + InclusionListExport.ExportFormat.getCommandLineOptions(), false),
     INCLUSION_LIST_PROTEIN_FILTERS("inclusion_list_protein_filters", "Protein inference filters to be used for the inclusion list export (comma separated). " + InclusionListExport.getProteinFiltersCommandLineOptions(), false),
@@ -83,10 +79,6 @@ public enum FollowUpCLIParams {
         aOptions.addOption(PROGENESIS_FILE.id, true, PROGENESIS_FILE.description);
         aOptions.addOption(PROGENESIS_TYPE.id, true, PROGENESIS_TYPE.description);
         aOptions.addOption(PROGENESIS_TARGETED_PTMS.id, true, PROGENESIS_TARGETED_PTMS.description);
-        aOptions.addOption(PEPNOVO_TRAINING_FOLDER.id, true, PEPNOVO_TRAINING_FOLDER.description);
-        aOptions.addOption(PEPNOVO_TRAINING_RECALIBRATION.id, true, PEPNOVO_TRAINING_RECALIBRATION.description);
-        aOptions.addOption(PEPNOVO_TRAINING_FDR.id, true, PEPNOVO_TRAINING_FDR.description);
-        aOptions.addOption(PEPNOVO_TRAINING_FNR.id, true, PEPNOVO_TRAINING_FNR.description);
         aOptions.addOption(INCLUSION_LIST_FILE.id, true, INCLUSION_LIST_FILE.description);
         aOptions.addOption(INCLUSION_LIST_FORMAT.id, true, INCLUSION_LIST_FORMAT.description);
         aOptions.addOption(INCLUSION_LIST_PEPTIDE_FILTERS.id, true, INCLUSION_LIST_PEPTIDE_FILTERS.description);
@@ -151,12 +143,6 @@ public enum FollowUpCLIParams {
         output += "\nFASTA Export:\n\n";
         output += "-" + String.format(formatter, FASTA_FILE.id) + " " + FASTA_FILE.description + "\n";
         output += "-" + String.format(formatter, FASTA_TYPE.id) + " " + FASTA_TYPE.description + "\n";
-        
-        output += "\nPepNovo Training Files Export:\n\n";
-        output += "-" + String.format(formatter, PEPNOVO_TRAINING_FOLDER.id) + " " + PEPNOVO_TRAINING_FOLDER.description + "\n";
-        output += "-" + String.format(formatter, PEPNOVO_TRAINING_RECALIBRATION.id) + " " + PEPNOVO_TRAINING_RECALIBRATION.description + "\n";
-        output += "-" + String.format(formatter, PEPNOVO_TRAINING_FDR.id) + " " + PEPNOVO_TRAINING_FDR.description + "\n";
-        output += "-" + String.format(formatter, PEPNOVO_TRAINING_FNR.id) + " " + PEPNOVO_TRAINING_FNR.description + "\n";
         
         output += "\nInclusion List Generation\n\n";
         output += "-" + String.format(formatter, INCLUSION_LIST_FILE.id) + " " + INCLUSION_LIST_FILE.description + "\n";
