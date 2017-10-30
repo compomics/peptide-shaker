@@ -410,7 +410,7 @@ public class PsmImporter {
                             try {
                                 ptmFactory.checkFixedModifications(modificationProfile, peptide, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
                             } catch (IllegalArgumentException e) {
-                                if (peptideAssumptionFilter.removeUnknownPTMs()) {
+                                if (peptideAssumptionFilter.removeUnknownModifications()) {
                                     // Exclude peptides with aberrant PTM mapping
                                     System.out.println(e.getMessage());
                                     ptmIssue++;

@@ -8,7 +8,6 @@ import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -17,6 +16,7 @@ import com.compomics.util.experiment.identification.matches_iterators.PeptideMat
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.experiment.identification.amino_acid_tags.TagComponent;
 import com.compomics.util.experiment.identification.amino_acid_tags.MassGap;
+import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.parameters.identification.search.DigestionParameters;
@@ -458,27 +458,8 @@ public class DisplayFeaturesGenerator {
         String tooltip = "<html>";
 
         for (TagComponent tagComponent : tag.getContent()) {
-            if (tagComponent instanceof AminoAcidPattern) {
-                AminoAcidPattern aminoAcidPattern = (AminoAcidPattern) tagComponent;
-                for (int site = 1; site <= aminoAcidPattern.length(); site++) {
-                    for (ModificationMatch modificationMatch : aminoAcidPattern.getModificationsAt(site)) {
-                        String affectedResidue = aminoAcidPattern.asSequence(site - 1);
-                        String modName = modificationMatch.getModification();
-                        Color ptmColor = modificationProfile.getColor(modName);
-                        if (modificationMatch.getConfident()) {
-                            tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
-                                    + affectedResidue
-                                    + "</span>"
-                                    + ": " + modName + " (confident)<br>";
-                        } else {
-                            tooltip += "<span style=\"color:#" + Util.color2Hex(ptmColor) + ";background:#" + Util.color2Hex(Color.WHITE) + "\">"
-                                    + affectedResidue
-                                    + "</span>"
-                                    + ": " + modName + " (not confident)<br>";
-                        }
-                    }
-                }
-            } else if (tagComponent instanceof AminoAcidSequence) {
+            
+            if (tagComponent instanceof AminoAcidSequence) {
                 AminoAcidSequence aminoAcidSequence = (AminoAcidSequence) tagComponent;
                 for (int site = 1; site <= aminoAcidSequence.length(); site++) {
                     for (ModificationMatch modificationMatch : aminoAcidSequence.getModificationsAt(site)) {
@@ -587,7 +568,7 @@ public class DisplayFeaturesGenerator {
             representativeAmbiguousLocations = getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayedPTMs);
             secondaryAmbiguousLocations = getFilteredAmbiguousModificationsSecondarySites(ptmScores, displayedPTMs);
         }
-        return Peptide.getTaggedModifiedSequence(modificationProfile,
+        return PeptideUtils.getTaggedModifiedSequence(modificationProfile,
                 peptide, confidentLocations, representativeAmbiguousLocations, secondaryAmbiguousLocations, fixedModifications, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
     }
 

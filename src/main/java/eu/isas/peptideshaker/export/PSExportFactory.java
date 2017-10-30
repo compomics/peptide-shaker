@@ -590,7 +590,7 @@ public class PSExportFactory implements ExportFactory {
 
         // accessions
         sectionContent.add(PsPeptideFeature.accessions);
-        sectionContent.add(PsPeptideFeature.unique_database);
+        sectionContent.add(PsPeptideFeature.unique_group);
 
         // protein group
         sectionContent.add(PsPeptideFeature.protein_groups);
@@ -772,7 +772,7 @@ public class PSExportFactory implements ExportFactory {
 
         // accessions
         sectionContent.add(PsPeptideFeature.accessions);
-        sectionContent.add(PsPeptideFeature.unique_database);
+        sectionContent.add(PsPeptideFeature.unique_group);
 
         // protein group
         sectionContent.add(PsPeptideFeature.protein_groups);

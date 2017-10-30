@@ -16,7 +16,7 @@ public enum PsPeptideFeature implements ExportFeature {
     protein_groups("Protein Group(s)", "List of identified protein groups this peptide can map to with associated validation level.", true),
     best_protein_group_validation("Protein Validation", "Best validation status among the protein groups this peptide maps to.", true),
     nValidatedProteinGroups("#Validated Protein Group(s)", "Indicates the number of protein groups this peptide maps to.", false),
-    unique_database("Unique Database", "Indicates whether the peptide is found uniquely in the protein match of interest when taking into account all proteins in the database.", false),
+    unique_group("Unique Group", "Indicates whether the peptide maps to a unique protein group.", false),
     pi("Protein Inference", "The protein inference status of this peptide.", false),
     sequence("Sequence", "Sequence of the peptide.", false),
     missed_cleavages("Missed Cleavages", "The number of missed cleavages.", false),

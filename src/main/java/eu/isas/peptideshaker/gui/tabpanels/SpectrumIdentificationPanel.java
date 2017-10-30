@@ -3047,7 +3047,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                         if (peptide.isModified()) {
                                             allModifications.addAll(peptide.getModificationMatches());
                                         }
+                                    
                                     } else if (currentAssumption instanceof TagAssumption) {
+                                        
                                         TagAssumption tagAssumption = (TagAssumption) currentAssumption;
 
                                         peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationParameters(spectrumKey, tagAssumption));
@@ -3067,39 +3069,50 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                                         // get the modifications for the tag
                                         for (TagComponent tagComponent : tagAssumption.getTag().getContent()) {
-                                            if (tagComponent instanceof AminoAcidPattern) {
-                                                AminoAcidPattern aminoAcidPattern = (AminoAcidPattern) tagComponent;
-                                                for (int site = 1; site <= aminoAcidPattern.length(); site++) {
-                                                    for (ModificationMatch modificationMatch : aminoAcidPattern.getModificationsAt(site)) {
-                                                        allModifications.add(modificationMatch);
-                                                    }
-                                                }
-                                            } else if (tagComponent instanceof AminoAcidSequence) {
+                                            
+                                            if (tagComponent instanceof AminoAcidSequence) {
+                                            
                                                 AminoAcidSequence aminoAcidSequence = (AminoAcidSequence) tagComponent;
+
                                                 for (int site = 1; site <= aminoAcidSequence.length(); site++) {
+
                                                     for (ModificationMatch modificationMatch : aminoAcidSequence.getModificationsAt(site)) {
+
                                                         allModifications.add(modificationMatch);
+
                                                     }
                                                 }
+
                                             } else if (tagComponent instanceof MassGap) {
+
                                                 // Nothing to do here
+
                                             } else {
+
                                                 throw new UnsupportedOperationException("Annotation not supported for the tag component " + tagComponent.getClass() + ".");
+
                                             }
                                         }
 
-                                        if (tagAssumption.getIdentificationCharge().value > maxPrecursorCharge) {
-                                            maxPrecursorCharge = tagAssumption.getIdentificationCharge().value;
+                                        if (tagAssumption.getIdentificationCharge() > maxPrecursorCharge) {
+                                            
+                                            maxPrecursorCharge = tagAssumption.getIdentificationCharge();
+                                        
                                         }
 
                                         if (!modifiedSequence.isEmpty()) {
+                                            
                                             modifiedSequence += " vs. ";
+                                        
                                         }
 
                                         modifiedSequence += tagAssumption.getTag().getTaggedModifiedSequence(
                                                 peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, false);
+                                    
                                     } else {
+                                    
                                         throw new UnsupportedOperationException("Spectrum annotation not implemented for identification assumption of type " + currentAssumption.getClass() + ".");
+                                    
                                     }
                                 }
                             }

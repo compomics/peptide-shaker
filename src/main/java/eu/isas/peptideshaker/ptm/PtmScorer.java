@@ -18,7 +18,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
-import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
+import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.identification.modification.PtmScore;
 import com.compomics.util.experiment.identification.modification.PtmSiteMapping;
 import com.compomics.util.experiment.identification.ptm.ptmscores.AScore;
@@ -685,7 +685,7 @@ public class PtmScorer extends DbObject {
 
         HashMap<Double, ArrayList<Integer>> confidentSites = new HashMap<>(variableModifications.size());
 
-        PsmIterator psmIterator = identification.getPsmIterator(peptideMatch.getSpectrumMatchesKeys(), waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(peptideMatch.getSpectrumMatchesKeys(), waitingHandler);
 
         // Map confident sites
         SpectrumMatch spectrumMatch;
@@ -1421,7 +1421,7 @@ public class PtmScorer extends DbObject {
 
         ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
-        PsmIterator psmIterator = identification.getPsmIterator(null);
+        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(null);
         for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
             PsmPtmScorerRunnable runnable = new PsmPtmScorerRunnable(psmIterator, identification, identificationParameters, waitingHandler, exceptionHandler);
             pool.submit(runnable);
@@ -1574,7 +1574,7 @@ public class PtmScorer extends DbObject {
         // PSMs with ambiguously localized PTMs in a map: File -> PTM mass -> spectrum keys
         HashMap<Double, HashSet<String>> notConfidentPeptideInference = new HashMap<>();
 
-        PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler);
         SpectrumMatch spectrumMatch;
 
         while ((spectrumMatch = psmIterator.next()) != null) {
@@ -2166,7 +2166,7 @@ public class PtmScorer extends DbObject {
         /**
          * An iterator for the PSMs.
          */
-        private PsmIterator psmIterator;
+        private SpectrumMatchesIterator psmIterator;
         /**
          * The identification.
          */
@@ -2198,7 +2198,7 @@ public class PtmScorer extends DbObject {
          * canceling the process
          * @param exceptionHandler handler for exceptions
          */
-        public PsmPtmScorerRunnable(PsmIterator psmIterator, Identification identification,
+        public PsmPtmScorerRunnable(SpectrumMatchesIterator psmIterator, Identification identification,
                 IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
             this.psmIterator = psmIterator;
             this.identification = identification;

@@ -8,7 +8,7 @@ import com.compomics.util.experiment.biology.*;
 import com.compomics.util.experiment.biology.ions.impl.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.modification.PtmtableContent;
+import com.compomics.util.experiment.identification.modification.ModificationtableContent;
 import com.compomics.util.experiment.massspectrometry.spectra.MSnSpectrum;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
@@ -286,7 +286,8 @@ public class PtmTable extends JTable {
     private void insertAreaCharts() {
 
         AnnotationParameters annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
-        PtmtableContent tempContent, tableContent = new PtmtableContent();
+        ModificationtableContent tempContent;
+        PtmtableContent tableContent = new ModificationtableContent();
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
         for (String spectrumKey : spectrumKeys) {
@@ -295,7 +296,7 @@ public class PtmTable extends JTable {
                 SpectrumMatch spectrumMatch = (SpectrumMatch)peptideShakerGUI.getIdentification().retrieveObject(spectrumKey);
                 peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationParameters(spectrumKey, spectrumMatch.getBestPeptideAssumption()));
                 peptideShakerGUI.updateAnnotationPreferences();
-                tempContent = PtmtableContent.getPTMTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences, peptideShakerGUI.getSpecificAnnotationPreferences());
+                tempContent = ModificationtableContent.getModificationTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences, peptideShakerGUI.getSpecificAnnotationPreferences());
                 tempContent.normalize();
                 tableContent.addAll(tempContent);
             } catch (Exception e) {
@@ -390,7 +391,7 @@ public class PtmTable extends JTable {
      * @param aa
      * @param column
      */
-    private void addAreaChart(PtmtableContent tableContent, int fragmentIonType, int aa, int column) {
+    private void addAreaChart(ModificationtableContent tableContent, int fragmentIonType, int aa, int column) {
 
         ArrayList<JSparklinesDataSeries> sparkLineDataSeriesAll = new ArrayList<>();
         ArrayList<Double> data;
@@ -458,7 +459,8 @@ public class PtmTable extends JTable {
     private void insertBarCharts() {
 
         AnnotationParameters annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
-        PtmtableContent tempContent, tableContent = new PtmtableContent();
+        ModificationtableContent tempContent;
+        PtmtableContent tableContent = new ModificationtableContent();
         MSnSpectrum spectrum;
         SpectrumMatch spectrumMatch;
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
@@ -470,7 +472,7 @@ public class PtmTable extends JTable {
                 spectrumMatch = (SpectrumMatch)peptideShakerGUI.getIdentification().retrieveObject(spectrumKey);
                 peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationParameters(spectrumKey, spectrumMatch.getBestPeptideAssumption()));
                 peptideShakerGUI.updateAnnotationPreferences();
-                tempContent = PtmtableContent.getPTMTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences, peptideShakerGUI.getSpecificAnnotationPreferences());
+                tempContent = ModificationtableContent.getModificationTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences, peptideShakerGUI.getSpecificAnnotationPreferences());
                 tempContent.normalize();
                 tableContent.addAll(tempContent);
             } catch (Exception e) {

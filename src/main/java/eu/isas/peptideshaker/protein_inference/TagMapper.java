@@ -196,48 +196,8 @@ public class TagMapper {
 
         // rename the variable modifications
         for (TagComponent tagComponent : tag.getContent()) {
-            if (tagComponent instanceof AminoAcidPattern) {
-
-                AminoAcidPattern aminoAcidPattern = (AminoAcidPattern) tagComponent;
-
-                for (int aa : aminoAcidPattern.getModificationIndexes()) {
-                    for (ModificationMatch modificationMatch : aminoAcidPattern.getModificationsAt(aa)) {
-                        if (modificationMatch.getVariable()) {
-                            if (advocateId == Advocate.direcTag.getIndex()) {
-                                Integer directagIndex = new Integer(modificationMatch.getModification());
-                                String utilitiesPtmName = modificationProfile.getVariableModifications().get(directagIndex);
-                                if (utilitiesPtmName == null) {
-                                    throw new IllegalArgumentException("DirecTag PTM " + directagIndex + " not recognized.");
-                                }
-                                modificationMatch.setModification(utilitiesPtmName);
-                                Modification ptm = ptmFactory.getModification(utilitiesPtmName);
-                                if (ptm.getPattern() != null) {
-                                    ArrayList<Character> aaAtTarget = ptm.getPattern().getAminoAcidsAtTarget();
-                                    if (aaAtTarget.size() > 1) {
-                                        throw new IllegalArgumentException("More than one amino acid can be targeted by the modification " + ptm + ", tag duplication required.");
-                                    }
-                                    int aaIndex = aa - 1;
-                                    aminoAcidPattern.setTargeted(aaIndex, aaAtTarget);
-                                }
-                            } else if (advocateId == Advocate.pepnovo.getIndex()) {
-                                String pepnovoPtmName = modificationMatch.getModification();
-                                PepnovoParameters pepnovoParameters = (PepnovoParameters) searchParameters.getIdentificationAlgorithmParameter(advocateId);
-                                String utilitiesPtmName = pepnovoParameters.getUtilitiesPtmName(pepnovoPtmName);
-                                if (utilitiesPtmName == null) {
-                                    throw new IllegalArgumentException("PepNovo+ PTM " + pepnovoPtmName + " not recognized.");
-                                }
-                                modificationMatch.setModification(utilitiesPtmName);
-                            } else {
-                                Advocate notImplemented = Advocate.getAdvocate(advocateId);
-                                if (notImplemented == null) {
-                                    throw new IllegalArgumentException("Advocate of id " + advocateId + " not recognized.");
-                                }
-                                throw new IllegalArgumentException("PTM mapping not implemented for " + Advocate.getAdvocate(advocateId).getName() + ".");
-                            }
-                        }
-                    }
-                }
-            } else if (tagComponent instanceof AminoAcidSequence) {
+            
+            if (tagComponent instanceof AminoAcidSequence) {
 
                 AminoAcidSequence aminoAcidSequence = (AminoAcidSequence) tagComponent;
 

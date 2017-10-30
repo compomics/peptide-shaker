@@ -13,7 +13,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
-import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
+import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
@@ -244,7 +244,7 @@ public class ProgenesisExcelExport {
         ArrayList<String> spectrumKeys = peptideMatch.getSpectrumMatchesKeys();
         PSParameter psParameter = new PSParameter();
 
-        PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(spectrumKeys, waitingHandler);
         SpectrumMatch spectrumMatch;
 
         while ((spectrumMatch = psmIterator.next()) != null) {

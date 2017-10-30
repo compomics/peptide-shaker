@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.TreeSet;
 
 /**
  * This class contains metrics from the dataset for later use.
@@ -78,7 +79,7 @@ public class Metrics implements Serializable {
     /**
      * List of modifications found in the dataset.
      */
-    private ArrayList<String> foundModifications = null;
+    private TreeSet<String> foundModifications = null;
     /**
      * The PSM matches for each fraction for each peptide. Key: 'fraction
      * name'_'peptide key'. Values: arraylist of spectrum keys.
@@ -383,12 +384,14 @@ public class Metrics implements Serializable {
     }
 
     /**
-     * Returns the list of variable modifications found in the dataset.
+     * Returns the names of the variable modifications found in the dataset.
      *
-     * @return the list of variable modifications found in the dataset
+     * @return the names of the variable modifications found in the dataset
      */
-    public ArrayList<String> getFoundModifications() {
+    public TreeSet<String> getFoundModifications() {
+        
         return foundModifications;
+        
     }
 
     /**
@@ -397,8 +400,10 @@ public class Metrics implements Serializable {
      * @param foundModifications the list of variable modifications found in the
      * dataset
      */
-    public void setFoundModifications(ArrayList<String> foundModifications) {
+    public void setFoundModifications(TreeSet<String> foundModifications) {
+        
         this.foundModifications = foundModifications;
+        
     }
 
     /**

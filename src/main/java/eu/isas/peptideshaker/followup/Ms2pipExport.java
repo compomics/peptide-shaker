@@ -7,7 +7,7 @@ import com.compomics.util.experiment.biology.ions.impl.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
+import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.identification.peptide_fragmentation.models.ms2pip.features_configuration.FeaturesMap;
 import com.compomics.util.experiment.identification.peptide_fragmentation.models.ms2pip.features_configuration.Ms2pipFeature;
 import com.compomics.util.experiment.identification.peptide_fragmentation.models.ms2pip.features_generation.FeaturesGenerator;
@@ -157,7 +157,7 @@ public class Ms2pipExport {
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
 
-        PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler);
 
         ExecutorService pool = Executors.newFixedThreadPool(nThreads);
 
@@ -349,7 +349,7 @@ public class Ms2pipExport {
         /**
          * The iterator to go through the PSMs.
          */
-        private final PsmIterator psmIterator;
+        private final SpectrumMatchesIterator psmIterator;
         /**
          * The spectrum annotator.
          */
@@ -378,7 +378,7 @@ public class Ms2pipExport {
          * @param psmIterator the psm iterator
          * @param identificationParameters the identification parameters
          */
-        private PsmProcessor(Identification identification, PsmIterator psmIterator, IdentificationParameters identificationParameters) {
+        private PsmProcessor(Identification identification, SpectrumMatchesIterator psmIterator, IdentificationParameters identificationParameters) {
 
             this.identification = identification;
             this.psmIterator = psmIterator;

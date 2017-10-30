@@ -8,7 +8,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
+import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
@@ -111,7 +111,7 @@ public class ProgenesisExport {
                     waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
                 }
 
-                PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
+                SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler);
                     SpectrumMatch spectrumMatch;
                 while ((spectrumMatch = psmIterator.next()) != null) {
 

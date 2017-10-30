@@ -116,7 +116,7 @@ public class PsInputFilterSection {
                     writer.write(idFilter.getMinPepLength() + "");
                     break;
                 case unknown_PTM:
-                    if (idFilter.removeUnknownPTMs()) {
+                    if (idFilter.removeUnknownModifications()) {
                         writer.write("Yes");
                     } else {
                         writer.write("No");

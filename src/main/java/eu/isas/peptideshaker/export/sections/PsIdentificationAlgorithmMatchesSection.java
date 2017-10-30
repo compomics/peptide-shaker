@@ -11,10 +11,10 @@ import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssu
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
+import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
-import com.compomics.util.experiment.identification.protein_sequences.PeptideUtils;
+import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
@@ -144,7 +144,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             waitingHandler.setMaxSecondaryProgressCounter(totalSize);
         }
 
-        PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler);
 
         SpectrumMatch spectrumMatch;
         while ((spectrumMatch = psmIterator.next()) != null) {
@@ -156,7 +156,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
-            String spectrumKey = spectrumMatch.getKey();
+            long spectrumMatchKey = spectrumMatch.getKey();
 
             HashMap<Integer, HashMap<Double, ArrayList<PeptideAssumption>>> peptideAssumptions = spectrumMatch.getPeptideAssumptionsMap();
 
@@ -316,8 +316,10 @@ public class PsIdentificationAlgorithmMatchesSection {
      */
     private static TreeMap<String, TreeSet<Integer>> getModMap(Peptide peptide, boolean variablePtms) {
 
-        return peptide.isModified() ? new TreeMap<>()
-                : peptide.getModificationMatches().stream()
+        ModificationMatch[] modificationMatches = peptide.getModificationMatches();
+
+        return modificationMatches == null ? new TreeMap<>()
+                : Arrays.stream(modificationMatches)
                         .filter(modificationMatch -> modificationMatch.getVariable() == variablePtms)
                         .collect(Collectors.groupingBy(ModificationMatch::getModification,
                                 TreeMap::new,
@@ -516,8 +518,7 @@ public class PsIdentificationAlgorithmMatchesSection {
 
             case aaBefore:
 
-                peptide = peptideAssumption.getPeptide();
-                TreeMap<String, String[]> aaMap = PeptideUtils.getAaBefore(peptide, nSurroundingAA, sequenceProvider);
+                TreeMap<String, String[]> aaMap = PeptideUtils.getAaBefore(peptideAssumption.getPeptide(), nSurroundingAA, sequenceProvider);
 
                 return aaMap.values().stream()
                         .map(aas -> (Arrays.stream(aas))
@@ -526,8 +527,7 @@ public class PsIdentificationAlgorithmMatchesSection {
 
             case aaAfter:
 
-                peptide = peptideAssumption.getPeptide();
-                aaMap = PeptideUtils.getAaAfter(peptide, nSurroundingAA, sequenceProvider);
+                aaMap = PeptideUtils.getAaAfter(peptideAssumption.getPeptide(), nSurroundingAA, sequenceProvider);
 
                 return aaMap.values().stream()
                         .map(aas -> (Arrays.stream(aas))
@@ -763,9 +763,9 @@ public class PsIdentificationAlgorithmMatchesSection {
                 }
 
                 return longestTag;
-                
+
             case amino_acids_annotated:
-                
+
                 peptide = peptideAssumption.getPeptide();
                 spectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
                 annotationPreferences = identificationParameters.getAnnotationPreferences();
@@ -775,7 +775,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                 sequenceLength = sequence.length();
                 coverageForward = new boolean[sequenceLength];
                 coverageRewind = new boolean[sequenceLength];
-                
+
                 matches.filter(ionMatch -> ionMatch.ion instanceof PeptideFragmentIon)
                         .map(ionMatch -> ((PeptideFragmentIon) ionMatch.ion))
                         .forEach(peptideFragmentIon -> {
@@ -785,71 +785,71 @@ public class PsIdentificationAlgorithmMatchesSection {
                                 coverageRewind[peptideFragmentIon.getNumber() - 1] = true;
                             }
                         });
-                
+
                 aaCoverageB = new boolean[sequenceLength];
                 previous = true;
-                
+
                 for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
-                    
+
                     boolean current = coverageForward[aaIndex];
-                    
+
                     if (current && previous) {
-                        
+
                         aaCoverageB[aaIndex] = true;
-                    
+
                     }
-                    
+
                     previous = current;
-                
+
                 }
-                
+
                 previous = true;
-                
+
                 for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
-                
+
                     boolean current = coverageRewind[aaIndex];
-                    
+
                     if (current && previous) {
-                    
+
                         aaCoverageB[sequenceLength - aaIndex - 1] = true;
-                    
+
                     }
-                    
+
                     previous = current;
-                
+
                 }
-                
+
                 StringBuilder tag = new StringBuilder();
                 double gap = 0;
-                
+
                 for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
-                
+
                     if (aaCoverageB[aaIndex]) {
-                    
+
                         if (gap > 0) {
-                        
+
                             tag.append("<").append(gap).append(">");
-                        
+
                         }
-                        
+
                         tag.append(sequence.charAt(aaIndex));
                         gap = 0;
-                    
+
                     } else {
-                    
+
                         gap += AminoAcid.getAminoAcid(sequence.charAt(aaIndex)).getMonoisotopicMass();
-                    
+
                     }
                 }
-                
+
                 if (gap > 0) {
-                
+
                     tag.append("<").append(gap).append(">");
-                
+
                 }
-                
+
                 return tag.toString();
-            
+
             default:
                 return "Not implemented";
         }
@@ -897,137 +897,137 @@ public class PsIdentificationAlgorithmMatchesSection {
             WaitingHandler waitingHandler) {
 
         switch (exportFeature) {
-            
+
             case rank:
-                
+
                 return Integer.toString(tagAssumption.getRank());
-            
+
             case variable_ptms:
-                
+
                 return Tag.getTagModificationsAsString(tagAssumption.getTag());
-            
+
             case fixed_ptms:
-                
+
                 return ""; //@TODO: impplement
-            
+
             case accessions:
-                
+
                 return "";
-                
+
             case protein_description:
-                
+
                 return "";
-                
+
             case algorithm_confidence:
-                
+
                 return Double.toString(psParameter.getSearchEngineConfidence());
-                
+
             case decoy:
-                
+
                 return "";
-                
+
             case hidden:
-                
+
                 return psParameter.getHidden() ? "1" : "0";
-                
+
             case identification_charge:
-                
+
                 return Integer.toString(tagAssumption.getIdentificationCharge());
-                
+
             case isotope:
-                
+
                 Precursor precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return tagAssumption.getIsotopeNumber(precursor.getMz(), identificationParameters.getSearchParameters().getMinIsotopicCorrection(), identificationParameters.getSearchParameters().getMaxIsotopicCorrection()) + "";
-                
+
             case mz:
-                
+
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return Double.toString(precursor.getMz());
-                
+
             case total_spectrum_intensity:
-                
+
                 Spectrum spectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
                 return Double.toString(spectrum.getTotalIntensity());
-                
+
             case max_intensity:
-                
+
                 spectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
                 return Double.toString(spectrum.getMaxIntensity());
-                
+
             case mz_error_ppm:
-                
+
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return tagAssumption.getDeltaMass(precursor.getMz(), true, identificationParameters.getSearchParameters().getMinIsotopicCorrection(), identificationParameters.getSearchParameters().getMaxIsotopicCorrection()) + "";
-            
+
             case rt:
-                
+
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return Double.toString(precursor.getRt());
-            
+
             case algorithm_score:
-                
+
                 int id = tagAssumption.getAdvocate();
                 double score = tagAssumption.getScore();
                 return Advocate.getAdvocate(id).getName() + " (" + score + ")";
-            
+
             case sequence:
-                
+
                 return tagAssumption.getTag().asSequence();
-            
+
             case missed_cleavages:
-                
+
                 return "";
-            
+
             case modified_sequence:
-                
+
                 return tagAssumption.getTag().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getModificationParameters(), false, false, true, false);
-            
+
             case spectrum_charge:
-                
+
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getPossibleChargesAsString();
-            
+
             case spectrum_file:
-                
+
                 return Spectrum.getSpectrumFile(spectrumKey);
-                
+
             case spectrum_scan_number:
-                
+
                 return SpectrumFactory.getInstance().getSpectrum(spectrumKey).getScanNumber();
-            
+
             case spectrum_array_list:
-                
+
                 return SpectrumFactory.getInstance().getSpectrum(spectrumKey).getPeakListAsString();
-                
+
             case spectrum_title:
-                
+
                 return Spectrum.getSpectrumTitle(spectrumKey);
-                
+
             case starred:
-                
+
                 return psParameter.getStarred() ? "1" : "0";
-                
+
             case theoretical_mass:
-                
+
                 return Double.toString(tagAssumption.getTag().getMass());
-                
+
             case validated:
-                
+
                 return psParameter.getMatchValidationLevel().toString();
-                
+
             case fragment_mz_accuracy_score:
             case intensity_score:
             case sequence_coverage:
             case longest_amino_acid_sequence_annotated:
             case amino_acids_annotated:
             case position:
-                
+
                 return "";
-                
+
             default:
-                
+
                 return "Not implemented";
-                
+
         }
     }
 }

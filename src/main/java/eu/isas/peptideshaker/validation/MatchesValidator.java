@@ -15,7 +15,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
-import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
+import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
@@ -194,7 +194,7 @@ public class MatchesValidator {
 
         ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
-        PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler);
 
         ArrayList<PsmValidatorRunnable> psmRunnables = new ArrayList<>(processingPreferences.getnThreads());
         for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
@@ -1285,7 +1285,7 @@ public class MatchesValidator {
         /**
          * An iterator for the PSMs.
          */
-        private PsmIterator psmIterator;
+        private SpectrumMatchesIterator psmIterator;
         /**
          * The identification.
          */
@@ -1354,7 +1354,7 @@ public class MatchesValidator {
          * @param storeContributions boolean indicating whether advocate
          * contributions should be stored.
          */
-        public PsmValidatorRunnable(PsmIterator psmIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
+        public PsmValidatorRunnable(SpectrumMatchesIterator psmIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
                 IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, InputMap inputMap, boolean applyQCFilters, boolean storeContributions) {
             this.psmIterator = psmIterator;
             this.identification = identification;

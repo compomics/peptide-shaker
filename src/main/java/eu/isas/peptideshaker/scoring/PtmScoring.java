@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This class contains score about the PTM localization scoring.
+ * This class contains stores the modification localization scores.
  *
  * @author Marc Vaudel
  */

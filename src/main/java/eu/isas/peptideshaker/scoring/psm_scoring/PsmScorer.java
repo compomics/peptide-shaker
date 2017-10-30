@@ -4,14 +4,12 @@ import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
+import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.identification.psm_scoring.PsmScore;
 import com.compomics.util.experiment.identification.psm_scoring.PsmScoresEstimator;
 import com.compomics.util.experiment.identification.psm_scoring.psm_scores.HyperScore;
-import com.compomics.util.experiment.massspectrometry.spectra.MSnSpectrum;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
@@ -92,7 +90,7 @@ public class PsmScorer {
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
         ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
-        PsmIterator psmIterator = identification.getPsmIterator(null);
+        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(null);
         ArrayList<PsmScorerRunnable> psmScorerRunnables = new ArrayList<>(processingPreferences.getnThreads());
         for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
             PsmScorerRunnable runnable = new PsmScorerRunnable(psmIterator, identification, inputMap, identificationParameters, waitingHandler, exceptionHandler);
@@ -343,7 +341,7 @@ public class PsmScorer {
 
         PSParameter psParameter = new PSParameter();
 
-        PsmIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler);
         SpectrumMatch spectrumMatch;
 
         while ((spectrumMatch = psmIterator.next()) != null) {
@@ -419,7 +417,7 @@ public class PsmScorer {
         /**
          * An iterator for the PSMs.
          */
-        private final PsmIterator psmIterator;
+        private final SpectrumMatchesIterator psmIterator;
         /**
          * The identification.
          */
@@ -464,7 +462,7 @@ public class PsmScorer {
          * canceling the process
          * @param exceptionHandler handler for exceptions
          */
-        public PsmScorerRunnable(PsmIterator psmIterator, Identification identification, InputMap inputMap,
+        public PsmScorerRunnable(SpectrumMatchesIterator psmIterator, Identification identification, InputMap inputMap,
                 IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
             this.psmIterator = psmIterator;
             this.identification = identification;
@@ -529,7 +527,7 @@ public class PsmScorer {
         /**
          * An iterator for the PSMs.
          */
-        private final PsmIterator psmIterator;
+        private final SpectrumMatchesIterator psmIterator;
         /**
          * The identification.
          */
@@ -577,7 +575,7 @@ public class PsmScorer {
          * canceling the process
          * @param exceptionHandler handler for exceptions
          */
-        public MissingEValueEstimatorRunnable(HashMap<String, ArrayList<Integer>> missingEValuesMap, Double defaultA, Double defaultB, PsmIterator psmIterator, Identification identification, InputMap inputMap,
+        public MissingEValueEstimatorRunnable(HashMap<String, ArrayList<Integer>> missingEValuesMap, Double defaultA, Double defaultB, SpectrumMatchesIterator psmIterator, Identification identification, InputMap inputMap,
                 IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
             this.missingEValues = missingEValuesMap;
             this.defaultA = defaultA;
