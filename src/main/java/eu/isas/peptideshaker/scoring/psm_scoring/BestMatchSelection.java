@@ -123,7 +123,7 @@ public class BestMatchSelection {
 
         PeptideAssumptionFilter idFilter = identificationParameters.getPeptideAssumptionFilter();
 
-        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
         SpectrumMatch spectrumMatch;
 
         while ((spectrumMatch = psmIterator.next()) != null) {

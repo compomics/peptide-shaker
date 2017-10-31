@@ -2037,7 +2037,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 int psmIndex = tableModel.getViewIndex(row);
                 String psmKey = psmKeys.get(tableModel.getViewIndex(psmIndex));
                 try {
-                    PSParameter psParameter = (PSParameter) ((SpectrumMatch) peptideShakerGUI.getIdentification().retrieveObject(psmKey)).getUrParam(new PSParameter());
+                    PSParameter psParameter = (PSParameter) ((SpectrumMatch) peptideShakerGUI.getIdentification().retrieveObject(psmKey)).getUrParam(PSParameter.dummy);
                     if (!psParameter.getStarred()) {
                         peptideShakerGUI.getStarHider().starPsm(psmKey, peptideShakerGUI.getSpectrumAnnotator());
                     } else {
@@ -2126,7 +2126,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 // star/unstar a protein
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
                     try {
-                        PSParameter psParameter = (PSParameter) ((ProteinMatch) peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getUrParam(new PSParameter());
+                        PSParameter psParameter = (PSParameter) ((ProteinMatch) peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getUrParam(PSParameter.dummy);
                         if (!psParameter.getStarred()) {
                             peptideShakerGUI.getStarHider().starProtein(proteinKey);
                         } else {
@@ -2224,7 +2224,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             // star/unstar a peptide
             if (column == peptideTable.getColumn("  ").getModelIndex()) {
                 try {
-                    PSParameter psParameter = (PSParameter) ((PeptideMatch) peptideShakerGUI.getIdentification().retrieveObject(peptideKey)).getUrParam(new PSParameter());
+                    PSParameter psParameter = (PSParameter) ((PeptideMatch) peptideShakerGUI.getIdentification().retrieveObject(peptideKey)).getUrParam(PSParameter.dummy);
                     if (!psParameter.getStarred()) {
                         peptideShakerGUI.getStarHider().starPeptide(peptideKey);
                     } else {

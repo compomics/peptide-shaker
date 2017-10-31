@@ -713,7 +713,7 @@ public class PeptideShaker {
             waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
         }
 
-        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
 
         SpectrumMatch spectrumMatch;
         while ((spectrumMatch = psmIterator.next()) != null) {
@@ -963,7 +963,7 @@ public class PeptideShaker {
 
         PSParameter psParameter = new PSParameter();
 
-        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
 
         SpectrumMatch spectrumMatch;
         while ((spectrumMatch = psmIterator.next()) != null) {

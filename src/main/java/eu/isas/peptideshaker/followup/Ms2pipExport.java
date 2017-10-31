@@ -157,7 +157,7 @@ public class Ms2pipExport {
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
 
-        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
 
         ExecutorService pool = Executors.newFixedThreadPool(nThreads);
 

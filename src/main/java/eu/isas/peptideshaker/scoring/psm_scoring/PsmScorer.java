@@ -90,7 +90,7 @@ public class PsmScorer {
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
         ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
-        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(null);
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(null);
         ArrayList<PsmScorerRunnable> psmScorerRunnables = new ArrayList<>(processingPreferences.getnThreads());
         for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
             PsmScorerRunnable runnable = new PsmScorerRunnable(psmIterator, identification, inputMap, identificationParameters, waitingHandler, exceptionHandler);
@@ -341,7 +341,7 @@ public class PsmScorer {
 
         PSParameter psParameter = new PSParameter();
 
-        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
         SpectrumMatch spectrumMatch;
 
         while ((spectrumMatch = psmIterator.next()) != null) {

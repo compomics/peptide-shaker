@@ -212,7 +212,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                 case 0:
                     return viewIndex + 1;
                 case 1:
-                    PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(new PSParameter());
+                    PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
                     if (psParameter == null) {
                         if (isScrolling()) {
                             return null;
@@ -223,7 +223,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     }
                     return psParameter.getStarred();
                 case 2:
-                    psParameter = (PSParameter) peptideMatch.getUrParam(new PSParameter());
+                    psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
                     if (psParameter == null) {
                         if (isScrolling()) {
                             return null;
@@ -284,7 +284,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
                     return arrrayListDataPoints;
                 case 6:
-                    psParameter = (PSParameter) peptideMatch.getUrParam(new PSParameter());
+                    psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
                     if (psParameter == null) {
                         if (isScrolling) {
                             return null;
@@ -303,7 +303,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                         return null;
                     }
                 case 7:
-                    psParameter = (PSParameter) peptideMatch.getUrParam(new PSParameter());
+                    psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
                     if (psParameter == null) {
                         if (isScrolling) {
                             return null;

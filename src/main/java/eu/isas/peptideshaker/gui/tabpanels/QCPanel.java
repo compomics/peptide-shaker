@@ -2038,7 +2038,7 @@ public class QCPanel extends javax.swing.JPanel {
                 validatedDecoyValues = new ArrayList<>();
                 nonValidatedDecoyValues = new ArrayList<>();
 
-                SpectrumMatchesIterator psmIterator = identification.getPsmIterator(progressDialog);
+                SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(progressDialog);
                 SpectrumMatch spectrumMatch;
 
                 while ((spectrumMatch = psmIterator.next()) != null) {
@@ -2090,7 +2090,7 @@ public class QCPanel extends javax.swing.JPanel {
                 validatedDecoyValues = new ArrayList<>();
                 nonValidatedDecoyValues = new ArrayList<>();
 
-                SpectrumMatchesIterator psmIterator = identification.getPsmIterator(progressDialog);
+                SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(progressDialog);
                 SpectrumMatch spectrumMatch;
 
                 while ((spectrumMatch = psmIterator.next()) != null) {

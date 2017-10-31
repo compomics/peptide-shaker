@@ -252,7 +252,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             nodes.add(peptideNodeName);
 
             // get the match validation level
-            PSParameter peptideMatchParameter = (PSParameter)peptideMatch.getUrParam(new PSParameter());
+            PSParameter peptideMatchParameter = (PSParameter)peptideMatch.getUrParam(PSParameter.dummy);
             String matchValidationLevel;
             if (peptideMatchParameter != null) {
                 matchValidationLevel = "Validation: " + peptideMatchParameter.getMatchValidationLevel();
@@ -279,7 +279,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                     nodes.add(proteinNodeKey);
 
                     // get the match validation level
-                    PSParameter proteinMatchParameter = (PSParameter)((ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(tempProteinAccession)).getUrParam(new PSParameter());
+                    PSParameter proteinMatchParameter = (PSParameter)((ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(tempProteinAccession)).getUrParam(PSParameter.dummy);
                     String nodeProperty = "";
                     if (proteinMatchParameter != null) {
                         nodeProperty += proteinMatchParameter.getMatchValidationLevel().getIndex();

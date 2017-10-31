@@ -144,7 +144,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             waitingHandler.setMaxSecondaryProgressCounter(totalSize);
         }
 
-        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
 
         SpectrumMatch spectrumMatch;
         while ((spectrumMatch = psmIterator.next()) != null) {

@@ -685,7 +685,7 @@ public class PtmScorer extends DbObject {
 
         HashMap<Double, ArrayList<Integer>> confidentSites = new HashMap<>(variableModifications.size());
 
-        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(peptideMatch.getSpectrumMatchesKeys(), waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(peptideMatch.getSpectrumMatchesKeys(), waitingHandler);
 
         // Map confident sites
         SpectrumMatch spectrumMatch;
@@ -799,7 +799,7 @@ public class PtmScorer extends DbObject {
 
             HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>> ambiguousSites = new HashMap<>(originalMatches.size());
 
-            psmIterator = identification.getPsmIterator(peptideMatch.getSpectrumMatchesKeys(), waitingHandler);
+            psmIterator = identification.getSpectrumMatchesIterator(peptideMatch.getSpectrumMatchesKeys(), waitingHandler);
 
             // Map ambiguous sites
             while ((spectrumMatch = psmIterator.next()) != null) {
@@ -1421,7 +1421,7 @@ public class PtmScorer extends DbObject {
 
         ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
-        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(null);
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(null);
         for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
             PsmPtmScorerRunnable runnable = new PsmPtmScorerRunnable(psmIterator, identification, identificationParameters, waitingHandler, exceptionHandler);
             pool.submit(runnable);
@@ -1574,7 +1574,7 @@ public class PtmScorer extends DbObject {
         // PSMs with ambiguously localized PTMs in a map: File -> PTM mass -> spectrum keys
         HashMap<Double, HashSet<String>> notConfidentPeptideInference = new HashMap<>();
 
-        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
         SpectrumMatch spectrumMatch;
 
         while ((spectrumMatch = psmIterator.next()) != null) {

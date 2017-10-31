@@ -207,14 +207,14 @@ public class ProteinGoTableModel extends DefaultTableModel {
                             return Double.NaN;
                         }
                     case 7:
-                        PSParameter pSParameter = (PSParameter)proteinMatch.getUrParam(new PSParameter());
+                        PSParameter pSParameter = (PSParameter)proteinMatch.getUrParam(PSParameter.dummy);
                         if (peptideShakerGUI.getDisplayPreferences().showScores()) {
                             return pSParameter.getProteinScore();
                         } else {
                             return pSParameter.getProteinConfidence();
                         }
                     case 8:
-                        pSParameter = (PSParameter)proteinMatch.getUrParam(new PSParameter());
+                        pSParameter = (PSParameter)proteinMatch.getUrParam(PSParameter.dummy);
                         return pSParameter.getMatchValidationLevel().getIndex();
                     default:
                         return "";

@@ -1263,7 +1263,7 @@ public class MzIdentMLExport {
         int psmCount = 0;
 
         // iterate the PSMs
-        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
 
         SpectrumMatch spectrumMatch;
         while ((spectrumMatch = psmIterator.next()) != null) {

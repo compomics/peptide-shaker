@@ -174,7 +174,7 @@ public class IdentificationFeaturesGenerator {
         ArrayList<Double> precursorMzDeviations = spectrumMatchesKeys.stream()
                 .map(key -> identification.getSpectrumMatch(key))
                 .filter(spectrumMatch -> spectrumMatch.getBestPeptideAssumption() != null
-                && ((PSParameter) spectrumMatch.getUrParam(new PSParameter())).getMatchValidationLevel().isValidated())
+                && ((PSParameter) spectrumMatch.getUrParam(PSParameter.dummy)).getMatchValidationLevel().isValidated())
                 .map(spectrumMatch -> spectrumMatch.getBestPeptideAssumption().getDeltaMass(
                 spectrumFactory.getPrecursorMz(spectrumMatch.getSpectrumKey()),
                 searchParameters.isPrecursorAccuracyTypePpm(),
@@ -377,7 +377,6 @@ public class IdentificationFeaturesGenerator {
         String sequence = sequenceProvider.getSequence(accession);
 
         HashMap<Integer, HashSet<Integer>> coverage = new HashMap<>();
-        PSParameter psParameter = new PSParameter();
 
         // iterate the peptides and store the coverage for each peptide validation level
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null);
@@ -386,7 +385,7 @@ public class IdentificationFeaturesGenerator {
         while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
             Peptide peptide = peptideMatch.getPeptide();
-            psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
+            PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
             boolean enzymaticPeptide = false;
 
             if (!allPeptides) {
@@ -680,7 +679,7 @@ public class IdentificationFeaturesGenerator {
 
         return digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme
                 ? Arrays.stream(peptideKeys)
-                        .filter(key -> ((PSParameter) (identification.getSpectrumMatch(key)).getUrParam(new PSParameter())).getMatchValidationLevel().isValidated()
+                        .filter(key -> ((PSParameter) (identification.getSpectrumMatch(key)).getUrParam(PSParameter.dummy)).getMatchValidationLevel().isValidated()
                         && !PeptideUtils.isEnzymatic(
                                 identification.getSpectrumMatch(key).getBestPeptideAssumption().getPeptide(),
                                 sequenceProvider,
@@ -707,7 +706,7 @@ public class IdentificationFeaturesGenerator {
      * protein tree or identification)
      */
     public void updateSequenceCoverage(long proteinMatchKey)
-            throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+            {
         HashMap<Integer, Double> result = estimateSequenceCoverage(proteinMatchKey);
         identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_validation_coverage, proteinMatchKey, result);
     }
@@ -914,7 +913,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the spectrum counting index
      */
-    public static Double estimateSpectrumCounting(Identification identification, SequenceProvider sequenceProvider, long proteinMatchKey,
+    public static double estimateSpectrumCounting(Identification identification, SequenceProvider sequenceProvider, long proteinMatchKey,
             SpectrumCountingPreferences spectrumCountingPreferences, int maxPepLength, IdentificationParameters identificationParameters) {
 
         ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
@@ -925,87 +924,87 @@ public class IdentificationFeaturesGenerator {
             // NSAF
             double result = 0;
 
-            PSParameter psParameter = new PSParameter();
-            ArrayList<UrParameter> parameters = new ArrayList<>(1);
-            parameters.add(psParameter);
-
             // iterate the peptides and store the coverage for each peptide validation level
             PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null);
             PeptideMatch peptideMatch;
 
             while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-                psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
+                PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
                 if (psParameter.getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel()) {
 
                     Peptide peptide = peptideMatch.getPeptide();
-                    
+
                     int peptideOccurrence = identification.getProteinMatches(peptide).stream()
                             .map(groupKey -> identification.getProteinMatch(groupKey))
-                            .filter(sharedGroup -> ((PSParameter) sharedGroup.getUrParam(new PSParameter()))
-                                    .getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel())
+                            .filter(sharedGroup -> ((PSParameter) sharedGroup.getUrParam(PSParameter.dummy))
+                            .getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel())
                             .mapToInt(sharedGroup -> peptide.getProteinMapping()
-                                    .get(sharedGroup.getLeadingAccession()).length)
+                            .get(sharedGroup.getLeadingAccession()).length)
                             .sum();
-                    
+
                     double spectrumCount = Arrays.stream(peptideMatch.getSpectrumMatchesKeys())
                             .mapToObj(key -> identification.getSpectrumMatch(key))
-                            .filter(spectrumMatch -> ((PSParameter) spectrumMatch.getUrParam(new PSParameter()))
-                                    .getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel())
+                            .filter(spectrumMatch -> ((PSParameter) spectrumMatch.getUrParam(PSParameter.dummy))
+                            .getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel())
                             .count();
 
                     double ratio = spectrumCount / peptideOccurrence;
-                    
+
                     result += ratio;
-                    
+
                 }
             }
 
             String proteinSequence = sequenceProvider.getSequence(proteinMatch.getLeadingAccession());
 
             if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
-                
+
                 result /= ProteinUtils.getObservableLength(proteinSequence, digestionPreferences.getEnzymes(), maxPepLength);
-                
+
             } else {
+
                 result /= proteinSequence.length();
+
             }
 
             if (new Double(result).isInfinite() || new Double(result).isNaN()) {
+
                 result = 0.0;
+
             }
 
             return result;
-            
+
         } else {
 
             // emPAI
             double result = Arrays.stream(proteinMatch.getPeptideMatchesKeys())
                     .mapToObj(key -> identification.getPeptideMatch(key))
-                            .filter(peptideMatch -> ((PSParameter) peptideMatch.getUrParam(new PSParameter()))
-                                    .getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel())
+                    .filter(peptideMatch -> ((PSParameter) peptideMatch.getUrParam(PSParameter.dummy))
+                    .getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel())
                     .count();
 
             if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
-                
-            String proteinSequence = sequenceProvider.getSequence(proteinMatch.getLeadingAccession());
+
+                String proteinSequence = sequenceProvider.getSequence(proteinMatch.getLeadingAccession());
                 result = Math.pow(10, result / (ProteinUtils.getNCleavageSites(proteinSequence, digestionPreferences.getEnzymes()) + 1)) - 1;
-            
+
             } else {
-                
+
                 result = Math.pow(10, result) - 1;
-                
+
             }
 
             if (new Double(result).isInfinite() || new Double(result).isNaN()) {
-                
+
                 result = 0.0;
-                
+
             }
 
             return result;
-            
+
         }
     }
 
@@ -1016,29 +1015,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match of interest
      *
      * @return the best protein coverage possible according to the given
-     * cleavage settings
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
-     * @throws org.apache.commons.math.MathException exception thrown whenever
-     * an error occurred while estimating the probability to observe an amino
+     * cleavage settingswhile estimating the probability to observe an amino
      * acid
      */
-    public Double getObservableCoverage(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MathException {
+    public double getObservableCoverage(long proteinMatchKey) {
 
         Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.expected_coverage, proteinMatchKey);
+
         if (result == null) {
+
             result = estimateObservableCoverage(proteinMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.expected_coverage, proteinMatchKey, result);
+
         }
 
         return result;
@@ -1051,8 +1039,10 @@ public class IdentificationFeaturesGenerator {
      *
      * @return true if the data is in cache
      */
-    public boolean observableCoverageInCache(String proteinMatchKey) {
+    public boolean observableCoverageInCache(long proteinMatchKey) {
+
         return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.expected_coverage, proteinMatchKey) != null;
+
     }
 
     /**
@@ -1060,25 +1050,13 @@ public class IdentificationFeaturesGenerator {
      * cleavage settings. Used when the main key for a protein has been altered.
      *
      * @param proteinMatchKey the key of the protein match of interest
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
-     * @throws org.apache.commons.math.MathException exception thrown whenever
-     * an error occurred while estimating the probability to observe an amino
-     * acid
      */
-    public void updateObservableCoverage(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MathException {
-        Double result = estimateObservableCoverage(proteinMatchKey);
+    public void updateObservableCoverage(long proteinMatchKey) {
+
+        double result = estimateObservableCoverage(proteinMatchKey);
+
         identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.expected_coverage, proteinMatchKey, result);
+
     }
 
     /**
@@ -1089,41 +1067,30 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the best protein coverage possible according to the given
      * cleavage settings
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
-     * @throws org.apache.commons.math.MathException exception thrown whenever
-     * an error occurred while estimating the probability to observe an amino
-     * acid
      */
-    private Double estimateObservableCoverage(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MathException {
+    private double estimateObservableCoverage(long proteinMatchKey) {
 
         DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
+
         if (digestionPreferences.getCleavagePreference() != DigestionParameters.CleavagePreference.enzyme) {
+
             return 1.0;
+
         }
-        String mainMatch;
-        if (ProteinMatch.getNProteins(proteinMatchKey) == 1) {
-            mainMatch = proteinMatchKey;
-        } else {
-            ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
-            mainMatch = proteinMatch.getLeadingAccession();
-        }
-        Protein currentProtein = sequenceFactory.getProtein(mainMatch);
+
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        String leadingAccession = proteinMatch.getLeadingAccession();
+        String sequence = sequenceProvider.getSequence(leadingAccession);
         double lengthMax = identificationParameters.getPeptideAssumptionFilter().getMaxPepLength();
+
         if (metrics.getPeptideLengthDistribution() != null) {
+
             lengthMax = Math.min(lengthMax, metrics.getPeptideLengthDistribution().getValueAtCumulativeProbability(0.99));
+
         }
-        return ((double) currentProtein.getObservableLength(digestionPreferences.getEnzymes(), lengthMax)) / currentProtein.getLength();
+
+        return ((double) ProteinUtils.getObservableLength(sequence, digestionPreferences.getEnzymes(), lengthMax)) / sequence.length();
+
     }
 
     /**
@@ -1131,58 +1098,31 @@ public class IdentificationFeaturesGenerator {
      * available after getSortedProteinKeys has been called.
      *
      * @return the number of validated proteins
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public int getNValidatedProteins() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public int getNValidatedProteins() {
+
         if (metrics.getnValidatedProteins() == -1) {
+
             estimateNValidatedProteins();
+
         }
+
         return metrics.getnValidatedProteins();
+
     }
 
     /**
      * Estimates the number of validated proteins and saves it in the metrics.
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    private void estimateNValidatedProteins() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-        PSParameter probabilities = new PSParameter();
-        int cpt = 0;
+    private void estimateNValidatedProteins() {
 
-        // batch load the protein parameters
-        identification.loadObjects(new ArrayList<>(identification.getProteinIdentification()), null, false);
-
-        for (String proteinKey : identification.getProteinIdentification()) {
-            if (!ProteinMatch.isDecoy(proteinKey)) {
-                probabilities = (PSParameter) ((ProteinMatch) identification.retrieveObject(proteinKey)).getUrParam(probabilities);
-                if (probabilities.getMatchValidationLevel().isValidated()) {
-                    cpt++;
-                }
-            }
-        }
-
-        metrics.setnValidatedProteins(cpt);
+        metrics.setnValidatedProteins(
+                (int) identification.getProteinIdentification().stream()
+                        .map(key -> identification.getProteinMatch(key))
+                        .filter(proteinMatch -> !proteinMatch.isDecoy()
+                        && ((PSParameter) proteinMatch.getUrParam(PSParameter.dummy))
+                                .getMatchValidationLevel().isValidated())
+                        .count());
     }
 
     /**
@@ -1190,57 +1130,32 @@ public class IdentificationFeaturesGenerator {
      * available after getSortedProteinKeys has been called.
      *
      * @return the number of validated proteins
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public int getNConfidentProteins() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public int getNConfidentProteins() {
+
         if (metrics.getnConfidentProteins() == -1) {
+
             estimateNConfidentProteins();
+
         }
+
         return metrics.getnConfidentProteins();
+
     }
 
     /**
      * Estimates the number of confident proteins and saves it in the metrics.
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    private void estimateNConfidentProteins() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-        PSParameter probabilities = new PSParameter();
-        int cpt = 0;
+    private void estimateNConfidentProteins() {
 
-        // batch load the protein parameters
-        identification.loadObjects(new ArrayList<>(identification.getProteinIdentification()), null, false);
+        metrics.setnConfidentProteins(
+                (int) identification.getProteinIdentification().stream()
+                        .map(key -> identification.getProteinMatch(key))
+                        .filter(proteinMatch -> !proteinMatch.isDecoy()
+                        && ((PSParameter) proteinMatch.getUrParam(PSParameter.dummy))
+                                .getMatchValidationLevel() == MatchValidationLevel.confident)
+                        .count());
 
-        for (String proteinKey : identification.getProteinIdentification()) {
-            if (!ProteinMatch.isDecoy(proteinKey)) {
-                probabilities = (PSParameter) ((ProteinMatch) identification.retrieveObject(proteinKey)).getUrParam(probabilities);
-                if (probabilities.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                    cpt++;
-                }
-            }
-        }
-        metrics.setnConfidentProteins(cpt);
     }
 
     /**
@@ -1249,37 +1164,17 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the number of validated peptides
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    private int estimateNValidatedPeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private int estimateNValidatedPeptides(long proteinMatchKey) {
 
-        int cpt = 0;
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
 
-        ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
-        PSParameter pSParameter = new PSParameter();
+        return (int) Arrays.stream(proteinMatch.getPeptideMatchesKeys())
+                .mapToObj(key -> identification.getPeptideMatch(key))
+                .filter(peptideMatch -> ((PSParameter) peptideMatch.getUrParam(PSParameter.dummy))
+                .getMatchValidationLevel().isValidated())
+                .count();
 
-        // batch load the peptide match parameters
-        identification.loadObjects(proteinMatch.getPeptideMatchesKeys(), null, false);
-
-        for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-            pSParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(peptideKey)).getUrParam(pSParameter);
-            if (pSParameter.getMatchValidationLevel().isValidated()) {
-                cpt++;
-            }
-        }
-
-        return cpt;
     }
 
     /**
@@ -1288,37 +1183,16 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the number of confident peptides
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    private int estimateNConfidentPeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private int estimateNConfidentPeptides(long proteinMatchKey) {
 
-        int cpt = 0;
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
 
-        ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
-        PSParameter pSParameter = new PSParameter();
-
-        // batch load the peptide match parameters
-        identification.loadObjects(proteinMatch.getPeptideMatchesKeys(), null, false);
-
-        for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-            pSParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(peptideKey)).getUrParam(pSParameter);
-            if (pSParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                cpt++;
-            }
-        }
-
-        return cpt;
+        return (int) Arrays.stream(proteinMatch.getPeptideMatchesKeys())
+                .mapToObj(key -> identification.getPeptideMatch(key))
+                .filter(peptideMatch -> ((PSParameter) peptideMatch.getUrParam(PSParameter.dummy))
+                .getMatchValidationLevel() == MatchValidationLevel.confident)
+                .count();
     }
 
     /**
@@ -1328,27 +1202,20 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the match
      *
      * @return the number of unique peptides
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public int getNUniquePeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public int getNUniquePeptides(long proteinMatchKey) {
+
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.unique_peptides, proteinMatchKey);
 
         if (result == null) {
+
             result = estimateNUniquePeptides(proteinMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.unique_peptides, proteinMatchKey, result);
+
         }
+
         return result;
+
     }
 
     /**
@@ -1357,25 +1224,16 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the number of peptides unique to a protein match
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    private int estimateNUniquePeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private int estimateNUniquePeptides(long proteinMatchKey) {
 
-        ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
 
-        return (int) proteinMatch.getPeptideMatchesKeys().stream().map(peptideKey -> (PeptideMatch) identification.retrieveObjectWrappedExceptions(peptideKey))
-                .filter(peptideMatch -> identification.isUniqueInDatabase(peptideMatch.getPeptide())).count();
+        return (int) Arrays.stream(proteinMatch.getPeptideMatchesKeys())
+                .mapToObj(peptideKey -> identification.getPeptideMatch(peptideKey))
+                .filter(peptideMatch -> identification.getProteinMatches(peptideMatch.getPeptide()).size() == 1)
+                .count();
+
     }
 
     /**
@@ -1384,27 +1242,20 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the match
      *
      * @return the number of unique peptides
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public int getNUniqueValidatedPeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public int getNUniqueValidatedPeptides(long proteinMatchKey) {
+
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.unique_validated_peptides, proteinMatchKey);
 
         if (result == null) {
+
             result = estimateNUniqueValidatedPeptides(proteinMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.unique_validated_peptides, proteinMatchKey, result);
+
         }
+
         return result;
+
     }
 
     /**
@@ -1413,230 +1264,70 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the number of peptides unique to a protein match
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    private int estimateNUniqueValidatedPeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private int estimateNUniqueValidatedPeptides(long proteinMatchKey) {
 
-        ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
-        int cpt = 0;
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
 
-        PSParameter psParameter = new PSParameter();
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null);
-        while (peptideMatchesIterator.hasNext()) {
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            if (identification.isUniqueInDatabase(peptideMatch.getPeptide())) {
-                psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
-                if (psParameter.getMatchValidationLevel().isValidated()) {
-                    cpt++;
-                }
-            }
-        }
-        return cpt;
+        return (int) Arrays.stream(proteinMatch.getPeptideMatchesKeys())
+                .mapToObj(peptideKey -> identification.getPeptideMatch(peptideKey))
+                .filter(peptideMatch
+                        -> ((PSParameter) peptideMatch.getUrParam(PSParameter.dummy)).getMatchValidationLevel().isValidated()
+                && identification.getProteinMatches(peptideMatch.getPeptide()).size() == 1)
+                .count();
+
     }
 
     /**
-     * Returns the number of peptides unique for this protein group. Note, this
-     * is independent of the validation status.
+     * Returns true if the leading protein of the given group has any enzymatic
+     * peptides.
      *
-     * @param proteinMatchKey the key of the match
-     *
-     * @return the number of unique peptides
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
-     */
-    public int getNUniquePeptidesGroup(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-        Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.unique_peptides_group, proteinMatchKey);
-
-        if (result == null) {
-            result = estimateNUniquePeptidesGroup(proteinMatchKey);
-            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.unique_peptides_group, proteinMatchKey, result);
-        }
-        return result;
-    }
-
-    /**
-     * Estimates the number of peptides unique to a protein match.
-     *
-     * @param proteinMatchKey the key of the protein match
-     *
-     * @return the number of peptides unique to a protein match
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
-     */
-    private int estimateNUniquePeptidesGroup(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-
-        ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
-        int cpt = 0;
-
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null);
-        while (peptideMatchesIterator.hasNext()) {
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            if (getNValidatedProteinGroups(peptideMatch.getPeptide()) == 1) {
-                cpt++;
-            }
-        }
-        return cpt;
-    }
-
-    /**
-     * Returns the number of unique validated peptides for this protein match.
-     *
-     * @param proteinMatchKey the key of the match
-     *
-     * @return the number of unique peptides
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
-     */
-    public int getNUniqueValidatedPeptidesGroup(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-        Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.unique_validated_peptides_group, proteinMatchKey);
-
-        if (result == null) {
-            result = estimateNUniqueValidatedPeptidesGroup(proteinMatchKey);
-            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.unique_validated_peptides_group, proteinMatchKey, result);
-        }
-        return result;
-    }
-
-    /**
-     * Estimates the number of validated peptides unique to a protein match.
-     *
-     * @param proteinMatchKey the key of the protein match
-     *
-     * @return the number of peptides unique to a protein match
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
-     */
-    private int estimateNUniqueValidatedPeptidesGroup(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-
-        ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
-        int cpt = 0;
-
-        PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<>(1);
-        parameters.add(psParameter);
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null);
-        while (peptideMatchesIterator.hasNext()) {
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            if (getNValidatedProteinGroups(peptideMatch.getPeptide()) == 1) {
-                String peptideKey = peptideMatch.getKey();
-                psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
-                if (psParameter.getMatchValidationLevel().isValidated()) {
-                    cpt++;
-                }
-            }
-        }
-        return cpt;
-    }
-
-    /**
-     * Returns true if the protein has any enzymatic peptides.
-     *
-     * @param proteinMatch the protein match
-     * @param proteinAccession the protein accession to check
+     * @param proteinMatchKey the protein match
      *
      * @return true if the protein has any enzymatic peptides
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public boolean hasEnzymaticPeptides(ProteinMatch proteinMatch, String proteinAccession) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-        Boolean result = (Boolean) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.containsEnzymaticPeptides, proteinAccession);
+    public boolean hasEnzymaticPeptides(long proteinMatchKey) {
+
+        Boolean result = (Boolean) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.containsEnzymaticPeptides, proteinMatchKey);
 
         if (result == null) {
-            result = checkEnzymaticPeptides(proteinMatch, proteinAccession);
-            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.containsEnzymaticPeptides, proteinAccession, result);
+
+            result = checkEnzymaticPeptides(proteinMatchKey);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.containsEnzymaticPeptides, proteinMatchKey, result);
+
         }
+
         return result;
+
     }
 
     /**
-     * Returns true if the protein has any enzymatic peptides.
+     * Returns true if the leading protein of the given group has any enzymatic
+     * peptides.
      *
-     * @param proteinMatch the protein match
-     * @param proteinAccession the protein accession to check
+     * @param proteinMatchKey the protein match
      *
      * @return true if the protein has any enzymatic peptides
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    private boolean checkEnzymaticPeptides(ProteinMatch proteinMatch, String proteinAccession) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private boolean checkEnzymaticPeptides(long proteinMatchKey) {
+
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+
         DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
-        switch (digestionPreferences.getCleavagePreference()) {
-            case enzyme:
-                return proteinMatch.hasEnzymaticPeptide(proteinAccession, digestionPreferences.getEnzymes(), identificationParameters.getSequenceMatchingPreferences());
-            default:
-                return true;
+
+        if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+
+            return Arrays.stream(proteinMatch.getPeptideMatchesKeys())
+                    .mapToObj(key -> identification.getPeptideMatch(key))
+                    .anyMatch(peptideMatch -> PeptideUtils.isEnzymatic(
+                            peptideMatch.getPeptide(), 
+                            sequenceProvider, 
+                            digestionPreferences.getEnzymes()));
+            
         }
+
+        return true;
+
     }
 
     /**
@@ -1645,25 +1336,16 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the number of validated peptides
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public int getNValidatedPeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public int getNValidatedPeptides(long proteinMatchKey) {
+        
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_peptides, proteinMatchKey);
 
         if (result == null) {
+            
             result = estimateNValidatedPeptides(proteinMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_validated_peptides, proteinMatchKey, result);
+        
         }
 
         return result;
@@ -1675,25 +1357,16 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the number of confident peptides
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public int getNConfidentPeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public int getNConfidentPeptides(long proteinMatchKey) {
+        
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_confident_peptides, proteinMatchKey);
 
         if (result == null) {
+            
             result = estimateNConfidentPeptides(proteinMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_peptides, proteinMatchKey, result);
+        
         }
 
         return result;
@@ -1703,44 +1376,24 @@ public class IdentificationFeaturesGenerator {
      * Updates the number of confident peptides for a given protein match.
      *
      * @param proteinMatchKey the key of the protein match
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public void updateNConfidentPeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public void updateNConfidentPeptides(long proteinMatchKey)  {
+        
         Integer result = estimateNConfidentPeptides(proteinMatchKey);
         identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_peptides, proteinMatchKey, result);
+    
     }
 
     /**
      * Updates the number of confident spectra for a given protein match.
      *
      * @param proteinMatchKey the key of the protein match
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public void updateNConfidentSpectra(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public void updateNConfidentSpectra(long proteinMatchKey) {
+        
         Integer result = estimateNConfidentSpectra(proteinMatchKey);
         identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, proteinMatchKey, result);
+    
     }
 
     /**
@@ -1751,8 +1404,10 @@ public class IdentificationFeaturesGenerator {
      *
      * @return true if the information is in cache
      */
-    public boolean nValidatedPeptidesInCache(String proteinMatchKey) {
+    public boolean nValidatedPeptidesInCache(long proteinMatchKey) {
+        
         return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_peptides, proteinMatchKey) != null;
+    
     }
 
     /**
@@ -1761,26 +1416,20 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the given protein match
      *
      * @return the number of spectra for the given protein match
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public Integer getNSpectra(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public Integer getNSpectra(long proteinMatchKey) {
+        
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_spectra, proteinMatchKey);
+        
         if (result == null) {
+            
             result = estimateNSpectra(proteinMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_spectra, proteinMatchKey, result);
+        
         }
+        
         return result;
+        
     }
 
     /**
@@ -1791,8 +1440,10 @@ public class IdentificationFeaturesGenerator {
      *
      * @return true if the data is in cache
      */
-    public boolean nSpectraInCache(String proteinMatchKey) {
+    public boolean nSpectraInCache(long proteinMatchKey) {
+        
         return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_spectra, proteinMatchKey) != null;
+    
     }
 
     /**
@@ -1802,31 +1453,15 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatch the protein match of interest
      *
      * @return the number of spectra where this protein was found
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    private int estimateNSpectra(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private int estimateNSpectra(long proteinMatchKey) {
 
-        int result = 0;
-
-        ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null);
-        while (peptideMatchesIterator.hasNext()) {
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            result += peptideMatch.getSpectrumCount();
-        }
-
-        return result;
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        
+        return Arrays.stream(proteinMatch.getPeptideMatchesKeys())
+                .mapToInt(key -> identification.getPeptideMatch(key).getSpectrumCount())
+                .sum();
+        
     }
 
     /**
@@ -1835,21 +1470,11 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the maximum number of spectra accounted by a single peptide Match
      * all found in a protein match
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public int getMaxNSpectra() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public int getMaxNSpectra() {
+        
         return identificationFeaturesCache.getMaxSpectrumCount();
+        
     }
 
     /**
@@ -1858,25 +1483,16 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the number of validated spectra
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public int getNValidatedSpectra(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public int getNValidatedSpectra(long proteinMatchKey) {
+        
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, proteinMatchKey);
 
         if (result == null) {
+            
             result = estimateNValidatedSpectra(proteinMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, proteinMatchKey, result);
+        
         }
 
         return result;
@@ -1888,20 +1504,9 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the number of validated spectra
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public int getNConfidentSpectra(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public int getNConfidentSpectra(long proteinMatchKey) {
+        
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, proteinMatchKey);
 
         if (result == null) {
@@ -1920,9 +1525,10 @@ public class IdentificationFeaturesGenerator {
      *
      * @return true if the data is in cache
      */
-    public boolean nValidatedSpectraInCache(String proteinMatchKey) {
-        Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, proteinMatchKey);
-        return result != null;
+    public boolean nValidatedSpectraInCache(long proteinMatchKey) {
+        
+        return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, proteinMatchKey) != null;
+        
     }
 
     /**
@@ -1931,40 +1537,16 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatch the protein match of interest
      *
      * @return the number of spectra where this protein was found
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    private int estimateNValidatedSpectra(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private int estimateNValidatedSpectra(long proteinMatchKey) {
 
-        int result = 0;
-
-        ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
-        PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<>(1);
-        parameters.add(psParameter);
-
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null);
-        while (peptideMatchesIterator.hasNext()) {
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
-                psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(spectrumKey)).getUrParam(psParameter);
-                if (psParameter.getMatchValidationLevel().isValidated()) {
-                    result++;
-                }
-            }
-        }
-
-        return result;
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        
+        return (int) Arrays.stream(proteinMatch.getPeptideMatchesKeys())
+                .flatMap(key -> Arrays.stream(identification.getPeptideMatch(key).getSpectrumMatchesKeys()))
+                .filter(key -> ((PSParameter) identification.getSpectrumMatch(key).getUrParam(PSParameter.dummy))
+                        .getMatchValidationLevel().isValidated())
+                .count();
     }
 
     /**
@@ -1973,39 +1555,16 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatch the protein match of interest
      *
      * @return the number of spectra where this protein was found
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    private int estimateNConfidentSpectra(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private int estimateNConfidentSpectra(long proteinMatchKey) {
 
-        int result = 0;
-
-        ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
-        PSParameter psParameter = new PSParameter();
-
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null);
-        while (peptideMatchesIterator.hasNext()) {
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
-                psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(spectrumKey)).getUrParam(psParameter);
-
-                if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                    result++;
-                }
-            }
-        }
-
-        return result;
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        
+        return (int) Arrays.stream(proteinMatch.getPeptideMatchesKeys())
+                .flatMap(key -> Arrays.stream(identification.getPeptideMatch(key).getSpectrumMatchesKeys()))
+                .filter(key -> ((PSParameter) identification.getSpectrumMatch(key).getUrParam(PSParameter.dummy))
+                        .getMatchValidationLevel() == MatchValidationLevel.confident)
+                .count();
     }
 
     /**
@@ -2015,43 +1574,36 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the number of validated spectra
      */
-    public int getNValidatedSpectraForPeptide(String peptideMatchKey) {
+    public int getNValidatedSpectraForPeptide(long peptideMatchKey) {
 
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, peptideMatchKey);
 
         if (result == null) {
+            
             result = estimateNValidatedSpectraForPeptide(peptideMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, peptideMatchKey, result);
+        
         }
 
         return result;
     }
 
     /**
-     * Sets the number of confident spectra for a given peptide match.
+     * Returns the number of confident spectra for a given peptide match.
      *
      * @param peptideMatchKey the key of the peptide match
      *
      * @return the number of confident spectra
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public int getNConfidentSpectraForPeptide(String peptideMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public int getNConfidentSpectraForPeptide(long peptideMatchKey) {
+        
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, peptideMatchKey);
 
         if (result == null) {
+            
             result = estimateNConfidentSpectraForPeptide(peptideMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, peptideMatchKey, result);
+        
         }
 
         return result;
@@ -2061,22 +1613,12 @@ public class IdentificationFeaturesGenerator {
      * Updates the number of confident spectra for a given peptide match.
      *
      * @param peptideMatchKey the key of the peptide match
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public void updateNConfidentSpectraForPeptide(String peptideMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public void updateNConfidentSpectraForPeptide(long peptideMatchKey) {
+        
         Integer result = estimateNConfidentSpectraForPeptide(peptideMatchKey);
         identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, peptideMatchKey, result);
+    
     }
 
     /**
@@ -2087,8 +1629,10 @@ public class IdentificationFeaturesGenerator {
      *
      * @return true if the data is in cache
      */
-    public boolean nValidatedSpectraForPeptideInCache(String peptideMatchKey) {
+    public boolean nValidatedSpectraForPeptideInCache(long peptideMatchKey) {
+        
         return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, peptideMatchKey) != null;
+    
     }
 
     /**
@@ -2097,35 +1641,16 @@ public class IdentificationFeaturesGenerator {
      * @param peptideMatchKey the peptide match of interest
      *
      * @return the number of confident spectra where this peptide was found
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    private int estimateNConfidentSpectraForPeptide(String peptideMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private int estimateNConfidentSpectraForPeptide(long peptideMatchKey) {
 
-        int nValidated = 0;
-
-        PeptideMatch peptideMatch = (PeptideMatch) identification.retrieveObject(peptideMatchKey);
-        PSParameter psParameter = new PSParameter();
-
-        identification.loadObjects(peptideMatch.getSpectrumMatchesKeys(), null, false);
-        for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
-            psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(spectrumKey)).getUrParam(psParameter);
-            if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                nValidated++;
-            }
-        }
-
-        return nValidated;
+        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideMatchKey);
+        
+        return (int) Arrays.stream(peptideMatch.getSpectrumMatchesKeys())
+                .filter(key -> ((PSParameter) identification.getSpectrumMatch(key).getUrParam(PSParameter.dummy))
+                        .getMatchValidationLevel() == MatchValidationLevel.confident)
+                .count();
+        
     }
 
     /**
@@ -2135,23 +1660,24 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the number of validated spectra where this peptide was found
      */
-    private int estimateNValidatedSpectraForPeptide(String peptideMatchKey) {
+    private int estimateNValidatedSpectraForPeptide(long peptideMatchKey) {
 
-        final PSParameter psParameter = new PSParameter();
-        PeptideMatch peptideMatch = (PeptideMatch) identification.retrieveObject(peptideMatchKey);
-
-        return (int) peptideMatch.getSpectrumMatchesKeys().stream()
-                .map(spectrumKey -> (PSParameter) (identification.getSpectrumMatch(spectrumKey)).getUrParam(psParameter))
-                .filter(parameter -> parameter.getMatchValidationLevel().isValidated())
+        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideMatchKey);
+        
+        return (int) Arrays.stream(peptideMatch.getSpectrumMatchesKeys())
+                .filter(key -> ((PSParameter) identification.getSpectrumMatch(key).getUrParam(PSParameter.dummy))
+                        .getMatchValidationLevel().isValidated())
                 .count();
-
+        
     }
 
     /**
      * Clears the spectrum counting data in cache.
      */
     public void clearSpectrumCounting() {
+        
         identificationFeaturesCache.removeObjects(IdentificationFeaturesCache.ObjectType.spectrum_counting);
+        
     }
 
     /**
@@ -2558,22 +2084,11 @@ public class IdentificationFeaturesGenerator {
      * @param filterPreferences the filtering preferences used. can be null
      *
      * @return the list of validated protein keys
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public ArrayList<String> getValidatedProteins(FilterPreferences filterPreferences)
-            throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public long[] getValidatedProteins(FilterPreferences filterPreferences) {
+        
         return getValidatedProteins(null, filterPreferences);
+        
     }
 
     /**
@@ -2584,26 +2099,19 @@ public class IdentificationFeaturesGenerator {
      * @param waitingHandler the waiting handler, can be null
      *
      * @return the list of validated protein keys
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public ArrayList<String> getValidatedProteins(WaitingHandler waitingHandler, FilterPreferences filterPreferences)
-            throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-        ArrayList<String> result = identificationFeaturesCache.getValidatedProteinList();
+    public long[] getValidatedProteins(WaitingHandler waitingHandler, FilterPreferences filterPreferences) {
+        
+        long[] result = identificationFeaturesCache.getValidatedProteinList();
+        
         if (result == null) {
+            
             getProcessedProteinKeys(waitingHandler, filterPreferences);
+            
         }
+        
         return identificationFeaturesCache.getValidatedProteinList();
+        
     }
 
     /**
@@ -2613,21 +2121,8 @@ public class IdentificationFeaturesGenerator {
      * @param waitingHandler the waiting handler, can be null
      *
      * @return the sorted list of protein keys
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public ArrayList<String> getProcessedProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences)
-            throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public long[] getProcessedProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences) {
 
         if (identificationFeaturesCache.getProteinList() == null) {
             if (waitingHandler != null) {
@@ -2645,27 +2140,29 @@ public class IdentificationFeaturesGenerator {
                     || metrics.getMaxMW() <= 0;
 
             // sort the proteins according to the protein score, then number of peptides (inverted), then number of spectra (inverted).
-            HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> orderMap
+            HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<Long>>>> orderMap
                     = new HashMap<>();
             ArrayList<Double> scores = new ArrayList<>();
-            PSParameter probabilities = new PSParameter();
             int maxPeptides = 0, maxSpectra = 0;
             double maxSpectrumCounting = 0, maxMW = 0;
             int nValidatedProteins = 0;
             int nConfidentProteins = 0;
 
             ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
+            ProteinMatch proteinMatch;
+    
+            while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
-            while (proteinMatchesIterator.hasNext()) {
+                long proteinKey = proteinMatch.getKey();
 
-                ProteinMatch proteinMatch = proteinMatchesIterator.next();
-                String proteinKey = proteinMatch.getKey();
-
-                if (!ProteinMatch.isDecoy(proteinKey)) {
-                    probabilities = (PSParameter) proteinMatch.getUrParam(probabilities);
-                    if (!probabilities.getHidden()) {
-                        double score = probabilities.getProteinProbabilityScore();
-                        int nPeptides = -proteinMatch.getPeptideMatchesKeys().size();
+                if (!proteinMatch.isDecoy()) {
+                    
+                    PSParameter proteinPsParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
+                    
+                    if (!proteinPsParameter.getHidden()) {
+                        
+                        double score = proteinPsParameter.getProteinProbabilityScore();
+                        int nPeptides = -proteinMatch.getPeptideMatchesKeys().length;
                         int nSpectra = -getNSpectra(proteinKey);
 
                         if (needMaxValues) {
@@ -2683,38 +2180,48 @@ public class IdentificationFeaturesGenerator {
                             if (tempSpectrumCounting > maxSpectrumCounting) {
                                 maxSpectrumCounting = tempSpectrumCounting;
                             }
-
-                            Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getLeadingAccession());
-
-                            if (currentProtein != null) {
-                                double mw = sequenceFactory.computeMolecularWeight(proteinMatch.getLeadingAccession());
+                            
+                            String proteinSequence = sequenceProvider.getSequence(proteinMatch.getLeadingAccession());
+                            
+                                double mw = ProteinUtils.computeMolecularWeight(proteinSequence);
+                                
                                 if (mw > maxMW) {
                                     maxMW = mw;
                                 }
-                            }
 
-                            if (probabilities.getMatchValidationLevel().isValidated()) {
+                            if (proteinPsParameter.getMatchValidationLevel().isValidated()) {
+                                
                                 nValidatedProteins++;
-                                if (probabilities.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                
+                                if (proteinPsParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                    
                                     nConfidentProteins++;
+                                    
                                 }
                             }
                         }
 
                         if (!orderMap.containsKey(score)) {
-                            orderMap.put(score, new HashMap<>());
+                            
+                            orderMap.put(score, new HashMap<>(1));
                             scores.add(score);
+                            
                         }
 
                         if (!orderMap.get(score).containsKey(nPeptides)) {
-                            orderMap.get(score).put(nPeptides, new HashMap<>());
+                            
+                            orderMap.get(score).put(nPeptides, new HashMap<>(1));
+                            
                         }
 
                         if (!orderMap.get(score).get(nPeptides).containsKey(nSpectra)) {
-                            orderMap.get(score).get(nPeptides).put(nSpectra, new ArrayList<>());
+                            
+                            orderMap.get(score).get(nPeptides).put(nSpectra, new ArrayList<>(1));
+                            
                         }
 
                         orderMap.get(score).get(nPeptides).get(nSpectra).add(proteinKey);
+                        
                     }
                 }
 
@@ -2728,23 +2235,27 @@ public class IdentificationFeaturesGenerator {
             }
 
             if (needMaxValues) {
+                
                 metrics.setMaxNPeptides(maxPeptides);
                 metrics.setMaxNSpectra(maxSpectra);
                 metrics.setMaxSpectrumCounting(maxSpectrumCounting);
                 metrics.setMaxMW(maxMW);
                 metrics.setnValidatedProteins(nValidatedProteins);
                 metrics.setnConfidentProteins(nConfidentProteins);
+                
             }
 
-            ArrayList<String> proteinList = new ArrayList<>();
+            ArrayList<Long> proteinList = new ArrayList<>();
 
             ArrayList<Double> scoreList = new ArrayList<>(orderMap.keySet());
             Collections.sort(scoreList);
 
             if (waitingHandler != null) {
+                
                 waitingHandler.resetSecondaryProgressCounter();
                 waitingHandler.setWaitingText("Updating Protein Table. Please Wait...");
                 waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size());
+                
             }
 
             for (double currentScore : scoreList) {
@@ -2758,23 +2269,33 @@ public class IdentificationFeaturesGenerator {
                     Collections.sort(nPsmList);
 
                     for (int currentNPsms : nPsmList) {
-                        ArrayList<String> tempList = orderMap.get(currentScore).get(currentNPeptides).get(currentNPsms);
+                        
+                        ArrayList<Long> tempList = orderMap.get(currentScore).get(currentNPeptides).get(currentNPsms);
                         Collections.sort(tempList);
                         proteinList.addAll(tempList);
+                        
                         if (waitingHandler != null) {
+                            
                             waitingHandler.setMaxSecondaryProgressCounter(tempList.size());
 
                             if (waitingHandler.isRunCanceled()) {
+                                
                                 return null;
+                                
                             }
                         }
                     }
                 }
             }
+            
+            long[] proteinArray = proteinList.stream()
+                    .mapToLong(Long::longValue)
+                    .toArray();
 
-            identificationFeaturesCache.setProteinList(proteinList);
+            identificationFeaturesCache.setProteinList(proteinArray);
 
             if (waitingHandler != null) {
+                
                 waitingHandler.setPrimaryProgressCounterIndeterminate(true);
 
                 if (waitingHandler.isRunCanceled()) {
@@ -2784,28 +2305,40 @@ public class IdentificationFeaturesGenerator {
         }
 
         if (hidingNeeded(filterPreferences) || identificationFeaturesCache.getProteinListAfterHiding() == null) {
-            ArrayList<String> proteinListAfterHiding = new ArrayList<>();
-            ArrayList<String> validatedProteinList = new ArrayList<>();
-            PSParameter psParameter = new PSParameter();
+            
+            ArrayList<Long> proteinListAfterHiding = new ArrayList<>();
+            ArrayList<Long> validatedProteinList = new ArrayList<>();
             int nValidatedProteins = 0;
             int nConfidentProteins = 0;
 
-            for (String proteinKey : identificationFeaturesCache.getProteinList()) {
-                if (!ProteinMatch.isDecoy(proteinKey)) {
-                    psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(proteinKey)).getUrParam(psParameter);
+            for (long proteinKey : identificationFeaturesCache.getProteinList()) {
+                
+                ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+                
+                if (!proteinMatch.isDecoy()) {
+                    
+                    PSParameter psParameter = (PSParameter) (proteinMatch).getUrParam(PSParameter.dummy);
+                    
                     if (!psParameter.getHidden()) {
+                        
                         proteinListAfterHiding.add(proteinKey);
+                        
                         if (psParameter.getMatchValidationLevel().isValidated()) {
+                            
                             nValidatedProteins++;
                             validatedProteinList.add(proteinKey);
+                            
                             if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                
                                 nConfidentProteins++;
+                                
                             }
                         }
                     }
                 }
 
                 if (waitingHandler != null) {
+                    
                     waitingHandler.setPrimaryProgressCounterIndeterminate(true);
 
                     if (waitingHandler.isRunCanceled()) {
@@ -2813,11 +2346,22 @@ public class IdentificationFeaturesGenerator {
                     }
                 }
             }
+            
+            long[] proteinArrayAfterHiding = proteinListAfterHiding.stream()
+                    .mapToLong(Long::longValue)
+                    .toArray();
 
-            identificationFeaturesCache.setProteinListAfterHiding(proteinListAfterHiding);
-            identificationFeaturesCache.setValidatedProteinList(validatedProteinList);
+            identificationFeaturesCache.setProteinListAfterHiding(proteinArrayAfterHiding);
+            
+            long[] validatedProteinArray = validatedProteinList.stream()
+                    .mapToLong(Long::longValue)
+                    .toArray();
+                    
+            identificationFeaturesCache.setValidatedProteinList(validatedProteinArray);
+            
             metrics.setnValidatedProteins(nValidatedProteins);
             metrics.setnConfidentProteins(nConfidentProteins);
+            
         }
 
         return identificationFeaturesCache.getProteinListAfterHiding();
@@ -2830,24 +2374,15 @@ public class IdentificationFeaturesGenerator {
      * @param filterPreferences the filtering preferences used. can be null
      *
      * @return the ordered protein keys to display when no filtering is applied.
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public ArrayList<String> getProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences)
-            throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public long[] getProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences) {
+        
         if (identificationFeaturesCache.getProteinList() == null) {
+            
             getProcessedProteinKeys(waitingHandler, filterPreferences);
+            
         }
+        
         return identificationFeaturesCache.getProteinList();
     }
 
@@ -2857,51 +2392,52 @@ public class IdentificationFeaturesGenerator {
      * @param proteinKey the key of the protein of interest
      *
      * @return a sorted list of the corresponding peptide keys
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public ArrayList<String> getSortedPeptideKeys(String proteinKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-        if (!proteinKey.equals(identificationFeaturesCache.getCurrentProteinKey()) || identificationFeaturesCache.getPeptideList() == null) {
+    public long[] getSortedPeptideKeys(long proteinKey) {
+        
+        if (proteinKey != identificationFeaturesCache.getCurrentProteinKey() || identificationFeaturesCache.getPeptideList() == null) {
 
-            ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinKey);
-            HashMap<Double, HashMap<Integer, ArrayList<String>>> peptideMap = new HashMap<>();
+            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+            
+            HashMap<Double, HashMap<Integer, ArrayList<Long>>> peptideMap = new HashMap<>(1);
+            
             int maxSpectrumCount = 0;
-
-            PSParameter psParameter = new PSParameter();
-            ArrayList<UrParameter> parameters = new ArrayList<>(1);
-            parameters.add(psParameter);
 
             // iterate the peptides and store the coverage for each peptide validation level
             PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null);
-            while (peptideMatchesIterator.hasNext()) {
-                PeptideMatch peptideMatch = peptideMatchesIterator.next();
-                String peptideKey = peptideMatch.getKey();
-                psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
+            PeptideMatch peptideMatch;
+            
+            while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+                
+                long peptideKey = peptideMatch.getKey();
+                PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
                 if (!psParameter.getHidden()) {
+                    
                     double peptideProbabilityScore = psParameter.getPeptideProbabilityScore();
 
                     if (!peptideMap.containsKey(peptideProbabilityScore)) {
-                        peptideMap.put(peptideProbabilityScore, new HashMap<>());
+                        
+                        peptideMap.put(peptideProbabilityScore, new HashMap<>(1));
+                        
                     }
+                    
                     int spectrumCount = -peptideMatch.getSpectrumCount();
+                    
                     if (peptideMatch.getSpectrumCount() > maxSpectrumCount) {
+                        
                         maxSpectrumCount = peptideMatch.getSpectrumCount();
+                        
                     }
+                    
                     if (!peptideMap.get(peptideProbabilityScore).containsKey(spectrumCount)) {
-                        peptideMap.get(peptideProbabilityScore).put(spectrumCount, new ArrayList<>());
+                        
+                        peptideMap.get(peptideProbabilityScore).put(spectrumCount, new ArrayList<>(1));
+                        
                     }
+                    
                     peptideMap.get(peptideProbabilityScore).get(spectrumCount).add(peptideKey);
+                    
                 }
             }
 
@@ -2909,19 +2445,27 @@ public class IdentificationFeaturesGenerator {
 
             ArrayList<Double> scores = new ArrayList<>(peptideMap.keySet());
             Collections.sort(scores);
-            ArrayList<String> peptideList = new ArrayList<>();
+            ArrayList<Long> peptideList = new ArrayList<>();
 
             for (double currentScore : scores) {
+                
                 ArrayList<Integer> nSpectra = new ArrayList<>(peptideMap.get(currentScore).keySet());
                 Collections.sort(nSpectra);
+                
                 for (int currentNPsm : nSpectra) {
-                    ArrayList<String> keys = peptideMap.get(currentScore).get(currentNPsm);
+                    
+                    ArrayList<Long> keys = peptideMap.get(currentScore).get(currentNPsm);
                     Collections.sort(keys);
                     peptideList.addAll(keys);
+                    
                 }
             }
 
-            identificationFeaturesCache.setPeptideList(peptideList);
+            long[] peptideArray = peptideList.stream()
+                    .mapToLong(Long::longValue)
+                    .toArray();
+            
+            identificationFeaturesCache.setPeptideList(peptideArray);
             identificationFeaturesCache.setCurrentProteinKey(proteinKey);
         }
         return identificationFeaturesCache.getPeptideList();
@@ -2937,68 +2481,79 @@ public class IdentificationFeaturesGenerator {
      * needed
      *
      * @return the ordered list of spectrum keys
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public ArrayList<String> getSortedPsmKeys(String peptideKey, boolean sortOnRt, boolean forceUpdate) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public long[] getSortedPsmKeys(long peptideKey, boolean sortOnRt, boolean forceUpdate) {
 
-        if (!peptideKey.equals(identificationFeaturesCache.getCurrentPeptideKey()) || identificationFeaturesCache.getPsmList() == null || forceUpdate) {
+        if (peptideKey != identificationFeaturesCache.getCurrentPeptideKey() || identificationFeaturesCache.getPsmList() == null || forceUpdate) {
 
-            PeptideMatch currentPeptideMatch = (PeptideMatch) identification.retrieveObject(peptideKey);
-            HashMap<Integer, HashMap<Double, ArrayList<String>>> orderingMap = new HashMap<>();
+            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+            
+            HashMap<Integer, HashMap<Double, ArrayList<Long>>> orderingMap = new HashMap<>(1);
             boolean hasRT = sortOnRt;
             double rt = -1;
             int nValidatedPsms = 0;
 
-            ArrayList<String> spectrumKeys = currentPeptideMatch.getSpectrumMatchesKeys();
-            PSParameter psParameter = new PSParameter();
+            long[] spectrumKeys = peptideMatch.getSpectrumMatchesKeys();
 
-            SpectrumMatchesIterator psmIterator = identification.getPsmIterator(spectrumKeys, null);
+            SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(spectrumKeys, null);
+            SpectrumMatch spectrumMatch;
 
-            while (psmIterator.hasNext()) {
+            while ((spectrumMatch = psmIterator.next()) != null) {
 
-                SpectrumMatch spectrumMatch = psmIterator.next();
-                String spectrumKey = spectrumMatch.getKey();
-                psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
+                long matchKey = spectrumMatch.getKey();
+                PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
 
                 if (!psParameter.getHidden()) {
+                    
                     if (psParameter.getMatchValidationLevel().isValidated()) {
+                        
                         nValidatedPsms++;
+                        
                     }
 
-                    int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+                    int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge();
+                    
                     if (!orderingMap.containsKey(charge)) {
-                        orderingMap.put(charge, new HashMap<>());
+                        
+                        orderingMap.put(charge, new HashMap<>(spectrumKeys.length));
+                        
                     }
+                    
                     if (hasRT) {
+                        
                         try {
-                            Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
+                            
+                            Precursor precursor = spectrumFactory.getPrecursor(spectrumMatch.getSpectrumKey());
                             rt = precursor.getRt();
+                            
                             if (rt == -1) {
+                                
                                 hasRT = false;
+                                
                             }
+                            
                         } catch (Exception e) {
+                            
                             e.printStackTrace();
                             hasRT = false;
+                            
                         }
                     }
+                    
                     if (!hasRT) {
+                        
                         rt = psParameter.getPsmProbabilityScore();
+                        
                     }
+                    
                     if (!orderingMap.get(charge).containsKey(rt)) {
-                        orderingMap.get(charge).put(rt, new ArrayList<>());
+                        
+                        orderingMap.get(charge).put(rt, new ArrayList<>(1));
+                        
                     }
-                    orderingMap.get(charge).get(rt).add(spectrumKey);
+                    
+                    orderingMap.get(charge).get(rt).add(matchKey);
+                    
                 }
             }
 
@@ -3006,19 +2561,27 @@ public class IdentificationFeaturesGenerator {
 
             ArrayList<Integer> charges = new ArrayList<>(orderingMap.keySet());
             Collections.sort(charges);
-            ArrayList<String> psmList = new ArrayList<>();
+            ArrayList<Long> psmList = new ArrayList<>();
 
             for (int currentCharge : charges) {
+                
                 ArrayList<Double> rts = new ArrayList<>(orderingMap.get(currentCharge).keySet());
                 Collections.sort(rts);
+                
                 for (double currentRT : rts) {
-                    ArrayList<String> tempResult = orderingMap.get(currentCharge).get(currentRT);
+                    
+                    ArrayList<Long> tempResult = orderingMap.get(currentCharge).get(currentRT);
                     Collections.sort(tempResult);
                     psmList.addAll(tempResult);
+                    
                 }
             }
 
-            identificationFeaturesCache.setPsmList(psmList);
+            long[] psmArray = psmList.stream()
+                    .mapToLong(Long::longValue)
+                    .toArray();
+
+            identificationFeaturesCache.setPsmList(psmArray);
             identificationFeaturesCache.setCurrentPeptideKey(peptideKey);
         }
 
@@ -3032,7 +2595,9 @@ public class IdentificationFeaturesGenerator {
      * @return the number of validated PSMs for the last selected peptide
      */
     public int getNValidatedPsms() {
+        
         return identificationFeaturesCache.getnValidatedPsms();
+        
     }
 
     /**
@@ -3045,17 +2610,24 @@ public class IdentificationFeaturesGenerator {
     private boolean hidingNeeded(FilterPreferences filterPreferences) {
 
         if (filterPreferences == null) {
+            
             return false;
+            
         }
 
         if (identificationFeaturesCache.isFiltered()) {
+            
             return true;
+            
         }
 
         for (ProteinFilter proteinFilter : filterPreferences.getProteinHideFilters().values()) {
+            
             if (proteinFilter.isActive()) {
+                
                 identificationFeaturesCache.setFiltered(true);
                 return true;
+                
             }
         }
 
@@ -3067,8 +2639,10 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinList the ordered protein list
      */
-    public void setProteinKeys(ArrayList<String> proteinList) {
+    public void setProteinKeys(long[] proteinList) {
+        
         identificationFeaturesCache.setProteinList(proteinList);
+        
     }
 
     /**
@@ -3077,7 +2651,9 @@ public class IdentificationFeaturesGenerator {
      * @return the identification features cache
      */
     public IdentificationFeaturesCache getIdentificationFeaturesCache() {
+        
         return identificationFeaturesCache;
+        
     }
 
     /**
@@ -3086,7 +2662,9 @@ public class IdentificationFeaturesGenerator {
      * @param identificationFeaturesCache the new identification features cache
      */
     public void setIdentificationFeaturesCache(IdentificationFeaturesCache identificationFeaturesCache) {
+        
         this.identificationFeaturesCache = identificationFeaturesCache;
+        
     }
 
     /**
@@ -3095,7 +2673,9 @@ public class IdentificationFeaturesGenerator {
      * @return the metrics
      */
     public Metrics getMetrics() {
+        
         return metrics;
+        
     }
 
     /**
@@ -3104,7 +2684,9 @@ public class IdentificationFeaturesGenerator {
      * @param spectrumCountingPreferences the spectrum counting preferences
      */
     public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences) {
+        
         this.spectrumCountingPreferences = spectrumCountingPreferences;
+        
     }
 
     /**
@@ -3113,18 +2695,11 @@ public class IdentificationFeaturesGenerator {
      * @param peptide the peptide of interest
      *
      * @return true if peptide is found in a single protein match
-     *
-     * @throws SQLException exception thrown whenever an error occurred while
-     * loading the object from the database
-     * @throws IOException exception thrown whenever an error occurred while
-     * reading the object in the database
-     * @throws ClassNotFoundException exception thrown whenever an error
-     * occurred while casting the database input in the desired match class
-     * @throws InterruptedException thrown whenever a threading issue occurred
-     * while interacting with the database
      */
-    public int getNValidatedProteinGroups(Peptide peptide) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public int getNValidatedProteinGroups(Peptide peptide) {
+        
         return getNValidatedProteinGroups(peptide, null);
+        
     }
 
     /**
@@ -3138,21 +2713,11 @@ public class IdentificationFeaturesGenerator {
      */
     public int getNValidatedProteinGroups(Peptide peptide, WaitingHandler waitingHandler) {
 
-        HashSet<String> keys = identification.getProteinMatches(peptide);
-        int nValidated = 0;
-        PSParameter psParameter = new PSParameter();
-
-        for (String key : keys) {
-
-            psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(key)).getUrParam(psParameter);
-
-            if (psParameter.getMatchValidationLevel().isValidated()) {
-
-                nValidated++;
-
-            }
-        }
-
-        return nValidated;
+        HashSet<Long> keys = identification.getProteinMatches(peptide);
+        
+        return (int) keys.stream()
+                .filter(key -> ((PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy))
+                        .getMatchValidationLevel().isValidated())
+                .count();
     }
 }

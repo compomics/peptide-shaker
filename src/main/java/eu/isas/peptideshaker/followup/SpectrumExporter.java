@@ -95,7 +95,7 @@ public class SpectrumExporter {
         // TODO: may be there is a more elegant way to retrieve the aggregated information
         // from all spectrumMatches than to iterate through all of them
         HashMap<String, ArrayList<String>> fileNames = new HashMap<>();
-        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
         SpectrumMatch spectrumMatch;
         while ((spectrumMatch = psmIterator.next()) != null) {
             String fileName = spectrumMatch.getSpectrumFile();

@@ -194,7 +194,7 @@ public class MatchesValidator {
 
         ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
-        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
 
         ArrayList<PsmValidatorRunnable> psmRunnables = new ArrayList<>(processingPreferences.getnThreads());
         for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
@@ -253,7 +253,7 @@ public class MatchesValidator {
 
         pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
-        psmIterator = identification.getPsmIterator(waitingHandler);
+        psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
 
         for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
             PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator, geneMaps, identificationParameters, waitingHandler, exceptionHandler, inputMap, true, false);

@@ -142,7 +142,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         setUpGui();
 
         this.matchKey = proteinMatchKey;
-        psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinMatchKey)).getUrParam(new PSParameter());
+        psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinMatchKey)).getUrParam(PSParameter.dummy);
         this.exceptionHandler = exceptionHandler;
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
@@ -195,7 +195,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         setUpGui();
 
         this.matchKey = peptideMatchKey;
-        psParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(peptideMatchKey)).getUrParam(new PSParameter());
+        psParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(peptideMatchKey)).getUrParam(PSParameter.dummy);
         this.exceptionHandler = exceptionHandler;
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
@@ -254,7 +254,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
         this.matchKey = psmMatchKey;
         SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(psmMatchKey);
-        psParameter = (PSParameter)spectrumMatch.getUrParam(new PSParameter());
+        psParameter = (PSParameter)spectrumMatch.getUrParam(PSParameter.dummy);
         this.exceptionHandler = exceptionHandler;
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;

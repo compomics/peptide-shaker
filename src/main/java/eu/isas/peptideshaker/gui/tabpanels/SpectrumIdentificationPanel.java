@@ -3607,7 +3607,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         return null;
                     case 9:
                         if (identification.matchExists(spectrumKey)) {
-                            PSParameter pSParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(new PSParameter());
+                            PSParameter pSParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(PSParameter.dummy);
                             if (pSParameter != null) {
                                 return pSParameter.getPsmScore();
                             } else {
@@ -3618,7 +3618,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         }
                     case 10:
                         if (identification.matchExists(spectrumKey)) {
-                            PSParameter pSParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(new PSParameter());
+                            PSParameter pSParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(PSParameter.dummy);
                             if (pSParameter != null) {
                                 return pSParameter.getPsmConfidence();
                             } else {
@@ -3629,7 +3629,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         }
                     case 11:
                         if (identification.matchExists(spectrumKey)) {
-                            PSParameter pSParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(new PSParameter());
+                            PSParameter pSParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(spectrumKey)).getUrParam(PSParameter.dummy);
                             if (pSParameter != null) {
                                 return pSParameter.getMatchValidationLevel().getIndex();
                             } else {

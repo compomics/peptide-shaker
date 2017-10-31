@@ -224,7 +224,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     case 0:
                         return viewIndex + 1;
                     case 1:
-                        PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(new PSParameter());
+                        PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
@@ -235,7 +235,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         }
                         return psParameter.getStarred();
                     case 2:
-                        psParameter = (PSParameter) proteinMatch.getUrParam(new PSParameter());
+                        psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
@@ -395,7 +395,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             return null;
                         }
                     case 11:
-                        psParameter = (PSParameter) proteinMatch.getUrParam(new PSParameter());
+                        psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
@@ -414,7 +414,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             return null;
                         }
                     case 12:
-                        psParameter = (PSParameter) proteinMatch.getUrParam(new PSParameter());
+                        psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;

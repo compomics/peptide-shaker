@@ -146,6 +146,10 @@ public class PSParameter extends DbObject implements UrParameter {
      * Map of the intermediate scores. Score index &gt; value
      */
     private HashMap<Integer, Double> intermediateScores;
+    /**
+     * An empty parameter used for instantiation.
+     */
+    public static final PSParameter dummy = new PSParameter();
 
     /**
      * Constructor.
@@ -1039,6 +1043,8 @@ public class PSParameter extends DbObject implements UrParameter {
 
     @Override
     public long getParameterKey() {
-        return getId();
+        
+        return serialVersionUID;
+        
 }
 }

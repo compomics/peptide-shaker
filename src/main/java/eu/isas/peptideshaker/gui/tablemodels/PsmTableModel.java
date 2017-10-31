@@ -187,7 +187,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                     case 0:
                         return viewIndex + 1;
                     case 1:
-                        PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(new PSParameter());
+                        PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
                         if (psParameter == null) {
                             if (isScrolling()) {
                                 return null;
@@ -254,7 +254,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                             throw new IllegalArgumentException("No best assumption found for spectrum " + psmKey + ".");
                         }
                     case 6:
-                        psParameter = (PSParameter) spectrumMatch.getUrParam(new PSParameter());
+                        psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
@@ -273,7 +273,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                             return null;
                         }
                     case 7:
-                        psParameter = (PSParameter) spectrumMatch.getUrParam(new PSParameter());
+                        psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
                         if (psParameter == null) {
                             if (isScrolling) {
                                 return null;

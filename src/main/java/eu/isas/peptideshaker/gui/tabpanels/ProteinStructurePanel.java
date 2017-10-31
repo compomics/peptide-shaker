@@ -1495,7 +1495,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
                     try {
-                        PSParameter psParameter = (PSParameter) ((ProteinMatch) peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getUrParam(new PSParameter());
+                        PSParameter psParameter = (PSParameter) ((ProteinMatch) peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getUrParam(PSParameter.dummy);
                         if (!psParameter.getStarred()) {
                             peptideShakerGUI.getStarHider().starProtein(proteinKey);
                         } else {
@@ -1537,7 +1537,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 if (column == peptideTable.getColumn("  ").getModelIndex()) {
                     try {
                         String peptideKey = peptideTableMap.get(getPeptideIndex(row));
-                        PSParameter psParameter = (PSParameter) ((PeptideMatch) peptideShakerGUI.getIdentification().retrieveObject(peptideKey)).getUrParam(new PSParameter());
+                        PSParameter psParameter = (PSParameter) ((PeptideMatch) peptideShakerGUI.getIdentification().retrieveObject(peptideKey)).getUrParam(PSParameter.dummy);
                         if (!psParameter.getStarred()) {
                             peptideShakerGUI.getStarHider().starPeptide(peptideKey);
                         } else {
