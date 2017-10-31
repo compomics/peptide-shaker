@@ -126,7 +126,7 @@ public class PSMaps extends DbObject implements UrParameter {
     }
 
     @Override
-    public String getParameterKey() {
-        return "PeptideShaker|1";
+    public long getParameterKey() {
+        return getId();
     }
 }

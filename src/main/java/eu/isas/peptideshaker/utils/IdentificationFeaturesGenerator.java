@@ -18,6 +18,7 @@ import com.compomics.util.experiment.identification.matches_iterators.PeptideMat
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
+import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
@@ -167,14 +168,13 @@ public class IdentificationFeaturesGenerator {
      */
     private void estimateMassErrorDistribution(String spectrumFile) {
 
-        final PSParameter psParameter = new PSParameter();
         HashSet<Long> spectrumMatchesKeys = identification.getSpectrumIdentification().get(spectrumFile);
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
         ArrayList<Double> precursorMzDeviations = spectrumMatchesKeys.stream()
                 .map(key -> identification.getSpectrumMatch(key))
                 .filter(spectrumMatch -> spectrumMatch.getBestPeptideAssumption() != null
-                && ((PSParameter) spectrumMatch.getUrParam(psParameter)).getMatchValidationLevel().isValidated())
+                && ((PSParameter) spectrumMatch.getUrParam(new PSParameter())).getMatchValidationLevel().isValidated())
                 .map(spectrumMatch -> spectrumMatch.getBestPeptideAssumption().getDeltaMass(
                 spectrumFactory.getPrecursorMz(spectrumMatch.getSpectrumKey()),
                 searchParameters.isPrecursorAccuracyTypePpm(),
@@ -474,101 +474,101 @@ public class IdentificationFeaturesGenerator {
         ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
         String accession = proteinMatch.getLeadingAccession();
         String sequence = sequenceProvider.getSequence(accession);
-        
+
         double[] result = new double[sequence.length()];
         Distribution peptideLengthDistribution = metrics.getPeptideLengthDistribution();
         DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
 
         // special case for no cleavage searches
         if (digestionPreferences.getCleavagePreference() != DigestionParameters.CleavagePreference.enzyme) {
-            
+
             for (int i = 0; i < result.length; i++) {
-                
+
                 result[i] = 1.0;
-                
+
             }
-            
+
             return result;
-            
+
         }
 
         int lastCleavage = -1;
         char previousChar = sequence.charAt(0), nextChar;
 
         for (int i = 0; i < sequence.length() - 1; i++) {
-            
+
             double p = 1.0;
             nextChar = sequence.charAt(i + 1);
             boolean cleavage = false;
-            
+
             for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
-                
+
                 if (enzyme.isCleavageSite(previousChar, nextChar)) {
-                    
+
                     cleavage = true;
                     break;
-                    
+
                 }
             }
-            
+
             if (cleavage) {
-                
+
                 int length = i - lastCleavage;
-                
+
                 if (peptideLengthDistribution == null) { // < 100 validated peptide
-                    
+
                     int pepMax = identificationParameters.getPeptideAssumptionFilter().getMaxPepLength();
-                    
+
                     if (length > pepMax) {
-                        
+
                         p = 0.0;
-                        
+
                     }
-                    
+
                 } else {
-                    
+
                     p = peptideLengthDistribution.getProbabilityAt(length);
-                    
+
                 }
-                
+
                 for (int j = lastCleavage + 1; j <= i; j++) {
-                    
+
                     result[j] = p;
-                    
+
                 }
-                
+
                 lastCleavage = i;
-                
+
             }
-            
+
             previousChar = nextChar;
-            
+
         }
 
         double p = 1.0;
 
         int length = sequence.length() - 1 - lastCleavage;
-        
+
         if (peptideLengthDistribution == null) { // < 100 validated peptide
-            
+
             int pepMax = identificationParameters.getPeptideAssumptionFilter().getMaxPepLength();
-            
+
             if (length > pepMax) {
-                
+
                 p = 0.0;
-                
+
             }
-            
+
         } else {
-            
+
             p = peptideLengthDistribution.getProbabilityAt(length);
-            
+
         }
-        
+
         for (int j = lastCleavage + 1; j < sequence.length(); j++) {
-            
+
             result[j] = p;
-            
+
         }
 
         return result;
@@ -582,16 +582,16 @@ public class IdentificationFeaturesGenerator {
      * @return the sequence coverage
      */
     public Double getValidatedSequenceCoverage(long proteinMatchKey) {
-        
+
         Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey);
 
         if (result == null) {
-            
+
             result = estimateValidatedSequenceCoverage(proteinMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey, result);
-        
+
         }
-        
+
         return result;
     }
 
@@ -603,9 +603,9 @@ public class IdentificationFeaturesGenerator {
      * @return true if the sequence coverage is in cache
      */
     public boolean validatedSequenceCoverageInCache(long proteinMatchKey) {
-        
+
         return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_validation_coverage, proteinMatchKey) != null;
-    
+
     }
 
     /**
@@ -616,18 +616,18 @@ public class IdentificationFeaturesGenerator {
      * @return the sequence coverage
      */
     public HashMap<Integer, Double> getSequenceCoverage(long proteinMatchKey) {
-        
+
         HashMap<Integer, Double> result = (HashMap<Integer, Double>) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_validation_coverage, proteinMatchKey);
 
         if (result == null) {
-            
+
             result = estimateSequenceCoverage(proteinMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_validation_coverage, proteinMatchKey, result);
-        
+
         }
-        
+
         return result;
-        
+
     }
 
     /**
@@ -638,9 +638,9 @@ public class IdentificationFeaturesGenerator {
      * @return true if the sequence coverage is in cache
      */
     public boolean sequenceCoverageInCache(long proteinMatchKey) {
-        
+
         return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_validation_coverage, proteinMatchKey) != null;
-    
+
     }
 
     /**
@@ -650,27 +650,18 @@ public class IdentificationFeaturesGenerator {
      * @param digestionPreferences the digestion preferences
      *
      * @return a list of non-enzymatic peptides for a given protein match
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public ArrayList<String> getNonEnzymatic(String proteinMatchKey, DigestionParameters digestionPreferences)
-            throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-        ArrayList<String> result = (ArrayList<String>) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.tryptic_protein, proteinMatchKey);
+    public long[] getNonEnzymatic(long proteinMatchKey, DigestionParameters digestionPreferences) {
+
+        long[] result = (long[]) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.tryptic_protein, proteinMatchKey);
 
         if (result == null) {
+
             result = estimateNonEnzymatic(proteinMatchKey, digestionPreferences);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.tryptic_protein, proteinMatchKey, result);
+
         }
+
         return result;
     }
 
@@ -681,53 +672,21 @@ public class IdentificationFeaturesGenerator {
      * @param digestionPreferences the digestion preferences
      *
      * @return a list of non-enzymatic peptides for a given protein match
-     *
-     * @throws IOException exception thrown whenever an error occurred while
-     * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronization
-     * error occurred
-     * @throws SQLException exception thrown whenever an error occurred while
-     * interacting with the database
-     * @throws ClassNotFoundException exception thrown whenever an error
-     * occurred while deserializing an object
      */
-    private ArrayList<String> estimateNonEnzymatic(String proteinMatchKey, DigestionParameters digestionPreferences)
-            throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private long[] estimateNonEnzymatic(long proteinMatchKey, DigestionParameters digestionPreferences) {
 
         ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
-        ArrayList<String> peptideKeys = proteinMatch.getPeptideMatchesKeys();
-        PSParameter peptidePSParameter = new PSParameter();
+        long[] peptideKeys = proteinMatch.getPeptideMatchesKeys();
 
-        identification.loadObjects(peptideKeys, null, false);
-
-        ArrayList<String> result = new ArrayList<>();
-
-        if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
-            // see if we have non-tryptic peptides
-            for (String peptideKey : peptideKeys) {
-
-                peptidePSParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(peptideKey)).getUrParam(peptidePSParameter);
-
-                if (peptidePSParameter.getMatchValidationLevel().isValidated()) {
-
-                    String peptideSequence = Peptide.getSequence(peptideKey);
-                    boolean enzymatic = false;
-                    for (String accession : ProteinMatch.getAccessions(proteinMatchKey)) {
-                        Protein currentProtein = sequenceFactory.getProtein(accession);
-                        if (currentProtein.isEnzymaticPeptide(peptideSequence, digestionPreferences.getEnzymes(),
-                                identificationParameters.getSequenceMatchingPreferences())) {
-                            enzymatic = true;
-                            break;
-                        }
-                    }
-
-                    if (!enzymatic) {
-                        result.add(peptideKey);
-                    }
-                }
-            }
-        }
-        return result;
+        return digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme
+                ? Arrays.stream(peptideKeys)
+                        .filter(key -> ((PSParameter) (identification.getSpectrumMatch(key)).getUrParam(new PSParameter())).getMatchValidationLevel().isValidated()
+                        && !PeptideUtils.isEnzymatic(
+                                identification.getSpectrumMatch(key).getBestPeptideAssumption().getPeptide(),
+                                sequenceProvider,
+                                digestionPreferences.getEnzymes()))
+                        .toArray()
+                : new long[0];
     }
 
     /**
@@ -747,7 +706,7 @@ public class IdentificationFeaturesGenerator {
      * threading error occurred while interacting with a database (from the
      * protein tree or identification)
      */
-    public void updateSequenceCoverage(String proteinMatchKey)
+    public void updateSequenceCoverage(long proteinMatchKey)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         HashMap<Integer, Double> result = estimateSequenceCoverage(proteinMatchKey);
         identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_validation_coverage, proteinMatchKey, result);
@@ -762,22 +721,9 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match of interest
      *
      * @return the corresponding spectrum counting metric normalized in the
-     * metricsprefix of mol
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
+     * metrics prefix of mol
      */
-    public Double getNormalizedSpectrumCounting(String proteinMatchKey)
-            throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public double getNormalizedSpectrumCounting(long proteinMatchKey) {
         return getNormalizedSpectrumCounting(proteinMatchKey, metrics, spectrumCountingPreferences.getUnit(), spectrumCountingPreferences.getReferenceMass(), spectrumCountingPreferences.getSelectedMethod());
     }
 
@@ -792,21 +738,8 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the corresponding spectrum counting metric normalized in the
      * metricsprefix of mol
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public Double getNormalizedSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences spectrumCountingPreferences, Metrics metrics)
-            throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public double getNormalizedSpectrumCounting(long proteinMatchKey, SpectrumCountingPreferences spectrumCountingPreferences, Metrics metrics) {
         return getNormalizedSpectrumCounting(proteinMatchKey, metrics, spectrumCountingPreferences.getUnit(), spectrumCountingPreferences.getReferenceMass(), spectrumCountingPreferences.getSelectedMethod());
     }
 
@@ -820,21 +753,8 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the corresponding spectrum counting metric normalized in the
      * metricsprefix of mol
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public Double getNormalizedSpectrumCounting(String proteinMatchKey, UnitOfMeasurement unit, SpectrumCountingPreferences.SpectralCountingMethod method)
-            throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public double getNormalizedSpectrumCounting(long proteinMatchKey, UnitOfMeasurement unit, SpectrumCountingPreferences.SpectralCountingMethod method) {
         return getNormalizedSpectrumCounting(proteinMatchKey, metrics, unit, spectrumCountingPreferences.getReferenceMass(), method);
     }
 
@@ -851,33 +771,32 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the corresponding spectrum counting metric normalized in the
      * metrics prefix of mol
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public Double getNormalizedSpectrumCounting(String proteinMatchKey, Metrics metrics, UnitOfMeasurement unit, Double referenceMass, SpectrumCountingPreferences.SpectralCountingMethod method)
-            throws IOException, SQLException, ClassNotFoundException, InterruptedException {
-        Double spectrumCounting = getSpectrumCounting(proteinMatchKey, method);
+    public double getNormalizedSpectrumCounting(long proteinMatchKey, Metrics metrics, UnitOfMeasurement unit, Double referenceMass, SpectrumCountingPreferences.SpectralCountingMethod method) {
+
+        double spectrumCounting = getSpectrumCounting(proteinMatchKey, method);
+
         if (spectrumCountingPreferences.getNormalize()) {
+
             String unitFullName = unit.getFullName();
             StandardUnit standardUnit = StandardUnit.getStandardUnit(unitFullName);
+
             if (standardUnit == null) {
+
                 throw new UnsupportedOperationException("Unit " + unitFullName + " not supported.");
+
             }
+
             switch (standardUnit) {
+
                 case mol:
+
                     if (referenceMass == null) {
+
                         throw new IllegalArgumentException("Reference mass missing for abundance normalization.");
+
                     }
+
                     MetricsPrefix metricsPrefix = unit.getMetricsPrefix();
                     int unitCorrection = 9 + metricsPrefix.POWER; // kg to u for ref mass + metrics.POWER
                     Double result = spectrumCounting * Math.pow(10, -unitCorrection);
@@ -885,19 +804,25 @@ public class IdentificationFeaturesGenerator {
                     Double totalCounting = metrics.getTotalSpectrumCountingMass();
                     result /= totalCounting;
                     return result;
+
                 case percentage:
                     totalCounting = metrics.getTotalSpectrumCounting();
                     result = 100 * spectrumCounting / totalCounting;
                     return result;
+
                 case ppm:
                     totalCounting = metrics.getTotalSpectrumCounting();
                     result = 1000000 * spectrumCounting / totalCounting;
                     return result;
+
                 default:
                     throw new UnsupportedOperationException("Unit " + unitFullName + " not supported.");
             }
+
         } else {
+
             return spectrumCounting;
+
         }
     }
 
@@ -908,20 +833,8 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match of interest
      *
      * @return the corresponding spectrum counting metric
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public Double getSpectrumCounting(String proteinMatchKey) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public double getSpectrumCounting(long proteinMatchKey) {
         return getSpectrumCounting(proteinMatchKey, spectrumCountingPreferences.getSelectedMethod());
     }
 
@@ -933,35 +846,29 @@ public class IdentificationFeaturesGenerator {
      * @param method the method to use
      *
      * @return the corresponding spectrum counting metric
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public Double getSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences.SpectralCountingMethod method)
-            throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public Double getSpectrumCounting(long proteinMatchKey, SpectrumCountingPreferences.SpectralCountingMethod method) {
 
         if (method == spectrumCountingPreferences.getSelectedMethod()) {
+
             Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.spectrum_counting, proteinMatchKey);
 
             if (result == null) {
+
                 result = estimateSpectrumCounting(proteinMatchKey);
                 identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.spectrum_counting, proteinMatchKey, result);
+
             }
+
             return result;
         } else {
+
             SpectrumCountingPreferences tempPreferences = new SpectrumCountingPreferences();
             tempPreferences.setSelectedMethod(method);
-            return estimateSpectrumCounting(identification, sequenceFactory, proteinMatchKey, tempPreferences,
+
+            return estimateSpectrumCounting(identification, sequenceProvider, proteinMatchKey, tempPreferences,
                     identificationParameters.getPeptideAssumptionFilter().getMaxPepLength(), identificationParameters);
+
         }
     }
 
@@ -973,9 +880,11 @@ public class IdentificationFeaturesGenerator {
      *
      * @return true if the data is cached
      */
-    public boolean spectrumCountingInCache(String proteinMatchKey) {
+    public boolean spectrumCountingInCache(long proteinMatchKey) {
+
         Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.spectrum_counting, proteinMatchKey);
         return result != null;
+
     }
 
     /**
@@ -984,63 +893,37 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatch the inspected protein match
      *
      * @return the spectrum counting score
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    private double estimateSpectrumCounting(String proteinMatchKey) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
-        return estimateSpectrumCounting(identification, sequenceFactory, proteinMatchKey,
+    private double estimateSpectrumCounting(long proteinMatchKey) {
+
+        return estimateSpectrumCounting(identification, sequenceProvider, proteinMatchKey,
                 spectrumCountingPreferences,
                 identificationParameters.getPeptideAssumptionFilter().getMaxPepLength(), identificationParameters);
+
     }
 
     /**
      * Returns the spectrum counting index based on the project settings.
      *
      * @param identification the identification
-     * @param sequenceFactory the sequence factory
+     * @param sequenceProvider a provider for the protein sequences
      * @param proteinMatchKey the protein match key
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param maxPepLength the maximal length accepted for a peptide
      * @param identificationParameters the identification parameters
      *
      * @return the spectrum counting index
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public static Double estimateSpectrumCounting(Identification identification, SequenceFactory sequenceFactory, String proteinMatchKey,
-            SpectrumCountingPreferences spectrumCountingPreferences, int maxPepLength, IdentificationParameters identificationParameters)
-            throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public static Double estimateSpectrumCounting(Identification identification, SequenceProvider sequenceProvider, long proteinMatchKey,
+            SpectrumCountingPreferences spectrumCountingPreferences, int maxPepLength, IdentificationParameters identificationParameters) {
 
-        ProteinMatch testMatch, proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
+        ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
         DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
 
         if (spectrumCountingPreferences.getSelectedMethod() == SpectralCountingMethod.NSAF) {
 
-            SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-
             // NSAF
             double result = 0;
-            int peptideOccurrence = 0;
 
             PSParameter psParameter = new PSParameter();
             ArrayList<UrParameter> parameters = new ArrayList<>(1);
@@ -1049,58 +932,44 @@ public class IdentificationFeaturesGenerator {
             // iterate the peptides and store the coverage for each peptide validation level
             PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null);
             PeptideMatch peptideMatch;
+
             while ((peptideMatch = peptideMatchesIterator.next()) != null) {
-                String peptideKey = peptideMatch.getKey();
+
                 psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
+
                 if (psParameter.getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel()) {
-                    String peptideSequence = Peptide.getSequence(peptideKey);
-                    ArrayList<String> possibleProteinMatches = new ArrayList<>();
 
-                    for (String protein : peptideMatch.getPeptide().getParentProteins(sequenceMatchingPreferences)) {
-                        if (identification.getProteinMap().get(protein) != null) {
-                            for (String proteinKey : identification.getProteinMap().get(protein)) {
-                                if (!possibleProteinMatches.contains(proteinKey)) {
-                                    try {
-                                        testMatch = (ProteinMatch) identification.retrieveObject(proteinKey);
-                                        if (testMatch.getPeptideMatchesKeys().contains(peptideKey)) {
-                                            Protein currentProtein = sequenceFactory.getProtein(testMatch.getLeadingAccession());
-                                            peptideOccurrence += currentProtein.getPeptideStart(peptideSequence,
-                                                    sequenceMatchingPreferences).size();
-                                            possibleProteinMatches.add(proteinKey);
-                                        }
-                                    } catch (Exception e) {
-                                        // protein deleted due to protein inference issue and not deleted from the map in versions earlier than 0.14.6
-                                        System.out.println("Non-existing protein key in protein map: " + proteinKey);
-                                        e.printStackTrace();
-                                        System.exit(1);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    Peptide peptide = peptideMatch.getPeptide();
+                    
+                    int peptideOccurrence = identification.getProteinMatches(peptide).stream()
+                            .map(groupKey -> identification.getProteinMatch(groupKey))
+                            .filter(sharedGroup -> ((PSParameter) sharedGroup.getUrParam(new PSParameter()))
+                                    .getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel())
+                            .mapToInt(sharedGroup -> peptide.getProteinMapping()
+                                    .get(sharedGroup.getLeadingAccession()).length)
+                            .sum();
+                    
+                    double spectrumCount = Arrays.stream(peptideMatch.getSpectrumMatchesKeys())
+                            .mapToObj(key -> identification.getSpectrumMatch(key))
+                            .filter(spectrumMatch -> ((PSParameter) spectrumMatch.getUrParam(new PSParameter()))
+                                    .getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel())
+                            .count();
 
-                    if (possibleProteinMatches.isEmpty()) {
-                        System.err.println("No protein found for the given peptide (" + peptideKey + ") when estimating NSAF of '" + proteinMatchKey + "'.");
-                    }
-
-                    double ratio = 1.0 / peptideOccurrence;
-
-                    identification.loadObjects(peptideMatch.getSpectrumMatchesKeys(), null, false);
-                    for (String spectrumMatchKey : peptideMatch.getSpectrumMatchesKeys()) {
-                        psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(spectrumMatchKey)).getUrParam(psParameter);
-                        if (psParameter.getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel()) {
-                            result += ratio;
-                        }
-                    }
+                    double ratio = spectrumCount / peptideOccurrence;
+                    
+                    result += ratio;
+                    
                 }
             }
 
-            Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getLeadingAccession());
+            String proteinSequence = sequenceProvider.getSequence(proteinMatch.getLeadingAccession());
 
             if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
-                result /= currentProtein.getObservableLength(digestionPreferences.getEnzymes(), maxPepLength);
+                
+                result /= ProteinUtils.getObservableLength(proteinSequence, digestionPreferences.getEnzymes(), maxPepLength);
+                
             } else {
-                result /= currentProtein.getLength();
+                result /= proteinSequence.length();
             }
 
             if (new Double(result).isInfinite() || new Double(result).isNaN()) {
@@ -1108,33 +977,35 @@ public class IdentificationFeaturesGenerator {
             }
 
             return result;
+            
         } else {
 
             // emPAI
-            double result = 0;
+            double result = Arrays.stream(proteinMatch.getPeptideMatchesKeys())
+                    .mapToObj(key -> identification.getPeptideMatch(key))
+                            .filter(peptideMatch -> ((PSParameter) peptideMatch.getUrParam(new PSParameter()))
+                                    .getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel())
+                    .count();
 
-            PSParameter psParameter = new PSParameter();
-
-            identification.loadObjects(proteinMatch.getPeptideMatchesKeys(), null, false);
-            for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-                psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(peptideKey)).getUrParam(psParameter);
-                if (psParameter.getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel()) {
-                    result++;
-                }
-            }
-
-            Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getLeadingAccession());
             if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
-                result = Math.pow(10, result / (currentProtein.getNCleavageSites(digestionPreferences.getEnzymes()) + 1)) - 1;
+                
+            String proteinSequence = sequenceProvider.getSequence(proteinMatch.getLeadingAccession());
+                result = Math.pow(10, result / (ProteinUtils.getNCleavageSites(proteinSequence, digestionPreferences.getEnzymes()) + 1)) - 1;
+            
             } else {
+                
                 result = Math.pow(10, result) - 1;
+                
             }
 
             if (new Double(result).isInfinite() || new Double(result).isNaN()) {
+                
                 result = 0.0;
+                
             }
 
             return result;
+            
         }
     }
 

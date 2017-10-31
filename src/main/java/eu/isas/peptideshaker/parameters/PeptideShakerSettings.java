@@ -259,7 +259,7 @@ public class PeptideShakerSettings extends DbObject implements UrParameter, Seri
     }
 
     @Override
-    public String getParameterKey() {
-        return "PeptideShaker|2";
+    public long getParameterKey() {
+        return getId();
     }
 }

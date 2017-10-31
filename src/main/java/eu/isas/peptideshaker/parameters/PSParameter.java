@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.parameters;
 
 import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.db.object.DbObject;
+import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.util.ArrayList;
@@ -1037,7 +1038,7 @@ public class PSParameter extends DbObject implements UrParameter {
     }
 
     @Override
-    public String getParameterKey() {
-        return "PeptideShaker|0";
-    }
+    public long getParameterKey() {
+        return getId();
+}
 }

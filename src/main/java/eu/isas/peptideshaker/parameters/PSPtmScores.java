@@ -486,7 +486,7 @@ public class PSPtmScores extends DbObject implements UrParameter {
     }
 
     @Override
-    public String getParameterKey() {
-        return "PeptideShaker|3";
+    public long getParameterKey() {
+        return getId();
     }
 }
