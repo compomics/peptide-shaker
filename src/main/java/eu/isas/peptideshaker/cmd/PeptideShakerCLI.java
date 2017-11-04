@@ -5,7 +5,7 @@ import com.compomics.software.settings.UtilitiesPathParameters;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
-import com.compomics.util.experiment.biology.genes.GeneFactory;
+import com.compomics.util.experiment.biology.genes.ProteinGeneDetailsProvider;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.identification.Identification;
@@ -191,7 +191,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             loadSpecies();
 
             // Set the gene mappings
-            GeneFactory geneFactory = new GeneFactory();
+            ProteinGeneDetailsProvider geneFactory = new ProteinGeneDetailsProvider();
             geneFactory.initialize(PeptideShaker.getJarFilePath());
 
             // Load the species mapping

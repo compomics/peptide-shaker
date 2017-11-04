@@ -24,6 +24,7 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Annotati
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
 import com.compomics.util.experiment.io.biology.protein.Header;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
@@ -373,6 +374,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
      * @param sequenceProvider a provider for the protein sequences
+     * @param proteinDetailsProvider a provider for protein details
      * @param identificationParameters the identification parameters
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
@@ -387,7 +389,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * section
      */
     public static String getPeptideAssumptionFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix, int nSurroundingAA,
+            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix, int nSurroundingAA,
             PeptideAssumption peptideAssumption, String spectrumKey, PSParameter psParameter, PsIdentificationAlgorithmMatchesFeature exportFeature,
             WaitingHandler waitingHandler) {
 
@@ -424,7 +426,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                 proteinMapping = peptideAssumption.getPeptide().getProteinMapping();
 
                 return proteinMapping.navigableKeySet().stream()
-                        .map(accession -> (Header.parseFromFASTA(sequenceProvider.getHeader(accession))).getDescription())
+                        .map(accession -> proteinDetailsProvider.getDescription(accession))
                         .collect(Collectors.joining(","));
 
             case algorithm_confidence:

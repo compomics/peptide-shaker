@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.fileimport;
 
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import eu.isas.peptideshaker.gui.MgfFilesNotFoundDialog;
 import com.compomics.util.experiment.identification.*;
@@ -15,9 +14,13 @@ import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.exceptions.exception_handlers.WaitingDialogExceptionHandler;
-import com.compomics.util.experiment.biology.proteins.Peptide;
-import com.compomics.util.experiment.biology.genes.GeneFactory;
+import com.compomics.util.experiment.biology.genes.ProteinGeneDetailsProvider;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
+import com.compomics.util.experiment.identification.protein_inference.fm_index.FMIndex;
+import com.compomics.util.experiment.io.biology.protein.FastaParameters;
+import com.compomics.util.experiment.io.biology.protein.FastaSummary;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -71,14 +74,17 @@ public class FileImporter {
      */
     private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
-     * The sequence factory.
+     * A provider for protein sequences.
      */
-    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private SequenceProvider sequenceProvider;
     /**
-     * If a Mascot dat file is bigger than this size, an indexed parsing will be
-     * used.
+     * A provider for protein details.
      */
-    public static final double MASCOT_MAX_SIZE = 400;
+    private ProteinDetailsProvider proteinDetailsProvider;
+    /**
+     * Summary information on the fasta file.
+     */
+    private FastaSummary fastaSummary;
     /**
      * Metrics of the dataset picked-up while loading the data.
      */
@@ -142,7 +148,8 @@ public class FileImporter {
     }
 
     /**
-     * Imports sequences from a FASTA file.
+     * Imports sequences from a FASTA file and sets the sequence provider and
+     * protein details provider fields.
      *
      * @param sequenceMatchingPreferences the sequence matching preferences
      * @param searchParameters the search parameters
@@ -152,118 +159,37 @@ public class FileImporter {
      * allowing canceling the import
      * @param exceptionHandler handler for exceptions
      * @param fastaFile FASTA file to process
+     *
+     * @throws java.io.IOException exception thrown if an error occurred while
+     * reading the fasta file
      */
     public void importSequences(SequenceMatchingParameters sequenceMatchingPreferences, SearchParameters searchParameters, PeptideVariantsParameters peptideVariantsPreferences, WaitingHandler waitingHandler,
-            ExceptionHandler exceptionHandler, File fastaFile) {
+            ExceptionHandler exceptionHandler, File fastaFile) throws IOException {
 
-        try {
-            waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".", true, true);
-            waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-            sequenceFactory.loadFastaFile(fastaFile, waitingHandler);
+        waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".", true, true);
+        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
-            if (waitingHandler.isRunCanceled()) {
-                return;
-            }
+        FastaParameters fastaParameters = searchParameters.getFastaParameters();
+        fastaSummary = FastaSummary.getSummary(fastaFile, fastaParameters, waitingHandler);
 
-            waitingHandler.resetSecondaryProgressCounter();
-            waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+        FMIndex fmIndex = new FMIndex(fastaFile, fastaParameters, waitingHandler, true, searchParameters.getModificationParameters(), peptideVariantsPreferences);
 
-            UtilitiesUserParameters userPreferences = UtilitiesUserParameters.loadUserParameters();
-            int memoryPreference = userPreferences.getMemoryParameter();
-            int nSequences = sequenceFactory.getNSequences();
-            int cacheSizeInMb = nSequences * 112 / 1048576; // 112 is the size taken by one protein
-            if (!sequenceFactory.isDefaultReversed() || cacheSizeInMb < memoryPreference / 4) {
-                nSequences = sequenceFactory.getNSequences();
-                sequenceFactory.setDecoyInMemory(true);
-            } else {
-                nSequences = sequenceFactory.getNTargetSequences();
-                sequenceFactory.setDecoyInMemory(false);
-            }
-            long availableCachSize = 1048576l * memoryPreference / 112; // 112 is the size taken by one protein
-            availableCachSize *= 0.75;
-            if (availableCachSize > nSequences) {
-                availableCachSize = nSequences;
-            } else {
-                waitingHandler.appendReport("Warning: PeptideShaker cannot load your FASTA file into memory. This will slow down the processing. "
-                        + "Note that using large large databases also reduces the search engine efficiency. "
-                        + "Try to either (i) use a smaller database, (ii) increase the memory provided to PeptideShaker, or (iii) improve the reading speed by using an SSD disc. "
-                        + "(See also http://compomics.github.io/projects/compomics-utilities/wiki/proteininference.html.)", true, true);
+        sequenceProvider = fmIndex;
+        proteinDetailsProvider = fmIndex;
 
-            }
-            int cacheSize = (int) availableCachSize;
-            sequenceFactory.setnCache(cacheSize);
-
-            try {
-                sequenceFactory.getDefaultPeptideMapper(sequenceMatchingPreferences, searchParameters, peptideVariantsPreferences, waitingHandler, exceptionHandler);
-            } catch (SQLException e) {
-                waitingHandler.appendReport("Database " + sequenceFactory.getCurrentFastaFile().getName()
-                        + " could not be accessed, make sure that the file is not used by another "
-                        + "program and that you have not run out of diskspace.", true, true);
-                e.printStackTrace();
-                waitingHandler.setRunCanceled();
-            }
-
-            if (!waitingHandler.isRunCanceled()) {
-                waitingHandler.appendReport("FASTA file import completed.", true, true);
-                waitingHandler.increasePrimaryProgressCounter();
-            } else {
-                sequenceFactory.clearFactory();
-            }
-
-        } catch (FileNotFoundException e) {
-            System.err.println("File " + fastaFile + " was not found. Please select a different FASTA file.");
-            e.printStackTrace();
-            waitingHandler.setRunCanceled();
-            waitingHandler.appendReport("File " + fastaFile + " was not found. Please select a different FASTA file.", true, true);
-        } catch (IOException e) {
-            System.err.println("An error occurred while indexing " + fastaFile + ".");
-            e.printStackTrace();
-            waitingHandler.setRunCanceled();
-            waitingHandler.appendReport("An error occurred while indexing " + fastaFile + ": " + e.getMessage(), true, true);
-        } catch (SQLException e) {
-            System.err.println("An error occurred while indexing " + fastaFile + ".");
-            e.printStackTrace();
-            waitingHandler.setRunCanceled();
-            waitingHandler.appendReport("An error occurred while indexing " + fastaFile + ": " + e.getMessage(), true, true);
-        } catch (InterruptedException e) {
-            System.err.println("An error occurred while loading " + fastaFile + ".");
-            e.printStackTrace();
-            waitingHandler.setRunCanceled();
-            waitingHandler.appendReport("An error occurred while loading " + fastaFile + ": " + e.getMessage(), true, true);
-        } catch (IllegalArgumentException e) {
-            System.err.println("An error occurred while loading " + fastaFile + ".");
-            e.printStackTrace();
-            waitingHandler.setRunCanceled();
-            waitingHandler.appendReport(e.getLocalizedMessage() + " Please refer to http://compomics.github.io/projects/peptide-shaker.html#troubleshooting", true, true);
-        } catch (ClassNotFoundException e) {
-            System.err.println("An error occurred while loading " + fastaFile + ".");
-            e.printStackTrace();
-            waitingHandler.setRunCanceled();
-            waitingHandler.appendReport("Serialization issue while processing the FASTA file. Please delete the .fasta.cui file and retry. "
-                    + "If the error occurs again please report bug using our issue tracker: https://github.com/compomics/peptide-shaker/issues.", true, true);
-        } catch (NullPointerException e) {
-            System.err.println("An error occurred while loading " + fastaFile + ".");
-            e.printStackTrace();
-            waitingHandler.setRunCanceled();
-            waitingHandler.appendReport("An error occurred when importing the sequences. "
-                    + "Please check the Search Parameters. See the log file for details. "
-                    + "If the error persists please let us know using our issue tracker: https://github.com/compomics/peptide-shaker/issues.", true, true);
-        }
     }
 
     /**
      * Imports the gene information for this project.
-     *
-     * @throws IOException exception thrown whenever an error occurred while
-     * reading or writing a file
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while establishing the connection
      */
-    public void importGenes() throws IOException, InterruptedException {
-        GeneFactory geneFactory = GeneFactory.getInstance();
+    public void importGenes() {
+
+        ProteinGeneDetailsProvider geneFactory = new ProteinGeneDetailsProvider();
+
         GeneParameters genePreferences = identificationParameters.getGenePreferences();
-        GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, waitingHandler);
+        GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, fastaSummary, sequenceProvider, proteinDetailsProvider, waitingHandler);
         peptideShaker.setGeneMaps(geneMaps);
+
     }
 
     /**
@@ -471,14 +397,13 @@ public class FileImporter {
                     }
 
                     while (!missingMgfFiles.isEmpty()) {
+
                         if (hasGUI) {
+
                             new MgfFilesNotFoundDialog((WaitingDialog) waitingHandler, missingMgfFiles);
-                            if (waitingHandler.isRunCanceled()) {
-                                identification.close();
-                                sequenceFactory.clearFactory();
-                                return 1;
-                            }
+
                         } else {
+
                             String missingFiles = "";
                             boolean first = true;
                             for (File mgfFile : missingMgfFiles.keySet()) {
@@ -491,7 +416,6 @@ public class FileImporter {
                             }
                             waitingHandler.appendReport("MGF files missing: " + missingFiles, true, true);
                             identification.close();
-                            sequenceFactory.clearFactory();
                             return 1;
                         }
                         waitingHandler.appendReport("Processing files with the new input.", true, true);
@@ -508,21 +432,21 @@ public class FileImporter {
                         }
                         if (waitingHandler.isRunCanceled()) {
                             identification.close();
-                            sequenceFactory.clearFactory();
                             return 1;
                         }
                     }
 
                     // clear the objects not needed anymore
                     singleProteinList.clear();
-                    sequenceFactory.emptyCache();
 
                     if (nRetained == 0) {
+
                         waitingHandler.appendReport("No identifications retained.", true, true);
                         waitingHandler.setRunCanceled();
                         identification.close();
-                        sequenceFactory.clearFactory();
+
                         return 1;
+
                     }
 
                     waitingHandler.appendReport("File import completed. "
@@ -554,17 +478,24 @@ public class FileImporter {
                 }
 
                 error.printStackTrace();
+
                 if (identification != null) {
+
                     try {
+
                         identification.close();
-                        sequenceFactory.clearFactory();
+
                     } catch (Exception e) {
+
                         e.printStackTrace();
+
                     }
                 }
+
                 return 1;
 
             } catch (Exception e) {
+
                 waitingHandler.setRunCanceled();
 
                 System.out.println("<CompomicsError>PeptideShaker processing failed. See the PeptideShaker log for details.</CompomicsError>");
@@ -585,11 +516,15 @@ public class FileImporter {
                 System.err.println("Free memory: " + Runtime.getRuntime().freeMemory());
 
                 if (identification != null) {
+
                     try {
+
                         identification.close();
-                        sequenceFactory.clearFactory();
+
                     } catch (Exception ex) {
+
                         ex.printStackTrace();
+
                     }
                 }
 
@@ -881,69 +816,96 @@ public class FileImporter {
          */
         private boolean importSpectrum(File idFile, SpectrumMatch spectrumMatch, int numberOfMatches) {
 
-            String spectrumKey = spectrumMatch.getKey();
+            String spectrumKey = spectrumMatch.getSpectrumKey();
             String fileName = Spectrum.getSpectrumFile(spectrumKey);
             String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
 
             // remap wrong spectrum file names
             if (spectrumFactory.getSpectrumFileFromIdName(fileName) != null) {
+
                 fileName = spectrumFactory.getSpectrumFileFromIdName(fileName).getName();
-                spectrumMatch.setKey(fileName, spectrumTitle);
-                spectrumKey = spectrumMatch.getKey();
+                spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
+                spectrumMatch.setSpectrumKey(spectrumKey);
+
             }
 
             // import the mgf file if not done already
             if (!mgfUsed.contains(fileName)) {
+
                 File spectrumFile = spectrumFiles.get(fileName);
+
                 if (spectrumFile != null && spectrumFile.exists()) {
+
                     importSpectra(fileName);
                     waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                     waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                     mgfUsed.add(fileName);
                     projectDetails.addSpectrumFile(spectrumFile);
                     nSpectra += spectrumFactory.getNSpectra(fileName);
+
                 } else {
+
                     if (!missingMgfFiles.containsKey(idFile)) {
+
                         missingMgfFiles.put(idFile, fileName);
                         waitingHandler.appendReport(fileName + " not found.", true, true);
+
                     }
+
                     return false;
+
                 }
             }
 
             // remap missing spectrum titles
             if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
+
                 String oldTitle = Spectrum.getSpectrumTitle(spectrumKey);
                 Integer spectrumNumber = spectrumMatch.getSpectrumNumber();
+
                 if (spectrumNumber == null) {
+
                     try {
+
                         spectrumNumber = new Integer(oldTitle);
+
                     } catch (Exception e) {
                         // ignore
                     }
                 }
+
                 if (spectrumNumber == null) {
+
                     String errorMessage = "Spectrum \'" + oldTitle + "\' not found in file " + fileName + ".";
                     waitingHandler.appendReport(errorMessage, true, true);
                     waitingHandler.setRunCanceled();
                     throw new IllegalArgumentException(errorMessage);
+
                 }
+
                 spectrumTitle = spectrumFactory.getSpectrumTitle(fileName, spectrumNumber);
                 spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
-                spectrumMatch.setKey(fileName, spectrumTitle);
+                spectrumMatch.setSpectrumKey(spectrumKey);
+
                 if (!spectrumFactory.spectrumLoaded(spectrumKey)) {
+
                     spectrumTitle = spectrumNumber + "";
                     spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
-                    spectrumMatch.setKey(fileName, spectrumTitle);
+                    spectrumMatch.setSpectrumKey(spectrumKey);
+
                     if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
+
                         String errorMessage = "Spectrum \'" + oldTitle + "\' number " + spectrumTitle + " not found in file " + fileName + ".";
                         waitingHandler.appendReport(errorMessage, true, true);
                         waitingHandler.setRunCanceled();
                         throw new IllegalArgumentException(errorMessage);
+
                     }
                 }
             }
+            
             return true;
+        
         }
 
         /**

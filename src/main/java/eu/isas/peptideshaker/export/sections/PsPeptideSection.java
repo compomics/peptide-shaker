@@ -8,6 +8,7 @@ import com.compomics.util.parameters.identification.search.ModificationParameter
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.io.biology.protein.Header;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
@@ -228,6 +229,7 @@ public class PsPeptideSection {
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
      * @param sequenceProvider a provider for the protein sequences
+     * @param proteinDetailsProvider a provider for protein details
      * @param identificationParameters the identification parameters
      * @param keys the keys of the protein matches to output
      * @param nSurroundingAA the number of surrounding amino acids to export
@@ -242,7 +244,7 @@ public class PsPeptideSection {
      * @return the component of the section corresponding to the given feature
      */
     public static String getfeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAA, String linePrefix,
+            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAA, String linePrefix,
             PeptideMatch peptideMatch, PSParameter psParameter, PsPeptideFeature peptideFeature,
             boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) {
 
@@ -260,7 +262,7 @@ public class PsPeptideSection {
                 proteinMapping = peptideMatch.getPeptide().getProteinMapping();
 
                 return proteinMapping.navigableKeySet().stream()
-                        .map(accession -> (Header.parseFromFASTA(sequenceProvider.getHeader(accession))).getDescription())
+                        .map(accession -> proteinDetailsProvider.getDescription(accession))
                         .collect(Collectors.joining(","));
 
             case protein_groups:

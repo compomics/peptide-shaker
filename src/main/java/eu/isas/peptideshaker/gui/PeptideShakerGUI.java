@@ -34,7 +34,7 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.genes.GeneFactory;
+import com.compomics.util.experiment.biology.genes.ProteinGeneDetailsProvider;
 import com.compomics.util.experiment.biology.*;
 import com.compomics.util.experiment.biology.ions.Ion.IonType;
 import com.compomics.util.experiment.biology.ions.impl.PeptideFragmentIon;
@@ -419,7 +419,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         }
 
         // create the gene mappping folder if not set
-        GeneFactory geneFactory = GeneFactory.getInstance();
+        ProteinGeneDetailsProvider geneFactory = ProteinGeneDetailsProvider.getInstance();
         try {
             geneFactory.initialize(PeptideShaker.getJarFilePath());
         } catch (Exception e) {

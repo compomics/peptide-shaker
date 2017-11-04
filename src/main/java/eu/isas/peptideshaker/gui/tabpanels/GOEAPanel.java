@@ -2,7 +2,7 @@ package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.genes.GeneFactory;
+import com.compomics.util.experiment.biology.genes.ProteinGeneDetailsProvider;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.biology.genes.go.GoDomains;
 import com.compomics.util.experiment.biology.genes.go.GoMapping;
@@ -369,11 +369,11 @@ public class GOEAPanel extends javax.swing.JPanel {
                             if (taxon != null) {
                                 SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
                                 String ensemblDatasetName = speciesFactory.getEnsemblDataset(taxon);
-                                File goMappingFile = GeneFactory.getGoMappingFile(ensemblDatasetName);
+                                File goMappingFile = ProteinGeneDetailsProvider.getGoMappingFile(ensemblDatasetName);
                                 backgroundGoMapping.loadMappingsFromFile(goMappingFile, progressDialog);
 
                                 GoDomains goDomains = new GoDomains();
-                                File goDomainsFile = GeneFactory.getGoDomainsFile();
+                                File goDomainsFile = ProteinGeneDetailsProvider.getGoDomainsFile();
                                 goDomains.laodMappingFromFile(goDomainsFile, progressDialog);
 
                                 Identification identification = peptideShakerGUI.getIdentification();
