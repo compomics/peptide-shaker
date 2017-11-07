@@ -90,11 +90,11 @@ public class FileImporter {
      */
     private final Metrics metrics;
     /**
-     * The mass tolerance to be used to match PTMs from search engines and
-     * expected PTMs. 0.01 by default, as far as I can remember it is the mass
+     * The mass tolerance to be used to match modifications from search engines and
+     * expected modifications. 0.01 by default, the mass
      * resolution in X!Tandem result files.
      */
-    public static final double PTM_MASS_TOLERANCE = 0.01;
+    public static final double MOD_MASS_TOLERANCE = 0.01;
     /**
      * The identification parameters.
      */
@@ -687,7 +687,7 @@ public class FileImporter {
                         int proteinIssue = psmImporter.getProteinIssue();
                         int peptideIssue = psmImporter.getPeptideIssue();
                         int precursorIssue = psmImporter.getPrecursorIssue();
-                        int ptmIssue = psmImporter.getPtmIssue();
+                        int ptmIssue = psmImporter.getModificationIssue();
                         int totalAssumptionsRejected = noProteins + proteinIssue + peptideIssue + precursorIssue + ptmIssue;
 
                         double sharePsmsRejected = 100.0 * psmsRejected / numberOfMatches;

@@ -20,7 +20,7 @@ import com.compomics.util.experiment.identification.matches_iterators.PeptideMat
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.identification.modification.PtmScore;
-import com.compomics.util.experiment.identification.modification.PtmSiteMapping;
+import com.compomics.util.experiment.identification.modification.ModificationSiteMapping;
 import com.compomics.util.experiment.identification.ptm.ptmscores.AScore;
 import com.compomics.util.experiment.identification.modification.scores.PhosphoRS;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
@@ -1813,7 +1813,7 @@ public class PtmScorer extends DbObject {
                                 nonConfidentMatches.put(modificationMatch.getModificationSite(), modificationMatch);
                             }
                         }
-                        HashMap<Integer, Integer> mapping = PtmSiteMapping.align(nonConfidentMatches.keySet(), newLocalizationCandidates);
+                        HashMap<Integer, Integer> mapping = ModificationSiteMapping.align(nonConfidentMatches.keySet(), newLocalizationCandidates);
                         for (Integer oldLocalization : mapping.keySet()) {
                             ModificationMatch modificationMatch = nonConfidentMatches.get(oldLocalization);
                             Integer newLocalization = mapping.get(oldLocalization);
