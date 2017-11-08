@@ -94,6 +94,7 @@ public class PsPeptideSection {
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
      * @param sequenceProvider a provider for the protein sequences
+     * @param proteinDetailsProvider the protein details provider
      * @param identificationParameters the identification parameters
      * @param keys the keys of the protein matches to output
      * @param nSurroundingAA the number of surrounding amino acids to export
@@ -104,12 +105,11 @@ public class PsPeptideSection {
      *
      * @throws java.io.IOException exception thrown if an error occurred while
      * reading or writing a file
-     * @throws java.lang.InterruptedException exception thrown if a thread got
-     * interrupted
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, ArrayList<Long> keys, int nSurroundingAA,
-            String linePrefix, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException, InterruptedException {
+            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, 
+            IdentificationParameters identificationParameters, ArrayList<Long> keys, int nSurroundingAA,
+            String linePrefix, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -176,7 +176,7 @@ public class PsPeptideSection {
                         }
 
                         PsPeptideFeature peptideFeature = (PsPeptideFeature) exportFeature;
-                        writer.write(getfeature(identification, identificationFeaturesGenerator, sequenceProvider, identificationParameters, keys, nSurroundingAA, linePrefix, peptideMatch, psParameter, peptideFeature, validatedOnly, decoys, waitingHandler));
+                        writer.write(getfeature(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, identificationParameters, nSurroundingAA, linePrefix, peptideMatch, psParameter, peptideFeature, validatedOnly, decoys, waitingHandler));
 
                     }
 
@@ -201,7 +201,7 @@ public class PsPeptideSection {
 
                         }
 
-                        psmSection.writeSection(identification, identificationFeaturesGenerator, sequenceProvider, identificationParameters, peptideMatch.getSpectrumMatchesKeys(), psmSectionPrefix, nSurroundingAA, validatedOnly, decoys, waitingHandler);
+                        psmSection.writeSection(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, identificationParameters, peptideMatch.getSpectrumMatchesKeys(), psmSectionPrefix, nSurroundingAA, validatedOnly, decoys, waitingHandler);
 
                         if (waitingHandler != null) {
 
@@ -229,7 +229,6 @@ public class PsPeptideSection {
      * @param sequenceProvider a provider for the protein sequences
      * @param proteinDetailsProvider a provider for protein details
      * @param identificationParameters the identification parameters
-     * @param keys the keys of the protein matches to output
      * @param nSurroundingAA the number of surrounding amino acids to export
      * @param linePrefix the line prefix to use.
      * @param peptideMatch the peptide match
@@ -242,7 +241,7 @@ public class PsPeptideSection {
      * @return the component of the section corresponding to the given feature
      */
     public static String getfeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAA, String linePrefix,
+            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, IdentificationParameters identificationParameters, int nSurroundingAA, String linePrefix,
             PeptideMatch peptideMatch, PSParameter psParameter, PsPeptideFeature peptideFeature,
             boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) {
 

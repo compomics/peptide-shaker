@@ -126,7 +126,7 @@ public class PsPsmSection {
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider,
-            IdentificationParameters identificationParameters, ArrayList<Long> keys,
+            IdentificationParameters identificationParameters, long[] keys,
             String linePrefix, int nSurroundingAA, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
@@ -146,9 +146,7 @@ public class PsPsmSection {
             waitingHandler.setMaxSecondaryProgressCounter(totalSize);
         }
 
-        PSParameter psParameter = new PSParameter();
-
-        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(keys, waitingHandler);
 
         SpectrumMatch spectrumMatch;
         while ((spectrumMatch = psmIterator.next()) != null) {
@@ -160,8 +158,8 @@ public class PsPsmSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
-            String spectrumKey = spectrumMatch.getSpectrumKey();
-            psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
+            String spectrumMatchKey = spectrumMatch.getSpectrumKey();
+            PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
 
             if (!validatedOnly || psParameter.getMatchValidationLevel().isValidated()) {
 
@@ -219,9 +217,9 @@ public class PsPsmSection {
                         fractionPrefix += line + ".";
                         writer.increaseDepth();
                         if (spectrumMatch.getBestPeptideAssumption() != null) {
-                            fragmentSection.writeSection(spectrumKey, spectrumMatch.getBestPeptideAssumption(), identificationParameters, fractionPrefix, null);
+                            fragmentSection.writeSection(spectrumMatchKey, spectrumMatch.getBestPeptideAssumption(), identificationParameters, sequenceProvider, fractionPrefix, null);
                         } else if (spectrumMatch.getBestTagAssumption() != null) {
-                            fragmentSection.writeSection(spectrumKey, spectrumMatch.getBestTagAssumption(), identificationParameters, fractionPrefix, null);
+                            fragmentSection.writeSection(spectrumMatchKey, spectrumMatch.getBestTagAssumption(), identificationParameters, sequenceProvider, fractionPrefix, null);
                         }
                         writer.decreseDepth();
                     }
