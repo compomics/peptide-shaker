@@ -111,8 +111,9 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
      * @param sequenceProvider the sequence provider
+     * @param proteinDetailsProvider the protein details provider
      * @param identificationParameters the identification parameters
-     * @param keys the keys of the PSM matches to output
+     * @param keys the keys of the spectrum matches to output
      * @param linePrefix the line prefix
      * @param nSurroundingAA the number of surrounding amino acids to export
      * @param waitingHandler the waiting handler
@@ -123,7 +124,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * while interacting with the database
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, ArrayList<String> keys,
+            ProteinDetailsProvider proteinDetailsProvider, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, ArrayList<Long> keys,
             String linePrefix, int nSurroundingAA, WaitingHandler waitingHandler) throws IOException, InterruptedException {
 
         if (waitingHandler != null) {
@@ -200,9 +201,11 @@ public class PsIdentificationAlgorithmMatchesSection {
 
                             psParameter = (PSParameter) assumption.getUrParam(psParameter);
                             PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                            String feature = getPeptideAssumptionFeature(identification, identificationFeaturesGenerator, sequenceProvider,
-                                    identificationParameters, keys, linePrefix, nSurroundingAA,
-                                    peptideAssumption, spectrumKey, psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
+                            String feature = getPeptideAssumptionFeature(identification, identificationFeaturesGenerator, 
+                                    sequenceProvider, proteinDetailsProvider,
+                                    identificationParameters, linePrefix, nSurroundingAA,
+                                    peptideAssumption, spectrumMatch.getSpectrumKey(), psParameter, 
+                                    identificationAlgorithmMatchesFeature, waitingHandler);
                             writer.write(feature);
 
                         }
@@ -220,7 +223,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                             }
 
                             fractionPrefix += line + ".";
-                            fragmentSection.writeSection(spectrumMatch.getKey(), assumption, identificationParameters, sequenceProvider, fractionPrefix, null);
+                            fragmentSection.writeSection(spectrumMatch.getSpectrumKey(), assumption, identificationParameters, sequenceProvider, fractionPrefix, null);
 
                         }
 
@@ -273,7 +276,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                             psParameter = (PSParameter) assumption.getUrParam(psParameter);
                             TagAssumption tagAssumption = (TagAssumption) assumption;
                             String feature = getTagAssumptionFeature(identification, identificationFeaturesGenerator,
-                                    identificationParameters, keys, linePrefix, tagAssumption, spectrumKey, psParameter,
+                                    identificationParameters, linePrefix, tagAssumption, spectrumMatch.getSpectrumKey(), psParameter,
                                     identificationAlgorithmMatchesFeature, waitingHandler);
                             writer.write(feature);
 
@@ -292,7 +295,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                             }
 
                             fractionPrefix += line + ".";
-                            fragmentSection.writeSection(spectrumMatch.getKey(), assumption, identificationParameters, sequenceProvider, fractionPrefix, null);
+                            fragmentSection.writeSection(spectrumMatch.getSpectrumKey(), assumption, identificationParameters, sequenceProvider, fractionPrefix, null);
 
                         }
 
@@ -376,7 +379,6 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @param sequenceProvider a provider for the protein sequences
      * @param proteinDetailsProvider a provider for protein details
      * @param identificationParameters the identification parameters
-     * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
      * @param nSurroundingAA the number of surrounding amino acids to export
      * @param peptideAssumption the assumption for the match to inspect
@@ -389,7 +391,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * section
      */
     public static String getPeptideAssumptionFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix, int nSurroundingAA,
+            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, IdentificationParameters identificationParameters, String linePrefix, int nSurroundingAA,
             PeptideAssumption peptideAssumption, String spectrumKey, PSParameter psParameter, PsIdentificationAlgorithmMatchesFeature exportFeature,
             WaitingHandler waitingHandler) {
 
@@ -882,7 +884,6 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
      * @param identificationParameters the identification parameters
-     * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
      * @param spectrumKey the key of the spectrum
      * @param tagAssumption the assumption for the match to inspect
@@ -894,7 +895,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * section
      */
     public static String getTagAssumptionFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix,
+            IdentificationParameters identificationParameters, String linePrefix,
             TagAssumption tagAssumption, String spectrumKey, PSParameter psParameter, PsIdentificationAlgorithmMatchesFeature exportFeature,
             WaitingHandler waitingHandler) {
 
