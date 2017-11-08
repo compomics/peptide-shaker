@@ -7,6 +7,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
+import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.experiment.io.biology.protein.Header;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
@@ -122,7 +123,7 @@ public class PsPeptideSection {
             keys = new ArrayList<>(identification.getPeptideIdentification());
         }
 
-        int line = 1;
+        int lineNumber = 1;
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Exporting. Please Wait...");
@@ -130,12 +131,7 @@ public class PsPeptideSection {
             waitingHandler.setMaxSecondaryProgressCounter(keys.size());
         }
 
-        PSParameter psParameter = new PSParameter();
-
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(keys, waitingHandler);
-        PeptideMatch peptideMatch;
-
-        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+        for (long key : keys) {
 
             if (waitingHandler != null) {
                 if (waitingHandler.isRunCanceled()) {
@@ -144,7 +140,9 @@ public class PsPeptideSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
-            psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
+            PeptideMatch peptideMatch = identification.getPeptideMatch(key);
+            
+            PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
             if (!validatedOnly || psParameter.getMatchValidationLevel().isValidated()) {
 
@@ -160,7 +158,7 @@ public class PsPeptideSection {
 
                         }
 
-                        writer.write(line + "");
+                        writer.write(Integer.toString(lineNumber));
                         first = false;
 
                     }
@@ -178,7 +176,7 @@ public class PsPeptideSection {
                         }
 
                         PsPeptideFeature peptideFeature = (PsPeptideFeature) exportFeature;
-                        writer.write(getfeature(identification, identificationFeaturesGenerator, identificationParameters, keys, nSurroundingAA, linePrefix, peptideMatch, psParameter, peptideFeature, validatedOnly, decoys, waitingHandler));
+                        writer.write(getfeature(identification, identificationFeaturesGenerator, sequenceProvider, identificationParameters, keys, nSurroundingAA, linePrefix, peptideMatch, psParameter, peptideFeature, validatedOnly, decoys, waitingHandler));
 
                     }
 
@@ -194,7 +192,7 @@ public class PsPeptideSection {
 
                         }
 
-                        psmSectionPrefix += line + ".";
+                        psmSectionPrefix += lineNumber + ".";
                         writer.increaseDepth();
 
                         if (waitingHandler != null) {
@@ -215,7 +213,7 @@ public class PsPeptideSection {
 
                     }
 
-                    line++;
+                    lineNumber++;
 
                 }
             }
@@ -387,7 +385,7 @@ public class PsPeptideSection {
                 
             case unique_group:
                 
-                return identification.isUniqueProteinGroup(peptideMatch.getPeptide()) ? "1" : "0";
+                return identification.getProteinMatches(peptideMatch.getPeptide()).size() == 1 ? "1" : "0";
                 
             case validated:
                 
@@ -555,14 +553,13 @@ public class PsPeptideSection {
      * Returns the peptide modification location confidence as a string.
      *
      * @param peptideMatch the peptide match
-     * @param ptmProfile the PTM profile
+     * @param modificationParameters the modification parameters
      *
      * @return the peptide modification location confidence as a string
      */
-    public static String getPeptideModificationLocationConfidence(PeptideMatch peptideMatch, ModificationParameters ptmProfile) {
+    public static String getPeptideModificationLocationConfidence(PeptideMatch peptideMatch, ModificationParameters modificationParameters) {
 
-        PSPtmScores psPtmScores = new PSPtmScores();
-        psPtmScores = (PSPtmScores) peptideMatch.getUrParam(psPtmScores);
+        PSPtmScores psPtmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
 
         if (psPtmScores != null) {
             
@@ -579,9 +576,8 @@ public class PsPeptideSection {
                 
                 }
                 
-                PSPtmScores ptmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
                 result.append(mod).append(" (");
-                PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                PtmScoring ptmScoring = psPtmScores.getPtmScoring(mod);
                 boolean firstSite = true;
                 
                 for (int site : ptmScoring.getOrderedPtmLocations()) {

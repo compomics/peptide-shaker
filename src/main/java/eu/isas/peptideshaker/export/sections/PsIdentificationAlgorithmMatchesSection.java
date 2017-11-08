@@ -23,7 +23,6 @@ import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
-import com.compomics.util.experiment.io.biology.protein.Header;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.waiting.WaitingHandler;
@@ -124,7 +123,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * while interacting with the database
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ProteinDetailsProvider proteinDetailsProvider, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, ArrayList<Long> keys,
+            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, IdentificationParameters identificationParameters, ArrayList<Long> keys,
             String linePrefix, int nSurroundingAA, WaitingHandler waitingHandler) throws IOException, InterruptedException {
 
         if (waitingHandler != null) {
