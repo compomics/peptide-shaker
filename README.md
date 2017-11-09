@@ -16,7 +16,7 @@
 
 |   |   |   |
 | :------------------------- | :---------------: | :--: |
-| [![download](https://github.com/compomics/peptide-shaker/wiki/images/download_button.png)](http://genesis.ugent.be/maven2/eu/isas/peptideshaker/PeptideShaker/1.16.14/PeptideShaker-1.16.14.zip) | *v1.16.14  - All platforms* | [ReleaseNotes](https://github.com/compomics/peptide-shaker/wiki/ReleaseNotes) |
+| [![download](https://github.com/compomics/peptide-shaker/wiki/images/download_button.png)](http://genesis.ugent.be/maven2/eu/isas/peptideshaker/PeptideShaker/1.16.15/PeptideShaker-1.16.15.zip) | *v1.16.15  - All platforms* | [ReleaseNotes](https://github.com/compomics/peptide-shaker/wiki/ReleaseNotes) |
 
 ---
 
