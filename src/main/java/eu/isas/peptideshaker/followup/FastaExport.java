@@ -6,7 +6,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.preferences.FilterPreferences;
+import eu.isas.peptideshaker.preferences.FilterParameters;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -44,7 +44,7 @@ public class FastaExport {
      * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public static void exportFasta(File destinationFile, Identification identification,
-            IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler, FilterPreferences filterPreferences)
+            IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler, FilterParameters filterPreferences)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         export(destinationFile, identification, identificationFeaturesGenerator, exportType, waitingHandler, filterPreferences, false);
     }
@@ -70,7 +70,7 @@ public class FastaExport {
      * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public static void exportAccessions(File destinationFile, Identification identification,
-            IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler, FilterPreferences filterPreferences)
+            IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler, FilterParameters filterPreferences)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         export(destinationFile, identification, identificationFeaturesGenerator, exportType, waitingHandler, filterPreferences, true);
     }
@@ -98,7 +98,7 @@ public class FastaExport {
      * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public static void export(File destinationFile, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ExportType exportType, WaitingHandler waitingHandler, FilterPreferences filterPreferences, boolean accessionOnly) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+            ExportType exportType, WaitingHandler waitingHandler, FilterParameters filterPreferences, boolean accessionOnly) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         FileWriter f = new FileWriter(destinationFile);

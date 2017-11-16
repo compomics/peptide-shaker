@@ -14,7 +14,7 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSPtmScores;
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.ptm.PtmScorer;
 import eu.isas.peptideshaker.scoring.maps.PsmPTMMap;
 import eu.isas.peptideshaker.scoring.PtmScoring;
@@ -204,7 +204,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      */
     private void updateSequenceLabel() {
         try {
-            DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
+            DisplayParameters displayPreferences = peptideShakerGUI.getDisplayPreferences();
             ModificationParameters modificationProfile = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters();
             Peptide peptide = peptideMatch.getPeptide();
             PSPtmScores ptmScores = new PSPtmScores();

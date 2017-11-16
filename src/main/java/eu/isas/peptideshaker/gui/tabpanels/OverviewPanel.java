@@ -44,7 +44,7 @@ import eu.isas.peptideshaker.gui.tablemodels.PsmTableModel;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSPtmScores;
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -4047,7 +4047,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 ArrayList<MSnSpectrum> allSpectra = new ArrayList<>();
                 IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
                 AnnotationParameters annotationPreferences = identificationParameters.getAnnotationPreferences();
-                DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
+                DisplayParameters displayPreferences = peptideShakerGUI.getDisplayPreferences();
                 ArrayList<Peptide> peptides = new ArrayList<>();
 
                 int maxCharge = 1;
@@ -4441,7 +4441,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // get the fixed ptms
                 HashMap<Integer, String> fixedPtms = new HashMap<>(); // @TODO: note that this only supports one fixed ptm per residue
-                DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
+                DisplayParameters displayPreferences = peptideShakerGUI.getDisplayPreferences();
 
                 // see if fixed ptms are displayed
                 if (displayPreferences.getDisplayedPtms().size() != peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getVariableModifications().size()) {
@@ -4577,7 +4577,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // get the fixed ptms
                 HashMap<Integer, String> fixedPtms = new HashMap<>(); // @TODO: note that this only supports one fixed ptm per residue
-                DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
+                DisplayParameters displayPreferences = peptideShakerGUI.getDisplayPreferences();
 
                 // see if fixed ptms are displayed
                 if (displayPreferences.getDisplayedPtms().size() != peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getVariableModifications().size()) {
@@ -4796,7 +4796,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                             // create and display the fragment ion table
                             ArrayList<ArrayList<IonMatch>> allAnnotations = getAnnotationsForAllSelectedSpectra();
-                            DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
+                            DisplayParameters displayPreferences = peptideShakerGUI.getDisplayPreferences();
 
                             if (!displayPreferences.useIntensityIonTable()) {
                                 fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, specificAnnotationPreferences.getFragmentIonTypes(),

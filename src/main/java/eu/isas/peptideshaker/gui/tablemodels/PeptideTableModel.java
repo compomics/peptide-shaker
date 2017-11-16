@@ -14,7 +14,7 @@ import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
@@ -218,7 +218,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                             return null;
                         } else if (!useDB) {
                             dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
+                            return DisplayParameters.LOADING_MESSAGE;
                         }
                     }
                     return psParameter.getStarred();
@@ -229,7 +229,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                             return null;
                         } else if (!useDB) {
                             dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
+                            return DisplayParameters.LOADING_MESSAGE;
                         }
                     }
                     return psParameter.getProteinInferenceGroupClass();
@@ -270,7 +270,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                             && (peptideMatch == null || !identificationFeaturesGenerator.nValidatedSpectraForPeptideInCache(peptideKey))
                             && (peptideMatch == null || !identification.peptideDetailsInCache(peptideKey))) {
                         dataMissingAtRow(row);
-                        return DisplayPreferences.LOADING_MESSAGE;
+                        return DisplayParameters.LOADING_MESSAGE;
                     }
 
                     double nConfidentSpectra = identificationFeaturesGenerator.getNConfidentSpectraForPeptide(peptideKey);
@@ -290,7 +290,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                             return null;
                         } else if (!useDB) {
                             dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
+                            return DisplayParameters.LOADING_MESSAGE;
                         }
                     }
                     if (psParameter != null) {
@@ -309,7 +309,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                             return null;
                         } else if (!useDB) {
                             dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
+                            return DisplayParameters.LOADING_MESSAGE;
                         }
                     }
                     if (psParameter != null) {

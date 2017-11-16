@@ -13,7 +13,7 @@ import java.util.HashMap;
  *
  * @author Marc Vaudel
  */
-public class FilterPreferences implements Serializable {
+public class FilterParameters implements Serializable {
 
     /**
      * Serial number for serialization compatibility.
@@ -47,7 +47,7 @@ public class FilterPreferences implements Serializable {
     /**
      * Constructors.
      */
-    public FilterPreferences() {
+    public FilterParameters() {
     }
 
     /**

@@ -35,7 +35,7 @@ import com.compomics.util.parameters.identification.advanced.ValidationQcParamet
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.experiment.io.biology.protein.Header.ProteinDatabase;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ProjectSettingsDialog;
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
@@ -116,7 +116,7 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * The display preferences.
      */
-    private DisplayPreferences displayPreferences = new DisplayPreferences();
+    private DisplayParameters displayPreferences = new DisplayParameters();
     /**
      * Information on the protocol.
      */

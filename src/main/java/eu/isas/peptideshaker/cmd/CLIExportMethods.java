@@ -16,7 +16,7 @@ import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.ProgenesisExport;
 import eu.isas.peptideshaker.followup.RecalibrationExporter;
 import eu.isas.peptideshaker.followup.SpectrumExporter;
-import eu.isas.peptideshaker.preferences.FilterPreferences;
+import eu.isas.peptideshaker.preferences.FilterParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
@@ -121,7 +121,7 @@ public class CLIExportMethods {
      * @throws ClassNotFoundException exception thrown whenever an exception
      * occurred while deserializing an object
      */
-    public static void exportAccessions(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler, FilterPreferences filteringPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public static void exportAccessions(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler, FilterParameters filteringPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         File destinationFileTemp = followUpCLIInputBean.getAccessionsExportFile();
         if (!destinationFileTemp.exists()) {
             destinationFileTemp.createNewFile();
@@ -150,7 +150,7 @@ public class CLIExportMethods {
      * @throws ClassNotFoundException exception thrown whenever an exception
      * occurred while deserializing an object
      */
-    public static void exportFasta(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler, FilterPreferences filteringPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public static void exportFasta(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler, FilterParameters filteringPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         File destinationFileTemp = followUpCLIInputBean.getFastaExportFile();
         if (!destinationFileTemp.exists()) {
             destinationFileTemp.createNewFile();
@@ -207,7 +207,7 @@ public class CLIExportMethods {
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
      */
-    public static void exportInclusionList(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, WaitingHandler waitingHandler, FilterPreferences filterPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public static void exportInclusionList(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, WaitingHandler waitingHandler, FilterParameters filterPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         ArrayList<InclusionListExport.PeptideFilterType> peptideFilterType = new ArrayList<>();
         for (int index : followUpCLIInputBean.getInclusionPeptideFilter()) {
             peptideFilterType.add(InclusionListExport.PeptideFilterType.getTypeFromIndex(index));

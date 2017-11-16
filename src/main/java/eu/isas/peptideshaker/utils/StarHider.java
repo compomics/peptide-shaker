@@ -17,7 +17,7 @@ import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.preferences.FilterPreferences;
+import eu.isas.peptideshaker.preferences.FilterParameters;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -152,7 +152,7 @@ public class StarHider {
      */
     public void starProtein(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
         boolean validated = false;
@@ -203,7 +203,7 @@ public class StarHider {
     public void unStarProtein(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
 
@@ -241,7 +241,7 @@ public class StarHider {
     public void hideProtein(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
         boolean validated = false;
@@ -292,7 +292,7 @@ public class StarHider {
     public void unHideProtein(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
         for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
@@ -329,7 +329,7 @@ public class StarHider {
     public void starPeptide(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
         boolean validated = false;
@@ -380,7 +380,7 @@ public class StarHider {
     public void unStarPeptide(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
 
@@ -418,7 +418,7 @@ public class StarHider {
     public void hidePeptide(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
         boolean validated = false;
@@ -469,7 +469,7 @@ public class StarHider {
     public void unHidePeptide(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
 
@@ -509,7 +509,7 @@ public class StarHider {
     public void starPsm(String matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
         boolean validated = false;
@@ -561,7 +561,7 @@ public class StarHider {
     public void unStarPsm(String matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
 
@@ -601,7 +601,7 @@ public class StarHider {
     public void hidePsm(String matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
         boolean validated = false;
@@ -653,7 +653,7 @@ public class StarHider {
     public void unHidePsm(String matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
 
@@ -693,7 +693,7 @@ public class StarHider {
      * occurs while making statistics on a distribution.
      */
     public boolean isProteinHidden(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
         for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
             if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
                 return true;
@@ -725,7 +725,7 @@ public class StarHider {
      * occurs while making statistics on a distribution.
      */
     public boolean isPeptideHidden(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
             if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
@@ -761,7 +761,7 @@ public class StarHider {
      * occurs while making statistics on a distribution.
      */
     public boolean isPsmHidden(String matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
             if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
@@ -795,7 +795,7 @@ public class StarHider {
      * occurs while making statistics on a distribution.
      */
     public boolean isProteinStarred(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
             if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
@@ -829,7 +829,7 @@ public class StarHider {
      * occurs while making statistics on a distribution.
      */
     public boolean isPeptideStarred(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
             if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
@@ -865,7 +865,7 @@ public class StarHider {
      * occurs while making statistics on a distribution.
      */
     public boolean isPsmStarred(String matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
         for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
             if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
                 return true;

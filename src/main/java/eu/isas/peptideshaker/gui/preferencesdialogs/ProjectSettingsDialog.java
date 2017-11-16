@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.gui.preferencesdialogs;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.preferences_dialogs.DisplayPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.preferences_dialogs.SpectrumCountingSettingsDialog;
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import java.awt.Dialog;
 import java.awt.Toolkit;
@@ -27,7 +27,7 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
     /**
      * The display preferences.
      */
-    private DisplayPreferences displayPreferences;
+    private DisplayParameters displayPreferences;
     /**
      * Boolean indicating whether the user canceled the edition of preferences.
      */
@@ -41,7 +41,7 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param displayPreferences the display preferences
      */
-    public ProjectSettingsDialog(java.awt.Frame parentFrame, Dialog owner, SpectrumCountingPreferences spectrumCountingPreferences, DisplayPreferences displayPreferences) {
+    public ProjectSettingsDialog(java.awt.Frame parentFrame, Dialog owner, SpectrumCountingPreferences spectrumCountingPreferences, DisplayParameters displayPreferences) {
         
         super(owner, true);
         initComponents();
@@ -61,7 +61,7 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param displayPreferences the display preferences
      */
-    public ProjectSettingsDialog(java.awt.Frame parentFrame, SpectrumCountingPreferences spectrumCountingPreferences, DisplayPreferences displayPreferences) {
+    public ProjectSettingsDialog(java.awt.Frame parentFrame, SpectrumCountingPreferences spectrumCountingPreferences, DisplayParameters displayPreferences) {
         
         super(parentFrame, true);
         initComponents();
@@ -95,7 +95,7 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
      *
      * @return the display preferences
      */
-    public DisplayPreferences getDisplayPreferences() {
+    public DisplayParameters getDisplayPreferences() {
         return displayPreferences;
     }
 

@@ -2,12 +2,12 @@ package eu.isas.peptideshaker.parameters;
 
 import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.db.object.DbObject;
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
+import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.parameters.identification.IdentificationParameters;
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
-import eu.isas.peptideshaker.preferences.FilterPreferences;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
+import eu.isas.peptideshaker.preferences.FilterParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
@@ -36,11 +36,11 @@ public class PeptideShakerSettings extends DbObject implements UrParameter, Seri
     /**
      * The GUI filter preferences.
      */
-    private FilterPreferences filterPreferences;
+    private FilterParameters filterParameters;
     /**
      * The display preferences.
      */
-    private DisplayPreferences displayPreferences;
+    private DisplayParameters displayParameters;
     /**
      * The project details.
      */
@@ -58,13 +58,9 @@ public class PeptideShakerSettings extends DbObject implements UrParameter, Seri
      */
     private IdentificationFeaturesCache identificationFeaturesCache;
     /**
-     * Information about the protocol used.
+     * The key of the object when stored in settings table of a cps file.
      */
-    private ShotgunProtocol shotgunProtocol;
-    /**
-     * The name of the object when stored in settings table of a cps file.
-     */
-    public static final String nameInCpsSettingsTable = "PeptideShaker";
+    public static final long nameInCpsSettingsTable = ExperimentObject.asLong("PeptideShaker");
 
     /**
      * Blank constructor.
@@ -75,7 +71,6 @@ public class PeptideShakerSettings extends DbObject implements UrParameter, Seri
     /**
      * Constructor for a PeptideShaker Settings class.
      *
-     * @param shotgunProtocol information about the protocol used
      * @param identificationParameters the parameters used for identification
      * @param spectrumCountingPreferences The spectrum counting preferences
      * @param projectDetails The project details
@@ -85,23 +80,24 @@ public class PeptideShakerSettings extends DbObject implements UrParameter, Seri
      * @param geneMaps The gene maps
      * @param identificationFeaturesCache The identification features cache
      */
-    public PeptideShakerSettings(ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
+    public PeptideShakerSettings(IdentificationParameters identificationParameters,
             SpectrumCountingPreferences spectrumCountingPreferences,
             ProjectDetails projectDetails,
-            FilterPreferences filterPreferences,
-            DisplayPreferences displayPreferences,
+            FilterParameters filterPreferences,
+            DisplayParameters displayPreferences,
             Metrics metrics,
             GeneMaps geneMaps,
             IdentificationFeaturesCache identificationFeaturesCache) {
-        this.shotgunProtocol = shotgunProtocol;
+        
         this.identificationParameters = identificationParameters;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.projectDetails = projectDetails;
-        this.filterPreferences = filterPreferences;
-        this.displayPreferences = displayPreferences;
+        this.filterParameters = filterPreferences;
+        this.displayParameters = displayPreferences;
         this.geneMaps = geneMaps;
         this.metrics = metrics;
         this.identificationFeaturesCache = identificationFeaturesCache;
+    
     }
 
     /**
@@ -110,8 +106,11 @@ public class PeptideShakerSettings extends DbObject implements UrParameter, Seri
      * @return the identification parameters
      */
     public IdentificationParameters getIdentificationParameters() {
+        
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        
         return identificationParameters;
+    
     }
 
     /**
@@ -120,8 +119,11 @@ public class PeptideShakerSettings extends DbObject implements UrParameter, Seri
      * @param identificationParameters the identification parameters
      */
     public void setIdentificationParameters(IdentificationParameters identificationParameters) {
+    
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+        
         this.identificationParameters = identificationParameters;
+    
     }
 
     /**
@@ -130,13 +132,19 @@ public class PeptideShakerSettings extends DbObject implements UrParameter, Seri
      * @return the spectrum counting preferences of the project
      */
     public SpectrumCountingPreferences getSpectrumCountingPreferences() {
+    
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        
         return spectrumCountingPreferences;
+    
     }
     
     public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences){
+    
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+        
         this.spectrumCountingPreferences = spectrumCountingPreferences;
+    
     }
     
     /**
@@ -155,53 +163,55 @@ public class PeptideShakerSettings extends DbObject implements UrParameter, Seri
     }
 
     /**
-     * Returns the GUI display preferences.
+     * Returns the GUI display parameters.
      *
-     * @return the GUI display preferences
+     * @return the GUI display parameters
      */
-    public FilterPreferences getFilterPreferences() {
+    public FilterParameters getFilterParameters() {
+        
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return filterPreferences;
+        
+        return filterParameters;
+    
     }
     
-    public void setFilterPreferences(FilterPreferences filterPreferences){
+    /**
+     * Sets the filter parameters.
+     * 
+     * @param filterParameters the filter parameters
+     */
+    public void setFilterParameters(FilterParameters filterParameters){
+        
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-        this.filterPreferences = filterPreferences;
+        
+        this.filterParameters = filterParameters;
+    
     }
 
     /**
-     * Returns the GUI display preferences.
+     * Returns the GUI display parameters.
      *
-     * @return the GUI display preferences
+     * @return the GUI display parameters
      */
-    public DisplayPreferences getDisplayPreferences() {
+    public DisplayParameters getDisplayParameters() {
+        
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return displayPreferences;
+        
+        return displayParameters;
+    
     }
     
-    public void setDisplayPreferences(DisplayPreferences displayPreferences){
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-        this.displayPreferences = displayPreferences;
-    }
-
     /**
-     * Returns information about the protocol used.
-     *
-     * @return information about the protocol used
+     * Sets the display parameters.
+     * 
+     * @param displayParameters 
      */
-    public ShotgunProtocol getShotgunProtocol() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return shotgunProtocol;
-    }
-
-    /**
-     * Sets information about the protocol used.
-     *
-     * @param shotgunProtocol information about the protocol used
-     */
-    public void setShotgunProtocol(ShotgunProtocol shotgunProtocol) {
+    public void setDisplayParameters(DisplayParameters displayParameters){
+        
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-        this.shotgunProtocol = shotgunProtocol;
+        
+        this.displayParameters = displayParameters;
+    
     }
 
     /**
@@ -210,49 +220,73 @@ public class PeptideShakerSettings extends DbObject implements UrParameter, Seri
      * @return the metrics saved when loading the files
      */
     public Metrics getMetrics() {
+        
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        if (metrics == null) {
-            metrics = new Metrics();
-        }
+        
         return metrics;
+    
     }
     
+    /**
+     * Sets the metrics saved when loading the files.
+     * 
+     * @param metrics the metrics saved when loading the files
+     */
     public void setMetrics(Metrics metrics){
+        
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+        
         this.metrics = metrics;
+    
     }
     
-
     /**
      * Returns the gene maps.
      *
      * @return the gene maps
      */
     public GeneMaps getGeneMaps() {
+        
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        if (geneMaps == null) {
-            geneMaps = new GeneMaps();
-        }
+        
         return geneMaps;
+    
     }
     
+    /**
+     * Sets the gene maps.
+     * 
+     * @param geneMaps the gene maps
+     */
     public void setGeneMaps(GeneMaps geneMaps){
+        
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+        
         this.geneMaps = geneMaps;
+    
     }
 
     /**
      * Returns the identification features cache used by the identification
-     * features generator before saving the file. Null for versions older than
-     * 0.18.0.
+     * features generator before saving the file.
      *
      * @return the identification features cache
      */
     public IdentificationFeaturesCache getIdentificationFeaturesCache() {
+        
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        
         return identificationFeaturesCache;
+    
     }
     
+    /**
+     * Sets the identification features cache used by the identification
+     * features generator before saving the file.
+     * 
+     * @param identificationFeaturesCache the identification features cache used by the identification
+     * features generator before saving the file
+     */
     public void setIdentificationFeaturesCache(IdentificationFeaturesCache identificationFeaturesCache){
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.identificationFeaturesCache = identificationFeaturesCache;

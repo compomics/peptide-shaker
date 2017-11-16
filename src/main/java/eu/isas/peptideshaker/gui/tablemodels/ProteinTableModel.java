@@ -13,7 +13,7 @@ import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -230,7 +230,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 return null;
                             } else if (!useDB) {
                                 dataMissingAtRow(row);
-                                return DisplayPreferences.LOADING_MESSAGE;
+                                return DisplayParameters.LOADING_MESSAGE;
                             }
                         }
                         return psParameter.getStarred();
@@ -241,7 +241,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 return null;
                             } else if (!useDB) {
                                 dataMissingAtRow(row);
-                                return DisplayPreferences.LOADING_MESSAGE;
+                                return DisplayParameters.LOADING_MESSAGE;
                             }
                         }
                         return psParameter.getProteinInferenceGroupClass();
@@ -251,7 +251,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 return null;
                             } else if (!useDB) {
                                 dataMissingAtRow(row);
-                                return DisplayPreferences.LOADING_MESSAGE;
+                                return DisplayParameters.LOADING_MESSAGE;
                             }
                         }
                         if (!isScrolling) {
@@ -265,7 +265,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 return null;
                             } else if (!useDB) {
                                 dataMissingAtRow(row);
-                                return DisplayPreferences.LOADING_MESSAGE;
+                                return DisplayParameters.LOADING_MESSAGE;
                             }
                         }
                         String description = null;
@@ -286,7 +286,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 return null;
                             } else if (!useDB) {
                                 dataMissingAtRow(row);
-                                return DisplayPreferences.LOADING_MESSAGE;
+                                return DisplayParameters.LOADING_MESSAGE;
                             }
                         }
                         String geneName = sequenceFactory.getHeader(proteinMatch.getLeadingAccession()).getGeneName();
@@ -304,7 +304,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 || !identificationFeaturesGenerator.observableCoverageInCache(proteinKey))
                                 && (proteinMatch == null || !identification.proteinDetailsInCache(proteinKey))) {
                             dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
+                            return DisplayParameters.LOADING_MESSAGE;
                         }
                         HashMap<Integer, Double> sequenceCoverage;
                         try {
@@ -337,7 +337,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 || !identificationFeaturesGenerator.nValidatedPeptidesInCache(proteinKey)
                                 && !identification.proteinDetailsInCache(proteinKey))) {
                             dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
+                            return DisplayParameters.LOADING_MESSAGE;
                         }
                         double nConfidentPeptides = identificationFeaturesGenerator.getNConfidentPeptides(proteinKey);
                         double nDoubtfulPeptides = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey) - nConfidentPeptides;
@@ -357,7 +357,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 || !identificationFeaturesGenerator.nSpectraInCache(proteinKey))
                                 && (proteinMatch == null || !identification.proteinDetailsInCache(proteinKey))) {
                             dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
+                            return DisplayParameters.LOADING_MESSAGE;
                         }
                         double nConfidentSpectra = identificationFeaturesGenerator.getNConfidentSpectra(proteinKey);
                         double nDoubtfulSpectra = identificationFeaturesGenerator.getNValidatedSpectra(proteinKey) - nConfidentSpectra;
@@ -376,7 +376,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         if (!useDB && !identificationFeaturesGenerator.spectrumCountingInCache(proteinKey)
                                 && (proteinMatch == null || !identification.proteinDetailsInCache(proteinKey))) {
                             dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
+                            return DisplayParameters.LOADING_MESSAGE;
                         }
                         return identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey);
                     case 10:
@@ -385,7 +385,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         }
                         if (!useDB && proteinMatch == null) {
                             dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
+                            return DisplayParameters.LOADING_MESSAGE;
                         }
                         String mainMatch = proteinMatch.getLeadingAccession();
                         Protein currentProtein = sequenceFactory.getProtein(mainMatch);
@@ -401,7 +401,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 return null;
                             } else if (!useDB) {
                                 dataMissingAtRow(row);
-                                return DisplayPreferences.LOADING_MESSAGE;
+                                return DisplayParameters.LOADING_MESSAGE;
                             }
                         }
                         if (psParameter != null) {
@@ -420,7 +420,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 return null;
                             } else if (!useDB) {
                                 dataMissingAtRow(row);
-                                return DisplayPreferences.LOADING_MESSAGE;
+                                return DisplayParameters.LOADING_MESSAGE;
                             }
                         }
                         if (psParameter != null) {

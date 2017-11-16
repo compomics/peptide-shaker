@@ -18,8 +18,8 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.ProteinInferenceParameters;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.parameters.PeptideShakerSettings;
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
-import eu.isas.peptideshaker.preferences.FilterPreferences;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
+import eu.isas.peptideshaker.preferences.FilterParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
@@ -73,11 +73,11 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * The filter preferences.
      */
-    protected FilterPreferences filterPreferences = new FilterPreferences();
+    protected FilterParameters filterPreferences = new FilterParameters();
     /**
      * The display preferences.
      */
-    protected DisplayPreferences displayPreferences = new DisplayPreferences();
+    protected DisplayParameters displayPreferences = new DisplayParameters();
     /**
      * Information on the protocol used.
      */
@@ -213,8 +213,8 @@ public class CpsParent extends UserPreferencesParent {
         projectDetails = experimentSettings.getProjectDetails();
         metrics = experimentSettings.getMetrics();
         geneMaps = experimentSettings.getGeneMaps();
-        filterPreferences = experimentSettings.getFilterPreferences();
-        displayPreferences = experimentSettings.getDisplayPreferences();
+        filterPreferences = experimentSettings.getFilterParameters();
+        displayPreferences = experimentSettings.getDisplayParameters();
         shotgunProtocol = experimentSettings.getShotgunProtocol();
 
 
@@ -482,7 +482,7 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @return the filter preferences
      */
-    public FilterPreferences getFilterPreferences() {
+    public FilterParameters getFilterPreferences() {
         return filterPreferences;
     }
 
@@ -491,7 +491,7 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @return the display preferences
      */
-    public DisplayPreferences getDisplayPreferences() {
+    public DisplayParameters getDisplayPreferences() {
         return displayPreferences;
     }
 
@@ -566,7 +566,7 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param filterPreferences the filter preferences
      */
-    public void setFilterPreferences(FilterPreferences filterPreferences) {
+    public void setFilterPreferences(FilterParameters filterPreferences) {
         this.filterPreferences = filterPreferences;
     }
 
@@ -575,7 +575,7 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param displayPreferences the display preferences
      */
-    public void setDisplayPreferences(DisplayPreferences displayPreferences) {
+    public void setDisplayPreferences(DisplayParameters displayPreferences) {
         this.displayPreferences = displayPreferences;
     }
 

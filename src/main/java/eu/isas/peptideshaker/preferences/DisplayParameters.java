@@ -10,7 +10,7 @@ import java.util.HashMap;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class DisplayPreferences implements Serializable {
+public class DisplayParameters implements Serializable {
 
     /**
      * The serial number for serialization compatibility.
@@ -53,7 +53,7 @@ public class DisplayPreferences implements Serializable {
     /**
      * Constructor.
      */
-    public DisplayPreferences() {
+    public DisplayParameters() {
     }
 
     /**

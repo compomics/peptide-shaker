@@ -16,7 +16,7 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
@@ -193,7 +193,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                                 return null;
                             } else if (!useDB) {
                                 dataMissingAtRow(row);
-                                return DisplayPreferences.LOADING_MESSAGE;
+                                return DisplayParameters.LOADING_MESSAGE;
                             }
                         }
                         return psParameter.getStarred();
@@ -203,7 +203,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                                 return null;
                             } else if (!useDB) {
                                 dataMissingAtRow(row);
-                                return DisplayPreferences.LOADING_MESSAGE;
+                                return DisplayParameters.LOADING_MESSAGE;
                             }
                         }
 
@@ -215,7 +215,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                                 return null;
                             } else if (!useDB) {
                                 dataMissingAtRow(row);
-                                return DisplayPreferences.LOADING_MESSAGE;
+                                return DisplayParameters.LOADING_MESSAGE;
                             }
                         }
                         return displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true);
@@ -225,7 +225,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                                 return null;
                             } else if (!useDB) {
                                 dataMissingAtRow(row);
-                                return DisplayPreferences.LOADING_MESSAGE;
+                                return DisplayParameters.LOADING_MESSAGE;
                             }
                         }
                         if (spectrumMatch.getBestPeptideAssumption() != null) {
@@ -241,7 +241,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                                 return null;
                             } else if (!useDB) {
                                 dataMissingAtRow(row);
-                                return DisplayPreferences.LOADING_MESSAGE;
+                                return DisplayParameters.LOADING_MESSAGE;
                             }
                         }
                         Precursor precursor = SpectrumFactory.getInstance().getPrecursor(psmKey);
@@ -260,7 +260,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                                 return null;
                             } else if (!useDB) {
                                 dataMissingAtRow(row);
-                                return DisplayPreferences.LOADING_MESSAGE;
+                                return DisplayParameters.LOADING_MESSAGE;
                             }
                         }
                         if (psParameter != null) {
@@ -279,7 +279,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                                 return null;
                             } else if (!useDB) {
                                 dataMissingAtRow(row);
-                                return DisplayPreferences.LOADING_MESSAGE;
+                                return DisplayParameters.LOADING_MESSAGE;
                             }
                         }
                         if (psParameter != null) {

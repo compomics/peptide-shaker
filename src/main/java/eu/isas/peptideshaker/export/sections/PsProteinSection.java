@@ -224,7 +224,7 @@ public class PsProteinSection {
 
             case protein_description:
 
-                return proteinDetailsProvider.getsimpleDescription(proteinMatch.getLeadingAccession());
+                return proteinDetailsProvider.getSimpleDescription(proteinMatch.getLeadingAccession());
 
             case ensembl_gene_id:
 

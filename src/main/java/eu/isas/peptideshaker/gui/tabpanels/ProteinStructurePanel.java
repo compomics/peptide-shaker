@@ -26,7 +26,7 @@ import eu.isas.peptideshaker.gui.protein_inference.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -3143,7 +3143,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         // remove old labels
         jmolPanel.getViewer().evalString("select all; label off");
 
-        DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
+        DisplayParameters displayPreferences = peptideShakerGUI.getDisplayPreferences();
 
         // annotate the modified covered residues
         for (int i = 0; i < peptideTable.getRowCount() && !progressDialog.isRunCanceled(); i++) {

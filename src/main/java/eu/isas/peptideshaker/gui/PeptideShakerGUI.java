@@ -64,8 +64,8 @@ import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
 import eu.isas.peptideshaker.gui.tabpanels.QCPanel;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.ValidationPanel;
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
-import eu.isas.peptideshaker.preferences.FilterPreferences;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
+import eu.isas.peptideshaker.preferences.FilterParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -2487,7 +2487,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             }
 
             // See if the display preferences need to be updated
-            DisplayPreferences newDisplayPreferences = preferencesDialog.getDisplayPreferences();
+            DisplayParameters newDisplayPreferences = preferencesDialog.getDisplayPreferences();
             // @TODO: uncomment the code below when the display prefrences have been set
 //            if (!newDisplayPreferences.isSameAs(getDisplayPreferences())) {
 //                setDisplayPreferences(newDisplayPreferences);
@@ -3822,7 +3822,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @return the filter preferences to use
      */
-    public FilterPreferences getFilterPreferences() {
+    public FilterParameters getFilterPreferences() {
         return cpsParent.getFilterPreferences();
     }
 
@@ -3831,7 +3831,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @return the display preferences to use
      */
-    public DisplayPreferences getDisplayPreferences() {
+    public DisplayParameters getDisplayPreferences() {
         return cpsParent.getDisplayPreferences();
     }
 
@@ -3840,7 +3840,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @param filterPreferences the GUI filter preferences to use
      */
-    public void setFilterPreferences(FilterPreferences filterPreferences) {
+    public void setFilterPreferences(FilterParameters filterPreferences) {
         cpsParent.setFilterPreferences(filterPreferences);
     }
 
@@ -3849,7 +3849,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @param displayPreferences the display preferences to use
      */
-    public void setDisplayPreferences(DisplayPreferences displayPreferences) {
+    public void setDisplayPreferences(DisplayParameters displayPreferences) {
         cpsParent.setDisplayPreferences(displayPreferences);
     }
 
@@ -4937,7 +4937,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         allCheckBoxMenuItem.setSelected(annotationPreferences.showAllPeaks());
 
         // Display preferenecs
-        DisplayPreferences displayPreferences = getDisplayPreferences();
+        DisplayParameters displayPreferences = getDisplayPreferences();
         barsCheckBoxMenuItem.setSelected(displayPreferences.showBars());
         intensityIonTableRadioButtonMenuItem.setSelected(displayPreferences.useIntensityIonTable());
     }
@@ -5027,7 +5027,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             annotationPreferences.setShowRewindIonDeNovoTags(rewindIonsDeNovoCheckBoxMenuItem.isSelected());
 
             // Display preferenecs
-            DisplayPreferences displayPreferences = getDisplayPreferences();
+            DisplayParameters displayPreferences = getDisplayPreferences();
             barsCheckBoxMenuItem.setSelected(displayPreferences.showBars());
             intensityIonTableRadioButtonMenuItem.setSelected(displayPreferences.useIntensityIonTable());
 

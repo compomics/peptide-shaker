@@ -13,7 +13,7 @@ import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.parameters.identification.search.DigestionParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.preferences.FilterPreferences;
+import eu.isas.peptideshaker.preferences.FilterParameters;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -58,7 +58,7 @@ public class InclusionListExport {
      */
     public static void exportInclusionList(File destinationFile, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ArrayList<Integer> proteinFilters, ArrayList<PeptideFilterType> peptideFilters, ExportFormat exportFormat, SearchParameters searchParameters, double rtWindow,
-            WaitingHandler waitingHandler, FilterPreferences filterPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            WaitingHandler waitingHandler, FilterParameters filterPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         if (waitingHandler != null) {

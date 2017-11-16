@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs.preferences_dialogs;
 
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 
@@ -22,7 +22,7 @@ public class DisplayPreferencesDialog extends javax.swing.JDialog {
      * @param parentFrame a parent frame
      * @param displayPreferences the display preferences to display
      */
-    public DisplayPreferencesDialog(java.awt.Frame parentFrame, DisplayPreferences displayPreferences) {
+    public DisplayPreferencesDialog(java.awt.Frame parentFrame, DisplayParameters displayPreferences) {
         super(parentFrame, true);
         initComponents();
         setUpGui();
@@ -44,7 +44,7 @@ public class DisplayPreferencesDialog extends javax.swing.JDialog {
      *
      * @param displayPreferences the display preferences to display
      */
-    private void populateGUI(DisplayPreferences displayPreferences) {
+    private void populateGUI(DisplayParameters displayPreferences) {
         // set the values
         nAASpinner.setValue(displayPreferences.getnAASurroundingPeptides());
     }
@@ -73,9 +73,9 @@ public class DisplayPreferencesDialog extends javax.swing.JDialog {
      * 
      * @return the new display preferences as set by the user
      */
-    public DisplayPreferences getDisplayPreferences() {
+    public DisplayParameters getDisplayPreferences() {
 
-        DisplayPreferences displayPreferences = new DisplayPreferences();
+        DisplayParameters displayPreferences = new DisplayParameters();
         int selection = (Integer) nAASpinner.getValue();
         displayPreferences.setnAASurroundingPeptides(selection);
         return displayPreferences;

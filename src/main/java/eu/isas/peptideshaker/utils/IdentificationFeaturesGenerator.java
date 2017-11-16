@@ -34,7 +34,7 @@ import com.compomics.util.parameters.identification.advanced.SequenceMatchingPar
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSPtmScores;
-import eu.isas.peptideshaker.preferences.FilterPreferences;
+import eu.isas.peptideshaker.preferences.FilterParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
@@ -2085,7 +2085,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the list of validated protein keys
      */
-    public long[] getValidatedProteins(FilterPreferences filterPreferences) {
+    public long[] getValidatedProteins(FilterParameters filterPreferences) {
         
         return getValidatedProteins(null, filterPreferences);
         
@@ -2100,7 +2100,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the list of validated protein keys
      */
-    public long[] getValidatedProteins(WaitingHandler waitingHandler, FilterPreferences filterPreferences) {
+    public long[] getValidatedProteins(WaitingHandler waitingHandler, FilterParameters filterPreferences) {
         
         long[] result = identificationFeaturesCache.getValidatedProteinList();
         
@@ -2122,7 +2122,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the sorted list of protein keys
      */
-    public long[] getProcessedProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences) {
+    public long[] getProcessedProteinKeys(WaitingHandler waitingHandler, FilterParameters filterPreferences) {
 
         if (identificationFeaturesCache.getProteinList() == null) {
             if (waitingHandler != null) {
@@ -2375,7 +2375,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the ordered protein keys to display when no filtering is applied.
      */
-    public long[] getProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences) {
+    public long[] getProteinKeys(WaitingHandler waitingHandler, FilterParameters filterPreferences) {
         
         if (identificationFeaturesCache.getProteinList() == null) {
             
@@ -2607,7 +2607,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @return a boolean indicating whether hiding proteins is necessary
      */
-    private boolean hidingNeeded(FilterPreferences filterPreferences) {
+    private boolean hidingNeeded(FilterParameters filterPreferences) {
 
         if (filterPreferences == null) {
             

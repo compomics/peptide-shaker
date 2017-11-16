@@ -55,7 +55,7 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Annotati
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
@@ -3154,7 +3154,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     bubbleScale = annotationPreferences.getFragmentIonAccuracy() * 10 * peptideShakerGUI.getBubbleScale();
                                 }
 
-                                DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
+                                DisplayParameters displayPreferences = peptideShakerGUI.getDisplayPreferences();
                                 MassErrorBubblePlot massErrorBubblePlot = new MassErrorBubblePlot(
                                         selectedIndexes, allAnnotations, allSpectra, annotationPreferences.getFragmentIonAccuracy(),
                                         bubbleScale, selectedIndexes.size() == 1, displayPreferences.showBars(),
