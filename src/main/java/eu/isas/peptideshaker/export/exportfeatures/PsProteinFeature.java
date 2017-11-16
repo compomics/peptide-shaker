@@ -48,8 +48,6 @@ public enum PsProteinFeature implements ExportFeature {
     peptides("#Peptides", "Total number of peptides.", false),
     unique_peptides("#Unique", "Total number of peptides unique to this protein group.", false),
     unique_validated_peptides("#Validated Unique", "Total number of peptides unique to this protein group.", false),
-    unique_peptides_group("#Unique to Group", "Total number of peptides found only in this protein group among the validated groups.", false),
-    unique_validated_peptides_group("#Validated Unique to Group", "Total number of validated peptides found only in this protein group among the validated groups.", false),
     validated_psms("#Validated PSMs", "Number of validated PSMs.", false),
     psms("#PSMs", "Number of PSMs.", false),
     score("Score", "Score of the protein group.", true),

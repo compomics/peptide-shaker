@@ -136,7 +136,7 @@ public class ProteinFilter extends MatchFilter {
                 }
                 return filterItemComparator.passes(input, genes);
             case GO:
-                return filterItemComparator.passes(input, new ArrayList<>(geneMaps.getGoNamesForProtein(matchKey)));
+                return filterItemComparator.passes(input, new ArrayList<>(geneMaps.getGoNamesForProtein(accession)));
             case expectedCoverage:
                 Double coverage = 100 * identificationFeaturesGenerator.getObservableCoverage(matchKey);
                 return filterItemComparator.passes(input, coverage.toString());

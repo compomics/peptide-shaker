@@ -590,7 +590,7 @@ public class PepXmlExport {
             searchScore.append("<search_score name=\"PSM score\" value=\"").append(psParameter.getPsmScore()).append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"PSM PEP\" value=\"").append(psParameter.getPsmProbability()).append("\"/>");
+            searchScore.append("<search_score name=\"PSM PEP\" value=\"").append(psParameter.getSpectrumMatchProbability()).append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
             searchScore.append("<search_score name=\"PSM confidence\" value=\"").append(psParameter.getPsmConfidence()).append("\"/>");

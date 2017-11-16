@@ -321,7 +321,7 @@ public class ProgenesisExcelExport {
                 cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 
                 cell = rowHead.createCell(column++);
-                cell.setCellValue(psParameter.getPsmProbability()); // pep value
+                cell.setCellValue(psParameter.getSpectrumMatchProbability()); // pep value
                 cell.setCellStyle(peptideRowCellStyle);
                 cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 

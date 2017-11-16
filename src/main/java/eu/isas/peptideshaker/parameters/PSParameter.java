@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.parameters;
 
 import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.db.object.DbObject;
-import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class PSParameter extends DbObject implements UrParameter {
     /**
      * Posterior error probability estimated for the search engine results.
      */
-    private double searchEngineProbability;
+    private double searchEnginePEP;
     /**
      * The difference in identification algorithm level PEP with the next best
      * peptide assumption with sequence difference for a given search engine.
@@ -40,13 +39,13 @@ public class PSParameter extends DbObject implements UrParameter {
      */
     private Double deltaPEP;
     /**
-     * Probabilistic score for a peptide to spectrum match in the dataset.
+     * Score for a spectrum match in the dataset.
      */
-    private double psmProbabilityScore;
+    private double spectrumMatchScore;
     /**
      * Spectrum posterior error probability.
      */
-    private double psmProbability;
+    private double spectrumProbability;
     /**
      * Probabilistic score for a peptide match.
      */
@@ -163,13 +162,19 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the peptide posterior error probability
      */
     public double getPeptideProbability() {
+    
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        
         return peptideProbability;
+    
     }
     
     public void setGroupClass(int groupClass){
+
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
         this.proteinInferenceGroupClass = groupClass;
+
     }
 
     /**
@@ -180,8 +185,11 @@ public class PSParameter extends DbObject implements UrParameter {
      * @param peptideProbability the new peptide posterior error probability
      */
     public void setPeptideProbability(double peptideProbability) {
+
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
         this.peptideProbability = peptideProbability;
+
     }
 
     /**
@@ -190,8 +198,11 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the peptide Probabilistic score
      */
     public double getPeptideProbabilityScore() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         return peptideProbabilityScore;
+
     }
 
     /**
@@ -200,8 +211,11 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the peptide score
      */
     public double getPeptideScore() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         return getScore(peptideProbabilityScore);
+
     }
 
     /**
@@ -210,12 +224,13 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the peptide confidence
      */
     public double getPeptideConfidence() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         double confidence = 100.0 * (1 - peptideProbability);
-        if (confidence <= 0) {
-            confidence = 0;
-        }
-        return confidence;
+        
+        return confidence < 0.0 ? 0.0 : confidence;
+        
     }
 
     /**
@@ -226,8 +241,11 @@ public class PSParameter extends DbObject implements UrParameter {
      * @param peptideProbabilityScore the new peptide Probabilistic score
      */
     public void setPeptideProbabilityScore(double peptideProbabilityScore) {
+
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
         this.peptideProbabilityScore = peptideProbabilityScore;
+
     }
 
     /**
@@ -236,8 +254,11 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the protein posterior error probability
      */
     public double getProteinProbability() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         return proteinProbability;
+
     }
 
     /**
@@ -248,8 +269,11 @@ public class PSParameter extends DbObject implements UrParameter {
      * @param proteinProbability the new protein posterior error probability
      */
     public void setProteinProbability(double proteinProbability) {
+
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
         this.proteinProbability = proteinProbability;
+
     }
 
     /**
@@ -258,8 +282,11 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the protein Probabilistic score
      */
     public double getProteinProbabilityScore() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         return proteinProbabilityScore;
+
     }
 
     /**
@@ -268,8 +295,11 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the protein score
      */
     public double getProteinScore() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         return getScore(proteinProbabilityScore);
+
     }
 
     /**
@@ -278,12 +308,13 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the protein confidence
      */
     public double getProteinConfidence() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         double confidence = 100.0 * (1 - proteinProbability);
-        if (confidence <= 0) {
-            confidence = 0;
-        }
-        return confidence;
+        
+        return confidence < 0.0 ? 0.0 : confidence;
+        
     }
 
     /**
@@ -294,8 +325,11 @@ public class PSParameter extends DbObject implements UrParameter {
      * @param proteinProbabilityScore the new protein Probabilistic score
      */
     public void setProteinProbabilityScore(double proteinProbabilityScore) {
+
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
         this.proteinProbabilityScore = proteinProbabilityScore;
+
     }
 
     /**
@@ -304,8 +338,11 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the search engine posterior error probability
      */
     public double getSearchEngineProbability() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return searchEngineProbability;
+
+        return searchEnginePEP;
+
     }
 
     /**
@@ -317,8 +354,11 @@ public class PSParameter extends DbObject implements UrParameter {
      * probability
      */
     public void setSearchEngineProbability(double searchEngineProbability) {
+
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-        this.searchEngineProbability = searchEngineProbability;
+
+        this.searchEnginePEP = searchEngineProbability;
+
     }
 
     /**
@@ -331,8 +371,11 @@ public class PSParameter extends DbObject implements UrParameter {
      * search engine
      */
     public Double getAlgorithmDeltaPEP() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         return algorithmDeltaPEP;
+
     }
 
     /**
@@ -345,8 +388,11 @@ public class PSParameter extends DbObject implements UrParameter {
      * search engine
      */
     public void setAlgorithmDeltaPEP(Double deltaPEP) {
+
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
         this.algorithmDeltaPEP = deltaPEP;
+
     }
 
     /**
@@ -359,8 +405,11 @@ public class PSParameter extends DbObject implements UrParameter {
      * engines
      */
     public Double getDeltaPEP() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         return deltaPEP;
+
     }
 
     /**
@@ -373,8 +422,11 @@ public class PSParameter extends DbObject implements UrParameter {
      * search engines
      */
     public void setDeltaPEP(Double deltaPEP) {
+
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
         this.deltaPEP = deltaPEP;
+
     }
 
     /**
@@ -383,22 +435,26 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the search engine confidence
      */
     public double getSearchEngineConfidence() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        double confidence = 100.0 * (1 - searchEngineProbability);
-        if (confidence <= 0) {
-            confidence = 0;
-        }
-        return confidence;
+
+        double confidence = 100.0 * (1 - searchEnginePEP);
+        
+        return confidence < 0.0 ? 0.0 : confidence;
+        
     }
 
     /**
-     * Returns the PSM posterior error probability.
+     * Returns the spectrum match posterior error probability.
      *
-     * @return the PSM posterior error probability
+     * @return the spectrum match posterior error probability
      */
-    public double getPsmProbability() {
+    public double getSpectrumMatchProbability() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return psmProbability;
+
+        return spectrumProbability;
+
     }
 
     /**
@@ -409,13 +465,24 @@ public class PSParameter extends DbObject implements UrParameter {
      * @param psmProbability the new the PSM posterior error probability
      */
     public void setPsmProbability(double psmProbability) {
+
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-        this.psmProbability = psmProbability;
+
+        this.spectrumProbability = psmProbability;
+
     }
     
+    /**
+     * Sets the score for a spectrum match.
+     * 
+     * @param psmProbabilityScore 
+     */
     public void setPsmProbabilityScore(double psmProbabilityScore) {
+
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-        this.psmProbabilityScore = psmProbabilityScore;
+
+        this.spectrumMatchScore = psmProbabilityScore;
+
     }
     
     public void setQcFilters(HashMap<String, Boolean> qcFilters){
@@ -430,7 +497,7 @@ public class PSParameter extends DbObject implements UrParameter {
      */
     public double getPsmProbabilityScore() {
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return psmProbabilityScore;
+        return spectrumMatchScore;
     }
 
     /**
@@ -441,7 +508,7 @@ public class PSParameter extends DbObject implements UrParameter {
      */
     public void setSpectrumProbabilityScore(double psmProbabilityScore) {
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-        this.psmProbabilityScore = psmProbabilityScore;
+        this.spectrumMatchScore = psmProbabilityScore;
     }
 
     /**
@@ -451,7 +518,7 @@ public class PSParameter extends DbObject implements UrParameter {
      */
     public double getPsmScore() {
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return getScore(psmProbabilityScore);
+        return getScore(spectrumMatchScore);
     }
 
     /**
@@ -461,7 +528,7 @@ public class PSParameter extends DbObject implements UrParameter {
      */
     public double getPsmConfidence() {
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        double confidence = 100.0 * (1 - psmProbability);
+        double confidence = 100.0 * (1 - spectrumProbability);
         if (confidence <= 0) {
             confidence = 0;
         }
@@ -545,8 +612,11 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the group class description
      */
     public String getProteinInferenceClassAsString() {
+        
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        
         return getProteinInferenceClassAsString(proteinInferenceGroupClass);
+    
     }
 
     /**
@@ -558,17 +628,29 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the group class description
      */
     public static String getProteinInferenceClassAsString(int matchClass) {
+    
         switch (matchClass) {
+        
             case NOT_GROUP:
+            
                 return "Single Protein";
+            
             case RELATED:
+            
                 return "Related Proteins";
+            
             case RELATED_AND_UNRELATED:
+
                 return "Related and Unrelated Proteins";
+
             case UNRELATED:
+
                 return "Unrelated Proteins";
+
             default:
+
                 return "";
+
         }
     }
 

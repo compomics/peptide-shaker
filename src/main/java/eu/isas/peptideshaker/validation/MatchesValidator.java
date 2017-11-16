@@ -883,7 +883,7 @@ public class MatchesValidator {
             for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
 
                 psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(spectrumKey)).getUrParam(psParameter);
-                probaScore = probaScore * psParameter.getPsmProbability();
+                probaScore = probaScore * psParameter.getSpectrumMatchProbability();
 
                 if (nFractions > 1) {
                     String fraction = Spectrum.getSpectrumFile(spectrumKey);
@@ -894,7 +894,7 @@ public class MatchesValidator {
                         fractionScore = 1.0;
                         change = true;
                     }
-                    Double tempScore = psParameter.getPsmProbability();
+                    Double tempScore = psParameter.getSpectrumMatchProbability();
                     if (tempScore != 1.0) {
                         fractionScore *= tempScore;
                         change = true;

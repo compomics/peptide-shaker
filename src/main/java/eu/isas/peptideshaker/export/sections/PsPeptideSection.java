@@ -108,7 +108,7 @@ public class PsPeptideSection {
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, 
-            IdentificationParameters identificationParameters, ArrayList<Long> keys, int nSurroundingAA,
+            IdentificationParameters identificationParameters, long[] keys, int nSurroundingAA,
             String linePrefix, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
@@ -119,19 +119,19 @@ public class PsPeptideSection {
             writeHeader();
         }
 
-        if (keys == null) {
-            keys = new ArrayList<>(identification.getPeptideIdentification());
-        }
-
         int lineNumber = 1;
 
         if (waitingHandler != null) {
+            
             waitingHandler.setWaitingText("Exporting. Please Wait...");
             waitingHandler.resetSecondaryProgressCounter();
-            waitingHandler.setMaxSecondaryProgressCounter(keys.size());
+            waitingHandler.setMaxSecondaryProgressCounter(keys == null ? identification.getPeptideIdentification().size() : keys.length);
         }
+        
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(keys, waitingHandler);
 
-        for (long key : keys) {
+        PeptideMatch peptideMatch;
+        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
             if (waitingHandler != null) {
                 if (waitingHandler.isRunCanceled()) {
@@ -139,8 +139,6 @@ public class PsPeptideSection {
                 }
                 waitingHandler.increaseSecondaryProgressCounter();
             }
-
-            PeptideMatch peptideMatch = identification.getPeptideMatch(key);
             
             PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
