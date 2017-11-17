@@ -35,8 +35,8 @@ import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.FilterParameters;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters.SpectralCountingMethod;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -93,7 +93,7 @@ public class IdentificationFeaturesGenerator {
     /**
      * The spectrum counting preferences.
      */
-    private SpectrumCountingPreferences spectrumCountingPreferences;
+    private SpectrumCountingParameters spectrumCountingPreferences;
     /**
      * Map of the distributions of precursor mass errors.
      */
@@ -110,7 +110,7 @@ public class IdentificationFeaturesGenerator {
      * @param spectrumCountingPreferences the spectrum counting preferences
      */
     public IdentificationFeaturesGenerator(Identification identification, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters,
-            Metrics metrics, SpectrumCountingPreferences spectrumCountingPreferences) {
+            Metrics metrics, SpectrumCountingParameters spectrumCountingPreferences) {
 
         this.metrics = metrics;
         this.sequenceProvider = sequenceProvider;
@@ -738,7 +738,7 @@ public class IdentificationFeaturesGenerator {
      * @return the corresponding spectrum counting metric normalized in the
      * metricsprefix of mol
      */
-    public double getNormalizedSpectrumCounting(long proteinMatchKey, SpectrumCountingPreferences spectrumCountingPreferences, Metrics metrics) {
+    public double getNormalizedSpectrumCounting(long proteinMatchKey, SpectrumCountingParameters spectrumCountingPreferences, Metrics metrics) {
         return getNormalizedSpectrumCounting(proteinMatchKey, metrics, spectrumCountingPreferences.getUnit(), spectrumCountingPreferences.getReferenceMass(), spectrumCountingPreferences.getSelectedMethod());
     }
 
@@ -753,7 +753,7 @@ public class IdentificationFeaturesGenerator {
      * @return the corresponding spectrum counting metric normalized in the
      * metricsprefix of mol
      */
-    public double getNormalizedSpectrumCounting(long proteinMatchKey, UnitOfMeasurement unit, SpectrumCountingPreferences.SpectralCountingMethod method) {
+    public double getNormalizedSpectrumCounting(long proteinMatchKey, UnitOfMeasurement unit, SpectrumCountingParameters.SpectralCountingMethod method) {
         return getNormalizedSpectrumCounting(proteinMatchKey, metrics, unit, spectrumCountingPreferences.getReferenceMass(), method);
     }
 
@@ -771,7 +771,7 @@ public class IdentificationFeaturesGenerator {
      * @return the corresponding spectrum counting metric normalized in the
      * metrics prefix of mol
      */
-    public double getNormalizedSpectrumCounting(long proteinMatchKey, Metrics metrics, UnitOfMeasurement unit, Double referenceMass, SpectrumCountingPreferences.SpectralCountingMethod method) {
+    public double getNormalizedSpectrumCounting(long proteinMatchKey, Metrics metrics, UnitOfMeasurement unit, Double referenceMass, SpectrumCountingParameters.SpectralCountingMethod method) {
 
         double spectrumCounting = getSpectrumCounting(proteinMatchKey, method);
 
@@ -846,7 +846,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the corresponding spectrum counting metric
      */
-    public Double getSpectrumCounting(long proteinMatchKey, SpectrumCountingPreferences.SpectralCountingMethod method) {
+    public Double getSpectrumCounting(long proteinMatchKey, SpectrumCountingParameters.SpectralCountingMethod method) {
 
         if (method == spectrumCountingPreferences.getSelectedMethod()) {
 
@@ -862,7 +862,7 @@ public class IdentificationFeaturesGenerator {
             return result;
         } else {
 
-            SpectrumCountingPreferences tempPreferences = new SpectrumCountingPreferences();
+            SpectrumCountingParameters tempPreferences = new SpectrumCountingParameters();
             tempPreferences.setSelectedMethod(method);
 
             return estimateSpectrumCounting(identification, sequenceProvider, proteinMatchKey, tempPreferences,
@@ -914,7 +914,7 @@ public class IdentificationFeaturesGenerator {
      * @return the spectrum counting index
      */
     public static double estimateSpectrumCounting(Identification identification, SequenceProvider sequenceProvider, long proteinMatchKey,
-            SpectrumCountingPreferences spectrumCountingPreferences, int maxPepLength, IdentificationParameters identificationParameters) {
+            SpectrumCountingParameters spectrumCountingPreferences, int maxPepLength, IdentificationParameters identificationParameters) {
 
         ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
         DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
@@ -2683,7 +2683,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @param spectrumCountingPreferences the spectrum counting preferences
      */
-    public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences) {
+    public void setSpectrumCountingPreferences(SpectrumCountingParameters spectrumCountingPreferences) {
         
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         

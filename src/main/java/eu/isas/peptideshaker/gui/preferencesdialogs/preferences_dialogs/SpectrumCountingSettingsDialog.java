@@ -4,7 +4,7 @@ import com.compomics.util.experiment.units.MetricsPrefix;
 import com.compomics.util.experiment.units.StandardUnit;
 import com.compomics.util.experiment.units.UnitOfMeasurement;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -28,7 +28,7 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
      * @param spectrumCountingPreferences the spectrum counting preferences to
      * display
      */
-    public SpectrumCountingSettingsDialog(java.awt.Frame parentFrame, SpectrumCountingPreferences spectrumCountingPreferences) {
+    public SpectrumCountingSettingsDialog(java.awt.Frame parentFrame, SpectrumCountingParameters spectrumCountingPreferences) {
         super(parentFrame, true);
         initComponents();
         setUpGui();
@@ -53,10 +53,10 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
      * @param spectrumCountingPreferences the spectrum counting preferences to
      * display
      */
-    private void populateGUI(SpectrumCountingPreferences spectrumCountingPreferences) {
+    private void populateGUI(SpectrumCountingParameters spectrumCountingPreferences) {
 
         // The spectrum couting method
-        if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingPreferences.SpectralCountingMethod.NSAF) {
+        if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingParameters.SpectralCountingMethod.NSAF) {
             methodCmb.setSelectedIndex(0);
             validationLevelLbl.setText("Spectra Considered:");
         } else {
@@ -184,13 +184,13 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
      *
      * @return the spectrum couting preferences as set by the user
      */
-    public SpectrumCountingPreferences getSpectrumCountingPreferences() {
+    public SpectrumCountingParameters getSpectrumCountingPreferences() {
 
-        SpectrumCountingPreferences spectrumCountingPreferences = new SpectrumCountingPreferences();
+        SpectrumCountingParameters spectrumCountingPreferences = new SpectrumCountingParameters();
         if (methodCmb.getSelectedIndex() == 0) {
-            spectrumCountingPreferences.setSelectedMethod(SpectrumCountingPreferences.SpectralCountingMethod.NSAF);
+            spectrumCountingPreferences.setSelectedMethod(SpectrumCountingParameters.SpectralCountingMethod.NSAF);
         } else if (methodCmb.getSelectedIndex() == 1) {
-            spectrumCountingPreferences.setSelectedMethod(SpectrumCountingPreferences.SpectralCountingMethod.EMPAI);
+            spectrumCountingPreferences.setSelectedMethod(SpectrumCountingParameters.SpectralCountingMethod.EMPAI);
         } else {
             throw new UnsupportedOperationException("Option " + methodCmb.getSelectedIndex() + "not supported.");
         }

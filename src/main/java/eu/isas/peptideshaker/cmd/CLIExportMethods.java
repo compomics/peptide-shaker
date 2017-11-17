@@ -18,7 +18,7 @@ import eu.isas.peptideshaker.followup.RecalibrationExporter;
 import eu.isas.peptideshaker.followup.SpectrumExporter;
 import eu.isas.peptideshaker.preferences.FilterParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.File;
@@ -254,7 +254,7 @@ public class CLIExportMethods {
      */
     public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment,
             ProjectDetails projectDetails, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            IdentificationParameters identificationParameters, int nSurroundingAA, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
+            IdentificationParameters identificationParameters, int nSurroundingAA, SpectrumCountingParameters spectrumCountingPreferences, WaitingHandler waitingHandler)
             throws IOException, SQLException, ClassNotFoundException,
             InterruptedException, MzMLUnmarshallerException, MathException {
 

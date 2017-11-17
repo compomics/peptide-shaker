@@ -31,7 +31,7 @@ import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.utils.Properties;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
@@ -695,7 +695,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(searchParameters);
 
         // set the spectrum counting prefrences
-        spectrumCountingPreferences = new SpectrumCountingPreferences();
+        spectrumCountingPreferences = new SpectrumCountingParameters();
 
         // incrementing the counter for a new PeptideShaker start run via GUI
         if (utilitiesUserPreferences.isAutoUpdate()) {

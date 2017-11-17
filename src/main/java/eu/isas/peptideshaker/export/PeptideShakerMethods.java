@@ -14,7 +14,7 @@ import com.compomics.util.parameters.identification.advanced.IdMatchValidationPa
 import com.compomics.util.parameters.identification.advanced.ModificationLocalizationParameters;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -388,9 +388,9 @@ public class PeptideShakerMethods {
      *
      * @return the spectrum counting method usage details
      */
-    public static String getSpectrumCounting(SpectrumCountingPreferences spectrumCountingPreferences) {
+    public static String getSpectrumCounting(SpectrumCountingParameters spectrumCountingPreferences) {
         String text = "Spectrum counting abundance indexes were estimated using the ";
-        if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) {
+        if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingParameters.SpectralCountingMethod.EMPAI) {
             text += "emPAI index [PMID 15958392].";
         } else {
             text += "Normalized Spectrum Abundance Factor [PMID 15282323] adapted for better handling of protein inference issues and peptide detectability.";

@@ -29,7 +29,7 @@ import com.compomics.util.parameters.identification.advanced.SequenceMatchingPar
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters.SpectralCountingMethod;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.awt.Color;

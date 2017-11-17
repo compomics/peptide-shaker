@@ -17,12 +17,12 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.ProteinInferenceParameters;
 import eu.isas.peptideshaker.export.CpsExporter;
-import eu.isas.peptideshaker.parameters.PeptideShakerSettings;
+import eu.isas.peptideshaker.parameters.PeptideShakerParameters;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.FilterParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters.SpectralCountingMethod;
 import eu.isas.peptideshaker.preferences.UserPreferences;
 import eu.isas.peptideshaker.preferences.UserPreferencesParent;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
@@ -57,7 +57,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * The spectrum counting preferences.
      */
-    protected SpectrumCountingPreferences spectrumCountingPreferences;
+    protected SpectrumCountingParameters spectrumCountingPreferences;
     /**
      * The project details.
      */
@@ -197,8 +197,8 @@ public class CpsParent extends UserPreferencesParent {
         System.out.println(cpsFile.getAbsolutePath());
         
         ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), destinationFile.getName(), false);
-        BlobObject blobObject = (BlobObject)objectsDB.retrieveObject(PeptideShakerSettings.nameInCpsSettingsTable);
-        PeptideShakerSettings experimentSettings = (PeptideShakerSettings)blobObject.unBlob();        
+        BlobObject blobObject = (BlobObject)objectsDB.retrieveObject(PeptideShakerParameters.key);
+        PeptideShakerParameters experimentSettings = (PeptideShakerParameters)blobObject.unBlob();        
         
         projectParameters = (ProjectParameters)objectsDB.retrieveObject(ProjectParameters.nameForDatabase);
         identification = new Ms2Identification(projectParameters.getProjectUniqueName(), objectsDB);
@@ -446,7 +446,7 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @return the spectrum counting preferences
      */
-    public SpectrumCountingPreferences getSpectrumCountingPreferences() {
+    public SpectrumCountingParameters getSpectrumCountingPreferences() {
         return spectrumCountingPreferences;
     }
 
@@ -519,7 +519,7 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param spectrumCountingPreferences the spectrum counting preferences
      */
-    public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences) {
+    public void setSpectrumCountingPreferences(SpectrumCountingParameters spectrumCountingPreferences) {
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         if (identificationFeaturesGenerator != null) {
             identificationFeaturesGenerator.setSpectrumCountingPreferences(spectrumCountingPreferences);
@@ -612,7 +612,7 @@ public class CpsParent extends UserPreferencesParent {
     public void setDefaultPreferences() {
         SearchParameters searchParameters = new SearchParameters();
         identificationParameters = new IdentificationParameters(searchParameters);
-        spectrumCountingPreferences = new SpectrumCountingPreferences();
+        spectrumCountingPreferences = new SpectrumCountingParameters();
         spectrumCountingPreferences.setSelectedMethod(SpectralCountingMethod.NSAF);
         spectrumCountingPreferences.setMatchValidationLevel(MatchValidationLevel.doubtful.getIndex());
     }

@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.export;
 
 import com.compomics.util.db.object.objects.BlobObject;
 import com.compomics.util.Util;
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
@@ -11,15 +10,13 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.FilterParameters;
-import eu.isas.peptideshaker.parameters.PeptideShakerSettings;
+import eu.isas.peptideshaker.parameters.PeptideShakerParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
 import eu.isas.peptideshaker.utils.Metrics;
 import java.io.*;
-import java.sql.SQLException;
-import org.apache.commons.compress.archivers.ArchiveException;
 
 /**
  * This class exports a PeptideShaker project as cpsx file.
@@ -34,12 +31,11 @@ public class CpsExporter {
      * @param destinationFile the destination cps file
      * @param waitingHandler a waiting handler used to cancel the saving
      * @param identification the identification to save
-     * @param shotgunProtocol information about the protocol used
      * @param identificationParameters the identification parameters
-     * @param spectrumCountingPreferences the spectrum counting preferences
+     * @param spectrumCountingParameters the spectrum counting preferences
      * @param projectDetails the project details
-     * @param filterPreferences the filtering preferences
-     * @param displayPreferences the display preferences
+     * @param filterParameters the filtering preferences
+     * @param displayParameters the display preferences
      * @param metrics the dataset
      * @param geneMaps the gene maps
      * @param identificationFeaturesCache the identification features cache
@@ -52,10 +48,11 @@ public class CpsExporter {
      * @throws java.lang.InterruptedException exception thrown if a thread is
      * interrupted while saving the project
      */
-    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, Identification identification, ShotgunProtocol shotgunProtocol,
-            IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterParameters filterPreferences,
+    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, Identification identification,
+            IdentificationParameters identificationParameters, SpectrumCountingParameters spectrumCountingParameters, 
+            ProjectDetails projectDetails, FilterParameters filterParameters,
             Metrics metrics, GeneMaps geneMaps, IdentificationFeaturesCache identificationFeaturesCache, boolean emptyCache,
-            DisplayParameters displayPreferences, File dbFolder) throws IOException, InterruptedException {
+            DisplayParameters displayParameters, File dbFolder) throws IOException, InterruptedException {
 
         identificationFeaturesCache.setReadOnly(true);
 
@@ -65,13 +62,13 @@ public class CpsExporter {
             projectDetails.setUserAdvocateMapping(Advocate.getUserAdvocates());
 
             // add all necessary data and parameters into the db for export
-            if (!identification.contains(PeptideShakerSettings.nameInCpsSettingsTable)) {
+            if (!identification.contains(PeptideShakerParameters.key)) {
 
-                PeptideShakerSettings peptideShakerSettings = new PeptideShakerSettings(shotgunProtocol, identificationParameters, spectrumCountingPreferences,
-                        projectDetails, filterPreferences, displayPreferences, metrics, geneMaps, identificationFeaturesCache);
+                PeptideShakerParameters peptideShakerParameters = new PeptideShakerParameters(identificationParameters, spectrumCountingParameters,
+                        projectDetails, filterParameters, displayParameters, metrics, geneMaps, identificationFeaturesCache);
 
-                BlobObject blobObject = new BlobObject(peptideShakerSettings);
-                identification.addObject(PeptideShakerSettings.nameInCpsSettingsTable, blobObject);
+                BlobObject blobObject = new BlobObject(peptideShakerParameters);
+                identification.addObject(PeptideShakerParameters.key, blobObject);
 
             }
 

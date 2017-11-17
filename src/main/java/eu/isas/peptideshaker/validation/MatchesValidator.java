@@ -37,7 +37,7 @@ import eu.isas.peptideshaker.filtering.items.AssumptionFilterItem;
 import eu.isas.peptideshaker.filtering.items.PeptideFilterItem;
 import eu.isas.peptideshaker.filtering.items.ProteinFilterItem;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.maps.PeptideSpecificMap;
@@ -134,7 +134,7 @@ public class MatchesValidator {
      */
     public void validateIdentifications(Identification identification, Metrics metrics, GeneMaps geneMaps, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler,
             IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator, InputMap inputMap,
-            SpectrumCountingPreferences spectrumCountingPreferences, ProcessingParameters processingPreferences) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException 
+            SpectrumCountingParameters spectrumCountingPreferences, ProcessingParameters processingPreferences) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException 
 
     /**
      * This method validates the identification matches of an identification
@@ -169,7 +169,7 @@ public class MatchesValidator {
     public void validateIdentifications(Identification identification, Metrics metrics, GeneMaps geneMaps, InputMap inputMap,
             WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             IdentificationParameters identificationParameters,
-            SpectrumCountingPreferences spectrumCountingPreferences, ProcessingParameters processingPreferences)
+            SpectrumCountingParameters spectrumCountingPreferences, ProcessingParameters processingPreferences)
             throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
         ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
@@ -1695,7 +1695,7 @@ public class MatchesValidator {
         /**
          * The spectrum counting preferences.
          */
-        private SpectrumCountingPreferences spectrumCountingPreferences;
+        private SpectrumCountingParameters spectrumCountingPreferences;
         /**
          * The waiting handler.
          */
@@ -1740,7 +1740,7 @@ public class MatchesValidator {
          * @param exceptionHandler handler for exceptions
          */
         public ProteinValidatorRunnable(ProteinMatchesIterator proteinMatchesIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps, Metrics metrics,
-                IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
+                IdentificationParameters identificationParameters, SpectrumCountingParameters spectrumCountingPreferences, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
             this.proteinMatchesIterator = proteinMatchesIterator;
             this.identification = identification;
             this.identificationFeaturesGenerator = identificationFeaturesGenerator;

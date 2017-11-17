@@ -4,13 +4,17 @@ import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.io.export.ExportScheme;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.file.SerializationUtils;
 import com.compomics.util.io.export.ExportFactory;
 import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.io.export.writers.ExcelWriter;
+import com.compomics.util.io.json.JsonMarshaller;
 import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.google.common.collect.Lists;
 import eu.isas.peptideshaker.export.exportfeatures.PsAnnotationFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsInputFilterFeature;
@@ -35,14 +39,17 @@ import eu.isas.peptideshaker.export.sections.PsSpectrumCountingSection;
 import eu.isas.peptideshaker.export.sections.PsValidationSection;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -86,36 +93,77 @@ public class PSExportFactory implements ExportFactory {
      * @return the instance of the factory
      */
     public static PSExportFactory getInstance() {
+        
         if (instance == null) {
+        
             try {
+            
                 File savedFile = new File(SERIALIZATION_FILE);
-                instance = (PSExportFactory) SerializationUtils.readObject(savedFile);
+                instance = loadFromFile(savedFile);
+            
             } catch (Exception e) {
+            
                 e.getMessage(); // print the message to the error log
                 instance = new PSExportFactory();
+                
                 try {
-                    instance.saveFactory();
+                
+                    saveFactory(instance);
+                
                 } catch (IOException ioe) {
+                
                     // cancel save
                     ioe.printStackTrace();
+                
                 }
             }
         }
+        
         return instance;
+    
     }
 
     /**
      * Saves the factory in the user folder.
      *
+     * @param psExportFactory the instance of the factory to save
+     * 
      * @throws IOException exception thrown whenever an error occurred while
      * saving the ptmFactory
      */
-    public void saveFactory() throws IOException {
+    public static void saveFactory(PSExportFactory psExportFactory) throws IOException {
+    
         File factoryFile = new File(SERIALIZATION_FILE);
+        
         if (!factoryFile.getParentFile().exists()) {
+        
             factoryFile.getParentFile().mkdir();
+        
         }
-        SerializationUtils.writeObject(instance, factoryFile);
+        
+        JsonMarshaller jsonMarshaller = new JsonMarshaller();
+        jsonMarshaller.saveObjectToJson(psExportFactory, factoryFile);
+    
+    }
+
+    /**
+     * Loads an export factory from a file. The file must be an export of the
+     * factory in the json format.
+     *
+     * @param file the file to load
+     *
+     * @return the export factory saved in file
+     *
+     * @throws IOException exception thrown whenever an error occurred while
+     * loading the file
+     */
+    public static PSExportFactory loadFromFile(File file) throws IOException {
+        
+        JsonMarshaller jsonMarshaller = new JsonMarshaller();
+        PSExportFactory result = (PSExportFactory) jsonMarshaller.fromJson(PSExportFactory.class, file);
+        
+        return result;
+    
     }
 
     /**
@@ -124,7 +172,9 @@ public class PSExportFactory implements ExportFactory {
      * @return a list of the implemented user schemes
      */
     public ArrayList<String> getUserSchemesNames() {
+        
         return new ArrayList<>(userSchemes.keySet());
+    
     }
 
     /**
@@ -135,30 +185,43 @@ public class PSExportFactory implements ExportFactory {
      * @return the default export scheme
      */
     public static ExportScheme getDefaultExportScheme(String schemeName) {
+    
         return getDefaultExportSchemes().get(schemeName);
+    
     }
 
     @Override
     public ExportScheme getExportScheme(String schemeName) {
+    
         ExportScheme exportScheme = userSchemes.get(schemeName);
+        
         if (exportScheme == null) {
+        
             exportScheme = getDefaultExportSchemes().get(schemeName);
+        
         }
+        
         return exportScheme;
+    
     }
 
     @Override
     public void removeExportScheme(String schemeName) {
+       
         userSchemes.remove(schemeName);
+
     }
 
     @Override
     public void addExportScheme(ExportScheme exportScheme) {
+
         userSchemes.put(exportScheme.getName(), exportScheme);
+
     }
 
     @Override
     public ArrayList<String> getImplementedSections() {
+
         ArrayList<String> result = new ArrayList<>();
         result.add(PsProteinFeature.type);
         result.add(PsPeptideFeature.type);
@@ -172,34 +235,51 @@ public class PSExportFactory implements ExportFactory {
         result.add(PsSpectrumCountingFeature.type);
         result.add(PsValidationFeature.type);
         return result;
+
     }
 
     @Override
     public ArrayList<ExportFeature> getExportFeatures(String sectionName, boolean includeSubFeatures) {
-        if (sectionName.equals(PsAnnotationFeature.type)) {
-            return PsAnnotationFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(PsInputFilterFeature.type)) {
-            return PsInputFilterFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(PsPeptideFeature.type)) {
-            return PsPeptideFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(PsProjectFeature.type)) {
-            return PsProjectFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(PsProteinFeature.type)) {
-            return PsProteinFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(PsPsmFeature.type)) {
-            return PsPsmFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(PsPtmScoringFeature.type)) {
-            return PsPtmScoringFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(PsSearchFeature.type)) {
-            return PsSearchFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(PsSpectrumCountingFeature.type)) {
-            return PsSpectrumCountingFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(PsValidationFeature.type)) {
-            return PsValidationFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(PsIdentificationAlgorithmMatchesFeature.type)) {
-            return PsIdentificationAlgorithmMatchesFeature.values()[0].getExportFeatures(includeSubFeatures);
+
+        switch (sectionName) {
+            
+            case PsAnnotationFeature.type:
+                return PsAnnotationFeature.values()[0].getExportFeatures(includeSubFeatures);
+                
+            case PsInputFilterFeature.type:
+                return PsInputFilterFeature.values()[0].getExportFeatures(includeSubFeatures);
+                
+            case PsPeptideFeature.type:
+                return PsPeptideFeature.values()[0].getExportFeatures(includeSubFeatures);
+                
+            case PsProjectFeature.type:
+                return PsProjectFeature.values()[0].getExportFeatures(includeSubFeatures);
+                
+            case PsProteinFeature.type:
+                return PsProteinFeature.values()[0].getExportFeatures(includeSubFeatures);
+                
+            case PsPsmFeature.type:
+                return PsPsmFeature.values()[0].getExportFeatures(includeSubFeatures);
+                
+            case PsPtmScoringFeature.type:
+                return PsPtmScoringFeature.values()[0].getExportFeatures(includeSubFeatures);
+                
+            case PsSearchFeature.type:
+                return PsSearchFeature.values()[0].getExportFeatures(includeSubFeatures);
+                
+            case PsSpectrumCountingFeature.type:
+                return PsSpectrumCountingFeature.values()[0].getExportFeatures(includeSubFeatures);
+                
+            case PsValidationFeature.type:
+                return PsValidationFeature.values()[0].getExportFeatures(includeSubFeatures);
+                
+            case PsIdentificationAlgorithmMatchesFeature.type:
+                return PsIdentificationAlgorithmMatchesFeature.values()[0].getExportFeatures(includeSubFeatures);
+                
+            default:
+                return new ArrayList<>(0);
+                
         }
-        return new ArrayList<>();
     }
 
     /**
@@ -207,10 +287,12 @@ public class PSExportFactory implements ExportFactory {
      *
      * @return a list of the default export schemes
      */
-    public static ArrayList<String> getDefaultExportSchemesNames() {
-        ArrayList<String> result = new ArrayList<>(getDefaultExportSchemes().keySet());
-        Collections.sort(result);
-        return result;
+    public static String[] getDefaultExportSchemesNames() {
+        
+        TreeMap<String,ExportScheme> exportSchemesMap = getDefaultExportSchemes();
+        
+        return exportSchemesMap.navigableKeySet().toArray(new String[exportSchemesMap.size()]);
+    
     }
 
     /**
@@ -240,83 +322,118 @@ public class PSExportFactory implements ExportFactory {
      * @param nSurroundingAA the number of surrounding amino acids to export
      * (mandatory for the Peptide section)
      * @param identificationParameters the identification parameters
+     * @param sequenceProvider a provider for the protein sequences
+     * @param proteinDetailsProvider the protein details provider
      * @param spectrumCountingPreferences the spectrum counting preferences
      * (mandatory for the spectrum counting section)
      * @param waitingHandler the waiting handler
      *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
-     * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while interacting with the database
-     * @throws SQLException exception thrown whenever an SQL exception occurred
-     * while interacting with the database
-     * @throws ClassNotFoundException exception thrown whenever an exception
-     * occurred while deserializing an object
-     * @throws MzMLUnmarshallerException exception thrown whenever an exception
-     * occurred while reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown whenever
-     * an exception occurred while estimating the theoretical coverage of a
-     * protein
      */
     public static void writeExport(ExportScheme exportScheme, File destinationFile, ExportFormat exportFormat, String experiment,
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
-            ArrayList<String> proteinKeys, ArrayList<String> peptideKeys, ArrayList<String> psmKeys,
-            String proteinMatchKey, int nSurroundingAA, IdentificationParameters identificationParameters,
-            SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
-            throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
+            long[] proteinKeys, long[] peptideKeys, long[] psmKeys,
+            String proteinMatchKey, int nSurroundingAA, IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, 
+            SpectrumCountingParameters spectrumCountingPreferences, WaitingHandler waitingHandler)
+            throws IOException {
 
         ExportWriter exportWriter = ExportWriter.getExportWriter(exportFormat, destinationFile, exportScheme.getSeparator(), exportScheme.getSeparationLines());
+        
         if (exportWriter instanceof ExcelWriter) {
+            
             ExcelWriter excelWriter = (ExcelWriter) exportWriter;
             PsExportStyle exportStyle = PsExportStyle.getReportStyle(excelWriter);
             excelWriter.setWorkbookStyle(exportStyle);
+        
         }
 
         exportWriter.writeMainTitle(exportScheme.getMainTitle());
 
         for (String sectionName : exportScheme.getSections()) {
+            
             if (exportScheme.isIncludeSectionTitles()) {
+                
                 exportWriter.startNewSection(sectionName);
+            
             } else {
+   
                 exportWriter.startNewSection();
+            
             }
-            if (sectionName.equals(PsAnnotationFeature.type)) {
-                PsAnnotationSection section = new PsAnnotationSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identificationParameters.getAnnotationPreferences(), waitingHandler);
-            } else if (sectionName.equals(PsInputFilterFeature.type)) {
-                PsInputFilterSection section = new PsInputFilterSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identificationParameters.getPeptideAssumptionFilter(), waitingHandler);
-            } else if (sectionName.equals(PsPeptideFeature.type)) {
-                PsPeptideSection section = new PsPeptideSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identification, identificationFeaturesGenerator, identificationParameters, peptideKeys, nSurroundingAA, "", exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
-            } else if (sectionName.equals(PsProjectFeature.type)) {
-                PsProjectSection section = new PsProjectSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(experiment, projectDetails, waitingHandler);
-            } else if (sectionName.equals(PsProteinFeature.type)) {
-                PsProteinSection section = new PsProteinSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identification, identificationFeaturesGenerator, geneMaps, identificationParameters, psmKeys, nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
-            } else if (sectionName.equals(PsPsmFeature.type)) {
-                PsPsmSection section = new PsPsmSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identification, identificationFeaturesGenerator, identificationParameters, psmKeys, "", nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
-            } else if (sectionName.equals(PsIdentificationAlgorithmMatchesFeature.type)) {
-                PsIdentificationAlgorithmMatchesSection section = new PsIdentificationAlgorithmMatchesSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identification, identificationFeaturesGenerator, identificationParameters, psmKeys, "", nSurroundingAA, waitingHandler);
-            } else if (sectionName.equals(PsPtmScoringFeature.type)) {
-                PsPtmScoringSection section = new PsPtmScoringSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identificationParameters.getPtmScoringPreferences(), waitingHandler);
-            } else if (sectionName.equals(PsSearchFeature.type)) {
-                PsSearchParametersSection section = new PsSearchParametersSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identificationParameters.getSearchParameters(), waitingHandler);
-            } else if (sectionName.equals(PsSpectrumCountingFeature.type)) {
-                PsSpectrumCountingSection section = new PsSpectrumCountingSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(spectrumCountingPreferences, waitingHandler);
-            } else if (sectionName.equals(PsValidationFeature.type)) {
-                PsValidationSection section = new PsValidationSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                PSMaps psMaps = new PSMaps();
-                psMaps = (PSMaps) identification.getUrParam(psMaps);
-                section.writeSection(psMaps, identificationParameters, waitingHandler);
-            } else {
-                throw new UnsupportedOperationException("Section " + sectionName + " not implemented.");
+            
+            switch (sectionName) {
+                
+                case PsAnnotationFeature.type:
+                    
+                        PsAnnotationSection psAnnotationSection = new PsAnnotationSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
+                        psAnnotationSection.writeSection(identificationParameters.getAnnotationPreferences(), waitingHandler);
+                        break;
+                        
+                case PsInputFilterFeature.type:
+                    
+                        PsInputFilterSection psInputFilterSection = new PsInputFilterSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
+                        psInputFilterSection.writeSection(identificationParameters.getPeptideAssumptionFilter(), waitingHandler);
+                        break;
+                        
+                case PsPeptideFeature.type:
+                    
+                        PsPeptideSection psPeptideSection = new PsPeptideSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
+                        psPeptideSection.writeSection(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, identificationParameters, peptideKeys, nSurroundingAA, "", exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
+                        break;
+                        
+                case PsProjectFeature.type:
+                    
+                        PsProjectSection psProjectSection = new PsProjectSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
+                        psProjectSection.writeSection(experiment, projectDetails, waitingHandler);
+                        break;
+                        
+                case PsProteinFeature.type:
+                    
+                        PsProteinSection psProteinSection = new PsProteinSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
+                        psProteinSection.writeSection(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, psmKeys, nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
+                        break;
+                        
+                case PsPsmFeature.type:
+                    
+                        PsPsmSection psPsmSection = new PsPsmSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
+                        psPsmSection.writeSection(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, identificationParameters, psmKeys, "", nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
+                        break;
+                        
+                case PsIdentificationAlgorithmMatchesFeature.type:
+                    
+                        PsIdentificationAlgorithmMatchesSection psIdentificationAlgorithmMatchesSection = new PsIdentificationAlgorithmMatchesSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
+                        psIdentificationAlgorithmMatchesSection.writeSection(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, identificationParameters, psmKeys, "", nSurroundingAA, waitingHandler);
+                        break;
+                        
+                case PsPtmScoringFeature.type:
+                    
+                        PsPtmScoringSection psPtmScoringSection = new PsPtmScoringSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
+                        psPtmScoringSection.writeSection(identificationParameters.getPtmScoringPreferences(), waitingHandler);
+                        break;
+                        
+                case PsSearchFeature.type:
+                    
+                        PsSearchParametersSection psSearchParametersSection = new PsSearchParametersSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
+                        psSearchParametersSection.writeSection(identificationParameters.getSearchParameters(), waitingHandler);
+                        break;
+                        
+                case PsSpectrumCountingFeature.type:
+                    
+                        PsSpectrumCountingSection psSpectrumCountingSection = new PsSpectrumCountingSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
+                        psSpectrumCountingSection.writeSection(spectrumCountingPreferences, waitingHandler);
+                        break;
+                        
+                case PsValidationFeature.type:
+                    
+                        PsValidationSection psValidationSection = new PsValidationSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
+                        PSMaps psMaps = new PSMaps();
+                        psMaps = (PSMaps) identification.getUrParam(psMaps);
+                        psValidationSection.writeSection(psMaps, identificationParameters, waitingHandler);
+                        break;
+                        
+                default:
+                    throw new UnsupportedOperationException("Section " + sectionName + " not implemented.");
             }
         }
 
@@ -336,30 +453,46 @@ public class PSExportFactory implements ExportFactory {
     public static void writeDocumentation(ExportScheme exportScheme, ExportFormat exportFormat, File destinationFile) throws IOException {
 
         ExportWriter exportWriter = ExportWriter.getExportWriter(exportFormat, destinationFile, exportScheme.getSeparator(), exportScheme.getSeparationLines());
+        
         if (exportWriter instanceof ExcelWriter) {
+            
             ExcelWriter excelWriter = (ExcelWriter) exportWriter;
             PsExportStyle exportStyle = PsExportStyle.getReportStyle(excelWriter); //@TODO use another style?
             excelWriter.setWorkbookStyle(exportStyle);
+        
         }
 
         String mainTitle = exportScheme.getMainTitle();
+        
         if (mainTitle != null) {
+        
             exportWriter.writeMainTitle(mainTitle);
+        
         }
+        
         for (String sectionName : exportScheme.getSections()) {
+            
             exportWriter.startNewSection(sectionName);
+            
             if (exportScheme.isIncludeSectionTitles()) {
+            
                 exportWriter.write(sectionName);
                 exportWriter.newLine();
+            
             }
+            
             for (ExportFeature exportFeature : exportScheme.getExportFeatures(sectionName)) {
+                
                 exportWriter.write(exportFeature.getTitle());
                 exportWriter.addSeparator();
                 exportWriter.write(exportFeature.getDescription());
                 exportWriter.newLine();
+            
             }
         }
+        
         exportWriter.close();
+    
     }
 
     /**
@@ -368,15 +501,25 @@ public class PSExportFactory implements ExportFactory {
      * @return the list of implemented reports
      */
     public String getCommandLineOptions() {
+        
         setUpReportList();
-        String options = "";
+        
+        StringBuilder options = new StringBuilder();
+        
         for (int i = 0; i < implementedReports.size(); i++) {
-            if (!options.equals("")) {
-                options += ", ";
+            
+            if (options.length() > 0) {
+                
+                options.append(", ");
+                
             }
-            options += i + ": " + implementedReports.get(i);
+            
+            options.append(i).append(": ").append(implementedReports.get(i));
+            
         }
-        return options;
+        
+        return options.toString();
+        
     }
 
     /**
@@ -385,10 +528,13 @@ public class PSExportFactory implements ExportFactory {
      *
      * @param experiment the experiment of the project
      * @param exportName the name of the report type
+     * 
      * @return the default file name for the export
      */
     public static String getDefaultReportName(String experiment, String exportName) {
+        
         return experiment + "_" + exportName + ".txt";
+        
     }
 
     /**
@@ -399,7 +545,9 @@ public class PSExportFactory implements ExportFactory {
      * @return the default file name for the export
      */
     public static String getDefaultDocumentation(String exportName) {
+        
         return exportName + "_documentation.txt";
+        
     }
 
     /**
@@ -410,24 +558,36 @@ public class PSExportFactory implements ExportFactory {
      * @return the corresponding export name
      */
     public String getExportTypeFromCommandLineOption(int commandLine) {
+        
         if (implementedReports == null) {
+            
             setUpReportList();
+            
         }
+        
         if (commandLine >= implementedReports.size()) {
+            
             throw new IllegalArgumentException("Unrecognized report type: " + commandLine + ". Available reports are: " + getCommandLineOptions() + ".");
+        
         }
+        
         return implementedReports.get(commandLine);
+        
     }
 
     /**
      * Initiates the sorted list of implemented reports.
      */
     private void setUpReportList() {
-        implementedReports = new ArrayList<>();
-        implementedReports.addAll(getDefaultExportSchemesNames());
-        ArrayList<String> userReports = new ArrayList<>(userSchemes.keySet());
-        Collections.sort(userReports);
-        implementedReports.addAll(userReports);
+        
+        implementedReports = Arrays.stream(getDefaultExportSchemesNames())
+                .collect(Collectors.toCollection(ArrayList::new));
+        
+        implementedReports.addAll(
+                userSchemes.keySet().stream()
+                .sorted()
+                .collect(Collectors.toList()));
+        
     }
 
     /**
@@ -435,7 +595,7 @@ public class PSExportFactory implements ExportFactory {
      *
      * @return a list containing the default schemes
      */
-    private static HashMap<String, ExportScheme> getDefaultExportSchemes() {
+    private static TreeMap<String, ExportScheme> getDefaultExportSchemes() {
 
         ///////////////////////////
         // Default hierarchical report
@@ -555,8 +715,6 @@ public class PSExportFactory implements ExportFactory {
         sectionContent.add(PsProteinFeature.validated_peptides);
         sectionContent.add(PsProteinFeature.unique_peptides);
         sectionContent.add(PsProteinFeature.unique_validated_peptides);
-        sectionContent.add(PsProteinFeature.unique_peptides_group);
-        sectionContent.add(PsProteinFeature.unique_validated_peptides_group);
         sectionContent.add(PsProteinFeature.psms);
         sectionContent.add(PsProteinFeature.validated_psms);
 
@@ -737,8 +895,6 @@ public class PSExportFactory implements ExportFactory {
         sectionContent.add(PsProteinFeature.validated_peptides);
         sectionContent.add(PsProteinFeature.unique_peptides);
         sectionContent.add(PsProteinFeature.unique_validated_peptides);
-        sectionContent.add(PsProteinFeature.unique_peptides_group);
-        sectionContent.add(PsProteinFeature.unique_validated_peptides_group);
         sectionContent.add(PsProteinFeature.psms);
         sectionContent.add(PsProteinFeature.validated_psms);
 
@@ -893,7 +1049,7 @@ public class PSExportFactory implements ExportFactory {
 
         ExportScheme coa = new ExportScheme("Certificate of Analysis", false, sectionsList, exportFeatures, ": ", true, false, 2, true, false, true);
 
-        HashMap<String, ExportScheme> defaultSchemes = new HashMap<>();
+        TreeMap<String, ExportScheme> defaultSchemes = new TreeMap<>();
         defaultSchemes.put(topDownReport.getName(), topDownReport);
         defaultSchemes.put(proteinReport.getName(), proteinReport);
         defaultSchemes.put(peptideReport.getName(), peptideReport);
@@ -903,7 +1059,9 @@ public class PSExportFactory implements ExportFactory {
         defaultSchemes.put(peptidePhosphoReport.getName(), peptidePhosphoReport);
         defaultSchemes.put(psmPhosphoReport.getName(), psmPhosphoReport);
         defaultSchemes.put(coa.getName(), coa);
+        
         return defaultSchemes;
+        
     }
 
     /**
@@ -912,7 +1070,9 @@ public class PSExportFactory implements ExportFactory {
      * @return the file where to save the implemented export schemes
      */
     public static String getSerializationFile() {
+        
         return SERIALIZATION_FILE;
+        
     }
 
     /**
@@ -921,8 +1081,10 @@ public class PSExportFactory implements ExportFactory {
      * @return the folder where to save the implemented export schemes
      */
     public static String getSerializationFolder() {
+        
         File tempFile = new File(getSerializationFile());
         return tempFile.getParent();
+        
     }
 
     /**
@@ -932,6 +1094,8 @@ public class PSExportFactory implements ExportFactory {
      * export schemes
      */
     public static void setSerializationFolder(String serializationFolder) {
+        
         PSExportFactory.SERIALIZATION_FILE = serializationFolder + "/exportFactory.cus";
+        
     }
 }

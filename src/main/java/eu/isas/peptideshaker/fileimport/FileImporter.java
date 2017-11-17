@@ -33,7 +33,7 @@ import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.protein_inference.PeptideMapper;
 import eu.isas.peptideshaker.protein_inference.TagMapper;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
@@ -136,7 +136,7 @@ public class FileImporter {
      * line mode).
      */
     public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, ProcessingParameters processingPreferences,
-            SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, boolean backgroundThread) {
+            SpectrumCountingParameters spectrumCountingPreferences, ProjectDetails projectDetails, boolean backgroundThread) {
 
         IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, identificationParameters, processingPreferences, spectrumCountingPreferences, projectDetails);
 
@@ -222,7 +222,7 @@ public class FileImporter {
         /**
          * The spectrum counting preferences.
          */
-        private final SpectrumCountingPreferences spectrumCountingPreferences;
+        private final SpectrumCountingParameters spectrumCountingPreferences;
         /**
          * The number of retained first hits.
          */
@@ -299,7 +299,7 @@ public class FileImporter {
          */
         public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
                 IdentificationParameters identificationParameters, ProcessingParameters processingPreferences,
-                SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails) {
+                SpectrumCountingParameters spectrumCountingPreferences, ProjectDetails projectDetails) {
 
             this.idFiles = new ArrayList<>();
             HashMap<String, File> filesMap = new HashMap<>();

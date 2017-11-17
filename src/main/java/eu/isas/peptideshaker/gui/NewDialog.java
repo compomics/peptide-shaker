@@ -36,7 +36,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.experiment.io.biology.protein.Header.ProteinDatabase;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ProjectSettingsDialog;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
 import eu.isas.peptideshaker.validation.MatchesValidator;
@@ -128,7 +128,7 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * The spectrum counting preferences.
      */
-    private SpectrumCountingPreferences spectrumCountingPreferences = new SpectrumCountingPreferences();
+    private SpectrumCountingParameters spectrumCountingPreferences = new SpectrumCountingParameters();
     /**
      * The project details.
      */

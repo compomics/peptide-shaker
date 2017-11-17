@@ -40,7 +40,7 @@ import com.compomics.util.parameters.identification.advanced.SequenceMatchingPar
 import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import com.compomics.util.waiting.Duration;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.protein_inference.ProteinInference;
 import eu.isas.peptideshaker.ptm.PtmScorer;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
@@ -195,7 +195,7 @@ public class PeptideShaker {
      */
     public void importFiles(WaitingHandler waitingHandler, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             IdentificationParameters identificationParameters, ProjectDetails projectDetails,
-            ProcessingParameters processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, boolean backgroundThread) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+            ProcessingParameters processingPreferences, SpectrumCountingParameters spectrumCountingPreferences, boolean backgroundThread) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         projectCreationDuration = new Duration();
         projectCreationDuration.start();
@@ -233,7 +233,7 @@ public class PeptideShaker {
      */
     public void processIdentifications(InputMap inputMap, HashMap<String, Integer> proteinCount, WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler, IdentificationParameters identificationParameters,
-            ProcessingParameters processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails)
+            ProcessingParameters processingPreferences, SpectrumCountingParameters spectrumCountingPreferences, ProjectDetails projectDetails)
             throws Exception {
 
         identification.getObjectsDB().commit();

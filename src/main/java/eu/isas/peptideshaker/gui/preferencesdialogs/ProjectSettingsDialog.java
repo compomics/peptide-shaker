@@ -4,7 +4,7 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.preferences_dialogs.DisplayPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.preferences_dialogs.SpectrumCountingSettingsDialog;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import java.awt.Dialog;
 import java.awt.Toolkit;
 
@@ -23,7 +23,7 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
     /**
      * The spectrum counting preferences.
      */
-    private SpectrumCountingPreferences spectrumCountingPreferences;
+    private SpectrumCountingParameters spectrumCountingPreferences;
     /**
      * The display preferences.
      */
@@ -41,7 +41,7 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param displayPreferences the display preferences
      */
-    public ProjectSettingsDialog(java.awt.Frame parentFrame, Dialog owner, SpectrumCountingPreferences spectrumCountingPreferences, DisplayParameters displayPreferences) {
+    public ProjectSettingsDialog(java.awt.Frame parentFrame, Dialog owner, SpectrumCountingParameters spectrumCountingPreferences, DisplayParameters displayPreferences) {
         
         super(owner, true);
         initComponents();
@@ -61,7 +61,7 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param displayPreferences the display preferences
      */
-    public ProjectSettingsDialog(java.awt.Frame parentFrame, SpectrumCountingPreferences spectrumCountingPreferences, DisplayParameters displayPreferences) {
+    public ProjectSettingsDialog(java.awt.Frame parentFrame, SpectrumCountingParameters spectrumCountingPreferences, DisplayParameters displayPreferences) {
         
         super(parentFrame, true);
         initComponents();
@@ -104,7 +104,7 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
      *
      * @return the spectrum counting preferences
      */
-    public SpectrumCountingPreferences getSpectrumCountingPreferences() {
+    public SpectrumCountingParameters getSpectrumCountingPreferences() {
         return spectrumCountingPreferences;
     }
 

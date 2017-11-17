@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class SpectrumCountingPreferences implements Serializable {
+public class SpectrumCountingParameters implements Serializable {
 
     /**
      * Serial version UID for post-serialization compatibility.
@@ -51,7 +51,7 @@ public class SpectrumCountingPreferences implements Serializable {
     /**
      * Default constructor.
      */
-    public SpectrumCountingPreferences() {
+    public SpectrumCountingParameters() {
         // Set default preferences
         selectedMethod = SpectralCountingMethod.NSAF;
         matchValidationLevel = MatchValidationLevel.doubtful.getIndex();
@@ -63,7 +63,7 @@ public class SpectrumCountingPreferences implements Serializable {
      * @param otherSpectrumCountingPreferences the other spectrum counting
      * preferences
      */
-    public SpectrumCountingPreferences(SpectrumCountingPreferences otherSpectrumCountingPreferences) {
+    public SpectrumCountingParameters(SpectrumCountingParameters otherSpectrumCountingPreferences) {
         this.selectedMethod = otherSpectrumCountingPreferences.getSelectedMethod();
         this.normalize = otherSpectrumCountingPreferences.getNormalize();
         this.referenceMass = otherSpectrumCountingPreferences.getReferenceMass();
@@ -117,7 +117,7 @@ public class SpectrumCountingPreferences implements Serializable {
      * @return a boolean indicating whether the other spectrum counting
      * preferences is the same as this one
      */
-    public boolean isSameAs(SpectrumCountingPreferences anotherSpectrumCountingPreferences) {
+    public boolean isSameAs(SpectrumCountingParameters anotherSpectrumCountingPreferences) {
         if (!getNormalize() && anotherSpectrumCountingPreferences.getNormalize()
                 || getNormalize() && !anotherSpectrumCountingPreferences.getNormalize()) {
             return false;

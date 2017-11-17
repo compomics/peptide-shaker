@@ -9,7 +9,7 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.FilterParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
 import eu.isas.peptideshaker.utils.Metrics;
 import java.io.Serializable;
@@ -19,7 +19,7 @@ import java.io.Serializable;
  *
  * @author Marc Vaudel
  */
-public class PeptideShakerSettings extends DbObject implements UrParameter, Serializable {
+public class PeptideShakerParameters extends DbObject implements UrParameter, Serializable {
 
     /**
      * Serial version UID for post-serialization compatibility.
@@ -32,7 +32,7 @@ public class PeptideShakerSettings extends DbObject implements UrParameter, Seri
     /**
      * The spectrum counting preferences.
      */
-    private SpectrumCountingPreferences spectrumCountingPreferences;
+    private SpectrumCountingParameters spectrumCountingPreferences;
     /**
      * The GUI filter preferences.
      */
@@ -60,12 +60,12 @@ public class PeptideShakerSettings extends DbObject implements UrParameter, Seri
     /**
      * The key of the object when stored in settings table of a cps file.
      */
-    public static final long nameInCpsSettingsTable = ExperimentObject.asLong("PeptideShaker");
+    public static final long key = ExperimentObject.asLong("PeptideShaker");
 
     /**
      * Blank constructor.
      */
-    public PeptideShakerSettings() {
+    public PeptideShakerParameters() {
     }
 
     /**
@@ -80,8 +80,8 @@ public class PeptideShakerSettings extends DbObject implements UrParameter, Seri
      * @param geneMaps The gene maps
      * @param identificationFeaturesCache The identification features cache
      */
-    public PeptideShakerSettings(IdentificationParameters identificationParameters,
-            SpectrumCountingPreferences spectrumCountingPreferences,
+    public PeptideShakerParameters(IdentificationParameters identificationParameters,
+            SpectrumCountingParameters spectrumCountingPreferences,
             ProjectDetails projectDetails,
             FilterParameters filterPreferences,
             DisplayParameters displayPreferences,
@@ -131,7 +131,7 @@ public class PeptideShakerSettings extends DbObject implements UrParameter, Seri
      *
      * @return the spectrum counting preferences of the project
      */
-    public SpectrumCountingPreferences getSpectrumCountingPreferences() {
+    public SpectrumCountingParameters getSpectrumCountingPreferences() {
     
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         
@@ -139,7 +139,7 @@ public class PeptideShakerSettings extends DbObject implements UrParameter, Seri
     
     }
     
-    public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences){
+    public void setSpectrumCountingPreferences(SpectrumCountingParameters spectrumCountingPreferences){
     
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         

@@ -119,12 +119,10 @@ public class PsIdentificationAlgorithmMatchesSection {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * interacting with a file
-     * @throws InterruptedException thrown whenever a threading error occurred
-     * while interacting with the database
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, IdentificationParameters identificationParameters, ArrayList<Long> keys,
-            String linePrefix, int nSurroundingAA, WaitingHandler waitingHandler) throws IOException, InterruptedException {
+            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, IdentificationParameters identificationParameters, long[] keys,
+            String linePrefix, int nSurroundingAA, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -156,8 +154,6 @@ public class PsIdentificationAlgorithmMatchesSection {
                 }
                 waitingHandler.increaseSecondaryProgressCounter();
             }
-
-            long spectrumMatchKey = spectrumMatch.getKey();
 
             HashMap<Integer, HashMap<Double, ArrayList<PeptideAssumption>>> peptideAssumptions = spectrumMatch.getPeptideAssumptionsMap();
 

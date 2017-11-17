@@ -45,7 +45,7 @@ import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.maps.ProteinMap;
 import eu.isas.peptideshaker.scoring.PtmScoring;
@@ -131,7 +131,7 @@ public class MzIdentMLExport {
     /**
      * The spectrum counting preferences.
      */
-    private SpectrumCountingPreferences spectrumCountingPreferences;
+    private SpectrumCountingParameters spectrumCountingPreferences;
     /**
      * The identification feature generator.
      */
@@ -219,7 +219,7 @@ public class MzIdentMLExport {
      * occurred while deserializing an object
      */
     public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingParameters spectrumCountingPreferences,
             IdentificationFeaturesGenerator identificationFeaturesGenerator, File outputFile, boolean includeProteinSequences, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException {
         this(peptideShakerVersion, identification, projectDetails, shotgunProtocol, identificationParameters, spectrumCountingPreferences, identificationFeaturesGenerator, outputFile, includeProteinSequences, waitingHandler, MatchValidationLevel.none, MatchValidationLevel.none, MatchValidationLevel.none);
     }
@@ -254,7 +254,7 @@ public class MzIdentMLExport {
      * occurred while deserializing an object
      */
     public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingParameters spectrumCountingPreferences,
             IdentificationFeaturesGenerator identificationFeaturesGenerator, File outputFile, boolean includeProteinSequences, WaitingHandler waitingHandler,
             MatchValidationLevel proteinMatchValidationLevel, MatchValidationLevel peptideMatchValidationLevel, MatchValidationLevel psmMatchValidationLevel) throws IOException, ClassNotFoundException {
 

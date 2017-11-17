@@ -27,7 +27,7 @@ import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelD
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters.SpectralCountingMethod;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.awt.Color;

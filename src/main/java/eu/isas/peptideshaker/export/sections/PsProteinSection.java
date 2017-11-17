@@ -21,7 +21,7 @@ import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsProteinFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPsmFeature;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
@@ -117,7 +117,7 @@ public class PsProteinSection {
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider,
-            GeneMaps geneMaps, IdentificationParameters identificationParameters, Collection<Long> keys,
+            GeneMaps geneMaps, IdentificationParameters identificationParameters, long[] keys,
             int nSurroundingAas, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException {
 
@@ -130,14 +130,17 @@ public class PsProteinSection {
         }
 
         if (keys == null) {
-            keys = identification.getProteinIdentification();
+            
+            keys = identification.getProteinIdentification().stream()
+                    .mapToLong(Long::longValue)
+                    .toArray();
         }
         int line = 1;
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Exporting. Please Wait...");
             waitingHandler.resetSecondaryProgressCounter();
-            waitingHandler.setMaxSecondaryProgressCounter(keys.size());
+            waitingHandler.setMaxSecondaryProgressCounter(keys.length);
         }
 
         for (long key : keys) {
@@ -500,57 +503,49 @@ public class PsProteinSection {
                 
             case spectrum_counting_nsaf:
                 
-                return Double.toString(
-                        identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
-                        SpectrumCountingPreferences.SpectralCountingMethod.NSAF));
+                return Double.toString(identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
+                        SpectrumCountingParameters.SpectralCountingMethod.NSAF));
                 
             case spectrum_counting_empai:
                 
-                return Double.toString(
-                        identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
-                        SpectrumCountingPreferences.SpectralCountingMethod.EMPAI));
+                return Double.toString(identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
+                        SpectrumCountingParameters.SpectralCountingMethod.EMPAI));
                 
             case spectrum_counting_empai_percent:
                 
-                return Double.toString(
-                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
+                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
                                 Units.percent, 
-                                SpectrumCountingPreferences.SpectralCountingMethod.EMPAI));
+                                SpectrumCountingParameters.SpectralCountingMethod.EMPAI));
             
             case spectrum_counting_nsaf_percent:
                 
-                return Double.toString(
-                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
+                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
                                 Units.percent, 
-                                SpectrumCountingPreferences.SpectralCountingMethod.NSAF));
+                                SpectrumCountingParameters.SpectralCountingMethod.NSAF));
             
             case spectrum_counting_empai_ppm:
 
-                return Double.toString(
-                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
+                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
                                 Units.ppm, 
-                                SpectrumCountingPreferences.SpectralCountingMethod.EMPAI));
+                                SpectrumCountingParameters.SpectralCountingMethod.EMPAI));
 
             case spectrum_counting_nsaf_ppm:
 
-                return Double.toString(
-                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
+                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
                                 Units.ppm, 
-                                SpectrumCountingPreferences.SpectralCountingMethod.NSAF));
+                                SpectrumCountingParameters.SpectralCountingMethod.NSAF));
 
             case spectrum_counting_empai_fmol:
 
-                return Double.toString(
-                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
+                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
                                 Units.fmol, 
-                                SpectrumCountingPreferences.SpectralCountingMethod.EMPAI));
+                                SpectrumCountingParameters.SpectralCountingMethod.EMPAI));
 
             case spectrum_counting_nsaf_fmol:
 
-                return Double.toString(
-                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
+                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
                                 Units.fmol, 
-                                SpectrumCountingPreferences.SpectralCountingMethod.NSAF));
+                                SpectrumCountingParameters.SpectralCountingMethod.NSAF));
 
             case starred:
                 

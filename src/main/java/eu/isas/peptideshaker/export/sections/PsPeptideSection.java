@@ -68,23 +68,38 @@ public class PsPeptideSection {
      * @param writer the writer which will write to the file
      */
     public PsPeptideSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
+        
         ArrayList<ExportFeature> psmFeatures = new ArrayList<>();
+        
         for (ExportFeature exportFeature : exportFeatures) {
+            
             if (exportFeature instanceof PsPeptideFeature) {
+            
                 peptideFeatures.add((PsPeptideFeature) exportFeature);
+            
             } else if (exportFeature instanceof PsPsmFeature || exportFeature instanceof PsIdentificationAlgorithmMatchesFeature || exportFeature instanceof PsFragmentFeature) {
+            
                 psmFeatures.add(exportFeature);
+            
             } else {
+            
                 throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
+            
             }
         }
+        
         Collections.sort(peptideFeatures);
+        
         if (!psmFeatures.isEmpty()) {
+        
             psmSection = new PsPsmSection(psmFeatures, indexes, header, writer);
+        
         }
+        
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
+    
     }
 
     /**
@@ -126,6 +141,7 @@ public class PsPeptideSection {
             waitingHandler.setWaitingText("Exporting. Please Wait...");
             waitingHandler.resetSecondaryProgressCounter();
             waitingHandler.setMaxSecondaryProgressCounter(keys == null ? identification.getPeptideIdentification().size() : keys.length);
+        
         }
         
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(keys, waitingHandler);

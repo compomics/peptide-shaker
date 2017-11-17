@@ -68,7 +68,7 @@ import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.FilterParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.preferences.UserPreferences;
 import eu.isas.peptideshaker.PeptideShakerWrapper;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
@@ -2474,7 +2474,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         if (!preferencesDialog.isCanceled()) {
 
             // See if the spectrum counting preferences need to be updated
-            SpectrumCountingPreferences newSpectrumCountingPreferences = preferencesDialog.getSpectrumCountingPreferences();
+            SpectrumCountingParameters newSpectrumCountingPreferences = preferencesDialog.getSpectrumCountingPreferences();
             if (!newSpectrumCountingPreferences.isSameAs(getSpectrumCountingPreferences())) {
                 setSpectrumCountingPreferences(newSpectrumCountingPreferences);
                 getIdentificationFeaturesGenerator().clearSpectrumCounting();
@@ -3858,7 +3858,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @return the spectrum counting preferences
      */
-    public SpectrumCountingPreferences getSpectrumCountingPreferences() {
+    public SpectrumCountingParameters getSpectrumCountingPreferences() {
         return cpsParent.getSpectrumCountingPreferences();
     }
 
@@ -3867,7 +3867,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @param spectrumCountingPreferences new spectrum counting preferences
      */
-    public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences) {
+    public void setSpectrumCountingPreferences(SpectrumCountingParameters spectrumCountingPreferences) {
         cpsParent.setSpectrumCountingPreferences(spectrumCountingPreferences);
     }
 

@@ -4,7 +4,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import eu.isas.peptideshaker.export.exportfeatures.PsSpectrumCountingFeature;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,7 +67,7 @@ public class PsSpectrumCountingSection {
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file
      */
-    public void writeSection(SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler) throws IOException {
+    public void writeSection(SpectrumCountingParameters spectrumCountingPreferences, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
