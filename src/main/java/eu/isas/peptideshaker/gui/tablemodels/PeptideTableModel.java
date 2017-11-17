@@ -255,7 +255,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                         Protein currentProtein = sequenceFactory.getProtein(proteinAccession);
                         String peptideSequence = Peptide.getSequence(peptideKey);
                         indexes = currentProtein.getPeptideStart(peptideSequence,
-                                identificationParameters.getSequenceMatchingPreferences());
+                                identificationParameters.getSequenceMatchingParameters());
                     } catch (IOException e) {
                         exceptionHandler.catchException(e);
                         return "IO Exception";

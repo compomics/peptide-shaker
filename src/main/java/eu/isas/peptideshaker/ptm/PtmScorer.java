@@ -19,7 +19,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
-import com.compomics.util.experiment.identification.modification.PtmScore;
+import com.compomics.util.experiment.identification.modification.ModificationLocalizationScore;
 import com.compomics.util.experiment.identification.modification.ModificationSiteMapping;
 import com.compomics.util.experiment.identification.ptm.ptmscores.AScore;
 import com.compomics.util.experiment.identification.modification.scores.PhosphoRS;
@@ -36,10 +36,10 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Specific
 import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.parameters.PSPtmScores;
+import eu.isas.peptideshaker.parameters.PSModificationScores;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.maps.PsmPTMMap;
-import eu.isas.peptideshaker.scoring.PtmScoring;
+import eu.isas.peptideshaker.scoring.ModificationScoring;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -112,10 +112,10 @@ public class PtmScorer extends DbObject {
     public void attachDeltaScore(Identification identification, SpectrumMatch spectrumMatch, SequenceMatchingParameters sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         HashMap<String, ArrayList<Integer>> modificationProfiles = new HashMap<>();
-        PSPtmScores ptmScores = new PSPtmScores();
+        PSModificationScores ptmScores = new PSModificationScores();
 
         if (spectrumMatch.getUrParam(ptmScores) != null) {
-            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+            ptmScores = (PSModificationScores) spectrumMatch.getUrParam(ptmScores);
         }
 
         PSParameter psParameter = new PSParameter();
@@ -215,9 +215,9 @@ public class PtmScorer extends DbObject {
                         }
                     }
 
-                    PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
+                    ModificationScoring ptmScoring = ptmScores.getModificationScoring(modName);
                     if (ptmScoring == null) {
-                        ptmScoring = new PtmScoring(modName);
+                        ptmScoring = new ModificationScoring(modName);
                         ptmScores.addPtmScoring(modName, ptmScoring);
                     }
 
@@ -261,16 +261,16 @@ public class PtmScorer extends DbObject {
             PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        AnnotationParameters annotationPreferences = identificationParameters.getAnnotationPreferences();
-        ModificationLocalizationParameters scoringPreferences = identificationParameters.getPtmScoringPreferences();
-        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
+        ModificationLocalizationParameters scoringPreferences = identificationParameters.getModificationLocalizationParameters();
+        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
         SequenceMatchingPreferences ptmSequenceMatchingPreferences = scoringPreferences.getSequenceMatchingPreferences();
 
         ModificationParameters ptmProfile = searchParameters.getModificationParameters();
 
-        PSPtmScores ptmScores = new PSPtmScores();
+        PSModificationScores ptmScores = new PSModificationScores();
         if (spectrumMatch.getUrParam(ptmScores) != null) {
-            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+            ptmScores = (PSModificationScores) spectrumMatch.getUrParam(ptmScores);
         }
 
         HashMap<Double, ArrayList<Modification>> modifications = new HashMap<>();
@@ -300,17 +300,17 @@ public class PtmScorer extends DbObject {
         if (!modifications.isEmpty()) {
 
             MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
-            SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), bestPeptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
+            SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), bestPeptideAssumption, identificationParameters.getSequenceMatchingParameters(), identificationParameters.getModificationLocalizationParameters().getSequenceMatchingPreferences());
 
             for (Double ptmMass : modifications.keySet()) {
                 HashMap<Integer, Double> scores = null;
-                if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore && nMod.get(ptmMass) == 1) {
+                if (scoringPreferences.getSelectedProbabilisticScore() == ModificationLocalizationScore.AScore && nMod.get(ptmMass) == 1) {
                     scores = AScore.getAScore(peptide, modifications.get(ptmMass), spectrum, annotationPreferences, specificAnnotationPreferences,
                             scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences, ptmSequenceMatchingPreferences, peptideSpectrumAnnotator);
                     if (scores == null) {
                         throw new IllegalArgumentException("An error occurred while scoring spectrum " + spectrum.getSpectrumTitle() + "of file " + spectrum.getFileName() + " with the A-score."); // Most likely a compatibility issue with utilities
                     }
-                } else if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
+                } else if (scoringPreferences.getSelectedProbabilisticScore() == ModificationLocalizationScore.PhosphoRS) {
                     scores = PhosphoRS.getSequenceProbabilities(peptide, modifications.get(ptmMass), spectrum, annotationPreferences, specificAnnotationPreferences,
                             scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences,
                             ptmSequenceMatchingPreferences, peptideSpectrumAnnotator);
@@ -359,10 +359,10 @@ public class PtmScorer extends DbObject {
 
                         String ptmName = mappedModification.getName();
 
-                        PtmScoring ptmScoring = ptmScores.getPtmScoring(ptmName);
+                        ModificationScoring ptmScoring = ptmScores.getModificationScoring(ptmName);
 
                         if (ptmScoring == null) {
-                            ptmScoring = new PtmScoring(ptmName);
+                            ptmScoring = new ModificationScoring(ptmName);
                             ptmScores.addPtmScoring(ptmName, ptmScoring);
                         }
 
@@ -403,16 +403,16 @@ public class PtmScorer extends DbObject {
             WaitingHandler waitingHandler, PeptideSpectrumAnnotator peptideSpectrumAnnotator)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
-        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
         attachDeltaScore(identification, spectrumMatch, sequenceMatchingPreferences);
 
-        ModificationLocalizationParameters scoringPreferences = identificationParameters.getPtmScoringPreferences();
+        ModificationLocalizationParameters scoringPreferences = identificationParameters.getModificationLocalizationParameters();
 
         if (scoringPreferences.isProbabilisticScoreCalculation()) {
             attachProbabilisticScore(identification, spectrumMatch, identificationParameters, peptideSpectrumAnnotator);
         }
 
-        PSPtmScores ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+        PSModificationScores ptmScores = (PSModificationScores) spectrumMatch.getUrParam(new PSModificationScores());
 
         if (ptmScores != null) {
 
@@ -443,7 +443,7 @@ public class PtmScorer extends DbObject {
 
                     if (ptm.getMass() == ptmMass) {
 
-                        PtmScoring ptmScoring = ptmScores.getPtmScoring(modification);
+                        ModificationScoring ptmScoring = ptmScores.getModificationScoring(modification);
 
                         for (int site : ptmScoring.getDSites()) {
 
@@ -597,10 +597,10 @@ public class PtmScorer extends DbObject {
             return;
         }
 
-        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
         ModificationParameters ptmSettings = identificationParameters.getSearchParameters().getModificationParameters();
 
-        PSPtmScores peptideScores = new PSPtmScores();
+        PSModificationScores peptideScores = new PSModificationScores();
         PSParameter psParameter = new PSParameter();
 
         HashMap<Double, Integer> variableModifications = new HashMap<>(peptide.getNModifications());
@@ -691,13 +691,13 @@ public class PtmScorer extends DbObject {
         SpectrumMatch spectrumMatch;
         while ((spectrumMatch = psmIterator.next()) != null) {
             psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
-            PSPtmScores psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+            PSModificationScores psmScores = (PSModificationScores) spectrumMatch.getUrParam(new PSModificationScores());
 
             for (String ptmName : psmScores.getScoredPTMs()) {
-                PtmScoring psmScoring = psmScores.getPtmScoring(ptmName);
-                PtmScoring peptideScoring = peptideScores.getPtmScoring(ptmName);
+                ModificationScoring psmScoring = psmScores.getModificationScoring(ptmName);
+                ModificationScoring peptideScoring = peptideScores.getModificationScoring(ptmName);
                 if (peptideScoring == null) {
-                    peptideScoring = new PtmScoring(ptmName);
+                    peptideScoring = new ModificationScoring(ptmName);
                     peptideScores.addPtmScoring(ptmName, peptideScoring);
                 }
                 for (int site : psmScoring.getScoredSites()) {
@@ -804,7 +804,7 @@ public class PtmScorer extends DbObject {
             // Map ambiguous sites
             while ((spectrumMatch = psmIterator.next()) != null) {
                 psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
-                PSPtmScores psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                PSModificationScores psmScores = (PSModificationScores) spectrumMatch.getUrParam(new PSModificationScores());
 
                 for (int representativeSite : psmScores.getRepresentativeSites()) {
                     HashMap<Integer, ArrayList<String>> ambiguousMappingAtSite = psmScores.getAmbiguousPtmsAtRepresentativeSite(representativeSite);
@@ -839,7 +839,7 @@ public class PtmScorer extends DbObject {
                                     }
                                     double probabilisticScore = 0.0;
                                     double dScore = 0.0;
-                                    PtmScoring ptmScoring = psmScores.getPtmScoring(ptmName);
+                                    ModificationScoring ptmScoring = psmScores.getModificationScoring(ptmName);
                                     if (ptmScoring != null) {
                                         probabilisticScore = ptmScoring.getProbabilisticScore(refSite);
                                         dScore = ptmScoring.getDeltaScore(refSite);
@@ -1271,17 +1271,17 @@ public class PtmScorer extends DbObject {
             psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
             if (psParameter.getMatchValidationLevel().isValidated() && Peptide.isModified(peptideKey)) {
                 String peptideSequence = Peptide.getSequence(peptideKey);
-                if (peptideMatch.getUrParam(new PSPtmScores()) == null || scorePeptides) {
+                if (peptideMatch.getUrParam(new PSModificationScores()) == null || scorePeptides) {
                     scorePTMs(identification, peptideMatch, identificationParameters, waitingHandler);
                 }
-                PSPtmScores peptideScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
+                PSModificationScores peptideScores = (PSModificationScores) peptideMatch.getUrParam(new PSModificationScores());
                 if (peptideScores != null) {
 
                     if (protein == null) {
                         protein = sequenceFactory.getProtein(proteinMatch.getLeadingAccession());
                     }
                     ArrayList<Integer> peptideStart = protein.getPeptideStart(peptideSequence,
-                            identificationParameters.getSequenceMatchingPreferences());
+                            identificationParameters.getSequenceMatchingParameters());
                     for (int confidentSite : peptideScores.getConfidentSites()) {
                         for (int peptideTempStart : peptideStart) {
                             int siteOnProtein = peptideTempStart + confidentSite - 1;
@@ -1317,7 +1317,7 @@ public class PtmScorer extends DbObject {
         }
 
         // remove ambiguous sites where a confident was found and merge overlapping groups
-        PSPtmScores proteinScores = new PSPtmScores();
+        PSModificationScores proteinScores = new PSModificationScores();
         ArrayList<Integer> representativeSites = new ArrayList<>(ambiguousSites.keySet());
         Collections.sort(representativeSites);
 
@@ -1564,8 +1564,8 @@ public class PtmScorer extends DbObject {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
-        SequenceMatchingParameters ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
-        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        SequenceMatchingParameters ptmSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingPreferences();
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         ModificationParameters ptmSettings = searchParameters.getModificationParameters();
 
@@ -1835,7 +1835,7 @@ public class PtmScorer extends DbObject {
                                     }
                                     modificationMatch.setModificationSite(newLocalization);
                                     modificationMatch.setModification(ptmCandidateName);
-                                    PSPtmScores psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                                    PSModificationScores psmScores = (PSModificationScores) spectrumMatch.getUrParam(new PSModificationScores());
                                     psmScores.changeRepresentativeSite(ptmCandidateName, oldLocalization, newLocalization);
                                 }
                                 modificationMatch.setInferred(true);
@@ -1879,7 +1879,7 @@ public class PtmScorer extends DbObject {
 
             SearchParameters searchParameters = identificationParameters.getSearchParameters();
             ModificationParameters modificationProfile = searchParameters.getModificationParameters();
-            PSPtmScores ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+            PSModificationScores ptmScores = (PSModificationScores) spectrumMatch.getUrParam(new PSModificationScores());
             HashMap<Double, ArrayList<ModificationMatch>> modMatchesMap = new HashMap<>(psPeptide.getNModifications());
             HashMap<Double, HashMap<Integer, String>> possiblePositions = new HashMap<>(psPeptide.getNModifications());
             HashMap<Double, HashMap<Integer, ArrayList<String>>> confidentSites = new HashMap<>(psPeptide.getNModifications());
@@ -1915,13 +1915,13 @@ public class PtmScorer extends DbObject {
                         ptmOccurence.add(modificationMatch);
                         for (String similarPtmName : modificationProfile.getSameMassNotFixedModifications(ptmMass)) {
                             Modification similarPtm = ptmFactory.getModification(similarPtmName);
-                            for (int pos : psPeptide.getPotentialModificationSites(similarPtm, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences())) {
+                            for (int pos : psPeptide.getPotentialModificationSites(similarPtm, identificationParameters.getSequenceMatchingParameters(), identificationParameters.getModificationLocalizationParameters().getSequenceMatchingPreferences())) {
                                 ptmPossibleSites.put(pos, similarPtmName);
                             }
                         }
                     } else {
-                        PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
-                        ptmScoring.setSiteConfidence(modificationMatch.getModificationSite(), PtmScoring.VERY_CONFIDENT);
+                        ModificationScoring ptmScoring = ptmScores.getModificationScoring(modName);
+                        ptmScoring.setSiteConfidence(modificationMatch.getModificationSite(), ModificationScoring.VERY_CONFIDENT);
                         modificationMatch.setConfident(true);
                         HashMap<Integer, ArrayList<String>> ptmSites = confidentSites.get(ptm.getMass());
                         if (ptmSites == null) {
@@ -1940,7 +1940,7 @@ public class PtmScorer extends DbObject {
                 }
             }
 
-            ModificationLocalizationParameters ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
+            ModificationLocalizationParameters ptmScoringPreferences = identificationParameters.getModificationLocalizationParameters();
             Set<Double> ptmMasses = modMatchesMap.keySet();
             HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>> ambiguousScoreToSiteMap = new HashMap<>(ptmMasses.size()); // p score -> d-score -> Map PTM mass -> site -> list of modifications
             HashMap<Double, Integer> nRepresentativesMap = new HashMap<>(ptmMasses.size());
@@ -1968,8 +1968,8 @@ public class PtmScorer extends DbObject {
                     for (ModificationMatch modMatch : ptmMatches) {
                         String modName = modMatch.getModification();
                         int site = modMatch.getModificationSite();
-                        PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
-                        ptmScoring.setSiteConfidence(site, PtmScoring.VERY_CONFIDENT);
+                        ModificationScoring ptmScoring = ptmScores.getModificationScoring(modName);
+                        ptmScoring.setSiteConfidence(site, ModificationScoring.VERY_CONFIDENT);
                         modMatch.setConfident(true);
                         ArrayList<String> ptmsAtAA = ptmConfidentSites.get(site);
                         if (ptmsAtAA == null) {
@@ -1980,14 +1980,14 @@ public class PtmScorer extends DbObject {
                         assignedPtms.add(modMatch);
                     }
                 } else if (!ptmScoringPreferences.isProbabilisticScoreCalculation()
-                        || ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore && ptmMatches.size() > 1) {
+                        || ptmScoringPreferences.getSelectedProbabilisticScore() == ModificationLocalizationScore.AScore && ptmMatches.size() > 1) {
 
                     double pScore = 0; // no probabilistic score in that case
 
                     for (ModificationMatch modificationMatch : ptmMatches) {
 
                         String modName = modificationMatch.getModification();
-                        PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
+                        ModificationScoring ptmScoring = ptmScores.getModificationScoring(modName);
                         ArrayList<Integer> orderedDSites = new ArrayList<>(ptmScoring.getDSites());
                         Collections.sort(orderedDSites);
 
@@ -1995,13 +1995,13 @@ public class PtmScorer extends DbObject {
                             if (site == modificationMatch.getModificationSite()) {
                                 double dScore = ptmScoring.getDeltaScore(site);
                                 if (dScore == 0) {
-                                    ptmScoring.setSiteConfidence(site, PtmScoring.RANDOM);
+                                    ptmScoring.setSiteConfidence(site, ModificationScoring.RANDOM);
                                     modificationMatch.setConfident(false);
                                 } else if (dScore <= 95) {
-                                    ptmScoring.setSiteConfidence(site, PtmScoring.DOUBTFUL);
+                                    ptmScoring.setSiteConfidence(site, ModificationScoring.DOUBTFUL);
                                     modificationMatch.setConfident(false);
                                 } else {
-                                    ptmScoring.setSiteConfidence(site, PtmScoring.CONFIDENT);
+                                    ptmScoring.setSiteConfidence(site, ModificationScoring.CONFIDENT);
                                     modificationMatch.setConfident(true);
                                     ArrayList<String> ptmsAtAA = ptmConfidentSites.get(site);
                                     if (ptmsAtAA == null) {
@@ -2041,7 +2041,7 @@ public class PtmScorer extends DbObject {
                     for (int site : ptmPotentialSites.keySet()) {
 
                         String modName = ptmPotentialSites.get(site);
-                        PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
+                        ModificationScoring ptmScoring = ptmScores.getModificationScoring(modName);
                         double pScore = 0;
                         double dScore = 0;
 

@@ -7,14 +7,12 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.io.file.SerializationUtils;
 import com.compomics.util.io.export.ExportFactory;
 import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.io.export.writers.ExcelWriter;
 import com.compomics.util.io.json.JsonMarshaller;
 import com.compomics.util.parameters.identification.IdentificationParameters;
-import com.google.common.collect.Lists;
 import eu.isas.peptideshaker.export.exportfeatures.PsAnnotationFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsInputFilterFeature;
@@ -43,15 +41,11 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import org.apache.commons.math.MathException;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * The PeptideShaker export factory
@@ -302,6 +296,7 @@ public class PSExportFactory implements ExportFactory {
      * @param exportScheme the scheme of the export
      * @param destinationFile the destination file
      * @param exportFormat the format of export to use
+     * @param gzip if true export text as gzipped file
      * @param experiment the experiment corresponding to this project (mandatory
      * for the Project section)
      * @param projectDetails the project details (mandatory for the Project
@@ -331,14 +326,14 @@ public class PSExportFactory implements ExportFactory {
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
      */
-    public static void writeExport(ExportScheme exportScheme, File destinationFile, ExportFormat exportFormat, String experiment,
+    public static void writeExport(ExportScheme exportScheme, File destinationFile, ExportFormat exportFormat, boolean gzip, String experiment,
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
             long[] proteinKeys, long[] peptideKeys, long[] psmKeys,
             String proteinMatchKey, int nSurroundingAA, IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, 
             SpectrumCountingParameters spectrumCountingPreferences, WaitingHandler waitingHandler)
             throws IOException {
 
-        ExportWriter exportWriter = ExportWriter.getExportWriter(exportFormat, destinationFile, exportScheme.getSeparator(), exportScheme.getSeparationLines());
+        ExportWriter exportWriter = ExportWriter.getExportWriter(exportFormat, destinationFile, exportScheme.getSeparator(), exportScheme.getSeparationLines(), gzip);
         
         if (exportWriter instanceof ExcelWriter) {
             
@@ -367,7 +362,7 @@ public class PSExportFactory implements ExportFactory {
                 case PsAnnotationFeature.type:
                     
                         PsAnnotationSection psAnnotationSection = new PsAnnotationSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                        psAnnotationSection.writeSection(identificationParameters.getAnnotationPreferences(), waitingHandler);
+                        psAnnotationSection.writeSection(identificationParameters.getAnnotationParameters(), waitingHandler);
                         break;
                         
                 case PsInputFilterFeature.type:
@@ -409,7 +404,7 @@ public class PSExportFactory implements ExportFactory {
                 case PsPtmScoringFeature.type:
                     
                         PsPtmScoringSection psPtmScoringSection = new PsPtmScoringSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                        psPtmScoringSection.writeSection(identificationParameters.getPtmScoringPreferences(), waitingHandler);
+                        psPtmScoringSection.writeSection(identificationParameters.getModificationLocalizationParameters(), waitingHandler);
                         break;
                         
                 case PsSearchFeature.type:
@@ -452,7 +447,7 @@ public class PSExportFactory implements ExportFactory {
      */
     public static void writeDocumentation(ExportScheme exportScheme, ExportFormat exportFormat, File destinationFile) throws IOException {
 
-        ExportWriter exportWriter = ExportWriter.getExportWriter(exportFormat, destinationFile, exportScheme.getSeparator(), exportScheme.getSeparationLines());
+        ExportWriter exportWriter = ExportWriter.getExportWriter(exportFormat, destinationFile, exportScheme.getSeparator(), exportScheme.getSeparationLines(), false);
         
         if (exportWriter instanceof ExcelWriter) {
             

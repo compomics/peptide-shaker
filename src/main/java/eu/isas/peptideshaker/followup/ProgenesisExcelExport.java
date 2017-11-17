@@ -231,7 +231,7 @@ public class ProgenesisExcelExport {
     private void insertPeptideData(PeptideMatch peptideMatch) throws Exception {
 
         Peptide peptide = peptideMatch.getPeptide();
-        ArrayList<String> proteinAccessions = peptide.getParentProteins(identificationParameters.getSequenceMatchingPreferences());
+        ArrayList<String> proteinAccessions = peptide.getParentProteins(identificationParameters.getSequenceMatchingParameters());
         StringBuilder proteinAccessionsAsString = new StringBuilder();
         for (String proteinAccession : proteinAccessions) {
             if (proteinAccessionsAsString.length() > 0) {

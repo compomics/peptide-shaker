@@ -997,7 +997,7 @@ public class StarHider {
                         for (String fraction : psParameter.getFractions()) {
 
                             // set the fraction molecular weights
-                            if (psParameter.getFractionConfidence(fraction) > peptideShakerGUI.getIdentificationParameters().getFractionSettings().getProteinConfidenceMwPlots()) {
+                            if (psParameter.getFractionConfidence(fraction) > peptideShakerGUI.getIdentificationParameters().getFractionParameters().getProteinConfidenceMwPlots()) {
                                 if (threadFractionMW.containsKey(fraction)) {
                                     threadFractionMW.get(fraction).add(proteinMW);
                                 } else {

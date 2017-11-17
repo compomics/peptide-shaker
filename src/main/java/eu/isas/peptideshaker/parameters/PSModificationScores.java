@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.parameters;
 import com.compomics.util.db.object.DbObject;
 import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.experiment.personalization.UrParameter;
-import eu.isas.peptideshaker.scoring.PtmScoring;
+import eu.isas.peptideshaker.scoring.ModificationScoring;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,7 +14,7 @@ import java.util.HashSet;
  *
  * @author Marc Vaudel
  */
-public class PSPtmScores extends DbObject implements UrParameter {
+public class PSModificationScores extends DbObject implements UrParameter {
 
     /**
      * Serial version UID for post-serialization compatibility.
@@ -24,7 +24,7 @@ public class PSPtmScores extends DbObject implements UrParameter {
      * A map containing all scores indexed by the modification of interest for a
      * peptide or a PSM.
      */
-    private final HashMap<String, PtmScoring> ptmMap = new HashMap<>();
+    private final HashMap<String, ModificationScoring> ptmMap = new HashMap<>();
     /**
      * A list of all modification sites confidently localized on a sequence in a
      * map: site &gt; PTM names.
@@ -49,7 +49,7 @@ public class PSPtmScores extends DbObject implements UrParameter {
     /**
      * Constructor.
      */
-    public PSPtmScores() {
+    public PSModificationScores() {
     }
 
     /**
@@ -58,7 +58,7 @@ public class PSPtmScores extends DbObject implements UrParameter {
      * @param ptmName the modification of interest
      * @param ptmScoring the corresponding scoring
      */
-    public void addPtmScoring(String ptmName, PtmScoring ptmScoring) {
+    public void addPtmScoring(String ptmName, ModificationScoring ptmScoring) {
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         ptmMap.put(ptmName, ptmScoring);
     }
@@ -70,7 +70,7 @@ public class PSPtmScores extends DbObject implements UrParameter {
      * @param ptmName the modification of interest
      * @return the scoring
      */
-    public PtmScoring getPtmScoring(String ptmName) {
+    public ModificationScoring getModificationScoring(String ptmName) {
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return ptmMap.get(ptmName);
     }

@@ -3122,7 +3122,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                     pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
                     PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters(), pSMaps);
 
-                    miniShaker.proteinMapChanged(progressDialog, peptideShakerGUI.getIdentificationParameters().getFractionSettings());
+                    miniShaker.proteinMapChanged(progressDialog, peptideShakerGUI.getIdentificationParameters().getFractionParameters());
                     modifiedMaps.put(0, false);
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);

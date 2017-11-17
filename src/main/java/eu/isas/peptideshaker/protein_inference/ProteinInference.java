@@ -383,7 +383,7 @@ public class ProteinInference {
 
         ArrayList<String> toRemove = new ArrayList<>();
         int maxProteinKeyLength = 0;
-        ProteinInferenceParameters proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
+        ProteinInferenceParameters proteinInferencePreferences = identificationParameters.getProteinInferenceParameters();
 
         int max = 2 * identification.getProteinIdentification().size();
         if (proteinInferencePreferences.getSimplifyGroups() && proteinInferencePreferences.getSimplifyGroupsScore()) {
@@ -605,7 +605,7 @@ public class ProteinInference {
                     while ((peptideMatch = peptideMatchesIterator.next()) != null) {
                         psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
                         boolean unrelated = false;
-                        for (String proteinAccession : peptideMatch.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
+                        for (String proteinAccession : peptideMatch.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingParameters())) {
                             if (!proteinKey.contains(proteinAccession)) {
                                 if (!getSimilarity(mainMatch, proteinAccession)) {
                                     unrelated = true;
@@ -628,7 +628,7 @@ public class ProteinInference {
                     psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
                     boolean unrelated = false;
                     boolean otherProtein = false;
-                    for (String protein : peptideMatch.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
+                    for (String protein : peptideMatch.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingParameters())) {
                         if (!proteinKey.contains(protein)) {
                             otherProtein = true;
                             if (!getSimilarity(mainMatch, protein)) {
@@ -762,7 +762,7 @@ public class ProteinInference {
             IdentificationFeaturesGenerator identificationFeaturesGenerator, IdentificationParameters identificationParameters)
             throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException, SQLException {
 
-        ProteinInferenceParameters proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
+        ProteinInferenceParameters proteinInferencePreferences = identificationParameters.getProteinInferenceParameters();
         if (proteinInferencePreferences.getSimplifyGroupsEnzymaticity()) {
             DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
             if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {

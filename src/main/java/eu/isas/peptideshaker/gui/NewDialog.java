@@ -731,13 +731,13 @@ public class NewDialog extends javax.swing.JDialog {
             progressCounter++; // the FASTA file
             progressCounter++; // the peptide to protein map
             progressCounter += 6; // computing probabilities etc
-            if (identificationParameters.getProteinInferencePreferences().getSimplifyGroups()) {
+            if (identificationParameters.getProteinInferenceParameters().getSimplifyGroups()) {
                 progressCounter++; // simplify protein groups
             }
             progressCounter++; // resolving protein inference
             progressCounter += 4; // Correcting protein probabilities, Validating identifications at 1% FDR, Scoring PTMs in peptides, Scoring PTMs in proteins.
             progressCounter += 2; // Scoring PTMs in PSMs. Estimating PTM FLR.
-            if (identificationParameters.getPtmScoringPreferences().getAlignNonConfidentPTMs()) {
+            if (identificationParameters.getModificationLocalizationParameters().getAlignNonConfidentPTMs()) {
                 progressCounter++; // Peptide inference
             }
 
@@ -849,10 +849,10 @@ public class NewDialog extends javax.swing.JDialog {
             File fastaFile = sequenceFactory.getCurrentFastaFile();
             if (fastaFile != null) {
                 fastaFileTxt.setText(sequenceFactory.getFileName());
-                if (identificationParameters.getProteinInferencePreferences() == null) {
-                    identificationParameters.setProteinInferencePreferences(new ProteinInferenceParameters());
+                if (identificationParameters.getProteinInferenceParameters() == null) {
+                    identificationParameters.setProteinInferenceParameters(new ProteinInferenceParameters());
                 }
-                identificationParameters.getProteinInferencePreferences().setProteinSequenceDatabase(fastaFile);
+                identificationParameters.getProteinInferenceParameters().setProteinSequenceDatabase(fastaFile);
                 identificationParameters.getSearchParameters().setFastaFile(fastaFile);
                 checkFastaFile();
             }
@@ -1541,9 +1541,9 @@ public class NewDialog extends javax.swing.JDialog {
 
         if (fastaFileTxt.getText() != null && fastaFileTxt.getText().length() > 0
                 && identificationParameters != null
-                && identificationParameters.getProteinInferencePreferences() != null
-                && identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase() != null
-                && identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().exists()) {
+                && identificationParameters.getProteinInferenceParameters() != null
+                && identificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase() != null
+                && identificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase().exists()) {
             databaseLabel.setForeground(Color.BLACK);
             databaseLabel.setToolTipText(null);
             fastaFileTxt.setToolTipText(null);
@@ -1710,7 +1710,7 @@ public class NewDialog extends javax.swing.JDialog {
             }
         }
 
-        File fastaFile = tempIdentificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
+        File fastaFile = tempIdentificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase();
         if (fastaFile == null) {
             fastaFile = searchParameters.getFastaFile();
         }
@@ -1761,9 +1761,9 @@ public class NewDialog extends javax.swing.JDialog {
 
             if (found) {
                 // see if the protein inference fasta file is also missing
-                File proteinInferenceSequenceDatabase = tempIdentificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
+                File proteinInferenceSequenceDatabase = tempIdentificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase();
                 if (proteinInferenceSequenceDatabase == null || (!proteinInferenceSequenceDatabase.exists() && proteinInferenceSequenceDatabase.getName().equalsIgnoreCase(fastaFile.getName()))) {
-                    tempIdentificationParameters.getProteinInferencePreferences().setProteinSequenceDatabase(fastaFile);
+                    tempIdentificationParameters.getProteinInferenceParameters().setProteinSequenceDatabase(fastaFile);
                 }
 
                 loadFastaFile(fastaFile, progressDialog);
@@ -1772,7 +1772,7 @@ public class NewDialog extends javax.swing.JDialog {
         }
 
         boolean matchesValidationAdded;
-        ValidationQcParameters validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+        ValidationQcParameters validationQCPreferences = tempIdentificationParameters.getIdValidationParameters().getValidationQCPreferences();
         if (validationQCPreferences == null
                 || validationQCPreferences.getPsmFilters() == null
                 || validationQCPreferences.getPeptideFilters() == null
@@ -1789,7 +1789,7 @@ public class NewDialog extends javax.swing.JDialog {
         if (!identificationParametersFactory.getParametersList().contains(tempIdentificationParameters.getName())) {
             identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
         } else {
-            boolean matchesValidationChanged = identificationParametersFactory.getIdentificationParameters(tempIdentificationParameters.getName()).getIdValidationPreferences().equals(tempIdentificationParameters.getIdValidationPreferences());
+            boolean matchesValidationChanged = identificationParametersFactory.getIdentificationParameters(tempIdentificationParameters.getName()).getIdValidationParameters().equals(tempIdentificationParameters.getIdValidationParameters());
             boolean otherSettingsChanged = !identificationParametersFactory.getIdentificationParameters(tempIdentificationParameters.getName()).equalsExceptValidationPreferences(tempIdentificationParameters);
 
             if (otherSettingsChanged || matchesValidationChanged && !matchesValidationAdded) {
@@ -2035,7 +2035,7 @@ public class NewDialog extends javax.swing.JDialog {
     private void setIdentificationParameters(IdentificationParameters newIdentificationParameters) {
 
         try {
-            ValidationQcParameters validationQCPreferences = newIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+            ValidationQcParameters validationQCPreferences = newIdentificationParameters.getIdValidationParameters().getValidationQCPreferences();
             if (validationQCPreferences == null
                     || validationQCPreferences.getPsmFilters() == null
                     || validationQCPreferences.getPeptideFilters() == null
@@ -2059,7 +2059,7 @@ public class NewDialog extends javax.swing.JDialog {
             settingsComboBox.setModel(new javax.swing.DefaultComboBoxModel(parameterList));
             settingsComboBox.setSelectedItem(identificationParameters.getName());
 
-            ProteinInferenceParameters proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
+            ProteinInferenceParameters proteinInferencePreferences = identificationParameters.getProteinInferenceParameters();
             File fastaFile = proteinInferencePreferences.getProteinSequenceDatabase();
             if (fastaFile == null) { // Backward compatibility
                 fastaFile = identificationParameters.getSearchParameters().getFastaFile();

@@ -382,9 +382,9 @@ public class Ms2pipExport {
 
             this.identification = identification;
             this.psmIterator = psmIterator;
-            this.annotationSettings = identificationParameters.getAnnotationPreferences();
-            this.sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-            this.ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
+            this.annotationSettings = identificationParameters.getAnnotationParameters();
+            this.sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
+            this.ptmSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingPreferences();
             featuresGenerator = new FeaturesGenerator(featuresMap);
 
         }

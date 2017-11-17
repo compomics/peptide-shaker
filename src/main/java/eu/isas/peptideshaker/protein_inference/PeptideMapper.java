@@ -59,7 +59,7 @@ public class PeptideMapper {
      */
     public void mapPeptides(LinkedList<SpectrumMatch> spectrumMatches, WaitingHandler waitingHandler) {
 
-        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
 
         spectrumMatches.parallelStream()
                 .flatMap(spectrumMatch -> spectrumMatch.getAllAssumptions().stream())

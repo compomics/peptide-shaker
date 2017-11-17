@@ -543,7 +543,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
                     try {
                         SpectrumExporter spectrumExporter = new SpectrumExporter(peptideShakerGUI.getIdentification());
-                        spectrumExporter.exportSpectra(selectedFolder, progressDialog, SpectrumExporter.ExportType.getTypeFromIndex(spectrumValidationCmb.getSelectedIndex()), peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                        spectrumExporter.exportSpectra(selectedFolder, progressDialog, SpectrumExporter.ExportType.getTypeFromIndex(spectrumValidationCmb.getSelectedIndex()), peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
@@ -631,7 +631,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         } else {
                             ProgenesisExport.writeProgenesisExport(finalOutputFile, peptideShakerGUI.getIdentification(),
                                     ProgenesisExport.ExportType.getTypeFromIndex(userChoice), progressDialog, ptmSelection,
-                                    peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                                    peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
                         }
 
                         boolean processCancelled = progressDialog.isRunCanceled();
@@ -809,11 +809,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             } else {
                                 nodeWriter.write(peptideKey + "\t"
                                         + peptideMatch.getPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, false)
-                                        + "\tpeptide" + "\t" + psParameter.getMatchValidationLevel() + "\t" + peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences()) + "\n"); // @TODO: add more information?
+                                        + "\tpeptide" + "\t" + psParameter.getMatchValidationLevel() + "\t" + peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters()) + "\n"); // @TODO: add more information?
                             }
 
                             // write the peptide to protein edge and the protein nodes
-                            for (String protein : peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                            for (String protein : peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters())) {
 
                                 // write the protein node
                                 if (!proteinsAdded.contains(protein)) {

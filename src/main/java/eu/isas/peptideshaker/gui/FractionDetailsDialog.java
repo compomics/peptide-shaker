@@ -66,7 +66,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
         ArrayList<String> spectrumFiles = peptideShakerGUI.getIdentification().getOrderedSpectrumFileNames();
         spectrumFileNameMap = new HashMap<>();
 
-        HashMap<String, XYDataPoint> expectedMolecularWeightRanges = peptideShakerGUI.getIdentificationParameters().getFractionSettings().getFractionMolecularWeightRanges();
+        HashMap<String, XYDataPoint> expectedMolecularWeightRanges = peptideShakerGUI.getIdentificationParameters().getFractionParameters().getFractionMolecularWeightRanges();
 
         for (int i = 0; i < spectrumFiles.size(); i++) {
 
@@ -513,7 +513,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
         }
 
         peptideShakerGUI.getIdentification().setOrderedListOfSpectrumFileNames(spectrumFiles);
-        peptideShakerGUI.getIdentificationParameters().getFractionSettings().setFractionMolecularWeightRanges(fractionRanges);
+        peptideShakerGUI.getIdentificationParameters().getFractionParameters().setFractionMolecularWeightRanges(fractionRanges);
         this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_okButtonActionPerformed

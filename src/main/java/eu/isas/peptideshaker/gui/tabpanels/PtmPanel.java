@@ -24,9 +24,9 @@ import com.compomics.util.gui.protein.SequenceModificationPanel;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.parameters.PSPtmScores;
+import eu.isas.peptideshaker.parameters.PSModificationScores;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
-import eu.isas.peptideshaker.scoring.PtmScoring;
+import eu.isas.peptideshaker.scoring.ModificationScoring;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
@@ -360,19 +360,19 @@ public class PtmPanel extends javax.swing.JPanel {
 
         // set up the PTM confidence color map
         HashMap<Integer, Color> ptmConfidenceColorMap = new HashMap<>();
-        ptmConfidenceColorMap.put(PtmScoring.NOT_FOUND, Color.lightGray);
-        ptmConfidenceColorMap.put(PtmScoring.RANDOM, Color.RED);
-        ptmConfidenceColorMap.put(PtmScoring.DOUBTFUL, Color.ORANGE);
-        ptmConfidenceColorMap.put(PtmScoring.CONFIDENT, Color.YELLOW);
-        ptmConfidenceColorMap.put(PtmScoring.VERY_CONFIDENT, peptideShakerGUI.getSparklineColor());
+        ptmConfidenceColorMap.put(ModificationScoring.NOT_FOUND, Color.lightGray);
+        ptmConfidenceColorMap.put(ModificationScoring.RANDOM, Color.RED);
+        ptmConfidenceColorMap.put(ModificationScoring.DOUBTFUL, Color.ORANGE);
+        ptmConfidenceColorMap.put(ModificationScoring.CONFIDENT, Color.YELLOW);
+        ptmConfidenceColorMap.put(ModificationScoring.VERY_CONFIDENT, peptideShakerGUI.getSparklineColor());
 
         // set up the PTM confidence tooltip map
         ptmConfidenceTooltipMap = new HashMap<>();
         ptmConfidenceTooltipMap.put(-1, "(No PTMs)");
-        ptmConfidenceTooltipMap.put(PtmScoring.RANDOM, "Random Assignment");
-        ptmConfidenceTooltipMap.put(PtmScoring.DOUBTFUL, "Doubtful Assignment");
-        ptmConfidenceTooltipMap.put(PtmScoring.CONFIDENT, "Confident Assignment");
-        ptmConfidenceTooltipMap.put(PtmScoring.VERY_CONFIDENT, "Very Confident Assignment");
+        ptmConfidenceTooltipMap.put(ModificationScoring.RANDOM, "Random Assignment");
+        ptmConfidenceTooltipMap.put(ModificationScoring.DOUBTFUL, "Doubtful Assignment");
+        ptmConfidenceTooltipMap.put(ModificationScoring.CONFIDENT, "Confident Assignment");
+        ptmConfidenceTooltipMap.put(ModificationScoring.VERY_CONFIDENT, "Very Confident Assignment");
 
         peptidesTable.getColumn("PTM").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(Color.lightGray, ptmConfidenceColorMap, ptmConfidenceTooltipMap));
         relatedPeptidesTable.getColumn("PTM").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(Color.lightGray, ptmConfidenceColorMap, ptmConfidenceTooltipMap));
@@ -2385,7 +2385,7 @@ public class PtmPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
-        peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(((Integer) intensitySlider.getValue()) / 100.0);
+        peptideShakerGUI.getIdentificationParameters().getAnnotationParameters().setIntensityLimit(((Integer) intensitySlider.getValue()) / 100.0);
         peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
         intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
@@ -2497,7 +2497,7 @@ public class PtmPanel extends javax.swing.JPanel {
     private void accuracySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_accuracySliderStateChanged
         SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
         double accuracy = (accuracySlider.getValue() / 100.0) * searchParameters.getFragmentIonAccuracy();
-        peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setFragmentIonAccuracy(accuracy);
+        peptideShakerGUI.getIdentificationParameters().getAnnotationParameters().setFragmentIonAccuracy(accuracy);
         peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
         accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " " + searchParameters.getFragmentAccuracyType());
@@ -3157,7 +3157,7 @@ public class PtmPanel extends javax.swing.JPanel {
         ArrayList<String> result = new ArrayList<>();
         try {
             for (String peptideKey : getDisplayedPeptides()) {
-                ArrayList<String> proteins = ((PeptideMatch) identification.retrieveObject(peptideKey)).getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                ArrayList<String> proteins = ((PeptideMatch) identification.retrieveObject(peptideKey)).getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
                 for (String protein : proteins) {
                     for (String proteinMatchKey : identification.getProteinMap().get(protein)) {
                         if (!result.contains(proteinMatchKey) && identification.matchExists(proteinMatchKey)) {
@@ -3410,7 +3410,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     SpectrumMatch spectrumMatch = (SpectrumMatch) peptideShakerGUI.getIdentification().retrieveObject(psmKey);
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                        selectedKey = peptide.getMatchingKey(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                        selectedKey = peptide.getMatchingKey(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
                     }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -3575,7 +3575,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                         PeptideMatch peptideMatch = (PeptideMatch) identification.retrieveObject(peptideKey);
 
-                        if (!peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                        if (!peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters())) {
 
                             probabilities = (PSParameter) peptideMatch.getUrParam(probabilities);
                             double p = probabilities.getPeptideProbability();
@@ -3862,7 +3862,7 @@ public class PtmPanel extends javax.swing.JPanel {
             spectrumChartJPanel.revalidate();
             spectrumChartJPanel.repaint();
 
-            AnnotationParameters annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
+            AnnotationParameters annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationParameters();
             MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
 
             if (currentSpectrum != null && currentSpectrum.getMzValuesAsArray().length > 0) {
@@ -3883,7 +3883,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         precursor.getMz(), spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().toString(),
                         "", 40, false, false, false, 2, false);
                 spectrum.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
-                spectrum.setDeltaMassWindow(peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().getFragmentIonAccuracy());
+                spectrum.setDeltaMassWindow(peptideShakerGUI.getIdentificationParameters().getAnnotationParameters().getFragmentIonAccuracy());
                 spectrum.setBorder(null);
                 spectrum.setDataPointAndLineColor(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumAnnotatedPeakColor(), 0);
                 spectrum.setPeakWaterMarkColor(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumBackgroundPeakColor());
@@ -3993,13 +3993,13 @@ public class PtmPanel extends javax.swing.JPanel {
      * @param scores the PTM scores
      * @return the modification profile
      */
-    private ArrayList<com.compomics.util.gui.protein.ModificationProfile> getModificationProfile(Peptide peptide, PSPtmScores scores) {
+    private ArrayList<com.compomics.util.gui.protein.ModificationProfile> getModificationProfile(Peptide peptide, PSModificationScores scores) {
         ArrayList<com.compomics.util.gui.protein.ModificationProfile> profiles = new ArrayList<>();
         if (scores != null) {
             for (String ptmName : scores.getScoredPTMs()) {
                 Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(ptmName);
                 com.compomics.util.gui.protein.ModificationProfile tempProfile = new com.compomics.util.gui.protein.ModificationProfile(ptmName, new double[peptide.getSequence().length()][2], ptmColor);
-                PtmScoring locationScoring = scores.getPtmScoring(ptmName);
+                ModificationScoring locationScoring = scores.getModificationScoring(ptmName);
                 for (int aa = 1; aa <= peptide.getSequence().length(); aa++) {
                     tempProfile.getProfile()[aa - 1][com.compomics.util.gui.protein.ModificationProfile.SCORE_1_ROW_INDEX] = locationScoring.getDeltaScore(aa);
                     tempProfile.getProfile()[aa - 1][com.compomics.util.gui.protein.ModificationProfile.SCORE_2_ROW_INDEX] = locationScoring.getProbabilisticScore(aa);
@@ -4180,13 +4180,13 @@ public class PtmPanel extends javax.swing.JPanel {
                         PeptideMatch peptideMatch = (PeptideMatch) identification.retrieveObject(peptideKey);
                         return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
                     case 4:
-                        PSPtmScores ptmScores = new PSPtmScores();
-                        ptmScores = (PSPtmScores) ((PeptideMatch) identification.retrieveObject(displayedPeptides.get(row))).getUrParam(ptmScores);
-                        if (ptmScores != null && ptmScores.getPtmScoring(getSelectedModification()) != null) {
-                            PtmScoring ptmScoring = ptmScores.getPtmScoring(getSelectedModification());
+                        PSModificationScores ptmScores = new PSModificationScores();
+                        ptmScores = (PSModificationScores) ((PeptideMatch) identification.retrieveObject(displayedPeptides.get(row))).getUrParam(ptmScores);
+                        if (ptmScores != null && ptmScores.getModificationScoring(getSelectedModification()) != null) {
+                            ModificationScoring ptmScoring = ptmScores.getModificationScoring(getSelectedModification());
                             return ptmScoring.getMinimalLocalizationConfidence();
                         } else {
-                            return PtmScoring.NOT_FOUND;
+                            return ModificationScoring.NOT_FOUND;
                         }
                     case 5:
                         probabilities = new PSParameter();
@@ -4279,13 +4279,13 @@ public class PtmPanel extends javax.swing.JPanel {
                         PeptideMatch peptideMatch = (PeptideMatch) identification.retrieveObject(peptideKey);
                         return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
                     case 4:
-                        PSPtmScores ptmScores = new PSPtmScores();
-                        ptmScores = (PSPtmScores) ((PeptideMatch) identification.retrieveObject(relatedPeptides.get(row))).getUrParam(ptmScores);
-                        if (ptmScores != null && ptmScores.getPtmScoring(getSelectedModification()) != null) {
-                            PtmScoring ptmScoring = ptmScores.getPtmScoring(getSelectedModification());
+                        PSModificationScores ptmScores = new PSModificationScores();
+                        ptmScores = (PSModificationScores) ((PeptideMatch) identification.retrieveObject(relatedPeptides.get(row))).getUrParam(ptmScores);
+                        if (ptmScores != null && ptmScores.getModificationScoring(getSelectedModification()) != null) {
+                            ModificationScoring ptmScoring = ptmScores.getModificationScoring(getSelectedModification());
                             return ptmScoring.getMinimalLocalizationConfidence();
                         } else {
-                            return PtmScoring.NOT_FOUND;
+                            return ModificationScoring.NOT_FOUND;
                         }
                     case 5:
                         probabilities = new PSParameter();
@@ -4401,13 +4401,13 @@ public class PtmPanel extends javax.swing.JPanel {
                     case 2:
                         return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence((SpectrumMatch) identification.retrieveObject(spectrumKey), true, true, true);
                     case 3:
-                        PSPtmScores ptmScores = new PSPtmScores();
-                        ptmScores = (PSPtmScores) ((SpectrumMatch) identification.retrieveObject(spectrumKey)).getUrParam(ptmScores);
-                        if (ptmScores != null && ptmScores.getPtmScoring(getSelectedModification()) != null) {
-                            PtmScoring ptmScoring = ptmScores.getPtmScoring(getSelectedModification());
+                        PSModificationScores ptmScores = new PSModificationScores();
+                        ptmScores = (PSModificationScores) ((SpectrumMatch) identification.retrieveObject(spectrumKey)).getUrParam(ptmScores);
+                        if (ptmScores != null && ptmScores.getModificationScoring(getSelectedModification()) != null) {
+                            ModificationScoring ptmScoring = ptmScores.getModificationScoring(getSelectedModification());
                             return ptmScoring.getMinimalLocalizationConfidence();
                         } else {
-                            return PtmScoring.NOT_FOUND;
+                            return ModificationScoring.NOT_FOUND;
                         }
                     case 4:
                         return ((SpectrumMatch) identification.retrieveObject(spectrumKey)).getBestPeptideAssumption().getIdentificationCharge().value;
@@ -4472,8 +4472,8 @@ public class PtmPanel extends javax.swing.JPanel {
     private void updateModificationProfile(PeptideMatch peptideMatch, boolean selectedPeptideProfile) {
 
         try {
-            PSPtmScores scores = new PSPtmScores();
-            scores = (PSPtmScores) peptideMatch.getUrParam(scores);
+            PSModificationScores scores = new PSModificationScores();
+            scores = (PSModificationScores) peptideMatch.getUrParam(scores);
             ArrayList<com.compomics.util.gui.protein.ModificationProfile> profiles = getModificationProfile(peptideMatch.getPeptide(), scores);
 
             SequenceModificationPanel sequenceModificationPanel
@@ -4481,7 +4481,7 @@ public class PtmPanel extends javax.swing.JPanel {
                             + peptideMatch.getPeptide().getSequence()
                             + "-" + peptideMatch.getPeptide().getCTerminal(),
                             profiles, true, "D-score",
-                            peptideShakerGUI.getIdentificationParameters().getPtmScoringPreferences().getSelectedProbabilisticScore().getName());
+                            peptideShakerGUI.getIdentificationParameters().getModificationLocalizationParameters().getSelectedProbabilisticScore().getName());
 
             if (selectedPeptideProfile) {
                 modificationProfileSelectedPeptideJPanel.removeAll();
@@ -4822,8 +4822,8 @@ public class PtmPanel extends javax.swing.JPanel {
                     for (int i = 0; i < peptideMatch.getSpectrumMatchesKeys().size(); i++) {
 
                         String spectrumKey = peptideMatch.getSpectrumMatchesKeys().get(i);
-                        PSPtmScores ptmScores = new PSPtmScores();
-                        ptmScores = (PSPtmScores) ((SpectrumMatch) identification.retrieveObject(spectrumKey)).getUrParam(ptmScores);
+                        PSModificationScores ptmScores = new PSModificationScores();
+                        ptmScores = (PSModificationScores) ((SpectrumMatch) identification.retrieveObject(spectrumKey)).getUrParam(ptmScores);
                         ((DefaultTableModel) psmAScoresTable.getModel()).addRow(new Object[]{(i + 1)});
                         ((DefaultTableModel) psmDeltaScoresTable.getModel()).addRow(new Object[]{(i + 1)});
 
@@ -4838,7 +4838,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                                 if (ptm.getMass() == selectedPtm.getMass()) {
 
-                                    PtmScoring ptmScoring = ptmScores.getPtmScoring(ptmName);
+                                    ModificationScoring ptmScoring = ptmScores.getModificationScoring(ptmName);
                                     for (int site : ptmScoring.getDSites()) {
                                         double ptmDScore = ptmScoring.getDeltaScore(site);
                                         Double tableDScore = dScores.get(site);

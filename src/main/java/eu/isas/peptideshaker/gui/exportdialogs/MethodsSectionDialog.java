@@ -105,10 +105,10 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
             text += PeptideShakerMethods.getPeptideShaker();
         }
         if (validationCheck.isSelected()) {
-            text += PeptideShakerMethods.getValidation(peptideShakerGUI.getIdentificationParameters().getIdValidationPreferences());
+            text += PeptideShakerMethods.getValidation(peptideShakerGUI.getIdentificationParameters().getIdValidationParameters());
         }
         if (ptmLocalizationCheck.isSelected()) {
-            text += PeptideShakerMethods.getPtmScoring(identificationParameters.getPtmScoringPreferences());
+            text += PeptideShakerMethods.getPtmScoring(identificationParameters.getModificationLocalizationParameters());
         }
 
         if (peptideShakerCheck.isSelected() || validationCheck.isSelected() || ptmLocalizationCheck.isSelected()) {

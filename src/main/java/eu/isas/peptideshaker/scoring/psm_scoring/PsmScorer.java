@@ -80,7 +80,7 @@ public class PsmScorer {
             throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         // Remove the intensity filter during scoring
-        AnnotationParameters annotationSettings = identificationParameters.getAnnotationPreferences();
+        AnnotationParameters annotationSettings = identificationParameters.getAnnotationParameters();
         double intensityThreshold = annotationSettings.getAnnotationIntensityLimit();
         annotationSettings.setIntensityLimit(0);
 
@@ -180,10 +180,10 @@ public class PsmScorer {
             IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator, HyperScore hyperScore, WaitingHandler waitingHandler)
             throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException, MathException {
 
-        AnnotationParameters annotationPreferences = identificationParameters.getAnnotationPreferences();
+        AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
 
-        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-        PsmScoringParameters psmScoringPreferences = identificationParameters.getPsmScoringPreferences();
+        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
+        PsmScoringParameters psmScoringPreferences = identificationParameters.getPsmScoringParameters();
 
         String spectrumKey = spectrumMatch.getKey();
         String spectrumFileName = spectrumMatch.getSpectrumFile();
@@ -228,7 +228,7 @@ public class PsmScorer {
                                 if (scoreIndex.equals(PsmScore.native_score.index)) {
                                     score = peptideAssumption.getScore();
                                 } else {
-                                    SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
+                                    SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingParameters(), identificationParameters.getModificationLocalizationParameters().getSequenceMatchingPreferences());
                                     score = psmScoresEstimator.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge().value, spectrum, identificationParameters, specificAnnotationPreferences, peptideSpectrumAnnotator, scoreIndex);
                                 }
 
@@ -336,8 +336,8 @@ public class PsmScorer {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
-        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-        PsmScoringParameters psmScoringPreferences = identificationParameters.getPsmScoringPreferences();
+        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
+        PsmScoringParameters psmScoringPreferences = identificationParameters.getPsmScoringParameters();
 
         PSParameter psParameter = new PSParameter();
 
@@ -594,8 +594,8 @@ public class PsmScorer {
 
                 PSParameter psParameter = new PSParameter();
                 boolean increaseProgress = true;
-                PsmScoringParameters psmScoringPreferences = identificationParameters.getPsmScoringPreferences();
-                SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+                PsmScoringParameters psmScoringPreferences = identificationParameters.getPsmScoringParameters();
+                SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
                 SpectrumMatch spectrumMatch;
 
                 while ((spectrumMatch = psmIterator.next()) != null && !waitingHandler.isRunCanceled()) {

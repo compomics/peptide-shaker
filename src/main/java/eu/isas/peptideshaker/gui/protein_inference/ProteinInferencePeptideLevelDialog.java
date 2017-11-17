@@ -101,7 +101,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml((PeptideMatch)peptideShakerGUI.getIdentification().retrieveObject(peptideMatchKey));
         peptideSequenceLabel.setToolTipText(tooltip);
 
-        ArrayList<String> possibleProteins = peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+        ArrayList<String> possibleProteins = peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
         List<String> retainedProteins;
 
         if (proteinMatchKey != null) {
@@ -267,7 +267,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             peptideTooltip = "<html>" + peptideTooltip + "<br><br>" + matchValidationLevel + "</html>";
             nodeToolTips.put(peptideNodeName, peptideTooltip);
 
-            ArrayList<String> possibleProteins = peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+            ArrayList<String> possibleProteins = peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
 
             for (String tempProteinAccession : possibleProteins) {
 
@@ -349,7 +349,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                     if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
                         enzymatic = protein.isEnzymaticPeptide(peptideMatch.getPeptide().getSequence(),
                                 digestionPreferences.getEnzymes(),
-                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
                     }
 
                     edgeProperties.put(peptideNodeName + "|" + proteinNodeKey, enzymatic.toString());

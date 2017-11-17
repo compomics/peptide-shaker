@@ -33,7 +33,7 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.parameters.PSPtmScores;
+import eu.isas.peptideshaker.parameters.PSModificationScores;
 import eu.isas.peptideshaker.preferences.FilterParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters.SpectralCountingMethod;
@@ -580,7 +580,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the sequence coverage
      */
-    public Double getValidatedSequenceCoverage(long proteinMatchKey) {
+    public double getValidatedSequenceCoverage(long proteinMatchKey) {
 
         Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey);
 
@@ -1692,8 +1692,8 @@ public class IdentificationFeaturesGenerator {
      */
     public String getConfidentPtmSites(IdentificationMatch identificationMatch, String sequence) {
 
-        PSPtmScores psPtmScores = new PSPtmScores();
-        psPtmScores = (PSPtmScores) identificationMatch.getUrParam(psPtmScores);
+        PSModificationScores psPtmScores = new PSModificationScores();
+        psPtmScores = (PSModificationScores) identificationMatch.getUrParam(psPtmScores);
 
         StringBuilder result = new StringBuilder();
 
@@ -1739,8 +1739,8 @@ public class IdentificationFeaturesGenerator {
      */
     public String getConfidentPtmSitesNumber(IdentificationMatch identificationMatch) {
 
-        PSPtmScores psPtmScores = new PSPtmScores();
-        psPtmScores = (PSPtmScores) identificationMatch.getUrParam(psPtmScores);
+        PSModificationScores psPtmScores = new PSModificationScores();
+        psPtmScores = (PSModificationScores) identificationMatch.getUrParam(psPtmScores);
 
         StringBuilder result = new StringBuilder();
 
@@ -1778,8 +1778,8 @@ public class IdentificationFeaturesGenerator {
      */
     public String getAmbiguousPtmSites(IdentificationMatch identificationMatch, String sequence) {
 
-        PSPtmScores psPtmScores = new PSPtmScores();
-        psPtmScores = (PSPtmScores) identificationMatch.getUrParam(psPtmScores);
+        PSModificationScores psPtmScores = new PSModificationScores();
+        psPtmScores = (PSModificationScores) identificationMatch.getUrParam(psPtmScores);
         StringBuilder result = new StringBuilder();
 
         if (psPtmScores != null) {
@@ -1834,8 +1834,8 @@ public class IdentificationFeaturesGenerator {
      */
     public String getAmbiguousPtmSiteNumber(IdentificationMatch identificationMatch) {
 
-        PSPtmScores psPtmScores = new PSPtmScores();
-        psPtmScores = (PSPtmScores) identificationMatch.getUrParam(psPtmScores);
+        PSModificationScores psPtmScores = new PSModificationScores();
+        psPtmScores = (PSModificationScores) identificationMatch.getUrParam(psPtmScores);
         StringBuilder result = new StringBuilder();
 
         if (psPtmScores != null) {
@@ -1865,8 +1865,8 @@ public class IdentificationFeaturesGenerator {
      */
     public String getConfidentPtmSites(IdentificationMatch match, String sequence, ArrayList<String> targetedPtms) {
 
-        PSPtmScores psPtmScores = new PSPtmScores();
-        psPtmScores = (PSPtmScores) match.getUrParam(psPtmScores);
+        PSModificationScores psPtmScores = new PSModificationScores();
+        psPtmScores = (PSModificationScores) match.getUrParam(psPtmScores);
 
         StringBuilder result = new StringBuilder();
 
@@ -1906,8 +1906,8 @@ public class IdentificationFeaturesGenerator {
      */
     public String getConfidentPtmSitesNumber(IdentificationMatch match, ArrayList<String> targetedPtms) {
 
-        PSPtmScores psPtmScores = new PSPtmScores();
-        psPtmScores = (PSPtmScores) match.getUrParam(psPtmScores);
+        PSModificationScores psPtmScores = new PSModificationScores();
+        psPtmScores = (PSModificationScores) match.getUrParam(psPtmScores);
 
         if (psPtmScores != null) {
 
@@ -1938,8 +1938,8 @@ public class IdentificationFeaturesGenerator {
      */
     public String getAmbiguousPtmSites(IdentificationMatch match, String sequence, ArrayList<String> targetedPtms) {
 
-        PSPtmScores psPtmScores = new PSPtmScores();
-        psPtmScores = (PSPtmScores) match.getUrParam(psPtmScores);
+        PSModificationScores psPtmScores = new PSModificationScores();
+        psPtmScores = (PSModificationScores) match.getUrParam(psPtmScores);
 
         if (psPtmScores != null) {
             HashMap<Integer, ArrayList<String>> reportPerSite = new HashMap<>();
@@ -2017,8 +2017,8 @@ public class IdentificationFeaturesGenerator {
      */
     public String getAmbiguousPtmSiteNumber(IdentificationMatch match, ArrayList<String> targetedPtms) {
 
-        PSPtmScores psPtmScores = new PSPtmScores();
-        psPtmScores = (PSPtmScores) match.getUrParam(psPtmScores);
+        PSModificationScores psPtmScores = new PSModificationScores();
+        psPtmScores = (PSModificationScores) match.getUrParam(psPtmScores);
 
         if (psPtmScores != null) {
             ArrayList<Integer> sites = new ArrayList<>();
@@ -2047,8 +2047,8 @@ public class IdentificationFeaturesGenerator {
      */
     public String getModifiedSequence(IdentificationMatch identificationMatch, String sequence) {
 
-        PSPtmScores psPtmScores = new PSPtmScores();
-        psPtmScores = (PSPtmScores) identificationMatch.getUrParam(psPtmScores);
+        PSModificationScores psPtmScores = new PSModificationScores();
+        psPtmScores = (PSModificationScores) identificationMatch.getUrParam(psPtmScores);
 
         if (psPtmScores != null) {
             StringBuilder result = new StringBuilder();

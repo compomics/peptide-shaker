@@ -157,7 +157,7 @@ public class PtmTable extends JTable {
         tempColumnTypes.add(java.lang.Integer.class);
         tooltips.add("a, b and c ion index");
 
-        AnnotationParameters annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
+        AnnotationParameters annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationParameters();
 
         if (annotationPreferences.getFragmentIonTypes().contains(PeptideFragmentIon.A_ION)) {
             columnHeaders.add("a");
@@ -285,7 +285,7 @@ public class PtmTable extends JTable {
      */
     private void insertAreaCharts() {
 
-        AnnotationParameters annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
+        AnnotationParameters annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationParameters();
         ModificationtableContent tempContent;
         PtmtableContent tableContent = new ModificationtableContent();
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
@@ -458,7 +458,7 @@ public class PtmTable extends JTable {
      */
     private void insertBarCharts() {
 
-        AnnotationParameters annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
+        AnnotationParameters annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationParameters();
         ModificationtableContent tempContent;
         PtmtableContent tableContent = new ModificationtableContent();
         MSnSpectrum spectrum;

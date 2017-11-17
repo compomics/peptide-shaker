@@ -24,7 +24,7 @@ import com.compomics.util.parameters.identification.advanced.SequenceMatchingPar
 import com.compomics.util.experiment.io.biology.protein.Header;
 import com.compomics.util.experiment.io.biology.protein.Header.ProteinDatabase;
 import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
-import eu.isas.peptideshaker.parameters.PSPtmScores;
+import eu.isas.peptideshaker.parameters.PSModificationScores;
 import java.awt.Color;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -299,8 +299,8 @@ public class DisplayFeaturesGenerator {
     public String getPeptideModificationTooltipAsHtml(SpectrumMatch spectrumMatch) {
         try {
             Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-            PSPtmScores ptmScores = new PSPtmScores();
-            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+            PSModificationScores ptmScores = new PSModificationScores();
+            ptmScores = (PSModificationScores) spectrumMatch.getUrParam(ptmScores);
             return getPeptideModificationTooltipAsHtml(peptide, ptmScores);
         } catch (Exception e) {
             exceptionHandler.catchException(e);
@@ -318,8 +318,8 @@ public class DisplayFeaturesGenerator {
     public String getPeptideModificationTooltipAsHtml(PeptideMatch peptideMatch) {
         try {
             Peptide peptide = peptideMatch.getPeptide();
-            PSPtmScores ptmScores = new PSPtmScores();
-            ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+            PSModificationScores ptmScores = new PSModificationScores();
+            ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
             return getPeptideModificationTooltipAsHtml(peptide, ptmScores);
         } catch (Exception e) {
             exceptionHandler.catchException(e);
@@ -335,7 +335,7 @@ public class DisplayFeaturesGenerator {
      * @param ptmScores the PTM scores
      * @return a string with the HTML tooltip for the peptide
      */
-    public String getPeptideModificationTooltipAsHtml(Peptide peptide, PSPtmScores ptmScores) {
+    public String getPeptideModificationTooltipAsHtml(Peptide peptide, PSModificationScores ptmScores) {
 
         String peptideSequence = peptide.getSequence();
         HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
@@ -511,8 +511,8 @@ public class DisplayFeaturesGenerator {
     public String getTaggedPeptideSequence(PeptideMatch peptideMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
         try {
             Peptide peptide = peptideMatch.getPeptide();
-            PSPtmScores ptmScores = new PSPtmScores();
-            ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+            PSModificationScores ptmScores = new PSModificationScores();
+            ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
             return getTaggedPeptideSequence(peptide, ptmScores, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
         } catch (Exception e) {
             exceptionHandler.catchException(e);
@@ -535,8 +535,8 @@ public class DisplayFeaturesGenerator {
     public String getTaggedPeptideSequence(SpectrumMatch spectrumMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
         try {
             Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-            PSPtmScores ptmScores = new PSPtmScores();
-            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+            PSModificationScores ptmScores = new PSModificationScores();
+            ptmScores = (PSModificationScores) spectrumMatch.getUrParam(ptmScores);
             return getTaggedPeptideSequence(peptide, ptmScores, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
         } catch (Exception e) {
             exceptionHandler.catchException(e);
@@ -558,7 +558,7 @@ public class DisplayFeaturesGenerator {
      *
      * @return the tagged peptide sequence
      */
-    public String getTaggedPeptideSequence(Peptide peptide, PSPtmScores ptmScores, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
+    public String getTaggedPeptideSequence(Peptide peptide, PSModificationScores ptmScores, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
         HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
         HashMap<Integer, ArrayList<String>> confidentLocations = new HashMap<>();
         HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = new HashMap<>();
@@ -607,7 +607,7 @@ public class DisplayFeaturesGenerator {
      * @return a map of filtered modifications based on the user display
      * preferences
      */
-    public static HashMap<Integer, ArrayList<String>> getFilteredConfidentModificationsSites(PSPtmScores ptmScores, ArrayList<String> displayedPtms) {
+    public static HashMap<Integer, ArrayList<String>> getFilteredConfidentModificationsSites(PSModificationScores ptmScores, ArrayList<String> displayedPtms) {
         HashMap<Integer, ArrayList<String>> result = new HashMap<>();
         for (String ptmName : displayedPtms) {
             for (int confidentSite : ptmScores.getConfidentSitesForPtm(ptmName)) {
@@ -632,7 +632,7 @@ public class DisplayFeaturesGenerator {
      * @return a map of filtered modifications based on the user display
      * preferences
      */
-    public static HashMap<Integer, ArrayList<String>> getFilteredAmbiguousModificationsRepresentativeSites(PSPtmScores ptmScores, ArrayList<String> displayedPtms) {
+    public static HashMap<Integer, ArrayList<String>> getFilteredAmbiguousModificationsRepresentativeSites(PSModificationScores ptmScores, ArrayList<String> displayedPtms) {
         HashMap<Integer, ArrayList<String>> result = new HashMap<>();
         for (int representativeSite : ptmScores.getRepresentativeSites()) {
             for (String ptmName : ptmScores.getPtmsAtRepresentativeSite(representativeSite)) {
@@ -659,7 +659,7 @@ public class DisplayFeaturesGenerator {
      * @return a map of filtered modifications based on the user display
      * preferences
      */
-    public static HashMap<Integer, ArrayList<String>> getFilteredAmbiguousModificationsSecondarySites(PSPtmScores ptmScores, ArrayList<String> displayedPtms) {
+    public static HashMap<Integer, ArrayList<String>> getFilteredAmbiguousModificationsSecondarySites(PSModificationScores ptmScores, ArrayList<String> displayedPtms) {
         HashMap<Integer, ArrayList<String>> result = new HashMap<>();
         for (int representativeSite : ptmScores.getRepresentativeSites()) {
             HashMap<Integer, ArrayList<String>> modificationsAtSite = ptmScores.getAmbiguousPtmsAtRepresentativeSite(representativeSite);

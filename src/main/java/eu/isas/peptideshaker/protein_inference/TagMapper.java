@@ -118,7 +118,7 @@ public class TagMapper {
 
         com.compomics.util.experiment.identification.protein_inference.PeptideMapper peptideMapper = sequenceFactory.getDefaultPeptideMapper();
         MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
-        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = spectrumMatch.getAssumptionsMap();
         for (int advocateId : assumptionsMap.keySet()) {
@@ -192,7 +192,7 @@ public class TagMapper {
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         ModificationParameters modificationProfile = searchParameters.getModificationParameters();
         // add the fixed PTMs
-        ptmFactory.checkFixedModifications(modificationProfile, tag, identificationParameters.getSequenceMatchingPreferences());
+        ptmFactory.checkFixedModifications(modificationProfile, tag, identificationParameters.getSequenceMatchingParameters());
 
         // rename the variable modifications
         for (TagComponent tagComponent : tag.getContent()) {

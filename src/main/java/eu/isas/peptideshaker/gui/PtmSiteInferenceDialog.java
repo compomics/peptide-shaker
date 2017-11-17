@@ -13,11 +13,11 @@ import com.compomics.util.gui.renderers.AlignedTableCellRenderer;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
-import eu.isas.peptideshaker.parameters.PSPtmScores;
+import eu.isas.peptideshaker.parameters.PSModificationScores;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.ptm.PtmScorer;
 import eu.isas.peptideshaker.scoring.maps.PsmPTMMap;
-import eu.isas.peptideshaker.scoring.PtmScoring;
+import eu.isas.peptideshaker.scoring.ModificationScoring;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.awt.Color;
 import java.awt.Toolkit;
@@ -54,7 +54,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     /**
      * The peptide PTM scoring.
      */
-    private PSPtmScores peptidePtmScore = null;
+    private PSModificationScores peptidePtmScore = null;
     /**
      * The peptide match.
      */
@@ -94,7 +94,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         try {
             peptideMatch = (PeptideMatch)peptideShakerGUI.getIdentification().retrieveObject(peptideKey);
             Peptide peptide = peptideMatch.getPeptide();
-            peptidePtmScore = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
+            peptidePtmScore = (PSModificationScores) peptideMatch.getUrParam(new PSModificationScores());
             if (peptidePtmScore != null) {
 
                 mainSelection = new boolean[peptide.getSequence().length()];
@@ -179,19 +179,19 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
         // set up the PTM confidence color map
         HashMap<Integer, Color> ptmConfidenceColorMap = new HashMap<>();
-        ptmConfidenceColorMap.put(PtmScoring.NOT_FOUND, Color.lightGray);
-        ptmConfidenceColorMap.put(PtmScoring.RANDOM, Color.RED);
-        ptmConfidenceColorMap.put(PtmScoring.DOUBTFUL, Color.ORANGE);
-        ptmConfidenceColorMap.put(PtmScoring.CONFIDENT, Color.YELLOW);
-        ptmConfidenceColorMap.put(PtmScoring.VERY_CONFIDENT, peptideShakerGUI.getSparklineColor());
+        ptmConfidenceColorMap.put(ModificationScoring.NOT_FOUND, Color.lightGray);
+        ptmConfidenceColorMap.put(ModificationScoring.RANDOM, Color.RED);
+        ptmConfidenceColorMap.put(ModificationScoring.DOUBTFUL, Color.ORANGE);
+        ptmConfidenceColorMap.put(ModificationScoring.CONFIDENT, Color.YELLOW);
+        ptmConfidenceColorMap.put(ModificationScoring.VERY_CONFIDENT, peptideShakerGUI.getSparklineColor());
 
         // set up the PTM confidence tooltip map
         ptmConfidenceTooltipMap = new HashMap<>();
-        ptmConfidenceTooltipMap.put(PtmScoring.NOT_FOUND, "Not Found");
-        ptmConfidenceTooltipMap.put(PtmScoring.RANDOM, "Random Assignment");
-        ptmConfidenceTooltipMap.put(PtmScoring.DOUBTFUL, "Doubtful Assignment");
-        ptmConfidenceTooltipMap.put(PtmScoring.CONFIDENT, "Confident Assignment");
-        ptmConfidenceTooltipMap.put(PtmScoring.VERY_CONFIDENT, "Very Confident Assignment");
+        ptmConfidenceTooltipMap.put(ModificationScoring.NOT_FOUND, "Not Found");
+        ptmConfidenceTooltipMap.put(ModificationScoring.RANDOM, "Random Assignment");
+        ptmConfidenceTooltipMap.put(ModificationScoring.DOUBTFUL, "Doubtful Assignment");
+        ptmConfidenceTooltipMap.put(ModificationScoring.CONFIDENT, "Confident Assignment");
+        ptmConfidenceTooltipMap.put(ModificationScoring.VERY_CONFIDENT, "Very Confident Assignment");
 
         for (int i = 1; i < ptmsTable.getColumnCount(); i++) {
             ptmsTable.getColumn(ptmsTable.getColumnName(i)).setCellRenderer(
@@ -207,8 +207,8 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
             DisplayParameters displayPreferences = peptideShakerGUI.getDisplayPreferences();
             ModificationParameters modificationProfile = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters();
             Peptide peptide = peptideMatch.getPeptide();
-            PSPtmScores ptmScores = new PSPtmScores();
-            ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+            PSModificationScores ptmScores = new PSModificationScores();
+            ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
             HashMap<Integer, ArrayList<String>> fixedModifications = DisplayFeaturesGenerator.getFilteredModifications(peptide.getIndexedFixedModifications(), displayPreferences.getDisplayedPtms());
             HashMap<Integer, ArrayList<String>> confidentLocations = DisplayFeaturesGenerator.getFilteredConfidentModificationsSites(ptmScores, displayPreferences.getDisplayedPtms());
             HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayPreferences.getDisplayedPtms());
@@ -366,19 +366,19 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                     return row + 1;
                 } else {
                     int psmNumber = row;
-                    PSPtmScores psmScores = (PSPtmScores) psms.get(psmNumber).getUrParam(new PSPtmScores());
+                    PSModificationScores psmScores = (PSModificationScores) psms.get(psmNumber).getUrParam(new PSModificationScores());
                     if (psmScores != null) {
-                        PtmScoring psmScoring = psmScores.getPtmScoring(ptm.getName());
+                        ModificationScoring psmScoring = psmScores.getModificationScoring(ptm.getName());
                         if (psmScoring != null) {
                             int site = column;
                             if (psmScoring.getConfidentPtmLocations().contains(site)) {
                                 return psmScoring.getLocalizationConfidence(site);
                             } else {
-                                return PtmScoring.NOT_FOUND;
+                                return ModificationScoring.NOT_FOUND;
                             }
                         }
                     }
-                    return PtmScoring.RANDOM;
+                    return ModificationScoring.RANDOM;
                 }
 
             } catch (Exception e) {
@@ -593,7 +593,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 Identification identification = peptideShakerGUI.getIdentification();
 
                 // update protein level PTM scoring
-                ArrayList<String> proteins = peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                ArrayList<String> proteins = peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
                 PSMaps psMaps = new PSMaps();
                 psMaps = (PSMaps) identification.getUrParam(psMaps);
                 PsmPTMMap psmPTMMap = psMaps.getPsmPTMMap();

@@ -75,23 +75,38 @@ public class PsProteinSection {
      * @param writer the writer which will write to the file
      */
     public PsProteinSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
+        
         ArrayList<ExportFeature> peptideFeatures = new ArrayList<>();
+        
         for (ExportFeature exportFeature : exportFeatures) {
+
             if (exportFeature instanceof PsProteinFeature) {
+
                 proteinFeatures.add((PsProteinFeature) exportFeature);
+
             } else if (exportFeature instanceof PsPeptideFeature || exportFeature instanceof PsPsmFeature || exportFeature instanceof PsIdentificationAlgorithmMatchesFeature || exportFeature instanceof PsFragmentFeature) {
+
                 peptideFeatures.add(exportFeature);
+
             } else {
+
                 throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
+
             }
         }
+
         Collections.sort(proteinFeatures);
+
         if (!peptideFeatures.isEmpty()) {
+
             peptideSection = new PsPeptideSection(peptideFeatures, indexes, header, writer);
+
         }
+
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
+
     }
 
     /**
@@ -122,11 +137,15 @@ public class PsProteinSection {
             throws IOException {
 
         if (waitingHandler != null) {
+
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+
         }
 
         if (header) {
+
             writeHeader();
+
         }
 
         if (keys == null) {
@@ -134,13 +153,17 @@ public class PsProteinSection {
             keys = identification.getProteinIdentification().stream()
                     .mapToLong(Long::longValue)
                     .toArray();
+
         }
+
         int line = 1;
 
         if (waitingHandler != null) {
+
             waitingHandler.setWaitingText("Exporting. Please Wait...");
             waitingHandler.resetSecondaryProgressCounter();
             waitingHandler.setMaxSecondaryProgressCounter(keys.length);
+
         }
 
         for (long key : keys) {
@@ -148,10 +171,15 @@ public class PsProteinSection {
             ProteinMatch proteinMatch = identification.getProteinMatch(key);
 
             if (waitingHandler != null) {
+
                 if (waitingHandler.isRunCanceled()) {
+
                     return;
+
                 }
+
                 waitingHandler.increaseSecondaryProgressCounter();
+
             }
 
             if (decoys || !proteinMatch.isDecoy()) {
@@ -163,33 +191,55 @@ public class PsProteinSection {
                     boolean first = true;
 
                     if (indexes) {
+
                         writer.write(line + "");
                         first = false;
+
                     }
 
                     for (ExportFeature exportFeature : proteinFeatures) {
+
                         if (!first) {
+
                             writer.addSeparator();
+
                         } else {
+
                             first = false;
+
                         }
+
                         PsProteinFeature tempProteinFeatures = (PsProteinFeature) exportFeature;
                         writer.write(getFeature(identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, nSurroundingAas, key, proteinMatch, psParameter, tempProteinFeatures, waitingHandler));
 
                     }
+
                     writer.newLine();
+
                     if (peptideSection != null) {
+
                         writer.increaseDepth();
+
                         if (waitingHandler != null) {
+
                             waitingHandler.setDisplayProgress(false);
+
                         }
+
                         peptideSection.writeSection(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, identificationParameters, proteinMatch.getPeptideMatchesKeys(), nSurroundingAas, line + ".", validatedOnly, decoys, waitingHandler);
+
                         if (waitingHandler != null) {
+
                             waitingHandler.setDisplayProgress(true);
+
                         }
+
                         writer.decreseDepth();
+
                     }
+
                     line++;
+
                 }
             }
         }

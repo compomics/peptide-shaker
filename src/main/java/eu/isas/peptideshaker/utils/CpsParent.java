@@ -299,7 +299,7 @@ public class CpsParent extends UserPreferencesParent {
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
         // Load fasta file
-        ProteinInferenceParameters proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
+        ProteinInferenceParameters proteinInferencePreferences = identificationParameters.getProteinInferenceParameters();
         File providedFastaLocation = proteinInferencePreferences.getProteinSequenceDatabase();
         String fastaFileName = providedFastaLocation.getName();
         File projectFolder = cpsFile.getParentFile();
@@ -744,7 +744,7 @@ public class CpsParent extends UserPreferencesParent {
             report += identificationParameters.getSearchParameters().getFastaFile().getAbsolutePath() + "<br>";
 
             report += "<br><b>FASTA File (protein inference):</b><br>";
-            report += identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getAbsolutePath() + "<br>";
+            report += identificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase().getAbsolutePath() + "<br>";
 
             report += "<br><br><b>Report:</b><br>";
             if (waitingHandlerReport == null) {

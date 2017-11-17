@@ -262,7 +262,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // export spectra
                 if (followUpCLIInputBean.spectrumExportNeeded()) {
                     try {
-                        CLIExportMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingPreferences());
+                        CLIExportMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingParameters());
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the spectra.", true, true);
                         e.printStackTrace();
@@ -295,7 +295,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // progenesis export
                 if (followUpCLIInputBean.progenesisExportNeeded()) {
                     try {
-                        CLIExportMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingPreferences());
+                        CLIExportMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingParameters());
                         waitingHandler.appendReport("Progenesis export completed.", true, true);
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);
@@ -359,7 +359,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     waitingHandler.setRunCanceled();
                 }
 
-                File fastaFile = identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
+                File fastaFile = identificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase();
                 ArrayList<File> spectrumFiles = new ArrayList<>();
                 for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
                     File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
@@ -578,7 +578,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     } else if (nameLowerCase.endsWith(".par")) {
                         try {
                             tempIdentificationParameters = IdentificationParameters.getIdentificationParameters(unzippedFile);
-                            ValidationQcParameters validationQCPreferences = tempIdentificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+                            ValidationQcParameters validationQCPreferences = tempIdentificationParameters.getIdValidationParameters().getValidationQCPreferences();
                             if (validationQCPreferences == null
                                     || validationQCPreferences.getPsmFilters() == null
                                     || validationQCPreferences.getPeptideFilters() == null
@@ -621,7 +621,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             identificationParametersInputBean.updateIdentificationParameters();
         }
         identificationParameters = identificationParametersInputBean.getIdentificationParameters();
-        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCPreferences();
         if (validationQCPreferences == null
                 || validationQCPreferences.getPsmFilters() == null
                 || validationQCPreferences.getPeptideFilters() == null
@@ -675,9 +675,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
             if (found) {
                 // see if the protein inference fasta file is also missing
-                File proteinInferenceSequenceDatabase = identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
+                File proteinInferenceSequenceDatabase = identificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase();
                 if (!proteinInferenceSequenceDatabase.exists() && proteinInferenceSequenceDatabase.getName().equalsIgnoreCase(fastaFile.getName())) {
-                    identificationParameters.getProteinInferencePreferences().setProteinSequenceDatabase(fastaFile);
+                    identificationParameters.getProteinInferenceParameters().setProteinSequenceDatabase(fastaFile);
                 } else {
                     waitingHandler.appendReport("FASTA file \'" + proteinInferenceSequenceDatabase.getName() + "\' not found.", true, true);
                 }

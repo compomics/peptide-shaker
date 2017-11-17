@@ -208,7 +208,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                         }
 
                         HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = spectrumMatch.getAssumptionsMap();
-                        return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftware(spectrumMatch, assumptions, identificationParameters.getSequenceMatchingPreferences(), inputMap.getInputAlgorithmsSorted().size());
+                        return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftware(spectrumMatch, assumptions, identificationParameters.getSequenceMatchingParameters(), inputMap.getInputAlgorithmsSorted().size());
                     case 3:
                         if (spectrumMatch == null) {
                             if (isScrolling()) {

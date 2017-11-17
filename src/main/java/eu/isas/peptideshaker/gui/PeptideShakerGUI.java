@@ -2038,12 +2038,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         ModificationParameters ptmSettings = getIdentificationParameters().getSearchParameters().getModificationParameters();
         ArrayList<NeutralLoss> neutralLosses = IonFactory.getNeutralLosses(ptmSettings);
         ArrayList<Integer> reporterIons = new ArrayList<>(IonFactory.getReporterIons(ptmSettings));
-        AnnotationParametersDialog annotationSettingsDialog = new AnnotationParametersDialog(this, getIdentificationParameters().getAnnotationPreferences(),
+        AnnotationParametersDialog annotationSettingsDialog = new AnnotationParametersDialog(this, getIdentificationParameters().getAnnotationParameters(),
                 getIdentificationParameters().getSearchParameters().getFragmentIonAccuracy(), neutralLosses, reporterIons, true);
         if (!annotationSettingsDialog.isCanceled()) {
             AnnotationParameters newAnnotationSettings = annotationSettingsDialog.getAnnotationSettings();
-            if (!newAnnotationSettings.isSameAs(getIdentificationParameters().getAnnotationPreferences())) {
-                getIdentificationParameters().setAnnotationSettings(newAnnotationSettings);
+            if (!newAnnotationSettings.isSameAs(getIdentificationParameters().getAnnotationParameters())) {
+                getIdentificationParameters().setAnnotationParameters(newAnnotationSettings);
                 updateSpectrumAnnotations();
                 setDataSaved(false);
             }
@@ -2315,7 +2315,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         }
 
                         // move the spectrum annotation menu bar and set the intensity slider value
-                        AnnotationParameters annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
+                        AnnotationParameters annotationPreferences = getIdentificationParameters().getAnnotationParameters();
                         switch (selectedIndex) {
                             case OVER_VIEW_TAB_INDEX:
                                 overviewPanel.showSpectrumAnnotationMenu();
@@ -3051,11 +3051,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void speciesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speciesJMenuItemActionPerformed
         IdentificationParameters identificationParameters = getIdentificationParameters();
-        GeneParameters genePreferences = identificationParameters.getGenePreferences();
+        GeneParameters genePreferences = identificationParameters.getGeneParameters();
         GeneParametersDialog genePreferencesDialog = new GeneParametersDialog(this, genePreferences, identificationParameters.getSearchParameters(), false);
         if (!genePreferencesDialog.isCanceled()) {
             genePreferences = genePreferencesDialog.getGenePreferences();
-            identificationParameters.setGenePreferences(genePreferences);
+            identificationParameters.setGeneParameters(genePreferences);
             if (allTabsJTabbedPane.getSelectedIndex() == GO_ANALYSIS_TAB_INDEX) {
                 goPanel.updateMappings();
             } else {
@@ -3180,7 +3180,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void validationQcMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validationQcMenuItemActionPerformed
 
-        final IdMatchValidationParameters idValidationPreferences = getIdentificationParameters().getIdValidationPreferences();
+        final IdMatchValidationParameters idValidationPreferences = getIdentificationParameters().getIdValidationParameters();
         final ValidationQcParameters validationQCPreferences = idValidationPreferences.getValidationQCPreferences();
         ValidationQCParametersDialog validationQCPreferencesDialog = new ValidationQCParametersDialog(this, this, validationQCPreferences, true);
 
@@ -3699,7 +3699,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public void updateAnnotationMenu() {
 
         IdentificationParameters identificationParameters = getIdentificationParameters();
-        AnnotationParameters annotationPreferences = identificationParameters.getAnnotationPreferences();
+        AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
         if (searchParameters.getForwardIons().contains(PeptideFragmentIon.A_ION)) {
@@ -3750,7 +3750,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
         IdentificationParameters identificationParameters = getIdentificationParameters();
-        AnnotationParameters annotationPreferences = identificationParameters.getAnnotationPreferences();
+        AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
@@ -4932,7 +4932,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         }
 
         // General annotation settings
-        AnnotationParameters annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
+        AnnotationParameters annotationPreferences = getIdentificationParameters().getAnnotationParameters();
         highResAnnotationCheckBoxMenuItem.setSelected(annotationPreferences.getTiesResolution() == SpectrumAnnotator.TiesResolution.mostAccurateMz); //@TODO: change for a drop down menu
         allCheckBoxMenuItem.setSelected(annotationPreferences.showAllPeaks());
 
@@ -4949,11 +4949,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public void updateAnnotationPreferences() {
 
         try {
-            AnnotationParameters annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
+            AnnotationParameters annotationPreferences = getIdentificationParameters().getAnnotationParameters();
 
             specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(specificAnnotationPreferences.getSpectrumKey(),
-                    specificAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingPreferences(),
-                    getIdentificationParameters().getPtmScoringPreferences().getSequenceMatchingPreferences());
+                    specificAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingParameters(),
+                    getIdentificationParameters().getModificationLocalizationParameters().getSequenceMatchingPreferences());
 
             if (!defaultAnnotationCheckBoxMenuItem.isSelected()) {
 
@@ -5467,7 +5467,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private boolean locateFastaFileManually() throws FileNotFoundException, ClassNotFoundException, IOException {
 
-        File fastaFile = getIdentificationParameters().getProteinInferencePreferences().getProteinSequenceDatabase();
+        File fastaFile = getIdentificationParameters().getProteinInferenceParameters().getProteinSequenceDatabase();
         JOptionPane.showMessageDialog(this,
                 "FASTA file " + fastaFile.getAbsolutePath() + " was not found."
                 + "\n\nPlease locate it manually.",
@@ -5497,7 +5497,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File selectedFastaFile = fileChooser.getSelectedFile();
             tempLastSelectedFolder.setLastSelectedFolder(selectedFastaFile.getAbsolutePath());
-            getIdentificationParameters().getProteinInferencePreferences().setProteinSequenceDatabase(selectedFastaFile);
+            getIdentificationParameters().getProteinInferenceParameters().setProteinSequenceDatabase(selectedFastaFile);
             dataSaved = false;
             return cpsParent.loadFastaFile(selectedFastaFile.getParentFile(), progressDialog);
         } else {
@@ -5588,7 +5588,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             if (selectedFile != null) {
 
-                AnnotationParameters annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
+                AnnotationParameters annotationPreferences = getIdentificationParameters().getAnnotationParameters();
                 PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
                 TagSpectrumAnnotator tagSpectrumAnnotator = new TagSpectrumAnnotator();
 
@@ -5611,14 +5611,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                     Peptide peptide = peptideAssumption.getPeptide();
                                     SpecificAnnotationParameters exportAnnotationPreferences = new SpecificAnnotationParameters(spectrumKey, peptideAssumption);
-                                    exportAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(exportAnnotationPreferences.getSpectrumKey(), exportAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingPreferences(), getIdentificationParameters().getPtmScoringPreferences().getSequenceMatchingPreferences());
+                                    exportAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(exportAnnotationPreferences.getSpectrumKey(), exportAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingParameters(), getIdentificationParameters().getModificationLocalizationParameters().getSequenceMatchingPreferences());
                                     annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, exportAnnotationPreferences, spectrum, peptide);
                                     identifier = peptide.getSequenceWithLowerCasePtms();
                                 } else if (assumption instanceof TagAssumption) {
                                     TagAssumption tagAssumption = (TagAssumption) assumption;
                                     Tag tag = tagAssumption.getTag();
                                     SpecificAnnotationParameters exportAnnotationPreferences = new SpecificAnnotationParameters(spectrumKey, tagAssumption);
-                                    exportAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(exportAnnotationPreferences.getSpectrumKey(), exportAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingPreferences(), getIdentificationParameters().getPtmScoringPreferences().getSequenceMatchingPreferences());
+                                    exportAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(exportAnnotationPreferences.getSpectrumKey(), exportAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingParameters(), getIdentificationParameters().getModificationLocalizationParameters().getSequenceMatchingPreferences());
                                     annotations = tagSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, exportAnnotationPreferences, spectrum, tag);
                                     identifier = tag.asSequence(); //@TODO: add PTMs?
                                 } else {
@@ -6402,7 +6402,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     public void run() {
 
                         File cpsFile = cpsParent.getCpsFile();
-                        File fastaFile = PeptideShakerGUI.this.getIdentificationParameters().getProteinInferencePreferences().getProteinSequenceDatabase();
+                        File fastaFile = PeptideShakerGUI.this.getIdentificationParameters().getProteinInferenceParameters().getProteinSequenceDatabase();
                         ArrayList<File> spectrumFiles = new ArrayList<>();
                         for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
                             File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);

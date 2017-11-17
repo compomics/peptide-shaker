@@ -354,7 +354,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             GoMapping backgroundGoMapping = new GoMapping();
                             Integer taxon = null;
                             IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                            GeneParameters genePreferences = identificationParameters.getGenePreferences();
+                            GeneParameters genePreferences = identificationParameters.getGeneParameters();
                             if (genePreferences != null) {
                                 taxon = genePreferences.getSelectedBackgroundSpecies();
                             }
@@ -362,7 +362,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 GeneParametersDialog genePreferencesDialog = new GeneParametersDialog(peptideShakerGUI, genePreferences, identificationParameters.getSearchParameters(), false);
                                 if (!genePreferencesDialog.isCanceled()) {
                                     genePreferences = genePreferencesDialog.getGenePreferences();
-                                    identificationParameters.setGenePreferences(genePreferences);
+                                    identificationParameters.setGeneParameters(genePreferences);
                                     taxon = genePreferences.getSelectedBackgroundSpecies();
                                 }
                             }

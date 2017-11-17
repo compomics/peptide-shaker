@@ -158,7 +158,7 @@ public class MzidCLI extends CpsParent {
                 }
                 return 1;
             }
-            waitingHandler.appendReport("Protein database " + identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getName() + ".", true, true);
+            waitingHandler.appendReport("Protein database " + identificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase().getName() + ".", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the FASTA file.", true, true);
             e.printStackTrace();
@@ -207,8 +207,8 @@ public class MzidCLI extends CpsParent {
 
         // export mzid file
         // make sure that all annotations are included
-        double currentIntensityLimit = this.getIdentificationParameters().getAnnotationPreferences().getAnnotationIntensityLimit();
-        this.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(0.0);
+        double currentIntensityLimit = this.getIdentificationParameters().getAnnotationParameters().getAnnotationIntensityLimit();
+        this.getIdentificationParameters().getAnnotationParameters().setIntensityLimit(0.0);
 
         try {
             CLIExportMethods.exportMzId(mzidCLIInputBean, this, waitingHandler);
@@ -218,7 +218,7 @@ public class MzidCLI extends CpsParent {
             waitingHandler.setRunCanceled();
         } finally {
             // reset the annotation level
-            this.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(currentIntensityLimit);
+            this.getIdentificationParameters().getAnnotationParameters().setIntensityLimit(currentIntensityLimit);
         }
 
         try {

@@ -186,7 +186,7 @@ public class FileImporter {
 
         ProteinGeneDetailsProvider geneFactory = new ProteinGeneDetailsProvider();
 
-        GeneParameters genePreferences = identificationParameters.getGenePreferences();
+        GeneParameters genePreferences = identificationParameters.getGeneParameters();
         GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, fastaSummary, sequenceProvider, proteinDetailsProvider, waitingHandler);
         peptideShaker.setGeneMaps(geneMaps);
 
@@ -352,14 +352,14 @@ public class FileImporter {
         public int importFiles() {
 
             try {
-                importSequences(identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getSearchParameters(), identificationParameters.getPeptideVariantsPreferences(), waitingHandler, exceptionHandler,
-                        identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase());
+                importSequences(identificationParameters.getSequenceMatchingParameters(), identificationParameters.getSearchParameters(), identificationParameters.getPeptideVariantsParameters(), waitingHandler, exceptionHandler,
+                        identificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase());
 
                 if (waitingHandler.isRunCanceled()) {
                     return 1;
                 }
 
-                GeneParameters genePreferences = identificationParameters.getGenePreferences();
+                GeneParameters genePreferences = identificationParameters.getGeneParameters();
                 if (genePreferences.getUseGeneMapping()) {
                     waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                     waitingHandler.appendReport("Importing gene mappings.", true, true);
@@ -574,7 +574,7 @@ public class FileImporter {
             LinkedList<SpectrumMatch> idFileSpectrumMatches = null;
             try {
                 if (peptideMapper != null && !peptideMapper.isCanceled()) {
-                    idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, identificationParameters.getSearchParameters(), identificationParameters.getSequenceMatchingPreferences(), true);
+                    idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, identificationParameters.getSearchParameters(), identificationParameters.getSequenceMatchingParameters(), true);
                 } else {
                     idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, identificationParameters.getSearchParameters(), null, true);
                 }

@@ -244,7 +244,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             nodeProperties.put(peptideNodeName, "" + peptideMatchParameter.getMatchValidationLevel().getIndex());
 
             // iterate the proteins
-            ArrayList<String> possibleProteins = peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+            ArrayList<String> possibleProteins = peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
 
             for (String tempProteinAccession : possibleProteins) {
 
@@ -329,7 +329,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
                         enzymatic = protein.isEnzymaticPeptide(peptideMatch.getPeptide().getSequence(),
                                 digestionPreferences.getEnzymes(),
-                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
                     }
 
                     edgeProperties.put(peptideNodeName + "|" + proteinNodeKey, enzymatic.toString());

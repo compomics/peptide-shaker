@@ -1869,7 +1869,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (!peptideParameter.getHidden()) {
 
-                        if (!peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                        if (!peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters())) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(value);
@@ -1935,7 +1935,7 @@ public class QCPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        if (!peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                        if (!peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters())) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(value);
@@ -1989,7 +1989,7 @@ public class QCPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        if (!peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                        if (!peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters())) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(length);
@@ -2062,7 +2062,7 @@ public class QCPanel extends javax.swing.JPanel {
                             maxValue = value;
                         }
 
-                        if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                        if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters())) {
                             if (psmParameter.getMatchValidationLevel().isValidated()) {
                                 if (psmParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(value);
@@ -2110,7 +2110,7 @@ public class QCPanel extends javax.swing.JPanel {
                             maxValue = value;
                         }
 
-                        if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                        if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters())) {
                             if (psmParameter.getMatchValidationLevel().isValidated()) {
                                 if (psmParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(value);
@@ -2334,8 +2334,8 @@ public class QCPanel extends javax.swing.JPanel {
         Identification identification = peptideShakerGUI.getIdentification();
         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
         ModificationParameters ptmSettings = identificationParameters.getSearchParameters().getModificationParameters();
-        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-        SequenceMatchingParameters ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
+        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
+        SequenceMatchingParameters ptmSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingPreferences();
 
         ArrayList<String> ptmNames = ptmSettings.getAllNotFixedModifications();
         HashMap<String, Integer> modifiedSitesMap = new HashMap<>(ptmNames.size());
@@ -2439,8 +2439,8 @@ public class QCPanel extends javax.swing.JPanel {
         Identification identification = peptideShakerGUI.getIdentification();
         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
         ModificationParameters ptmSettings = identificationParameters.getSearchParameters().getModificationParameters();
-        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-        SequenceMatchingParameters ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
+        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
+        SequenceMatchingParameters ptmSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingPreferences();
 
         ArrayList<String> ptmNames = ptmSettings.getAllNotFixedModifications();
         HashMap<String, Integer> modifiedPeptidesMap = new HashMap<>(ptmNames.size());

@@ -12,7 +12,7 @@ import java.util.Set;
  *
  * @author Marc Vaudel
  */
-public class PtmScoring implements Serializable {
+public class ModificationScoring implements Serializable {
 
     /**
      * Serial version UID for post-serialization compatibility.
@@ -63,7 +63,7 @@ public class PtmScoring implements Serializable {
     /**
      * Default constructor Constructor.
      */
-    public PtmScoring() {
+    public ModificationScoring() {
     }
 
     /**
@@ -71,7 +71,7 @@ public class PtmScoring implements Serializable {
      *
      * @param ptmName the name of the PTM of interest.
      */
-    public PtmScoring(String ptmName) {
+    public ModificationScoring(String ptmName) {
         this.ptmName = ptmName;
     }
 
@@ -255,7 +255,7 @@ public class PtmScoring implements Serializable {
      *
      * @param anotherScore another score
      */
-    public void addAll(PtmScoring anotherScore) {
+    public void addAll(ModificationScoring anotherScore) {
         for (int position : anotherScore.getDSites()) {
             double newScore = anotherScore.getDeltaScore(position);
             if (getDeltaScore(position) < newScore) {

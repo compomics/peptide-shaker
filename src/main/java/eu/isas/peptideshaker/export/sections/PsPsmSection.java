@@ -24,9 +24,9 @@ import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPsmFeature;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.parameters.PSPtmScores;
+import eu.isas.peptideshaker.parameters.PSModificationScores;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
-import eu.isas.peptideshaker.scoring.PtmScoring;
+import eu.isas.peptideshaker.scoring.ModificationScoring;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -291,14 +291,14 @@ public class PsPsmSection {
 
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
 
-                    PSPtmScores ptmScores = new PSPtmScores();
-                    ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+                    PSModificationScores ptmScores = new PSModificationScores();
+                    ptmScores = (PSModificationScores) spectrumMatch.getUrParam(ptmScores);
                     if (ptmScores != null) {
                         StringBuilder result = new StringBuilder();
                         ArrayList<String> modList = new ArrayList<>(ptmScores.getScoredPTMs());
                         Collections.sort(modList);
                         for (String mod : modList) {
-                            PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                            ModificationScoring ptmScoring = ptmScores.getModificationScoring(mod);
                             ArrayList<Integer> sites = new ArrayList<>(ptmScoring.getProbabilisticSites());
                             if (!sites.isEmpty()) {
                                 Collections.sort(sites);
@@ -329,13 +329,13 @@ public class PsPsmSection {
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
                     
                     StringBuilder result = new StringBuilder();
-                    PSPtmScores ptmScores = new PSPtmScores();
-                    ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+                    PSModificationScores ptmScores = new PSModificationScores();
+                    ptmScores = (PSModificationScores) spectrumMatch.getUrParam(ptmScores);
                     if (ptmScores != null) {
                         ArrayList<String> modList = new ArrayList<>(ptmScores.getScoredPTMs());
                         Collections.sort(modList);
                         for (String mod : modList) {
-                            PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                            ModificationScoring ptmScoring = ptmScores.getModificationScoring(mod);
                             ArrayList<Integer> sites = new ArrayList<>(ptmScoring.getDSites());
                             if (!sites.isEmpty()) {
                                 Collections.sort(sites);
@@ -374,7 +374,7 @@ public class PsPsmSection {
                     
                    return spectrumMatch.getAllPeptideAssumptions()
                             .filter(peptideAssumption -> peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(
-                                            bestPeptideAssumption.getPeptide(), identificationParameters.getSequenceMatchingPreferences()))
+                                            bestPeptideAssumption.getPeptide(), identificationParameters.getSequenceMatchingParameters()))
                             .collect(Collectors.toMap(PeptideAssumption::getAdvocate, 
                                     Function.identity(), 
                                     (a, b) -> b.getScore() < a.getScore() ? b : a, 
@@ -558,7 +558,7 @@ public class PsPsmSection {
      */
     public static String getPeptideModificationLocationConfidence(SpectrumMatch spectrumMatch, ModificationParameters modificationParameters) {
 
-        PSPtmScores psPtmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+        PSModificationScores psPtmScores = (PSModificationScores) spectrumMatch.getUrParam(new PSModificationScores());
 
         if (psPtmScores != null) {
             
@@ -576,7 +576,7 @@ public class PsPsmSection {
                 }
                 
                 result.append(mod).append(" (");
-                PtmScoring ptmScoring = psPtmScores.getPtmScoring(mod);
+                ModificationScoring ptmScoring = psPtmScores.getModificationScoring(mod);
                 boolean firstSite = true;
                 
                 for (int site : ptmScoring.getOrderedPtmLocations()) {
@@ -593,23 +593,23 @@ public class PsPsmSection {
                     
                     int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
                     
-                    if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                    if (ptmConfidence == ModificationScoring.NOT_FOUND) {
                     
                         result.append(site).append(": Not Scored");
                   
-                    } else if (ptmConfidence == PtmScoring.RANDOM) {
+                    } else if (ptmConfidence == ModificationScoring.RANDOM) {
                     
                         result.append(site).append(": Random");
                     
-                    } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                    } else if (ptmConfidence == ModificationScoring.DOUBTFUL) {
                     
                         result.append(site).append(": Doubtfull");
                     
-                    } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                    } else if (ptmConfidence == ModificationScoring.CONFIDENT) {
                     
                         result.append(site).append(": Confident");
                     
-                    } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                    } else if (ptmConfidence == ModificationScoring.VERY_CONFIDENT) {
                     
                         result.append(site).append(": Very Confident");
                     

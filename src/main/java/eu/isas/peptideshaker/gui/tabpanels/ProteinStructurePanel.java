@@ -3101,7 +3101,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             String peptideSequence = Peptide.getSequence(peptideKey);
             AminoAcidPattern aminoAcidPattern = AminoAcidPattern.getAminoAcidPatternFromString(peptideSequence);
 
-            for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+            for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters())) {
 
                 int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
 
@@ -3110,7 +3110,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         + " and resno <=" + (peptideTempEnd - chains[selectedChainIndex - 1].getDifference())
                         + " and chain = " + currentChain + "; color green");
 
-                if (!aminoAcidPattern.getIndexes(chainSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences()).isEmpty()) {
+                if (!aminoAcidPattern.getIndexes(chainSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters()).isEmpty()) {
                     peptideTable.setValueAt(true, i, peptideTable.getColumn("PDB").getModelIndex());
                     peptidePdbArray.add(peptideKey);
                 }
@@ -3126,7 +3126,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         String peptideSequence = Peptide.getSequence(peptideKey);
         AminoAcidPattern aminoAcidPattern = AminoAcidPattern.getAminoAcidPatternFromString(peptideSequence);
 
-        for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+        for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters())) {
 
             if (progressDialog.isRunCanceled()) {
                 break;
@@ -3162,7 +3162,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 modifications = new ArrayList<>(0);
             }
 
-            for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+            for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters())) {
                 if (progressDialog.isRunCanceled()) {
                     break;
                 }
@@ -3419,7 +3419,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     SpectrumMatch spectrumMatch = (SpectrumMatch) peptideShakerGUI.getIdentification().retrieveObject(psmKey);
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                        peptideKey = peptide.getMatchingKey(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                        peptideKey = peptide.getMatchingKey(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
                     }
                 } else {
                     peptideShakerGUI.resetSelectedItems();

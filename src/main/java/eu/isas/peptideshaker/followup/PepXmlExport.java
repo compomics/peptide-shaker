@@ -94,8 +94,8 @@ public class PepXmlExport {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         }
 
-        sequenceFactory.getDefaultPeptideMapper(identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getSearchParameters(),
-                identificationParameters.getPeptideVariantsPreferences(), waitingHandler, exceptionHandler);
+        sequenceFactory.getDefaultPeptideMapper(identificationParameters.getSequenceMatchingParameters(), identificationParameters.getSearchParameters(),
+                identificationParameters.getPeptideVariantsParameters(), waitingHandler, exceptionHandler);
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Exporting PSMs. Please Wait...");
@@ -511,7 +511,7 @@ public class PepXmlExport {
         searchHitStart.append("<search_hit hit_rank=\"").append(peptideAssumption.getRank()).append("\" ");
         searchHitStart.append("peptide=\"").append(peptide.getSequence()).append("\" ");
         StringBuilder proteins = new StringBuilder();
-        ArrayList<String> proteinAccessions = peptide.getParentProteins(identificationParameters.getSequenceMatchingPreferences());
+        ArrayList<String> proteinAccessions = peptide.getParentProteins(identificationParameters.getSequenceMatchingParameters());
         for (String accession : proteinAccessions) {
             if (proteins.length() > 0) {
                 proteins.append(", ");

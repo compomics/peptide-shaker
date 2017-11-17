@@ -12,7 +12,7 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.experiment.io.biology.protein.Header;
 import eu.isas.peptideshaker.filtering.items.PeptideFilterItem;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.parameters.PSPtmScores;
+import eu.isas.peptideshaker.parameters.PSModificationScores;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -99,10 +99,10 @@ public class PeptideFilter extends MatchFilter {
         switch (filterItem) {
             case proteinAccession:
                 peptideMatch = (PeptideMatch)identification.retrieveObject(matchKey);
-                return filterItemComparator.passes(input, peptideMatch.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences()));
+                return filterItemComparator.passes(input, peptideMatch.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingParameters()));
             case proteinDescription:
                 peptideMatch = (PeptideMatch)identification.retrieveObject(matchKey);
-                ArrayList<String> accessions = peptideMatch.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
+                ArrayList<String> accessions = peptideMatch.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingParameters());
                 ArrayList<String> descriptions = new ArrayList<>();
                 for (String accession : accessions) {
                     Header proteinHeader = SequenceFactory.getInstance().getHeader(accession);
@@ -114,8 +114,8 @@ public class PeptideFilter extends MatchFilter {
             case ptm:
                 peptideMatch = (PeptideMatch)identification.retrieveObject(matchKey);
                 ArrayList<String> ptms;
-                PSPtmScores psPtmScores = new PSPtmScores();
-                psPtmScores = (PSPtmScores) peptideMatch.getUrParam(psPtmScores);
+                PSModificationScores psPtmScores = new PSModificationScores();
+                psPtmScores = (PSModificationScores) peptideMatch.getUrParam(psPtmScores);
                 if (psPtmScores != null) {
                     ptms = psPtmScores.getScoredPTMs();
                 } else {

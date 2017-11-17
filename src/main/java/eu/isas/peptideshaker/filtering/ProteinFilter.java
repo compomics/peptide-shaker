@@ -15,7 +15,7 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.experiment.io.biology.protein.Header;
 import eu.isas.peptideshaker.filtering.items.ProteinFilterItem;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.parameters.PSPtmScores;
+import eu.isas.peptideshaker.parameters.PSModificationScores;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
@@ -154,8 +154,8 @@ public class ProteinFilter extends MatchFilter {
             case ptm:
                 ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(matchKey);
                 ArrayList<String> ptms;
-                PSPtmScores psPtmScores = new PSPtmScores();
-                psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
+                PSModificationScores psPtmScores = new PSModificationScores();
+                psPtmScores = (PSModificationScores) proteinMatch.getUrParam(psPtmScores);
                 if (psPtmScores != null) {
                     ptms = psPtmScores.getScoredPTMs();
                 } else {

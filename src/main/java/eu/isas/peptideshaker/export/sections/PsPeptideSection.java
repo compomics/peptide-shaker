@@ -19,9 +19,9 @@ import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatc
 import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPsmFeature;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.parameters.PSPtmScores;
+import eu.isas.peptideshaker.parameters.PSModificationScores;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
-import eu.isas.peptideshaker.scoring.PtmScoring;
+import eu.isas.peptideshaker.scoring.ModificationScoring;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -409,14 +409,14 @@ public class PsPeptideSection {
                 return Integer.toString(identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideMatch.getKey()));
             
             case probabilistic_score:
-                PSPtmScores ptmScores = new PSPtmScores();
-                ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+                PSModificationScores ptmScores = new PSModificationScores();
+                ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
                 if (ptmScores != null) {
                     StringBuilder result = new StringBuilder();
                     ArrayList<String> modList = new ArrayList<>(ptmScores.getScoredPTMs());
                     Collections.sort(modList);
                     for (String mod : modList) {
-                        PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                        ModificationScoring ptmScoring = ptmScores.getModificationScoring(mod);
                         ArrayList<Integer> sites = new ArrayList<>(ptmScoring.getProbabilisticSites());
                         if (!sites.isEmpty()) {
                             Collections.sort(sites);
@@ -441,13 +441,13 @@ public class PsPeptideSection {
                 return "";
             case d_score:
                 StringBuilder result = new StringBuilder();
-                ptmScores = new PSPtmScores();
-                ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+                ptmScores = new PSModificationScores();
+                ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
                 if (ptmScores != null) {
                     ArrayList<String> modList = new ArrayList<>(ptmScores.getScoredPTMs());
                     Collections.sort(modList);
                     for (String mod : modList) {
-                        PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                        ModificationScoring ptmScoring = ptmScores.getModificationScoring(mod);
                         ArrayList<Integer> sites = new ArrayList<>(ptmScoring.getDSites());
                         if (!sites.isEmpty()) {
                             Collections.sort(sites);
@@ -572,7 +572,7 @@ public class PsPeptideSection {
      */
     public static String getPeptideModificationLocationConfidence(PeptideMatch peptideMatch, ModificationParameters modificationParameters) {
 
-        PSPtmScores psPtmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
+        PSModificationScores psPtmScores = (PSModificationScores) peptideMatch.getUrParam(new PSModificationScores());
 
         if (psPtmScores != null) {
             
@@ -590,7 +590,7 @@ public class PsPeptideSection {
                 }
                 
                 result.append(mod).append(" (");
-                PtmScoring ptmScoring = psPtmScores.getPtmScoring(mod);
+                ModificationScoring ptmScoring = psPtmScores.getModificationScoring(mod);
                 boolean firstSite = true;
                 
                 for (int site : ptmScoring.getOrderedPtmLocations()) {
@@ -607,23 +607,23 @@ public class PsPeptideSection {
                     
                     int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
                     
-                    if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                    if (ptmConfidence == ModificationScoring.NOT_FOUND) {
                     
                         result.append(site).append(": Not Scored");
                   
-                    } else if (ptmConfidence == PtmScoring.RANDOM) {
+                    } else if (ptmConfidence == ModificationScoring.RANDOM) {
                     
                         result.append(site).append(": Random");
                     
-                    } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                    } else if (ptmConfidence == ModificationScoring.DOUBTFUL) {
                     
                         result.append(site).append(": Doubtfull");
                     
-                    } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                    } else if (ptmConfidence == ModificationScoring.CONFIDENT) {
                     
                         result.append(site).append(": Confident");
                     
-                    } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                    } else if (ptmConfidence == ModificationScoring.VERY_CONFIDENT) {
                     
                         result.append(site).append(": Very Confident");
                     
