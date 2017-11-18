@@ -4,9 +4,10 @@ import com.compomics.util.experiment.filtering.FilterItemComparator;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.filtering.items.AssumptionFilterItem;
 import eu.isas.peptideshaker.filtering.items.PsmFilterItem;
@@ -39,17 +40,21 @@ public class PsmFilter extends MatchFilter {
      * @param name the name of the filter
      */
     public PsmFilter(String name) {
+        
         this.name = name;
         assumptionFilter = new AssumptionFilter(name);
         this.filterType = FilterType.PSM;
+    
     }
 
     /**
      * Constructor.
      */
     public PsmFilter() {
+    
         assumptionFilter = new AssumptionFilter();
         this.filterType = FilterType.PSM;
+    
     }
 
     /**
@@ -63,6 +68,7 @@ public class PsmFilter extends MatchFilter {
      * @param reportFailed a report for when the filter is not passed
      */
     public PsmFilter(String name, String description, String condition, String reportPassed, String reportFailed) {
+    
         this.name = name;
         this.description = description;
         this.condition = condition;
@@ -70,6 +76,7 @@ public class PsmFilter extends MatchFilter {
         this.reportFailed = reportFailed;
         assumptionFilter = new AssumptionFilter(name, description, condition, reportPassed, reportFailed);
         this.filterType = FilterType.PSM;
+    
     }
 
     /**
@@ -78,45 +85,51 @@ public class PsmFilter extends MatchFilter {
      * @return the assumption filter
      */
     public AssumptionFilter getAssumptionFilter() {
+    
         return assumptionFilter;
+    
     }
 
     @Override
     protected MatchFilter getNew() {
+    
         return new PsmFilter();
+    
     }
 
     @Override
-    public boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, String matchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
+    public boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, long matchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
 
         PsmFilterItem filterItem = PsmFilterItem.getItem(itemName);
+        
         if (filterItem == null) {
-            return assumptionFilter.isValidated(itemName, filterItemComparator, value, matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, peptideSpectrumAnnotator);
+        
+            return assumptionFilter.isValidated(itemName, filterItemComparator, value, matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, peptideSpectrumAnnotator);
+        
         }
+        
         String input = value.toString();
         switch (filterItem) {
+            
             case confidence:
-                PSParameter psParameter = new PSParameter();
-                psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(matchKey)).getUrParam(psParameter);
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(matchKey);
+                PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
+                double confidence = psParameter.getProteinConfidence();
+                return filterItemComparator.passes(input, confidence);
                 
-                Double confidence = psParameter.getProteinConfidence();
-                return filterItemComparator.passes(input, confidence.toString());
             case validationStatus:
-                psParameter = new PSParameter();
-                psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(matchKey)).getUrParam(psParameter);
-                Integer validation = psParameter.getMatchValidationLevel().getIndex();
-                return filterItemComparator.passes(input, validation.toString());
+                spectrumMatch = identification.getSpectrumMatch(matchKey);
+                psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
+                int validation = psParameter.getMatchValidationLevel().getIndex();
+                return filterItemComparator.passes(input, validation);
+                
             case stared:
-                psParameter = new PSParameter();
-                psParameter = (PSParameter)((SpectrumMatch)identification.retrieveObject(matchKey)).getUrParam(psParameter);
-                String starred;
-                if (psParameter.getStarred()) {
-                    starred = FilterItemComparator.trueFalse[0];
-                } else {
-                    starred = FilterItemComparator.trueFalse[1];
-                }
+                spectrumMatch = identification.getSpectrumMatch(matchKey);
+                psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
+                String starred = psParameter.getStarred() ?  FilterItemComparator.trueFalse[0] :  FilterItemComparator.trueFalse[1];
                 return filterItemComparator.passes(input, starred);
+                
             default:
                 throw new IllegalArgumentException("Protein filter not implemented for item " + filterItem.name + ".");
         }
@@ -124,15 +137,23 @@ public class PsmFilter extends MatchFilter {
 
     @Override
     public FilterItem[] getPossibleFilterItems() {
+        
         return PsmFilterItem.values();
+    
     }
 
     @Override
     public FilterItem getFilterItem(String itemName) {
+        
         FilterItem psmFilterItem = PsmFilterItem.getItem(itemName);
+        
         if (psmFilterItem != null) {
+        
             return psmFilterItem;
+        
         }
+        
         return AssumptionFilterItem.getItem(itemName);
+    
     }
 }

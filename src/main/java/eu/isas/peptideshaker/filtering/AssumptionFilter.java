@@ -17,6 +17,8 @@ import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDist
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import eu.isas.peptideshaker.filtering.items.AssumptionFilterItem;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -90,7 +92,7 @@ public class AssumptionFilter extends MatchFilter {
 
     @Override
     public boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, long spectrumMatchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
+            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
         
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
         PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();

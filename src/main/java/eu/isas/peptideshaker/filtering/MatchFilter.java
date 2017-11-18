@@ -7,17 +7,14 @@ import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
-import java.io.IOException;
 import java.io.Serializable;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
-import org.apache.commons.math.MathException;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * Abstract representing a filter.
@@ -402,13 +399,15 @@ public abstract class MatchFilter implements Serializable, Filter {
      * @param identificationFeaturesGenerator the identification features
      * generator providing identification features
      * @param identificationParameters the identification parameters
+     * @param sequenceProvider the protein sequence provider
+     * @param proteinDetailsProvider a provider for protein details
      * @param peptideSpectrumAnnotator the annotator to use to annotate spectra when filtering on psm or assumptions
      *
      * @return a boolean indicating whether a match is validated by a given
      * filter
      */
     public boolean isValidated(long matchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
+            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
 
         if (exceptions.contains(matchKey)) {
             
@@ -428,7 +427,7 @@ public abstract class MatchFilter implements Serializable, Filter {
             Object value = entry.getValue();
             FilterItemComparator filterItemComparator = comparatorsMap.get(itemName);
             
-            if (!isValidated(itemName, filterItemComparator, value, matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, peptideSpectrumAnnotator)) {
+            if (!isValidated(itemName, filterItemComparator, value, matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, peptideSpectrumAnnotator)) {
             
                 return false;
             
@@ -453,6 +452,8 @@ public abstract class MatchFilter implements Serializable, Filter {
      * @param identificationFeaturesGenerator the identification feature
      * generator where to get identification features
      * @param identificationParameters the identification parameters used
+     * @param sequenceProvider the protein sequence provider
+     * @param proteinDetailsProvider a provider for protein details
      * @param peptideSpectrumAnnotator the annotator to use to annotate spectra when filtering on psm or assumptions
      *
      * @return a boolean indicating whether the match designated by the protein
@@ -460,7 +461,7 @@ public abstract class MatchFilter implements Serializable, Filter {
      * threshold.
      */
     public abstract boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, long matchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator);
+            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, PeptideSpectrumAnnotator peptideSpectrumAnnotator);
 
     @Override
     public boolean isSameAs(Filter anotherFilter) {
