@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -56,11 +57,11 @@ public abstract class MatchFilter implements Serializable, Filter {
     /**
      * The key of the manually validated matches.
      */
-    protected ArrayList<String> manualValidation = new ArrayList<>();
+    protected HashSet<Long> manualValidation = new HashSet<>(0);
     /**
      * The exceptions to the rule.
      */
-    protected ArrayList<String> exceptions = new ArrayList<>();
+    protected HashSet<Long> exceptions = new HashSet<>(0);
     /**
      * Name of the manual selection filter.
      */
@@ -211,7 +212,7 @@ public abstract class MatchFilter implements Serializable, Filter {
      *
      * @return the exceptions to the rule
      */
-    public ArrayList<String> getExceptions() {
+    public HashSet<Long> getExceptions() {
         return exceptions;
     }
 
@@ -220,7 +221,7 @@ public abstract class MatchFilter implements Serializable, Filter {
      *
      * @return the manually validated items
      */
-    public ArrayList<String> getManualValidation() {
+    public HashSet<Long> getManualValidation() {
         return manualValidation;
     }
 
@@ -229,7 +230,7 @@ public abstract class MatchFilter implements Serializable, Filter {
      *
      * @param matchKey the key of the match to add
      */
-    public void addManualValidation(String matchKey) {
+    public void addManualValidation(Long matchKey) {
         manualValidation.add(matchKey);
     }
 
@@ -238,7 +239,7 @@ public abstract class MatchFilter implements Serializable, Filter {
      *
      * @param manualValidation list of manually validated keys
      */
-    public void setManualValidation(ArrayList<String> manualValidation) {
+    public void setManualValidation(HashSet<Long> manualValidation) {
         this.manualValidation = manualValidation;
     }
 
@@ -247,7 +248,7 @@ public abstract class MatchFilter implements Serializable, Filter {
      *
      * @param matchKey the key of the exception to add
      */
-    public void addException(String matchKey) {
+    public void addException(Long matchKey) {
         exceptions.add(matchKey);
     }
 
@@ -256,7 +257,7 @@ public abstract class MatchFilter implements Serializable, Filter {
      *
      * @param exceptions the excepted matches
      */
-    public void setExceptions(ArrayList<String> exceptions) {
+    public void setExceptions(HashSet<Long> exceptions) {
         this.exceptions = exceptions;
     }
 
@@ -265,7 +266,7 @@ public abstract class MatchFilter implements Serializable, Filter {
      *
      * @param matchKey the key of the match to remove
      */
-    public void removeManualValidation(String matchKey) {
+    public void removeManualValidation(Long matchKey) {
         manualValidation.remove(matchKey);
     }
 
@@ -274,7 +275,7 @@ public abstract class MatchFilter implements Serializable, Filter {
      *
      * @param matchKey the key of the exception to remove
      */
-    public void removeException(String matchKey) {
+    public void removeException(Long matchKey) {
         exceptions.remove(matchKey);
     }
 
@@ -287,6 +288,7 @@ public abstract class MatchFilter implements Serializable, Filter {
 
     @Override
     public MatchFilter clone() {
+        
         MatchFilter newFilter = getNew();
         newFilter.setName(name);
         newFilter.setDescription(description);
@@ -294,14 +296,19 @@ public abstract class MatchFilter implements Serializable, Filter {
         newFilter.setReportPassed(reportPassed);
         newFilter.setReportFailed(reportFailed);
         newFilter.setType(filterType);
-        newFilter.setManualValidation((ArrayList<String>) manualValidation.clone());
-        newFilter.setExceptions((ArrayList<String>) exceptions.clone());
+        newFilter.setManualValidation(new HashSet<>(manualValidation));
+        newFilter.setExceptions(new HashSet<>(exceptions));
+        
         for (String itemName : getItemsNames()) {
+            
             FilterItemComparator filterItemComparator = getComparatorForItem(itemName);
             Object value = getValue(itemName);
             newFilter.setFilterItem(itemName, filterItemComparator, value);
+        
         }
+        
         return newFilter;
+    
     }
 
     /**
@@ -399,39 +406,37 @@ public abstract class MatchFilter implements Serializable, Filter {
      *
      * @return a boolean indicating whether a match is validated by a given
      * filter
-     *
-     * @throws java.io.IOException exception thrown whenever an exception
-     * occurred while reading or writing a file
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading issue occurred while validating that the match passes the
-     * filter
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserilalizing a match
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown
-     * whenever an error occurred while reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown whenever
-     * an error occurred while doing statistics on a distribution
      */
-    public boolean isValidated(String matchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
+    public boolean isValidated(long matchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
 
         if (exceptions.contains(matchKey)) {
+            
             return false;
+        
         }
 
         if (manualValidation.contains(matchKey)) {
+        
             return true;
+        
         }
-        for (String itemName : valuesMap.keySet()) {
+        
+        for (Entry<String, Object> entry : valuesMap.entrySet()) {
+        
+            String itemName = entry.getKey();
+            Object value = entry.getValue();
             FilterItemComparator filterItemComparator = comparatorsMap.get(itemName);
-            Object value = valuesMap.get(itemName);
+            
             if (!isValidated(itemName, filterItemComparator, value, matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, peptideSpectrumAnnotator)) {
+            
                 return false;
+            
             }
         }
+        
         return true;
+        
     }
 
     /**
@@ -453,23 +458,9 @@ public abstract class MatchFilter implements Serializable, Filter {
      * @return a boolean indicating whether the match designated by the protein
      * key validates the given item using the given comparator and value
      * threshold.
-     *
-     * @throws java.io.IOException exception thrown whenever an exception
-     * occurred while reading or writing a file
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading issue occurred while validating that the match passes the
-     * filter
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserilalizing a match
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown
-     * whenever an error occurred while reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown whenever
-     * an error occurred while doing statistics on a distribution
      */
-    public abstract boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, String matchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException;
+    public abstract boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, long matchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator);
 
     @Override
     public boolean isSameAs(Filter anotherFilter) {
@@ -494,10 +485,10 @@ public abstract class MatchFilter implements Serializable, Filter {
             if (isActive() != otherFilter.isActive()) {
                 return false;
             }
-            if (!Util.sameLists(exceptions, otherFilter.getExceptions())) {
+            if (!Util.sameSets(exceptions, otherFilter.getExceptions())) {
                 return false;
             }
-            if (!Util.sameLists(manualValidation, otherFilter.getManualValidation())) {
+            if (!Util.sameSets(manualValidation, otherFilter.getManualValidation())) {
                 return false;
             }
             if (!Util.sameSets(getItemsNames(), otherFilter.getItemsNames())) {
