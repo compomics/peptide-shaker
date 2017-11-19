@@ -1,18 +1,14 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.modifications.Modification;
-import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
-import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
-import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.waiting.WaitingHandler;
@@ -29,18 +25,13 @@ import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.ModificationScoring;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.apache.commons.math.MathException;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class outputs the PSM level export features.
@@ -217,9 +208,9 @@ public class PsPsmSection {
                         fractionPrefix += line + ".";
                         writer.increaseDepth();
                         if (spectrumMatch.getBestPeptideAssumption() != null) {
-                            fragmentSection.writeSection(spectrumMatchKey, spectrumMatch.getBestPeptideAssumption(), identificationParameters, sequenceProvider, fractionPrefix, null);
+                            fragmentSection.writeSection(spectrumMatchKey, spectrumMatch.getBestPeptideAssumption(), identificationParameters, fractionPrefix, null);
                         } else if (spectrumMatch.getBestTagAssumption() != null) {
-                            fragmentSection.writeSection(spectrumMatchKey, spectrumMatch.getBestTagAssumption(), identificationParameters, sequenceProvider, fractionPrefix, null);
+                            fragmentSection.writeSection(spectrumMatchKey, spectrumMatch.getBestTagAssumption(), identificationParameters, fractionPrefix, null);
                         }
                         writer.decreseDepth();
                     }

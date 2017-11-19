@@ -15,7 +15,6 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.TagSpectrumAnnotator;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
-import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import static eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature.fragment_number;
@@ -87,7 +86,6 @@ public class PsFragmentSection {
      * @param spectrumKey the key of the spectrum
      * @param spectrumIdentificationAssumption the spectrum identification of
      * interest
-     * @param sequenceProvider a provider for the protein sequences
      * @param identificationParameters the identification parameters
      * @param linePrefix the line prefix
      * @param waitingHandler the waiting handler
@@ -96,7 +94,7 @@ public class PsFragmentSection {
      * writing the file
      */
     public void writeSection(String spectrumKey, SpectrumIdentificationAssumption spectrumIdentificationAssumption, 
-            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider,
+            IdentificationParameters identificationParameters,
             String linePrefix, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
@@ -114,7 +112,7 @@ public class PsFragmentSection {
         List<IonMatch> annotations;
         Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
         AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
-        SpecificAnnotationParameters specificAnnotationParameters = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, spectrumIdentificationAssumption, sequenceProvider, identificationParameters.getSequenceMatchingParameters(), identificationParameters.getModificationLocalizationParameters().getSequenceMatchingPreferences());
+        SpecificAnnotationParameters specificAnnotationParameters = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, spectrumIdentificationAssumption, identificationParameters.getSequenceMatchingParameters(), identificationParameters.getModificationLocalizationParameters().getSequenceMatchingPreferences());
         
         if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
             

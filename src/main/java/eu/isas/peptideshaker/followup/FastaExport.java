@@ -1,20 +1,13 @@
 package eu.isas.peptideshaker.followup;
 
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
-import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.preferences.FilterParameters;
-import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
 
 /**
  * Export proteins in the FASTA format.
@@ -24,185 +17,85 @@ import java.util.ArrayList;
 public class FastaExport {
 
     /**
-     * Exports the proteins of interest in a text file of the FASTA format. Non
-     * validated protein mode iterates all proteins in the original FASTA file
-     * (size in the sequence factory). Validated protein mode iterates only
-     * validated proteins (size in the identification features generator).
-     *
-     * @param destinationFile the file where to write
-     * @param identification the identification
-     * @param identificationFeaturesGenerator the identification features
-     * generator
-     * @param exportType the export type (see enum below)
-     * @param waitingHandler waiting handler used to display progress and cancel
-     * the process
-     * @param filterPreferences the filter preferences
-     *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     */
-    public static void exportFasta(File destinationFile, Identification identification,
-            IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler, FilterParameters filterPreferences)
-            throws IOException, SQLException, ClassNotFoundException, InterruptedException {
-        export(destinationFile, identification, identificationFeaturesGenerator, exportType, waitingHandler, filterPreferences, false);
-    }
-
-    /**
-     * Exports the accessions proteins of interest in a text file. Non validated
-     * protein mode iterates all proteins in the original FASTA file (size in
-     * the sequence factory). Validated protein mode iterates only validated
-     * proteins (size in the identification features generator).
-     *
-     * @param destinationFile the file where to write
-     * @param identification the identification
-     * @param identificationFeaturesGenerator the identification features
-     * generator
-     * @param exportType the export type (see enum below)
-     * @param waitingHandler waiting handler used to display progress and cancel
-     * the process
-     * @param filterPreferences the filter preferences
-     *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     */
-    public static void exportAccessions(File destinationFile, Identification identification,
-            IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler, FilterParameters filterPreferences)
-            throws IOException, SQLException, ClassNotFoundException, InterruptedException {
-        export(destinationFile, identification, identificationFeaturesGenerator, exportType, waitingHandler, filterPreferences, true);
-    }
-
-    /**
      * Exports the proteins of interest in a text file of the given format. Non
      * validated protein mode iterates all proteins in the original FASTA file
      * (size in the sequence factory). Validated protein mode iterates only
      * validated proteins (size in the identification features generator).
      *
      * @param destinationFile the file where to write
+     * @param fastaFile the original fasta file
+     * @param sequenceProvider the sequence provider
      * @param identification the identification
-     * @param identificationFeaturesGenerator the identification features
-     * generator
      * @param exportType the export type (see enum below)
      * @param waitingHandler waiting handler used to display progress and cancel
      * the process
-     * @param filterPreferences the filter preferences
      * @param accessionOnly if true only the accession of the protein will be
      * exported, if false the entire information in FASTA format
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IOException thrown if an error occurs while writing the file.
      */
-    public static void export(File destinationFile, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ExportType exportType, WaitingHandler waitingHandler, FilterParameters filterPreferences, boolean accessionOnly) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public static void export(File destinationFile, File fastaFile, SequenceProvider sequenceProvider,
+            Identification identification, ExportType exportType, WaitingHandler waitingHandler, boolean accessionOnly) throws IOException {
 
-        SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-        FileWriter f = new FileWriter(destinationFile);
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(destinationFile))) {
 
-        try {
+            for (String accession : sequenceProvider.getAccessions()) {
 
-            BufferedWriter b = new BufferedWriter(f);
+                if (include(accession, exportType, identification)) {
 
-            try {
-                if (exportType == ExportType.non_validated) {
+                    if (accessionOnly) {
 
-                    PSParameter psParameter = new PSParameter();
-                    identification.loadObjects(ProteinMatch.class, waitingHandler, false);
+                        bw.write(accession);
+                        bw.newLine();
 
-                    for (String accession : sequenceFactory.getAccessions()) {
+                    } else {
 
-                        if (!sequenceFactory.isDecoyAccession(accession)) {
+                        bw.write(sequenceProvider.getHeader(accession));
+                        bw.newLine();
+                        bw.write(sequenceProvider.getSequence(accession));
+                        bw.newLine();
 
-                            ArrayList<String> matches = new ArrayList<>(identification.getProteinMap().get(accession));
-
-                            boolean validated = false;
-                            for (String match : matches) {
-                                psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(match)).getUrParam(psParameter);
-                                if (psParameter.getMatchValidationLevel().isValidated()) {
-                                    validated = true;
-                                    break;
-                                }
-                            }
-                            if (!validated) {
-                                writeAccession(b, accession, sequenceFactory, accessionOnly);
-                            }
-                        }
-                        if (waitingHandler != null) {
-                            if (waitingHandler.isRunCanceled()) {
-                                break;
-                            }
-                            waitingHandler.increaseSecondaryProgressCounter();
-                        }
-                    }
-                } else {
-
-                    ArrayList<String> exported = new ArrayList<>();
-
-                    ArrayList<String> proteinMatches = identificationFeaturesGenerator.getValidatedProteins(waitingHandler, filterPreferences);
-                    ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(proteinMatches, waitingHandler);
-                    ProteinMatch proteinMatch;
-                    while ((proteinMatch = proteinMatchesIterator.next()) != null) {
-                        
-                        ArrayList<String> accessions = new ArrayList<>();
-                        if (exportType == ExportType.validated_main_accession) {
-                            accessions.add(proteinMatch.getLeadingAccession());
-                        } else if (exportType == ExportType.validated_all_accessions) {
-                            accessions.addAll(proteinMatch.getTheoreticProtein());
-                        }
-                        for (String accession : accessions) {
-                            if (!exported.contains(accession)) {
-                                writeAccession(b, accession, sequenceFactory, accessionOnly);
-                                exported.add(accession);
-                            }
-                        }
-                        if (waitingHandler != null) {
-                            if (waitingHandler.isRunCanceled()) {
-                                break;
-                            }
-                            waitingHandler.increaseSecondaryProgressCounter();
-                        }
                     }
                 }
-            } finally {
-                b.close();
             }
-        } finally {
-            f.close();
         }
-
     }
 
     /**
-     * Writes the desired information about a given accession.
+     * Returns a boolean indicating whether the given accession should be
+     * included in the export.
      *
-     * @param b the stream where to write
-     * @param accession the accession of interest
-     * @param sequenceFactory the sequence factory
-     * @param accessionOnly indicate whether only the accession shall be written
-     * or the entire protein details in FASTA format
+     * @param accession the accession
+     * @param exportType the export type
+     * @param identification the identification
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws FileNotFoundException thrown if a FileNotFoundException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @return a boolean indicating whether the given accession should be
+     * included in the export
      */
-    private static void writeAccession(BufferedWriter b, String accession, SequenceFactory sequenceFactory, boolean accessionOnly)
-            throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException {
+    private static boolean include(String accession, ExportType exportType, Identification identification) {
 
-        if (accessionOnly) {
-            b.write(accession);
-            b.newLine();
-        } else {
-            b.write(sequenceFactory.getHeader(accession).getRawHeader());
-            b.newLine();
-            b.write(sequenceFactory.getProtein(accession).getSequence());
-            b.newLine();
+        switch (exportType) {
+
+            case non_validated:
+                return identification.getProteinMap().get(accession).stream()
+                        .map(key -> (PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy))
+                        .allMatch(psParameter -> !psParameter.getMatchValidationLevel().isValidated());
+
+            case validated_all_accessions:
+                return identification.getProteinMap().get(accession).stream()
+                        .map(key -> (PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy))
+                        .anyMatch(psParameter -> psParameter.getMatchValidationLevel().isValidated());
+
+            case validated_main_accession:
+                return identification.getProteinMap().get(accession).stream()
+                        .map(key -> identification.getProteinMatch(key))
+                        .filter(proteinMatch -> proteinMatch.getLeadingAccession().equals(accession))
+                        .map(proteinMatch -> (PSParameter) proteinMatch.getUrParam(PSParameter.dummy))
+                        .anyMatch(psParameter -> psParameter.getMatchValidationLevel().isValidated());
+
+            default:
+                throw new UnsupportedOperationException("Export not implemented for " + exportType + ".");
+
         }
     }
 
@@ -226,11 +119,11 @@ public class FastaExport {
         /**
          * Index for the export type.
          */
-        public int index;
+        public final int index;
         /**
          * Description of the export.
          */
-        public String description;
+        public final String description;
 
         /**
          * Constructor.
@@ -238,8 +131,10 @@ public class FastaExport {
          * @param index
          */
         private ExportType(int index, String description) {
+
             this.index = index;
             this.description = description;
+
         }
 
         /**
@@ -249,14 +144,23 @@ public class FastaExport {
          * @return the export type
          */
         public static ExportType getTypeFromIndex(int index) {
+
             if (index == validated_main_accession.index) {
+
                 return validated_main_accession;
+
             } else if (index == validated_all_accessions.index) {
+
                 return validated_all_accessions;
+
             } else if (index == non_validated.index) {
+
                 return non_validated;
+
             } else {
+
                 throw new IllegalArgumentException("Export type " + index + " not implemented.");
+
             }
         }
 
