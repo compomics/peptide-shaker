@@ -73,45 +73,66 @@ public class InclusionListExport {
         try (FileWriter f = new FileWriter(destinationFile);
                 BufferedWriter b = new BufferedWriter(f)) {
 
-            PSParameter psParameter = new PSParameter();
             ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
             ProteinMatch proteinMatch;
             while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
-                psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+                PSParameter proteinParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
-                if (!proteinFilters.contains(psParameter.getProteinInferenceGroupClass())) {
+                if (!proteinFilters.contains(proteinParameter.getProteinInferenceGroupClass())) {
 
-                    ArrayList<String> peptideMatches = new ArrayList<>();
+                    ArrayList<Long> peptideMatches = new ArrayList<>();
 
-                    for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-                        psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(peptideKey)).getUrParam(psParameter);
-                        if (psParameter.getMatchValidationLevel().isValidated()) {
+                    for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
+
+                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                        PSParameter peptideParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
+
+                        if (peptideParameter.getMatchValidationLevel().isValidated()) {
+
                             boolean passesFilter = true;
+
                             for (PeptideFilterType filterType : peptideFilters) {
-                                String sequence = Peptide.getSequence(peptideKey);
+
+                                String sequence = peptideMatch.getPeptide().getSequence();
+
                                 if (filterType == PeptideFilterType.degenerated) {
-                                    if (psParameter.getProteinInferenceGroupClass() != PSParameter.NOT_GROUP) {
+
+                                    if (peptideParameter.getProteinInferenceGroupClass() != PSParameter.NOT_GROUP) {
+
                                         passesFilter = false;
                                         break;
+
                                     }
+
                                 } else if (filterType == PeptideFilterType.miscleaved) {
 
                                     Integer peptideMinMissedCleavages = null;
                                     DigestionParameters digestionPreferences = searchParameters.getDigestionParameters();
+
                                     if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+
                                         for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
+
                                             int tempMissedCleavages = enzyme.getNmissedCleavages(sequence);
+
                                             if (peptideMinMissedCleavages == null || tempMissedCleavages < peptideMinMissedCleavages) {
+
                                                 peptideMinMissedCleavages = tempMissedCleavages;
+
                                             }
                                         }
                                     }
+
                                     if (peptideMinMissedCleavages != null && peptideMinMissedCleavages > 0) {
+
                                         passesFilter = false;
                                         break;
+
                                     }
+
                                 } else if (filterType == PeptideFilterType.reactive) {
+
                                     if (sequence.contains("M")
                                             || sequence.contains("C")
                                             || sequence.contains("W")
@@ -120,39 +141,55 @@ public class InclusionListExport {
                                             || sequence.contains("QG")
                                             || sequence.startsWith("N")
                                             || sequence.startsWith("Q")) {
+
                                         passesFilter = false;
                                         break;
+
                                     }
                                 }
                             }
+
                             if (passesFilter) {
+
                                 peptideMatches.add(peptideKey);
+
                             }
                         }
                     }
 
                     if (!peptideMatches.isEmpty()) {
-                        for (String peptideKey : peptideMatches) {
-                            PeptideMatch peptideMatch = (PeptideMatch) identification.retrieveObject(peptideKey);
-                            ArrayList<String> validatedPsms = new ArrayList<>();
-                            for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
-                                psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(spectrumKey)).getUrParam(psParameter);
-                                if (psParameter.getMatchValidationLevel().isValidated()) {
-                                    validatedPsms.add(spectrumKey);
+
+                        for (long peptideKey : peptideMatches) {
+
+                            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                            ArrayList<SpectrumMatch> validatedPsms = new ArrayList<>(peptideMatch.getSpectrumCount());
+                            ArrayList<Double> retentionTimes = new ArrayList<>(peptideMatch.getSpectrumCount());
+
+                            for (long spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
+
+                                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+
+                                if (spectrumMatch.getBestPeptideAssumption() != null) {
+
+                                    PSParameter spectrumParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
+
+                                    if (spectrumParameter.getMatchValidationLevel().isValidated()) {
+
+                                        validatedPsms.add(spectrumMatch);
+                                        retentionTimes.add(spectrumFactory.getPrecursor(spectrumMatch.getSpectrumKey()).getRt());
+
+                                    }
                                 }
                             }
+
                             if (!validatedPsms.isEmpty()) {
-                                ArrayList<Double> retentionTimes = new ArrayList<>();
-                                for (String spectrumKey : validatedPsms) {
-                                    retentionTimes.add(spectrumFactory.getPrecursor(spectrumKey).getRt());
-                                }
-                                for (String spectrumKey : validatedPsms) {
-                                    SpectrumMatch spectrumMatch = (SpectrumMatch) identification.retrieveObject(spectrumKey);
-                                    if (spectrumMatch.getBestPeptideAssumption() != null) {
-                                        String line = getInclusionListLine(spectrumMatch, retentionTimes, rtWindow, exportFormat, searchParameters);
-                                        b.write(line);
-                                        b.newLine();
-                                    }
+
+                                for (SpectrumMatch spectrumMatch : validatedPsms) {
+
+                                    String line = getInclusionListLine(spectrumMatch, retentionTimes, rtWindow, exportFormat, searchParameters);
+                                    b.write(line);
+                                    b.newLine();
+
                                 }
                             }
                         }
@@ -160,10 +197,15 @@ public class InclusionListExport {
                 }
 
                 if (waitingHandler != null) {
+                    
                     if (waitingHandler.isRunCanceled()) {
+                    
                         return;
+                    
                     }
+                    
                     waitingHandler.increaseSecondaryProgressCounter();
+                
                 }
             }
         }
@@ -180,59 +222,75 @@ public class InclusionListExport {
      * @param searchParameters the search parameters used for the search
      *
      * @return a line to be appended in the inclusion list
-     * @throws Exception exception thrown whenever a problem was encountered
-     * while reading the spectrum file
      */
     private static String getInclusionListLine(SpectrumMatch spectrumMatch, ArrayList<Double> retentionTimes, double rtWindow,
-            ExportFormat exportFormat, SearchParameters searchParameters) throws IOException, MzMLUnmarshallerException {
+            ExportFormat exportFormat, SearchParameters searchParameters) {
 
-        String spectrumKey = spectrumMatch.getKey();
+        String spectrumKey = spectrumMatch.getSpectrumKey();
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
 
         switch (exportFormat) {
+            
             case Thermo:
                 int index = (int) (0.25 * retentionTimes.size());
                 double rtMin = retentionTimes.get(index) / 60;
                 index = (int) (0.75 * retentionTimes.size());
                 double rtMax = retentionTimes.get(index) / 60;
+                
                 if (rtMax - rtMin < rtWindow / 60) {
+                
                     index = (int) (0.5 * retentionTimes.size());
                     rtMin = (retentionTimes.get(index) - rtWindow / 2) / 60;
                     rtMax = (retentionTimes.get(index) + rtWindow / 2) / 60;
+                
                 }
+                
                 return precursor.getMz() + "\t" + rtMin + "\t" + rtMax;
+            
             case ABI:
                 index = (int) (0.5 * retentionTimes.size());
                 double rtInMin = retentionTimes.get(index) / 60;
                 return rtInMin + "\t" + precursor.getMz();
+           
             case Bruker:
                 index = (int) 0.5 * retentionTimes.size();
                 double rt = retentionTimes.get(index);
                 int index25 = (int) (0.25 * retentionTimes.size());
                 int index75 = (int) (0.75 * retentionTimes.size());
                 double range = retentionTimes.get(index75) - retentionTimes.get(index25);
+            
                 if (range < rtWindow) {
+                
                     range = rtWindow;
+                
                 }
+                
                 if (searchParameters.getPrecursorAccuracyType() == SearchParameters.MassAccuracyType.PPM) {
+                
                     double deltaMZ = searchParameters.getPrecursorAccuracy() / 1000000 * precursor.getMz();
                     double mzMin = precursor.getMz() - deltaMZ;
                     double mzMax = precursor.getMz() + deltaMZ;
                     return rt + "," + range + "," + mzMin + "," + mzMax;
+                
                 } else { // Dalton
-                    double deltaMZ = searchParameters.getPrecursorAccuracy() / spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+                
+                    double deltaMZ = searchParameters.getPrecursorAccuracy() / spectrumMatch.getBestPeptideAssumption().getIdentificationCharge();
                     double mzMin = precursor.getMz() - deltaMZ;
                     double mzMax = precursor.getMz() + deltaMZ;
                     return rt + "," + range + "," + mzMin + "," + mzMax;
+                
                 }
+                
             case MassLynx:
                 index = (int) (0.5 * retentionTimes.size());
                 rt = retentionTimes.get(index);
                 return precursor.getMz() + "," + rt;
+            
             default:
                 return "";
+                
         }
     }
 
