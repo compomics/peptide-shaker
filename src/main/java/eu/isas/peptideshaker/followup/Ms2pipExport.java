@@ -15,9 +15,9 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Annotati
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
-import com.compomics.util.experiment.massspectrometry.spectra.MSnSpectrum;
 import com.compomics.util.experiment.mass_spectrometry.SimpleNoiseDistribution;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.parameters.identification.IdentificationParameters;
@@ -403,7 +403,7 @@ public class Ms2pipExport {
 
                     if (peptideAssumption != null) {
 
-                        String spectrumKey = spectrumMatch.getKey();
+                        String spectrumKey = spectrumMatch.getSpectrumKey();
 
                         psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
 
@@ -411,10 +411,10 @@ public class Ms2pipExport {
 
                             SpecificAnnotationParameters specificAnnotationSettings = annotationSettings.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
 
-                            MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
+                            Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
 
                             Peptide peptide = peptideAssumption.getPeptide();
-                            int charge = peptideAssumption.getIdentificationCharge().value;
+                            int charge = peptideAssumption.getIdentificationCharge();
 
                             ArrayList<IonMatch> ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationSettings, specificAnnotationSettings, spectrum, peptide, false);
 

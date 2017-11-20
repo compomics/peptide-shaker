@@ -1,16 +1,13 @@
 package eu.isas.peptideshaker.followup;
 
-import com.compomics.util.experiment.biology.proteins.Peptide;
+import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
-import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
-import com.compomics.util.experiment.massspectrometry.spectra.MSnSpectrum;
+import com.compomics.util.experiment.io.mass_spectrometry.mgf.MgfFileIterator;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
-import com.compomics.util.experiment.personalization.UrParameter;
+import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
@@ -18,11 +15,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class can be used to export spectra.
@@ -39,10 +32,6 @@ public class SpectrumExporter {
      * The spectrum factory.
      */
     private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-    /**
-     * The sequence factory.
-     */
-    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
     /**
      * Constructor.
@@ -50,7 +39,9 @@ public class SpectrumExporter {
      * @param identification The identification of this project
      */
     public SpectrumExporter(Identification identification) {
+
         this.identification = identification;
+
     }
 
     /**
@@ -63,113 +54,166 @@ public class SpectrumExporter {
      * @param exportType the type of PSM to export
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @throws IOException thrown if an error occurred while writing the file
      */
     public void exportSpectra(File destinationFolder, WaitingHandler waitingHandler, ExportType exportType, SequenceMatchingParameters sequenceMatchingPreferences)
-            throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
+            throws IOException {
 
-        PSParameter psParameter = new PSParameter();
+        ArrayList<String> spectrumFileNames = spectrumFactory.getMgfFileNames();
 
-        if (exportType == ExportType.non_validated_peptides
-                || exportType == ExportType.validated_psms_peptides
-                || exportType == ExportType.validated_psms_peptides_proteins) {
+        for (int i = 0; i < spectrumFileNames.size(); i++) {
+
+            String fileName = spectrumFileNames.get(i);
+            File spectrumFile = spectrumFactory.getMgfFileFromName(fileName);
+
             if (waitingHandler != null) {
-                waitingHandler.setWaitingText("Exporting Spectra - Loading Peptides. Please Wait...");
+
+                waitingHandler.setWaitingText("Exporting Spectra. Please Wait... (" + (i + 1) + "/" + spectrumFileNames.size() + ")");
+
+                // reset the progress bar
+                waitingHandler.resetSecondaryProgressCounter();
+                waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(fileName).size());
             }
-            identification.loadObjects(PeptideMatch.class, waitingHandler, true);
-        }
-        if (exportType == ExportType.non_validated_proteins
-                || exportType == ExportType.validated_psms_peptides_proteins) {
-            if (waitingHandler != null) {
-                waitingHandler.setWaitingText("Exporting Spectra - Loading Proteins. Please Wait...");
-            }
-            identification.loadObjects(ProteinMatch.class, waitingHandler, true);
-        }
 
-        // HashMap for mapping files to the spectra
-        // TODO: may be there is a more elegant way to retrieve the aggregated information
-        // from all spectrumMatches than to iterate through all of them
-        HashMap<String, ArrayList<String>> fileNames = new HashMap<>();
-        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
-        SpectrumMatch spectrumMatch;
-        while ((spectrumMatch = psmIterator.next()) != null) {
-            String fileName = spectrumMatch.getSpectrumFile();
-            if (!fileNames.containsKey(fileName)) {
-                fileNames.put(fileName, new ArrayList<>());
-            }
-            fileNames.get(fileName).add(spectrumMatch.getKey());
-        }
+            MgfFileIterator mgfFileIterator = new MgfFileIterator(spectrumFile);
+            File destinationFile = getDestinationFile(destinationFolder, fileName, exportType);
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(destinationFile))) {
 
-        int i = 0;
-        for (String mgfFile : fileNames.keySet()) {
-            ArrayList<String> spectraPerFile = fileNames.get(mgfFile);
+                while (mgfFileIterator.hasNext()) {
 
-            FileWriter f = new FileWriter(new File(destinationFolder, getFileName(mgfFile, exportType)));
+                    Spectrum spectrum = mgfFileIterator.next();
+                    String spectrumKey = spectrum.getSpectrumKey();
 
-            try {
-                BufferedWriter b = new BufferedWriter(f);
-                try {
+                    if (include(spectrumKey, identification, sequenceMatchingPreferences, exportType)) {
+
+                        bw.write(spectrum.asMgf());
+
+                    }
+
                     if (waitingHandler != null) {
-                        waitingHandler.setWaitingText("Exporting Spectra - Writing File. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
-                        // reset the progress bar
-                        waitingHandler.resetSecondaryProgressCounter();
-                        if (exportType == ExportType.non_validated_psms
-                                || exportType == ExportType.non_validated_peptides
-                                || exportType == ExportType.non_validated_proteins) {
-                            waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(mgfFile).size());
-                        } else {
-                            waitingHandler.setMaxSecondaryProgressCounter(spectraPerFile.size());
+
+                        if (waitingHandler.isRunCanceled()) {
+
+                            return;
+
                         }
+
+                        waitingHandler.increaseSecondaryProgressCounter();
+
                     }
-
-                    // Export the identified spectra
-                    psmIterator = identification.getPsmIterator(spectraPerFile, waitingHandler);
-                    while ((spectrumMatch = psmIterator.next()) != null) {
-
-                        String spectrumKey = spectrumMatch.getKey();
-
-                        if (shallExport(spectrumMatch, exportType, sequenceMatchingPreferences)) {
-                            MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
-                            b.write(spectrum.asMgf());
-                        }
-                        if (waitingHandler != null) {
-                            if (waitingHandler.isRunCanceled()) {
-                                return;
-                            }
-                            waitingHandler.increaseSecondaryProgressCounter();
-                        }
-                    }
-
-                    if (exportType == ExportType.non_validated_psms
-                            || exportType == ExportType.non_validated_peptides
-                            || exportType == ExportType.non_validated_proteins) {
-                        HashSet<String> identifiedSpectra = new HashSet<>(spectraPerFile);
-                        for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
-                            String spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
-                            if (!identifiedSpectra.contains(spectrumKey)) {
-                                MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(mgfFile, spectrumTitle);
-                                b.write(spectrum.asMgf());
-                            }
-                            if (waitingHandler != null) {
-                                if (waitingHandler.isRunCanceled()) {
-                                    return;
-                                }
-                                waitingHandler.increaseSecondaryProgressCounter();
-                            }
-                        }
-                    }
-                } finally {
-                    b.close();
                 }
-            } finally {
-                f.close();
             }
-            i++;
+        }
+    }
+
+    /**
+     * Returns the destination file for the given export.
+     *
+     * @param destinationFolder the destination folder
+     * @param originalFileName the original file name
+     * @param exportType the export type
+     *
+     * @return the destination file
+     */
+    public static File getDestinationFile(File destinationFolder, String originalFileName, ExportType exportType) {
+
+        return new File(destinationFolder, Util.removeExtension(originalFileName) + getSuffix(exportType) + ".mgf");
+
+    }
+
+    /**
+     * Indicates whether a spectrum should be exported.
+     * 
+     * @param spectrumKey the key of the spectrum
+     * @param identification the identification object
+     * @param sequenceMatchingParameters the sequence matching preferences
+     * @param exportType the export type
+     * 
+     * @return a boolean indicating whether a spectrum should be exported
+     */
+    public static boolean include(String spectrumKey, Identification identification, SequenceMatchingParameters sequenceMatchingParameters, ExportType exportType) {
+
+        long spectrumMatchKey = ExperimentObject.asLong(spectrumKey);
+        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
+
+        switch (exportType) {
+
+            case non_validated_psms:
+
+                return spectrumMatch == null || !((PSParameter) spectrumMatch.getUrParam(PSParameter.dummy))
+                        .getMatchValidationLevel().isValidated();
+
+            case non_validated_peptides:
+
+                if (spectrumMatch == null || spectrumMatch.getBestPeptideAssumption() == null) {
+
+                    return true;
+
+                }
+
+                long peptideMatchKey = spectrumMatch.getBestPeptideAssumption().getPeptide().getMatchingKey(sequenceMatchingParameters);
+                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideMatchKey);
+
+                return !((PSParameter) peptideMatch.getUrParam(PSParameter.dummy))
+                        .getMatchValidationLevel().isValidated();
+
+            case non_validated_proteins:
+
+                if (spectrumMatch == null || spectrumMatch.getBestPeptideAssumption() == null) {
+
+                    return true;
+
+                }
+
+                return !identification.getProteinMatches(spectrumMatch.getBestPeptideAssumption().getPeptide()).stream()
+                        .anyMatch(key -> ((PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy))
+                        .getMatchValidationLevel().isValidated());
+
+            case validated_psms:
+
+                return spectrumMatch != null && ((PSParameter) spectrumMatch.getUrParam(PSParameter.dummy))
+                        .getMatchValidationLevel().isValidated();
+
+            case validated_psms_peptides:
+
+                if (spectrumMatch == null || spectrumMatch.getBestPeptideAssumption() == null || !((PSParameter) spectrumMatch.getUrParam(PSParameter.dummy))
+                        .getMatchValidationLevel().isValidated()) {
+
+                    return false;
+
+                }
+
+                peptideMatchKey = spectrumMatch.getBestPeptideAssumption().getPeptide().getMatchingKey(sequenceMatchingParameters);
+                peptideMatch = identification.getPeptideMatch(peptideMatchKey);
+
+                return ((PSParameter) peptideMatch.getUrParam(PSParameter.dummy))
+                        .getMatchValidationLevel().isValidated();
+
+            case validated_psms_peptides_proteins:
+
+                if (spectrumMatch == null || spectrumMatch.getBestPeptideAssumption() == null || !((PSParameter) spectrumMatch.getUrParam(PSParameter.dummy))
+                        .getMatchValidationLevel().isValidated()) {
+
+                    return false;
+
+                }
+
+                peptideMatchKey = spectrumMatch.getBestPeptideAssumption().getPeptide().getMatchingKey(sequenceMatchingParameters);
+                peptideMatch = identification.getPeptideMatch(peptideMatchKey);
+
+                if (!((PSParameter) peptideMatch.getUrParam(PSParameter.dummy))
+                        .getMatchValidationLevel().isValidated()) {
+
+                    return false;
+
+                }
+
+                return !identification.getProteinMatches(spectrumMatch.getBestPeptideAssumption().getPeptide()).stream()
+                        .anyMatch(key -> ((PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy))
+                        .getMatchValidationLevel().isValidated());
+
+            default:
+                throw new UnsupportedOperationException("Export " + exportType + " not implemented.");
         }
     }
 
@@ -180,135 +224,27 @@ public class SpectrumExporter {
      * @return the suffix for a spectrum file name
      */
     public static String getSuffix(ExportType exportType) {
+
         switch (exportType) {
+
             case non_validated_psms:
                 return "_non_validated_PSMs";
+
             case non_validated_peptides:
                 return "_non_validated_peptides";
+
             case non_validated_proteins:
                 return "_non_validated_proteins";
+
             case validated_psms:
                 return "_validated_PSMs";
+
             case validated_psms_peptides:
                 return "_validated_PSMs-peptides";
+
             case validated_psms_peptides_proteins:
                 return "_validated_PSMs-peptides-proteins";
-            default:
-                throw new IllegalArgumentException("Export type " + exportType + " not supported.");
-        }
-    }
 
-    /**
-     * Returns the name of the file to write.
-     *
-     * @param fileName the original file name
-     * @param exportType the type of PSM to be exported
-     * @return the name of the file
-     */
-    public static String getFileName(String fileName, ExportType exportType) {
-        String tempName = fileName.substring(0, fileName.lastIndexOf("."));
-        String extension = fileName.substring(fileName.lastIndexOf("."));
-        return tempName + getSuffix(exportType) + extension;
-    }
-
-    /**
-     * Indicates whether a spectrum shall be exported according to the export
-     * type number. Note: proteins must be set for every exported peptide.
-     *
-     * @param spectrumKey the key of the spectrum
-     * @param exportType the export type number
-     * @param sequenceMatchingPreferences the sequence matching preferences
-     *
-     * @return whether a spectrum shall be exported
-     *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     */
-    private boolean shallExport(SpectrumMatch spectrumMatch, ExportType exportType, SequenceMatchingParameters sequenceMatchingPreferences)
-            throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-
-        PSParameter psParameter = new PSParameter();
-        String spectrumKey = spectrumMatch.getKey();
-        psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
-        PSParameter psParameterSpectrum = (PSParameter) spectrumMatch.getUrParam(psParameter);
-
-        switch (exportType) {
-            case non_validated_psms:
-            case validated_psms:
-                if (psParameter.getMatchValidationLevel().isValidated()) {
-                    if (spectrumMatch.getBestPeptideAssumption() != null) {
-                        boolean decoy = false;
-                        for (String accession : spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(sequenceMatchingPreferences)) {
-                            if (sequenceFactory.isDecoyAccession(accession)) {
-                                decoy = true;
-                                break;
-                            }
-                        }
-                        return !decoy && exportType == ExportType.validated_psms;
-                    } else {
-                        return false;
-                    }
-                }
-                return exportType == ExportType.non_validated_psms;
-            case non_validated_peptides:
-            case validated_psms_peptides:
-                if (spectrumMatch.getBestPeptideAssumption() != null) {
-                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                    boolean decoy = false;
-                    for (String accession : peptide.getParentProteins(sequenceMatchingPreferences)) {
-                        if (sequenceFactory.isDecoyAccession(accession)) {
-                            decoy = true;
-                            break;
-                        }
-                    }
-                    if (!decoy) {
-                        String peptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
-                        psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(peptideKey)).getUrParam(psParameter);
-                        if (exportType == ExportType.non_validated_peptides || psParameterSpectrum.getMatchValidationLevel().isValidated()) {
-                            if (psParameter.getMatchValidationLevel().isValidated()) {
-                                return exportType == ExportType.validated_psms_peptides;
-                            }
-                        }
-                    }
-                }
-                return exportType == ExportType.non_validated_peptides;
-            case non_validated_proteins:
-            case validated_psms_peptides_proteins:
-                if (spectrumMatch.getBestPeptideAssumption() != null) {
-                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                    boolean decoy = false;
-                    for (String accession : peptide.getParentProteins(sequenceMatchingPreferences)) {
-                        if (sequenceFactory.isDecoyAccession(accession)) {
-                            decoy = true;
-                            break;
-                        }
-                    }
-                    if (!decoy) {
-                        String peptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
-                        psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(peptideKey)).getUrParam(psParameter);
-                        if (exportType == ExportType.non_validated_proteins
-                                || psParameter.getMatchValidationLevel().isValidated()
-                                && psParameterSpectrum.getMatchValidationLevel().isValidated()) {
-                            ArrayList<String> proteins = peptide.getParentProteins(sequenceMatchingPreferences);
-                            for (String accession : proteins) {
-                                HashSet<String> proteinKeys = identification.getProteinMap().get(accession);
-                                if (proteinKeys != null) {
-                                    identification.loadObjects(new ArrayList<>(proteinKeys), null, true);
-                                    for (String proteinKey : proteinKeys) {
-                                        psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(proteinKey)).getUrParam(psParameter);
-                                        if (psParameter.getMatchValidationLevel().isValidated()) {
-                                            return exportType == ExportType.validated_psms_peptides_proteins;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return exportType == ExportType.non_validated_proteins;
-                }
-                return true;
             default:
                 throw new IllegalArgumentException("Export type " + exportType + " not supported.");
         }
@@ -370,22 +306,39 @@ public class SpectrumExporter {
          * @return the export type corresponding to a given index
          */
         public static ExportType getTypeFromIndex(int index) {
+
             if (index == non_validated_psms.index) {
+
                 return non_validated_psms;
+
             } else if (index == non_validated_peptides.index) {
+
                 return non_validated_peptides;
+
             } else if (index == non_validated_proteins.index) {
+
                 return non_validated_proteins;
+
             } else if (index == non_validated_peptides.index) {
+
                 return non_validated_peptides;
+
             } else if (index == validated_psms.index) {
+
                 return validated_psms;
+
             } else if (index == validated_psms_peptides.index) {
+
                 return validated_psms_peptides;
+
             } else if (index == validated_psms_peptides_proteins.index) {
+
                 return validated_psms_peptides_proteins;
+
             } else {
+
                 throw new IllegalArgumentException("Export type index " + index + " not implemented.");
+
             }
             //Note: don't forget to add new enums in the following methods
         }
@@ -397,6 +350,7 @@ public class SpectrumExporter {
          * @return all possibilities descriptions in an array of string
          */
         public static String[] getPossibilities() {
+
             return new String[]{
                 non_validated_psms.description,
                 non_validated_peptides.description,
@@ -413,6 +367,7 @@ public class SpectrumExporter {
          * @return a description of the command line arguments
          */
         public static String getCommandLineOptions() {
+
             return non_validated_psms.index + ": " + non_validated_psms.description + " (default), "
                     + non_validated_peptides.index + ": " + non_validated_peptides.description + ", "
                     + non_validated_proteins.index + ": " + non_validated_proteins.description + ", "

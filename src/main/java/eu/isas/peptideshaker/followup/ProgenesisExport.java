@@ -3,12 +3,14 @@ package eu.isas.peptideshaker.followup;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
+import com.compomics.util.experiment.identification.utils.PeptideUtils;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
@@ -20,8 +22,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * This class exports identifications for post-processing with Non-Linear
@@ -34,135 +39,112 @@ public class ProgenesisExport {
     /**
      * The separator (tab by default).
      */
-    public static final String SEPARATOR = "\t";
+    public static final char SEPARATOR = '\t';
 
     /**
      * Writes a file containing the PSMs in a Progenesis compatible format.
-     * Note: proteins must be set for every exported peptide.
      *
      * @param destinationFile the destination file
+     * @param sequenceProvider a sequence provider
+     * @param proteinDetailsProvider the protein details provider
      * @param identification the identification
      * @param exportType the type of export
      * @param waitingHandler waiting handler displaying progress to the user and
      * allowing canceling the process
-     * @param targetedPTMs the PTMs of interest in case of a PTM export. Ignored
+     * @param targetedModifications the modifications of interest in case of a PTM export. Ignored
      * otherwise.
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IOException thrown if an error occurred while writing the file
      */
-    public static void writeProgenesisExport(File destinationFile, Identification identification, ExportType exportType,
-            WaitingHandler waitingHandler, ArrayList<String> targetedPTMs, SequenceMatchingParameters sequenceMatchingPreferences)
-            throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public static void writeProgenesisExport(File destinationFile, SequenceProvider sequenceProvider, 
+            ProteinDetailsProvider proteinDetailsProvider, Identification identification, ExportType exportType,
+            WaitingHandler waitingHandler, HashSet<String> targetedModifications, SequenceMatchingParameters sequenceMatchingPreferences)
+            throws IOException {
 
         if (exportType == ExportType.confident_ptms) {
-            if (targetedPTMs == null || targetedPTMs.isEmpty()) {
+
+            if (targetedModifications == null || targetedModifications.isEmpty()) {
+
                 throw new IllegalArgumentException("No modification provided for the Progenesis PTM export.");
+
             }
         }
 
-        PSParameter psParameter = new PSParameter();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(destinationFile))) {
 
-        if (exportType == ExportType.validated_psms_peptides || exportType == ExportType.validated_psms_peptides_proteins || exportType == ExportType.confident_ptms) {
+            writer.write("sequence");
+            writer.write(SEPARATOR);
+            writer.write("modif");
+            writer.write(SEPARATOR);
+            writer.write("score");
+            writer.write(SEPARATOR);
+            writer.write("main AC");
+            writer.write(SEPARATOR);
+            writer.write("description");
+            writer.write(SEPARATOR);
+            writer.write("compound");
+            writer.write(SEPARATOR);
+            writer.write("jobid");
+            writer.write(SEPARATOR);
+            writer.write("pmkey");
+            writer.newLine();
+
             if (waitingHandler != null) {
-                waitingHandler.setWaitingText("Progenesis Export - Loading Peptides. Please Wait...");
+            
+                waitingHandler.setWaitingText("Exporting Spectra - Writing File. Please Wait...");
+                // reset the progress bar
+                waitingHandler.resetSecondaryProgressCounter();
+                waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
+            
             }
-            identification.loadObjects(PeptideMatch.class, waitingHandler, true);
-        }
-        if (exportType == ExportType.validated_psms_peptides_proteins || exportType == ExportType.confident_ptms) {
-            if (waitingHandler != null) {
-                waitingHandler.setWaitingText("Progenesis Export - Loading Proteins. Please Wait...");
-            }
-            identification.loadObjects(ProteinMatch.class, waitingHandler, true);
-        }
 
-        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
-            return;
-        }
+            SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
+            SpectrumMatch spectrumMatch;
+            
+            while ((spectrumMatch = psmIterator.next()) != null) {
 
-        FileWriter f = new FileWriter(destinationFile);
-        try {
-            BufferedWriter writer = new BufferedWriter(f);
-            try {
-                writer.write("sequence" + SEPARATOR);
-                writer.write("modif" + SEPARATOR);
-                writer.write("score" + SEPARATOR);
-                writer.write("main AC" + SEPARATOR);
-                writer.write("description" + SEPARATOR);
-                writer.write("compound" + SEPARATOR);
-                writer.write("jobid" + SEPARATOR);
-                writer.write("pmkey" + SEPARATOR);
-                writer.newLine();
+                        if (spectrumMatch.getBestPeptideAssumption() != null) {
+                            
+                   PSParameter spectrumMatchParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
 
+                    if (spectrumMatchParameter.getMatchValidationLevel().isValidated()) {
+                            
+                            Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
 
-                if (waitingHandler != null) {
-                    waitingHandler.setWaitingText("Exporting Spectra - Loading PSMs. Please Wait...");
-                }
-                identification.loadObjects(SpectrumMatch.class, waitingHandler, true);
-                if (waitingHandler != null) {
-                    waitingHandler.setWaitingText("Exporting Spectra - Writing File. Please Wait...");
-                    // reset the progress bar
-                    waitingHandler.resetSecondaryProgressCounter();
-                    waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
-                }
-
-                SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
-                    SpectrumMatch spectrumMatch;
-                while ((spectrumMatch = psmIterator.next()) != null) {
-
-                    String spectrumKey = spectrumMatch.getKey();
-
-                    if (identification.matchExists(spectrumKey)) {
-                        psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
-
-                        if (psParameter.getMatchValidationLevel().isValidated()) {
-
-                            if (spectrumMatch.getBestPeptideAssumption() != null) {
-                                Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-
-                                if (exportType != ExportType.confident_ptms || isTargetedPeptide(peptide, targetedPTMs)) {
-
-                                    boolean decoy = false;
-                                    for (String protein : peptide.getParentProteins(sequenceMatchingPreferences)) {
-                                        if (SequenceFactory.getInstance().isDecoyAccession(protein)) {
-                                            decoy = true;
-                                            break;
-                                        }
-                                    }
-                                    if (!decoy) {
-                                        if (exportType == ExportType.validated_psms) {
-                                            writePsm(writer, spectrumKey, identification, sequenceMatchingPreferences);
-                                        } else {
-                                            String peptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
-                                            psParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(peptideKey)).getUrParam(psParameter);
-                                            if (psParameter.getMatchValidationLevel().isValidated()) {
-                                                if (exportType == ExportType.validated_psms_peptides) {
-                                                    writePsm(writer, spectrumKey, identification, sequenceMatchingPreferences);
-                                                } else {
-                                                    ArrayList<String> accessions = new ArrayList<>();
-                                                    for (String accession : peptide.getParentProteins(sequenceMatchingPreferences)) {
-                                                        HashSet<String> groups = identification.getProteinMap().get(accession);
-                                                        if (groups != null) {
-                                                            for (String group : groups) {
-                                                                psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(group)).getUrParam(psParameter);
-                                                                if (psParameter.getMatchValidationLevel().isValidated()) {
-                                                                    for (String groupAccession : ProteinMatch.getAccessions(group)) {
-                                                                        if (!accessions.contains(groupAccession)) {
-                                                                            accessions.add(groupAccession);
-                                                                        }
-                                                                    }
-                                                                }
+                            if (exportType != ExportType.confident_ptms || isTargetedPeptide(peptide, targetedModifications)) {
+                                
+                                if (!PeptideUtils.isDecoy(peptide, sequenceProvider)) {
+                                    
+                                    if (exportType == ExportType.validated_psms) {
+                                    
+                                        writeSpectrumMatch(writer, spectrumMatch, proteinDetailsProvider);
+                                    
+                                    } else {
+                                    
+                                        long peptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
+                                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                                        PSParameter peptideParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
+                                        
+                                        if (peptideParameter.getMatchValidationLevel().isValidated()) {
+                                            
+                                            if (exportType == ExportType.validated_psms_peptides) {
+                                            
+                                                writeSpectrumMatch(writer, spectrumMatch, proteinDetailsProvider);
+                                            
+                                            } else {
+                                                
+                                                for (long proteinMatchKey : identification.getProteinMatches(peptide)) {
+                                                    
+                                                    ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+                                                    PSParameter proteinParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
+                                                    
+                                                            if (proteinParameter.getMatchValidationLevel().isValidated()) {
+                                                                
+                                                writeSpectrumMatch(writer, spectrumMatch, proteinDetailsProvider);
+                                                    break;
+                                                    
                                                             }
-                                                        }
-                                                    }
-                                                    if (!accessions.isEmpty()) {
-                                                        writePsm(writer, spectrumKey, accessions, identification, sequenceMatchingPreferences);
-                                                    }
                                                 }
                                             }
                                         }
@@ -170,46 +152,38 @@ public class ProgenesisExport {
                                 }
                             }
                         }
-                        if (waitingHandler != null) {
-                            if (waitingHandler.isRunCanceled()) {
-                                return;
-                            }
-                            waitingHandler.increaseSecondaryProgressCounter();
+                    }
+                        
+                    if (waitingHandler != null) {
+                        
+                        if (waitingHandler.isRunCanceled()) {
+                        
+                            return;
+                        
                         }
+                        
+                        waitingHandler.increaseSecondaryProgressCounter();
+                    
                     }
                 }
-            } finally {
-                writer.close();
             }
-        } finally {
-            f.close();
         }
-    }
 
     /**
-     * Indicates whether the given peptide contains any of the targeted PTMs and
+     * Indicates whether the given peptide contains any of the targeted modifications and
      * if yes whether all are confidently localized.
      *
      * @param peptide the peptide of interest
-     * @param targetedPTMs the targeted PTMs
+     * @param targetedModifications the targeted modifications
      *
-     * @return true if the peptide contains one or more of the targeted PTMs and
-     * false if one of the targeted PTMs is not confidently localized
+     * @return true if the peptide contains one or more of the targeted modifications confidently localized
      */
-    private static boolean isTargetedPeptide(Peptide peptide, ArrayList<String> targetedPTMs) {
-        boolean found = false, confident = true;
-        if (peptide.isModified()) {
-            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                if (targetedPTMs.contains(modificationMatch.getModification())) {
-                    found = true;
-                    if (!modificationMatch.getConfident()) {
-                        confident = false;
-                        break;
-                    }
-                }
-            }
-        }
-        return found && confident;
+    private static boolean isTargetedPeptide(Peptide peptide, HashSet<String> targetedModifications) {
+        
+        return Arrays.stream(peptide.getModificationMatches())
+                .anyMatch(modificationMatch -> targetedModifications.contains(modificationMatch.getModification())
+                && modificationMatch.getConfident());
+        
     }
 
     /**
@@ -217,122 +191,103 @@ public class ProgenesisExport {
      * Progenesis format.
      *
      * @param writer the writer
-     * @param spectrumKey the key of the PSM to export
+     * @param spectrumMatch the spectrum match to export
+     * @param proteinDetailsProvider the protein details provider
      * @param identification the identification
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IOException thrown if an error occurred while writing the file
      */
-    private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification, SequenceMatchingParameters sequenceMatchingPreferences)
-            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
-        writePsm(writer, spectrumKey, null, identification, sequenceMatchingPreferences);
-    }
+    private static void writeSpectrumMatch(BufferedWriter writer, SpectrumMatch spectrumMatch, ProteinDetailsProvider proteinDetailsProvider)
+            throws IOException {
 
-    /**
-     * Writes the lines corresponding to a PSM in the export file in the
-     * Progenesis format. Note: proteins must be set for every exported peptide.
-     *
-     * @param writer the writer
-     * @param spectrumKey the key of the PSM to export
-     * @param accessions the accessions corresponding to that peptide according
-     * to protein inference. If null all proteins will be reported.
-     * @param identification the identification
-     * @param sequenceMatchingPreferences the sequence matching preferences
-     *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     */
-    private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification, SequenceMatchingParameters sequenceMatchingPreferences)
-            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
-
-        SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(spectrumKey);
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter)spectrumMatch.getUrParam(psParameter);
+        PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
         PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
+        Peptide peptide = bestAssumption.getPeptide();
 
-        if (accessions == null) {
-            accessions = bestAssumption.getPeptide().getParentProteins(sequenceMatchingPreferences);
-        }
-
-        for (String protein : accessions) {
+        for (String accession : peptide.getProteinMapping().navigableKeySet()) {
 
             // peptide sequence
-            writer.write(bestAssumption.getPeptide().getSequence() + SEPARATOR);
+            String sequence = peptide.getSequence();
+            writer.write(sequence + SEPARATOR);
 
             // modifications
-            HashMap<String, ArrayList<Integer>> modMap = new HashMap<>();
-            Peptide peptide = bestAssumption.getPeptide();
-            if (peptide.isModified()) {
+            HashMap<Integer, HashSet<String>> modMap = new HashMap<>();
+            
                 for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                    
                     if (modificationMatch.getVariable()) {
-                        if (!modMap.containsKey(modificationMatch.getModification())) {
-                            modMap.put(modificationMatch.getModification(), new ArrayList<>());
+                        
+                        int site = modificationMatch.getModificationSite();
+                        HashSet<String> modNames = modMap.get(site);
+                    
+                        if (modNames == null) {
+                        
+                            modNames = new HashSet<>(1);
+                            modMap.put(site, modNames);
+                        
                         }
-                        modMap.get(modificationMatch.getModification()).add(modificationMatch.getModificationSite());
-                    }
-                }
-            }
-
-            ArrayList<String> mods = new ArrayList<>(modMap.keySet());
-
-            for (int i = 0; i < bestAssumption.getPeptide().getSequence().length() + 1; i++) {
-
-                String allMods = "";
-
-                for (int k = 0; k < mods.size(); k++) {
-
-                    String tempMod = mods.get(k);
-
-                    if (modMap.get(tempMod).contains(Integer.valueOf(i))) {
-
-                        if (allMods.length() > 0) {
-                            allMods += ", ";
-                        }
-
-                        allMods += tempMod;
+                        
+                        modNames.add(modificationMatch.getModification());
+                    
                     }
                 }
 
-                writer.write(allMods + ":");
+            for (int i = 0; i < sequence.length() + 1; i++) {
+                
+                HashSet<String> modsAtI = modMap.get(i + 1);
+                
+                if (modsAtI != null) {
+                    
+                    writer.write(modsAtI.stream()
+                    .sorted()
+                    .collect(Collectors.joining(",")));
+                    
+                }
+                
+                writer.write(':');
+                
             }
 
             writer.write(SEPARATOR);
 
             // score
-            writer.write(psParameter.getPsmConfidence() + SEPARATOR);
+            writer.write(Double.toString(psParameter.getPsmConfidence()));
+            writer.write(SEPARATOR);
 
             // main AC
-            writer.write(protein + SEPARATOR);
+            writer.write(accession);
+            writer.write(SEPARATOR);
 
             // description
-            String description = SequenceFactory.getInstance().getHeader(protein).getSimpleProteinDescription();
-            writer.write(description + SEPARATOR);
+            writer.write(proteinDetailsProvider.getSimpleDescription(accession));
+            writer.write(SEPARATOR);
 
             // compound
-            String spectrumTitle = Spectrum.getSpectrumTitle(spectrumMatch.getKey());
-            // correct for the intensity tag introduced in the newest version of Progenesis
+            String spectrumTitle = Spectrum.getSpectrumTitle(spectrumMatch.getSpectrumKey());
+            
+// correct for the intensity tag introduced in the newest version of Progenesis
             int intensityIndex = spectrumTitle.indexOf(" (intensity=");
+            
             if (intensityIndex > -1) {
+
                 spectrumTitle = spectrumTitle.substring(0, intensityIndex);
+
             }
-            writer.write(spectrumTitle + SEPARATOR);
+
+            writer.write(spectrumTitle);
+            writer.write(SEPARATOR);
 
             // jobid
-            writer.write("N/A" + SEPARATOR);
+            writer.write("N/A");
+            writer.write(SEPARATOR);
 
             // pmkey
-            writer.write("N/A" + SEPARATOR);
+            writer.write("N/A");
+            writer.write(SEPARATOR);
 
             writer.newLine();
+            
         }
     }
 
@@ -383,19 +338,31 @@ public class ProgenesisExport {
          * Returns the export type corresponding to a given index.
          *
          * @param index the index of interest
+         * 
          * @return the export type
          */
         public static ExportType getTypeFromIndex(int index) {
+
             if (index == validated_psms.index) {
+
                 return validated_psms;
+
             } else if (index == validated_psms_peptides.index) {
+
                 return validated_psms_peptides;
+
             } else if (index == validated_psms_peptides_proteins.index) {
+
                 return validated_psms_peptides_proteins;
+
             } else if (index == confident_ptms.index) {
+
                 return confident_ptms;
+
             } else {
+
                 throw new IllegalArgumentException("Export type index " + index + " not implemented.");
+
             }
             //Note: don't forget to add new enums in the following methods
         }
@@ -407,6 +374,7 @@ public class ProgenesisExport {
          * @return all possibilities descriptions in an array of string
          */
         public static String[] getPossibilities() {
+
             return new String[]{
                 validated_psms_peptides_proteins.description,
                 validated_psms_peptides.description,
@@ -421,6 +389,7 @@ public class ProgenesisExport {
          * @return a description of the command line arguments
          */
         public static String getCommandLineOptions() {
+
             return validated_psms_peptides_proteins.index + ": " + validated_psms_peptides_proteins.description + ", "
                     + validated_psms_peptides.index + ": " + validated_psms_peptides.description + ", "
                     + validated_psms.index + ": " + validated_psms.description + ","
