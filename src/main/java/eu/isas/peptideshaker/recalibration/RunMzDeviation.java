@@ -16,14 +16,12 @@ import eu.isas.peptideshaker.parameters.PSParameter;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
-import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This class computes the mz deviations for a a given run (i.e. file).
@@ -261,7 +259,6 @@ public class RunMzDeviation {
      *
      * @param spectrumFileName the name of the file of the run
      * @param identification the corresponding identification
-     * @param sequenceProvider a provider for the protein sequences
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler displaying the progress and
      * allowing the user to cancel the process. Can be null
@@ -269,7 +266,7 @@ public class RunMzDeviation {
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred while
      */
-    public RunMzDeviation(String spectrumFileName, Identification identification, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
+    public RunMzDeviation(String spectrumFileName, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
             throws InterruptedException {
 
         AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
@@ -295,7 +292,7 @@ public class RunMzDeviation {
                 break;
             }
 
-            String spectrumKey = spectrumMatch.getKey();
+            String spectrumKey = spectrumMatch.getSpectrumKey();
 
             psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
 
@@ -321,7 +318,7 @@ public class RunMzDeviation {
                     precursorRawMap.get(precursorRT).get(precursorMz).add(error);
 
                     Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumKey);
-                    SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(currentSpectrum.getSpectrumKey(), bestPeptideAssumption, sequenceProvider, identificationParameters.getSequenceMatchingParameters(), identificationParameters.getModificationLocalizationParameters().getSequenceMatchingPreferences());
+                    SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(currentSpectrum.getSpectrumKey(), bestPeptideAssumption, identificationParameters.getSequenceMatchingParameters(), identificationParameters.getModificationLocalizationParameters().getSequenceMatchingPreferences());
                     List<IonMatch> ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
                             currentSpectrum, bestPeptideAssumption.getPeptide()).collect(Collectors.toList());
                     
