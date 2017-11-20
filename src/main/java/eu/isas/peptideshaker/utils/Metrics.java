@@ -84,7 +84,7 @@ public class Metrics implements Serializable {
      * The PSM matches for each fraction for each peptide. Key: 'fraction
      * name'_'peptide key'. Values: arraylist of spectrum keys.
      */
-    private HashMap<String, ArrayList<String>> fractionPsmMatches;
+    private HashMap<String, ArrayList<Long>> fractionPsmMatches;
     /**
      * The total number of peptides per fraction.
      */
@@ -412,8 +412,10 @@ public class Metrics implements Serializable {
      *
      * @param fractionPsmMatches the fraction PSM matches
      */
-    public void setFractionPsmMatches(HashMap<String, ArrayList<String>> fractionPsmMatches) {
+    public void setFractionPsmMatches(HashMap<String, ArrayList<Long>> fractionPsmMatches) {
+        
         this.fractionPsmMatches = fractionPsmMatches;
+    
     }
 
     /**
@@ -422,12 +424,10 @@ public class Metrics implements Serializable {
      *
      * @return he list of fraction PSM matches
      */
-    public HashMap<String, ArrayList<String>> getFractionPsmMatches() {
-        if (fractionPsmMatches != null) {
+    public HashMap<String, ArrayList<Long>> getFractionPsmMatches() {
+        
             return fractionPsmMatches;
-        } else {
-            return new HashMap<>();
-        }
+            
     }
 
     /**

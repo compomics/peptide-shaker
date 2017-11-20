@@ -155,11 +155,11 @@ public class PsIdentificationAlgorithmMatchesSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
-            HashMap<Integer, HashMap<Double, ArrayList<PeptideAssumption>>> peptideAssumptions = spectrumMatch.getPeptideAssumptionsMap();
+            HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> peptideAssumptions = spectrumMatch.getPeptideAssumptionsMap();
 
             for (int advocateId : peptideAssumptions.keySet()) {
 
-                HashMap<Double, ArrayList<PeptideAssumption>> advocateAssumptions = peptideAssumptions.get(advocateId);
+                TreeMap<Double, ArrayList<PeptideAssumption>> advocateAssumptions = peptideAssumptions.get(advocateId);
                 ArrayList<Double> scores = new ArrayList<>(advocateAssumptions.keySet());
                 Collections.sort(scores);
 
@@ -177,7 +177,7 @@ public class PsIdentificationAlgorithmMatchesSection {
 
                             }
 
-                            writer.write(line + "");
+                            writer.write(Integer.toString(line));
                             firstFeature = false;
 
                         }
@@ -229,11 +229,11 @@ public class PsIdentificationAlgorithmMatchesSection {
                 }
             }
 
-            HashMap<Integer, HashMap<Double, ArrayList<TagAssumption>>> tagAssumptions = spectrumMatch.getTagAssumptionsMap();
+            HashMap<Integer, TreeMap<Double, ArrayList<TagAssumption>>> tagAssumptions = spectrumMatch.getTagAssumptionsMap();
 
             for (int advocateId : tagAssumptions.keySet()) {
 
-                HashMap<Double, ArrayList<TagAssumption>> advocateAssumptions = tagAssumptions.get(advocateId);
+                TreeMap<Double, ArrayList<TagAssumption>> advocateAssumptions = tagAssumptions.get(advocateId);
                 ArrayList<Double> scores = new ArrayList<>(advocateAssumptions.keySet());
                 Collections.sort(scores);
 

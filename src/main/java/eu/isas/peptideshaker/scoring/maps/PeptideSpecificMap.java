@@ -97,21 +97,19 @@ public class PeptideSpecificMap implements Serializable {
      * @param probabilityScore The estimated peptide probabilistic score
      * @param peptideMatch The corresponding peptide match
      * @param sequenceMatchingPreferences The sequence matching preferences
-     *
-     * @throws IOException thrown if an IOException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
      */
-    public void addPoint(double probabilityScore, PeptideMatch peptideMatch, SequenceMatchingParameters sequenceMatchingPreferences)
-            throws IOException, InterruptedException, SQLException, ClassNotFoundException {
+    public void addPoint(double probabilityScore, PeptideMatch peptideMatch, SequenceMatchingParameters sequenceMatchingPreferences) {
+        
         String key = getKey(peptideMatch);
+        
         if (!peptideMaps.containsKey(key)) {
+        
             peptideMaps.put(key, new TargetDecoyMap());
+        
         }
+        
         peptideMaps.get(key).put(probabilityScore, peptideMatch.getPeptide().isDecoy(sequenceMatchingPreferences));
+    
     }
 
     /**

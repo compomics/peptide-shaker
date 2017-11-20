@@ -259,21 +259,8 @@ public class IdentificationFeaturesGenerator {
 
         }
 
-        TreeSet<String> modifications = metrics.getFoundModifications();
-
-        if (modifications == null) {
-
-            modifications = identification.getPeptideIdentification().stream()
-                    .map(key -> identification.getPeptideMatch(key))
-                    .flatMap(peptideMatch -> Arrays.stream(peptideMatch.getPeptide().getModificationMatches()))
-                    .map(modificationMatch -> modificationMatch.getModification())
-                    .collect(Collectors.toCollection(TreeSet::new));
-
-            metrics.setFoundModifications(modifications);
-
-        }
-
-        return modifications;
+        return metrics.getFoundModifications();
+        
     }
 
     /**

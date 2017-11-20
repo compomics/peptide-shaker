@@ -508,9 +508,9 @@ public class PepXmlExport {
         }
 
         // Search engines results
-        HashMap<Integer, HashMap<Double, ArrayList<PeptideAssumption>>> assumptions = ((SpectrumMatch)identification.retrieveObject(spectrumMatch.getKey())).getPeptideAssumptionsMap();
+        HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> assumptions = ((SpectrumMatch)identification.retrieveObject(spectrumMatch.getKey())).getPeptideAssumptionsMap();
         
-        for (HashMap<Double, ArrayList<PeptideAssumption>> scoreMap : assumptions.values()) {
+        for (TreeMap<Double, ArrayList<PeptideAssumption>> scoreMap : assumptions.values()) {
         
             for (ArrayList<PeptideAssumption> spectrumIdentificationAssumptions : scoreMap.values()) {
             

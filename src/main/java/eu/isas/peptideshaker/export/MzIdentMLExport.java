@@ -2271,11 +2271,11 @@ public class MzIdentMLExport {
             // add the individual search engine results
             Double mascotScore = null, msAmandaScore = null;
             TreeMap<Integer, Double> scores = new TreeMap<>();
-            HashMap<Integer, HashMap<Double, ArrayList<PeptideAssumption>>> assumptions = identification.getSpectrumMatch(spectrumMatchKey).getPeptideAssumptionsMap();
+            HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> assumptions = identification.getSpectrumMatch(spectrumMatchKey).getPeptideAssumptionsMap();
 
             for (Integer tempAdvocate : assumptions.keySet()) {
 
-                HashMap<Double, ArrayList<PeptideAssumption>> advocateMap = assumptions.get(tempAdvocate);
+                TreeMap<Double, ArrayList<PeptideAssumption>> advocateMap = assumptions.get(tempAdvocate);
 
                 for (double eValue : advocateMap.keySet()) {
 
