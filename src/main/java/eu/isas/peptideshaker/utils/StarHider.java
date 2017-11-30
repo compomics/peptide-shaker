@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.exceptions.ExceptionHandler;
+import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -8,8 +9,11 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.utils.ProteinUtils;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
@@ -26,6 +30,7 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -38,21 +43,90 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 public class StarHider {
 
     /**
-     * PeptideShakerGUI instance.
+     * The identification.
      */
-    private final PeptideShakerGUI peptideShakerGUI;
+    private final Identification identification;
+    /**
+     * The filter preferences
+     */
+    private final FilterParameters filterPreferences;
+    /**
+     * The sequence provider.
+     */
+    private final SequenceProvider sequenceProvider;
+    /**
+     * The protein details provider.
+     */
+    private final ProteinDetailsProvider proteinDetailsProvider;
+    /**
+     * The gene maps.
+     */
+    private final GeneMaps geneMaps;
+    /**
+     * The identification features generator.
+     */
+    private final IdentificationFeaturesGenerator identificationFeaturesGenerator;
+    /**
+     * The identification parameters.
+     */
+    private final IdentificationParameters identificationParameters;
+    /**
+     * The metrics.
+     */
+    private final Metrics metrics;
     /**
      * The progress dialog.
      */
-    private ProgressDialogX progressDialog;
+    private final ProgressDialogX progressDialog;
+    /**
+     * The number of threads.
+     */
+    private final int nThreads;
+    /**
+     * The exception handler.
+     */
+    private final ExceptionHandler exceptionHandler;
 
     /**
      * Constructor.
      *
-     * @param peptideShakerGUI the peptideShakerGUI main class
+     * @param identification the identification
+     * @param filterPreferences the filter preferences
+     * @param sequenceProvider the sequence provider
+     * @param proteinDetailsProvider the protein details provider
+     * @param geneMaps the gene maps
+     * @param identificationFeaturesGenerator the identification features
+     * generator
+     * @param identificationParameters the identification parameters
+     * @param metrics the metrics
+     * @param progressDialog the progress dialog
+     * @param nThreads the number of threads
+     * @param exceptionHandler the exception handler
      */
-    public StarHider(PeptideShakerGUI peptideShakerGUI) {
-        this.peptideShakerGUI = peptideShakerGUI;
+    public StarHider(Identification identification,
+            FilterParameters filterPreferences,
+            SequenceProvider sequenceProvider,
+            ProteinDetailsProvider proteinDetailsProvider,
+            GeneMaps geneMaps,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            IdentificationParameters identificationParameters,
+            Metrics metrics,
+            ProgressDialogX progressDialog,
+            int nThreads,
+            ExceptionHandler exceptionHandler) {
+
+        this.identification = identification;
+        this.filterPreferences = filterPreferences;
+        this.sequenceProvider = sequenceProvider;
+        this.proteinDetailsProvider = proteinDetailsProvider;
+        this.geneMaps = geneMaps;
+        this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+        this.identificationParameters = identificationParameters;
+        this.metrics = metrics;
+        this.progressDialog = progressDialog;
+        this.nThreads = nThreads;
+        this.exceptionHandler = exceptionHandler;
+
     }
 
     /**
@@ -60,10 +134,6 @@ public class StarHider {
      */
     public void starHide() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI,
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true);
         progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Hiding/Starring Matches. Please Wait...");
 
@@ -83,28 +153,36 @@ public class StarHider {
 
                 try {
 
-                    int nThreads = peptideShakerGUI.getProcessingPreferences().getnThreads();
                     ExecutorService pool = Executors.newFixedThreadPool(nThreads);
 
-                    Identification identification = peptideShakerGUI.getIdentification();
                     progressDialog.setPrimaryProgressCounterIndeterminate(false);
                     progressDialog.setMaxPrimaryProgressCounter(identification.getProteinIdentification().size());
 
                     ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(progressDialog);
 
                     ArrayList<StarHiderRunnable> runnables = new ArrayList<>(nThreads);
+
                     for (int i = 1; i <= nThreads && !progressDialog.isRunCanceled(); i++) {
-                        StarHiderRunnable starHiderRunnable = new StarHiderRunnable(proteinMatchesIterator, progressDialog, peptideShakerGUI.getExceptionHandler());
+
+                        StarHiderRunnable starHiderRunnable = new StarHiderRunnable(proteinMatchesIterator, progressDialog);
                         pool.submit(starHiderRunnable);
                         runnables.add(starHiderRunnable);
+
                     }
+
                     if (progressDialog.isRunCanceled()) {
+
                         pool.shutdownNow();
                         return;
+
                     }
+
                     pool.shutdown();
+
                     if (!pool.awaitTermination(identification.getProteinIdentification().size(), TimeUnit.MINUTES)) {
-                        throw new InterruptedException("Hiding/Starring matches timed out. Please contact the developers.");
+
+                        throw new TimeoutException("Hiding/Starring matches timed out. Please contact the developers.");
+
                     }
 
                     HashMap<String, ArrayList<Double>> fractionMW = new HashMap<>();
@@ -131,17 +209,17 @@ public class StarHider {
                     }
 
                     // set the observed fractional molecular weights per fraction
-                    peptideShakerGUI.getMetrics().setObservedFractionalMassesAll(fractionMW);
+                    metrics.setObservedFractionalMassesAll(fractionMW);
 
                     progressDialog.setRunFinished();
-                    peptideShakerGUI.updateTabbedPanes();
 
                 } catch (Exception e) {
 
-                    peptideShakerGUI.catchException(e);
+                    exceptionHandler.catchException(e);
 
                 }
             }
+
         }.start();
     }
 
@@ -152,8 +230,6 @@ public class StarHider {
      */
     public void starProtein(long matchKey) {
 
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);
         PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
         boolean validated = false;
@@ -165,8 +241,11 @@ public class StarHider {
                 matchFilter.removeException(matchKey);
 
             }
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
+
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
+
                 validated = true;
+
             }
         }
 
@@ -202,8 +281,6 @@ public class StarHider {
      */
     public void unStarProtein(long matchKey) {
 
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);
         PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
@@ -215,7 +292,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
 
                 matchFilter.addException(matchKey);
 
@@ -234,8 +311,6 @@ public class StarHider {
      */
     public void hideProtein(long matchKey) {
 
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);
         PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
         boolean validated = false;
@@ -248,7 +323,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
 
                 validated = true;
 
@@ -286,9 +361,6 @@ public class StarHider {
      * @param matchKey the key of the match
      */
     public void unHideProtein(long matchKey) {
-
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);
         PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
@@ -300,7 +372,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
 
                 matchFilter.addException(matchKey);
 
@@ -319,35 +391,47 @@ public class StarHider {
      */
     public void starPeptide(long matchKey) {
 
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         PeptideMatch peptideMatch = identification.getPeptideMatch(matchKey);
         PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
         boolean validated = false;
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
+
             if (matchFilter.getExceptions().contains(matchKey)) {
+
                 matchFilter.removeException(matchKey);
+
             }
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
+
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
+
                 validated = true;
+
             }
         }
 
         if (!validated) {
+
             PeptideFilter peptideFilter;
             if (!filterPreferences.getPeptideStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
+
                 peptideFilter = new PeptideFilter(MatchFilter.MANUAL_SELECTION);
                 peptideFilter.setDescription("Manual selection via the graphical interface");
                 filterPreferences.getPeptideStarFilters().put(peptideFilter.getName(), peptideFilter);
+
             } else {
+
                 peptideFilter = filterPreferences.getPeptideStarFilters().get(MatchFilter.MANUAL_SELECTION);
+
             }
+
             peptideFilter.addManualValidation(matchKey);
+
         }
 
         psParameter.setStarred(true);
         peptideShakerGUI.setDataSaved(false);
+
     }
 
     /**
@@ -357,8 +441,6 @@ public class StarHider {
      */
     public void unStarPeptide(long matchKey) {
 
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
 
@@ -370,7 +452,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
 
                 matchFilter.addException(matchKey);
 
@@ -389,8 +471,6 @@ public class StarHider {
      */
     public void hidePeptide(long matchKey) {
 
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
         boolean validated = false;
@@ -403,7 +483,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
 
                 validated = true;
 
@@ -442,8 +522,6 @@ public class StarHider {
      */
     public void unHidePeptide(long matchKey) {
 
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
 
@@ -455,7 +533,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
 
                 matchFilter.addException(matchKey);
 
@@ -476,8 +554,6 @@ public class StarHider {
      */
     public void starPsm(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
 
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
         boolean validated = false;
@@ -492,7 +568,7 @@ public class StarHider {
 
                 }
 
-                if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
+                if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
 
                     validated = true;
 
@@ -530,8 +606,6 @@ public class StarHider {
      */
     public void unStarPsm(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
 
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
 
@@ -543,7 +617,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
 
                 matchFilter.addException(matchKey);
 
@@ -564,8 +638,6 @@ public class StarHider {
      */
     public void hidePsm(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
 
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
         boolean validated = false;
@@ -580,7 +652,7 @@ public class StarHider {
 
                 }
 
-                if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
+                if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
 
                     validated = true;
 
@@ -618,8 +690,6 @@ public class StarHider {
      */
     public void unHidePsm(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
 
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
 
@@ -631,7 +701,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
 
                 matchFilter.addException(matchKey);
 
@@ -654,10 +724,8 @@ public class StarHider {
      */
     public boolean isProteinHidden(long matchKey) {
 
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
-
         return filterPreferences.getProteinHideFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null));
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null));
 
     }
 
@@ -672,10 +740,8 @@ public class StarHider {
      */
     public boolean isPeptideHidden(long matchKey) {
 
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
-
         return filterPreferences.getPeptideHideFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null));
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null));
 
     }
 
@@ -692,10 +758,8 @@ public class StarHider {
      */
     public boolean isPsmHidden(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
 
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
-
         return filterPreferences.getPsmHideFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator));
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, peptideSpectrumAnnotator));
 
     }
 
@@ -710,10 +774,8 @@ public class StarHider {
      */
     public boolean isProteinStarred(long matchKey) {
 
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
-
         return filterPreferences.getProteinStarFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null));
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null));
 
     }
 
@@ -728,10 +790,8 @@ public class StarHider {
      */
     public boolean isPeptideStarred(long matchKey) {
 
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
-
         return filterPreferences.getPeptideStarFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null));
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null));
 
     }
 
@@ -748,10 +808,8 @@ public class StarHider {
      */
     public boolean isPsmStarred(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
 
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
-
         return filterPreferences.getPeptideStarFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator));
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, peptideSpectrumAnnotator));
 
     }
 
@@ -767,21 +825,17 @@ public class StarHider {
          */
         private WaitingHandler waitingHandler;
         /**
-         * Handler for the exceptions.
-         */
-        private ExceptionHandler exceptionHandler;
-        /**
          * The fraction mw map for this thread
          */
-        private HashMap<String, ArrayList<Double>> threadFractionMW = new HashMap<>();
+        private final HashMap<String, ArrayList<Double>> threadFractionMW = new HashMap<>();
         /**
          * An iterator for the protein matches
          */
-        private ProteinMatchesIterator proteinMatchesIterator;
+        private final ProteinMatchesIterator proteinMatchesIterator;
         /**
          * The spectrum annotator to use for this thread
          */
-        private PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
+        private final PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
 
         /**
          * Constructor.
@@ -792,17 +846,16 @@ public class StarHider {
          * canceling the process
          * @param exceptionHandler handler for exceptions
          */
-        public StarHiderRunnable(ProteinMatchesIterator proteinMatchesIterator, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
+        public StarHiderRunnable(ProteinMatchesIterator proteinMatchesIterator, WaitingHandler waitingHandler) {
+
             this.proteinMatchesIterator = proteinMatchesIterator;
             this.waitingHandler = waitingHandler;
-            this.exceptionHandler = exceptionHandler;
+
         }
 
         @Override
         public void run() {
             try {
-
-                Identification identification = peptideShakerGUI.getIdentification();
 
                 ProteinMatch proteinMatch;
                 while ((proteinMatch = proteinMatchesIterator.next()) != null && !progressDialog.isRunCanceled()) {
@@ -839,12 +892,18 @@ public class StarHider {
                         PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
                         if (!psmpassed) {
+
                             psParameter.setHidden(true);
+
                         } else if (isPeptideHidden(peptideKey)) {
+
                             psParameter.setHidden(true);
+
                         } else {
+
                             psParameter.setHidden(false);
                             peptidePassed = true;
+
                         }
 
                         psParameter.setStarred(isPeptideStarred(peptideKey));
@@ -873,7 +932,7 @@ public class StarHider {
                         for (String fraction : psParameter.getFractions()) {
 
                             // set the fraction molecular weights
-                            if (psParameter.getFractionConfidence(fraction) > peptideShakerGUI.getIdentificationParameters().getFractionParameters().getProteinConfidenceMwPlots()) {
+                            if (psParameter.getFractionConfidence(fraction) > identificationParameters.getFractionParameters().getProteinConfidenceMwPlots()) {
 
                                 if (threadFractionMW.containsKey(fraction)) {
 
@@ -915,7 +974,9 @@ public class StarHider {
          * proteins found in this thread
          */
         public HashMap<String, ArrayList<Double>> getThreadFractionMW() {
+
             return threadFractionMW;
+
         }
     }
 }

@@ -88,6 +88,8 @@ import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.parameters.identification.advanced.IdMatchValidationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpectrumAnnotator;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.gui.parameters.identification.IdentificationParametersEditionDialog;
 import com.compomics.util.gui.parameters.identification.IdentificationParametersOverviewDialog;
@@ -4165,6 +4167,28 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         return cpsParent.getIdentification();
 
+    }
+    
+    /**
+     * Returns the sequence provider.
+     * 
+     * @return the sequence provider
+     */
+    public SequenceProvider getSequenceProvider() {
+        
+        return cpsParent.getSequenceProvider();
+        
+    }
+    
+    /**
+     * Returns the protein details provider.
+     * 
+     * @return the protein details provider
+     */
+    public ProteinDetailsProvider getProteinDetailsProvider() {
+        
+        return cpsParent.getProteinDetailsProvider();
+        
     }
 
     /**

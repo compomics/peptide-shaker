@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.parameters;
 import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.db.object.DbObject;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.experiment.personalization.UrParameter;
@@ -51,9 +52,13 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      */
     private final Metrics metrics;
     /**
-     * the sequence provider.
+     * The sequence provider.
      */
     private final SequenceProvider sequenceProvider;
+    /**
+     * The protein details provider.
+     */
+    private final ProteinDetailsProvider proteinDetailsProvider;
     /**
      * The gene maps.
      */
@@ -77,6 +82,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      * @param displayPreferences The display preferences
      * @param metrics The metrics saved when loading the files
      * @param sequenceProvider the sequence provider
+     * @param proteinDetailsProvider the protein details provider
      * @param geneMaps The gene maps
      * @param identificationFeaturesCache The identification features cache
      */
@@ -87,6 +93,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
             DisplayParameters displayPreferences,
             Metrics metrics,
             SequenceProvider sequenceProvider,
+            ProteinDetailsProvider proteinDetailsProvider,
             GeneMaps geneMaps,
             IdentificationFeaturesCache identificationFeaturesCache) {
         
@@ -97,6 +104,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
         this.displayParameters = displayPreferences;
         this.metrics = metrics;
         this.sequenceProvider = sequenceProvider;
+        this.proteinDetailsProvider = proteinDetailsProvider;
         this.geneMaps = geneMaps;
         this.identificationFeaturesCache = identificationFeaturesCache;
     
@@ -191,6 +199,19 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
         
         return sequenceProvider;
     
+    }
+
+    /**
+     * Returns the protein details provider.
+     * 
+     * @return the protein details provider
+     */
+    public ProteinDetailsProvider getProteinDetailsProvider() {
+        
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        
+        return proteinDetailsProvider;
+        
     }
     
     /**

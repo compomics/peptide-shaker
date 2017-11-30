@@ -6,6 +6,7 @@ import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
@@ -72,6 +73,10 @@ public class CpsParent extends UserPreferencesParent {
      * The sequence provider.
      */
     protected SequenceProvider sequenceProvider;
+    /**
+     * The protein details provider.
+     */
+    protected ProteinDetailsProvider proteinDetailsProvider;
     /**
      * The gene maps.
      */
@@ -677,6 +682,29 @@ public class CpsParent extends UserPreferencesParent {
         
         this.dbFolder = dbFolder;
     }
+
+    /**
+     * Returns the sequence provider.
+     * 
+     * @return the sequence provider
+     */
+    public SequenceProvider getSequenceProvider() {
+        
+        return sequenceProvider;
+        
+    }
+
+    /**
+     * Returns the protein details provider.
+     * 
+     * @return the protein details provider
+     */
+    public ProteinDetailsProvider getProteinDetailsProvider() {
+        
+        return proteinDetailsProvider;
+        
+    }
+    
     
 
     /**

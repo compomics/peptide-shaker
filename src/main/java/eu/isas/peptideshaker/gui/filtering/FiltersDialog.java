@@ -1123,6 +1123,8 @@ public class FiltersDialog extends javax.swing.JDialog {
         peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
 
         peptideShakerGUI.getStarHider().starHide();
+        peptideShakerGUI.updateTabbedPanes();
+
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -1195,7 +1197,7 @@ public class FiltersDialog extends javax.swing.JDialog {
      * @param evt the mouse event
      */
     private void starredProteinsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_starredProteinsTableMouseReleased
-        
+
         int column = starredProteinsTable.getSelectedColumn();
         int row = starredProteinsTable.getSelectedRow();
         if (row != -1 && evt.getButton() == MouseEvent.BUTTON1) {
@@ -1215,7 +1217,7 @@ public class FiltersDialog extends javax.swing.JDialog {
             editStarredProtein.setEnabled(true);
             deleteStarredProtein.setEnabled(true);
         }
-        
+
     }//GEN-LAST:event_starredProteinsTableMouseReleased
 
     /**
