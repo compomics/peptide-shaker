@@ -11,7 +11,6 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.FilterParameters;
 import eu.isas.peptideshaker.parameters.PeptideShakerParameters;
-import eu.isas.peptideshaker.preferences.MsFilesParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
@@ -34,7 +33,6 @@ public class CpsExporter {
      * @param identification the identification to save
      * @param sequenceProvider the sequence provider
      * @param identificationParameters the identification parameters
-     * @param msFilesParameters the mass spectrometry input files of the project
      * @param spectrumCountingParameters the spectrum counting preferences
      * @param projectDetails the project details
      * @param filterParameters the filtering preferences
@@ -49,13 +47,20 @@ public class CpsExporter {
      * @throws IOException thrown whenever an error occurred while reading or
      * writing a file
      */
-    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, 
-            Identification identification, SequenceProvider sequenceProvider,
-            IdentificationParameters identificationParameters, MsFilesParameters msFilesParameters, 
+    public static void saveAs(File destinationFile, 
+            WaitingHandler waitingHandler, 
+            Identification identification, 
+            SequenceProvider sequenceProvider,
+            IdentificationParameters identificationParameters, 
             SpectrumCountingParameters spectrumCountingParameters, 
-            ProjectDetails projectDetails, FilterParameters filterParameters,
-            Metrics metrics, GeneMaps geneMaps, IdentificationFeaturesCache identificationFeaturesCache, boolean emptyCache,
-            DisplayParameters displayParameters, File dbFolder) throws IOException {
+            ProjectDetails projectDetails, 
+            FilterParameters filterParameters,
+            Metrics metrics, 
+            GeneMaps geneMaps, 
+            IdentificationFeaturesCache identificationFeaturesCache, 
+            boolean emptyCache,
+            DisplayParameters displayParameters, 
+            File dbFolder) throws IOException {
 
         identificationFeaturesCache.setReadOnly(true);
 
@@ -67,7 +72,7 @@ public class CpsExporter {
             // add all necessary data and parameters into the db for export
             if (!identification.contains(PeptideShakerParameters.key)) {
 
-                PeptideShakerParameters peptideShakerParameters = new PeptideShakerParameters(identificationParameters, msFilesParameters, spectrumCountingParameters,
+                PeptideShakerParameters peptideShakerParameters = new PeptideShakerParameters(identificationParameters, spectrumCountingParameters,
                         projectDetails, filterParameters, displayParameters, metrics, sequenceProvider, geneMaps, identificationFeaturesCache);
 
                 BlobObject blobObject = new BlobObject(peptideShakerParameters);

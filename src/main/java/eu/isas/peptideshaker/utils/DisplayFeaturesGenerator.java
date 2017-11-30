@@ -22,7 +22,6 @@ import com.compomics.util.parameters.identification.search.ModificationParameter
 import com.compomics.util.parameters.identification.search.DigestionParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.experiment.io.biology.protein.Header;
-import com.compomics.util.experiment.io.biology.protein.Header.ProteinDatabase;
 import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
 import eu.isas.peptideshaker.parameters.PSModificationScores;
 import java.awt.Color;

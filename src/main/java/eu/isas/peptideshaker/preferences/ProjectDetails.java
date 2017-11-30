@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import com.compomics.util.pride.prideobjects.*;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * This class contains the details about a project.
@@ -32,7 +33,7 @@ public class ProjectDetails implements Serializable {
      */
     private HashMap<String, HashMap<String, ArrayList<String>>> identificationAlgorithms = new HashMap<>();
     /**
-     * List of the spectrum files.
+     * Map of the spectrum files indexed by name.
      */
     private HashMap<String, File> spectrumFiles = new HashMap<>();
     /**
@@ -148,7 +149,9 @@ public class ProjectDetails implements Serializable {
      * @return all identification files loaded
      */
     public ArrayList<File> getIdentificationFiles() {
+        
         return identificationFiles;
+        
     }
 
     /**
@@ -157,32 +160,44 @@ public class ProjectDetails implements Serializable {
      * @param identificationFile the identification file loaded
      */
     public void addIdentificationFiles(File identificationFile) {
+        
         identificationFiles.add(identificationFile);
+        
     }
 
     /**
-     * Attaches a spectrum file to the project. Warning: any previous file with
-     * the same name will be silently ignored.
+     * Attaches a spectrum file to the project.
      *
      * @param spectrumFile the spectrum file to add
      */
     public void addSpectrumFile(File spectrumFile) {
+        
         String fileName = Util.getFileName(spectrumFile.getAbsolutePath());
         spectrumFiles.put(fileName, spectrumFile);
+    }
+    
+    /**
+     * Returns the name of the input spectrum files as a set.
+     * 
+     * @return the spectrum file names
+     */
+    public Set<String> getSpectrumFileNames() {
+        
+        return spectrumFiles.keySet();
+        
     }
 
     /**
      * Returns the file corresponding to the given name.
      *
      * @param fileName the name of the desired file
+     * 
      * @return the corresponding file, null if not found.
      */
     public File getSpectrumFile(String fileName) {
-        // Compatibility check
-        if (spectrumFiles == null) {
-            spectrumFiles = new HashMap<>();
-        }
+        
         return spectrumFiles.get(fileName);
+        
     }
 
     /**
@@ -191,7 +206,9 @@ public class ProjectDetails implements Serializable {
      * @return the creation date of the project
      */
     public Date getCreationDate() {
+        
         return creationDate;
+        
     }
 
     /**
@@ -200,7 +217,9 @@ public class ProjectDetails implements Serializable {
      * @param creationDate the creation date of the project
      */
     public void setCreationDate(Date creationDate) {
+        
         this.creationDate = creationDate;
+        
     }
 
     /**
@@ -209,10 +228,9 @@ public class ProjectDetails implements Serializable {
      * @return the PeptideShaker version used to create the project
      */
     public String getPeptideShakerVersion() {
-        if (peptideShakerVersion == null) {
-            peptideShakerVersion = "unknown";
-        }
+        
         return peptideShakerVersion;
+        
     }
 
     /**
@@ -222,7 +240,9 @@ public class ProjectDetails implements Serializable {
      * project
      */
     public void setPeptideShakerVersion(String peptideShakerVersion) {
+        
         this.peptideShakerVersion = peptideShakerVersion;
+        
     }
 
     /**
@@ -232,11 +252,8 @@ public class ProjectDetails implements Serializable {
      */
     public String getReport() {
 
-        if (report == null) {
-            return "(report not saved)";
-        }
-
-        return report;
+        return report == null ? "(report not saved)" : report;
+        
     }
 
     /**
@@ -245,7 +262,9 @@ public class ProjectDetails implements Serializable {
      * @param report the report to set
      */
     public void setReport(String report) {
+        
         this.report = report;
+        
     }
 
     /**
@@ -254,7 +273,9 @@ public class ProjectDetails implements Serializable {
      * @return the prideExperimenttitle
      */
     public String getPrideExperimentTitle() {
+        
         return prideExperimentTitle;
+        
     }
 
     /**
@@ -263,7 +284,9 @@ public class ProjectDetails implements Serializable {
      * @param prideExperimentTitle the prideExperimentTitle to set
      */
     public void setPrideExperimentTitle(String prideExperimentTitle) {
+        
         this.prideExperimentTitle = prideExperimentTitle;
+        
     }
 
     /**
@@ -272,7 +295,9 @@ public class ProjectDetails implements Serializable {
      * @return the prideExperimentLabel
      */
     public String getPrideExperimentLabel() {
+        
         return prideExperimentLabel;
+        
     }
 
     /**
@@ -281,7 +306,9 @@ public class ProjectDetails implements Serializable {
      * @param prideExperimentLabel the prideExperimentLabel to set
      */
     public void setPrideExperimentLabel(String prideExperimentLabel) {
+        
         this.prideExperimentLabel = prideExperimentLabel;
+        
     }
 
     /**
@@ -290,7 +317,9 @@ public class ProjectDetails implements Serializable {
      * @return the prideExperimentProjectTitle
      */
     public String getPrideExperimentProjectTitle() {
+        
         return prideExperimentProjectTitle;
+        
     }
 
     /**
@@ -299,7 +328,9 @@ public class ProjectDetails implements Serializable {
      * @param prideExperimentProjectTitle the prideExperimentProjectTitle to set
      */
     public void setPrideExperimentProjectTitle(String prideExperimentProjectTitle) {
+        
         this.prideExperimentProjectTitle = prideExperimentProjectTitle;
+        
     }
 
     /**
@@ -308,7 +339,9 @@ public class ProjectDetails implements Serializable {
      * @return the prideExperimentDescription
      */
     public String getPrideExperimentDescription() {
+        
         return prideExperimentDescription;
+        
     }
 
     /**
@@ -317,7 +350,9 @@ public class ProjectDetails implements Serializable {
      * @param prideExperimentDescription the prideExperimentDescription to set
      */
     public void setPrideExperimentDescription(String prideExperimentDescription) {
+        
         this.prideExperimentDescription = prideExperimentDescription;
+        
     }
 
     /**
@@ -326,7 +361,9 @@ public class ProjectDetails implements Serializable {
      * @return the prideReferenceGroup
      */
     public ReferenceGroup getPrideReferenceGroup() {
+        
         return prideReferenceGroup;
+        
     }
 
     /**
@@ -335,7 +372,9 @@ public class ProjectDetails implements Serializable {
      * @param prideReferenceGroup the prideReferenceGroup to set
      */
     public void setPrideReferenceGroup(ReferenceGroup prideReferenceGroup) {
+        
         this.prideReferenceGroup = prideReferenceGroup;
+        
     }
 
     /**
@@ -344,7 +383,9 @@ public class ProjectDetails implements Serializable {
      * @return the prideContactGroup
      */
     public ContactGroup getPrideContactGroup() {
+        
         return prideContactGroup;
+        
     }
 
     /**
@@ -353,7 +394,9 @@ public class ProjectDetails implements Serializable {
      * @param prideContactGroup the prideContactGroup to set
      */
     public void setPrideContactGroup(ContactGroup prideContactGroup) {
+        
         this.prideContactGroup = prideContactGroup;
+        
     }
 
     /**
@@ -362,7 +405,9 @@ public class ProjectDetails implements Serializable {
      * @return the prideSample
      */
     public Sample getPrideSample() {
+        
         return prideSample;
+        
     }
 
     /**
@@ -371,7 +416,9 @@ public class ProjectDetails implements Serializable {
      * @param prideSample the prideSample to set
      */
     public void setPrideSample(Sample prideSample) {
+        
         this.prideSample = prideSample;
+        
     }
 
     /**
@@ -380,7 +427,9 @@ public class ProjectDetails implements Serializable {
      * @return the prideProtocol
      */
     public Protocol getPrideProtocol() {
+        
         return prideProtocol;
+        
     }
 
     /**
@@ -389,7 +438,9 @@ public class ProjectDetails implements Serializable {
      * @param prideProtocol the prideProtocol to set
      */
     public void setPrideProtocol(Protocol prideProtocol) {
+        
         this.prideProtocol = prideProtocol;
+        
     }
 
     /**
@@ -398,7 +449,9 @@ public class ProjectDetails implements Serializable {
      * @return the prideInstrument
      */
     public Instrument getPrideInstrument() {
+        
         return prideInstrument;
+        
     }
 
     /**
@@ -407,7 +460,9 @@ public class ProjectDetails implements Serializable {
      * @param prideInstrument the prideInstrument to set
      */
     public void setPrideInstrument(Instrument prideInstrument) {
+        
         this.prideInstrument = prideInstrument;
+        
     }
 
     /**
@@ -416,7 +471,9 @@ public class ProjectDetails implements Serializable {
      * @return the prideOutputFolder
      */
     public String getPrideOutputFolder() {
+        
         return prideOutputFolder;
+        
     }
 
     /**
@@ -425,7 +482,9 @@ public class ProjectDetails implements Serializable {
      * @param prideOutputFolder the prideOutputFolder to set
      */
     public void setPrideOutputFolder(String prideOutputFolder) {
+        
         this.prideOutputFolder = prideOutputFolder;
+        
     }
 
     /**
@@ -434,7 +493,9 @@ public class ProjectDetails implements Serializable {
      * @return the mzIdentML output file
      */
     public String getMzIdentMLOutputFile() {
+        
         return mzIdentMLOutputFile;
+        
     }
 
     /**
@@ -443,7 +504,9 @@ public class ProjectDetails implements Serializable {
      * @param mzIdentMLOutputFile the mzIdentMLOutputFile to set
      */
     public void setMzIdentOutputFile(String mzIdentMLOutputFile) {
+        
         this.mzIdentMLOutputFile = mzIdentMLOutputFile;
+        
     }
 
     /**
@@ -452,7 +515,9 @@ public class ProjectDetails implements Serializable {
      * @return true if the identification algorithms are stored
      */
     public boolean hasIdentificationAlgorithms() {
+        
         return identificationAlgorithms != null;
+        
     }
 
     /**
@@ -463,20 +528,33 @@ public class ProjectDetails implements Serializable {
      * of the Advocate class
      */
     public ArrayList<Integer> getIdentificationAlgorithms() {
+        
         ArrayList<Integer> result = new ArrayList<>();
+        
         for (HashMap<String, ArrayList<String>> advocateVersions : identificationAlgorithms.values()) {
+            
             for (String advocateName : advocateVersions.keySet()) {
+                
                 Advocate advocate = Advocate.getAdvocate(advocateName);
+                
                 if (advocate == null) {
+                    
                     throw new IllegalArgumentException("Identification algorithm " + advocateName + " not recognized.");
+                    
                 }
+                
                 int advocateId = advocate.getIndex();
+                
                 if (!result.contains(advocateId)) {
+                    
                     result.add(advocateId);
+                    
                 }
             }
         }
+        
         return result;
+        
     }
 
     /**
@@ -486,26 +564,41 @@ public class ProjectDetails implements Serializable {
      * @return the different identification algorithm versions used
      */
     public HashMap<String, ArrayList<String>> getAlgorithmNameToVersionsMap() {
+        
         HashMap<String, ArrayList<String>> algorithmNameToVersionMap = new HashMap<>();
+        
         for (HashMap<String, ArrayList<String>> fileMapping : identificationAlgorithms.values()) {
+            
             for (String softwareName : fileMapping.keySet()) {
+                
                 ArrayList<String> newVersions = fileMapping.get(softwareName);
+                
                 if (newVersions != null && !newVersions.isEmpty()) {
+                    
                     ArrayList<String> currentVersions = algorithmNameToVersionMap.get(softwareName);
+                    
                     if (currentVersions == null) {
+                        
                         currentVersions = new ArrayList<>(newVersions);
                         algorithmNameToVersionMap.put(softwareName, currentVersions);
+                        
                     } else {
+                        
                         for (String version : newVersions) {
+                            
                             if (!currentVersions.contains(version)) {
+                                
                                 currentVersions.add(version);
+                                
                             }
                         }
                     }
                 }
             }
         }
+        
         return algorithmNameToVersionMap;
+        
     }
 
     /**
@@ -517,10 +610,9 @@ public class ProjectDetails implements Serializable {
      * @return the identification algorithms used
      */
     public HashMap<String, ArrayList<String>> getIdentificationAlgorithmsForFile(String idFileName) {
-        if (identificationAlgorithms == null) {
-            return null;
-        }
-        return identificationAlgorithms.get(idFileName);
+        
+        return identificationAlgorithms == null ? null : identificationAlgorithms.get(idFileName);
+        
     }
 
     /**
@@ -531,10 +623,9 @@ public class ProjectDetails implements Serializable {
      * create this file in a map: algorithm name &gt; versions
      */
     public void setIdentificationAlgorithmsForFile(String idFileName, HashMap<String, ArrayList<String>> fileIdentificationAlgorithms) {
-        if (identificationAlgorithms == null) {
-            identificationAlgorithms = new HashMap<>();
-        }
+        
         identificationAlgorithms.put(idFileName, fileIdentificationAlgorithms);
+        
     }
 
     /**
@@ -543,7 +634,9 @@ public class ProjectDetails implements Serializable {
      * @return the contactFirstName
      */
     public String getContactFirstName() {
+        
         return contactFirstName;
+        
     }
 
     /**
@@ -552,7 +645,9 @@ public class ProjectDetails implements Serializable {
      * @param contactFirstName the contactFirstName to set
      */
     public void setContactFirstName(String contactFirstName) {
+        
         this.contactFirstName = contactFirstName;
+        
     }
 
     /**
@@ -561,7 +656,9 @@ public class ProjectDetails implements Serializable {
      * @return the contactLastName
      */
     public String getContactLastName() {
+        
         return contactLastName;
+        
     }
 
     /**
@@ -570,7 +667,9 @@ public class ProjectDetails implements Serializable {
      * @param contactLastName the contactLastName to set
      */
     public void setContactLastName(String contactLastName) {
+        
         this.contactLastName = contactLastName;
+        
     }
 
     /**
@@ -579,7 +678,9 @@ public class ProjectDetails implements Serializable {
      * @return the contactEmailName
      */
     public String getContactEmail() {
+        
         return contactEmail;
+        
     }
 
     /**
@@ -588,7 +689,9 @@ public class ProjectDetails implements Serializable {
      * @param contactEmail the contactEmailName to set
      */
     public void setContactEmail(String contactEmail) {
+        
         this.contactEmail = contactEmail;
+        
     }
 
     /**
@@ -597,7 +700,9 @@ public class ProjectDetails implements Serializable {
      * @return the contactUrl
      */
     public String getContactUrl() {
+        
         return contactUrl;
+        
     }
 
     /**
@@ -606,7 +711,9 @@ public class ProjectDetails implements Serializable {
      * @param contactUrl the contactUrl to set
      */
     public void setContactUrl(String contactUrl) {
+        
         this.contactUrl = contactUrl;
+        
     }
 
     /**
@@ -615,7 +722,9 @@ public class ProjectDetails implements Serializable {
      * @return the contactAddress
      */
     public String getContactAddress() {
+        
         return contactAddress;
+        
     }
 
     /**
@@ -624,7 +733,9 @@ public class ProjectDetails implements Serializable {
      * @param contactAddress the contactAddress to set
      */
     public void setContactAddress(String contactAddress) {
+        
         this.contactAddress = contactAddress;
+        
     }
 
     /**
@@ -633,7 +744,9 @@ public class ProjectDetails implements Serializable {
      * @return the organizationName
      */
     public String getOrganizationName() {
+        
         return organizationName;
+        
     }
 
     /**
@@ -642,7 +755,9 @@ public class ProjectDetails implements Serializable {
      * @param organizationName the organizationName to set
      */
     public void setOrganizationName(String organizationName) {
+        
         this.organizationName = organizationName;
+        
     }
 
     /**
@@ -651,7 +766,9 @@ public class ProjectDetails implements Serializable {
      * @return the organizationEmail
      */
     public String getOrganizationEmail() {
+        
         return organizationEmail;
+        
     }
 
     /**
@@ -660,7 +777,9 @@ public class ProjectDetails implements Serializable {
      * @param organizationEmail the organizationEmail to set
      */
     public void setOrganizationEmail(String organizationEmail) {
+        
         this.organizationEmail = organizationEmail;
+        
     }
 
     /**
@@ -669,7 +788,9 @@ public class ProjectDetails implements Serializable {
      * @return the organizationUrl
      */
     public String getOrganizationUrl() {
+        
         return organizationUrl;
+        
     }
 
     /**
@@ -678,7 +799,9 @@ public class ProjectDetails implements Serializable {
      * @param organizationUrl the organizationUrl to set
      */
     public void setOrganizationUrl(String organizationUrl) {
+        
         this.organizationUrl = organizationUrl;
+        
     }
 
     /**
@@ -687,7 +810,9 @@ public class ProjectDetails implements Serializable {
      * @return the organizationAddress
      */
     public String getOrganizationAddress() {
+        
         return organizationAddress;
+        
     }
 
     /**
@@ -696,7 +821,9 @@ public class ProjectDetails implements Serializable {
      * @param organizationAddress the organizationAddress to set
      */
     public void setOrganizationAddress(String organizationAddress) {
+        
         this.organizationAddress = organizationAddress;
+        
     }
 
     /**
@@ -705,7 +832,9 @@ public class ProjectDetails implements Serializable {
      * @return the user advocates used in this project
      */
     public HashMap<Integer, Advocate> getUserAdvocateMapping() {
+        
         return userAdvocateMapping;
+        
     }
 
     /**
@@ -714,7 +843,9 @@ public class ProjectDetails implements Serializable {
      * @param userAdvocateMapping the user advocates used in this project
      */
     public void setUserAdvocateMapping(HashMap<Integer, Advocate> userAdvocateMapping) {
+        
         this.userAdvocateMapping = userAdvocateMapping;
+        
     }
 
     /**
@@ -725,10 +856,9 @@ public class ProjectDetails implements Serializable {
      * export
      */
     public Boolean getIncludeProteinSequences() {
-        if (includeProteinSequences == null) {
-            includeProteinSequences = false;
-        }
+        
         return includeProteinSequences;
+        
     }
 
     /**
@@ -737,6 +867,8 @@ public class ProjectDetails implements Serializable {
      * @param includeProteinSequences the includeProteinSequences to set
      */
     public void setIncludeProteinSequences(Boolean includeProteinSequences) {
+        
         this.includeProteinSequences = includeProteinSequences;
+        
     }
 }

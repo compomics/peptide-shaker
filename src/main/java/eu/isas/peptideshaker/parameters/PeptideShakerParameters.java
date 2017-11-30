@@ -9,7 +9,6 @@ import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.FilterParameters;
-import eu.isas.peptideshaker.preferences.MsFilesParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
@@ -60,10 +59,6 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      */
     protected final GeneMaps geneMaps;
     /**
-     * Map of the mass spectrometry input files parameters.
-     */
-    private final MsFilesParameters msFilesParameters;
-    /**
      * The identification features generator with features in cache.
      */
     private final IdentificationFeaturesCache identificationFeaturesCache;
@@ -76,7 +71,6 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      * Constructor for a PeptideShaker Settings class.
      *
      * @param identificationParameters the parameters used for identification
-     * @param msFilesParameters the mass spectrometry input files parameters
      * @param spectrumCountingPreferences The spectrum counting preferences
      * @param projectDetails The project details
      * @param filterPreferences The filter preferences
@@ -87,7 +81,6 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      * @param identificationFeaturesCache The identification features cache
      */
     public PeptideShakerParameters(IdentificationParameters identificationParameters,
-            MsFilesParameters msFilesParameters,
             SpectrumCountingParameters spectrumCountingPreferences,
             ProjectDetails projectDetails,
             FilterParameters filterPreferences,
@@ -98,7 +91,6 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
             IdentificationFeaturesCache identificationFeaturesCache) {
         
         this.identificationParameters = identificationParameters;
-        this.msFilesParameters = msFilesParameters;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.projectDetails = projectDetails;
         this.filterParameters = filterPreferences;
@@ -121,19 +113,6 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
         
         return identificationParameters;
     
-    }
-
-    /**
-     * Returns the mass spectrometry input files parameters.
-     * 
-     * @return the mass spectrometry input files parameters
-     */
-    public MsFilesParameters getMsFilesParameters() {
-        
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        
-        return msFilesParameters;
-        
     }
 
     /**
