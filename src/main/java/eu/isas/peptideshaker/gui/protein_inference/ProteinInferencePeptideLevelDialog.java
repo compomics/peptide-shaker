@@ -161,7 +161,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             if (retainedProteins.contains(proteinAccession)) {
                 ((DefaultTableModel) retainedProteinJTable.getModel()).addRow(new Object[]{
                     (++retainedCpt),
-                    peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(proteinAccession),
+                    peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLink(proteinAccession),
                     description,
                     geneName,
                     chromosome,
@@ -181,7 +181,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 
                 ((DefaultTableModel) otherProteinJTable.getModel()).addRow(new Object[]{
                     (++possibleCpt),
-                    peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(proteinAccession),
+                    peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLink(proteinAccession),
                     description,
                     geneName,
                     chromosome,

@@ -10,15 +10,15 @@ public class ResidueAnnotation {
     /**
      * The residue annotation as a string.
      */
-    private final String annotation;
+    public final String annotation;
     /**
-     * A unique (external) identifier for the annotaton.
+     * A unique (external) identifier for the annotation.
      */
-    private final String identifier;
+    public final long identifier;
     /**
      * If true the given annotation is clickable.
      */
-    private final boolean clickable;
+    public final boolean clickable;
 
     /**
      * Create a new ResidueAnnotation object.
@@ -27,36 +27,11 @@ public class ResidueAnnotation {
      * @param identifier a unique (external) identifier for the annotaton
      * @param clickable if true the given annotation is clickable
      */
-    public ResidueAnnotation(String annotation, String identifier, boolean clickable) {
+    public ResidueAnnotation(String annotation, long identifier, boolean clickable) {
+        
         this.annotation = annotation;
         this.identifier = identifier;
         this.clickable = clickable;
-    }
-
-    /**
-     * Returns the annotation as a string.
-     * 
-     * @return the annotation
-     */
-    public String getAnnotation() {
-        return annotation;
-    }
-
-    /**
-     * Returns the (externally) unique identifier.
-     * 
-     * @return the identifier
-     */
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    /**
-     * Returns true if the given annotation is clickable.
-     * 
-     * @return the clickable
-     */
-    public boolean isClickable() {
-        return clickable;
+        
     }
 }

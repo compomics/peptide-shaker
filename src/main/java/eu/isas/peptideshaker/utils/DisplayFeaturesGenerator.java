@@ -1,34 +1,34 @@
 package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.Util;
-import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidPattern;
 import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidSequence;
 import com.compomics.util.experiment.biology.proteins.Peptide;
-import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.experiment.identification.amino_acid_tags.TagComponent;
 import com.compomics.util.experiment.identification.amino_acid_tags.MassGap;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
+import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.parameters.identification.search.DigestionParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
-import com.compomics.util.experiment.io.biology.protein.Header;
+import com.compomics.util.experiment.io.biology.protein.ProteinDatabase;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
 import eu.isas.peptideshaker.parameters.PSModificationScores;
 import java.awt.Color;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 /**
  * This class creates the display features needed for the GUI.
@@ -47,28 +47,32 @@ public class DisplayFeaturesGenerator {
      */
     private final String notSelectedRowHtmlTagFontColor = TableProperties.getNotSelectedRowHtmlTagFontColor();
     /**
-     * The exception handler used to catch exceptions.
-     */
-    private final ExceptionHandler exceptionHandler;
-    /**
      * List of PTMs to display.
      */
-    private ArrayList<String> displayedPTMs;
+    private HashSet<String> displayedPTMs;
     /**
-     * The sequence factory.
+     * The sequence provider.
      */
-    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private final SequenceProvider sequenceProvider;
+    /**
+     * The protein details provider.
+     */
+    private final ProteinDetailsProvider proteinDetailsProvider;
 
     /**
      * Constructor
      *
      * @param modificationProfile the modification profile containing the colors
      * of the PTMs
-     * @param exceptionHandler an exception handler to catch exceptions
+     * @param sequenceProvider the sequence provider
+     * @param proteinDetailsProvider the protein details provider
      */
-    public DisplayFeaturesGenerator(ModificationParameters modificationProfile, ExceptionHandler exceptionHandler) {
+    public DisplayFeaturesGenerator(ModificationParameters modificationProfile, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider) {
+
         this.modificationProfile = modificationProfile;
-        this.exceptionHandler = exceptionHandler;
+        this.sequenceProvider = sequenceProvider;
+        this.proteinDetailsProvider = proteinDetailsProvider;
+
     }
 
     /**
@@ -77,50 +81,68 @@ public class DisplayFeaturesGenerator {
      * href tags, where the main use is to include it in the protein tables.
      *
      * @param proteinAccession the protein to get the database link for
+     *
      * @return the transformed accession number
      */
-    public String addDatabaseLink(String proteinAccession) {
+    public String getDatabaseLink(String proteinAccession) {
 
-        String accessionNumberWithLink = proteinAccession;
+        // No link for decoy proteins
+        if (ProteinUtils.isDecoy(proteinAccession, sequenceProvider)) {
 
-        try {
-            if (sequenceFactory.getHeader(proteinAccession) != null) {
+            return proteinAccession;
 
-                // try to find the database from the SequenceDatabase
-                Header.ProteinDatabase databaseType = sequenceFactory.getHeader(proteinAccession).getDatabaseType();
-
-                // create the database link
-                if (databaseType != null) {
-
-                    // @TODO: support more databases
-                    if (databaseType == Header.ProteinDatabase.IPI || databaseType == Header.ProteinDatabase.UniProt) {
-                        accessionNumberWithLink = "<html><a href=\"" + getUniProtAccessionLink(proteinAccession)
-                                + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
-                                + proteinAccession + "</font></a></html>";
-                    } else if (databaseType == Header.ProteinDatabase.NextProt) {
-                        accessionNumberWithLink = "<html><a href=\"" + getNextProtAccessionLink(proteinAccession)
-                                + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
-                                + proteinAccession + "</font></a></html>";
-                    } else if (databaseType == Header.ProteinDatabase.NCBI) {
-                        accessionNumberWithLink = "<html><a href=\"" + getNcbiAccessionLink(proteinAccession)
-                                + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
-                                + proteinAccession + "</font></a></html>";
-                    } else if (databaseType == Header.ProteinDatabase.UniRef) {
-                        // remove the 'UniRefXYZ_' part to get the default UniProt accession
-                        String uniProtProteinAccession = proteinAccession.substring(proteinAccession.indexOf("_") + 1);
-                        accessionNumberWithLink = "<html><a href=\"" + getUniProtAccessionLink(uniProtProteinAccession)
-                                + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
-                                + proteinAccession + "</font></a></html>";
-                    } else {
-                        // unknown database!
-                    }
-                }
-            }
-        } catch (Exception e) {
-            exceptionHandler.catchException(e);
         }
 
-        return accessionNumberWithLink;
+        // Get link according to the database type
+        ProteinDatabase proteinDatabase = proteinDetailsProvider.getProteinDatabase(proteinAccession);
+
+        switch (proteinDatabase) {
+
+            case IPI:
+            case UniProt:
+                return String.join("", 
+                        "<html><a href=\"",
+                        getUniProtAccessionLink(proteinAccession),
+                        "\"><font color=\"",
+                        notSelectedRowHtmlTagFontColor,
+                        "\">",
+                        proteinAccession,
+                        "</font></a></html>");
+
+            case NextProt:
+                return String.join("", 
+                        "<html><a href=\"", 
+                        getNextProtAccessionLink(proteinAccession), 
+                        "\"><font color=\"", 
+                        notSelectedRowHtmlTagFontColor, 
+                        "\">", 
+                        proteinAccession, 
+                        "</font></a></html>");
+
+            case NCBI:
+                return String.join("", 
+                        "<html><a href=\"", 
+                        getNcbiAccessionLink(proteinAccession), 
+                        "\"><font color=\"", 
+                        notSelectedRowHtmlTagFontColor, 
+                        "\">", 
+                        proteinAccession, 
+                        "</font></a></html>");
+
+            case UniRef:
+                // remove the 'UniRefXYZ_' part to get the default UniProt accession
+                String uniProtProteinAccession = proteinAccession.substring(proteinAccession.indexOf("_") + 1);
+                return String.join("", 
+                        "<html><a href=\"" + getUniProtAccessionLink(uniProtProteinAccession), 
+                        "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">", 
+                        proteinAccession, 
+                        "</font></a></html>");
+
+            default:
+                // not supported
+                return proteinAccession;
+
+        }
     }
 
     /**
@@ -128,84 +150,19 @@ public class DisplayFeaturesGenerator {
      * corresponding database. Note that this is a complete HTML with HTML and a
      * href tags, where the main use is to include it in the protein tables.
      *
-     * @param proteins the list of proteins to get the database links for
+     * @param proteinAccessions the list of the accessions of proteins to get
+     * the database links for
+     *
      * @return the transformed accession number
      */
-    public String addDatabaseLinks(ArrayList<String> proteins) {
+    public String getDatabaseLinks(ArrayList<String> proteinAccessions) {
 
-        if (proteins.isEmpty()) {
-            return "";
-        }
+        return proteinAccessions.isEmpty() ? ""
+                : proteinAccessions.stream()
+                        .sorted()
+                        .map(accession -> getDatabaseLink(accession))
+                        .collect(Collectors.joining(", ", "<html>", "</html>"));
 
-        StringBuilder accessionNumberWithLink = new StringBuilder();
-        accessionNumberWithLink.append("<html>");
-
-        for (String proteinAccession : proteins) {
-            try {
-                if (!sequenceFactory.isDecoyAccession(proteinAccession) && sequenceFactory.getHeader(proteinAccession) != null) {
-                    // try to find the database from the SequenceDatabase
-                    ProteinDatabase database = sequenceFactory.getHeader(proteinAccession).getDatabaseType();
-
-                    // create the database link
-                    if (database != null) {
-
-                        // @TODO: support more databases
-                        if (database == ProteinDatabase.IPI || database == ProteinDatabase.UniProt) {
-                            accessionNumberWithLink.append("<a href=\"");
-                            accessionNumberWithLink.append(getUniProtAccessionLink(proteinAccession));
-                            accessionNumberWithLink.append("\"><font color=\"");
-                            accessionNumberWithLink.append(notSelectedRowHtmlTagFontColor);
-                            accessionNumberWithLink.append("\">");
-                            accessionNumberWithLink.append(proteinAccession);
-                            accessionNumberWithLink.append("</font></a>, ");
-                        } else if (database == ProteinDatabase.NextProt) {
-                            accessionNumberWithLink.append("<a href=\"");
-                            accessionNumberWithLink.append(getNextProtAccessionLink(proteinAccession));
-                            accessionNumberWithLink.append("\"><font color=\"");
-                            accessionNumberWithLink.append(notSelectedRowHtmlTagFontColor);
-                            accessionNumberWithLink.append("\">");
-                            accessionNumberWithLink.append(proteinAccession);
-                            accessionNumberWithLink.append("</font></a>, ");
-                        } else if (database == ProteinDatabase.NCBI) {
-                            accessionNumberWithLink.append("<a href=\"");
-                            accessionNumberWithLink.append(getNcbiAccessionLink(proteinAccession));
-                            accessionNumberWithLink.append("\"><font color=\"");
-                            accessionNumberWithLink.append(notSelectedRowHtmlTagFontColor);
-                            accessionNumberWithLink.append("\">");
-                            accessionNumberWithLink.append(proteinAccession);
-                            accessionNumberWithLink.append("</font></a>, ");
-                        } else if (database == Header.ProteinDatabase.UniRef) {
-                            // remove the 'UniRefXYZ_' part to get the default UniProt accession
-                            String uniProtProteinAccession = proteinAccession.substring(proteinAccession.indexOf("_") + 1);
-                            accessionNumberWithLink.append("<a href=\"");
-                            accessionNumberWithLink.append(getUniProtAccessionLink(uniProtProteinAccession));
-                            accessionNumberWithLink.append("\"><font color=\"");
-                            accessionNumberWithLink.append(notSelectedRowHtmlTagFontColor);
-                            accessionNumberWithLink.append("\">");
-                            accessionNumberWithLink.append(proteinAccession);
-                            accessionNumberWithLink.append("</font></a>, ");
-                        } else {
-                            // unknown database!
-                            accessionNumberWithLink.append(proteinAccession);
-                            accessionNumberWithLink.append(", ");
-                        }
-                    }
-                } else {
-                    accessionNumberWithLink.append(proteinAccession);
-                    accessionNumberWithLink.append(", ");
-                }
-            } catch (Exception e) {
-                accessionNumberWithLink.append(proteinAccession);
-                accessionNumberWithLink.append(", ");
-            }
-        }
-
-        // remove the last ', '
-        String accessionNumberWithLinkAsString = accessionNumberWithLink.toString();
-        accessionNumberWithLinkAsString = accessionNumberWithLinkAsString.substring(0, accessionNumberWithLinkAsString.length() - 2);
-        accessionNumberWithLinkAsString += "</html>";
-
-        return accessionNumberWithLinkAsString;
     }
 
     /**
@@ -217,7 +174,14 @@ public class DisplayFeaturesGenerator {
      * @return the protein accession web link
      */
     public String getSrsAccessionLink(String proteinAccession, String database) {
-        return "http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+%5b" + database + "-AccNumber:" + proteinAccession + "%5d";
+
+        return String.join("", 
+                "http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+%5b",
+                database,
+                "-AccNumber:",
+                proteinAccession,
+                "%5d");
+
     }
 
     /**
@@ -228,7 +192,9 @@ public class DisplayFeaturesGenerator {
      * @return the protein accession web link
      */
     public String getUniProtAccessionLink(String proteinAccession) {
+
         return "http://www.uniprot.org/uniprot/" + proteinAccession;
+
     }
 
     /**
@@ -239,8 +205,10 @@ public class DisplayFeaturesGenerator {
      * @return the protein accession web link
      */
     public String getNextProtAccessionLink(String proteinAccession) {
+
         proteinAccession = proteinAccession.substring(0, proteinAccession.lastIndexOf("-")); // have to remove the isoform info
         return "http://www.nextprot.org/db/entry/" + proteinAccession;
+
     }
 
     /**
@@ -251,7 +219,9 @@ public class DisplayFeaturesGenerator {
      * @return the protein accession web link
      */
     public String getNcbiAccessionLink(String proteinAccession) {
+
         return "http://www.ncbi.nlm.nih.gov/protein/" + proteinAccession;
+
     }
 
     /**
@@ -262,7 +232,9 @@ public class DisplayFeaturesGenerator {
      * @return the project accession web link
      */
     public static String getPrideAccessionLink(String projectAccession) {
+
         return "http://www.ebi.ac.uk/pride/directLink.do?experimentAccessionNumber=" + projectAccession;
+
     }
 
     /**
@@ -273,7 +245,9 @@ public class DisplayFeaturesGenerator {
      * @return the project accession web link
      */
     public static String getPrideProjectArchiveLink(String projectAccession) {
+
         return "http://www.ebi.ac.uk/pride/archive/projects/" + projectAccession;
+
     }
 
     /**
@@ -285,7 +259,13 @@ public class DisplayFeaturesGenerator {
      * @return the project accession web link
      */
     public static String getPrideAssayArchiveLink(String projectAccession, String assayAccession) {
-        return "http://www.ebi.ac.uk/pride/archive/projects/" + projectAccession + "/assays/" + assayAccession;
+
+        return String.join("", 
+                "http://www.ebi.ac.uk/pride/archive/projects/",
+                projectAccession,
+                "/assays/",
+                assayAccession);
+
     }
 
     /**
@@ -296,15 +276,12 @@ public class DisplayFeaturesGenerator {
      * @return a string with the HTML tooltip for the peptide
      */
     public String getPeptideModificationTooltipAsHtml(SpectrumMatch spectrumMatch) {
-        try {
-            Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-            PSModificationScores ptmScores = new PSModificationScores();
-            ptmScores = (PSModificationScores) spectrumMatch.getUrParam(ptmScores);
-            return getPeptideModificationTooltipAsHtml(peptide, ptmScores);
-        } catch (Exception e) {
-            exceptionHandler.catchException(e);
-            return "Error";
-        }
+
+        Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+        PSModificationScores ptmScores = new PSModificationScores();
+        ptmScores = (PSModificationScores) spectrumMatch.getUrParam(ptmScores);
+        return getPeptideModificationTooltipAsHtml(peptide, ptmScores);
+
     }
 
     /**
@@ -315,15 +292,12 @@ public class DisplayFeaturesGenerator {
      * @return a string with the HTML tooltip for the peptide
      */
     public String getPeptideModificationTooltipAsHtml(PeptideMatch peptideMatch) {
-        try {
-            Peptide peptide = peptideMatch.getPeptide();
-            PSModificationScores ptmScores = new PSModificationScores();
-            ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
-            return getPeptideModificationTooltipAsHtml(peptide, ptmScores);
-        } catch (Exception e) {
-            exceptionHandler.catchException(e);
-            return "Error";
-        }
+
+        Peptide peptide = peptideMatch.getPeptide();
+        PSModificationScores ptmScores = new PSModificationScores();
+        ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
+        return getPeptideModificationTooltipAsHtml(peptide, ptmScores);
+
     }
 
     /**
@@ -338,12 +312,14 @@ public class DisplayFeaturesGenerator {
 
         String peptideSequence = peptide.getSequence();
         HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
-        HashMap<Integer, ArrayList<String>> confidentLocations = new HashMap<>();
-        HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = new HashMap<>();
+        HashMap<Integer, ArrayList<String>> confidentLocations = new HashMap<>(2);
+        HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = new HashMap<>(2);
 
         if (ptmScores != null) {
+
             confidentLocations = getFilteredConfidentModificationsSites(ptmScores, displayedPTMs);
             representativeAmbiguousLocations = getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayedPTMs);
+
         }
 
         return getPtmToolTip(peptideSequence, fixedModifications, confidentLocations, representativeAmbiguousLocations);
@@ -362,22 +338,33 @@ public class DisplayFeaturesGenerator {
         HashMap<Integer, ArrayList<String>> representativeModificationSites = new HashMap<>(peptide.getNModifications());
         HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
 
-        if (peptide.isModified()) {
-            for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                String modName = modMatch.getModification();
-                int modSite = modMatch.getModificationSite();
-                if (modMatch.getVariable()) {
-                    if (modMatch.getConfident()) {
-                        if (!confidentModificationSites.containsKey(modSite)) {
-                            confidentModificationSites.put(modSite, new ArrayList<>());
-                        }
-                        confidentModificationSites.get(modSite).add(modName);
-                    } else {
-                        if (!representativeModificationSites.containsKey(modSite)) {
-                            representativeModificationSites.put(modSite, new ArrayList<>());
-                        }
-                        representativeModificationSites.get(modSite).add(modName);
+        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+
+            String modName = modMatch.getModification();
+            int modSite = modMatch.getModificationSite();
+
+            if (modMatch.getVariable()) {
+
+                if (modMatch.getConfident()) {
+
+                    if (!confidentModificationSites.containsKey(modSite)) {
+
+                        confidentModificationSites.put(modSite, new ArrayList<>());
+
                     }
+
+                    confidentModificationSites.get(modSite).add(modName);
+
+                } else {
+
+                    if (!representativeModificationSites.containsKey(modSite)) {
+
+                        representativeModificationSites.put(modSite, new ArrayList<>());
+
+                    }
+
+                    representativeModificationSites.get(modSite).add(modName);
+
                 }
             }
         }
@@ -386,12 +373,13 @@ public class DisplayFeaturesGenerator {
     }
 
     /**
-     * Returns the PTM tooltip as HTML.
+     * Returns the PTM tooltip as HTML. Null if no modification.
      *
      * @param peptideSequence the peptide sequence
      * @param fixedModifications the fixed modifications
      * @param confidentLocations the confident locations
      * @param representativeAmbiguousLocations the representative locations
+     *
      * @return the PTM tooltip as HTML
      */
     private String getPtmToolTip(String peptideSequence,
@@ -399,8 +387,10 @@ public class DisplayFeaturesGenerator {
             HashMap<Integer, ArrayList<String>> confidentLocations,
             HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations) {
 
-        String tooltip = "<html>";
-        ArrayList<String> alreadyAnnotated = new ArrayList<>();
+        StringBuilder tooltip = new StringBuilder();
+        tooltip.append("<html>");
+
+        HashSet<String> alreadyAnnotated = new HashSet<>(2);
 
         for (int aa = 1; aa <= peptideSequence.length(); aa++) {
 
@@ -408,39 +398,53 @@ public class DisplayFeaturesGenerator {
             char aminoAcid = peptideSequence.charAt(aaIndex);
 
             if (confidentLocations.containsKey(aa) && !confidentLocations.get(aa).isEmpty()) {
-                for (String ptmName : confidentLocations.get(aa)) { //There should be only one
-                    String temp = AminoAcidSequence.getTaggedResidue(aminoAcid, ptmName, modificationProfile, 1, true, true) + ": " + ptmName + " (confident)<br>";
+
+                for (String modName : confidentLocations.get(aa)) { //There should be only one
+
+                    String temp = AminoAcidSequence.getTaggedResidue(aminoAcid, modName, modificationProfile, 1, true, true) + ": " + modName + " (confident)<br>";
+
                     if (!alreadyAnnotated.contains(temp)) {
-                        tooltip += temp;
+
+                        tooltip.append(temp);
                         alreadyAnnotated.add(temp);
+
                     }
                 }
+
             } else if (representativeAmbiguousLocations.containsKey(aa) && !representativeAmbiguousLocations.get(aa).isEmpty()) {
-                for (String ptmName : representativeAmbiguousLocations.get(aa)) { //There should be only one
-                    String temp = AminoAcidSequence.getTaggedResidue(aminoAcid, ptmName, modificationProfile, 2, true, true) + ": " + ptmName + " (not confident)<br>";
+
+                for (String modName : representativeAmbiguousLocations.get(aa)) { //There should be only one
+
+                    String temp = AminoAcidSequence.getTaggedResidue(aminoAcid, modName, modificationProfile, 2, true, true) + ": " + modName + " (not confident)<br>";
+
                     if (!alreadyAnnotated.contains(temp)) {
-                        tooltip += temp;
+
+                        tooltip.append(temp);
                         alreadyAnnotated.add(temp);
+
                     }
                 }
+
             } else if (fixedModifications.containsKey(aa) && !fixedModifications.get(aa).isEmpty()) {
-                for (String ptmName : fixedModifications.get(aa)) { //There should be only one
-                    String temp = AminoAcidSequence.getTaggedResidue(aminoAcid, ptmName, modificationProfile, 1, true, true) + ": " + ptmName + " (fixed)<br>";
+
+                for (String modName : fixedModifications.get(aa)) { //There should be only one
+
+                    String temp = AminoAcidSequence.getTaggedResidue(aminoAcid, modName, modificationProfile, 1, true, true) + ": " + modName + " (fixed)<br>";
+
                     if (temp.startsWith("<") && !alreadyAnnotated.contains(temp)) {
-                        tooltip += temp;
+
+                        tooltip.append(temp);
                         alreadyAnnotated.add(temp);
+
                     }
                 }
             }
         }
 
-        if (!tooltip.equalsIgnoreCase("<html>")) {
-            tooltip += "</html>";
-        } else {
-            tooltip = null;
-        }
+        tooltip.append("</html>");
 
-        return tooltip;
+        return tooltip.length() == 13 ? null : tooltip.toString();
+
     }
 
     /**
@@ -448,50 +452,69 @@ public class DisplayFeaturesGenerator {
      * modification details.
      *
      * @param tag the tag
+     *
      * @return a string with the HTML tooltip for the tag
      */
     public String getTagModificationTooltipAsHtml(Tag tag) {
 
-        // @TODO: update to use the ptm scores
         // @TODO: merge with getTagModificationTooltipAsHtml in DeNovoGUI and move to utilities
-        String tooltip = "<html>";
+        StringBuilder tooltip = new StringBuilder();
+        tooltip.append("<html>");
 
         for (TagComponent tagComponent : tag.getContent()) {
-            
+
             if (tagComponent instanceof AminoAcidSequence) {
+
                 AminoAcidSequence aminoAcidSequence = (AminoAcidSequence) tagComponent;
+
                 for (int site = 1; site <= aminoAcidSequence.length(); site++) {
+
                     for (ModificationMatch modificationMatch : aminoAcidSequence.getModificationsAt(site)) {
+
                         char affectedResidue = aminoAcidSequence.charAt(site - 1);
                         String modName = modificationMatch.getModification();
                         Color ptmColor = modificationProfile.getColor(modName);
+
                         if (modificationMatch.getConfident()) {
-                            tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
-                                    + affectedResidue
-                                    + "</span>"
-                                    + ": " + modName + " (confident)<br>";
+
+                            tooltip.append("<span style=\"color:#")
+                                    .append(Util.color2Hex(Color.WHITE))
+                                    .append(";background:#")
+                                    .append(Util.color2Hex(ptmColor))
+                                    .append("\">").append(affectedResidue)
+                                    .append("</span>: ")
+                                    .append(modName)
+                                    .append(" (confident)<br>");
+
                         } else {
-                            tooltip += "<span style=\"color:#" + Util.color2Hex(ptmColor) + ";background:#" + Util.color2Hex(Color.WHITE) + "\">"
-                                    + affectedResidue
-                                    + "</span>"
-                                    + ": " + modName + " (not confident)<br>";
+
+                            tooltip.append("<span style=\"color:#")
+                                    .append(Util.color2Hex(ptmColor))
+                                    .append(";background:#")
+                                    .append(Util.color2Hex(Color.WHITE))
+                                    .append("\">")
+                                    .append(affectedResidue)
+                                    .append("</span>: ")
+                                    .append(modName)
+                                    .append(" (not confident)<br>");
+
                         }
                     }
                 }
+
             } else if (tagComponent instanceof MassGap) {
-                // Nothing to do here
+                // Nothing to annotate
+
             } else {
                 throw new UnsupportedOperationException("Annotation not supported for the tag component " + tagComponent.getClass() + ".");
+
             }
         }
 
-        if (!tooltip.equalsIgnoreCase("<html>")) {
-            tooltip += "</html>";
-        } else {
-            tooltip = null;
-        }
+        tooltip.append("</html>");
 
-        return tooltip;
+        return tooltip.length() == 13 ? null : tooltip.toString();
+
     }
 
     /**
@@ -508,15 +531,12 @@ public class DisplayFeaturesGenerator {
      * @return the tagged peptide sequence
      */
     public String getTaggedPeptideSequence(PeptideMatch peptideMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
-        try {
-            Peptide peptide = peptideMatch.getPeptide();
-            PSModificationScores ptmScores = new PSModificationScores();
-            ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
-            return getTaggedPeptideSequence(peptide, ptmScores, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
-        } catch (Exception e) {
-            exceptionHandler.catchException(e);
-            return "Error";
-        }
+
+        Peptide peptide = peptideMatch.getPeptide();
+        PSModificationScores modificationScores = new PSModificationScores();
+        modificationScores = (PSModificationScores) peptideMatch.getUrParam(modificationScores);
+        return getTaggedPeptideSequence(peptide, modificationScores, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
+
     }
 
     /**
@@ -529,18 +549,16 @@ public class DisplayFeaturesGenerator {
      * PTM tags, e.g, &lt;mox&gt;, are used
      * @param includeHtmlStartEndTags if true, HTML start and end tags are added
      * @param useShortName if true the short names are used in the tags
+     *
      * @return the tagged peptide sequence
      */
     public String getTaggedPeptideSequence(SpectrumMatch spectrumMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
-        try {
-            Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-            PSModificationScores ptmScores = new PSModificationScores();
-            ptmScores = (PSModificationScores) spectrumMatch.getUrParam(ptmScores);
-            return getTaggedPeptideSequence(peptide, ptmScores, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
-        } catch (Exception e) {
-            exceptionHandler.catchException(e);
-            return "Error";
-        }
+
+        Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+        PSModificationScores modificationScores = new PSModificationScores();
+        modificationScores = (PSModificationScores) spectrumMatch.getUrParam(modificationScores);
+        return getTaggedPeptideSequence(peptide, modificationScores, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
+
     }
 
     /**
@@ -558,17 +576,24 @@ public class DisplayFeaturesGenerator {
      * @return the tagged peptide sequence
      */
     public String getTaggedPeptideSequence(Peptide peptide, PSModificationScores ptmScores, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
+
         HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
-        HashMap<Integer, ArrayList<String>> confidentLocations = new HashMap<>();
-        HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = new HashMap<>();
-        HashMap<Integer, ArrayList<String>> secondaryAmbiguousLocations = new HashMap<>();
+        
+        HashMap<Integer, ArrayList<String>> confidentLocations = new HashMap<>(2);
+        HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = new HashMap<>(2);
+        HashMap<Integer, ArrayList<String>> secondaryAmbiguousLocations = new HashMap<>(2);
+
         if (ptmScores != null) {
+
             confidentLocations = getFilteredConfidentModificationsSites(ptmScores, displayedPTMs);
             representativeAmbiguousLocations = getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayedPTMs);
             secondaryAmbiguousLocations = getFilteredAmbiguousModificationsSecondarySites(ptmScores, displayedPTMs);
+
         }
-        return PeptideUtils.getTaggedModifiedSequence(modificationProfile,
-                peptide, confidentLocations, representativeAmbiguousLocations, secondaryAmbiguousLocations, fixedModifications, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
+
+        return PeptideUtils.getTaggedModifiedSequence(peptide, modificationProfile,
+                confidentLocations, representativeAmbiguousLocations, secondaryAmbiguousLocations,
+                fixedModifications, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
     }
 
     /**
@@ -576,75 +601,111 @@ public class DisplayFeaturesGenerator {
      *
      * @param modificationMap the map of modifications to filter (amino acid
      * &gt; list of modifications, 1 is the first amino acid)
-     * @param displayedPtms list of PTMs to display
+     * @param displayedModifications list of PTMs to display
      *
      * @return a map of filtered modifications based on the user display
      * preferences
      */
-    public static HashMap<Integer, ArrayList<String>> getFilteredModifications(HashMap<Integer, ArrayList<String>> modificationMap, ArrayList<String> displayedPtms) {
-        HashMap<Integer, ArrayList<String>> result = new HashMap<>();
+    public static HashMap<Integer, ArrayList<String>> getFilteredModifications(HashMap<Integer, ArrayList<String>> modificationMap, HashSet<String> displayedModifications) {
+
+        HashMap<Integer, ArrayList<String>> result = new HashMap<>(modificationMap.size());
+
         for (int aa : modificationMap.keySet()) {
-            for (String ptm : modificationMap.get(aa)) {
-                if (displayedPtms.contains(ptm)) {
-                    if (!result.containsKey(aa)) {
-                        result.put(aa, new ArrayList<>());
+
+            for (String modName : modificationMap.get(aa)) {
+
+                if (displayedModifications.contains(modName)) {
+
+                    ArrayList<String> mods = result.get(aa);
+
+                    if (mods == null) {
+
+                        mods = new ArrayList<>(1);
+                        result.put(aa, mods);
+
                     }
-                    result.get(aa).add(ptm);
+
+                    mods.add(modName);
+
                 }
             }
         }
+
         return result;
+
     }
 
     /**
      * Exports the confidently localized modification sites in a map: site &gt;
      * mapped modifications.
      *
-     * @param ptmScores the PeptideShaker PTM scores
-     * @param displayedPtms list of PTMs to display
+     * @param modificationScores the PeptideShaker PTM scores
+     * @param displayedModifications list of PTMs to display
      *
      * @return a map of filtered modifications based on the user display
      * preferences
      */
-    public static HashMap<Integer, ArrayList<String>> getFilteredConfidentModificationsSites(PSModificationScores ptmScores, ArrayList<String> displayedPtms) {
-        HashMap<Integer, ArrayList<String>> result = new HashMap<>();
-        for (String ptmName : displayedPtms) {
-            for (int confidentSite : ptmScores.getConfidentSitesForPtm(ptmName)) {
+    public static HashMap<Integer, ArrayList<String>> getFilteredConfidentModificationsSites(PSModificationScores modificationScores, HashSet<String> displayedModifications) {
+
+        HashMap<Integer, ArrayList<String>> result = new HashMap<>(2);
+
+        for (String modName : displayedModifications) {
+
+            for (int confidentSite : modificationScores.getConfidentSitesForPtm(modName)) {
+
                 ArrayList<String> modifications = result.get(confidentSite);
+
                 if (modifications == null) {
-                    modifications = new ArrayList<>();
+
+                    modifications = new ArrayList<>(1);
                     result.put(confidentSite, modifications);
+
                 }
-                modifications.add(ptmName);
+
+                modifications.add(modName);
+
             }
         }
+
         return result;
+
     }
 
     /**
      * Exports the ambiguously localized modification representative sites in a
      * map: site &gt; mapped modifications.
      *
-     * @param ptmScores the PeptideShaker PTM scores
-     * @param displayedPtms list of PTMs to display
+     * @param modificationScores the PeptideShaker PTM scores
+     * @param displayedModifications list of PTMs to display
      *
      * @return a map of filtered modifications based on the user display
      * preferences
      */
-    public static HashMap<Integer, ArrayList<String>> getFilteredAmbiguousModificationsRepresentativeSites(PSModificationScores ptmScores, ArrayList<String> displayedPtms) {
-        HashMap<Integer, ArrayList<String>> result = new HashMap<>();
-        for (int representativeSite : ptmScores.getRepresentativeSites()) {
-            for (String ptmName : ptmScores.getPtmsAtRepresentativeSite(representativeSite)) {
-                if (displayedPtms.contains(ptmName)) {
+    public static HashMap<Integer, ArrayList<String>> getFilteredAmbiguousModificationsRepresentativeSites(PSModificationScores modificationScores, HashSet<String> displayedModifications) {
+
+        HashMap<Integer, ArrayList<String>> result = new HashMap<>(2);
+
+        for (int representativeSite : modificationScores.getRepresentativeSites()) {
+
+            for (String modName : modificationScores.getPtmsAtRepresentativeSite(representativeSite)) {
+
+                if (displayedModifications.contains(modName)) {
+
                     ArrayList<String> modifications = result.get(representativeSite);
+
                     if (modifications == null) {
+
                         modifications = new ArrayList<>();
                         result.put(representativeSite, modifications);
+
                     }
-                    modifications.add(ptmName);
+
+                    modifications.add(modName);
+
                 }
             }
         }
+
         return result;
     }
 
@@ -652,32 +713,47 @@ public class DisplayFeaturesGenerator {
      * Exports the ambiguously localized modification secondary sites in a map:
      * site &gt; mapped modifications.
      *
-     * @param ptmScores the PeptideShaker PTM scores
-     * @param displayedPtms list of PTMs to display
+     * @param modificationScores the PeptideShaker PTM scores
+     * @param displayedModifications list of PTMs to display
      *
      * @return a map of filtered modifications based on the user display
      * preferences
      */
-    public static HashMap<Integer, ArrayList<String>> getFilteredAmbiguousModificationsSecondarySites(PSModificationScores ptmScores, ArrayList<String> displayedPtms) {
-        HashMap<Integer, ArrayList<String>> result = new HashMap<>();
-        for (int representativeSite : ptmScores.getRepresentativeSites()) {
-            HashMap<Integer, ArrayList<String>> modificationsAtSite = ptmScores.getAmbiguousPtmsAtRepresentativeSite(representativeSite);
+    public static HashMap<Integer, ArrayList<String>> getFilteredAmbiguousModificationsSecondarySites(PSModificationScores modificationScores, HashSet<String> displayedModifications) {
+
+        HashMap<Integer, ArrayList<String>> result = new HashMap<>(2);
+
+        for (int representativeSite : modificationScores.getRepresentativeSites()) {
+
+            HashMap<Integer, ArrayList<String>> modificationsAtSite = modificationScores.getAmbiguousPtmsAtRepresentativeSite(representativeSite);
+
             for (int secondarySite : modificationsAtSite.keySet()) {
+
                 if (secondarySite != representativeSite) {
-                    for (String ptmName : modificationsAtSite.get(secondarySite)) {
-                        if (displayedPtms.contains(ptmName)) {
+
+                    for (String modName : modificationsAtSite.get(secondarySite)) {
+
+                        if (displayedModifications.contains(modName)) {
+
                             ArrayList<String> modifications = result.get(representativeSite);
+
                             if (modifications == null) {
-                                modifications = new ArrayList<>();
+
+                                modifications = new ArrayList<>(1);
                                 result.put(secondarySite, modifications);
+
                             }
-                            modifications.add(ptmName);
+
+                            modifications.add(modName);
+
                         }
                     }
                 }
             }
         }
+
         return result;
+
     }
 
     /**
@@ -685,13 +761,21 @@ public class DisplayFeaturesGenerator {
      * QuickGO.
      *
      * @param goAccession the GO accession number
+     *
      * @return the GO accession number as a web link to the given GO term at
      * QuickGO
      */
-    public String addGoLink(String goAccession) { // @TODO: move method to utilities...
-        return "<html><a href=\"" + getGoAccessionLink(goAccession)
-                + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
-                + goAccession + "</font></a></html>";
+    public String addGoLink(String goAccession) { // @TODO: move method to utilities
+
+        return String.join("", 
+                "<html><a href=\"", 
+                getGoAccessionLink(goAccession),
+                "\"><font color=\"",
+                notSelectedRowHtmlTagFontColor,
+                "\">",
+                goAccession,
+                "</font></a></html>");
+
     }
 
     /**
@@ -699,19 +783,24 @@ public class DisplayFeaturesGenerator {
      * QuickGO.
      *
      * @param goAccession the GO accession number
+     *
      * @return the GO accession web link
      */
     public String getGoAccessionLink(String goAccession) {
-        return "https://www.ebi.ac.uk/QuickGO/GTerm?id=" + goAccession;
+
+        return String.join("", "https://www.ebi.ac.uk/QuickGO/GTerm?id=", goAccession);
+
     }
 
     /**
      * Sets the PTMs to display.
      *
-     * @param displayedPTMs the names of the PTMs to display in a list
+     * @param displayedModifications the names of the PTMs to display in a list
      */
-    public void setDisplayedPTMs(ArrayList<String> displayedPTMs) {
-        this.displayedPTMs = displayedPTMs;
+    public void setDisplayedModifications(HashSet<String> displayedModifications) {
+
+        this.displayedPTMs = displayedModifications;
+
     }
 
     /**
@@ -731,90 +820,125 @@ public class DisplayFeaturesGenerator {
      * should be considered
      *
      * @return the residue annotation for a given protein
-     *
-     * @throws IOException thrown if an IOException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
      */
-    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(String proteinMatchKey, SequenceMatchingParameters sequenceMatchingPreferences,
+    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(long proteinMatchKey, SequenceMatchingParameters sequenceMatchingPreferences,
             IdentificationFeaturesGenerator identificationFeaturesGenerator, Metrics metrics, Identification identification,
-            boolean allPeptides, SearchParameters searchParameters, boolean enzymatic)
-            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+            boolean allPeptides, SearchParameters searchParameters, boolean enzymatic) {
 
-        ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(proteinMatchKey);
-        Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getLeadingAccession());
-        String sequence = currentProtein.getSequence();
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        String sequence = sequenceProvider.getSequence(proteinMatch.getLeadingAccession());
 
         HashMap<Integer, ArrayList<ResidueAnnotation>> residueAnnotation = new HashMap<>(sequence.length());
 
         double[] coverage = identificationFeaturesGenerator.getCoverableAA(proteinMatchKey);
         double lastP = coverage[0];
         int lastIndex = 0;
+
         for (int i = 1; i < coverage.length; i++) {
+
             double p = coverage[i];
+
             if (p != lastP) {
-                String annotation = (lastIndex + 1) + "-" + (i + 1);
+
+                StringBuilder annotation = new StringBuilder();
+                annotation.append(lastIndex + 1).append('-').append(i + 1);
+
                 if (metrics.getPeptideLengthDistribution() != null) {
-                    annotation += ", " + Util.roundDouble(100 * lastP, 1) + "% chance of coverage";
+
+                    annotation.append(", ").append(Util.roundDouble(100 * lastP, 1)).append("% chance of coverage");
+
                 } else if (lastP > 0.01) {
-                    annotation += ", possible to cover";
+
+                    annotation.append(", possible to cover");
+
                 }
+
                 ArrayList<ResidueAnnotation> annotations = new ArrayList<>(1);
-                annotations.add(new ResidueAnnotation(annotation, null, false));
+                annotations.add(new ResidueAnnotation(annotation.toString(), 0l, false));
+
                 for (int j = lastIndex; j < i; j++) {
+
                     residueAnnotation.put(j, new ArrayList<>(annotations));
+
                 }
+
                 lastP = p;
                 lastIndex = i;
+
             }
-        }
-        int i = coverage.length;
-        String annotation = (lastIndex + 1) + "-" + (i);
-        if (metrics.getPeptideLengthDistribution() != null) {
-            annotation += ", " + Util.roundDouble(100 * lastP, 1) + "% chance of coverage";
-        } else if (lastP > 0.01) {
-            annotation += ", possible to cover";
-        }
-        ArrayList<ResidueAnnotation> annotations = new ArrayList<>(1);
-        annotations.add(new ResidueAnnotation(annotation, null, false));
-        for (int j = lastIndex; j < i; j++) {
-            residueAnnotation.put(j, new ArrayList<>(annotations));
         }
 
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null); // @TODO: add waiting handler?
-        PeptideMatch peptideMatch;
-        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
-            
-            String peptideKey = peptideMatch.getKey();
+        int i = coverage.length;
+        StringBuilder annotation = new StringBuilder();
+        annotation.append(lastIndex + 1).append("-").append(i);
+
+        if (metrics.getPeptideLengthDistribution() != null) {
+
+            annotation.append(", ").append(Util.roundDouble(100 * lastP, 1)).append("% chance of coverage");
+
+        } else if (lastP > 0.01) {
+
+            annotation.append(", possible to cover");
+
+        }
+
+        ArrayList<ResidueAnnotation> annotations = new ArrayList<>(1);
+        annotations.add(new ResidueAnnotation(annotation.toString(), 0l, false));
+
+        for (int j = lastIndex; j < i; j++) {
+
+            residueAnnotation.put(j, new ArrayList<>(annotations));
+
+        }
+
+        for (long peptideMatchKey : proteinMatch.getPeptideMatchesKeys()) {
+
+            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideMatchKey);
             String peptideSequence = peptideMatch.getPeptide().getSequence();
             boolean enzymaticPeptide = true;
+
             if (!allPeptides) {
+
                 DigestionParameters digestionPreferences = searchParameters.getDigestionParameters();
+
                 if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
-                    enzymatic = currentProtein.isEnzymaticPeptide(peptideMatch.getPeptide().getSequence(),
-                            digestionPreferences.getEnzymes(), sequenceMatchingPreferences);
+
+                    PeptideUtils.isEnzymatic(peptideMatch.getPeptide(), sequenceProvider, digestionPreferences.getEnzymes());
+
                 }
             }
+
             if (allPeptides || (enzymatic && enzymaticPeptide) || (!enzymatic && !enzymaticPeptide)) {
+
                 String modifiedSequence = getTaggedPeptideSequence(peptideMatch, true, false, true);
                 AminoAcidPattern aminoAcidPattern = AminoAcidPattern.getAminoAcidPatternFromString(peptideSequence);
                 ArrayList<Integer> startIndexes = aminoAcidPattern.getIndexes(sequence, sequenceMatchingPreferences);
-                for (int index : startIndexes) {
-                    int peptideTempStart = index;
-                    int peptideTempEnd = peptideTempStart + peptideSequence.length();
-                    ResidueAnnotation newAnnotation = new ResidueAnnotation(peptideTempStart + " - " + modifiedSequence + " - " + peptideTempEnd, peptideKey, true);
-                    for (int j = peptideTempStart - 1; j < peptideTempEnd - 1; j++) {
+
+                for (int startIndex : startIndexes) {
+
+                    int endIndex = startIndex + peptideSequence.length();
+                    String peptideTempStart = Integer.toString(startIndex);
+                    String peptideTempEnd = Integer.toString(endIndex);
+
+                    ResidueAnnotation newAnnotation = new ResidueAnnotation(String.join(" - ", peptideTempStart, modifiedSequence, peptideTempEnd), peptideMatchKey, true);
+
+                    for (int j = startIndex - 1; j < endIndex - 1; j++) {
+
                         annotations = residueAnnotation.get(j);
+
                         if (annotations == null) {
-                            annotations = new ArrayList<>();
+
+                            annotations = new ArrayList<>(1);
                             residueAnnotation.put(j, annotations);
-                        } else if (annotations.size() == 1 && !annotations.get(0).isClickable()) {
+
+                        } else if (annotations.size() == 1 && !annotations.get(0).clickable) {
+
                             annotations.clear();
+
                         }
+
                         annotations.add(newAnnotation);
+
                     }
                 }
             }

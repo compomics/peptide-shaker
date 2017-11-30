@@ -255,7 +255,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             }
                         }
                         if (!isScrolling) {
-                            return displayFeaturesGenerator.addDatabaseLink(proteinMatch.getLeadingAccession());
+                            return displayFeaturesGenerator.getDatabaseLink(proteinMatch.getLeadingAccession());
                         } else {
                             return proteinMatch.getLeadingAccession();
                         }

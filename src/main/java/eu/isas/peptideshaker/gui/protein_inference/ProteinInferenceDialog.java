@@ -1094,7 +1094,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 1:
                     return inspectedMatch.getLeadingAccession().equals(accessions.get(row));
                 case 2:
-                    return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(accessions.get(row));
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLink(accessions.get(row));
                 case 3:
                     try {
                         String description = sequenceFactory.getHeader(accessions.get(row)).getSimpleProteinDescription();
@@ -1212,7 +1212,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 0:
                     return (row + 1);
                 case 1:
-                    return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLinks(new ArrayList<>(Arrays.asList(ProteinMatch.getAccessions(uniqueMatches.get(row)))));
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLinks(new ArrayList<>(Arrays.asList(ProteinMatch.getAccessions(uniqueMatches.get(row)))));
                 case 2:
                     return pSParameter.getProteinConfidence();
                 case 3:
@@ -1278,7 +1278,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 0:
                     return (row + 1);
                 case 1:
-                    return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLinks(new ArrayList<>(Arrays.asList(ProteinMatch.getAccessions(associatedMatches.get(row)))));
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLinks(new ArrayList<>(Arrays.asList(ProteinMatch.getAccessions(associatedMatches.get(row)))));
                 case 2:
                     return pSParameter.getProteinConfidence();
                 case 3:

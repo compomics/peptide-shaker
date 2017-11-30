@@ -146,7 +146,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
             if (column == 0) {
                 return row + 1;
             } else if (column == 1) {
-                return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(proteinMatch.getLeadingAccession());
+                return peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLink(proteinMatch.getLeadingAccession());
             } else if (column == 2) {
                 String description = "";
                 try {

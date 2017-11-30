@@ -135,7 +135,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
                         return row + 1;
                     case 1:
                         String mainMatch = proteinMatch.getLeadingAccession();
-                        return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(mainMatch);
+                        return peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLink(mainMatch);
                     case 2:
                         String description = "";
                         try {

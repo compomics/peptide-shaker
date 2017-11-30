@@ -3600,7 +3600,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(spectrumKey);
                             DisplayFeaturesGenerator displayFeaturesGenerator = peptideShakerGUI.getDisplayFeaturesGenerator();
                             if (spectrumMatch.getBestPeptideAssumption() != null) {
-                                return displayFeaturesGenerator.addDatabaseLinks(spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(
+                                return displayFeaturesGenerator.getDatabaseLinks(spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(
                                         peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters()));
                             }
                         }
@@ -3728,7 +3728,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     String proteins = "";
                     String sequence;
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
-                        proteins = displayFeaturesGenerator.addDatabaseLinks(spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters()));
+                        proteins = displayFeaturesGenerator.getDatabaseLinks(spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters()));
                         sequence = displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true);
                         peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch);
                     } else if (spectrumMatch.getBestTagAssumption() != null) {
