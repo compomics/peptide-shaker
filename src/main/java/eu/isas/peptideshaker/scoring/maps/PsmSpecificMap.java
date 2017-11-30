@@ -137,19 +137,12 @@ public class PsmSpecificMap extends DbObject implements Serializable {
      * @param probabilityScore the estimated score
      * @param spectrumMatch the spectrum match of interest
      * @param sequenceMatchingPreferences The sequence matching preferences
-     *
-     * @throws IOException thrown if an IOException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
      */
-    public void addPoint(double probabilityScore, SpectrumMatch spectrumMatch, SequenceMatchingParameters sequenceMatchingPreferences)
-            throws IOException, InterruptedException, SQLException, ClassNotFoundException {
+    public void addPoint(double probabilityScore, SpectrumMatch spectrumMatch, SequenceMatchingParameters sequenceMatchingPreferences) {
+        
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
 
-        int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+        int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge();
         HashMap<String, TargetDecoyMap> fileMapping = fileSpecificPsmsMaps.get(charge);
         if (fileMapping == null) {
             fileMapping = new HashMap<>();
