@@ -218,7 +218,7 @@ public class PtmScorer extends DbObject {
                     ModificationScoring ptmScoring = ptmScores.getModificationScoring(modName);
                     if (ptmScoring == null) {
                         ptmScoring = new ModificationScoring(modName);
-                        ptmScores.addPtmScoring(modName, ptmScoring);
+                        ptmScores.addModificationScoring(modName, ptmScoring);
                     }
 
                     if (secondaryP < refP) {
@@ -363,7 +363,7 @@ public class PtmScorer extends DbObject {
 
                         if (ptmScoring == null) {
                             ptmScoring = new ModificationScoring(ptmName);
-                            ptmScores.addPtmScoring(ptmName, ptmScoring);
+                            ptmScores.addModificationScoring(ptmName, ptmScoring);
                         }
 
                         ptmScoring.setProbabilisticScore(site, scores.get(site));
@@ -437,7 +437,7 @@ public class PtmScorer extends DbObject {
                 HashMap<Double, ArrayList<Integer>> pSitesMap = new HashMap<>(nPtm);
                 HashMap<Integer, Double> pScores = new HashMap<>(nPtm);
 
-                for (String modification : ptmScores.getScoredPTMs()) {
+                for (String modification : ptmScores.getScoredModifications()) {
 
                     Modification ptm = ptmFactory.getModification(modification);
 
@@ -693,12 +693,12 @@ public class PtmScorer extends DbObject {
             psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
             PSModificationScores psmScores = (PSModificationScores) spectrumMatch.getUrParam(new PSModificationScores());
 
-            for (String ptmName : psmScores.getScoredPTMs()) {
+            for (String ptmName : psmScores.getScoredModifications()) {
                 ModificationScoring psmScoring = psmScores.getModificationScoring(ptmName);
                 ModificationScoring peptideScoring = peptideScores.getModificationScoring(ptmName);
                 if (peptideScoring == null) {
                     peptideScoring = new ModificationScoring(ptmName);
-                    peptideScores.addPtmScoring(ptmName, peptideScoring);
+                    peptideScores.addModificationScoring(ptmName, peptideScoring);
                 }
                 for (int site : psmScoring.getScoredSites()) {
                     double psmDScore = psmScoring.getDeltaScore(site);
@@ -807,7 +807,7 @@ public class PtmScorer extends DbObject {
                 PSModificationScores psmScores = (PSModificationScores) spectrumMatch.getUrParam(new PSModificationScores());
 
                 for (int representativeSite : psmScores.getRepresentativeSites()) {
-                    HashMap<Integer, ArrayList<String>> ambiguousMappingAtSite = psmScores.getAmbiguousPtmsAtRepresentativeSite(representativeSite);
+                    HashMap<Integer, ArrayList<String>> ambiguousMappingAtSite = psmScores.getAmbiguousModificationsAtRepresentativeSite(representativeSite);
                     int mappingSize = ambiguousMappingAtSite.size();
                     for (int refSite : ambiguousMappingAtSite.keySet()) {
                         for (String ptmName : ambiguousMappingAtSite.get(refSite)) {
@@ -1298,7 +1298,7 @@ public class PtmScorer extends DbObject {
                         }
                     }
                     for (int representativeSite : peptideScores.getRepresentativeSites()) {
-                        HashMap<Integer, ArrayList<String>> peptideAmbiguousSites = peptideScores.getAmbiguousPtmsAtRepresentativeSite(representativeSite);
+                        HashMap<Integer, ArrayList<String>> peptideAmbiguousSites = peptideScores.getAmbiguousModificationsAtRepresentativeSite(representativeSite);
                         for (int peptideTempStart : peptideStart) {
                             int proteinRepresentativeSite = peptideTempStart + representativeSite - 1;
                             HashMap<Integer, ArrayList<String>> proteinAmbiguousSites = ambiguousSites.get(proteinRepresentativeSite);

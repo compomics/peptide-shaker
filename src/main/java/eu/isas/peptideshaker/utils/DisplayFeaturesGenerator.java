@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 public class DisplayFeaturesGenerator {
 
     /**
-     * The modification profile containing the colors of the PTMs.
+     * The modification profile containing the colors of the modifications.
      */
     private final ModificationParameters modificationProfile;
     /**
@@ -47,9 +47,9 @@ public class DisplayFeaturesGenerator {
      */
     private final String notSelectedRowHtmlTagFontColor = TableProperties.getNotSelectedRowHtmlTagFontColor();
     /**
-     * List of PTMs to display.
+     * List of modifications to display.
      */
-    private HashSet<String> displayedPTMs;
+    private HashSet<String> displayedModifications;
     /**
      * The sequence provider.
      */
@@ -63,7 +63,7 @@ public class DisplayFeaturesGenerator {
      * Constructor
      *
      * @param modificationProfile the modification profile containing the colors
-     * of the PTMs
+     * of the modifications
      * @param sequenceProvider the sequence provider
      * @param proteinDetailsProvider the protein details provider
      */
@@ -278,9 +278,9 @@ public class DisplayFeaturesGenerator {
     public String getPeptideModificationTooltipAsHtml(SpectrumMatch spectrumMatch) {
 
         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-        PSModificationScores ptmScores = new PSModificationScores();
-        ptmScores = (PSModificationScores) spectrumMatch.getUrParam(ptmScores);
-        return getPeptideModificationTooltipAsHtml(peptide, ptmScores);
+        PSModificationScores modificationScores = new PSModificationScores();
+        modificationScores = (PSModificationScores) spectrumMatch.getUrParam(modificationScores);
+        return getPeptideModificationTooltipAsHtml(peptide, modificationScores);
 
     }
 
@@ -294,9 +294,9 @@ public class DisplayFeaturesGenerator {
     public String getPeptideModificationTooltipAsHtml(PeptideMatch peptideMatch) {
 
         Peptide peptide = peptideMatch.getPeptide();
-        PSModificationScores ptmScores = new PSModificationScores();
-        ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
-        return getPeptideModificationTooltipAsHtml(peptide, ptmScores);
+        PSModificationScores modificationScores = new PSModificationScores();
+        modificationScores = (PSModificationScores) peptideMatch.getUrParam(modificationScores);
+        return getPeptideModificationTooltipAsHtml(peptide, modificationScores);
 
     }
 
@@ -305,24 +305,24 @@ public class DisplayFeaturesGenerator {
      * modification details.
      *
      * @param peptide the peptide
-     * @param ptmScores the PTM scores
+     * @param modificationScores the modification scores
      * @return a string with the HTML tooltip for the peptide
      */
-    public String getPeptideModificationTooltipAsHtml(Peptide peptide, PSModificationScores ptmScores) {
+    public String getPeptideModificationTooltipAsHtml(Peptide peptide, PSModificationScores modificationScores) {
 
         String peptideSequence = peptide.getSequence();
-        HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
+        HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedModifications);
         HashMap<Integer, ArrayList<String>> confidentLocations = new HashMap<>(2);
         HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = new HashMap<>(2);
 
-        if (ptmScores != null) {
+        if (modificationScores != null) {
 
-            confidentLocations = getFilteredConfidentModificationsSites(ptmScores, displayedPTMs);
-            representativeAmbiguousLocations = getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayedPTMs);
+            confidentLocations = getFilteredConfidentModificationsSites(modificationScores, displayedModifications);
+            representativeAmbiguousLocations = getFilteredAmbiguousModificationsRepresentativeSites(modificationScores, displayedModifications);
 
         }
 
-        return getPtmToolTip(peptideSequence, fixedModifications, confidentLocations, representativeAmbiguousLocations);
+        return getModificationToolTip(peptideSequence, fixedModifications, confidentLocations, representativeAmbiguousLocations);
     }
 
     /**
@@ -336,7 +336,7 @@ public class DisplayFeaturesGenerator {
 
         HashMap<Integer, ArrayList<String>> confidentModificationSites = new HashMap<>(peptide.getNModifications());
         HashMap<Integer, ArrayList<String>> representativeModificationSites = new HashMap<>(peptide.getNModifications());
-        HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
+        HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedModifications);
 
         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
 
@@ -369,20 +369,20 @@ public class DisplayFeaturesGenerator {
             }
         }
 
-        return getPtmToolTip(peptide.getSequence(), fixedModifications, confidentModificationSites, representativeModificationSites);
+        return getModificationToolTip(peptide.getSequence(), fixedModifications, confidentModificationSites, representativeModificationSites);
     }
 
     /**
-     * Returns the PTM tooltip as HTML. Null if no modification.
+     * Returns the modification tooltip as HTML. Null if no modification.
      *
      * @param peptideSequence the peptide sequence
      * @param fixedModifications the fixed modifications
      * @param confidentLocations the confident locations
      * @param representativeAmbiguousLocations the representative locations
      *
-     * @return the PTM tooltip as HTML
+     * @return the modification tooltip as HTML
      */
-    private String getPtmToolTip(String peptideSequence,
+    private String getModificationToolTip(String peptideSequence,
             HashMap<Integer, ArrayList<String>> fixedModifications,
             HashMap<Integer, ArrayList<String>> confidentLocations,
             HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations) {
@@ -473,14 +473,14 @@ public class DisplayFeaturesGenerator {
 
                         char affectedResidue = aminoAcidSequence.charAt(site - 1);
                         String modName = modificationMatch.getModification();
-                        Color ptmColor = modificationProfile.getColor(modName);
+                        Color modificationColor = modificationProfile.getColor(modName);
 
                         if (modificationMatch.getConfident()) {
 
                             tooltip.append("<span style=\"color:#")
                                     .append(Util.color2Hex(Color.WHITE))
                                     .append(";background:#")
-                                    .append(Util.color2Hex(ptmColor))
+                                    .append(Util.color2Hex(modificationColor))
                                     .append("\">").append(affectedResidue)
                                     .append("</span>: ")
                                     .append(modName)
@@ -489,7 +489,7 @@ public class DisplayFeaturesGenerator {
                         } else {
 
                             tooltip.append("<span style=\"color:#")
-                                    .append(Util.color2Hex(ptmColor))
+                                    .append(Util.color2Hex(modificationColor))
                                     .append(";background:#")
                                     .append(Util.color2Hex(Color.WHITE))
                                     .append("\">")
@@ -519,12 +519,12 @@ public class DisplayFeaturesGenerator {
 
     /**
      * Returns the peptide with modification sites tagged (color coded or with
-     * PTM tags, e.g, &lt;mox&gt;) in the sequence based on PeptideShaker site
+     * modification tags, e.g, &lt;mox&gt;) in the sequence based on PeptideShaker site
      * inference results for the given peptide match.
      *
      * @param peptideMatch the peptide match of interest
      * @param useHtmlColorCoding if true, color coded HTML is used, otherwise
-     * PTM tags, e.g, &lt;mox&gt;, are used
+     * modification tags, e.g, &lt;mox&gt;, are used
      * @param includeHtmlStartEndTags if true, HTML start and end tags are added
      * @param useShortName if true the short names are used in the tags
      *
@@ -541,12 +541,12 @@ public class DisplayFeaturesGenerator {
 
     /**
      * Returns the peptide with modification sites tagged (color coded or with
-     * PTM tags, e.g, &lt;mox&gt;) in the sequence based on PeptideShaker site
+     * modification tags, e.g, &lt;mox&gt;) in the sequence based on PeptideShaker site
      * inference results for the best assumption of the given spectrum match.
      *
      * @param spectrumMatch the spectrum match of interest
      * @param useHtmlColorCoding if true, color coded HTML is used, otherwise
-     * PTM tags, e.g, &lt;mox&gt;, are used
+     * modification tags, e.g, &lt;mox&gt;, are used
      * @param includeHtmlStartEndTags if true, HTML start and end tags are added
      * @param useShortName if true the short names are used in the tags
      *
@@ -563,31 +563,31 @@ public class DisplayFeaturesGenerator {
 
     /**
      * Returns the peptide with modification sites tagged (color coded or with
-     * PTM tags, e.g, &lt;mox&gt;) in the sequence based on the provided PTM
+     * modification tags, e.g, &lt;mox&gt;) in the sequence based on the provided modification
      * localization scores.
      *
      * @param peptide the spectrum match of interest
-     * @param ptmScores the PTM localization scores
+     * @param modificationScores the modification localization scores
      * @param useHtmlColorCoding if true, color coded HTML is used, otherwise
-     * PTM tags, e.g, &lt;mox&gt;, are used
+     * modification tags, e.g, &lt;mox&gt;, are used
      * @param includeHtmlStartEndTags if true, HTML start and end tags are added
      * @param useShortName if true the short names are used in the tags
      *
      * @return the tagged peptide sequence
      */
-    public String getTaggedPeptideSequence(Peptide peptide, PSModificationScores ptmScores, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
+    public String getTaggedPeptideSequence(Peptide peptide, PSModificationScores modificationScores, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
 
-        HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
+        HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedModifications);
         
         HashMap<Integer, ArrayList<String>> confidentLocations = new HashMap<>(2);
         HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = new HashMap<>(2);
         HashMap<Integer, ArrayList<String>> secondaryAmbiguousLocations = new HashMap<>(2);
 
-        if (ptmScores != null) {
+        if (modificationScores != null) {
 
-            confidentLocations = getFilteredConfidentModificationsSites(ptmScores, displayedPTMs);
-            representativeAmbiguousLocations = getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayedPTMs);
-            secondaryAmbiguousLocations = getFilteredAmbiguousModificationsSecondarySites(ptmScores, displayedPTMs);
+            confidentLocations = getFilteredConfidentModificationsSites(modificationScores, displayedModifications);
+            representativeAmbiguousLocations = getFilteredAmbiguousModificationsRepresentativeSites(modificationScores, displayedModifications);
+            secondaryAmbiguousLocations = getFilteredAmbiguousModificationsSecondarySites(modificationScores, displayedModifications);
 
         }
 
@@ -601,7 +601,7 @@ public class DisplayFeaturesGenerator {
      *
      * @param modificationMap the map of modifications to filter (amino acid
      * &gt; list of modifications, 1 is the first amino acid)
-     * @param displayedModifications list of PTMs to display
+     * @param displayedModifications list of modifications to display
      *
      * @return a map of filtered modifications based on the user display
      * preferences
@@ -639,8 +639,8 @@ public class DisplayFeaturesGenerator {
      * Exports the confidently localized modification sites in a map: site &gt;
      * mapped modifications.
      *
-     * @param modificationScores the PeptideShaker PTM scores
-     * @param displayedModifications list of PTMs to display
+     * @param modificationScores the PeptideShaker modification scores
+     * @param displayedModifications list of modifications to display
      *
      * @return a map of filtered modifications based on the user display
      * preferences
@@ -651,7 +651,7 @@ public class DisplayFeaturesGenerator {
 
         for (String modName : displayedModifications) {
 
-            for (int confidentSite : modificationScores.getConfidentSitesForPtm(modName)) {
+            for (int confidentSite : modificationScores.getConfidentSitesForModification(modName)) {
 
                 ArrayList<String> modifications = result.get(confidentSite);
 
@@ -687,7 +687,7 @@ public class DisplayFeaturesGenerator {
 
         for (int representativeSite : modificationScores.getRepresentativeSites()) {
 
-            for (String modName : modificationScores.getPtmsAtRepresentativeSite(representativeSite)) {
+            for (String modName : modificationScores.getModificationsAtRepresentativeSite(representativeSite)) {
 
                 if (displayedModifications.contains(modName)) {
 
@@ -725,7 +725,7 @@ public class DisplayFeaturesGenerator {
 
         for (int representativeSite : modificationScores.getRepresentativeSites()) {
 
-            HashMap<Integer, ArrayList<String>> modificationsAtSite = modificationScores.getAmbiguousPtmsAtRepresentativeSite(representativeSite);
+            HashMap<Integer, ArrayList<String>> modificationsAtSite = modificationScores.getAmbiguousModificationsAtRepresentativeSite(representativeSite);
 
             for (int secondarySite : modificationsAtSite.keySet()) {
 
@@ -799,7 +799,7 @@ public class DisplayFeaturesGenerator {
      */
     public void setDisplayedModifications(HashSet<String> displayedModifications) {
 
-        this.displayedPTMs = displayedModifications;
+        this.displayedModifications = displayedModifications;
 
     }
 

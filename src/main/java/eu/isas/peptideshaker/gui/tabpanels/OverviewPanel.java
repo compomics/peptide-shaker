@@ -4471,7 +4471,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 for (int aa = 1; aa < sequence.length(); aa++) {
 
                     String ptmName = fixedPtms.get(aa + 1);
-                    for (String variablePTM : psPtmScores.getPtmsAtRepresentativeSite(aa + 1)) {
+                    for (String variablePTM : psPtmScores.getModificationsAtRepresentativeSite(aa + 1)) {
                         if (displayPreferences.isDisplayedPTM(variablePTM)) {
                             ptmName = variablePTM;
                             break;
@@ -4607,7 +4607,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 for (int aa = 1; aa < sequence.length(); aa++) {
 
                     String ptmName = fixedPtms.get(aa + 1);
-                    for (String variablePTM : psPtmScores.getPtmsAtRepresentativeSite(aa + 1)) {
+                    for (String variablePTM : psPtmScores.getModificationsAtRepresentativeSite(aa + 1)) {
                         if (displayPreferences.isDisplayedPTM(variablePTM)) {
                             ptmName = variablePTM;
                             break;

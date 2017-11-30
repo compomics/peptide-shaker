@@ -98,17 +98,17 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
             if (peptidePtmScore != null) {
 
                 mainSelection = new boolean[peptide.getSequence().length()];
-                for (String ptmName : peptidePtmScore.getConfidentlyLocalizedPtms()) {
+                for (String ptmName : peptidePtmScore.getConfidentlyLocalizedModifications()) {
                     Modification tempPTM = ptmFactory.getModification(ptmName);
                     if (tempPTM.getMass() == ptmMass) { // @TODO: compare against the accuracy
-                        for (int site : peptidePtmScore.getConfidentSitesForPtm(ptmName)) {
+                        for (int site : peptidePtmScore.getConfidentSitesForModification(ptmName)) {
                             mainSelection[site - 1] = true;
                         }
                     }
                 }
 
                 secondarySelection = new boolean[peptide.getSequence().length()];
-                for (String ptmName : peptidePtmScore.getAmbiguouslyLocalizedPtms()) {
+                for (String ptmName : peptidePtmScore.getAmbiguouslyLocalizedModifications()) {
                     Modification tempPTM = ptmFactory.getModification(ptmName);
                     if (tempPTM.getMass() == ptmMass) { // @TODO: compare against the accuracy
                         for (int site : peptidePtmScore.getAmbiguousModificationsSites(ptmName).keySet()) {

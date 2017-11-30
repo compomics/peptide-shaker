@@ -413,7 +413,7 @@ public class PsPeptideSection {
                 ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
                 if (ptmScores != null) {
                     StringBuilder result = new StringBuilder();
-                    ArrayList<String> modList = new ArrayList<>(ptmScores.getScoredPTMs());
+                    ArrayList<String> modList = new ArrayList<>(ptmScores.getScoredModifications());
                     Collections.sort(modList);
                     for (String mod : modList) {
                         ModificationScoring ptmScoring = ptmScores.getModificationScoring(mod);
@@ -444,7 +444,7 @@ public class PsPeptideSection {
                 ptmScores = new PSModificationScores();
                 ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
                 if (ptmScores != null) {
-                    ArrayList<String> modList = new ArrayList<>(ptmScores.getScoredPTMs());
+                    ArrayList<String> modList = new ArrayList<>(ptmScores.getScoredModifications());
                     Collections.sort(modList);
                     for (String mod : modList) {
                         ModificationScoring ptmScoring = ptmScores.getModificationScoring(mod);
@@ -576,7 +576,7 @@ public class PsPeptideSection {
 
         if (psPtmScores != null) {
             
-            ArrayList<String> modList = psPtmScores.getScoredPTMs();
+            ArrayList<String> modList = psPtmScores.getScoredModifications();
 
             StringBuilder result = new StringBuilder();
             Collections.sort(modList);

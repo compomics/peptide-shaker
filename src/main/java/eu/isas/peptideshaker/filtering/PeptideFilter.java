@@ -131,7 +131,7 @@ public class PeptideFilter extends MatchFilter {
                 PSModificationScores psPtmScores = new PSModificationScores();
                 psPtmScores = (PSModificationScores) peptideMatch.getUrParam(psPtmScores);
                 if (psPtmScores != null) {
-                    ptms = psPtmScores.getScoredPTMs();
+                    ptms = psPtmScores.getScoredModifications();
                 } else {
                     ptms = new ArrayList<>(0);
                 }

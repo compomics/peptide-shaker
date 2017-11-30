@@ -3,6 +3,9 @@ package eu.isas.peptideshaker.preferences;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * This class contains the display preferences for the current project.
@@ -31,7 +34,7 @@ public class DisplayParameters implements Serializable {
     /**
      * The number of amino acids surrounding a peptide.
      */
-    private Integer nAASurroundingPeptides = 2;
+    private int nAASurroundingPeptides = 2;
     /**
      * The displayed PTMs.
      */
@@ -63,7 +66,9 @@ public class DisplayParameters implements Serializable {
      * should be displayed
      */
     public void showHiddenProteins(boolean showHiddenProteins) {
+        
         this.showHiddenProteins = showHiddenProteins;
+        
     }
 
     /**
@@ -72,7 +77,9 @@ public class DisplayParameters implements Serializable {
      * @return true if the hidden proteins should be displayed
      */
     public boolean showHiddenProteins() {
+        
         return showHiddenProteins;
+        
     }
 
     /**
@@ -81,7 +88,9 @@ public class DisplayParameters implements Serializable {
      * @param showScores a boolean indicating whether scores should be displayed
      */
     public void showScores(boolean showScores) {
+        
         this.showScores = showScores;
+        
     }
 
     /**
@@ -90,7 +99,9 @@ public class DisplayParameters implements Serializable {
      * @return true if the scores are to be displayed
      */
     public boolean showScores() {
+        
         return showScores;
+        
     }
 
     /**
@@ -100,7 +111,9 @@ public class DisplayParameters implements Serializable {
      * validated proteins should be displayed
      */
     public void showValidatedProteinsOnly(boolean showValidatedProteinsOnly) {
+        
         this.showValidatedProteinsOnly = showValidatedProteinsOnly;
+        
     }
 
     /**
@@ -109,7 +122,9 @@ public class DisplayParameters implements Serializable {
      * @return true if only the validated proteins are to be displayed
      */
     public boolean showValidatedProteinsOnly() {
+        
         return showValidatedProteinsOnly;
+        
     }
 
     /**
@@ -119,10 +134,9 @@ public class DisplayParameters implements Serializable {
      * @return the number of amino acids surrounding a peptide sequence
      */
     public int getnAASurroundingPeptides() {
-        if (nAASurroundingPeptides == null) {
-            nAASurroundingPeptides = 2;
-        }
+        
         return nAASurroundingPeptides;
+        
     }
 
     /**
@@ -132,7 +146,9 @@ public class DisplayParameters implements Serializable {
      * peptide sequence
      */
     public void setnAASurroundingPeptides(int nAASurroundingPeptides) {
+        
         this.nAASurroundingPeptides = nAASurroundingPeptides;
+        
     }
 
     /**
@@ -142,7 +158,9 @@ public class DisplayParameters implements Serializable {
      * @param displayed a boolean indicating whether the PTM shall be displayed
      */
     public void setDisplayedModification(String ptmName, boolean displayed) {
+        
         displayedPTMs.put(ptmName, displayed);
+        
     }
 
     /**
@@ -152,15 +170,18 @@ public class DisplayParameters implements Serializable {
      * @return a boolean indicating whether the PTM shall be displayed
      */
     public boolean isDisplayedPTM(String ptmName) {
-        if (displayedPTMs == null) {
-            throw new IllegalArgumentException("The displayed PTM map is not set for this project.");
-        }
+        
         Boolean result = displayedPTMs.get(ptmName);
+        
         if (result == null) {
+            
             result = false;
             setDisplayedModification(ptmName, result);
+            
         }
+        
         return result;
+        
     }
 
     /**
@@ -169,8 +190,11 @@ public class DisplayParameters implements Serializable {
      * @param modificationProfile the modification profile
      */
     public void setDefaultSelection(com.compomics.util.parameters.identification.search.ModificationParameters modificationProfile) {
+        
         for (String ptm : modificationProfile.getAllNotFixedModifications()) {
+            
             setDisplayedModification(ptm, true);
+            
         }
     }
     
@@ -179,14 +203,13 @@ public class DisplayParameters implements Serializable {
      * 
      * @return a list containing the names of the PTMs to display
      */
-    public ArrayList<String> getDisplayedModifications() {
-        ArrayList<String> result = new ArrayList<>();
-        for (String ptmName : displayedPTMs.keySet()) {
-            if (displayedPTMs.get(ptmName)) {
-                result.add(ptmName);
-            }
-        }
-        return result;
+    public HashSet<String> getDisplayedModifications() {
+        
+        return displayedPTMs.entrySet().stream()
+                .filter(entry -> entry.getValue())
+                .map(Entry::getKey)
+                .collect(Collectors.toCollection(HashSet::new));
+        
     }
 
     /**
@@ -195,7 +218,9 @@ public class DisplayParameters implements Serializable {
      * @return true if bars are to be shown in the bubble plot
      */
     public boolean showBars() {
+        
         return showBars;
+        
     }
 
     /**
@@ -204,7 +229,9 @@ public class DisplayParameters implements Serializable {
      * @param showBars if the bars in the bubble plot are to be shown
      */
     public void setShowBars(boolean showBars) {
+        
         this.showBars = showBars;
+        
     }
 
     /**
@@ -215,7 +242,9 @@ public class DisplayParameters implements Serializable {
      * displays the standard Mascot version
      */
     public boolean useIntensityIonTable() {
+        
         return intensityIonTable;
+        
     }
 
     /**
@@ -225,6 +254,8 @@ public class DisplayParameters implements Serializable {
      * shown
      */
     public void setIntensityIonTable(boolean intensityIonTable) {
+        
         this.intensityIonTable = intensityIonTable;
+        
     }
 }

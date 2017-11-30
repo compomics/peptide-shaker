@@ -3974,7 +3974,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
     private ArrayList<com.compomics.util.gui.protein.ModificationProfile> getModificationProfile(Peptide peptide, PSModificationScores scores) {
         ArrayList<com.compomics.util.gui.protein.ModificationProfile> profiles = new ArrayList<>();
         if (scores != null) {
-            for (String ptmName : scores.getScoredPTMs()) {
+            for (String ptmName : scores.getScoredModifications()) {
                 Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(ptmName);
                 com.compomics.util.gui.protein.ModificationProfile tempProfile = new com.compomics.util.gui.protein.ModificationProfile(ptmName, new double[peptide.getSequence().length()][2], ptmColor);
                 ModificationScoring locationScoring = scores.getModificationScoring(ptmName);
@@ -4810,7 +4810,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                             HashMap<Integer, Double> dScores = new HashMap<>();
                             HashMap<Integer, Double> pScores = new HashMap<>();
 
-                            for (String ptmName : ptmScores.getScoredPTMs()) {
+                            for (String ptmName : ptmScores.getScoredModifications()) {
 
                                 Modification ptm = ptmFactory.getModification(ptmName);
 

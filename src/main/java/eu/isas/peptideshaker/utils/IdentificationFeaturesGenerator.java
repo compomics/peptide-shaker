@@ -1687,7 +1687,7 @@ public class IdentificationFeaturesGenerator {
         if (psPtmScores != null) {
 
             boolean firstPtm = true;
-            ArrayList<String> ptms = psPtmScores.getConfidentlyLocalizedPtms();
+            ArrayList<String> ptms = psPtmScores.getConfidentlyLocalizedModifications();
             Collections.sort(ptms);
 
             for (String ptm : ptms) {
@@ -1699,7 +1699,7 @@ public class IdentificationFeaturesGenerator {
                 result.append(ptm);
                 result.append("(");
                 boolean firstSite = true;
-                ArrayList<Integer> sites = psPtmScores.getConfidentSitesForPtm(ptm);
+                ArrayList<Integer> sites = psPtmScores.getConfidentSitesForModification(ptm);
                 Collections.sort(sites);
                 for (Integer site : sites) {
                     if (!firstSite) {
@@ -1733,7 +1733,7 @@ public class IdentificationFeaturesGenerator {
 
         if (psPtmScores != null) {
             boolean firstPtm = true;
-            ArrayList<String> ptms = psPtmScores.getConfidentlyLocalizedPtms();
+            ArrayList<String> ptms = psPtmScores.getConfidentlyLocalizedModifications();
             Collections.sort(ptms);
 
             for (String ptm : ptms) {
@@ -1744,7 +1744,7 @@ public class IdentificationFeaturesGenerator {
                 }
                 result.append(ptm);
                 result.append("(");
-                result.append(psPtmScores.getConfidentSitesForPtm(ptm).size());
+                result.append(psPtmScores.getConfidentSitesForModification(ptm).size());
                 result.append(")");
             }
         }
@@ -1770,7 +1770,7 @@ public class IdentificationFeaturesGenerator {
         StringBuilder result = new StringBuilder();
 
         if (psPtmScores != null) {
-            ArrayList<String> ptms = psPtmScores.getAmbiguouslyLocalizedPtms();
+            ArrayList<String> ptms = psPtmScores.getAmbiguouslyLocalizedModifications();
             Collections.sort(ptms);
             for (String ptmName : ptms) {
                 if (result.length() > 0) {
@@ -1826,7 +1826,7 @@ public class IdentificationFeaturesGenerator {
         StringBuilder result = new StringBuilder();
 
         if (psPtmScores != null) {
-            ArrayList<String> ptms = psPtmScores.getAmbiguouslyLocalizedPtms();
+            ArrayList<String> ptms = psPtmScores.getAmbiguouslyLocalizedModifications();
             Collections.sort(ptms);
 
             for (String ptmName : ptms) {
@@ -1862,7 +1862,7 @@ public class IdentificationFeaturesGenerator {
             Collections.sort(targetedPtms);
             ArrayList<Integer> sites = new ArrayList<>();
             for (String ptm : targetedPtms) {
-                for (Integer site : psPtmScores.getConfidentSitesForPtm(ptm)) {
+                for (Integer site : psPtmScores.getConfidentSitesForModification(ptm)) {
                     if (!sites.contains(site)) {
                         sites.add(site);
                     }
@@ -1900,7 +1900,7 @@ public class IdentificationFeaturesGenerator {
 
             ArrayList<Integer> sites = new ArrayList<>();
             for (String ptm : targetedPtms) {
-                for (Integer site : psPtmScores.getConfidentSitesForPtm(ptm)) {
+                for (Integer site : psPtmScores.getConfidentSitesForModification(ptm)) {
                     if (!sites.contains(site)) {
                         sites.add(site);
                     }

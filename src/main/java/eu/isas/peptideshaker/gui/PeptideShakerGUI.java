@@ -316,12 +316,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private JumpToPanel jumpToPanel;
     /**
-     * The class used to star/hide items.
-     */
-    private StarHider starHider = new StarHider(this);
-    /**
-     * The class used to provide graphical sexy features out of the
-     * identification.
+     * The class used to provide graphical features.
      */
     private DisplayFeaturesGenerator displayFeaturesGenerator;
     /**
@@ -3248,6 +3243,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         }
 
         displayFeaturesGenerator.setDisplayedPTMs(getDisplayParameters().getDisplayedModifications());
+        
         updateModificationColorCoding();
 
     }//GEN-LAST:event_fixedModsJCheckBoxMenuItemActionPerformed

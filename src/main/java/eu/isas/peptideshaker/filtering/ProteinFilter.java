@@ -150,7 +150,7 @@ public class ProteinFilter extends MatchFilter {
                 PSModificationScores psPtmScores = new PSModificationScores();
                 psPtmScores = (PSModificationScores) proteinMatch.getUrParam(psPtmScores);
                 ArrayList<String> ptms = psPtmScores != null ? 
-                        psPtmScores.getScoredPTMs() : new ArrayList<>(0);
+                        psPtmScores.getScoredModifications() : new ArrayList<>(0);
                 return filterItemComparator.passes(input, ptms);
                 
             case nPeptides:

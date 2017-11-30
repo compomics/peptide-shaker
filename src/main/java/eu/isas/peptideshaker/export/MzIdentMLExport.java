@@ -2070,7 +2070,7 @@ public class MzIdentMLExport {
 
                         if (peptide.getModificationMatches().length > 0) {
 
-                            ArrayList<String> scoredModifications = psModificationScores.getScoredPTMs();
+                            ArrayList<String> scoredModifications = psModificationScores.getScoredModifications();
                             HashSet<String> coveredModifications = new HashSet<>(scoredModifications.size());
 
                             for (String modName : scoredModifications) {
@@ -2176,7 +2176,7 @@ public class MzIdentMLExport {
 
                         if (peptide.getModificationMatches().length > 0) {
 
-                            ArrayList<String> scoredModifications = psModificationScores.getScoredPTMs();
+                            ArrayList<String> scoredModifications = psModificationScores.getScoredModifications();
                             HashSet<String> coveredModifications = new HashSet<>(scoredModifications.size());
 
                             for (String modName : scoredModifications) {
