@@ -1500,7 +1500,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
 
                         MatchesValidator matchesValidator = new MatchesValidator(pSMaps.getPsmSpecificMap(), pSMaps.getPeptideSpecificMap(), pSMaps.getProteinMap());
-                        matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), peptideShakerGUI.getGeneMaps(), pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getExceptionHandler(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getProcessingPreferences());
+                        matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), peptideShakerGUI.getGeneMaps(), pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getExceptionHandler(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingParameters(), peptideShakerGUI.getProcessingPreferences());
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(true);
 

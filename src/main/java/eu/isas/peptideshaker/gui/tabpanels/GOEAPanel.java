@@ -2044,7 +2044,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         ((DefaultTableModel) proteinTable.getModel()).fireTableStructureChanged();
         setProteinGoTableProperties();
 
-        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+        if (peptideShakerGUI.getDisplayParameters().showScores()) {
             proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Score");
         } else {
             proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Confidence");

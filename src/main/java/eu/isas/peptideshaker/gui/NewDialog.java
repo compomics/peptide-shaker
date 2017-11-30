@@ -692,7 +692,7 @@ public class NewDialog extends javax.swing.JDialog {
             }
             peptideShakerGUI.setShotgunProtocol(shotgunProtocol);
             peptideShakerGUI.setProcessingPreferences(processingPreferences);
-            peptideShakerGUI.setDisplayPreferences(displayPreferences);
+            peptideShakerGUI.setDisplayParameters(displayPreferences);
             projectDetails = new ProjectDetails();
             projectDetails.setCreationDate(new Date());
             projectDetails.setPeptideShakerVersion(new eu.isas.peptideshaker.utils.Properties().getVersion());
@@ -700,7 +700,7 @@ public class NewDialog extends javax.swing.JDialog {
             peptideShakerGUI.setCurentNotes(new ArrayList<>());
             peptideShakerGUI.updateNotesNotificationCounter();
             peptideShakerGUI.resetDisplayFeaturesGenerator();
-            peptideShakerGUI.setSpectrumCountingPreferences(spectrumCountingPreferences);
+            peptideShakerGUI.setSpectrumCountingParameters(spectrumCountingPreferences);
             
             ProjectParameters projectParameters = new ProjectParameters(projectNameIdTxt.getText().trim());
 

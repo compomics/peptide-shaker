@@ -5,12 +5,13 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.personalization.ExperimentObject;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.FilterParameters;
 import eu.isas.peptideshaker.parameters.PeptideShakerParameters;
+import eu.isas.peptideshaker.preferences.MsFilesParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
@@ -31,7 +32,9 @@ public class CpsExporter {
      * @param destinationFile the destination cps file
      * @param waitingHandler a waiting handler used to cancel the saving
      * @param identification the identification to save
+     * @param sequenceProvider the sequence provider
      * @param identificationParameters the identification parameters
+     * @param msFilesParameters the mass spectrometry input files of the project
      * @param spectrumCountingParameters the spectrum counting preferences
      * @param projectDetails the project details
      * @param filterParameters the filtering preferences
@@ -45,14 +48,14 @@ public class CpsExporter {
      *
      * @throws IOException thrown whenever an error occurred while reading or
      * writing a file
-     * @throws java.lang.InterruptedException exception thrown if a thread is
-     * interrupted while saving the project
      */
-    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, Identification identification,
-            IdentificationParameters identificationParameters, SpectrumCountingParameters spectrumCountingParameters, 
+    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, 
+            Identification identification, SequenceProvider sequenceProvider,
+            IdentificationParameters identificationParameters, MsFilesParameters msFilesParameters, 
+            SpectrumCountingParameters spectrumCountingParameters, 
             ProjectDetails projectDetails, FilterParameters filterParameters,
             Metrics metrics, GeneMaps geneMaps, IdentificationFeaturesCache identificationFeaturesCache, boolean emptyCache,
-            DisplayParameters displayParameters, File dbFolder) throws IOException, InterruptedException {
+            DisplayParameters displayParameters, File dbFolder) throws IOException {
 
         identificationFeaturesCache.setReadOnly(true);
 
@@ -64,8 +67,8 @@ public class CpsExporter {
             // add all necessary data and parameters into the db for export
             if (!identification.contains(PeptideShakerParameters.key)) {
 
-                PeptideShakerParameters peptideShakerParameters = new PeptideShakerParameters(identificationParameters, spectrumCountingParameters,
-                        projectDetails, filterParameters, displayParameters, metrics, geneMaps, identificationFeaturesCache);
+                PeptideShakerParameters peptideShakerParameters = new PeptideShakerParameters(identificationParameters, msFilesParameters, spectrumCountingParameters,
+                        projectDetails, filterParameters, displayParameters, metrics, sequenceProvider, geneMaps, identificationFeaturesCache);
 
                 BlobObject blobObject = new BlobObject(peptideShakerParameters);
                 identification.addObject(PeptideShakerParameters.key, blobObject);
@@ -73,7 +76,7 @@ public class CpsExporter {
             }
 
             PSMaps psMaps = new PSMaps();
-            long psMapsIdentKey = ExperimentObject.asLong(psMaps.getParameterKey() + "_identification");
+            long psMapsIdentKey = psMaps.getParameterKey();
 
             if (!identification.contains(psMapsIdentKey)) {
 

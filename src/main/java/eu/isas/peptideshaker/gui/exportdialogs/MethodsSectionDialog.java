@@ -119,7 +119,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
             text += PeptideShakerMethods.getGeneAnnotation();
         }
         if (proteinAbundanceIndexesCheck.isSelected()) {
-            text += PeptideShakerMethods.getSpectrumCounting(peptideShakerGUI.getSpectrumCountingPreferences());
+            text += PeptideShakerMethods.getSpectrumCounting(peptideShakerGUI.getSpectrumCountingParameters());
         }
 
         if (geneAnnotationCheck.isSelected() || proteinAbundanceIndexesCheck.isSelected()) {
@@ -188,8 +188,8 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
                         PSExportFactory.writeExport(exportScheme, selectedFile, exportFormat, peptideShakerGUI.getProjectParameters().getProjectUniqueName(),
                                 peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
                                 peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), null, null, null, null,
-                                peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(), peptideShakerGUI.getIdentificationParameters(),
-                                peptideShakerGUI.getSpectrumCountingPreferences(), progressDialog);
+                                peptideShakerGUI.getDisplayParameters().getnAASurroundingPeptides(), peptideShakerGUI.getIdentificationParameters(),
+                                peptideShakerGUI.getSpectrumCountingParameters(), progressDialog);
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();

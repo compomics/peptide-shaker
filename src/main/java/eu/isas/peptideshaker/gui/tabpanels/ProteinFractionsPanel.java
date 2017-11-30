@@ -170,7 +170,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         proteinTableToolTips.add("MS2 Quantification");
         proteinTableToolTips.add("Protein Molecular Weight (kDa)");
 
-        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+        if (peptideShakerGUI.getDisplayParameters().showScores()) {
             proteinTableToolTips.add("Protein Score");
         } else {
             proteinTableToolTips.add("Protein Confidence");
@@ -265,7 +265,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             public void run() {
 
                 try {
-                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterPreferences());
+                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterParameters());
                 } catch (Exception e) {
                     // Now I'd be surprised that you reach this stage
                     peptideShakerGUI.catchException(e);
@@ -1887,7 +1887,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      */
     public void updateScores() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
-        ((ProteinTableModel) proteinTable.getModel()).showScores(peptideShakerGUI.getDisplayPreferences().showScores());
+        ((ProteinTableModel) proteinTable.getModel()).showScores(peptideShakerGUI.getDisplayParameters().showScores());
         ((DefaultTableModel) proteinTable.getModel()).fireTableStructureChanged();
         setProteinTableProperties();
 
@@ -1895,7 +1895,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             this.updateSelection();
         }
 
-        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+        if (peptideShakerGUI.getDisplayParameters().showScores()) {
             proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Score");
         } else {
             proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Confidence");

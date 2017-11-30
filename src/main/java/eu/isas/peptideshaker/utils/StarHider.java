@@ -2,12 +2,12 @@ package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
+import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.waiting.WaitingHandler;
@@ -41,10 +41,6 @@ public class StarHider {
      * PeptideShakerGUI instance.
      */
     private final PeptideShakerGUI peptideShakerGUI;
-    /**
-     * The sequence factory.
-     */
-    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The progress dialog.
      */
@@ -94,9 +90,6 @@ public class StarHider {
                     progressDialog.setPrimaryProgressCounterIndeterminate(false);
                     progressDialog.setMaxPrimaryProgressCounter(identification.getProteinIdentification().size());
 
-                    PSParameter psParameter = new PSParameter();
-                    ArrayList<UrParameter> parameters = new ArrayList<>(1);
-                    parameters.add(psParameter);
                     ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(progressDialog);
 
                     ArrayList<StarHiderRunnable> runnables = new ArrayList<>(nThreads);
@@ -110,14 +103,31 @@ public class StarHider {
                         return;
                     }
                     pool.shutdown();
-                    if (!pool.awaitTermination(7, TimeUnit.DAYS)) {
+                    if (!pool.awaitTermination(identification.getProteinIdentification().size(), TimeUnit.MINUTES)) {
                         throw new InterruptedException("Hiding/Starring matches timed out. Please contact the developers.");
                     }
 
                     HashMap<String, ArrayList<Double>> fractionMW = new HashMap<>();
+
                     for (StarHiderRunnable starHiderRunnable : runnables) {
+
                         HashMap<String, ArrayList<Double>> threadFractionMW = starHiderRunnable.getThreadFractionMW();
-                        for (String fraction : threadFractionMW.keySet()) 
+
+                        for (String fraction : threadFractionMW.keySet()) {
+
+                            ArrayList<Double> mws = fractionMW.get(fraction),
+                                    threadMws = threadFractionMW.get(fraction);
+
+                            if (mws == null) {
+
+                                fractionMW.put(fraction, threadMws);
+
+                            } else {
+
+                                mws.addAll(threadMws);
+
+                            }
+                        }
                     }
 
                     // set the observed fractional molecular weights per fraction
@@ -125,8 +135,11 @@ public class StarHider {
 
                     progressDialog.setRunFinished();
                     peptideShakerGUI.updateTabbedPanes();
+
                 } catch (Exception e) {
+
                     peptideShakerGUI.catchException(e);
+
                 }
             }
         }.start();
@@ -136,30 +149,21 @@ public class StarHider {
      * Stars a protein match.
      *
      * @param matchKey the key of the match
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public void starProtein(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
+    public void starProtein(long matchKey) {
+
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
+        ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);
+        PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
         boolean validated = false;
 
         for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
+
             if (matchFilter.getExceptions().contains(matchKey)) {
+
                 matchFilter.removeException(matchKey);
+
             }
             if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
                 validated = true;
@@ -167,171 +171,158 @@ public class StarHider {
         }
 
         if (!validated) {
+
             ProteinFilter proteinFilter;
+
             if (!filterPreferences.getProteinStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
+
                 proteinFilter = new ProteinFilter(MatchFilter.MANUAL_SELECTION);
                 proteinFilter.setDescription("Manual selection via the graphical interface");
                 filterPreferences.getProteinStarFilters().put(proteinFilter.getName(), proteinFilter);
+
             } else {
+
                 proteinFilter = filterPreferences.getProteinStarFilters().get(MatchFilter.MANUAL_SELECTION);
+
             }
+
             proteinFilter.addManualValidation(matchKey);
+
         }
 
         psParameter.setStarred(true);
         peptideShakerGUI.setDataSaved(false);
+
     }
 
     /**
      * Unstars a protein match.
      *
      * @param matchKey the key of the match
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public void unStarProtein(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
+    public void unStarProtein(long matchKey) {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
+        ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);
+        PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
         for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
+
             if (matchFilter.getManualValidation().contains(matchKey)) {
+
                 matchFilter.removeManualValidation(matchKey);
+
             }
+
             if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
+
                 matchFilter.addException(matchKey);
+
             }
         }
 
         psParameter.setStarred(false);
         peptideShakerGUI.setDataSaved(false);
+
     }
 
     /**
      * Hides a protein match.
      *
      * @param matchKey the key of the match
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public void hideProtein(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
+    public void hideProtein(long matchKey) {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
+        ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);
+        PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
         boolean validated = false;
 
         for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
+
             if (matchFilter.getExceptions().contains(matchKey)) {
+
                 matchFilter.removeException(matchKey);
+
             }
+
             if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
+
                 validated = true;
+
             }
         }
 
         if (!validated) {
+
             ProteinFilter proteinFilter;
+
             if (!filterPreferences.getProteinHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
+
                 proteinFilter = new ProteinFilter(MatchFilter.MANUAL_SELECTION);
                 proteinFilter.setDescription("Manual selection via the graphical interface");
                 filterPreferences.getProteinHideFilters().put(proteinFilter.getName(), proteinFilter);
+
             } else {
+
                 proteinFilter = filterPreferences.getProteinHideFilters().get(MatchFilter.MANUAL_SELECTION);
+
             }
+
             proteinFilter.addManualValidation(matchKey);
+
         }
 
         psParameter.setHidden(true);
         peptideShakerGUI.setDataSaved(false);
+
     }
 
     /**
      * Unhides a protein match.
      *
      * @param matchKey the key of the match
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public void unHideProtein(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
+    public void unHideProtein(long matchKey) {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
+        ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);
+        PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
+
         for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
+
             if (matchFilter.getManualValidation().contains(matchKey)) {
+
                 matchFilter.removeManualValidation(matchKey);
+
             }
+
             if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
+
                 matchFilter.addException(matchKey);
+
             }
         }
 
         psParameter.setHidden(true);
         peptideShakerGUI.setDataSaved(false);
+
     }
 
     /**
      * Stars a peptide match.
      *
      * @param matchKey the key of the match
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public void starPeptide(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
+    public void starPeptide(long matchKey) {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
+        PeptideMatch peptideMatch = identification.getPeptideMatch(matchKey);
+        PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
         boolean validated = false;
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
@@ -363,127 +354,117 @@ public class StarHider {
      * Unstars a peptide match.
      *
      * @param matchKey the key of the match
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public void unStarPeptide(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
+    public void unStarPeptide(long matchKey) {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
+
             if (matchFilter.getManualValidation().contains(matchKey)) {
+
                 matchFilter.removeManualValidation(matchKey);
+
             }
+
             if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
+
                 matchFilter.addException(matchKey);
+
             }
         }
 
         psParameter.setStarred(false);
         peptideShakerGUI.setDataSaved(false);
+
     }
 
     /**
      * Hides a peptide match.
      *
      * @param matchKey the key of the match
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public void hidePeptide(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
+    public void hidePeptide(long matchKey) {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
         boolean validated = false;
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
+
             if (matchFilter.getExceptions().contains(matchKey)) {
+
                 matchFilter.removeException(matchKey);
+
             }
+
             if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
+
                 validated = true;
+
             }
         }
 
         if (!validated) {
+
             PeptideFilter peptideFilter;
+
             if (!filterPreferences.getPeptideHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
+
                 peptideFilter = new PeptideFilter(MatchFilter.MANUAL_SELECTION);
                 peptideFilter.setDescription("Manual selection via the graphical interface");
                 filterPreferences.getPeptideHideFilters().put(peptideFilter.getName(), peptideFilter);
+
             } else {
+
                 peptideFilter = filterPreferences.getPeptideHideFilters().get(MatchFilter.MANUAL_SELECTION);
+
             }
+
             peptideFilter.addManualValidation(matchKey);
+
         }
 
         psParameter.setHidden(true);
         peptideShakerGUI.setDataSaved(false);
+
     }
 
     /**
      * Unhides a peptide match.
      *
      * @param matchKey the key of the match
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public void unHidePeptide(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
+    public void unHidePeptide(long matchKey) {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
+
             if (matchFilter.getManualValidation().contains(matchKey)) {
+
                 matchFilter.removeManualValidation(matchKey);
+
             }
+
             if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
+
                 matchFilter.addException(matchKey);
+
             }
         }
 
         psParameter.setHidden(false);
         peptideShakerGUI.setDataSaved(false);
+
     }
 
     /**
@@ -492,50 +473,52 @@ public class StarHider {
      * @param matchKey the key of the match
      * @param peptideSpectrumAnnotator the spectrum annotator to use during
      * filtering
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public void starPsm(String matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
+    public void starPsm(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
         boolean validated = false;
 
         if (!validated) {
+
             for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
+
                 if (matchFilter.getExceptions().contains(matchKey)) {
+
                     matchFilter.removeException(matchKey);
+
                 }
+
                 if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
+
                     validated = true;
+
                 }
             }
+
             PsmFilter psmFilter;
             if (!filterPreferences.getPsmStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
+
                 psmFilter = new PsmFilter(MatchFilter.MANUAL_SELECTION);
                 psmFilter.setDescription("Manual selection via the graphical interface");
                 filterPreferences.getPsmStarFilters().put(psmFilter.getName(), psmFilter);
+
             } else {
+
                 psmFilter = filterPreferences.getPsmStarFilters().get(MatchFilter.MANUAL_SELECTION);
+
             }
+
             psmFilter.addManualValidation(matchKey);
+
         }
 
         psParameter.setStarred(true);
         peptideShakerGUI.setDataSaved(false);
+
     }
 
     /**
@@ -544,38 +527,32 @@ public class StarHider {
      * @param matchKey the key of the match
      * @param peptideSpectrumAnnotator the spectrum annotator to use during
      * filtering
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public void unStarPsm(String matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
+    public void unStarPsm(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
 
         for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
+
             if (matchFilter.getManualValidation().contains(matchKey)) {
+
                 matchFilter.removeManualValidation(matchKey);
+
             }
+
             if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
+
                 matchFilter.addException(matchKey);
+
             }
         }
 
         psParameter.setStarred(false);
         peptideShakerGUI.setDataSaved(false);
+
     }
 
     /**
@@ -584,50 +561,52 @@ public class StarHider {
      * @param matchKey the key of the match
      * @param peptideSpectrumAnnotator the spectrum annotator to use during
      * filtering
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public void hidePsm(String matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
+    public void hidePsm(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
         boolean validated = false;
 
         if (!validated) {
+
             for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
+
                 if (matchFilter.getExceptions().contains(matchKey)) {
+
                     matchFilter.removeException(matchKey);
+
                 }
+
                 if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
+
                     validated = true;
+
                 }
             }
+
             PsmFilter psmFilter;
             if (!filterPreferences.getPsmHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
+
                 psmFilter = new PsmFilter(MatchFilter.MANUAL_SELECTION);
                 psmFilter.setDescription("Manual selection via the graphical interface");
                 filterPreferences.getPsmHideFilters().put(psmFilter.getName(), psmFilter);
+
             } else {
+
                 psmFilter = filterPreferences.getPsmHideFilters().get(MatchFilter.MANUAL_SELECTION);
+
             }
+
             psmFilter.addManualValidation(matchKey);
+
         }
 
         psParameter.setHidden(true);
         peptideShakerGUI.setDataSaved(false);
+
     }
 
     /**
@@ -636,38 +615,32 @@ public class StarHider {
      * @param matchKey the key of the match
      * @param peptideSpectrumAnnotator the spectrum annotator to use during
      * filtering
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public void unHidePsm(String matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
+    public void unHidePsm(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
 
         for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
+
             if (matchFilter.getManualValidation().contains(matchKey)) {
+
                 matchFilter.removeManualValidation(matchKey);
+
             }
+
             if (matchFilter.isValidated(matchKey, identification, peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
+
                 matchFilter.addException(matchKey);
+
             }
         }
 
         psParameter.setHidden(false);
         peptideShakerGUI.setDataSaved(false);
+
     }
 
     /**
@@ -678,28 +651,14 @@ public class StarHider {
      *
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public boolean isProteinHidden(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
-        for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
-            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isProteinHidden(long matchKey) {
+
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
+
+        return filterPreferences.getProteinHideFilters().values().stream()
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null));
+
     }
 
     /**
@@ -710,30 +669,14 @@ public class StarHider {
      *
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public boolean isPeptideHidden(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
+    public boolean isPeptideHidden(long matchKey) {
 
-        for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
-            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
-                return true;
-            }
-        }
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
 
-        return false;
+        return filterPreferences.getPeptideHideFilters().values().stream()
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null));
+
     }
 
     /**
@@ -746,30 +689,14 @@ public class StarHider {
      *
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public boolean isPsmHidden(String matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
+    public boolean isPsmHidden(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
 
-        for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
-            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
-                return true;
-            }
-        }
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
 
-        return false;
+        return filterPreferences.getPsmHideFilters().values().stream()
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator));
+
     }
 
     /**
@@ -780,30 +707,14 @@ public class StarHider {
      *
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public boolean isProteinStarred(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
+    public boolean isProteinStarred(long matchKey) {
 
-        for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
-            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
-                return true;
-            }
-        }
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
 
-        return false;
+        return filterPreferences.getProteinStarFilters().values().stream()
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null));
+
     }
 
     /**
@@ -814,30 +725,14 @@ public class StarHider {
      *
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public boolean isPeptideStarred(String matchKey) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
+    public boolean isPeptideStarred(long matchKey) {
 
-        for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
-            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null)) {
-                return true;
-            }
-        }
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
 
-        return false;
+        return filterPreferences.getPeptideStarFilters().values().stream()
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), null));
+
     }
 
     /**
@@ -850,28 +745,13 @@ public class StarHider {
      *
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
-     *
-     * @throws IOException thrown whenever an error occurs while reading or
-     * writing a file.
-     * @throws InterruptedException thrown whenever a threading error occurs
-     * while processing the match.
-     * @throws SQLException thrown whenever an error occurs while interacting
-     * with a back-end database.
-     * @throws ClassNotFoundException thrown whenever an error occurs while
-     * deserilalizing an object from a database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException thrown whenever
-     * an error occurs while reading an mzML file.
-     * @throws org.apache.commons.math.MathException thrown whenever an error
-     * occurs while making statistics on a distribution.
      */
-    public boolean isPsmStarred(String matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException, MathException {
-        FilterParameters filterPreferences = peptideShakerGUI.getFilterPreferences();
-        for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
-            if (matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isPsmStarred(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
+
+        FilterParameters filterPreferences = peptideShakerGUI.getFilterParameters();
+
+        return filterPreferences.getPeptideStarFilters().values().stream()
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, peptideShakerGUI.getIdentification(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideSpectrumAnnotator));
 
     }
 
@@ -924,48 +804,39 @@ public class StarHider {
 
                 Identification identification = peptideShakerGUI.getIdentification();
 
-                PSParameter psParameter = new PSParameter();
+                ProteinMatch proteinMatch;
+                while ((proteinMatch = proteinMatchesIterator.next()) != null && !progressDialog.isRunCanceled()) {
 
-                while (proteinMatchesIterator.hasNext() && !progressDialog.isRunCanceled()) {
-
-                    ProteinMatch proteinMatch = proteinMatchesIterator.next();
-
-                    String proteinKey = proteinMatch.getKey();
-
-                    if (progressDialog.isRunCanceled()) {
-                        break;
-                    }
+                    long proteinKey = proteinMatch.getKey();
 
                     boolean peptidePassed = false;
 
-                    for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
+                    for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
 
-                        if (progressDialog.isRunCanceled()) {
-                            break;
-                        }
-
-                        PeptideMatch peptideMatch = (PeptideMatch) identification.retrieveObject(peptideKey);
+                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                         boolean psmpassed = false;
 
-                        for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
+                        for (long spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
 
-                            if (progressDialog.isRunCanceled()) {
-                                break;
-                            }
-
-                            psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(spectrumKey)).getUrParam(psParameter);
+                            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                            PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
 
                             if (isPsmHidden(spectrumKey, peptideSpectrumAnnotator)) {
+
                                 psParameter.setHidden(true);
+
                             } else {
+
                                 psParameter.setHidden(false);
                                 psmpassed = true;
+
                             }
 
                             psParameter.setStarred(isPsmStarred(spectrumKey, peptideSpectrumAnnotator));
+
                         }
 
-                        psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
+                        PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
                         if (!psmpassed) {
                             psParameter.setHidden(true);
@@ -977,14 +848,19 @@ public class StarHider {
                         }
 
                         psParameter.setStarred(isPeptideStarred(peptideKey));
+
                     }
 
-                    psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(proteinKey)).getUrParam(psParameter);
+                    PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
                     if (!peptidePassed) {
+
                         psParameter.setHidden(true);
+
                     } else {
+
                         psParameter.setHidden(isProteinHidden(proteinKey));
+
                     }
 
                     psParameter.setStarred(isProteinStarred(proteinKey));
@@ -992,29 +868,42 @@ public class StarHider {
                     // update the observed fractional molecular weights per fraction
                     if (!psParameter.getHidden() && psParameter.getMatchValidationLevel().isValidated() && !proteinMatch.isDecoy()) {
 
-                        Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getLeadingAccession());
+                        Double proteinMW = ProteinUtils.computeMolecularWeight(proteinMatch.getLeadingAccession());
 
                         for (String fraction : psParameter.getFractions()) {
 
                             // set the fraction molecular weights
                             if (psParameter.getFractionConfidence(fraction) > peptideShakerGUI.getIdentificationParameters().getFractionParameters().getProteinConfidenceMwPlots()) {
+
                                 if (threadFractionMW.containsKey(fraction)) {
+
                                     threadFractionMW.get(fraction).add(proteinMW);
+
                                 } else {
+
                                     ArrayList<Double> mw = new ArrayList<>();
                                     mw.add(proteinMW);
                                     threadFractionMW.put(fraction, mw);
+
                                 }
                             }
                         }
                     }
 
                     progressDialog.increasePrimaryProgressCounter();
+
+                    if (progressDialog.isRunCanceled()) {
+
+                        break;
+
+                    }
                 }
 
             } catch (Exception e) {
+
                 exceptionHandler.catchException(e);
                 progressDialog.setRunCanceled();
+
             }
         }
 
@@ -1028,6 +917,5 @@ public class StarHider {
         public HashMap<String, ArrayList<Double>> getThreadFractionMW() {
             return threadFractionMW;
         }
-
     }
 }

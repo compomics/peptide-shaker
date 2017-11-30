@@ -273,7 +273,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // export protein accessions
                 if (followUpCLIInputBean.accessionExportNeeded()) {
                     try {
-                        CLIExportMethods.exportAccessions(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterPreferences);
+                        CLIExportMethods.exportAccessions(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterParameters);
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the protein accessions.", true, true);
                         e.printStackTrace();
@@ -284,7 +284,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // export protein details
                 if (followUpCLIInputBean.accessionExportNeeded()) {
                     try {
-                        CLIExportMethods.exportFasta(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterPreferences);
+                        CLIExportMethods.exportFasta(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterParameters);
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the protein details.", true, true);
                         e.printStackTrace();

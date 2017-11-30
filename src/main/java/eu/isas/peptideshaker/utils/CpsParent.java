@@ -4,12 +4,10 @@ import com.compomics.util.db.object.objects.BlobObject;
 import com.compomics.util.Util;
 import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.experiment.ProjectParameters;
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import com.compomics.util.experiment.identification.identifications.Ms2Identification;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.io.compression.ZipUtils;
@@ -23,7 +21,7 @@ import eu.isas.peptideshaker.preferences.FilterParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters.SpectralCountingMethod;
-import eu.isas.peptideshaker.preferences.UserPreferences;
+import eu.isas.peptideshaker.preferences.UserParameters;
 import eu.isas.peptideshaker.preferences.UserPreferencesParent;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.PSMaps;
@@ -67,21 +65,21 @@ public class CpsParent extends UserPreferencesParent {
      */
     protected Metrics metrics;
     /**
+     * The sequence provider.
+     */
+    protected SequenceProvider sequenceProvider;
+    /**
      * The gene maps.
      */
     protected GeneMaps geneMaps;
     /**
-     * The filter preferences.
+     * The filter parameters.
      */
-    protected FilterParameters filterPreferences = new FilterParameters();
+    protected FilterParameters filterParameters = new FilterParameters();
     /**
-     * The display preferences.
+     * The display parameters.
      */
-    protected DisplayParameters displayPreferences = new DisplayParameters();
-    /**
-     * Information on the protocol used.
-     */
-    protected ShotgunProtocol shotgunProtocol;
+    protected DisplayParameters displayParameters = new DisplayParameters();
     /**
      * The identification parameters.
      */
@@ -97,7 +95,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * The name of the table to use to store PeptideShaker experiment settings.
      */
-    public static final String settingsTableName = "PeptideShaker_experiment_settings";
+    public static final String psParametersTableName = "PeptideShaker_experiment_parameters";
     /**
      * All parameters of a project
      */
@@ -116,29 +114,22 @@ public class CpsParent extends UserPreferencesParent {
      * @param dbFolder the folder where the database is stored.
      */
     public CpsParent(File dbFolder) {
+        
         this.dbFolder = dbFolder;
+        
     }
 
     /**
      * Loads the information from a cps file.
      *
      * @param zipFile the zip file containing the cps file
-     * @param dbFolder the folder where to untar the project
+     * @param dbFolder the folder where to extract the project
      * @param waitingHandler a waiting handler displaying feedback to the user.
      * Ignored if null
      *
-     * @throws IOException thrown of IOException occurs exception thrown
-     * whenever an error occurred while reading or writing a file
-     * @throws SQLException thrown of SQLException occurs exception thrown
-     * whenever an error occurred while interacting with the database
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while saving the project
-     * @throws org.apache.commons.compress.archivers.ArchiveException exception
-     * thrown whenever an error occurs while untaring the file
+     * @throws IOException thrown if an error occurred while reading the file
      */
-    public void loadCpsFromZipFile(File zipFile, File dbFolder, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, SQLException, InterruptedException, ArchiveException {
+    public void loadCpsFromZipFile(File zipFile, File dbFolder, WaitingHandler waitingHandler) throws IOException {
 
         String newName = PsZipUtils.getTempFolderName(zipFile.getName());
         String parentFolder = PsZipUtils.getUnzipParentFolder();
@@ -173,21 +164,16 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @throws IOException thrown of IOException occurs exception thrown
      * whenever an error occurred while reading or writing a file
-     * @throws SQLException thrown of SQLException occurs exception thrown
-     * whenever an error occurred while interacting with the database
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while saving the project
-     * @throws org.apache.commons.compress.archivers.ArchiveException exception
-     * thrown whenever an error occurs while untaring the file
      */
-    public void loadCpsFile(File dbFolder, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, SQLException, InterruptedException, ArchiveException {
+    public void loadCpsFile(File dbFolder, WaitingHandler waitingHandler) throws IOException {
 
         // close any open connection to an identification database
         if (identification != null) {
+
             identification.close();
+
         }
+
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
         String dbName = "tempDB-" + df.format(new Date()) + ".psDB";
         
@@ -197,14 +183,14 @@ public class CpsParent extends UserPreferencesParent {
         System.out.println(cpsFile.getAbsolutePath());
         
         ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), destinationFile.getName(), false);
-        BlobObject blobObject = (BlobObject)objectsDB.retrieveObject(PeptideShakerParameters.key);
-        PeptideShakerParameters experimentSettings = (PeptideShakerParameters)blobObject.unBlob();        
+        BlobObject blobObject = (BlobObject) objectsDB.retrieveObject(PeptideShakerParameters.key);
+        PeptideShakerParameters experimentSettings = (PeptideShakerParameters) blobObject.unBlob();        
         
-        projectParameters = (ProjectParameters)objectsDB.retrieveObject(ProjectParameters.nameForDatabase);
-        identification = new Ms2Identification(projectParameters.getProjectUniqueName(), objectsDB);
+        projectParameters = (ProjectParameters) objectsDB.retrieveObject(ProjectParameters.nameForDatabase);
+        identification = new Identification(objectsDB);
         
         PSMaps psMaps = new PSMaps();
-        psMaps = (PSMaps)objectsDB.retrieveObject(psMaps.getParameterKey() + "_identification");
+        psMaps = (PSMaps) objectsDB.retrieveObject(psMaps.getParameterKey());
         identification.addUrParam(psMaps);
         
         // Get PeptideShaker settings
@@ -213,27 +199,32 @@ public class CpsParent extends UserPreferencesParent {
         projectDetails = experimentSettings.getProjectDetails();
         metrics = experimentSettings.getMetrics();
         geneMaps = experimentSettings.getGeneMaps();
-        filterPreferences = experimentSettings.getFilterParameters();
-        displayPreferences = experimentSettings.getDisplayParameters();
-        shotgunProtocol = experimentSettings.getShotgunProtocol();
-
+        filterParameters = experimentSettings.getFilterParameters();
+        displayParameters = experimentSettings.getDisplayParameters();
+        sequenceProvider = experimentSettings.getSequenceProvider();
 
         // Set up caches
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, metrics, spectrumCountingPreferences);
+        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, sequenceProvider, identificationParameters, metrics, spectrumCountingPreferences);
         IdentificationFeaturesCache identificationFeaturesCache = experimentSettings.getIdentificationFeaturesCache();
+        
         if (identificationFeaturesCache != null) {
+
             identificationFeaturesGenerator.setIdentificationFeaturesCache(experimentSettings.getIdentificationFeaturesCache());
             identificationFeaturesCache.setReadOnly(false);
+
         }
 
         if (waitingHandler != null && waitingHandler.isRunCanceled()) {
+
             waitingHandler.setRunFinished();
             return;
+
         }
 
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);
         saveUserPreferences();
+        
     }
 
     /**
@@ -244,83 +235,18 @@ public class CpsParent extends UserPreferencesParent {
      * @param emptyCache if true the cache will be emptied
      *
      * @throws IOException thrown of IOException occurs exception thrown
-     * whenever an error occurred while reading or writing a file
-     * @throws SQLException thrown of SQLException occurs exception thrown
-     * whenever an error occurred while interacting with the database
-     * @throws ArchiveException thrown of ArchiveException occurs exception
-     * thrown whenever an error occurred while taring the project
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while saving the project
+     * whenever an error occurred while writing the file
      */
-    public void saveProject(WaitingHandler waitingHandler, boolean emptyCache) throws IOException, SQLException, ArchiveException, ClassNotFoundException, InterruptedException {
-        CpsExporter.saveAs(cpsFile, waitingHandler, identification, shotgunProtocol, identificationParameters,
-                spectrumCountingPreferences, projectDetails, filterPreferences, metrics, geneMaps,
-                identificationFeaturesGenerator.getIdentificationFeaturesCache(), emptyCache, displayPreferences, dbFolder);
+    public void saveProject(WaitingHandler waitingHandler, boolean emptyCache) throws IOException {
+        
+        CpsExporter.saveAs(cpsFile, waitingHandler, identification, sequenceProvider, identificationParameters,
+                spectrumCountingPreferences, projectDetails, filterParameters, metrics, geneMaps,
+                identificationFeaturesGenerator.getIdentificationFeaturesCache(), emptyCache, displayParameters, dbFolder);
 
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);
         saveUserPreferences();
-    }
-
-    /**
-     * Loads the FASTA file in the sequence factory.
-     *
-     * @param waitingHandler a waiting handler displaying progress to the user.
-     * Can be null.
-     * @throws IOException thrown of IOException occurs
-     * @throws FileNotFoundException thrown if FileNotFoundException occurs
-     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
-     *
-     * @return a boolean indicating whether the loading was successful
-     */
-    public boolean loadFastaFile(WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
-        return loadFastaFile(null, waitingHandler);
-    }
-
-    /**
-     * Loads the FASTA file in the sequence factory.
-     *
-     * @param folder a folder to look into, the user last selected folder for
-     * instance, can be null
-     * @param waitingHandler a waiting handler displaying progress to the user.
-     * Can be null
-     *
-     * @return a boolean indicating whether the loading was successful
-     *
-     * @throws IOException thrown of IOException occurs exception thrown
-     * whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object
-     */
-    public boolean loadFastaFile(File folder, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException {
-
-        SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-
-        // Load fasta file
-        ProteinInferenceParameters proteinInferencePreferences = identificationParameters.getProteinInferenceParameters();
-        File providedFastaLocation = proteinInferencePreferences.getProteinSequenceDatabase();
-        String fastaFileName = providedFastaLocation.getName();
-        File projectFolder = cpsFile.getParentFile();
-        File dataFolder = new File(projectFolder, "data");
-
-        if (providedFastaLocation.exists()) {
-            sequenceFactory.loadFastaFile(providedFastaLocation, waitingHandler);
-        } else if (folder != null && new File(folder, fastaFileName).exists()) {
-            sequenceFactory.loadFastaFile(new File(folder, fastaFileName), waitingHandler);
-            proteinInferencePreferences.setProteinSequenceDatabase(new File(folder, fastaFileName));
-        } else if (new File(projectFolder, fastaFileName).exists()) {
-            sequenceFactory.loadFastaFile(new File(projectFolder, fastaFileName), waitingHandler);
-            proteinInferencePreferences.setProteinSequenceDatabase(new File(projectFolder, fastaFileName));
-        } else if (new File(dataFolder, fastaFileName).exists()) {
-            sequenceFactory.loadFastaFile(new File(dataFolder, fastaFileName), waitingHandler);
-            proteinInferencePreferences.setProteinSequenceDatabase(new File(dataFolder, fastaFileName));
-        } else {
-            return false;
-        }
-
-        return true;
+        
     }
 
     /**
@@ -356,26 +282,40 @@ public class CpsParent extends UserPreferencesParent {
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
+            
             File providedSpectrumLocation = projectDetails.getSpectrumFile(spectrumFileName);
             File projectFolder = cpsFile.getParentFile();
             File dataFolder = new File(projectFolder, "data");
+            
             // try to locate the spectrum file
             if (providedSpectrumLocation == null || !providedSpectrumLocation.exists()) {
+
                 File fileInProjectFolder = new File(projectFolder, spectrumFileName);
                 File fileInDataFolder = new File(dataFolder, spectrumFileName);
                 File fileInGivenFolder = new File(folder, spectrumFileName);
+
                 if (fileInProjectFolder.exists()) {
+
                     projectDetails.addSpectrumFile(fileInProjectFolder);
+
                 } else if (fileInDataFolder.exists()) {
+
                     projectDetails.addSpectrumFile(fileInDataFolder);
+
                 } else if (fileInGivenFolder.exists()) {
+
                     projectDetails.addSpectrumFile(fileInDataFolder);
+
                 } else {
+
                     return false;
+
                 }
             }
+
             File mgfFile = projectDetails.getSpectrumFile(spectrumFileName);
             spectrumFactory.addSpectra(mgfFile, waitingHandler);
+
         }
 
         return true;
@@ -446,7 +386,7 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @return the spectrum counting preferences
      */
-    public SpectrumCountingParameters getSpectrumCountingPreferences() {
+    public SpectrumCountingParameters getSpectrumCountingParameters() {
         return spectrumCountingPreferences;
     }
 
@@ -482,8 +422,8 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @return the filter preferences
      */
-    public FilterParameters getFilterPreferences() {
-        return filterPreferences;
+    public FilterParameters getFilterParameters() {
+        return filterParameters;
     }
 
     /**
@@ -491,8 +431,8 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @return the display preferences
      */
-    public DisplayParameters getDisplayPreferences() {
-        return displayPreferences;
+    public DisplayParameters getDisplayParameters() {
+        return displayParameters;
     }
 
     /**
@@ -519,7 +459,7 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param spectrumCountingPreferences the spectrum counting preferences
      */
-    public void setSpectrumCountingPreferences(SpectrumCountingParameters spectrumCountingPreferences) {
+    public void setSpectrumCountingParameters(SpectrumCountingParameters spectrumCountingPreferences) {
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         if (identificationFeaturesGenerator != null) {
             identificationFeaturesGenerator.setSpectrumCountingPreferences(spectrumCountingPreferences);
@@ -566,8 +506,8 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param filterPreferences the filter preferences
      */
-    public void setFilterPreferences(FilterParameters filterPreferences) {
-        this.filterPreferences = filterPreferences;
+    public void setFilterParameters(FilterParameters filterPreferences) {
+        this.filterParameters = filterPreferences;
     }
 
     /**
@@ -575,8 +515,8 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param displayPreferences the display preferences
      */
-    public void setDisplayPreferences(DisplayParameters displayPreferences) {
-        this.displayPreferences = displayPreferences;
+    public void setDisplayParameters(DisplayParameters displayPreferences) {
+        this.displayParameters = displayPreferences;
     }
 
     /**
@@ -593,7 +533,7 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @return the user preferences
      */
-    public UserPreferences getUserPreferences() {
+    public UserParameters getUserParameters() {
         return userPreferences;
     }
 
@@ -609,7 +549,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Sets the default preferences.
      */
-    public void setDefaultPreferences() {
+    public void setDefaultParameters() {
         SearchParameters searchParameters = new SearchParameters();
         identificationParameters = new IdentificationParameters(searchParameters);
         spectrumCountingPreferences = new SpectrumCountingParameters();

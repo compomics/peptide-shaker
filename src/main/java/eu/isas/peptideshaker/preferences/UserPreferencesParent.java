@@ -14,7 +14,7 @@ public abstract class UserPreferencesParent {
     /**
      * The user preferences.
      */
-    protected UserPreferences userPreferences;
+    protected UserParameters userPreferences;
 
     /**
      * Loads the user preferences.
@@ -24,15 +24,15 @@ public abstract class UserPreferencesParent {
         try {
             File file = new File(PeptideShaker.getUserPreferencesFile());
             if (!file.exists()) {
-                userPreferences = new UserPreferences();
+                userPreferences = new UserParameters();
                 saveUserPreferences();
             } else {
-                userPreferences = (UserPreferences) SerializationUtils.readObject(file);
+                userPreferences = (UserParameters) SerializationUtils.readObject(file);
             }
         } catch (Exception e) {
             System.err.println("An error occurred while loading " + PeptideShaker.getUserPreferencesFile() + " (see below). User preferences set back to default.");
             e.printStackTrace();
-            userPreferences = new UserPreferences();
+            userPreferences = new UserParameters();
         }
     }
 

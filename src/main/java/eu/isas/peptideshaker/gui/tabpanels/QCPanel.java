@@ -1392,7 +1392,7 @@ public class QCPanel extends javax.swing.JPanel {
                         } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
                             proteinChart.setTitle("Protein QC Plot - MS2 Quantification Scores");
 
-                            if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.EMPAI) {
+                            if (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod() == SpectralCountingMethod.EMPAI) {
                                 proteinChart.getCategoryPlot().getDomainAxis().setLabel("MS2 Quantification (emPAI)");
                             } else {
                                 proteinChart.getCategoryPlot().getDomainAxis().setLabel("MS2 Quantification (NSAF)");

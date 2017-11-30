@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class UserPreferences implements Serializable {
+public class UserParameters implements Serializable {
 
     /**
      * The serial number for serialization compatibility.
@@ -29,7 +29,7 @@ public class UserPreferences implements Serializable {
     /**
      * Constructor.
      */
-    public UserPreferences() {
+    public UserParameters() {
     }
 
     /**

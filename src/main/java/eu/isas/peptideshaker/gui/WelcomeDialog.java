@@ -516,7 +516,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 setVisible(false);
                 peptideShakerGUI.setVisible(true);
                 peptideShakerGUI.importPeptideShakerFile(selectedFile);
-                peptideShakerGUI.getUserPreferences().addRecentProject(selectedFile);
+                peptideShakerGUI.getUserParameters().addRecentProject(selectedFile);
                 peptideShakerGUI.updateRecentProjectsList();
                 LastSelectedFolder lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();
                 lastSelectedFolder.setLastSelectedFolder(selectedFile.getAbsolutePath());
@@ -728,7 +728,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                             boolean success = downloadSearchGUI();
 
                             if (success) {
-                                peptideShakerGUI.setUtilitiesUserPreferences(UtilitiesUserParameters.loadUserParameters());
+                                peptideShakerGUI.setUtilitiesUserParameters(UtilitiesUserParameters.loadUserParameters());
                             } else {
                                 openReshake = false;
                             }
@@ -817,7 +817,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private void searchGUISettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchGUISettingsMenuItemActionPerformed
         try {
             new SearchGuiSetupDialog(peptideShakerGUI, true);
-            peptideShakerGUI.loadUserPreferences();
+            peptideShakerGUI.loadUserParameters();
         } catch (Exception ex) {
             peptideShakerGUI.catchException(ex);
         }

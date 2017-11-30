@@ -441,7 +441,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                 if (jumpType == JumpType.proteinAndPeptides) {
 
-                                    for (String proteinKey : peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterPreferences())) {
+                                    for (String proteinKey : peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterParameters())) {
                                         if (!ProteinMatch.isDecoy(proteinKey)) {
                                             if (proteinKey.toLowerCase().contains(input)) {
                                                 possibilities.get(jumpType).add(proteinKey);

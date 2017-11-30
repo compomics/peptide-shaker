@@ -299,7 +299,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         proteinTableToolTips.add("MS2 Quantification");
         proteinTableToolTips.add("Protein Molecular Weight (kDa)");
 
-        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+        if (peptideShakerGUI.getDisplayParameters().showScores()) {
             proteinTableToolTips.add("Protein Score");
         } else {
             proteinTableToolTips.add("Protein Confidence");
@@ -2696,7 +2696,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 spectrumLayeredPane.repaint();
 
                 // set the sliders split pane divider location
-                if (peptideShakerGUI.getUserPreferences().showSliders()) {
+                if (peptideShakerGUI.getUserParameters().showSliders()) {
                     slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth() - 30);
                 } else {
                     slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth());
@@ -3884,7 +3884,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      *
      * @return a list of keys of the displayed PSMs
      */
-    public ArrayList<String> getDisplayedPsms() {
+    public ArrayList<String> getDisplayedSpectrumMatches() {
         return psmKeys;
     }
 
@@ -4047,7 +4047,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 ArrayList<MSnSpectrum> allSpectra = new ArrayList<>();
                 IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
                 AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
-                DisplayParameters displayPreferences = peptideShakerGUI.getDisplayPreferences();
+                DisplayParameters displayPreferences = peptideShakerGUI.getDisplayParameters();
                 ArrayList<Peptide> peptides = new ArrayList<>();
 
                 int maxCharge = 1;
@@ -4441,10 +4441,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // get the fixed ptms
                 HashMap<Integer, String> fixedPtms = new HashMap<>(); // @TODO: note that this only supports one fixed ptm per residue
-                DisplayParameters displayPreferences = peptideShakerGUI.getDisplayPreferences();
+                DisplayParameters displayPreferences = peptideShakerGUI.getDisplayParameters();
 
                 // see if fixed ptms are displayed
-                if (displayPreferences.getDisplayedPtms().size() != peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getVariableModifications().size()) {
+                if (displayPreferences.getDisplayedModifications().size() != peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getVariableModifications().size()) {
 
                     Identification identification = peptideShakerGUI.getIdentification();
                     identification.loadObjects(peptideKeys, progressDialog, false);
@@ -4577,10 +4577,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // get the fixed ptms
                 HashMap<Integer, String> fixedPtms = new HashMap<>(); // @TODO: note that this only supports one fixed ptm per residue
-                DisplayParameters displayPreferences = peptideShakerGUI.getDisplayPreferences();
+                DisplayParameters displayPreferences = peptideShakerGUI.getDisplayParameters();
 
                 // see if fixed ptms are displayed
-                if (displayPreferences.getDisplayedPtms().size() != peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getVariableModifications().size()) {
+                if (displayPreferences.getDisplayedModifications().size() != peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getVariableModifications().size()) {
 
                     Identification identification = peptideShakerGUI.getIdentification();
                     identification.loadObjects(peptideKeys, progressDialog, false);
@@ -4796,7 +4796,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                             // create and display the fragment ion table
                             ArrayList<ArrayList<IonMatch>> allAnnotations = getAnnotationsForAllSelectedSpectra();
-                            DisplayParameters displayPreferences = peptideShakerGUI.getDisplayPreferences();
+                            DisplayParameters displayPreferences = peptideShakerGUI.getDisplayParameters();
 
                             if (!displayPreferences.useIntensityIonTable()) {
                                 fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, specificAnnotationPreferences.getFragmentIonTypes(),
@@ -4935,7 +4935,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 // update the table model
                 if (psmTable.getModel() instanceof PsmTableModel && ((PsmTableModel) psmTable.getModel()).isInstantiated()) {
                     ((PsmTableModel) psmTable.getModel()).updateDataModel(identification, peptideShakerGUI.getDisplayFeaturesGenerator(),
-                            peptideShakerGUI.getIdentificationParameters(), psmKeys, peptideShakerGUI.getDisplayPreferences().showScores());
+                            peptideShakerGUI.getIdentificationParameters(), psmKeys, peptideShakerGUI.getDisplayParameters().showScores());
                     ((PsmTableModel) psmTable.getModel()).setSelfUpdating(true);
                     ((PsmTableModel) psmTable.getModel()).resetSorting(new ProgressDialogX(peptideShakerGUI,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -4943,7 +4943,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             true));
                 } else {
                     PsmTableModel psmTableModel = new PsmTableModel(identification, peptideShakerGUI.getDisplayFeaturesGenerator(),
-                            peptideShakerGUI.getIdentificationParameters(), psmKeys, peptideShakerGUI.getDisplayPreferences().showScores(),
+                            peptideShakerGUI.getIdentificationParameters(), psmKeys, peptideShakerGUI.getDisplayParameters().showScores(),
                             peptideShakerGUI.getExceptionHandler());
                     psmTable.setModel(psmTableModel);
                 }
@@ -5033,7 +5033,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 if (peptideTable.getModel() instanceof PeptideTableModel && ((PeptideTableModel) peptideTable.getModel()).isInstantiated()) {
                     ((PeptideTableModel) peptideTable.getModel()).updateDataModel(identification, identificationFeaturesGenerator,
                             peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(),
-                            accession, peptideKeys, peptideShakerGUI.getDisplayPreferences().showScores());
+                            accession, peptideKeys, peptideShakerGUI.getDisplayParameters().showScores());
                     ((PeptideTableModel) peptideTable.getModel()).setSelfUpdating(true);
                     ((PeptideTableModel) peptideTable.getModel()).resetSorting(new ProgressDialogX(peptideShakerGUI,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -5042,7 +5042,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 } else {
                     PeptideTableModel peptideTableModel = new PeptideTableModel(identification, identificationFeaturesGenerator,
                             peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(),
-                            accession, peptideKeys, peptideShakerGUI.getDisplayPreferences().showScores(), peptideShakerGUI.getExceptionHandler());
+                            accession, peptideKeys, peptideShakerGUI.getDisplayParameters().showScores(), peptideShakerGUI.getExceptionHandler());
                     peptideTable.setModel(peptideTableModel);
                 }
 
@@ -5111,7 +5111,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 try {
                     peptideShakerGUI.getIdentificationFeaturesGenerator().setProteinKeys(peptideShakerGUI.getMetrics().getProteinKeys());
                     try {
-                        proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterPreferences());
+                        proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterParameters());
                     } catch (Exception e) {
                         //Very bad news. Not totally sure how good an error at this point is handled
                         peptideShakerGUI.catchException(e);
@@ -5142,15 +5142,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     ((DefaultTableModel) proteinTable.getModel()).fireTableDataChanged();
 
                     // update spectrum counting column header tooltip
-                    if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.EMPAI) {
+                    if (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod() == SpectralCountingMethod.EMPAI) {
                         proteinTableToolTips.set(proteinTable.getColumn("MS2 Quant.").getModelIndex(), "Protein MS2 Quantification - emPAI");
-                    } else if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.NSAF) {
+                    } else if (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod() == SpectralCountingMethod.NSAF) {
                         proteinTableToolTips.set(proteinTable.getColumn("MS2 Quant.").getModelIndex(), "Protein MS2 Quantification - NSAF");
                     } else {
                         proteinTableToolTips.set(proteinTable.getColumn("MS2 Quant.").getModelIndex(), "Protein MS2 Quantification");
                     }
 
-                    if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+                    if (peptideShakerGUI.getDisplayParameters().showScores()) {
                         proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Score");
                     } else {
                         proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Confidence");
@@ -5491,7 +5491,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     public void updateScores() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
-        ((ProteinTableModel) proteinTable.getModel()).showScores(peptideShakerGUI.getDisplayPreferences().showScores());
+        ((ProteinTableModel) proteinTable.getModel()).showScores(peptideShakerGUI.getDisplayParameters().showScores());
         ((DefaultTableModel) proteinTable.getModel()).fireTableStructureChanged();
         ((DefaultTableModel) peptideTable.getModel()).fireTableStructureChanged();
         ((DefaultTableModel) psmTable.getModel()).fireTableStructureChanged();
@@ -5501,7 +5501,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             this.updateSelection(false);
         }
 
-        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+        if (peptideShakerGUI.getDisplayParameters().showScores()) {
             proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Score");
             peptideTableToolTips.set(peptideTable.getColumnCount() - 2, "Peptide Score");
             psmTableToolTips.set(psmTable.getColumnCount() - 2, "PSM Score");
@@ -5554,7 +5554,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     /**
      * Update the PTM color coding.
      */
-    public void updatePtmColors() {
+    public void updateModificationColors() {
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
@@ -5636,7 +5636,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 ProteinMatch proteinMatch = (ProteinMatch) peptideShakerGUI.getIdentification().retrieveObject(proteinKey);
                 Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getLeadingAccession());
                 HashMap<Integer, String[]> aaSurrounding = currentProtein.getSurroundingAA(Peptide.getSequence(peptideKey),
-                        peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(), peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
+                        peptideShakerGUI.getDisplayParameters().getnAASurroundingPeptides(), peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
 
                 String before = "", after = "";
 
@@ -5771,7 +5771,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 // @TODO: implement standard export
                 throw new UnsupportedOperationException("Export not implemented.");
             } else if (tableIndex == TableIndex.PSM_TABLE) {
-                ArrayList<String> selectedPsms = getDisplayedPsms();
+                ArrayList<String> selectedPsms = getDisplayedSpectrumMatches();
                 // @TODO: implement standard export
                 throw new UnsupportedOperationException("Export not implemented.");
             }

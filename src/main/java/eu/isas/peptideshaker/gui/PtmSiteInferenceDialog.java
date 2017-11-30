@@ -204,15 +204,15 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      */
     private void updateSequenceLabel() {
         try {
-            DisplayParameters displayPreferences = peptideShakerGUI.getDisplayPreferences();
+            DisplayParameters displayPreferences = peptideShakerGUI.getDisplayParameters();
             ModificationParameters modificationProfile = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters();
             Peptide peptide = peptideMatch.getPeptide();
             PSModificationScores ptmScores = new PSModificationScores();
             ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
-            HashMap<Integer, ArrayList<String>> fixedModifications = DisplayFeaturesGenerator.getFilteredModifications(peptide.getIndexedFixedModifications(), displayPreferences.getDisplayedPtms());
-            HashMap<Integer, ArrayList<String>> confidentLocations = DisplayFeaturesGenerator.getFilteredConfidentModificationsSites(ptmScores, displayPreferences.getDisplayedPtms());
-            HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayPreferences.getDisplayedPtms());
-            HashMap<Integer, ArrayList<String>> secondaryAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayPreferences.getDisplayedPtms());
+            HashMap<Integer, ArrayList<String>> fixedModifications = DisplayFeaturesGenerator.getFilteredModifications(peptide.getIndexedFixedModifications(), displayPreferences.getDisplayedModifications());
+            HashMap<Integer, ArrayList<String>> confidentLocations = DisplayFeaturesGenerator.getFilteredConfidentModificationsSites(ptmScores, displayPreferences.getDisplayedModifications());
+            HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayPreferences.getDisplayedModifications());
+            HashMap<Integer, ArrayList<String>> secondaryAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayPreferences.getDisplayedModifications());
 
             String modName = ptm.getName();
             int aa;

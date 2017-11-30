@@ -146,12 +146,12 @@ public class FiltersDialog extends javax.swing.JDialog {
         peptideHideFilters = new HashMap<>();
         psmStarFilters = new HashMap<>();
         psmHideFilters = new HashMap<>();
-        proteinStarFilters.putAll(peptideShakerGUI.getFilterPreferences().getProteinStarFilters());
-        proteinHideFilters.putAll(peptideShakerGUI.getFilterPreferences().getProteinHideFilters());
-        peptideStarFilters.putAll(peptideShakerGUI.getFilterPreferences().getPeptideStarFilters());
-        peptideHideFilters.putAll(peptideShakerGUI.getFilterPreferences().getPeptideHideFilters());
-        psmStarFilters.putAll(peptideShakerGUI.getFilterPreferences().getPsmStarFilters());
-        psmHideFilters.putAll(peptideShakerGUI.getFilterPreferences().getPsmHideFilters());
+        proteinStarFilters.putAll(peptideShakerGUI.getFilterParameters().getProteinStarFilters());
+        proteinHideFilters.putAll(peptideShakerGUI.getFilterParameters().getProteinHideFilters());
+        peptideStarFilters.putAll(peptideShakerGUI.getFilterParameters().getPeptideStarFilters());
+        peptideHideFilters.putAll(peptideShakerGUI.getFilterParameters().getPeptideHideFilters());
+        psmStarFilters.putAll(peptideShakerGUI.getFilterParameters().getPsmStarFilters());
+        psmHideFilters.putAll(peptideShakerGUI.getFilterParameters().getPsmHideFilters());
     }
 
     /**
@@ -1104,12 +1104,12 @@ public class FiltersDialog extends javax.swing.JDialog {
      * @param evt the action event
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        peptideShakerGUI.getFilterPreferences().setProteinStarFilters(proteinStarFilters);
-        peptideShakerGUI.getFilterPreferences().setProteinHideFilters(proteinHideFilters);
-        peptideShakerGUI.getFilterPreferences().setPeptideStarFilters(peptideStarFilters);
-        peptideShakerGUI.getFilterPreferences().setPeptideHideFilters(peptideHideFilters);
-        peptideShakerGUI.getFilterPreferences().setPsmStarFilters(psmStarFilters);
-        peptideShakerGUI.getFilterPreferences().setPsmHideFilters(psmHideFilters);
+        peptideShakerGUI.getFilterParameters().setProteinStarFilters(proteinStarFilters);
+        peptideShakerGUI.getFilterParameters().setProteinHideFilters(proteinHideFilters);
+        peptideShakerGUI.getFilterParameters().setPeptideStarFilters(peptideStarFilters);
+        peptideShakerGUI.getFilterParameters().setPeptideHideFilters(peptideHideFilters);
+        peptideShakerGUI.getFilterParameters().setPsmStarFilters(psmStarFilters);
+        peptideShakerGUI.getFilterParameters().setPsmHideFilters(psmHideFilters);
 
         setVisible(false);
 
@@ -1145,7 +1145,7 @@ public class FiltersDialog extends javax.swing.JDialog {
             }
             if (others.contains(newName)) {
                 int outcome = JOptionPane.YES_OPTION;
-                if (peptideShakerGUI.getFilterPreferences().filterExists(newName)) {
+                if (peptideShakerGUI.getFilterParameters().filterExists(newName)) {
                     outcome = JOptionPane.showConfirmDialog(this,
                             "Should protein filter " + newName + " be overwritten?", "Selected Name Already Exists",
                             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -1676,7 +1676,7 @@ public class FiltersDialog extends javax.swing.JDialog {
             }
             if (others.contains(newName)) {
                 int outcome = JOptionPane.YES_OPTION;
-                if (peptideShakerGUI.getFilterPreferences().filterExists(newName)) {
+                if (peptideShakerGUI.getFilterParameters().filterExists(newName)) {
                     outcome = JOptionPane.showConfirmDialog(this,
                             "Should protein filter " + newName + " be overwritten?", "Selected Name Already Exists",
                             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -1732,7 +1732,7 @@ public class FiltersDialog extends javax.swing.JDialog {
             }
             if (others.contains(newName)) {
                 int outcome = JOptionPane.YES_OPTION;
-                if (peptideShakerGUI.getFilterPreferences().filterExists(newName)) {
+                if (peptideShakerGUI.getFilterParameters().filterExists(newName)) {
                     outcome = JOptionPane.showConfirmDialog(this,
                             "Should peptide filter " + newName + " be overwritten?", "Selected Name Already Exists",
                             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -1788,7 +1788,7 @@ public class FiltersDialog extends javax.swing.JDialog {
             }
             if (others.contains(newName)) {
                 int outcome = JOptionPane.YES_OPTION;
-                if (peptideShakerGUI.getFilterPreferences().filterExists(newName)) {
+                if (peptideShakerGUI.getFilterParameters().filterExists(newName)) {
                     outcome = JOptionPane.showConfirmDialog(this,
                             "Should peptide filter " + newName + " be overwritten?", "Selected Name Already Exists",
                             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -1844,7 +1844,7 @@ public class FiltersDialog extends javax.swing.JDialog {
             }
             if (others.contains(newName)) {
                 int outcome = JOptionPane.YES_OPTION;
-                if (peptideShakerGUI.getFilterPreferences().filterExists(newName)) {
+                if (peptideShakerGUI.getFilterParameters().filterExists(newName)) {
                     outcome = JOptionPane.showConfirmDialog(this,
                             "Should psm filter " + newName + " be overwritten?", "Selected Name Already Exists",
                             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -1900,7 +1900,7 @@ public class FiltersDialog extends javax.swing.JDialog {
             }
             if (others.contains(newName)) {
                 int outcome = JOptionPane.YES_OPTION;
-                if (peptideShakerGUI.getFilterPreferences().filterExists(newName)) {
+                if (peptideShakerGUI.getFilterParameters().filterExists(newName)) {
                     outcome = JOptionPane.showConfirmDialog(this,
                             "Should psm filter " + newName + " be overwritten?", "Selected Name Already Exists",
                             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);

@@ -81,10 +81,10 @@ public class ProteinFractionTableModel extends DefaultTableModel {
 
         if (identification != null) {
             try {
-                if (peptideShakerGUI.getDisplayPreferences().showValidatedProteinsOnly()) {
-                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(peptideShakerGUI.getFilterPreferences()); // show validated proteins only
+                if (peptideShakerGUI.getDisplayParameters().showValidatedProteinsOnly()) {
+                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(peptideShakerGUI.getFilterParameters()); // show validated proteins only
                 } else {
-                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterPreferences()); // show all proteins
+                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterParameters()); // show all proteins
                 }
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);

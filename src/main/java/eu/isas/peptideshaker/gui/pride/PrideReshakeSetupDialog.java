@@ -1618,7 +1618,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
                 // reload the user preferences
                 try {
-                    prideReShakeGUI.getPeptideShakerGUI().setUtilitiesUserPreferences(UtilitiesUserParameters.loadUserParameters());
+                    prideReShakeGUI.getPeptideShakerGUI().setUtilitiesUserParameters(UtilitiesUserParameters.loadUserParameters());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null, "An error occurred when reading the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();

@@ -3,11 +3,13 @@ package eu.isas.peptideshaker.parameters;
 import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.db.object.DbObject;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.FilterParameters;
+import eu.isas.peptideshaker.preferences.MsFilesParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
@@ -15,7 +17,7 @@ import eu.isas.peptideshaker.utils.Metrics;
 import java.io.Serializable;
 
 /**
- * This class will be used to save all settings needed in PeptideShaker.
+ * This class stores parameters for a PeptideShaker project.
  *
  * @author Marc Vaudel
  */
@@ -28,74 +30,82 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
     /**
      * The identification parameters.
      */
-    private IdentificationParameters identificationParameters;
+    private final IdentificationParameters identificationParameters;
     /**
      * The spectrum counting preferences.
      */
-    private SpectrumCountingParameters spectrumCountingPreferences;
+    private final SpectrumCountingParameters spectrumCountingPreferences;
     /**
      * The GUI filter preferences.
      */
-    private FilterParameters filterParameters;
+    private final FilterParameters filterParameters;
     /**
      * The display preferences.
      */
-    private DisplayParameters displayParameters;
+    private final DisplayParameters displayParameters;
     /**
      * The project details.
      */
-    private ProjectDetails projectDetails;
+    private final ProjectDetails projectDetails;
     /**
      * The metrics saved when loading the files.
      */
-    private Metrics metrics;
+    private final Metrics metrics;
+    /**
+     * the sequence provider.
+     */
+    private final SequenceProvider sequenceProvider;
     /**
      * The gene maps.
      */
-    protected GeneMaps geneMaps;
+    protected final GeneMaps geneMaps;
+    /**
+     * Map of the mass spectrometry input files parameters.
+     */
+    private final MsFilesParameters msFilesParameters;
     /**
      * The identification features generator with features in cache.
      */
-    private IdentificationFeaturesCache identificationFeaturesCache;
+    private final IdentificationFeaturesCache identificationFeaturesCache;
     /**
      * The key of the object when stored in settings table of a cps file.
      */
-    public static final long key = ExperimentObject.asLong("PeptideShaker");
-
-    /**
-     * Blank constructor.
-     */
-    public PeptideShakerParameters() {
-    }
+    public static final long key = ExperimentObject.asLong("PeptideShaker_parameters");
 
     /**
      * Constructor for a PeptideShaker Settings class.
      *
      * @param identificationParameters the parameters used for identification
+     * @param msFilesParameters the mass spectrometry input files parameters
      * @param spectrumCountingPreferences The spectrum counting preferences
      * @param projectDetails The project details
      * @param filterPreferences The filter preferences
      * @param displayPreferences The display preferences
      * @param metrics The metrics saved when loading the files
+     * @param sequenceProvider the sequence provider
      * @param geneMaps The gene maps
      * @param identificationFeaturesCache The identification features cache
      */
     public PeptideShakerParameters(IdentificationParameters identificationParameters,
+            MsFilesParameters msFilesParameters,
             SpectrumCountingParameters spectrumCountingPreferences,
             ProjectDetails projectDetails,
             FilterParameters filterPreferences,
             DisplayParameters displayPreferences,
             Metrics metrics,
+            SequenceProvider sequenceProvider,
             GeneMaps geneMaps,
             IdentificationFeaturesCache identificationFeaturesCache) {
         
         this.identificationParameters = identificationParameters;
+        this.msFilesParameters = msFilesParameters;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.projectDetails = projectDetails;
         this.filterParameters = filterPreferences;
         this.displayParameters = displayPreferences;
-        this.geneMaps = geneMaps;
         this.metrics = metrics;
+        this.sequenceProvider = sequenceProvider;
+        this.geneMaps = geneMaps;
         this.identificationFeaturesCache = identificationFeaturesCache;
     
     }
@@ -114,16 +124,16 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
     }
 
     /**
-     * Sets the identification parameters.
-     *
-     * @param identificationParameters the identification parameters
+     * Returns the mass spectrometry input files parameters.
+     * 
+     * @return the mass spectrometry input files parameters
      */
-    public void setIdentificationParameters(IdentificationParameters identificationParameters) {
-    
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+    public MsFilesParameters getMsFilesParameters() {
         
-        this.identificationParameters = identificationParameters;
-    
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        
+        return msFilesParameters;
+        
     }
 
     /**
@@ -139,27 +149,17 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
     
     }
     
-    public void setSpectrumCountingPreferences(SpectrumCountingParameters spectrumCountingPreferences){
-    
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-        
-        this.spectrumCountingPreferences = spectrumCountingPreferences;
-    
-    }
-    
     /**
      * Returns the project details.
      *
      * @return the project details
      */
     public ProjectDetails getProjectDetails() {
+        
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        
         return projectDetails;
-    }
-    
-    public void setProjectDetails(ProjectDetails projectDetails){
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-        this.projectDetails = projectDetails;
+        
     }
 
     /**
@@ -172,19 +172,6 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         
         return filterParameters;
-    
-    }
-    
-    /**
-     * Sets the filter parameters.
-     * 
-     * @param filterParameters the filter parameters
-     */
-    public void setFilterParameters(FilterParameters filterParameters){
-        
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-        
-        this.filterParameters = filterParameters;
     
     }
 
@@ -200,19 +187,6 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
         return displayParameters;
     
     }
-    
-    /**
-     * Sets the display parameters.
-     * 
-     * @param displayParameters 
-     */
-    public void setDisplayParameters(DisplayParameters displayParameters){
-        
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-        
-        this.displayParameters = displayParameters;
-    
-    }
 
     /**
      * Returns the metrics saved when loading the files.
@@ -226,17 +200,17 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
         return metrics;
     
     }
-    
+
     /**
-     * Sets the metrics saved when loading the files.
-     * 
-     * @param metrics the metrics saved when loading the files
+     * Returns the sequence provider saved when loading the files.
+     *
+     * @return the sequence provider saved when loading the files
      */
-    public void setMetrics(Metrics metrics){
+    public SequenceProvider getSequenceProvider() {
         
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         
-        this.metrics = metrics;
+        return sequenceProvider;
     
     }
     
@@ -252,19 +226,6 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
         return geneMaps;
     
     }
-    
-    /**
-     * Sets the gene maps.
-     * 
-     * @param geneMaps the gene maps
-     */
-    public void setGeneMaps(GeneMaps geneMaps){
-        
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-        
-        this.geneMaps = geneMaps;
-    
-    }
 
     /**
      * Returns the identification features cache used by the identification
@@ -278,18 +239,6 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
         
         return identificationFeaturesCache;
     
-    }
-    
-    /**
-     * Sets the identification features cache used by the identification
-     * features generator before saving the file.
-     * 
-     * @param identificationFeaturesCache the identification features cache used by the identification
-     * features generator before saving the file
-     */
-    public void setIdentificationFeaturesCache(IdentificationFeaturesCache identificationFeaturesCache){
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-        this.identificationFeaturesCache = identificationFeaturesCache;
     }
 
     @Override

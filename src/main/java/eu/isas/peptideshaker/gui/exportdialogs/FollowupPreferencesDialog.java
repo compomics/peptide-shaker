@@ -1019,7 +1019,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             progressDialog.setMaxPrimaryProgressCounter(identificationFeaturesGenerator.getNValidatedProteins());
                         }
 
-                        FastaExport.export(selectedFile, peptideShakerGUI.getIdentification(), identificationFeaturesGenerator, exportType, progressDialog, peptideShakerGUI.getFilterPreferences(), finalAccessionsOnly);
+                        FastaExport.export(selectedFile, peptideShakerGUI.getIdentification(), identificationFeaturesGenerator, exportType, progressDialog, peptideShakerGUI.getFilterParameters(), finalAccessionsOnly);
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();

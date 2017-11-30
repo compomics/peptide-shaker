@@ -64,7 +64,7 @@ import org.jfree.chart.plot.PlotOrientation;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class PtmPanel extends javax.swing.JPanel {
+public class ModificationsPanel extends javax.swing.JPanel {
 
     /**
      * The progress dialog.
@@ -153,7 +153,7 @@ public class PtmPanel extends javax.swing.JPanel {
      *
      * @param peptideShakerGUI the PeptideShaker parent frame
      */
-    public PtmPanel(PeptideShakerGUI peptideShakerGUI) {
+    public ModificationsPanel(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
 
@@ -670,8 +670,6 @@ public class PtmPanel extends javax.swing.JPanel {
         ptmLayeredPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Variable Modifications"));
         ptmLayeredPanel.setOpaque(false);
 
-        ptmJScrollPane.setOpaque(false);
-
         ptmJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -760,9 +758,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 ptmSelectionHelpJButtonActionPerformed(evt);
             }
         });
+        ptmLayeredLayeredPane.setLayer(ptmSelectionHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         ptmLayeredLayeredPane.add(ptmSelectionHelpJButton);
         ptmSelectionHelpJButton.setBounds(240, 0, 10, 19);
-        ptmLayeredLayeredPane.setLayer(ptmSelectionHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuPtmBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -777,9 +775,9 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        ptmLayeredLayeredPane.setLayer(contextMenuPtmBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
         ptmLayeredLayeredPane.add(contextMenuPtmBackgroundPanel);
         contextMenuPtmBackgroundPanel.setBounds(230, 0, 20, 19);
-        ptmLayeredLayeredPane.setLayer(contextMenuPtmBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout ptmPanelLayout = new javax.swing.GroupLayout(ptmPanel);
         ptmPanel.setLayout(ptmPanelLayout);
@@ -797,7 +795,6 @@ public class PtmPanel extends javax.swing.JPanel {
         peptideTablesJSplitPane.setDividerSize(0);
         peptideTablesJSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         peptideTablesJSplitPane.setResizeWeight(0.5);
-        peptideTablesJSplitPane.setOpaque(false);
 
         modifiedPeptidesPanel.setOpaque(false);
 
@@ -808,9 +805,6 @@ public class PtmPanel extends javax.swing.JPanel {
         selectedPeptidesJSplitPane.setDividerLocation(400);
         selectedPeptidesJSplitPane.setDividerSize(0);
         selectedPeptidesJSplitPane.setResizeWeight(0.5);
-        selectedPeptidesJSplitPane.setOpaque(false);
-
-        peptidesTableJScrollPane.setOpaque(false);
 
         peptidesTable.setModel(new PeptideTable());
         peptidesTable.setOpaque(false);
@@ -881,9 +875,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 modificationProfileHelpJButtonActionPerformed(evt);
             }
         });
+        modifiedPeptidesLayeredPane.setLayer(modificationProfileHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         modifiedPeptidesLayeredPane.add(modificationProfileHelpJButton);
         modificationProfileHelpJButton.setBounds(747, 0, 10, 19);
-        modifiedPeptidesLayeredPane.setLayer(modificationProfileHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportModifiedPeptideProfileJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportModifiedPeptideProfileJButton.setToolTipText("Export");
@@ -904,9 +898,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 exportModifiedPeptideProfileJButtonMouseReleased(evt);
             }
         });
+        modifiedPeptidesLayeredPane.setLayer(exportModifiedPeptideProfileJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         modifiedPeptidesLayeredPane.add(exportModifiedPeptideProfileJButton);
         exportModifiedPeptideProfileJButton.setBounds(730, 0, 10, 19);
-        modifiedPeptidesLayeredPane.setLayer(exportModifiedPeptideProfileJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuModifiedPeptidesBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -921,9 +915,9 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        modifiedPeptidesLayeredPane.setLayer(contextMenuModifiedPeptidesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
         modifiedPeptidesLayeredPane.add(contextMenuModifiedPeptidesBackgroundPanel);
         contextMenuModifiedPeptidesBackgroundPanel.setBounds(730, 0, 30, 19);
-        modifiedPeptidesLayeredPane.setLayer(contextMenuModifiedPeptidesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout modifiedPeptidesPanelLayout = new javax.swing.GroupLayout(modifiedPeptidesPanel);
         modifiedPeptidesPanel.setLayout(modifiedPeptidesPanelLayout);
@@ -950,24 +944,21 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptidesJSplitPane.setBorder(null);
         relatedPeptidesJSplitPane.setDividerLocation(400);
         relatedPeptidesJSplitPane.setDividerSize(0);
-        relatedPeptidesJSplitPane.setOpaque(false);
-
-        relatedPeptidesTableJScrollPane.setOpaque(false);
 
         relatedPeptidesTable.setModel(new RelatedPeptidesTable());
         relatedPeptidesTable.setOpaque(false);
         relatedPeptidesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        relatedPeptidesTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                relatedPeptidesTableMouseMoved(evt);
+            }
+        });
         relatedPeptidesTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 relatedPeptidesTableMouseExited(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 relatedPeptidesTableMouseReleased(evt);
-            }
-        });
-        relatedPeptidesTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseMoved(java.awt.event.MouseEvent evt) {
-                relatedPeptidesTableMouseMoved(evt);
             }
         });
         relatedPeptidesTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1027,9 +1018,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 relatedProfileHelpJButtonActionPerformed(evt);
             }
         });
+        relatedPeptiesLayeredPane.setLayer(relatedProfileHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         relatedPeptiesLayeredPane.add(relatedProfileHelpJButton);
         relatedProfileHelpJButton.setBounds(750, 0, 10, 19);
-        relatedPeptiesLayeredPane.setLayer(relatedProfileHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportRelatedPeptideProfileJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportRelatedPeptideProfileJButton.setToolTipText("Export");
@@ -1050,9 +1041,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 exportRelatedPeptideProfileJButtonMouseReleased(evt);
             }
         });
+        relatedPeptiesLayeredPane.setLayer(exportRelatedPeptideProfileJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         relatedPeptiesLayeredPane.add(exportRelatedPeptideProfileJButton);
         exportRelatedPeptideProfileJButton.setBounds(740, 0, 10, 19);
-        relatedPeptiesLayeredPane.setLayer(exportRelatedPeptideProfileJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuRelatedPeptidesBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1067,9 +1058,9 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        relatedPeptiesLayeredPane.setLayer(contextMenuRelatedPeptidesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
         relatedPeptiesLayeredPane.add(contextMenuRelatedPeptidesBackgroundPanel);
         contextMenuRelatedPeptidesBackgroundPanel.setBounds(730, 0, 30, 19);
-        relatedPeptiesLayeredPane.setLayer(contextMenuRelatedPeptidesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout relatedPeptidesJPanelLayout = new javax.swing.GroupLayout(relatedPeptidesJPanel);
         relatedPeptidesJPanel.setLayout(relatedPeptidesJPanelLayout);
@@ -1103,7 +1094,6 @@ public class PtmPanel extends javax.swing.JPanel {
         psmSpectraSplitPane.setDividerLocation(500);
         psmSpectraSplitPane.setDividerSize(0);
         psmSpectraSplitPane.setResizeWeight(0.5);
-        psmSpectraSplitPane.setOpaque(false);
 
         spectrumAndFragmentIonJPanel.setOpaque(false);
         spectrumAndFragmentIonJPanel.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
@@ -1118,7 +1108,6 @@ public class PtmPanel extends javax.swing.JPanel {
         slidersSplitPane.setBorder(null);
         slidersSplitPane.setDividerLocation(500);
         slidersSplitPane.setDividerSize(0);
-        slidersSplitPane.setOpaque(false);
 
         spectrumTabbedPane.setBackground(new java.awt.Color(255, 255, 255));
         spectrumTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
@@ -1129,8 +1118,6 @@ public class PtmPanel extends javax.swing.JPanel {
         });
 
         psmAScoresJPanel.setOpaque(false);
-
-        psmAScoresScrollPane.setOpaque(false);
 
         psmAScoresTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1188,8 +1175,6 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumTabbedPane.addTab("Probabilistic Scores", psmAScoresJPanel);
 
         psmDeltaScoresJPanel.setOpaque(false);
-
-        psmDeltaScrollPane.setOpaque(false);
 
         psmDeltaScoresTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1292,7 +1277,6 @@ public class PtmPanel extends javax.swing.JPanel {
         accuracySlider.setPaintTicks(true);
         accuracySlider.setToolTipText("Annotation Accuracy");
         accuracySlider.setValue(100);
-        accuracySlider.setOpaque(false);
         accuracySlider.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 accuracySliderMouseWheelMoved(evt);
@@ -1308,7 +1292,6 @@ public class PtmPanel extends javax.swing.JPanel {
         intensitySlider.setPaintTicks(true);
         intensitySlider.setToolTipText("Annotation Intensity Level");
         intensitySlider.setValue(75);
-        intensitySlider.setOpaque(false);
         intensitySlider.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 intensitySliderMouseWheelMoved(evt);
@@ -1382,9 +1365,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 spectrumHelpJButtonActionPerformed(evt);
             }
         });
+        spectrumLayeredPane.setLayer(spectrumHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         spectrumLayeredPane.add(spectrumHelpJButton);
         spectrumHelpJButton.setBounds(540, 0, 10, 19);
-        spectrumLayeredPane.setLayer(spectrumHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportSpectrumJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportSpectrumJButton.setToolTipText("Export");
@@ -1405,9 +1388,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 exportSpectrumJButtonMouseReleased(evt);
             }
         });
+        spectrumLayeredPane.setLayer(exportSpectrumJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         spectrumLayeredPane.add(exportSpectrumJButton);
         exportSpectrumJButton.setBounds(530, 0, 10, 19);
-        spectrumLayeredPane.setLayer(exportSpectrumJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuSpectrumBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1422,9 +1405,9 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        spectrumLayeredPane.setLayer(contextMenuSpectrumBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
         spectrumLayeredPane.add(contextMenuSpectrumBackgroundPanel);
         contextMenuSpectrumBackgroundPanel.setBounds(530, 0, 30, 19);
-        spectrumLayeredPane.setLayer(contextMenuSpectrumBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout spectrumAndFragmentIonJPanelLayout = new javax.swing.GroupLayout(spectrumAndFragmentIonJPanel);
         spectrumAndFragmentIonJPanel.setLayout(spectrumAndFragmentIonJPanelLayout);
@@ -1444,14 +1427,11 @@ public class PtmPanel extends javax.swing.JPanel {
         psmSplitPane.setBorder(null);
         psmSplitPane.setDividerSize(0);
         psmSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        psmSplitPane.setOpaque(false);
 
         modPsmsPanel.setOpaque(false);
 
         modsPsmsLayeredPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide Spectrum Matches - Modified Peptide"));
         modsPsmsLayeredPanel.setOpaque(false);
-
-        psmsModifiedTableJScrollPane.setOpaque(false);
 
         selectedPsmsTable.setModel(new PsmsTable(false));
         selectedPsmsTable.setOpaque(false);
@@ -1516,9 +1496,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 modifiedPsmsHelpJButtonActionPerformed(evt);
             }
         });
+        psmsModPeptidesLayeredPane.setLayer(modifiedPsmsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         psmsModPeptidesLayeredPane.add(modifiedPsmsHelpJButton);
         modifiedPsmsHelpJButton.setBounds(480, 0, 10, 19);
-        psmsModPeptidesLayeredPane.setLayer(modifiedPsmsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportModifiedPsmsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportModifiedPsmsJButton.setToolTipText("Copy to Clipboard");
@@ -1541,9 +1521,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 exportModifiedPsmsJButtonActionPerformed(evt);
             }
         });
+        psmsModPeptidesLayeredPane.setLayer(exportModifiedPsmsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         psmsModPeptidesLayeredPane.add(exportModifiedPsmsJButton);
         exportModifiedPsmsJButton.setBounds(470, 0, 10, 19);
-        psmsModPeptidesLayeredPane.setLayer(exportModifiedPsmsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuModPsmsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1558,9 +1538,9 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        psmsModPeptidesLayeredPane.setLayer(contextMenuModPsmsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
         psmsModPeptidesLayeredPane.add(contextMenuModPsmsBackgroundPanel);
         contextMenuModPsmsBackgroundPanel.setBounds(460, 0, 30, 19);
-        psmsModPeptidesLayeredPane.setLayer(contextMenuModPsmsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout modPsmsPanelLayout = new javax.swing.GroupLayout(modPsmsPanel);
         modPsmsPanel.setLayout(modPsmsPanelLayout);
@@ -1579,8 +1559,6 @@ public class PtmPanel extends javax.swing.JPanel {
 
         relatedPsmsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide Spectrum Matches - Releated Peptide"));
         relatedPsmsPanel.setOpaque(false);
-
-        psmsRelatedTableJScrollPane.setOpaque(false);
 
         relatedPsmsTable.setModel(new PsmsTable(true));
         relatedPsmsTable.setOpaque(false);
@@ -1645,9 +1623,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 relatedPsmsHelpJButtonActionPerformed(evt);
             }
         });
+        psmsRelatedPeptidesJLayeredPane.setLayer(relatedPsmsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         psmsRelatedPeptidesJLayeredPane.add(relatedPsmsHelpJButton);
         relatedPsmsHelpJButton.setBounds(480, 0, 10, 19);
-        psmsRelatedPeptidesJLayeredPane.setLayer(relatedPsmsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportRelatedPsmsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportRelatedPsmsJButton.setToolTipText("Copy to Clipboard");
@@ -1670,9 +1648,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 exportRelatedPsmsJButtonActionPerformed(evt);
             }
         });
+        psmsRelatedPeptidesJLayeredPane.setLayer(exportRelatedPsmsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         psmsRelatedPeptidesJLayeredPane.add(exportRelatedPsmsJButton);
         exportRelatedPsmsJButton.setBounds(470, 0, 10, 19);
-        psmsRelatedPeptidesJLayeredPane.setLayer(exportRelatedPsmsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuRelatedPsmsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1687,9 +1665,9 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        psmsRelatedPeptidesJLayeredPane.setLayer(contextMenuRelatedPsmsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
         psmsRelatedPeptidesJLayeredPane.add(contextMenuRelatedPsmsBackgroundPanel);
         contextMenuRelatedPsmsBackgroundPanel.setBounds(460, 0, 30, 19);
-        psmsRelatedPeptidesJLayeredPane.setLayer(contextMenuRelatedPsmsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout relatedPsmsJPanelLayout = new javax.swing.GroupLayout(relatedPsmsJPanel);
         relatedPsmsJPanel.setLayout(relatedPsmsJPanelLayout);
@@ -1924,7 +1902,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         // set the sliders split pane divider location
-                        if (peptideShakerGUI.getUserPreferences().showSliders()) {
+                        if (peptideShakerGUI.getUserParameters().showSliders()) {
                             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth() - 30);
                         } else {
                             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth());
@@ -2317,7 +2295,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         if (!((String) ptmJTable.getValueAt(row, ptmJTable.getColumn("PTM").getModelIndex())).equalsIgnoreCase("no modification")) {
                             peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().setColor(
                                     (String) ptmJTable.getValueAt(row, ptmJTable.getColumn("  ").getModelIndex()), newColor);
-                            peptideShakerGUI.updatePtmColorCoding();
+                            peptideShakerGUI.updateModificationColorCoding();
                         }
                     }
                 } else {
@@ -3188,7 +3166,7 @@ public class PtmPanel extends javax.swing.JPanel {
      *
      * @return a list of the PSM keys of the currently displayed assumptions
      */
-    public ArrayList<String> getDisplayedPsms() {
+    public ArrayList<String> getDisplayedSpectrumMatches() {
         ArrayList<String> result = new ArrayList<>();
         try {
             for (String peptide : displayedPeptides) {
@@ -4564,7 +4542,7 @@ public class PtmPanel extends javax.swing.JPanel {
     /**
      * Update the PTM color coding.
      */
-    public void updatePtmColors() {
+    public void updateModificationColors() {
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
@@ -4700,7 +4678,7 @@ public class PtmPanel extends javax.swing.JPanel {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 // set the sliders split pane divider location
-                if (peptideShakerGUI.getUserPreferences().showSliders()) {
+                if (peptideShakerGUI.getUserParameters().showSliders()) {
                     slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth() - 30);
                 } else {
                     slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth());

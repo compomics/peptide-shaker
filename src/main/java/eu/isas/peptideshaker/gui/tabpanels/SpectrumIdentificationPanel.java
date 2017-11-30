@@ -403,7 +403,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         idSoftwareTableToolTips.add("Unassigned Spectra");
         idSoftwareTableToolTips.add("Identificaiton Rate (%)");
 
-        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+        if (peptideShakerGUI.getDisplayParameters().showScores()) {
 
             spectrumTable.getColumn("Score").setMaxWidth(90);
             spectrumTable.getColumn("Score").setMinWidth(90);
@@ -1542,7 +1542,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         // set the sliders split pane divider location
-                        if (peptideShakerGUI.getUserPreferences().showSliders()) {
+                        if (peptideShakerGUI.getUserParameters().showSliders()) {
                             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth() - 30);
                         } else {
                             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth());
@@ -3154,7 +3154,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     bubbleScale = annotationPreferences.getFragmentIonAccuracy() * 10 * peptideShakerGUI.getBubbleScale();
                                 }
 
-                                DisplayParameters displayPreferences = peptideShakerGUI.getDisplayPreferences();
+                                DisplayParameters displayPreferences = peptideShakerGUI.getDisplayParameters();
                                 MassErrorBubblePlot massErrorBubblePlot = new MassErrorBubblePlot(
                                         selectedIndexes, allAnnotations, allSpectra, annotationPreferences.getFragmentIonAccuracy(),
                                         bubbleScale, selectedIndexes.size() == 1, displayPreferences.showBars(),
@@ -3253,7 +3253,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     /**
      * Update the PTM color coding.
      */
-    public void updatePtmColors() {
+    public void updateModificationColors() {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         spectrumSelectionChanged();
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -3337,7 +3337,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     public void updateSeparators() {
         // set the sliders split pane divider location
-        if (peptideShakerGUI.getUserPreferences().showSliders()) {
+        if (peptideShakerGUI.getUserParameters().showSliders()) {
             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth() - 30);
         } else {
             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth());
@@ -3483,7 +3483,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         @Override
         public int getColumnCount() {
-            if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+            if (peptideShakerGUI.getDisplayParameters().showScores()) {
                 return 12;
             }
             return 11;
@@ -3492,7 +3492,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         @Override
         public String getColumnName(int column) {
             int columnIndex = column;
-            if (!peptideShakerGUI.getDisplayPreferences().showScores() && column > 8) {
+            if (!peptideShakerGUI.getDisplayParameters().showScores() && column > 8) {
                 columnIndex = column + 1;
             }
             switch (columnIndex) {
@@ -3528,7 +3528,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         @Override
         public Object getValueAt(int row, int column) {
             int columnIndex = column;
-            if (!peptideShakerGUI.getDisplayPreferences().showScores() && column > 8) {
+            if (!peptideShakerGUI.getDisplayParameters().showScores() && column > 8) {
                 columnIndex = column + 1;
             }
 
@@ -3678,7 +3678,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         @Override
         public int getColumnCount() {
-            if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+            if (peptideShakerGUI.getDisplayParameters().showScores()) {
                 return 7;
             }
             return 6;
@@ -3687,7 +3687,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         @Override
         public String getColumnName(int column) {
             int columnIndex = column;
-            if (!peptideShakerGUI.getDisplayPreferences().showScores() && column > 3) {
+            if (!peptideShakerGUI.getDisplayParameters().showScores() && column > 3) {
                 columnIndex = column + 1;
             }
             switch (columnIndex) {
@@ -3713,7 +3713,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         @Override
         public Object getValueAt(int row, int column) {
             int columnIndex = column;
-            if (!peptideShakerGUI.getDisplayPreferences().showScores() && column > 3) {
+            if (!peptideShakerGUI.getDisplayParameters().showScores() && column > 3) {
                 columnIndex = column + 1;
             }
 
@@ -3797,7 +3797,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         @Override
         public int getColumnCount() {
-            if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+            if (peptideShakerGUI.getDisplayParameters().showScores()) {
                 return 8;
             }
             return 7;
@@ -3806,7 +3806,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         @Override
         public String getColumnName(int column) {
             int columnIndex = column;
-            if (!peptideShakerGUI.getDisplayPreferences().showScores() && column > 4) {
+            if (!peptideShakerGUI.getDisplayParameters().showScores() && column > 4) {
                 columnIndex = column + 1;
             }
             switch (columnIndex) {
@@ -3834,7 +3834,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         @Override
         public Object getValueAt(int row, int column) {
             int columnIndex = column;
-            if (!peptideShakerGUI.getDisplayPreferences().showScores() && column > 4) {
+            if (!peptideShakerGUI.getDisplayParameters().showScores() && column > 4) {
                 columnIndex = column + 1;
             }
 
@@ -3855,7 +3855,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
                         ModificationParameters modificationProfile = searchParameters.getModificationParameters();
                         boolean showFixed = false;
-                        for (String ptmName : peptideShakerGUI.getDisplayPreferences().getDisplayedPtms()) {
+                        for (String ptmName : peptideShakerGUI.getDisplayParameters().getDisplayedModifications()) {
                             if (modificationProfile.getFixedModifications().contains(ptmName)) {
                                 showFixed = true;
                             }

@@ -232,7 +232,7 @@ public class FollowUpCLI extends CpsParent {
         // export protein accessions
         if (followUpCLIInputBean.accessionExportNeeded()) {
             try {
-                CLIExportMethods.exportAccessions(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterPreferences);
+                CLIExportMethods.exportAccessions(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterParameters);
                 waitingHandler.appendReport("Protein accessions export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the protein accessions.", true, true);
@@ -244,7 +244,7 @@ public class FollowUpCLI extends CpsParent {
         // export protein details
         if (followUpCLIInputBean.fastaExportNeeded()) {
             try {
-                CLIExportMethods.exportFasta(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterPreferences);
+                CLIExportMethods.exportFasta(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterParameters);
                 waitingHandler.appendReport("Protein details export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the protein details.", true, true);
@@ -268,7 +268,7 @@ public class FollowUpCLI extends CpsParent {
         // inclusion list export
         if (followUpCLIInputBean.inclusionListNeeded()) {
             try {
-                CLIExportMethods.exportInclusionList(followUpCLIInputBean, identification, identificationFeaturesGenerator, identificationParameters.getSearchParameters(), waitingHandler, filterPreferences);
+                CLIExportMethods.exportInclusionList(followUpCLIInputBean, identification, identificationFeaturesGenerator, identificationParameters.getSearchParameters(), waitingHandler, filterParameters);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while generating the inclusion list.", true, true);
                 e.printStackTrace();

@@ -7,7 +7,7 @@ import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.io.Serializable;
 
 /**
- * This class contains the spectrum counting preferences.
+ * This class contains the spectrum counting parameters.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes

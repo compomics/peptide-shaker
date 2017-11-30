@@ -110,7 +110,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
             case 6:
                 return "MS2 Quant.";
             case 7:
-                if (peptideShakerGUI != null && peptideShakerGUI.getDisplayPreferences().showScores()) {
+                if (peptideShakerGUI != null && peptideShakerGUI.getDisplayParameters().showScores()) {
                     return "Score";
                 } else {
                     return "Confidence";
@@ -208,7 +208,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
                         }
                     case 7:
                         PSParameter pSParameter = (PSParameter)proteinMatch.getUrParam(PSParameter.dummy);
-                        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+                        if (peptideShakerGUI.getDisplayParameters().showScores()) {
                             return pSParameter.getProteinScore();
                         } else {
                             return pSParameter.getProteinConfidence();

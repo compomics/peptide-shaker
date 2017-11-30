@@ -230,7 +230,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         proteinTableToolTips.add("MS2 Quantification");
         proteinTableToolTips.add("Protein Molecular Weight (kDa)");
 
-        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+        if (peptideShakerGUI.getDisplayParameters().showScores()) {
             proteinTableToolTips.add("Protein Score");
         } else {
             proteinTableToolTips.add("Protein Confidence");
@@ -2742,7 +2742,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     peptideShakerGUI.getIdentificationFeaturesGenerator().setProteinKeys(peptideShakerGUI.getMetrics().getProteinKeys());
 
                     try {
-                        proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterPreferences());
+                        proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterParameters());
                     } catch (Exception e) {
                         // Now I'd be surprised that you reach this stage
                         peptideShakerGUI.catchException(e);
@@ -2765,15 +2765,15 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     ((DefaultTableModel) proteinTable.getModel()).fireTableDataChanged();
 
                     // update spectrum counting column header tooltip
-                    if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.EMPAI) {
+                    if (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod() == SpectralCountingMethod.EMPAI) {
                         proteinTableToolTips.set(proteinTable.getColumn("MS2 Quant.").getModelIndex(), "Protein MS2 Quantification - emPAI");
-                    } else if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.NSAF) {
+                    } else if (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod() == SpectralCountingMethod.NSAF) {
                         proteinTableToolTips.set(proteinTable.getColumn("MS2 Quant.").getModelIndex(), "Protein MS2 Quantification - NSAF");
                     } else {
                         proteinTableToolTips.set(proteinTable.getColumn("MS2 Quant.").getModelIndex(), "Protein MS2 Quantification");
                     }
 
-                    if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+                    if (peptideShakerGUI.getDisplayParameters().showScores()) {
                         proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Score");
                     } else {
                         proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Confidence");
@@ -3143,7 +3143,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         // remove old labels
         jmolPanel.getViewer().evalString("select all; label off");
 
-        DisplayParameters displayPreferences = peptideShakerGUI.getDisplayPreferences();
+        DisplayParameters displayPreferences = peptideShakerGUI.getDisplayParameters();
 
         // annotate the modified covered residues
         for (int i = 0; i < peptideTable.getRowCount() && !progressDialog.isRunCanceled(); i++) {
@@ -3256,7 +3256,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      */
     public void updateScores() {
 
-        ((ProteinTableModel) proteinTable.getModel()).showScores(peptideShakerGUI.getDisplayPreferences().showScores());
+        ((ProteinTableModel) proteinTable.getModel()).showScores(peptideShakerGUI.getDisplayParameters().showScores());
         ((DefaultTableModel) proteinTable.getModel()).fireTableStructureChanged();
         setTableProperties();
 
@@ -3264,7 +3264,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             reselect();
         }
 
-        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+        if (peptideShakerGUI.getDisplayParameters().showScores()) {
             proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Score");
         } else {
             proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Confidence");
@@ -3276,7 +3276,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
     /**
      * Update the PTM color coding.
      */
-    public void updatePtmColors() {
+    public void updateModificationColors() {
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 

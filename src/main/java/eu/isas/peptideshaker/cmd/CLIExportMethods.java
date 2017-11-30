@@ -327,7 +327,7 @@ public class CLIExportMethods {
 
         MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), cpsParent.getIdentification(), cpsParent.getProjectDetails(),
                 cpsParent.getShotgunProtocol(), cpsParent.getIdentificationParameters(),
-                cpsParent.getSpectrumCountingPreferences(), cpsParent.getIdentificationFeaturesGenerator(),
+                cpsParent.getSpectrumCountingParameters(), cpsParent.getIdentificationFeaturesGenerator(),
                 mzidCLIInputBean.getOutputFile(), mzidCLIInputBean.getIncludeProteinSequences(), waitingHandler);
         mzIdentMLExport.createMzIdentMLFile(mzidCLIInputBean.getMzIdentMLVersion());
     }

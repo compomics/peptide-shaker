@@ -141,7 +141,7 @@ public class DisplayParameters implements Serializable {
      * @param ptmName the name of the PTM
      * @param displayed a boolean indicating whether the PTM shall be displayed
      */
-    public void setDisplayedPTM(String ptmName, boolean displayed) {
+    public void setDisplayedModification(String ptmName, boolean displayed) {
         displayedPTMs.put(ptmName, displayed);
     }
 
@@ -158,7 +158,7 @@ public class DisplayParameters implements Serializable {
         Boolean result = displayedPTMs.get(ptmName);
         if (result == null) {
             result = false;
-            setDisplayedPTM(ptmName, result);
+            setDisplayedModification(ptmName, result);
         }
         return result;
     }
@@ -170,7 +170,7 @@ public class DisplayParameters implements Serializable {
      */
     public void setDefaultSelection(com.compomics.util.parameters.identification.search.ModificationParameters modificationProfile) {
         for (String ptm : modificationProfile.getAllNotFixedModifications()) {
-            setDisplayedPTM(ptm, true);
+            setDisplayedModification(ptm, true);
         }
     }
     
@@ -179,7 +179,7 @@ public class DisplayParameters implements Serializable {
      * 
      * @return a list containing the names of the PTMs to display
      */
-    public ArrayList<String> getDisplayedPtms() {
+    public ArrayList<String> getDisplayedModifications() {
         ArrayList<String> result = new ArrayList<>();
         for (String ptmName : displayedPTMs.keySet()) {
             if (displayedPTMs.get(ptmName)) {

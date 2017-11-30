@@ -685,7 +685,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
                 try {
                     MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
-                            peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
+                            peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingParameters(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
                             finalOutputFile, includeSequencesCheckBox.isSelected(), progressDialog, MatchValidationLevel.none, MatchValidationLevel.none, MatchValidationLevel.none);
                     mzIdentMLExport.createMzIdentMLFile(mzIdentMLVersion);
 

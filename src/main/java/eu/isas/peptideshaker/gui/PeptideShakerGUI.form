@@ -1189,7 +1189,7 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
                 </Container>
-                <Container class="javax.swing.JPanel" name="ptmJPanel">
+                <Container class="javax.swing.JPanel" name="modificationJPanel">
                   <Properties>
                     <Property name="opaque" type="boolean" value="false"/>
                   </Properties>

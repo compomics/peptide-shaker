@@ -323,7 +323,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                     } else {
                         // @TODO: is there a faster way of doing this..?
                         String loweCaseAccession = tempProteinAccession.toLowerCase();
-                        for (String proteinKey : peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterPreferences())) {
+                        for (String proteinKey : peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterParameters())) {
                             if (!ProteinMatch.isDecoy(proteinKey)) {
                                 if (proteinKey.toLowerCase().contains(loweCaseAccession)) {
                                     ArrayList<String> secondaryPeptides = ((ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(proteinKey)).getPeptideMatchesKeys();
