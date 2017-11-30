@@ -1687,30 +1687,45 @@ public class IdentificationFeaturesGenerator {
         if (psPtmScores != null) {
 
             boolean firstPtm = true;
-            ArrayList<String> ptms = psPtmScores.getConfidentlyLocalizedModifications();
-            Collections.sort(ptms);
+            TreeSet<String> ptms = psPtmScores.getConfidentlyLocalizedModifications();
 
             for (String ptm : ptms) {
+
                 if (firstPtm) {
+
                     firstPtm = false;
+
                 } else {
+
                     result.append("; ");
+
                 }
+
                 result.append(ptm);
                 result.append("(");
+                
                 boolean firstSite = true;
-                ArrayList<Integer> sites = psPtmScores.getConfidentSitesForModification(ptm);
-                Collections.sort(sites);
+                TreeSet<Integer> sites = new TreeSet(psPtmScores.getConfidentSitesForModification(ptm));
+                
                 for (Integer site : sites) {
+                
                     if (!firstSite) {
+                    
                         result.append(", ");
+
                     } else {
+
                         firstSite = false;
+
                     }
+
                     char aa = sequence.charAt(site - 1);
                     result.append(aa).append(site);
+                    
                 }
+                
                 result.append(")");
+            
             }
         }
 

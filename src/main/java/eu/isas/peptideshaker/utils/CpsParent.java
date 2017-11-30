@@ -196,7 +196,7 @@ public class CpsParent extends UserPreferencesParent {
         BlobObject blobObject = (BlobObject) objectsDB.retrieveObject(PeptideShakerParameters.key);
         PeptideShakerParameters psParameters = (PeptideShakerParameters) blobObject.unBlob();        
         
-        projectParameters = (ProjectParameters) objectsDB.retrieveObject(ProjectParameters.nameForDatabase);
+        projectParameters = (ProjectParameters) objectsDB.retrieveObject(ProjectParameters.key);
         identification = new Identification(objectsDB);
         
         PSMaps psMaps = new PSMaps();
@@ -249,7 +249,7 @@ public class CpsParent extends UserPreferencesParent {
      */
     public void saveProject(WaitingHandler waitingHandler, boolean emptyCache) throws IOException {
         
-        CpsExporter.saveAs(cpsFile, waitingHandler, identification, sequenceProvider, identificationParameters,
+        CpsExporter.saveAs(cpsFile, waitingHandler, identification, identificationParameters, sequenceProvider, proteinDetailsProvider,
                 spectrumCountingPreferences, projectDetails, filterParameters, metrics, geneMaps,
                 identificationFeaturesGenerator.getIdentificationFeaturesCache(), emptyCache, displayParameters, dbFolder);
 
