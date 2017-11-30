@@ -5,6 +5,7 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.IdentificationParameters;
@@ -33,6 +34,7 @@ public class CpsExporter {
      * @param identification the identification to save
      * @param sequenceProvider the sequence provider
      * @param identificationParameters the identification parameters
+     * @param proteinDetailsProvider the protein details providers
      * @param spectrumCountingParameters the spectrum counting preferences
      * @param projectDetails the project details
      * @param filterParameters the filtering preferences
@@ -50,13 +52,14 @@ public class CpsExporter {
     public static void saveAs(File destinationFile, 
             WaitingHandler waitingHandler, 
             Identification identification, 
-            SequenceProvider sequenceProvider,
             IdentificationParameters identificationParameters, 
+            SequenceProvider sequenceProvider,
+            ProteinDetailsProvider proteinDetailsProvider,
             SpectrumCountingParameters spectrumCountingParameters, 
             ProjectDetails projectDetails, 
             FilterParameters filterParameters,
             Metrics metrics, 
-            GeneMaps geneMaps, 
+            GeneMaps geneMaps,
             IdentificationFeaturesCache identificationFeaturesCache, 
             boolean emptyCache,
             DisplayParameters displayParameters, 
@@ -73,7 +76,7 @@ public class CpsExporter {
             if (!identification.contains(PeptideShakerParameters.key)) {
 
                 PeptideShakerParameters peptideShakerParameters = new PeptideShakerParameters(identificationParameters, spectrumCountingParameters,
-                        projectDetails, filterParameters, displayParameters, metrics, sequenceProvider, geneMaps, identificationFeaturesCache);
+                        projectDetails, filterParameters, displayParameters, metrics, sequenceProvider, proteinDetailsProvider, geneMaps, identificationFeaturesCache);
 
                 BlobObject blobObject = new BlobObject(peptideShakerParameters);
                 identification.addObject(PeptideShakerParameters.key, blobObject);

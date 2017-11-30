@@ -17,6 +17,8 @@ import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Protein filter.
@@ -145,13 +147,13 @@ public class ProteinFilter extends MatchFilter {
                 double spectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(matchKey);
                 return filterItemComparator.passes(input, spectrumCounting);
                 
-            case ptm:
+            case modification:
                 proteinMatch = identification.getProteinMatch(matchKey);
-                PSModificationScores psPtmScores = new PSModificationScores();
-                psPtmScores = (PSModificationScores) proteinMatch.getUrParam(psPtmScores);
-                ArrayList<String> ptms = psPtmScores != null ? 
-                        psPtmScores.getScoredModifications() : new ArrayList<>(0);
-                return filterItemComparator.passes(input, ptms);
+                PSModificationScores modificationScores = new PSModificationScores();
+                modificationScores = (PSModificationScores) proteinMatch.getUrParam(modificationScores);
+                Set<String> modifications = modificationScores == null ? new HashSet<>(0) 
+                        : modificationScores.getScoredModifications();
+                return filterItemComparator.passes(input, modifications);
                 
             case nPeptides:
                 proteinMatch = identification.getProteinMatch(matchKey);

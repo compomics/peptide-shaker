@@ -7,6 +7,7 @@ import eu.isas.peptideshaker.scoring.ModificationScoring;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.TreeSet;
 
 /**
@@ -109,13 +110,13 @@ public class PSModificationScores extends DbObject implements UrParameter {
      *
      * @return a list of scored modifications
      */
-    public ArrayList<String> getScoredModifications() {
+    public Set<String> getScoredModifications() {
 
         ObjectsDB.increaseRWCounter();
         zooActivateRead();
         ObjectsDB.decreaseRWCounter();
 
-        return new ArrayList<>(modificationMap.keySet());
+        return modificationMap.keySet();
 
     }
 

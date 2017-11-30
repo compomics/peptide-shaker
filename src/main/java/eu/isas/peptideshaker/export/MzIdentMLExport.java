@@ -58,6 +58,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -2070,7 +2071,7 @@ public class MzIdentMLExport {
 
                         if (peptide.getModificationMatches().length > 0) {
 
-                            ArrayList<String> scoredModifications = psModificationScores.getScoredModifications();
+                            Set<String> scoredModifications = psModificationScores.getScoredModifications();
                             HashSet<String> coveredModifications = new HashSet<>(scoredModifications.size());
 
                             for (String modName : scoredModifications) {
@@ -2176,7 +2177,7 @@ public class MzIdentMLExport {
 
                         if (peptide.getModificationMatches().length > 0) {
 
-                            ArrayList<String> scoredModifications = psModificationScores.getScoredModifications();
+                            Set<String> scoredModifications = psModificationScores.getScoredModifications();
                             HashSet<String> coveredModifications = new HashSet<>(scoredModifications.size());
 
                             for (String modName : scoredModifications) {

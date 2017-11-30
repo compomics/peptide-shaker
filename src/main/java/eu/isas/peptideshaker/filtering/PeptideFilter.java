@@ -14,6 +14,8 @@ import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSModificationScores;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -125,17 +127,13 @@ public class PeptideFilter extends MatchFilter {
                 peptideMatch = identification.getPeptideMatch(matchKey);
                 return filterItemComparator.passes(input, peptideMatch.getPeptide().getSequence());
                 
-            case ptm:
+            case modification:
                 peptideMatch = identification.getPeptideMatch(matchKey);
-                ArrayList<String> ptms;
-                PSModificationScores psPtmScores = new PSModificationScores();
-                psPtmScores = (PSModificationScores) peptideMatch.getUrParam(psPtmScores);
-                if (psPtmScores != null) {
-                    ptms = psPtmScores.getScoredModifications();
-                } else {
-                    ptms = new ArrayList<>(0);
-                }
-                return filterItemComparator.passes(input, ptms);
+                PSModificationScores modificationScores = new PSModificationScores();
+                modificationScores = (PSModificationScores) peptideMatch.getUrParam(modificationScores);
+                Set<String> modifications = modificationScores == null ? new HashSet<>(0) 
+                        : modificationScores.getScoredModifications();
+                return filterItemComparator.passes(input, modifications);
                 
             case nPSMs:
                 peptideMatch = identification.getPeptideMatch(matchKey);

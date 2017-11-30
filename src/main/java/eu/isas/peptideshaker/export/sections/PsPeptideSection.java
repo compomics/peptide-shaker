@@ -7,8 +7,6 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
-import com.compomics.util.experiment.identification.utils.ProteinUtils;
-import com.compomics.util.experiment.io.biology.protein.Header;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.io.export.ExportFeature;
@@ -29,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
@@ -576,10 +575,9 @@ public class PsPeptideSection {
 
         if (psPtmScores != null) {
             
-            ArrayList<String> modList = psPtmScores.getScoredModifications();
+            TreeSet<String> modList = new TreeSet(psPtmScores.getScoredModifications());
 
             StringBuilder result = new StringBuilder();
-            Collections.sort(modList);
 
             for (String mod : modList) {
             

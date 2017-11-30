@@ -105,7 +105,7 @@ public enum PsmFilterItem implements FilterItem {
     }
 
     @Override
-    public boolean isPtm() {
+    public boolean needsModifications() {
         switch (this) {
             default:
                 return false;

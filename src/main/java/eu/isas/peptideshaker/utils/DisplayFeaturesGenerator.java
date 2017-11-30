@@ -675,8 +675,8 @@ public class DisplayFeaturesGenerator {
      * Exports the ambiguously localized modification representative sites in a
      * map: site &gt; mapped modifications.
      *
-     * @param modificationScores the PeptideShaker PTM scores
-     * @param displayedModifications list of PTMs to display
+     * @param modificationScores the PeptideShaker modification scores
+     * @param displayedModifications list of modifications to display
      *
      * @return a map of filtered modifications based on the user display
      * preferences
@@ -713,8 +713,8 @@ public class DisplayFeaturesGenerator {
      * Exports the ambiguously localized modification secondary sites in a map:
      * site &gt; mapped modifications.
      *
-     * @param modificationScores the PeptideShaker PTM scores
-     * @param displayedModifications list of PTMs to display
+     * @param modificationScores the PeptideShaker modification scores
+     * @param displayedModifications list of modifications to display
      *
      * @return a map of filtered modifications based on the user display
      * preferences
@@ -725,7 +725,7 @@ public class DisplayFeaturesGenerator {
 
         for (int representativeSite : modificationScores.getRepresentativeSites()) {
 
-            HashMap<Integer, ArrayList<String>> modificationsAtSite = modificationScores.getAmbiguousModificationsAtRepresentativeSite(representativeSite);
+            HashMap<Integer, HashSet<String>> modificationsAtSite = modificationScores.getAmbiguousModificationsAtRepresentativeSite(representativeSite);
 
             for (int secondarySite : modificationsAtSite.keySet()) {
 
@@ -793,9 +793,9 @@ public class DisplayFeaturesGenerator {
     }
 
     /**
-     * Sets the PTMs to display.
+     * Sets the modifications to display.
      *
-     * @param displayedModifications the names of the PTMs to display in a list
+     * @param displayedModifications the names of the modifications to display in a list
      */
     public void setDisplayedModifications(HashSet<String> displayedModifications) {
 

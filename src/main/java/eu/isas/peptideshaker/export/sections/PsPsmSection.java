@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -553,10 +554,9 @@ public class PsPsmSection {
 
         if (psPtmScores != null) {
             
-            ArrayList<String> modList = psPtmScores.getScoredModifications();
+            TreeSet<String> modList = new TreeSet<>(psPtmScores.getScoredModifications());
 
             StringBuilder result = new StringBuilder();
-            Collections.sort(modList);
 
             for (String mod : modList) {
             

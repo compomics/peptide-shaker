@@ -16,7 +16,7 @@ public enum PeptideFilterItem implements FilterItem {
     proteinAccession("Protein Accession", "Accession of the protein this peptide maps to according to the sequence database."),
     proteinDescription("Protein Description", "Description of the protein according to the sequence database."),
     sequence("Peptide Sequence", "Amino acid pattern which should be contained in the peptide sequence."),
-    ptm("PTM", "Posttranslational modification carried by the peptide."),
+    modification("modification", "Modification carried by the peptide."),
     nPSMs("#PSMs", "Number of PSMs."),
     nValidatedPSMs("#Validated PSMs", "Number of Validated PSMs."),
     nConfidentPSMs("#Confident PSMs", "Number of Confident PSMs."),
@@ -115,9 +115,9 @@ public enum PeptideFilterItem implements FilterItem {
     }
 
     @Override
-    public boolean isPtm() {
+    public boolean needsModifications() {
         switch (this) {
-            case ptm:
+            case modification:
                 return true;
             default:
                 return false;

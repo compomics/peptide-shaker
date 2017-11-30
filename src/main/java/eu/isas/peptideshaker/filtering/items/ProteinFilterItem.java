@@ -23,7 +23,7 @@ public enum ProteinFilterItem implements FilterItem {
     validatedCoverage("Validated Coverage", "Protein sequence coverage achieved using validated peptides."),
     confidentCoverage("Confident Coverage", "Protein sequence coverage achieved using confident peptides."),
     spectrumCounting("Spectrum Counting", "Spectrum counting quantification value."),
-    ptm("PTM", "Posttranslational modification carried by the protein."),
+    modification("modification", "Modification carried by the protein."),
     nPeptides("#Peptides", "Number of peptides."),
     nValidatedPeptides("#Validated Peptides", "Number of validated peptides."),
     nConfidentPeptides("#Confident Peptides", "Number of confident peptides."),
@@ -132,9 +132,9 @@ public enum ProteinFilterItem implements FilterItem {
     }
 
     @Override
-    public boolean isPtm() {
+    public boolean needsModifications() {
         switch (this) {
-            case ptm:
+            case modification:
                 return true;
             default:
                 return false;

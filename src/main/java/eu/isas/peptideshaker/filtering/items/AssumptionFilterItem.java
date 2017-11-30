@@ -121,7 +121,7 @@ public enum AssumptionFilterItem implements FilterItem {
     }
 
     @Override
-    public boolean isPtm() {
+    public boolean needsModifications() {
         switch (this) {
             case ptm:
                 return true;

@@ -559,7 +559,7 @@ public class FilterDialog extends javax.swing.JDialog {
     private void editValue(String itemName) {
         FilterItem filterItem = matchFilter.getFilterItem(itemName);
         ListChooser listChooser = null;
-        if (filterItem.isPtm()) {
+        if (filterItem.needsModifications()) {
             ArrayList<String> ptms = identificationParameters.getSearchParameters().getModificationParameters().getAllModifications();
             if (ptms != null && ptms.size() > 0) {
                 listChooser = new PtmChooser(parentFrame, ptms, false); //@TODO: allow multiple selection
@@ -776,7 +776,7 @@ public class FilterDialog extends javax.swing.JDialog {
                 case 3:
                     String itemName = itemsNames.get(row);
                     FilterItem filterItem = matchFilter.getFilterItem(itemName);
-                    return !filterItem.isPtm() && filterItem.getPossibilities() == null;
+                    return !filterItem.needsModifications() && filterItem.getPossibilities() == null;
                 default:
                     return false;
             }
