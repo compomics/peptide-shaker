@@ -617,20 +617,34 @@ public class InputMap implements Serializable {
      * protein
      * @param psmScoringPreferences the psm scoring preferences
      */
-    public void setIntermediateScore(String fileName, Integer advocateIndex, Integer scoreIndex, Double score, boolean decoy, PsmScoringParameters psmScoringPreferences) {
+    public void setIntermediateScore(String fileName, int advocateIndex, int scoreIndex, double score, boolean decoy, PsmScoringParameters psmScoringPreferences) {
+        
         HashMap<Integer, HashMap<Integer, TargetDecoyMap>> advocateMap = intermediateScores.get(fileName);
+        
         if (advocateMap == null) {
+        
             advocateMap = createIntermediateScoreMap(fileName);
+        
         }
+        
         HashMap<Integer, TargetDecoyMap> scoreMap = advocateMap.get(advocateIndex);
+        
         if (scoreMap == null) {
+        
             scoreMap = createIntermediateScoreMap(advocateIndex, advocateMap);
+        
         }
+        
         TargetDecoyMap targetDecoyMap = scoreMap.get(scoreIndex);
+        
         if (targetDecoyMap == null) {
+        
             targetDecoyMap = createTargetDecoyMap(scoreIndex, scoreMap, psmScoringPreferences);
+        
         }
+        
         targetDecoyMap.put(score, decoy);
+    
     }
 
     /**

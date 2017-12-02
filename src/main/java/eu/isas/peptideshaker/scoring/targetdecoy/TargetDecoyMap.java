@@ -67,7 +67,9 @@ public class TargetDecoyMap extends DbObject {
      * bin to set the bin size
      */
     public TargetDecoyMap(Integer minDecoysInBin) {
+
         this.minDecoysInBin = minDecoysInBin;
+
     }
 
     /**
@@ -76,26 +78,43 @@ public class TargetDecoyMap extends DbObject {
      * @param score the given score
      * @return the estimated posterior error probability
      */
-    public Double getProbability(double score) {
+    public  double getProbability(double score) {
+        
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        
         TargetDecoyPoint point = hitMap.get(score);
+        
         if (point != null) {
+        
             return point.p;
+        
         } else if (score >= scores.get(scores.size() - 1)) {
+        
             return hitMap.get(scores.get(scores.size() - 1)).p;
+        
         } else {
+        
             int indexDown = 0;
             int indexUp = scores.size() - 1;
             int indexTemp;
+            
             while (indexUp - indexDown > 1) {
+            
                 indexTemp = (indexUp - indexDown) / 2 + indexDown;
+                
                 if (scores.get(indexTemp) > score) {
+                
                     indexUp = indexTemp;
+                
                 } else {
+                
                     indexDown = indexTemp;
+                
                 }
             }
+            
             return (hitMap.get(scores.get(indexUp)).p + hitMap.get(scores.get(indexDown)).p) / 2;
+        
         }
     }
 
@@ -127,15 +146,25 @@ public class TargetDecoyMap extends DbObject {
      * @param isDecoy boolean indicating whether the hit is decoy
      */
     public void put(Double score, boolean isDecoy) {
+        
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+        
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
+        
         if (targetDecoyPoint == null) {
+        
             targetDecoyPoint = createTargetDecoyPoint(score);
+        
         }
+
         if (isDecoy) {
+
             targetDecoyPoint.increaseDecoy();
+
         } else {
+
             targetDecoyPoint.increaseTarget();
+
         }
     }
 
@@ -148,13 +177,20 @@ public class TargetDecoyMap extends DbObject {
      * @return the target decoy point of the map at the given score
      */
     public synchronized TargetDecoyPoint createTargetDecoyPoint(Double score) {
+        
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
+        
         if (targetDecoyPoint == null) {
+        
             targetDecoyPoint = new TargetDecoyPoint();
             hitMap.put(score, targetDecoyPoint);
+
         }
+
         return targetDecoyPoint;
+
     }
 
     /**
@@ -165,12 +201,19 @@ public class TargetDecoyMap extends DbObject {
      * @param isDecoy boolean indicating whether the hit is decoy
      */
     public void remove(Double score, boolean isDecoy) {
+
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
+
         if (!isDecoy) {
+
             targetDecoyPoint.decreaseTarget();
+
         } else {
+
             targetDecoyPoint.decreaseDecoy();
+
         }
     }
 
@@ -178,21 +221,32 @@ public class TargetDecoyMap extends DbObject {
      * Removes empty points and clears dependent metrics if needed.
      */
     public synchronized void cleanUp() {
+
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
         boolean removed = false;
+
         HashSet<Double> currentScores = new HashSet<>(hitMap.keySet());
+
         for (Double score : currentScores) {
+
             TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
+
             if (targetDecoyPoint.nTarget == 0
                     && targetDecoyPoint.nDecoy == 0) {
+
                 hitMap.remove(score);
                 removed = true;
+
             }
         }
+
         if (removed) {
+
             scores = null;
             nmax = null;
             windowSize = null;
+
         }
     }
 
@@ -201,10 +255,15 @@ public class TargetDecoyMap extends DbObject {
      * and above will be skipped for Nmax.
      */
     private void estimateNs() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         if (scores == null) {
+
             estimateScores();
+
         }
+
         boolean onlyTarget = true;
         nmax = 0;
         int targetCpt = 0;
@@ -213,36 +272,57 @@ public class TargetDecoyMap extends DbObject {
         int targetCount = 0, decoyCount = 0;
 
         for (double score : scores) {
+
             TargetDecoyPoint point = hitMap.get(score);
+
             if (onlyTarget) {
+
                 if (point.nDecoy > 0) {
+
                     nTargetOnly += point.nTarget / 2 + point.nTarget % 2;
                     targetCpt += point.nTarget / 2;
                     onlyTarget = false;
                     decoyCpt += point.nDecoy;
 
                 } else {
+
                     nTargetOnly += point.nTarget;
+
                 }
+
             } else if (point.nDecoy > 0) {
+
                 targetCpt += point.nTarget / 2 + point.nTarget % 2;
                 decoyCpt += point.nDecoy;
+
                 if (targetCpt > nmax
                         && score < 1.0
                         && decoyCpt >= minDecoysInBin) {
+
                     nmax = targetCpt;
+
                 }
+
                 targetCpt = point.nTarget / 2;
                 decoyCpt = point.nDecoy;
+
             } else {
+
                 targetCpt += point.nTarget;
+
             }
+
             targetCount += point.nTarget;
             decoyCount += point.nDecoy;
+
             if (targetCount > 0) {
-                Double fdr = ((double) decoyCount) / targetCount;
+
+                double fdr = ((double) decoyCount) / targetCount;
+
                 if (fdr < minFDR) {
+
                     minFDR = fdr;
+
                 }
             }
         }
@@ -254,20 +334,28 @@ public class TargetDecoyMap extends DbObject {
      * @param waitingHandler the handler displaying feedback to the user
      */
     public void estimateProbabilities(WaitingHandler waitingHandler) {
+        
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
 
         if (scores == null) {
+
             estimateScores();
+
         }
+
         if (nmax == null) {
+
             estimateNs();
+
         }
         if (windowSize == null) {
+
             windowSize = nmax;
+
         }
 
         // estimate p
-        Double currentScore = scores.get(0);
+        double currentScore = scores.get(0);
         TargetDecoyPoint tempPoint, previousPoint = hitMap.get(currentScore);
         double nLimit = 0.5 * windowSize;
         double nTargetUp = 1.5 * previousPoint.nTarget;
@@ -278,46 +366,74 @@ public class TargetDecoyMap extends DbObject {
         boolean oneReached = false;
 
         for (int i = 0; i < scores.size(); i++) {
+
             currentScore = scores.get(i);
             TargetDecoyPoint point = hitMap.get(currentScore);
+
             if (!oneReached) {
+
                 double change = 0.5 * (previousPoint.nTarget + point.nTarget);
                 nTargetDown += change;
                 nTargetUp -= change;
+
                 while (nTargetDown > nLimit) {
+
                     if (iDown < i) {
+
                         tempPoint = hitMap.get(scores.get(iDown));
                         double nTargetDownTemp = nTargetDown - tempPoint.nTarget;
+
                         if (nTargetDownTemp >= nLimit) {
+
                             nDecoy -= tempPoint.nDecoy;
                             nTargetDown = nTargetDownTemp;
                             iDown++;
+
                         } else {
+
                             break;
+
                         }
+
                     } else {
+
                         break;
+
                     }
                 }
+
                 while (nTargetUp < nLimit && iUp < scores.size()) {
+
                     tempPoint = hitMap.get(scores.get(iUp));
                     nTargetUp += tempPoint.nTarget;
                     nDecoy += tempPoint.nDecoy;
                     iUp++;
+
                 }
+
                 double nTarget = nTargetDown + nTargetUp;
                 point.p = Math.max(Math.min(nDecoy / nTarget, 1), 0);
+
                 if (point.p >= 0.98) {
+
                     oneReached = true;
+
                 }
+
             } else {
+
                 point.p = 1;
+
             }
+
             previousPoint = point;
 
             waitingHandler.increaseSecondaryProgressCounter();
+
             if (waitingHandler.isRunCanceled()) {
+
                 return;
+
             }
         }
     }
@@ -328,11 +444,17 @@ public class TargetDecoyMap extends DbObject {
      * @return the Nmax metric
      */
     public int getnMax() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         if (nmax == null) {
+
             estimateNs();
+
         }
+
         return nmax;
+
     }
 
     /**
@@ -341,8 +463,11 @@ public class TargetDecoyMap extends DbObject {
      * @return the minimal FDR which can be achieved in this dataset
      */
     public Double getMinFdr() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         return minFDR;
+
     }
 
     /**
@@ -351,12 +476,18 @@ public class TargetDecoyMap extends DbObject {
      * @return the minimal detectable PEP variation in percent
      */
     public double getResolution() {
+
         double pmin = 0;
         int nMax = getnMax();
+
         if (nMax != 0) {
+
             pmin = 100.0 / nMax;
+
         }
+
         return pmin;
+
     }
 
     /**
@@ -365,17 +496,23 @@ public class TargetDecoyMap extends DbObject {
      * @return the number of target hits before the first decoy hit
      */
     public Integer getnTargetOnly() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         return nTargetOnly;
+
     }
 
     /**
      * Sorts the scores implemented in this map.
      */
     private void estimateScores() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         scores = new ArrayList<>(hitMap.keySet());
         Collections.sort(scores);
+
     }
 
     /**
@@ -384,11 +521,17 @@ public class TargetDecoyMap extends DbObject {
      * @return the sorted scores implemented in this map.
      */
     public ArrayList<Double> getScores() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         if (scores == null) {
+
             estimateScores();
+
         }
+
         return scores;
+
     }
 
     /**
@@ -397,18 +540,28 @@ public class TargetDecoyMap extends DbObject {
      * @param anOtherMap another target/decoy map
      */
     public void addAll(TargetDecoyMap anOtherMap) {
+
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
         for (double score : anOtherMap.getScores()) {
+
             for (int i = 0; i < anOtherMap.getNDecoy(score); i++) {
+
                 put(score, true);
+
             }
+
             for (int i = 0; i < anOtherMap.getNTarget(score); i++) {
+
                 put(score, false);
+
             }
         }
+
         scores = null;
         nmax = null;
         windowSize = null;
+
     }
 
     /**
@@ -419,14 +572,23 @@ public class TargetDecoyMap extends DbObject {
      * @return a boolean indicating if a suspicious input was detected
      */
     public boolean suspiciousInput(Double initialFDR) {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         if (nmax == null) {
+
             estimateNs();
+
         }
+
         if (nmax < 100 || minFDR > initialFDR) {
+
             return true;
+
         }
+
         return false;
+
     }
 
     /**
@@ -435,8 +597,11 @@ public class TargetDecoyMap extends DbObject {
      * @return the current target decoy results
      */
     public TargetDecoyResults getTargetDecoyResults() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         return targetDecoyResults;
+
     }
 
     /**
@@ -445,8 +610,11 @@ public class TargetDecoyMap extends DbObject {
      * @return the target decoy series
      */
     public TargetDecoySeries getTargetDecoySeries() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         return new TargetDecoySeries(hitMap);
+
     }
 
     /**
@@ -455,11 +623,17 @@ public class TargetDecoyMap extends DbObject {
      * @return the window size used for pep estimation
      */
     public int getWindowSize() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         if (windowSize == null) {
+
             windowSize = getnMax();
+
         }
+
         return windowSize;
+
     }
 
     /**
@@ -468,8 +642,11 @@ public class TargetDecoyMap extends DbObject {
      * @param windowSize the window size used for pep estimation
      */
     public void setWindowSize(int windowSize) {
+
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
         this.windowSize = windowSize;
+
     }
 
     /**
@@ -478,7 +655,10 @@ public class TargetDecoyMap extends DbObject {
      * @return the size of the map
      */
     public int getMapSize() {
+
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
         return hitMap.size();
+
     }
 }

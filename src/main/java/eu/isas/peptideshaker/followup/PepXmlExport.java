@@ -450,7 +450,7 @@ public class PepXmlExport {
      */
     private void writeSpectrumQueries(SimpleXmlWriter sw, Identification identification, IdentificationParameters identificationParameters, String spectrumFile, WaitingHandler waitingHandler) throws IOException {
         
-        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler, "spectrumFile == '" + spectrumFile + "'");
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler, "spectrumFile == '" + spectrumFile + "'");
         SpectrumMatch spectrumMatch;
         
         while ((spectrumMatch = psmIterator.next()) != null) {

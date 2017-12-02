@@ -23,6 +23,7 @@ import com.compomics.util.experiment.identification.matches_iterators.SpectrumMa
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.io.biology.protein.FastaParameters;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import eu.isas.peptideshaker.fileimport.FileImporter;
@@ -195,7 +196,7 @@ public class PeptideShaker {
      */
     public void importFiles(WaitingHandler waitingHandler, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             IdentificationParameters identificationParameters, ProjectDetails projectDetails,
-            ProcessingParameters processingPreferences, SpectrumCountingParameters spectrumCountingPreferences, boolean backgroundThread) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+            ProcessingParameters processingPreferences, SpectrumCountingParameters spectrumCountingPreferences, boolean backgroundThread) {
 
         projectCreationDuration = new Duration();
         projectCreationDuration.start();
@@ -208,10 +209,11 @@ public class PeptideShaker {
 
         objectsDB = new ObjectsDB(PeptideShaker.getMatchesFolder().getAbsolutePath(), dbName);
         identification = new Identification(objectsDB);
-        identification.addObject(ProjectParameters.nameForDatabase, projectParameters);
+        identification.addObject(ProjectParameters.key, projectParameters);
 
         fileImporter = new FileImporter(this, waitingHandler, identificationParameters, metrics);
         fileImporter.importFiles(idFiles, spectrumFiles, processingPreferences, spectrumCountingPreferences, projectDetails, backgroundThread);
+        
     }
 
     /**
@@ -224,21 +226,18 @@ public class PeptideShaker {
      * @param waitingHandler the handler displaying feedback to the user
      * @param exceptionHandler handler for exceptions
      * @param identificationParameters the identification parameters
+     * @param sequenceProvider a protein sequence provider
      * @param processingPreferences the processing preferences
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param projectDetails the project details
-     *
-     * @throws Exception exception thrown whenever an error occurred while
-     * loading the identification files
      */
     public void processIdentifications(InputMap inputMap, HashMap<String, Integer> proteinCount, WaitingHandler waitingHandler,
-            ExceptionHandler exceptionHandler, IdentificationParameters identificationParameters,
-            ProcessingParameters processingPreferences, SpectrumCountingParameters spectrumCountingPreferences, ProjectDetails projectDetails)
-            throws Exception {
+            ExceptionHandler exceptionHandler, IdentificationParameters identificationParameters, SequenceProvider sequenceProvider,
+            ProcessingParameters processingPreferences, SpectrumCountingParameters spectrumCountingPreferences, ProjectDetails projectDetails) {
 
         identification.getObjectsDB().commit();
 
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, metrics, spectrumCountingPreferences);
+        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, sequenceProvider, metrics, spectrumCountingPreferences);
 
         if (waitingHandler.isRunCanceled()) {
             return;

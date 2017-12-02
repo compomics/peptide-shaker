@@ -283,7 +283,7 @@ public class RunMzDeviation {
             waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(spectrumFileName).size());
         }
 
-        SpectrumMatchesIterator psmIterator = identification.getPsmIterator(waitingHandler, "spectrumFile == '" + spectrumFileName + "'");
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler, "spectrumFile == '" + spectrumFileName + "'");
         SpectrumMatch spectrumMatch;
 
         while ((spectrumMatch = psmIterator.next()) != null) {

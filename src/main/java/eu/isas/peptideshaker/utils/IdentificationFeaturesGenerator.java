@@ -1,16 +1,12 @@
 package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.experiment.units.MetricsPrefix;
-import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidPattern;
 import com.compomics.util.experiment.biology.enzymes.Enzyme;
-import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.proteins.Peptide;
-import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMatch;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -22,7 +18,6 @@ import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
-import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.experiment.units.StandardUnit;
 import com.compomics.util.experiment.units.UnitOfMeasurement;
 import com.compomics.util.math.statistics.Distribution;
@@ -30,7 +25,6 @@ import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDist
 import com.compomics.util.parameters.identification.search.DigestionParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.IdentificationParameters;
-import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSModificationScores;
@@ -38,8 +32,6 @@ import eu.isas.peptideshaker.preferences.FilterParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters.SpectralCountingMethod;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,8 +41,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import org.apache.commons.math.MathException;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class provides identification features and stores them in cache.
@@ -104,12 +94,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @param identification an identification object allowing retrieving
      * matches and parameters
-     * @param sequenceProvider a protein sequence provider
      * @param identificationParameters the identification parameters
+     * @param sequenceProvider a protein sequence provider
      * @param metrics the metrics picked-up wile loading the data
      * @param spectrumCountingPreferences the spectrum counting preferences
      */
-    public IdentificationFeaturesGenerator(Identification identification, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters,
+    public IdentificationFeaturesGenerator(Identification identification, IdentificationParameters identificationParameters, SequenceProvider sequenceProvider,
             Metrics metrics, SpectrumCountingParameters spectrumCountingPreferences) {
 
         this.metrics = metrics;
