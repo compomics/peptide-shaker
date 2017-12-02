@@ -409,7 +409,7 @@ public class PsPsmSection {
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
                     
                     String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
-                    return identificationFeaturesGenerator.getConfidentPtmSites(spectrumMatch, sequence);
+                    return identificationFeaturesGenerator.getConfidentModificationSites(spectrumMatch, sequence);
                     
                 }
                 
@@ -417,14 +417,14 @@ public class PsPsmSection {
                 
             case confident_modification_sites_number:
                 
-                return identificationFeaturesGenerator.getConfidentPtmSitesNumber(spectrumMatch);
+                return identificationFeaturesGenerator.getConfidentModificationSitesNumber(spectrumMatch);
                 
             case ambiguous_modification_sites:
                 
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
                     
                     String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
-                    return identificationFeaturesGenerator.getAmbiguousPtmSites(spectrumMatch, sequence);
+                    return identificationFeaturesGenerator.getAmbiguousModificationSites(spectrumMatch, sequence);
                     
                 }
                 
@@ -432,7 +432,7 @@ public class PsPsmSection {
                 
             case ambiguous_modification_sites_number:
                 
-                return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(spectrumMatch);
+                return identificationFeaturesGenerator.getAmbiguousModificationSiteNumber(spectrumMatch);
                 
             case confident_phosphosites:
                 
@@ -450,7 +450,7 @@ public class PsPsmSection {
                         }
                     }
                     
-                    return identificationFeaturesGenerator.getConfidentPtmSites(spectrumMatch, sequence, modifications);
+                    return identificationFeaturesGenerator.getConfidentModificationSites(spectrumMatch, sequence, modifications);
                     
                 }
                 
@@ -469,7 +469,7 @@ public class PsPsmSection {
                     }
                 }
                 
-                return identificationFeaturesGenerator.getConfidentPtmSitesNumber(spectrumMatch, modifications);
+                return identificationFeaturesGenerator.getConfidentModificationSitesNumber(spectrumMatch, modifications);
                 
             case ambiguous_phosphosites:
                 
@@ -487,7 +487,7 @@ public class PsPsmSection {
                         }
                     }
                     
-                    return identificationFeaturesGenerator.getAmbiguousPtmSites(spectrumMatch, sequence, modifications);
+                    return identificationFeaturesGenerator.getAmbiguousModificationSites(spectrumMatch, sequence, modifications);
                     
                 }
                 
@@ -506,7 +506,7 @@ public class PsPsmSection {
                     }
                 }
                 
-                return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(spectrumMatch, modifications);
+                return identificationFeaturesGenerator.getAmbiguousModificationSiteNumber(spectrumMatch, modifications);
                 
             default:
                 return "Not implemented";

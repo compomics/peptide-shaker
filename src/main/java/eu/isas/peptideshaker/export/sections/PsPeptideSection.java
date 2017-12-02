@@ -471,14 +471,14 @@ public class PsPeptideSection {
                 return "";
             case confident_modification_sites:
                 String sequence = peptideMatch.getPeptide().getSequence();
-                return identificationFeaturesGenerator.getConfidentPtmSites(peptideMatch, sequence);
+                return identificationFeaturesGenerator.getConfidentModificationSites(peptideMatch, sequence);
             case confident_modification_sites_number:
-                return identificationFeaturesGenerator.getConfidentPtmSitesNumber(peptideMatch);
+                return identificationFeaturesGenerator.getConfidentModificationSitesNumber(peptideMatch);
             case ambiguous_modification_sites:
                 sequence = peptideMatch.getPeptide().getSequence();
-                return identificationFeaturesGenerator.getAmbiguousPtmSites(peptideMatch, sequence);
+                return identificationFeaturesGenerator.getAmbiguousModificationSites(peptideMatch, sequence);
             case ambiguous_modification_sites_number:
-                return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(peptideMatch);
+                return identificationFeaturesGenerator.getAmbiguousModificationSiteNumber(peptideMatch);
             case confident_phosphosites:
                 ArrayList<String> modifications = new ArrayList<>();
                 for (String ptm : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
@@ -486,7 +486,7 @@ public class PsPeptideSection {
                         modifications.add(ptm);
                     }
                 }
-                return identificationFeaturesGenerator.getConfidentPtmSites(peptideMatch, peptideMatch.getPeptide().getSequence(), modifications);
+                return identificationFeaturesGenerator.getConfidentModificationSites(peptideMatch, peptideMatch.getPeptide().getSequence(), modifications);
             case confident_phosphosites_number:
                 modifications = new ArrayList<>();
                 for (String ptm : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
@@ -494,7 +494,7 @@ public class PsPeptideSection {
                         modifications.add(ptm);
                     }
                 }
-                return identificationFeaturesGenerator.getConfidentPtmSitesNumber(peptideMatch, modifications);
+                return identificationFeaturesGenerator.getConfidentModificationSitesNumber(peptideMatch, modifications);
             case ambiguous_phosphosites:
                 modifications = new ArrayList<>();
                 for (String ptm : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
@@ -502,7 +502,7 @@ public class PsPeptideSection {
                         modifications.add(ptm);
                     }
                 }
-                return identificationFeaturesGenerator.getAmbiguousPtmSites(peptideMatch, peptideMatch.getPeptide().getSequence(), modifications);
+                return identificationFeaturesGenerator.getAmbiguousModificationSites(peptideMatch, peptideMatch.getPeptide().getSequence(), modifications);
             case ambiguous_phosphosites_number:
                 modifications = new ArrayList<>();
                 for (String ptm : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
@@ -510,7 +510,7 @@ public class PsPeptideSection {
                         modifications.add(ptm);
                     }
                 }
-                return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(peptideMatch, modifications);
+                return identificationFeaturesGenerator.getAmbiguousModificationSiteNumber(peptideMatch, modifications);
             default:
                 return "Not implemented";
         }

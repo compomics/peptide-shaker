@@ -385,21 +385,21 @@ public class PsProteinSection {
 
                 mainAccession = proteinMatch.getLeadingAccession();
                 String sequence = sequenceProvider.getSequence(mainAccession);
-                return identificationFeaturesGenerator.getConfidentPtmSites(proteinMatch, sequence);
+                return identificationFeaturesGenerator.getConfidentModificationSites(proteinMatch, sequence);
 
             case confident_modification_sites_number:
 
-                return identificationFeaturesGenerator.getConfidentPtmSitesNumber(proteinMatch);
+                return identificationFeaturesGenerator.getConfidentModificationSitesNumber(proteinMatch);
 
             case ambiguous_modification_sites:
 
                 mainAccession = proteinMatch.getLeadingAccession();
                 sequence = sequenceProvider.getSequence(mainAccession);
-                return identificationFeaturesGenerator.getAmbiguousPtmSites(proteinMatch, sequence);
+                return identificationFeaturesGenerator.getAmbiguousModificationSites(proteinMatch, sequence);
 
             case ambiguous_modification_sites_number:
 
-                return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(proteinMatch);
+                return identificationFeaturesGenerator.getAmbiguousModificationSiteNumber(proteinMatch);
 
             case confident_phosphosites:
 
@@ -416,7 +416,7 @@ public class PsProteinSection {
 
                 mainAccession = proteinMatch.getLeadingAccession();
                 sequence = sequenceProvider.getSequence(mainAccession);
-                return identificationFeaturesGenerator.getConfidentPtmSites(proteinMatch, sequence, modifications);
+                return identificationFeaturesGenerator.getConfidentModificationSites(proteinMatch, sequence, modifications);
 
             case confident_phosphosites_number:
 
@@ -431,7 +431,7 @@ public class PsProteinSection {
                     }
                 }
 
-                return identificationFeaturesGenerator.getConfidentPtmSitesNumber(proteinMatch, modifications);
+                return identificationFeaturesGenerator.getConfidentModificationSitesNumber(proteinMatch, modifications);
 
             case ambiguous_phosphosites:
 
@@ -448,7 +448,7 @@ public class PsProteinSection {
 
                 mainAccession = proteinMatch.getLeadingAccession();
                 sequence = sequenceProvider.getSequence(mainAccession);
-                return identificationFeaturesGenerator.getAmbiguousPtmSites(proteinMatch, sequence, modifications);
+                return identificationFeaturesGenerator.getAmbiguousModificationSites(proteinMatch, sequence, modifications);
 
             case ambiguous_phosphosites_number:
 
@@ -463,7 +463,7 @@ public class PsProteinSection {
                     }
                 }
 
-                return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(proteinMatch, modifications);
+                return identificationFeaturesGenerator.getAmbiguousModificationSiteNumber(proteinMatch, modifications);
 
             case possible_coverage:
 

@@ -260,7 +260,7 @@ public class IdentificationFeaturesGenerator {
         }
 
         return metrics.getFoundModifications();
-        
+
     }
 
     /**
@@ -679,21 +679,8 @@ public class IdentificationFeaturesGenerator {
      * Updates the sequence coverage of the protein of interest.
      *
      * @param proteinMatchKey the key of the protein of interest
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    public void updateSequenceCoverage(long proteinMatchKey)
-            {
+    public void updateSequenceCoverage(long proteinMatchKey) {
         HashMap<Integer, Double> result = estimateSequenceCoverage(proteinMatchKey);
         identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_validation_coverage, proteinMatchKey, result);
     }
@@ -1307,10 +1294,10 @@ public class IdentificationFeaturesGenerator {
             return Arrays.stream(proteinMatch.getPeptideMatchesKeys())
                     .mapToObj(key -> identification.getPeptideMatch(key))
                     .anyMatch(peptideMatch -> PeptideUtils.isEnzymatic(
-                            peptideMatch.getPeptide(), 
-                            sequenceProvider, 
-                            digestionPreferences.getEnzymes()));
-            
+                    peptideMatch.getPeptide(),
+                    sequenceProvider,
+                    digestionPreferences.getEnzymes()));
+
         }
 
         return true;
@@ -1325,14 +1312,14 @@ public class IdentificationFeaturesGenerator {
      * @return the number of validated peptides
      */
     public int getNValidatedPeptides(long proteinMatchKey) {
-        
+
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_peptides, proteinMatchKey);
 
         if (result == null) {
-            
+
             result = estimateNValidatedPeptides(proteinMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_validated_peptides, proteinMatchKey, result);
-        
+
         }
 
         return result;
@@ -1346,14 +1333,14 @@ public class IdentificationFeaturesGenerator {
      * @return the number of confident peptides
      */
     public int getNConfidentPeptides(long proteinMatchKey) {
-        
+
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_confident_peptides, proteinMatchKey);
 
         if (result == null) {
-            
+
             result = estimateNConfidentPeptides(proteinMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_peptides, proteinMatchKey, result);
-        
+
         }
 
         return result;
@@ -1364,11 +1351,11 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinMatchKey the key of the protein match
      */
-    public void updateNConfidentPeptides(long proteinMatchKey)  {
-        
+    public void updateNConfidentPeptides(long proteinMatchKey) {
+
         Integer result = estimateNConfidentPeptides(proteinMatchKey);
         identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_peptides, proteinMatchKey, result);
-    
+
     }
 
     /**
@@ -1377,10 +1364,10 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      */
     public void updateNConfidentSpectra(long proteinMatchKey) {
-        
+
         Integer result = estimateNConfidentSpectra(proteinMatchKey);
         identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, proteinMatchKey, result);
-    
+
     }
 
     /**
@@ -1392,9 +1379,9 @@ public class IdentificationFeaturesGenerator {
      * @return true if the information is in cache
      */
     public boolean nValidatedPeptidesInCache(long proteinMatchKey) {
-        
+
         return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_peptides, proteinMatchKey) != null;
-    
+
     }
 
     /**
@@ -1405,18 +1392,18 @@ public class IdentificationFeaturesGenerator {
      * @return the number of spectra for the given protein match
      */
     public Integer getNSpectra(long proteinMatchKey) {
-        
+
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_spectra, proteinMatchKey);
-        
+
         if (result == null) {
-            
+
             result = estimateNSpectra(proteinMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_spectra, proteinMatchKey, result);
-        
+
         }
-        
+
         return result;
-        
+
     }
 
     /**
@@ -1428,9 +1415,9 @@ public class IdentificationFeaturesGenerator {
      * @return true if the data is in cache
      */
     public boolean nSpectraInCache(long proteinMatchKey) {
-        
+
         return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_spectra, proteinMatchKey) != null;
-    
+
     }
 
     /**
@@ -1444,11 +1431,11 @@ public class IdentificationFeaturesGenerator {
     private int estimateNSpectra(long proteinMatchKey) {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
-        
+
         return Arrays.stream(proteinMatch.getPeptideMatchesKeys())
                 .mapToInt(key -> identification.getPeptideMatch(key).getSpectrumCount())
                 .sum();
-        
+
     }
 
     /**
@@ -1459,9 +1446,9 @@ public class IdentificationFeaturesGenerator {
      * all found in a protein match
      */
     public int getMaxNSpectra() {
-        
+
         return identificationFeaturesCache.getMaxSpectrumCount();
-        
+
     }
 
     /**
@@ -1472,14 +1459,14 @@ public class IdentificationFeaturesGenerator {
      * @return the number of validated spectra
      */
     public int getNValidatedSpectra(long proteinMatchKey) {
-        
+
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, proteinMatchKey);
 
         if (result == null) {
-            
+
             result = estimateNValidatedSpectra(proteinMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, proteinMatchKey, result);
-        
+
         }
 
         return result;
@@ -1493,7 +1480,7 @@ public class IdentificationFeaturesGenerator {
      * @return the number of validated spectra
      */
     public int getNConfidentSpectra(long proteinMatchKey) {
-        
+
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, proteinMatchKey);
 
         if (result == null) {
@@ -1513,9 +1500,9 @@ public class IdentificationFeaturesGenerator {
      * @return true if the data is in cache
      */
     public boolean nValidatedSpectraInCache(long proteinMatchKey) {
-        
+
         return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, proteinMatchKey) != null;
-        
+
     }
 
     /**
@@ -1528,11 +1515,11 @@ public class IdentificationFeaturesGenerator {
     private int estimateNValidatedSpectra(long proteinMatchKey) {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
-        
+
         return (int) Arrays.stream(proteinMatch.getPeptideMatchesKeys())
                 .flatMap(key -> Arrays.stream(identification.getPeptideMatch(key).getSpectrumMatchesKeys()))
                 .filter(key -> ((PSParameter) identification.getSpectrumMatch(key).getUrParam(PSParameter.dummy))
-                        .getMatchValidationLevel().isValidated())
+                .getMatchValidationLevel().isValidated())
                 .count();
     }
 
@@ -1546,11 +1533,11 @@ public class IdentificationFeaturesGenerator {
     private int estimateNConfidentSpectra(long proteinMatchKey) {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
-        
+
         return (int) Arrays.stream(proteinMatch.getPeptideMatchesKeys())
                 .flatMap(key -> Arrays.stream(identification.getPeptideMatch(key).getSpectrumMatchesKeys()))
                 .filter(key -> ((PSParameter) identification.getSpectrumMatch(key).getUrParam(PSParameter.dummy))
-                        .getMatchValidationLevel() == MatchValidationLevel.confident)
+                .getMatchValidationLevel() == MatchValidationLevel.confident)
                 .count();
     }
 
@@ -1566,10 +1553,10 @@ public class IdentificationFeaturesGenerator {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, peptideMatchKey);
 
         if (result == null) {
-            
+
             result = estimateNValidatedSpectraForPeptide(peptideMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, peptideMatchKey, result);
-        
+
         }
 
         return result;
@@ -1583,14 +1570,14 @@ public class IdentificationFeaturesGenerator {
      * @return the number of confident spectra
      */
     public int getNConfidentSpectraForPeptide(long peptideMatchKey) {
-        
+
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, peptideMatchKey);
 
         if (result == null) {
-            
+
             result = estimateNConfidentSpectraForPeptide(peptideMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, peptideMatchKey, result);
-        
+
         }
 
         return result;
@@ -1602,10 +1589,10 @@ public class IdentificationFeaturesGenerator {
      * @param peptideMatchKey the key of the peptide match
      */
     public void updateNConfidentSpectraForPeptide(long peptideMatchKey) {
-        
+
         Integer result = estimateNConfidentSpectraForPeptide(peptideMatchKey);
         identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, peptideMatchKey, result);
-    
+
     }
 
     /**
@@ -1617,9 +1604,9 @@ public class IdentificationFeaturesGenerator {
      * @return true if the data is in cache
      */
     public boolean nValidatedSpectraForPeptideInCache(long peptideMatchKey) {
-        
+
         return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, peptideMatchKey) != null;
-    
+
     }
 
     /**
@@ -1632,12 +1619,12 @@ public class IdentificationFeaturesGenerator {
     private int estimateNConfidentSpectraForPeptide(long peptideMatchKey) {
 
         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideMatchKey);
-        
+
         return (int) Arrays.stream(peptideMatch.getSpectrumMatchesKeys())
                 .filter(key -> ((PSParameter) identification.getSpectrumMatch(key).getUrParam(PSParameter.dummy))
-                        .getMatchValidationLevel() == MatchValidationLevel.confident)
+                .getMatchValidationLevel() == MatchValidationLevel.confident)
                 .count();
-        
+
     }
 
     /**
@@ -1650,86 +1637,45 @@ public class IdentificationFeaturesGenerator {
     private int estimateNValidatedSpectraForPeptide(long peptideMatchKey) {
 
         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideMatchKey);
-        
+
         return (int) Arrays.stream(peptideMatch.getSpectrumMatchesKeys())
                 .filter(key -> ((PSParameter) identification.getSpectrumMatch(key).getUrParam(PSParameter.dummy))
-                        .getMatchValidationLevel().isValidated())
+                .getMatchValidationLevel().isValidated())
                 .count();
-        
+
     }
 
     /**
      * Clears the spectrum counting data in cache.
      */
     public void clearSpectrumCounting() {
-        
+
         identificationFeaturesCache.removeObjects(IdentificationFeaturesCache.ObjectType.spectrum_counting);
-        
+
     }
 
     /**
-     * Returns a summary of all PTMs present on the sequence confidently
-     * assigned to an amino acid. Example: SEQVEM&lt;mox&gt;CE gives Oxidation
-     * of M (M6).
+     * Returns a summary of all modifications present on the sequence
+     * confidently assigned to an amino acid. Example: SEQVEM&lt;mox&gt;CE gives
+     * Oxidation of M (M6).
      *
      * @param identificationMatch the identification match
      * @param sequence the sequence
      *
-     * @return a PTM summary for the given match
+     * @return a modificatoin summary for the given match
      */
-    public String getConfidentPtmSites(IdentificationMatch identificationMatch, String sequence) {
+    public String getConfidentModificationSites(IdentificationMatch identificationMatch, String sequence) {
 
-        PSModificationScores psPtmScores = new PSModificationScores();
-        psPtmScores = (PSModificationScores) identificationMatch.getUrParam(psPtmScores);
+        PSModificationScores modificationsScores = (PSModificationScores) identificationMatch.getUrParam(new PSModificationScores());
 
-        StringBuilder result = new StringBuilder();
+        return modificationsScores == null ? ""
+                : modificationsScores.getConfidentlyLocalizedModifications().stream()
+                        .map(modName -> String.join("", modName, modificationsScores.getConfidentSitesForModification(modName).stream()
+                        .sorted()
+                        .map(site -> String.join("", sequence.substring(site - 1, site), site.toString()))
+                        .collect(Collectors.joining(", ", "(", ")"))))
+                        .collect(Collectors.joining(";"));
 
-        if (psPtmScores != null) {
-
-            boolean firstPtm = true;
-            TreeSet<String> ptms = psPtmScores.getConfidentlyLocalizedModifications();
-
-            for (String ptm : ptms) {
-
-                if (firstPtm) {
-
-                    firstPtm = false;
-
-                } else {
-
-                    result.append("; ");
-
-                }
-
-                result.append(ptm);
-                result.append("(");
-                
-                boolean firstSite = true;
-                TreeSet<Integer> sites = new TreeSet(psPtmScores.getConfidentSitesForModification(ptm));
-                
-                for (Integer site : sites) {
-                
-                    if (!firstSite) {
-                    
-                        result.append(", ");
-
-                    } else {
-
-                        firstSite = false;
-
-                    }
-
-                    char aa = sequence.charAt(site - 1);
-                    result.append(aa).append(site);
-                    
-                }
-                
-                result.append(")");
-            
-            }
-        }
-
-        return result.toString();
     }
 
     /**
@@ -1737,306 +1683,215 @@ public class IdentificationFeaturesGenerator {
      *
      * @param identificationMatch the identification match
      *
-     * @return a PTM summary for the given protein
+     * @return a modification summary for the given protein
      */
-    public String getConfidentPtmSitesNumber(IdentificationMatch identificationMatch) {
+    public String getConfidentModificationSitesNumber(IdentificationMatch identificationMatch) {
 
-        PSModificationScores psPtmScores = new PSModificationScores();
-        psPtmScores = (PSModificationScores) identificationMatch.getUrParam(psPtmScores);
+        final PSModificationScores modificationScores = (PSModificationScores) identificationMatch.getUrParam(new PSModificationScores());
 
-        StringBuilder result = new StringBuilder();
+        return modificationScores == null ? ""
+                : modificationScores.getConfidentlyLocalizedModifications().stream()
+                        .map(modName -> String.join("", modName, "(", Integer.toString(modificationScores.getConfidentSitesForModification(modName).size()), ")"))
+                        .collect(Collectors.joining(";"));
 
-        if (psPtmScores != null) {
-            boolean firstPtm = true;
-            ArrayList<String> ptms = psPtmScores.getConfidentlyLocalizedModifications();
-            Collections.sort(ptms);
-
-            for (String ptm : ptms) {
-                if (firstPtm) {
-                    firstPtm = false;
-                } else {
-                    result.append("; ");
-                }
-                result.append(ptm);
-                result.append("(");
-                result.append(psPtmScores.getConfidentSitesForModification(ptm).size());
-                result.append(")");
-            }
-        }
-
-        return result.toString();
     }
 
     /**
-     * Returns a list of the PTMs present on the sequence ambiguously assigned
-     * to an amino acid grouped by representative site followed by secondary
-     * ambiguous sites. Example: SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K returns M6
-     * {M9}.
+     * Returns a list of the modifications present on the sequence ambiguously
+     * assigned to an amino acid grouped by representative site followed by
+     * secondary ambiguous sites. Example: SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K
+     * returns M6 {M9}.
      *
      * @param identificationMatch the identification match
      * @param sequence the sequence
      *
-     * @return a PTM summary for the given protein
+     * @return a modification summary for the given protein
      */
-    public String getAmbiguousPtmSites(IdentificationMatch identificationMatch, String sequence) {
+    public String getAmbiguousModificationSites(IdentificationMatch identificationMatch, String sequence) {
 
-        PSModificationScores psPtmScores = new PSModificationScores();
-        psPtmScores = (PSModificationScores) identificationMatch.getUrParam(psPtmScores);
-        StringBuilder result = new StringBuilder();
+        final PSModificationScores modificationScores = (PSModificationScores) identificationMatch.getUrParam(new PSModificationScores());
 
-        if (psPtmScores != null) {
-            ArrayList<String> ptms = psPtmScores.getAmbiguouslyLocalizedModifications();
-            Collections.sort(ptms);
-            for (String ptmName : ptms) {
-                if (result.length() > 0) {
-                    result.append(", ");
-                }
-                result.append(ptmName).append(" (");
-                HashMap<Integer, ArrayList<Integer>> sites = psPtmScores.getAmbiguousModificationsSites(ptmName);
-                ArrayList<Integer> representativeSites = new ArrayList<>(sites.keySet());
-                Collections.sort(representativeSites);
-                boolean firstRepresentativeSite = true;
-                for (int representativeSite : representativeSites) {
-                    if (firstRepresentativeSite) {
-                        firstRepresentativeSite = false;
-                    } else {
-                        result.append(", ");
-                    }
-                    char aa = sequence.charAt(representativeSite - 1);
-                    result.append(aa).append(representativeSite).append("-{");
-                    ArrayList<Integer> secondarySites = sites.get(representativeSite);
-                    Collections.sort(secondarySites);
-                    boolean firstSecondarySite = true;
-                    for (Integer secondarySite : secondarySites) {
-                        if (firstSecondarySite) {
-                            firstSecondarySite = false;
-                        } else {
-                            result.append(" ");
-                        }
-                        aa = sequence.charAt(secondarySite - 1);
-                        result.append(aa).append(secondarySite);
-                    }
-                    result.append("}");
-                }
-                result.append(")");
-            }
-        }
-        return result.toString();
+        return modificationScores == null ? ""
+                : modificationScores.getAmbiguouslyLocalizedModifications().stream()
+                        .map(modName -> String.join("", modName, "(", getSitesSummary(modificationScores.getAmbiguousModificationsSites(modName), sequence), ")"))
+                        .collect(Collectors.joining(";"));
+
     }
 
     /**
-     * Returns a summary of the number of PTMs present on the sequence
+     * Returns a string representing the given map of modification sites.
+     *
+     * @param sites the modification sites
+     * @param sequence the sequence
+     *
+     * @return a string representing the given map of modification sites
+     */
+    private String getSitesSummary(HashMap<Integer, HashSet<Integer>> sites, String sequence) {
+
+        return (new TreeMap<>(sites)).entrySet().stream()
+                .map(entry -> String.join("",
+                sequence.substring(entry.getKey() - 1, entry.getKey()),
+                entry.getKey().toString(),
+                entry.getValue().stream()
+                        .map(site -> site.toString())
+                        .collect(Collectors.joining(" ", "-{", "}"))))
+                .collect(Collectors.joining(","));
+
+    }
+
+    /**
+     * Returns a summary of the number of modifications present on the sequence
      * ambiguously assigned to an amino acid grouped by representative site
      * followed by secondary ambiguous sites. Example:
      * SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K returns M6 {M9}.
      *
      * @param identificationMatch the identification match
      *
-     * @return a PTM summary for the given protein
+     * @return a modification summary for the given match
      */
-    public String getAmbiguousPtmSiteNumber(IdentificationMatch identificationMatch) {
+    public String getAmbiguousModificationSiteNumber(IdentificationMatch identificationMatch) {
 
-        PSModificationScores psPtmScores = new PSModificationScores();
-        psPtmScores = (PSModificationScores) identificationMatch.getUrParam(psPtmScores);
-        StringBuilder result = new StringBuilder();
+        final PSModificationScores modificationScores = (PSModificationScores) identificationMatch.getUrParam(new PSModificationScores());
 
-        if (psPtmScores != null) {
-            ArrayList<String> ptms = psPtmScores.getAmbiguouslyLocalizedModifications();
-            Collections.sort(ptms);
+        return modificationScores == null ? ""
+                : modificationScores.getAmbiguouslyLocalizedModifications().stream()
+                        .map(modName -> String.join("",
+                        modName, " (", Integer.toString(modificationScores.getAmbiguousModificationsSites(modName).size()), ")"))
+                        .collect(Collectors.joining(";"));
 
-            for (String ptmName : ptms) {
-                if (result.length() > 0) {
-                    result.append(", ");
-                }
-                result.append(ptmName).append(" (").append(psPtmScores.getAmbiguousModificationsSites(ptmName).size()).append(")");
-            }
-        }
-
-        return result.toString();
     }
 
     /**
-     * Returns a summary of the PTMs present on the peptide sequence confidently
-     * assigned to an amino acid with focus on given PTMs.
+     * Returns a summary of the modifications present on the peptide sequence
+     * confidently assigned to an amino acid with focus on given list of
+     * modifications.
      *
      * @param match the identification match
      * @param sequence the sequence
-     * @param targetedPtms the PTMs to include in the summary
+     * @param targetedModifications the mosifications to include in the summary
      *
-     * @return a PTM summary for the given protein
+     * @return a modification summary for the given match
      */
-    public String getConfidentPtmSites(IdentificationMatch match, String sequence, ArrayList<String> targetedPtms) {
+    public String getConfidentModificationSites(IdentificationMatch match, String sequence, ArrayList<String> targetedModifications) {
 
-        PSModificationScores psPtmScores = new PSModificationScores();
-        psPtmScores = (PSModificationScores) match.getUrParam(psPtmScores);
+        final PSModificationScores modificationScores = (PSModificationScores) match.getUrParam(new PSModificationScores());
 
-        StringBuilder result = new StringBuilder();
+        return modificationScores == null ? ""
+                : targetedModifications.stream()
+                        .flatMap(modName -> modificationScores.getConfidentSitesForModification(modName).stream())
+                        .distinct()
+                        .sorted()
+                        .map(site -> String.join("", sequence.substring(site - 1, site), site.toString()))
+                        .collect(Collectors.joining(","));
 
-        if (psPtmScores != null) {
-
-            Collections.sort(targetedPtms);
-            ArrayList<Integer> sites = new ArrayList<>();
-            for (String ptm : targetedPtms) {
-                for (Integer site : psPtmScores.getConfidentSitesForModification(ptm)) {
-                    if (!sites.contains(site)) {
-                        sites.add(site);
-                    }
-                }
-            }
-            boolean firstSite = true;
-            Collections.sort(sites);
-            for (Integer site : sites) {
-                if (!firstSite) {
-                    result.append(", ");
-                } else {
-                    firstSite = false;
-                }
-                char aa = sequence.charAt(site - 1);
-                result.append(aa).append(site);
-            }
-        }
-        return result.toString();
     }
 
     /**
      * Returns the number of confidently localized variable modifications.
      *
      * @param match the identification match
-     * @param targetedPtms the PTMs to include in the summary
+     * @param targetedModifications the modifications to include in the summary
      *
-     * @return a PTM summary for the given protein
+     * @return a modification summary for the given match
      */
-    public String getConfidentPtmSitesNumber(IdentificationMatch match, ArrayList<String> targetedPtms) {
+    public String getConfidentModificationSitesNumber(IdentificationMatch match, ArrayList<String> targetedModifications) {
 
-        PSModificationScores psPtmScores = new PSModificationScores();
-        psPtmScores = (PSModificationScores) match.getUrParam(psPtmScores);
+        final PSModificationScores modificationScores = (PSModificationScores) match.getUrParam(new PSModificationScores());
 
-        if (psPtmScores != null) {
+        return modificationScores == null ? ""
+                : Long.toString(
+                        targetedModifications.stream()
+                                .flatMap(modName -> modificationScores.getConfidentSitesForModification(modName).stream())
+                                .distinct()
+                                .count());
 
-            ArrayList<Integer> sites = new ArrayList<>();
-            for (String ptm : targetedPtms) {
-                for (Integer site : psPtmScores.getConfidentSitesForModification(ptm)) {
-                    if (!sites.contains(site)) {
-                        sites.add(site);
-                    }
-                }
-            }
-            return sites.size() + "";
-        }
-        return "";
     }
 
     /**
-     * Returns a list of the PTMs present on the sequence ambiguously assigned
-     * to an amino acid grouped by representative site followed by secondary
-     * ambiguous sites. Example: SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K returns M6
-     * {M9}.
+     * Returns a list of the modifications present on the sequence ambiguously
+     * assigned to an amino acid grouped by representative site followed by
+     * secondary ambiguous sites. Example: SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K
+     * returns M6 {M9}.
      *
      * @param match the identification match
      * @param sequence the sequence
-     * @param targetedPtms the targeted PTMs, can be null
+     * @param targetedModifications the modifications to include in the summary
      *
-     * @return a PTM summary for the given protein
+     * @return a modification summary for the given match
      */
-    public String getAmbiguousPtmSites(IdentificationMatch match, String sequence, ArrayList<String> targetedPtms) {
+    public String getAmbiguousModificationSites(IdentificationMatch match, String sequence, ArrayList<String> targetedModifications) {
 
-        PSModificationScores psPtmScores = new PSModificationScores();
-        psPtmScores = (PSModificationScores) match.getUrParam(psPtmScores);
+        PSModificationScores modificationScores = new PSModificationScores();
+        modificationScores = (PSModificationScores) match.getUrParam(modificationScores);
 
-        if (psPtmScores != null) {
-            HashMap<Integer, ArrayList<String>> reportPerSite = new HashMap<>();
+        if (modificationScores == null) {
 
-            for (String ptmName : targetedPtms) {
+            return "";
 
-                HashMap<Integer, ArrayList<Integer>> sites = psPtmScores.getAmbiguousModificationsSites(ptmName);
-                ArrayList<Integer> representativeSites = new ArrayList<>(sites.keySet());
-                Collections.sort(representativeSites);
+        } else {
 
-                for (int representativeSite : representativeSites) {
+            TreeMap<Integer, ArrayList<String>> reportPerSite = new TreeMap<>();
 
-                    StringBuilder reportAtSite = new StringBuilder();
-                    if (reportAtSite.length() > 0) {
-                        reportAtSite.append(", ");
-                    }
+            for (String modName : targetedModifications) {
 
-                    char aa = sequence.charAt(representativeSite - 1);
-                    reportAtSite.append(aa).append(representativeSite).append("-{");
-                    ArrayList<Integer> secondarySites = sites.get(representativeSite);
-                    Collections.sort(secondarySites);
-                    boolean firstSecondarySite = true;
+                TreeMap<Integer, HashSet<Integer>> sites = new TreeMap<>(modificationScores.getAmbiguousModificationsSites(modName));
 
-                    for (Integer secondarySite : secondarySites) {
-                        if (firstSecondarySite) {
-                            firstSecondarySite = false;
-                        } else {
-                            reportAtSite.append(" ");
-                        }
-                        aa = sequence.charAt(secondarySite - 1);
-                        reportAtSite.append(aa).append(secondarySite);
-                    }
+                for (Entry<Integer, HashSet<Integer>> entry : sites.entrySet()) {
 
-                    reportAtSite.append("}");
+                    int representativeSite = entry.getKey();
+                    HashSet<Integer> ambiguousSites = entry.getValue();
+
+                    StringBuilder prefix = new StringBuilder();
+                    prefix.append(sequence.charAt(representativeSite - 1)).append(representativeSite).append("-{");
+
+                    String reportAtSite = ambiguousSites.stream()
+                            .sorted()
+                            .map(site -> String.join("", sequence.substring(site - 1, site), site.toString()))
+                            .collect(Collectors.joining(" ", prefix, "}"));
 
                     ArrayList<String> reportsAtSite = reportPerSite.get(representativeSite);
+
                     if (reportsAtSite == null) {
-                        reportsAtSite = new ArrayList<>();
+
+                        reportsAtSite = new ArrayList<>(1);
                         reportPerSite.put(representativeSite, reportsAtSite);
+
                     }
-                    reportsAtSite.add(reportAtSite.toString());
+
+                    reportsAtSite.add(reportAtSite);
+
                 }
             }
 
-            ArrayList<Integer> sites = new ArrayList<>(reportPerSite.keySet());
-            Collections.sort(sites);
-            StringBuilder result = new StringBuilder();
+            return reportPerSite.values().stream()
+                    .flatMap(ArrayList::stream)
+                    .collect(Collectors.joining(";"));
 
-            for (int site : sites) {
-                if (result.length() > 0) {
-                    result.append(", ");
-                }
-                ArrayList<String> siteReports = reportPerSite.get(site);
-                Collections.sort(siteReports);
-                for (String siteReport : siteReports) {
-                    result.append(siteReport);
-                }
-            }
-
-            return result.toString();
         }
-        return "";
     }
 
     /**
-     * Returns a summary of the number of PTMs present on the sequence
+     * Returns a summary of the number of modifications present on the sequence
      * ambiguously assigned to an amino acid grouped by representative site
      * followed by secondary ambiguous sites. Example:
      * SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K returns M6 {M9}.
      *
      * @param match the identification match
-     * @param targetedPtms the targeted PTMs, can be null
+     * @param targetedModifications the modifications to include in the summary
      *
-     * @return a PTM summary for the given protein
+     * @return a modification summary for the given match
      */
-    public String getAmbiguousPtmSiteNumber(IdentificationMatch match, ArrayList<String> targetedPtms) {
+    public String getAmbiguousModificationSiteNumber(IdentificationMatch match, ArrayList<String> targetedModifications) {
 
-        PSModificationScores psPtmScores = new PSModificationScores();
-        psPtmScores = (PSModificationScores) match.getUrParam(psPtmScores);
+        final PSModificationScores modificationScores = (PSModificationScores) match.getUrParam(new PSModificationScores());
 
-        if (psPtmScores != null) {
-            ArrayList<Integer> sites = new ArrayList<>();
-
-            for (String ptmName : targetedPtms) {
-                HashMap<Integer, ArrayList<Integer>> ptmAmbiguousSites = psPtmScores.getAmbiguousModificationsSites(ptmName);
-                for (int site : ptmAmbiguousSites.keySet()) {
-                    if (!sites.contains(site)) {
-                        sites.add(site);
-                    }
-                }
-            }
-
-            return sites.size() + "";
-        }
-        return "";
+        return modificationScores == null ? ""
+                : Long.toString(
+                        targetedModifications.stream()
+                                .flatMap(modName -> modificationScores.getAmbiguousModificationsSites(modName).keySet().stream())
+                                .distinct()
+                                .count());
+        
     }
 
     /**
@@ -2049,34 +1904,37 @@ public class IdentificationFeaturesGenerator {
      */
     public String getModifiedSequence(IdentificationMatch identificationMatch, String sequence) {
 
-        PSModificationScores psPtmScores = new PSModificationScores();
-        psPtmScores = (PSModificationScores) identificationMatch.getUrParam(psPtmScores);
+        PSModificationScores modificationScores = (PSModificationScores) identificationMatch.getUrParam(new PSModificationScores());
 
-        if (psPtmScores != null) {
-            StringBuilder result = new StringBuilder();
+        if (modificationScores == null) {
+            
+            return "";
+            
+        } else {
+            
+            StringBuilder result = new StringBuilder(sequence.length());
 
             for (int aa = 0; aa < sequence.length(); aa++) {
+
                 result.append(sequence.charAt(aa));
+                
                 int aaNumber = aa + 1;
-                if (!psPtmScores.getConfidentModificationsAt(aaNumber).isEmpty()) {
-                    boolean first = true;
-                    result.append("<");
-                    for (String ptmName : psPtmScores.getConfidentModificationsAt(aaNumber)) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            result.append(", ");
-                        }
-                        Modification ptm = modificationFactory.getModification(ptmName);
-                        result.append(ptm.getShortName());
-                    }
-                    result.append(">");
+                HashSet<String> modificationsAtSite = modificationScores.getConfidentModificationsAt(aaNumber);
+
+                if (!modificationsAtSite.isEmpty()) {
+                    
+                    result.append(
+                        modificationsAtSite.stream()
+                            .sorted()
+                                .map(modName -> modificationFactory.getModification(modName).getShortName())
+                            .collect(Collectors.joining(",", "<", ">")));
+                    
                 }
             }
 
             return result.toString();
+            
         }
-        return "";
     }
 
     /**
@@ -2088,9 +1946,9 @@ public class IdentificationFeaturesGenerator {
      * @return the list of validated protein keys
      */
     public long[] getValidatedProteins(FilterParameters filterPreferences) {
-        
+
         return getValidatedProteins(null, filterPreferences);
-        
+
     }
 
     /**
@@ -2103,17 +1961,17 @@ public class IdentificationFeaturesGenerator {
      * @return the list of validated protein keys
      */
     public long[] getValidatedProteins(WaitingHandler waitingHandler, FilterParameters filterPreferences) {
-        
+
         long[] result = identificationFeaturesCache.getValidatedProteinList();
-        
+
         if (result == null) {
-            
+
             getProcessedProteinKeys(waitingHandler, filterPreferences);
-            
+
         }
-        
+
         return identificationFeaturesCache.getValidatedProteinList();
-        
+
     }
 
     /**
@@ -2152,17 +2010,17 @@ public class IdentificationFeaturesGenerator {
 
             ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
             ProteinMatch proteinMatch;
-    
+
             while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
                 long proteinKey = proteinMatch.getKey();
 
                 if (!proteinMatch.isDecoy()) {
-                    
+
                     PSParameter proteinPsParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
-                    
+
                     if (!proteinPsParameter.getHidden()) {
-                        
+
                         double score = proteinPsParameter.getProteinProbabilityScore();
                         int nPeptides = -proteinMatch.getPeptideMatchesKeys().length;
                         int nSpectra = -getNSpectra(proteinKey);
@@ -2182,48 +2040,48 @@ public class IdentificationFeaturesGenerator {
                             if (tempSpectrumCounting > maxSpectrumCounting) {
                                 maxSpectrumCounting = tempSpectrumCounting;
                             }
-                            
+
                             String proteinSequence = sequenceProvider.getSequence(proteinMatch.getLeadingAccession());
-                            
-                                double mw = ProteinUtils.computeMolecularWeight(proteinSequence);
-                                
-                                if (mw > maxMW) {
-                                    maxMW = mw;
-                                }
+
+                            double mw = ProteinUtils.computeMolecularWeight(proteinSequence);
+
+                            if (mw > maxMW) {
+                                maxMW = mw;
+                            }
 
                             if (proteinPsParameter.getMatchValidationLevel().isValidated()) {
-                                
+
                                 nValidatedProteins++;
-                                
+
                                 if (proteinPsParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                                    
+
                                     nConfidentProteins++;
-                                    
+
                                 }
                             }
                         }
 
                         if (!orderMap.containsKey(score)) {
-                            
+
                             orderMap.put(score, new HashMap<>(1));
                             scores.add(score);
-                            
+
                         }
 
                         if (!orderMap.get(score).containsKey(nPeptides)) {
-                            
+
                             orderMap.get(score).put(nPeptides, new HashMap<>(1));
-                            
+
                         }
 
                         if (!orderMap.get(score).get(nPeptides).containsKey(nSpectra)) {
-                            
+
                             orderMap.get(score).get(nPeptides).put(nSpectra, new ArrayList<>(1));
-                            
+
                         }
 
                         orderMap.get(score).get(nPeptides).get(nSpectra).add(proteinKey);
-                        
+
                     }
                 }
 
@@ -2237,14 +2095,14 @@ public class IdentificationFeaturesGenerator {
             }
 
             if (needMaxValues) {
-                
+
                 metrics.setMaxNPeptides(maxPeptides);
                 metrics.setMaxNSpectra(maxSpectra);
                 metrics.setMaxSpectrumCounting(maxSpectrumCounting);
                 metrics.setMaxMW(maxMW);
                 metrics.setnValidatedProteins(nValidatedProteins);
                 metrics.setnConfidentProteins(nConfidentProteins);
-                
+
             }
 
             ArrayList<Long> proteinList = new ArrayList<>();
@@ -2253,11 +2111,11 @@ public class IdentificationFeaturesGenerator {
             Collections.sort(scoreList);
 
             if (waitingHandler != null) {
-                
+
                 waitingHandler.resetSecondaryProgressCounter();
                 waitingHandler.setWaitingText("Updating Protein Table. Please Wait...");
                 waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size());
-                
+
             }
 
             for (double currentScore : scoreList) {
@@ -2271,25 +2129,25 @@ public class IdentificationFeaturesGenerator {
                     Collections.sort(nPsmList);
 
                     for (int currentNPsms : nPsmList) {
-                        
+
                         ArrayList<Long> tempList = orderMap.get(currentScore).get(currentNPeptides).get(currentNPsms);
                         Collections.sort(tempList);
                         proteinList.addAll(tempList);
-                        
+
                         if (waitingHandler != null) {
-                            
+
                             waitingHandler.setMaxSecondaryProgressCounter(tempList.size());
 
                             if (waitingHandler.isRunCanceled()) {
-                                
+
                                 return null;
-                                
+
                             }
                         }
                     }
                 }
             }
-            
+
             long[] proteinArray = proteinList.stream()
                     .mapToLong(Long::longValue)
                     .toArray();
@@ -2297,7 +2155,7 @@ public class IdentificationFeaturesGenerator {
             identificationFeaturesCache.setProteinList(proteinArray);
 
             if (waitingHandler != null) {
-                
+
                 waitingHandler.setPrimaryProgressCounterIndeterminate(true);
 
                 if (waitingHandler.isRunCanceled()) {
@@ -2307,40 +2165,40 @@ public class IdentificationFeaturesGenerator {
         }
 
         if (hidingNeeded(filterPreferences) || identificationFeaturesCache.getProteinListAfterHiding() == null) {
-            
+
             ArrayList<Long> proteinListAfterHiding = new ArrayList<>();
             ArrayList<Long> validatedProteinList = new ArrayList<>();
             int nValidatedProteins = 0;
             int nConfidentProteins = 0;
 
             for (long proteinKey : identificationFeaturesCache.getProteinList()) {
-                
+
                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-                
+
                 if (!proteinMatch.isDecoy()) {
-                    
+
                     PSParameter psParameter = (PSParameter) (proteinMatch).getUrParam(PSParameter.dummy);
-                    
+
                     if (!psParameter.getHidden()) {
-                        
+
                         proteinListAfterHiding.add(proteinKey);
-                        
+
                         if (psParameter.getMatchValidationLevel().isValidated()) {
-                            
+
                             nValidatedProteins++;
                             validatedProteinList.add(proteinKey);
-                            
+
                             if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                                
+
                                 nConfidentProteins++;
-                                
+
                             }
                         }
                     }
                 }
 
                 if (waitingHandler != null) {
-                    
+
                     waitingHandler.setPrimaryProgressCounterIndeterminate(true);
 
                     if (waitingHandler.isRunCanceled()) {
@@ -2348,22 +2206,22 @@ public class IdentificationFeaturesGenerator {
                     }
                 }
             }
-            
+
             long[] proteinArrayAfterHiding = proteinListAfterHiding.stream()
                     .mapToLong(Long::longValue)
                     .toArray();
 
             identificationFeaturesCache.setProteinListAfterHiding(proteinArrayAfterHiding);
-            
+
             long[] validatedProteinArray = validatedProteinList.stream()
                     .mapToLong(Long::longValue)
                     .toArray();
-                    
+
             identificationFeaturesCache.setValidatedProteinList(validatedProteinArray);
-            
+
             metrics.setnValidatedProteins(nValidatedProteins);
             metrics.setnConfidentProteins(nConfidentProteins);
-            
+
         }
 
         return identificationFeaturesCache.getProteinListAfterHiding();
@@ -2378,13 +2236,13 @@ public class IdentificationFeaturesGenerator {
      * @return the ordered protein keys to display when no filtering is applied.
      */
     public long[] getProteinKeys(WaitingHandler waitingHandler, FilterParameters filterPreferences) {
-        
+
         if (identificationFeaturesCache.getProteinList() == null) {
-            
+
             getProcessedProteinKeys(waitingHandler, filterPreferences);
-            
+
         }
-        
+
         return identificationFeaturesCache.getProteinList();
     }
 
@@ -2396,50 +2254,50 @@ public class IdentificationFeaturesGenerator {
      * @return a sorted list of the corresponding peptide keys
      */
     public long[] getSortedPeptideKeys(long proteinKey) {
-        
+
         if (proteinKey != identificationFeaturesCache.getCurrentProteinKey() || identificationFeaturesCache.getPeptideList() == null) {
 
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-            
+
             HashMap<Double, HashMap<Integer, ArrayList<Long>>> peptideMap = new HashMap<>(1);
-            
+
             int maxSpectrumCount = 0;
 
             // iterate the peptides and store the coverage for each peptide validation level
             PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null);
             PeptideMatch peptideMatch;
-            
+
             while ((peptideMatch = peptideMatchesIterator.next()) != null) {
-                
+
                 long peptideKey = peptideMatch.getKey();
                 PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
                 if (!psParameter.getHidden()) {
-                    
+
                     double peptideProbabilityScore = psParameter.getPeptideProbabilityScore();
 
                     if (!peptideMap.containsKey(peptideProbabilityScore)) {
-                        
+
                         peptideMap.put(peptideProbabilityScore, new HashMap<>(1));
-                        
+
                     }
-                    
+
                     int spectrumCount = -peptideMatch.getSpectrumCount();
-                    
+
                     if (peptideMatch.getSpectrumCount() > maxSpectrumCount) {
-                        
+
                         maxSpectrumCount = peptideMatch.getSpectrumCount();
-                        
+
                     }
-                    
+
                     if (!peptideMap.get(peptideProbabilityScore).containsKey(spectrumCount)) {
-                        
+
                         peptideMap.get(peptideProbabilityScore).put(spectrumCount, new ArrayList<>(1));
-                        
+
                     }
-                    
+
                     peptideMap.get(peptideProbabilityScore).get(spectrumCount).add(peptideKey);
-                    
+
                 }
             }
 
@@ -2450,23 +2308,23 @@ public class IdentificationFeaturesGenerator {
             ArrayList<Long> peptideList = new ArrayList<>();
 
             for (double currentScore : scores) {
-                
+
                 ArrayList<Integer> nSpectra = new ArrayList<>(peptideMap.get(currentScore).keySet());
                 Collections.sort(nSpectra);
-                
+
                 for (int currentNPsm : nSpectra) {
-                    
+
                     ArrayList<Long> keys = peptideMap.get(currentScore).get(currentNPsm);
                     Collections.sort(keys);
                     peptideList.addAll(keys);
-                    
+
                 }
             }
 
             long[] peptideArray = peptideList.stream()
                     .mapToLong(Long::longValue)
                     .toArray();
-            
+
             identificationFeaturesCache.setPeptideList(peptideArray);
             identificationFeaturesCache.setCurrentProteinKey(proteinKey);
         }
@@ -2489,7 +2347,7 @@ public class IdentificationFeaturesGenerator {
         if (peptideKey != identificationFeaturesCache.getCurrentPeptideKey() || identificationFeaturesCache.getPsmList() == null || forceUpdate) {
 
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-            
+
             HashMap<Integer, HashMap<Double, ArrayList<Long>>> orderingMap = new HashMap<>(1);
             boolean hasRT = sortOnRt;
             double rt = -1;
@@ -2506,56 +2364,56 @@ public class IdentificationFeaturesGenerator {
                 PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
 
                 if (!psParameter.getHidden()) {
-                    
+
                     if (psParameter.getMatchValidationLevel().isValidated()) {
-                        
+
                         nValidatedPsms++;
-                        
+
                     }
 
                     int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge();
-                    
+
                     if (!orderingMap.containsKey(charge)) {
-                        
+
                         orderingMap.put(charge, new HashMap<>(spectrumKeys.length));
-                        
+
                     }
-                    
+
                     if (hasRT) {
-                        
+
                         try {
-                            
+
                             Precursor precursor = spectrumFactory.getPrecursor(spectrumMatch.getSpectrumKey());
                             rt = precursor.getRt();
-                            
+
                             if (rt == -1) {
-                                
+
                                 hasRT = false;
-                                
+
                             }
-                            
+
                         } catch (Exception e) {
-                            
+
                             e.printStackTrace();
                             hasRT = false;
-                            
+
                         }
                     }
-                    
+
                     if (!hasRT) {
-                        
+
                         rt = psParameter.getPsmProbabilityScore();
-                        
+
                     }
-                    
+
                     if (!orderingMap.get(charge).containsKey(rt)) {
-                        
+
                         orderingMap.get(charge).put(rt, new ArrayList<>(1));
-                        
+
                     }
-                    
+
                     orderingMap.get(charge).get(rt).add(matchKey);
-                    
+
                 }
             }
 
@@ -2566,16 +2424,16 @@ public class IdentificationFeaturesGenerator {
             ArrayList<Long> psmList = new ArrayList<>();
 
             for (int currentCharge : charges) {
-                
+
                 ArrayList<Double> rts = new ArrayList<>(orderingMap.get(currentCharge).keySet());
                 Collections.sort(rts);
-                
+
                 for (double currentRT : rts) {
-                    
+
                     ArrayList<Long> tempResult = orderingMap.get(currentCharge).get(currentRT);
                     Collections.sort(tempResult);
                     psmList.addAll(tempResult);
-                    
+
                 }
             }
 
@@ -2597,9 +2455,9 @@ public class IdentificationFeaturesGenerator {
      * @return the number of validated PSMs for the last selected peptide
      */
     public int getNValidatedPsms() {
-        
+
         return identificationFeaturesCache.getnValidatedPsms();
-        
+
     }
 
     /**
@@ -2612,24 +2470,24 @@ public class IdentificationFeaturesGenerator {
     private boolean hidingNeeded(FilterParameters filterPreferences) {
 
         if (filterPreferences == null) {
-            
+
             return false;
-            
+
         }
 
         if (identificationFeaturesCache.isFiltered()) {
-            
+
             return true;
-            
+
         }
 
         for (ProteinFilter proteinFilter : filterPreferences.getProteinHideFilters().values()) {
-            
+
             if (proteinFilter.isActive()) {
-                
+
                 identificationFeaturesCache.setFiltered(true);
                 return true;
-                
+
             }
         }
 
@@ -2642,9 +2500,9 @@ public class IdentificationFeaturesGenerator {
      * @param proteinList the ordered protein list
      */
     public void setProteinKeys(long[] proteinList) {
-        
+
         identificationFeaturesCache.setProteinList(proteinList);
-        
+
     }
 
     /**
@@ -2653,9 +2511,9 @@ public class IdentificationFeaturesGenerator {
      * @return the identification features cache
      */
     public IdentificationFeaturesCache getIdentificationFeaturesCache() {
-        
+
         return identificationFeaturesCache;
-        
+
     }
 
     /**
@@ -2664,9 +2522,9 @@ public class IdentificationFeaturesGenerator {
      * @param identificationFeaturesCache the new identification features cache
      */
     public void setIdentificationFeaturesCache(IdentificationFeaturesCache identificationFeaturesCache) {
-        
+
         this.identificationFeaturesCache = identificationFeaturesCache;
-        
+
     }
 
     /**
@@ -2675,9 +2533,9 @@ public class IdentificationFeaturesGenerator {
      * @return the metrics
      */
     public Metrics getMetrics() {
-        
+
         return metrics;
-        
+
     }
 
     /**
@@ -2686,9 +2544,9 @@ public class IdentificationFeaturesGenerator {
      * @param spectrumCountingPreferences the spectrum counting preferences
      */
     public void setSpectrumCountingPreferences(SpectrumCountingParameters spectrumCountingPreferences) {
-        
+
         this.spectrumCountingPreferences = spectrumCountingPreferences;
-        
+
     }
 
     /**
@@ -2699,9 +2557,9 @@ public class IdentificationFeaturesGenerator {
      * @return true if peptide is found in a single protein match
      */
     public int getNValidatedProteinGroups(Peptide peptide) {
-        
+
         return getNValidatedProteinGroups(peptide, null);
-        
+
     }
 
     /**
@@ -2716,10 +2574,10 @@ public class IdentificationFeaturesGenerator {
     public int getNValidatedProteinGroups(Peptide peptide, WaitingHandler waitingHandler) {
 
         HashSet<Long> keys = identification.getProteinMatches(peptide);
-        
+
         return (int) keys.stream()
                 .filter(key -> ((PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy))
-                        .getMatchValidationLevel().isValidated())
+                .getMatchValidationLevel().isValidated())
                 .count();
     }
 }
