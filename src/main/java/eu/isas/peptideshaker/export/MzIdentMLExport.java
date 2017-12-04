@@ -44,7 +44,6 @@ import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSModificationScores;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.scoring.maps.ProteinMap;
 import eu.isas.peptideshaker.scoring.ModificationScoring;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
@@ -1485,22 +1484,21 @@ public class MzIdentMLExport {
 
             PSMaps psMaps = new PSMaps();
             psMaps = (PSMaps) identification.getUrParam(psMaps);
-            ProteinMap proteinMap = psMaps.getProteinMap();
-            TargetDecoyMap targetDecoyMap = proteinMap.getTargetDecoyMap();
-            TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+            TargetDecoyMap proteinMap = psMaps.getProteinMap();
+            TargetDecoyResults proteinTargetDecoyResults = proteinMap.getTargetDecoyResults();
 
-            double threshold = targetDecoyResults.getUserInput() / 100;
-            int thresholdType = targetDecoyResults.getInputType();
+            double threshold = proteinTargetDecoyResults.getUserInput() / 100;
+            int thresholdType = proteinTargetDecoyResults.getInputType();
 
             if (thresholdType == 0) {
 
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002461", "protein group-level global confidence", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // confidence
 
-            } else if (targetDecoyResults.getInputType() == 1) {
+            } else if (proteinTargetDecoyResults.getInputType() == 1) {
 
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002369", "protein group-level global FDR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FDR
 
-            } else if (targetDecoyResults.getInputType() == 2) {
+            } else if (proteinTargetDecoyResults.getInputType() == 2) {
 
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002460", "protein group-level global FNR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FNR
 

@@ -214,7 +214,7 @@ public class CpsParent extends UserPreferencesParent {
         sequenceProvider = psParameters.getSequenceProvider();
 
         // Set up caches
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, sequenceProvider, identificationParameters, metrics, spectrumCountingPreferences);
+        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, sequenceProvider, metrics, spectrumCountingPreferences);
         IdentificationFeaturesCache identificationFeaturesCache = psParameters.getIdentificationFeaturesCache();
         
         if (identificationFeaturesCache != null) {
@@ -636,7 +636,7 @@ public class CpsParent extends UserPreferencesParent {
      */
     public void resetIdentificationFeaturesGenerator() {
         
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, sequenceProvider, identificationParameters, metrics, spectrumCountingPreferences);
+        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, sequenceProvider, metrics, spectrumCountingPreferences);
         
     }
 
