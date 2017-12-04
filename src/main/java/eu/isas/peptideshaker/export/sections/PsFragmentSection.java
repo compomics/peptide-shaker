@@ -185,7 +185,7 @@ public class PsFragmentSection {
                         
                     }
                     
-                    writer.write(line + "");
+                    writer.write(Integer.toString(line));
                     writer.addSeparator();
                 
                 }

@@ -89,7 +89,7 @@ public class PsSearchParametersSection {
 
         for (PsSearchFeature exportFeature : searchFeatures) {
             if (indexes) {
-                writer.write(line + "");
+                writer.write(Integer.toString(line));
                 writer.addSeparator();
             }
             writer.write(exportFeature.getTitle());

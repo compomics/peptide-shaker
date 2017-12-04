@@ -86,7 +86,7 @@ public class PsPtmScoringSection {
 
         for (PsPtmScoringFeature ptmScoringFeature : ptmScoringFeatures) {
             if (indexes) {
-                writer.write(line + "");
+                writer.write(Integer.toString(line));
                 writer.addSeparator();
             }
             writer.write(ptmScoringFeature.getTitle() + "");

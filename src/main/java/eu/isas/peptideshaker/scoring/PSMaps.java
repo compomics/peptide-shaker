@@ -4,10 +4,7 @@ import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.db.object.DbObject;
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
-import eu.isas.peptideshaker.scoring.maps.PeptideSpecificMap;
-import eu.isas.peptideshaker.scoring.maps.ProteinMap;
-import eu.isas.peptideshaker.scoring.maps.modifications.PsmPTMMap;
-import eu.isas.peptideshaker.scoring.maps.SpecificTargetDecoyMap;
+import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 
 /**
  * This class contains all scoring maps from PeptideShaker and will be used to
@@ -22,21 +19,17 @@ public class PSMaps extends DbObject implements UrParameter {
      */
     static final long serialVersionUID = -7582248988590322280L;
     /**
-     * The protein map.
+     * The PSM level map.
      */
-    private ProteinMap proteinMap;
+    private TargetDecoyMap psmMap;
     /**
-     * The PSM map.
+     * The peptide level map.
      */
-    private SpecificTargetDecoyMap PsmSpecificMap;
+    private TargetDecoyMap peptideMap;
     /**
-     * The peptide map.
+     * The protein level map.
      */
-    private PeptideSpecificMap PeptideSpecificMap;
-    /**
-     * The PSM level PTM map.
-     */
-    private PsmPTMMap psmPTMMap;
+    private TargetDecoyMap proteinMap;
     /**
      * The target decoy map of all search engine scores.
      */
@@ -51,48 +44,18 @@ public class PSMaps extends DbObject implements UrParameter {
     /**
      * Constructor for the PSMaps.
      *
-     * @param proteinMap the protein map
-     * @param PsmSpecificMap the PSM map
-     * @param PeptideSpecificMap the peptide map
-     * @param inputMap the target decoy map of all search engine scores
-     * @param psmPTMMap the PSM level PTM scoring map
+     * @param inputMap the input map
+     * @param psmMap the PSM level map
+     * @param peptideMap the peptide level map
+     * @param proteinMap the protein level map
      */
-    public PSMaps(SpecificTargetDecoyMap PsmSpecificMap, PeptideSpecificMap PeptideSpecificMap, ProteinMap proteinMap, InputMap inputMap, PsmPTMMap psmPTMMap) {
-        this.proteinMap = proteinMap;
-        this.PeptideSpecificMap = PeptideSpecificMap;
-        this.PsmSpecificMap = PsmSpecificMap;
+    public PSMaps(InputMap inputMap, TargetDecoyMap psmMap, TargetDecoyMap peptideMap, TargetDecoyMap proteinMap) {
+        
         this.inputMap = inputMap;
-        this.psmPTMMap = psmPTMMap;
-    }
-
-    /**
-     * Getter for the peptide map.
-     *
-     * @return the peptide map
-     */
-    public PeptideSpecificMap getPeptideSpecificMap() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return PeptideSpecificMap;
-    }
-
-    /**
-     * Getter for the PSM map.
-     *
-     * @return the PSM map
-     */
-    public SpecificTargetDecoyMap getPsmSpecificMap() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return PsmSpecificMap;
-    }
-
-    /**
-     * Getter for the protein map.
-     *
-     * @return the protein map
-     */
-    public ProteinMap getProteinMap() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return proteinMap;
+        this.psmMap = psmMap;
+        this.peptideMap = peptideMap;
+        this.proteinMap = proteinMap;
+        
     }
 
     /**
@@ -101,28 +64,50 @@ public class PSMaps extends DbObject implements UrParameter {
      * @return the target decoy map of all search engine scores
      */
     public InputMap getInputMap() {
+        
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        
         return inputMap;
+    
     }
 
     /**
-     * Returns the PSM level PTM scoring map.
-     * 
-     * @return the PSM level PTM scoring map
+     * Returns the target decoy map at the psm level.
+     *
+     * @return the target decoy map at the psm level
      */
-    public PsmPTMMap getPsmPTMMap() {
+    public TargetDecoyMap getPsmMap() {
+        
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return psmPTMMap;
+        
+        return psmMap;
+    
     }
 
     /**
-     * Sets the PSM level PTM scoring map.
-     * 
-     * @param psmPTMMap the PSM level PTM scoring map
+     * Returns the target decoy map at the peptide level.
+     *
+     * @return the target decoy map at the peptide level
      */
-    public void setPsmPTMMap(PsmPTMMap psmPTMMap) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-        this.psmPTMMap = psmPTMMap;
+    public TargetDecoyMap getPeptideMap() {
+        
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        
+        return peptideMap;
+    
+    }
+
+    /**
+     * Returns the target decoy map at the protein level.
+     *
+     * @return the target decoy map at the protein level
+     */
+    public TargetDecoyMap getProteinMap() {
+        
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        
+        return proteinMap;
+    
     }
 
     @Override

@@ -88,7 +88,7 @@ public class PsSpectrumCountingSection {
 
         for (PsSpectrumCountingFeature spectrumCountingFeature : spectrumCountingFeatures) {
             if (indexes) {
-                writer.write(line + "");
+                writer.write(Integer.toString(line));
                 writer.addSeparator();
             }
             writer.write(spectrumCountingFeature.getTitle());

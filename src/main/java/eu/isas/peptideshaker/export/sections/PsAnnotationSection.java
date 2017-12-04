@@ -88,7 +88,7 @@ public class PsAnnotationSection {
         for (ExportFeature exportFeature : annotationFeatures) {
 
             if (indexes) {
-                writer.write(line + "");
+                writer.write(Integer.toString(line));
                 writer.addSeparator();
             }
 

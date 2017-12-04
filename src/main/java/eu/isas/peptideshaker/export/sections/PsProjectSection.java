@@ -89,7 +89,7 @@ public class PsProjectSection {
 
         for (PsProjectFeature projectFeature : projectFeatures) {
             if (indexes) {
-                writer.write(line + "");
+                writer.write(Integer.toString(line));
                 writer.addSeparator();
             }
             writer.write(projectFeature.getTitle());

@@ -85,7 +85,7 @@ public class PsInputFilterSection {
         for (ExportFeature exportFeature : exportFeatures) {
 
             if (indexes) {
-                writer.write(line + "");
+                writer.write(Integer.toString(line));
                 writer.addSeparator();
             }
 

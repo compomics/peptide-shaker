@@ -7,9 +7,6 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
-import com.compomics.util.experiment.units.MetricsPrefix;
-import com.compomics.util.experiment.units.StandardUnit;
-import com.compomics.util.experiment.units.UnitOfMeasurement;
 import com.compomics.util.experiment.units.Units;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
@@ -27,7 +24,6 @@ import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -192,7 +188,7 @@ public class PsProteinSection {
 
                     if (indexes) {
 
-                        writer.write(line + "");
+                        writer.write(Integer.toString(line));
                         first = false;
 
                     }

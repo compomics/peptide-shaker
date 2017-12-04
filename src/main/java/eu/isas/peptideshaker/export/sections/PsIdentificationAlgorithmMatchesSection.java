@@ -251,7 +251,7 @@ public class PsIdentificationAlgorithmMatchesSection {
 
                             }
 
-                            writer.write(line + "");
+                            writer.write(Integer.toString(line));
                             firstFeature = false;
 
                         }

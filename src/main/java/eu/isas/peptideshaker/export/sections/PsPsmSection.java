@@ -165,7 +165,7 @@ public class PsPsmSection {
                         if (linePrefix != null) {
                             writer.write(linePrefix);
                         }
-                        writer.write(line + "");
+                        writer.write(Integer.toString(line));
                         first = false;
                     }
                     for (PsIdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature : identificationAlgorithmMatchesFeatures) {
