@@ -10,7 +10,7 @@ import eu.isas.peptideshaker.export.exportfeatures.PsValidationFeature;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.scoring.maps.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.maps.ProteinMap;
-import eu.isas.peptideshaker.scoring.maps.ChargeSpecificMap;
+import eu.isas.peptideshaker.scoring.maps.SpecificTargetDecoyMap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -372,12 +372,12 @@ public class PsValidationSection {
                     line++;
                     break;
                 case psm_accuracy:
-                    ChargeSpecificMap psmTargetDecoyMap = psMaps.getPsmSpecificMap();
-                    ArrayList<Integer> possibleCharges = psmTargetDecoyMap.getPossibleCharges();
+                    SpecificTargetDecoyMap psmTargetDecoyMap = psMaps.getPsmSpecificMap();
+                    ArrayList<Integer> possibleCharges = psmTargetDecoyMap.getPossibleCategories();
                     Collections.sort(possibleCharges);
                     HashSet<Integer> foundCharges = new HashSet<>(possibleCharges.size());
                     for (int charge : possibleCharges) {
-                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCharge(charge);
+                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCategory(charge);
                         Collections.sort(files);
                         for (String file : files) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
@@ -459,11 +459,11 @@ public class PsValidationSection {
                     break;
                 case psm_confidence:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
-                    possibleCharges = psmTargetDecoyMap.getPossibleCharges();
+                    possibleCharges = psmTargetDecoyMap.getPossibleCategories();
                     Collections.sort(possibleCharges);
                     foundCharges = new HashSet<>(possibleCharges.size());
                     for (int charge : possibleCharges) {
-                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCharge(charge);
+                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCategory(charge);
                         Collections.sort(files);
                         for (String file : files) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
@@ -537,11 +537,11 @@ public class PsValidationSection {
                     break;
                 case psm_fdr:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
-                    possibleCharges = psmTargetDecoyMap.getPossibleCharges();
+                    possibleCharges = psmTargetDecoyMap.getPossibleCategories();
                     Collections.sort(possibleCharges);
                     foundCharges = new HashSet<>(possibleCharges.size());
                     for (int charge : possibleCharges) {
-                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCharge(charge);
+                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCategory(charge);
                         Collections.sort(files);
                         for (String file : files) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
@@ -615,11 +615,11 @@ public class PsValidationSection {
                     break;
                 case psm_fnr:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
-                    possibleCharges = psmTargetDecoyMap.getPossibleCharges();
+                    possibleCharges = psmTargetDecoyMap.getPossibleCategories();
                     Collections.sort(possibleCharges);
                     foundCharges = new HashSet<>(possibleCharges.size());
                     for (int charge : possibleCharges) {
-                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCharge(charge);
+                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCategory(charge);
                         Collections.sort(files);
                         for (String file : files) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
@@ -693,11 +693,11 @@ public class PsValidationSection {
                     break;
                 case psm_pep:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
-                    possibleCharges = psmTargetDecoyMap.getPossibleCharges();
+                    possibleCharges = psmTargetDecoyMap.getPossibleCategories();
                     Collections.sort(possibleCharges);
                     foundCharges = new HashSet<>(possibleCharges.size());
                     for (int charge : possibleCharges) {
-                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCharge(charge);
+                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCategory(charge);
                         Collections.sort(files);
                         for (String file : files) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
@@ -771,11 +771,11 @@ public class PsValidationSection {
                     break;
                 case total_psm:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
-                    possibleCharges = psmTargetDecoyMap.getPossibleCharges();
+                    possibleCharges = psmTargetDecoyMap.getPossibleCategories();
                     Collections.sort(possibleCharges);
                     foundCharges = new HashSet<>(possibleCharges.size());
                     for (int charge : possibleCharges) {
-                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCharge(charge);
+                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCategory(charge);
                         Collections.sort(files);
                         for (String file : files) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
@@ -849,11 +849,11 @@ public class PsValidationSection {
                     break;
                 case validated_psm:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
-                    possibleCharges = psmTargetDecoyMap.getPossibleCharges();
+                    possibleCharges = psmTargetDecoyMap.getPossibleCategories();
                     Collections.sort(possibleCharges);
                     foundCharges = new HashSet<>(possibleCharges.size());
                     for (int charge : possibleCharges) {
-                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCharge(charge);
+                        ArrayList<String> files = psmTargetDecoyMap.getFilesAtCategory(charge);
                         Collections.sort(files);
                         for (String file : files) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {

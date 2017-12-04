@@ -38,7 +38,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSModificationScores;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
-import eu.isas.peptideshaker.scoring.maps.PsmPTMMap;
+import eu.isas.peptideshaker.scoring.maps.modifications.PsmPTMMap;
 import eu.isas.peptideshaker.scoring.ModificationScoring;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;

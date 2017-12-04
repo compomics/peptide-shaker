@@ -18,6 +18,7 @@ import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
+import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
@@ -482,7 +483,7 @@ public class BestMatchSelection {
                     psParameter.setAlgorithmDeltaPEP(matchParameter.getAlgorithmDeltaPEP());
                     psParameter.setDeltaPEP(matchParameter.getDeltaPEP());
 
-                    matchesValidator.getPsmMap().addPoint(psParameter.getPsmProbabilityScore(), spectrumMatch, sequenceMatchingPreferences);
+                    matchesValidator.getPsmMap().put(psParameter.getPsmProbabilityScore(), PeptideUtils.isDecoy(psPeptide, sequenceProvider));
 
                     String validationMapKey = "";
 

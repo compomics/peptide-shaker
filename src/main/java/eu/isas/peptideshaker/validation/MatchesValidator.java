@@ -8,7 +8,6 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
-import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -18,9 +17,7 @@ import com.compomics.util.experiment.identification.matches_iterators.SpectrumMa
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
-import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
-import com.compomics.util.parameters.identification.advanced.IdMatchValidationParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import com.compomics.util.waiting.WaitingHandler;
@@ -45,15 +42,11 @@ import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
-import eu.isas.peptideshaker.scoring.maps.PeptideSpecificMap;
-import eu.isas.peptideshaker.scoring.maps.ProteinMap;
-import eu.isas.peptideshaker.scoring.maps.ChargeSpecificMap;
+import eu.isas.peptideshaker.scoring.maps.SpecificTargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -65,9 +58,8 @@ import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
-import org.apache.commons.math.MathException;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class validates the quality of identification matches.
@@ -79,15 +71,15 @@ public class MatchesValidator {
     /**
      * The PSM target decoy map.
      */
-    private ChargeSpecificMap psmMap;
+    private TargetDecoyMap psmMap;
     /**
      * The peptide target decoy map.
      */
-    private PeptideSpecificMap peptideMap;
+    private TargetDecoyMap peptideMap;
     /**
      * The protein target decoy map.
      */
-    private ProteinMap proteinMap;
+    private TargetDecoyMap proteinMap;
     /**
      * The spectrum factory.
      */
@@ -100,7 +92,7 @@ public class MatchesValidator {
      * @param peptideMap the peptide target decoy map
      * @param proteinMap the protein target decoy map
      */
-    public MatchesValidator(ChargeSpecificMap psmMap, PeptideSpecificMap peptideMap, ProteinMap proteinMap) {
+    public MatchesValidator(TargetDecoyMap psmMap, TargetDecoyMap peptideMap, TargetDecoyMap proteinMap) {
 
         this.psmMap = psmMap;
         this.peptideMap = peptideMap;
@@ -132,12 +124,14 @@ public class MatchesValidator {
      *
      * @throws java.lang.InterruptedException exception thrown if a thread gets
      * interrupted
+     * @throws java.util.concurrent.TimeoutException exception thrown if the
+     * operation times out
      */
     public void validateIdentifications(Identification identification, Metrics metrics, InputMap inputMap,
             WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             FastaParameters fastaParameters, SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps, IdentificationParameters identificationParameters,
-            SpectrumCountingParameters spectrumCountingPreferences, ProcessingParameters processingPreferences) throws InterruptedException {
+            SpectrumCountingParameters spectrumCountingPreferences, ProcessingParameters processingPreferences) throws InterruptedException, TimeoutException {
 
         ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCPreferences();
 
@@ -186,7 +180,7 @@ public class MatchesValidator {
 
         if (!pool.awaitTermination(identification.getSpectrumIdentificationSize(), TimeUnit.MINUTES)) {
 
-            throw new InterruptedException("Spectrum matches validation timed out. Please contact the developers.");
+            throw new TimeoutException("Spectrum matches validation timed out. Please contact the developers.");
 
         }
 
@@ -275,7 +269,7 @@ public class MatchesValidator {
 
         if (!pool.awaitTermination(identification.getSpectrumIdentificationSize(), TimeUnit.MINUTES)) {
 
-            throw new InterruptedException("Spectrum matches validation timed out. Please contact the developers.");
+            throw new TimeoutException("Spectrum matches validation timed out. Please contact the developers.");
 
         }
 
@@ -406,15 +400,15 @@ public class MatchesValidator {
             FastaParameters fastaParameters, SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider,
             GeneMaps geneMaps, IdentificationParameters identificationParameters,
-            ProteinMap proteinMap, long proteinKey) {
+            TargetDecoyMap proteinMap, long proteinKey) {
 
         ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCPreferences();
-        TargetDecoyMap targetDecoyMap = proteinMap.getTargetDecoyMap();
-        TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+
+        TargetDecoyResults targetDecoyResults = proteinMap.getTargetDecoyResults();
         double fdrLimit = targetDecoyResults.getFdrLimit();
         double nTargetLimit = 100.0 / fdrLimit;
         double proteinThreshold = targetDecoyResults.getScoreLimit();
-        double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
+        double margin = validationQCPreferences.getConfidenceMargin() * proteinMap.getResolution();
         double proteinConfidentThreshold = targetDecoyResults.getConfidenceLimit() + margin;
 
         if (proteinConfidentThreshold > 100) {
@@ -423,11 +417,11 @@ public class MatchesValidator {
 
         }
 
-        boolean noValidated = proteinMap.getTargetDecoyMap().getTargetDecoyResults().noValidated();
+        boolean noValidated = proteinMap.getTargetDecoyResults().noValidated();
 
         updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, fastaParameters,
                 sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters,
-                targetDecoyMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
+                proteinMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
 
     }
 
@@ -532,7 +526,7 @@ public class MatchesValidator {
     public static void updatePeptideMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             FastaParameters fastaParameters, SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps,
-            IdentificationParameters identificationParameters, PeptideSpecificMap peptideMap, long peptideKey) {
+            IdentificationParameters identificationParameters, TargetDecoyMap peptideMap, long peptideKey) {
 
         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
         PSParameter psParameter = (PSParameter) ((PeptideMatch) peptideMatch).getUrParam(PSParameter.dummy);
@@ -541,12 +535,11 @@ public class MatchesValidator {
 
         if (fastaParameters.isTargetDecoy()) {
 
-            TargetDecoyMap targetDecoyMap = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSpecificMapKey()));
-            TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+            TargetDecoyResults targetDecoyResults = peptideMap.getTargetDecoyResults();
             double fdrLimit = targetDecoyResults.getFdrLimit();
             double nTargetLimit = 100.0 / fdrLimit;
             double peptideThreshold = targetDecoyResults.getScoreLimit();
-            double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
+            double margin = validationQCPreferences.getConfidenceMargin() * peptideMap.getResolution();
             double confidenceThreshold = targetDecoyResults.getConfidenceLimit() + margin;
 
             if (confidenceThreshold > 100) {
@@ -555,7 +548,7 @@ public class MatchesValidator {
 
             }
 
-            boolean noValidated = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSpecificMapKey())).getTargetDecoyResults().noValidated();
+            boolean noValidated = peptideMap.getTargetDecoyResults().noValidated();
 
             if (!noValidated && psParameter.getPeptideProbabilityScore() <= peptideThreshold) {
 
@@ -576,7 +569,7 @@ public class MatchesValidator {
 
                 boolean confidenceThresholdPassed = psParameter.getPeptideConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
-                boolean enoughHits = !validationQCPreferences.isFirstDecoy() || targetDecoyMap.getnTargetOnly() > nTargetLimit;
+                boolean enoughHits = !validationQCPreferences.isFirstDecoy() || peptideMap.getnTargetOnly() > nTargetLimit;
 
                 boolean enoughSequences = !validationQCPreferences.isDbSize();
 
@@ -622,7 +615,7 @@ public class MatchesValidator {
             FastaParameters fastaParameters, SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps,
             IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator,
-            ChargeSpecificMap psmMap, long spectrumMatchKey, boolean applyQCFilters) {
+            TargetDecoyMap psmMap, long spectrumMatchKey, boolean applyQCFilters) {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
         PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
@@ -631,22 +624,18 @@ public class MatchesValidator {
 
         if (fastaParameters.isTargetDecoy()) {
 
-            Integer charge = new Integer(psParameter.getSpecificMapKey());
-            String spectrumKey = spectrumMatch.getSpectrumKey();
-            String fileName = Spectrum.getSpectrumFile(spectrumKey);
-            TargetDecoyMap targetDecoyMap = psmMap.getTargetDecoyMap(charge, fileName);
             double psmThreshold = 0;
             double confidenceThreshold = 100;
             boolean noValidated = true;
             double nTargetLimit = 100;
 
-            if (targetDecoyMap != null) {
+            if (psmMap != null) {
 
-                TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                TargetDecoyResults targetDecoyResults = psmMap.getTargetDecoyResults();
                 double fdrLimit = targetDecoyResults.getFdrLimit();
                 nTargetLimit = 100.0 / fdrLimit;
                 psmThreshold = targetDecoyResults.getScoreLimit();
-                double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
+                double margin = validationQCPreferences.getConfidenceMargin() * psmMap.getResolution();
                 confidenceThreshold = targetDecoyResults.getConfidenceLimit() + margin;
 
                 if (confidenceThreshold > 100) {
@@ -681,7 +670,7 @@ public class MatchesValidator {
 
                 boolean confidenceThresholdPassed = psParameter.getPsmConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
-                boolean enoughHits = !validationQCPreferences.isFirstDecoy() || targetDecoyMap.getnTargetOnly() > nTargetLimit;
+                boolean enoughHits = !validationQCPreferences.isFirstDecoy() || psmMap.getnTargetOnly() > nTargetLimit;
 
                 boolean enoughSequences = !validationQCPreferences.isDbSize();
 
@@ -847,8 +836,8 @@ public class MatchesValidator {
 
             foundModifications.addAll(
                     Arrays.stream(peptideMatch.getPeptide().getModificationMatches())
-                    .map(ModificationMatch::getModification)
-                    .collect(Collectors.toSet()));
+                            .map(ModificationMatch::getModification)
+                            .collect(Collectors.toSet()));
 
             double probaScore = 1;
             HashMap<String, Double> fractionScores = new HashMap<>(nFractions);
@@ -942,7 +931,7 @@ public class MatchesValidator {
             }
 
             peptideMatch.addUrParam(psParameter);
-            peptideMap.addPoint(psParameter.getPeptideProbabilityScore(), peptideMatch, identificationParameters.getSequenceMatchingParameters());
+            peptideMap.put(psParameter.getPeptideProbabilityScore(), peptideMatch.getIsDecoy());
 
             waitingHandler.increaseSecondaryProgressCounter();
 
@@ -993,7 +982,8 @@ public class MatchesValidator {
 
             if (fastaParameters.isTargetDecoy()) {
 
-                psParameter.setPeptideProbability(peptideMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getPeptideProbabilityScore()));
+                double probability = peptideMap.getProbability(psParameter.getPeptideProbabilityScore());
+                psParameter.setPeptideProbability(probability);
 
             } else {
 
@@ -1013,7 +1003,8 @@ public class MatchesValidator {
 
                 if (fastaParameters.isTargetDecoy()) {
 
-                    psParameter.setFractionPEP(fraction, peptideMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getFractionScore(fraction)));
+                    double probability = peptideMap.getProbability(psParameter.getFractionScore(fraction));
+                    psParameter.setFractionPEP(fraction, probability);
 
                 } else {
 
@@ -1134,7 +1125,7 @@ public class MatchesValidator {
             // Set the global score
             psParameter.setProteinProbabilityScore(probaScore);
             proteinMatch.addUrParam(psParameter);
-            proteinMap.addPoint(psParameter.getProteinProbabilityScore(), proteinMatch.isDecoy());
+            proteinMap.put(psParameter.getProteinProbabilityScore(), proteinMatch.isDecoy());
 
         }
 
@@ -1238,7 +1229,7 @@ public class MatchesValidator {
      *
      * @return the PSM scoring specific map
      */
-    public ChargeSpecificMap getPsmMap() {
+    public TargetDecoyMap getPsmMap() {
 
         return psmMap;
 
@@ -1249,7 +1240,7 @@ public class MatchesValidator {
      *
      * @param psmMap the PSM scoring specific map
      */
-    public void setPsmMap(ChargeSpecificMap psmMap) {
+    public void setPsmMap(TargetDecoyMap psmMap) {
 
         this.psmMap = psmMap;
 
@@ -1260,7 +1251,7 @@ public class MatchesValidator {
      *
      * @return the peptide scoring specific map
      */
-    public PeptideSpecificMap getPeptideMap() {
+    public TargetDecoyMap getPeptideMap() {
 
         return peptideMap;
 
@@ -1271,7 +1262,7 @@ public class MatchesValidator {
      *
      * @param peptideMap the peptide scoring specific map
      */
-    public void setPeptideMap(PeptideSpecificMap peptideMap) {
+    public void setPeptideMap(TargetDecoyMap peptideMap) {
 
         this.peptideMap = peptideMap;
 
@@ -1282,7 +1273,7 @@ public class MatchesValidator {
      *
      * @return the protein scoring map
      */
-    public ProteinMap getProteinMap() {
+    public TargetDecoyMap getProteinMap() {
 
         return proteinMap;
 
@@ -1293,7 +1284,7 @@ public class MatchesValidator {
      *
      * @param proteinMap the protein scoring map
      */
-    public void setProteinMap(ProteinMap proteinMap) {
+    public void setProteinMap(TargetDecoyMap proteinMap) {
 
         this.proteinMap = proteinMap;
 
@@ -1926,12 +1917,11 @@ public class MatchesValidator {
         public void run() {
             try {
 
-                TargetDecoyMap targetDecoyMap = proteinMap.getTargetDecoyMap();
-                TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                TargetDecoyResults targetDecoyResults = proteinMap.getTargetDecoyResults();
                 double desiredThreshold = targetDecoyResults.getUserInput();
                 double nTargetLimit = 100.0 / desiredThreshold;
                 double proteinThreshold = targetDecoyResults.getScoreLimit();
-                double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
+                double margin = validationQCPreferences.getConfidenceMargin() * proteinMap.getResolution();
                 double proteinConfidentThreshold = targetDecoyResults.getConfidenceLimit() + margin;
 
                 if (proteinConfidentThreshold > 100) {
@@ -1940,7 +1930,7 @@ public class MatchesValidator {
 
                 }
 
-                boolean noValidated = proteinMap.getTargetDecoyMap().getTargetDecoyResults().noValidated();
+                boolean noValidated = proteinMap.getTargetDecoyResults().noValidated();
                 int maxValidatedSpectraFractionLevel = 0;
                 int maxValidatedPeptidesFractionLevel = 0;
                 double maxProteinAveragePrecursorIntensity = 0.0, maxProteinSummedPrecursorIntensity = 0.0;
@@ -1950,7 +1940,7 @@ public class MatchesValidator {
 
                     long proteinKey = proteinMatch.getKey();
                     updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, fastaParameters, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters,
-                            targetDecoyMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
+                            proteinMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
 
                     // set the fraction details
                     PSParameter psParameter = new PSParameter();

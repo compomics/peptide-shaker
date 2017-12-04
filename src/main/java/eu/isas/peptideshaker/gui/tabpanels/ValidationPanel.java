@@ -13,7 +13,7 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoySeries;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.scoring.PSMaps;
-import eu.isas.peptideshaker.scoring.maps.ChargeSpecificMap;
+import eu.isas.peptideshaker.scoring.maps.SpecificTargetDecoyMap;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -2350,10 +2350,10 @@ public class ValidationPanel extends javax.swing.JPanel {
                     }
                 }
 
-                ChargeSpecificMap psmSpecificMap = pSMaps.getPsmSpecificMap();
+                SpecificTargetDecoyMap psmSpecificMap = pSMaps.getPsmSpecificMap();
                 ArrayList<Integer> foundCharges = new ArrayList<>(4);
-                for (Integer charge : psmSpecificMap.getPossibleCharges()) {
-                    for (String file : psmSpecificMap.getFilesAtCharge(charge)) {
+                for (Integer charge : psmSpecificMap.getPossibleCategories()) {
+                    for (String file : psmSpecificMap.getFilesAtCategory(charge)) {
                         if (!psmSpecificMap.isFileGrouped(charge, file)) {
                             foundCharges.add(charge);
                             if (progressDialog.isRunCanceled()) {
@@ -2371,7 +2371,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                     }
                 }
                 HashMap<Integer, ArrayList<Integer>> groupedCharges = new HashMap<>();
-                for (int charge : psmSpecificMap.getChargesFromGroupedFiles()) {
+                for (int charge : psmSpecificMap.getCategoriesFromGroupedFiles()) {
                     int correctedCharge = psmSpecificMap.getCorrectedCharge(charge);
                     if (correctedCharge == charge) {
                         HashMap<Integer, String> psmKey = new HashMap<>();

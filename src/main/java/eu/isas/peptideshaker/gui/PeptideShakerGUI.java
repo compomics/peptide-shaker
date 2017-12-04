@@ -112,7 +112,7 @@ import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences.PeptideShakerPathKey;
 import eu.isas.peptideshaker.ptm.PtmScorer;
-import eu.isas.peptideshaker.scoring.maps.PsmPTMMap;
+import eu.isas.peptideshaker.scoring.maps.modifications.PsmPTMMap;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;

@@ -6,8 +6,8 @@ import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.maps.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.maps.ProteinMap;
-import eu.isas.peptideshaker.scoring.maps.PsmPTMMap;
-import eu.isas.peptideshaker.scoring.maps.ChargeSpecificMap;
+import eu.isas.peptideshaker.scoring.maps.modifications.PsmPTMMap;
+import eu.isas.peptideshaker.scoring.maps.SpecificTargetDecoyMap;
 
 /**
  * This class contains all scoring maps from PeptideShaker and will be used to
@@ -28,7 +28,7 @@ public class PSMaps extends DbObject implements UrParameter {
     /**
      * The PSM map.
      */
-    private ChargeSpecificMap PsmSpecificMap;
+    private SpecificTargetDecoyMap PsmSpecificMap;
     /**
      * The peptide map.
      */
@@ -57,7 +57,7 @@ public class PSMaps extends DbObject implements UrParameter {
      * @param inputMap the target decoy map of all search engine scores
      * @param psmPTMMap the PSM level PTM scoring map
      */
-    public PSMaps(ChargeSpecificMap PsmSpecificMap, PeptideSpecificMap PeptideSpecificMap, ProteinMap proteinMap, InputMap inputMap, PsmPTMMap psmPTMMap) {
+    public PSMaps(SpecificTargetDecoyMap PsmSpecificMap, PeptideSpecificMap PeptideSpecificMap, ProteinMap proteinMap, InputMap inputMap, PsmPTMMap psmPTMMap) {
         this.proteinMap = proteinMap;
         this.PeptideSpecificMap = PeptideSpecificMap;
         this.PsmSpecificMap = PsmSpecificMap;
@@ -80,7 +80,7 @@ public class PSMaps extends DbObject implements UrParameter {
      *
      * @return the PSM map
      */
-    public ChargeSpecificMap getPsmSpecificMap() {
+    public SpecificTargetDecoyMap getPsmSpecificMap() {
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return PsmSpecificMap;
     }

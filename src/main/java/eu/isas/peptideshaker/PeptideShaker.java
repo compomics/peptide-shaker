@@ -5,8 +5,8 @@ import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import eu.isas.peptideshaker.scoring.maps.ProteinMap;
 import eu.isas.peptideshaker.scoring.maps.PeptideSpecificMap;
-import eu.isas.peptideshaker.scoring.maps.ChargeSpecificMap;
-import eu.isas.peptideshaker.scoring.maps.PsmPTMMap;
+import eu.isas.peptideshaker.scoring.maps.SpecificTargetDecoyMap;
+import eu.isas.peptideshaker.scoring.maps.modifications.PsmPTMMap;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
@@ -159,7 +159,7 @@ public class PeptideShaker {
      */
     public PeptideShaker(ProjectParameters projectParameters) {
         this.projectParameters = projectParameters;
-        ChargeSpecificMap psmMap = new ChargeSpecificMap();
+        SpecificTargetDecoyMap psmMap = new SpecificTargetDecoyMap();
         PeptideSpecificMap peptideMap = new PeptideSpecificMap();
         ProteinMap proteinMap = new ProteinMap();
         matchesValidator = new MatchesValidator(psmMap, peptideMap, proteinMap);
