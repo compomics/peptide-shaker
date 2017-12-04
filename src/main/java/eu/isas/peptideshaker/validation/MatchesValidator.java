@@ -47,7 +47,7 @@ import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.maps.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.maps.ProteinMap;
-import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
+import eu.isas.peptideshaker.scoring.maps.ChargeSpecificMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -79,7 +79,7 @@ public class MatchesValidator {
     /**
      * The PSM target decoy map.
      */
-    private PsmSpecificMap psmMap;
+    private ChargeSpecificMap psmMap;
     /**
      * The peptide target decoy map.
      */
@@ -100,7 +100,7 @@ public class MatchesValidator {
      * @param peptideMap the peptide target decoy map
      * @param proteinMap the protein target decoy map
      */
-    public MatchesValidator(PsmSpecificMap psmMap, PeptideSpecificMap peptideMap, ProteinMap proteinMap) {
+    public MatchesValidator(ChargeSpecificMap psmMap, PeptideSpecificMap peptideMap, ProteinMap proteinMap) {
 
         this.psmMap = psmMap;
         this.peptideMap = peptideMap;
@@ -622,7 +622,7 @@ public class MatchesValidator {
             FastaParameters fastaParameters, SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps,
             IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator,
-            PsmSpecificMap psmMap, long spectrumMatchKey, boolean applyQCFilters) {
+            ChargeSpecificMap psmMap, long spectrumMatchKey, boolean applyQCFilters) {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
         PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
@@ -1238,7 +1238,7 @@ public class MatchesValidator {
      *
      * @return the PSM scoring specific map
      */
-    public PsmSpecificMap getPsmMap() {
+    public ChargeSpecificMap getPsmMap() {
 
         return psmMap;
 
@@ -1249,7 +1249,7 @@ public class MatchesValidator {
      *
      * @param psmMap the PSM scoring specific map
      */
-    public void setPsmMap(PsmSpecificMap psmMap) {
+    public void setPsmMap(ChargeSpecificMap psmMap) {
 
         this.psmMap = psmMap;
 

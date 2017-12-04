@@ -7,7 +7,7 @@ import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.maps.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.maps.ProteinMap;
 import eu.isas.peptideshaker.scoring.maps.PsmPTMMap;
-import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
+import eu.isas.peptideshaker.scoring.maps.ChargeSpecificMap;
 
 /**
  * This class contains all scoring maps from PeptideShaker and will be used to
@@ -28,7 +28,7 @@ public class PSMaps extends DbObject implements UrParameter {
     /**
      * The PSM map.
      */
-    private PsmSpecificMap PsmSpecificMap;
+    private ChargeSpecificMap PsmSpecificMap;
     /**
      * The peptide map.
      */
@@ -57,7 +57,7 @@ public class PSMaps extends DbObject implements UrParameter {
      * @param inputMap the target decoy map of all search engine scores
      * @param psmPTMMap the PSM level PTM scoring map
      */
-    public PSMaps(PsmSpecificMap PsmSpecificMap, PeptideSpecificMap PeptideSpecificMap, ProteinMap proteinMap, InputMap inputMap, PsmPTMMap psmPTMMap) {
+    public PSMaps(ChargeSpecificMap PsmSpecificMap, PeptideSpecificMap PeptideSpecificMap, ProteinMap proteinMap, InputMap inputMap, PsmPTMMap psmPTMMap) {
         this.proteinMap = proteinMap;
         this.PeptideSpecificMap = PeptideSpecificMap;
         this.PsmSpecificMap = PsmSpecificMap;
@@ -80,7 +80,7 @@ public class PSMaps extends DbObject implements UrParameter {
      *
      * @return the PSM map
      */
-    public PsmSpecificMap getPsmSpecificMap() {
+    public ChargeSpecificMap getPsmSpecificMap() {
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return PsmSpecificMap;
     }

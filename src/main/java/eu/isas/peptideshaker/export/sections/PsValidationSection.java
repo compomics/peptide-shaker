@@ -10,7 +10,7 @@ import eu.isas.peptideshaker.export.exportfeatures.PsValidationFeature;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.scoring.maps.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.maps.ProteinMap;
-import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
+import eu.isas.peptideshaker.scoring.maps.ChargeSpecificMap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -372,7 +372,7 @@ public class PsValidationSection {
                     line++;
                     break;
                 case psm_accuracy:
-                    PsmSpecificMap psmTargetDecoyMap = psMaps.getPsmSpecificMap();
+                    ChargeSpecificMap psmTargetDecoyMap = psMaps.getPsmSpecificMap();
                     ArrayList<Integer> possibleCharges = psmTargetDecoyMap.getPossibleCharges();
                     Collections.sort(possibleCharges);
                     HashSet<Integer> foundCharges = new HashSet<>(possibleCharges.size());

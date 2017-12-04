@@ -48,7 +48,7 @@ public class TargetDecoyMap extends DbObject {
     /**
      * The minimal FDR which can be achieved on the dataset.
      */
-    private Double minFDR = 1.0;
+    private double minFDR = 1.0;
     /**
      * The results computed on this map.
      */
@@ -462,7 +462,7 @@ public class TargetDecoyMap extends DbObject {
      *
      * @return the minimal FDR which can be achieved in this dataset
      */
-    public Double getMinFdr() {
+    public double getMinFdr() {
 
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
 

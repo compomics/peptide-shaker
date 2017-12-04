@@ -13,7 +13,7 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoySeries;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.scoring.PSMaps;
-import eu.isas.peptideshaker.scoring.maps.PsmSpecificMap;
+import eu.isas.peptideshaker.scoring.maps.ChargeSpecificMap;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -2350,7 +2350,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                     }
                 }
 
-                PsmSpecificMap psmSpecificMap = pSMaps.getPsmSpecificMap();
+                ChargeSpecificMap psmSpecificMap = pSMaps.getPsmSpecificMap();
                 ArrayList<Integer> foundCharges = new ArrayList<>(4);
                 for (Integer charge : psmSpecificMap.getPossibleCharges()) {
                     for (String file : psmSpecificMap.getFilesAtCharge(charge)) {
