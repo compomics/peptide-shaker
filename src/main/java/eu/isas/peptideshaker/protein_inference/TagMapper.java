@@ -116,7 +116,7 @@ public class TagMapper {
      */
     private void mapTagsForSpectrumMatch(SpectrumMatch spectrumMatch) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
 
-        com.compomics.util.experiment.identification.protein_inference.PeptideMapper peptideMapper = sequenceFactory.getDefaultPeptideMapper();
+        com.compomics.util.experiment.identification.protein_inference.FastaMapper peptideMapper = sequenceFactory.getDefaultPeptideMapper();
         MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
         SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
