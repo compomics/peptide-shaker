@@ -2,20 +2,16 @@ package eu.isas.peptideshaker.protein_inference;
 
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.proteins.Peptide;
-import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideVariantMatches;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.protein_inference.FastaMapper;
 import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
-import com.compomics.util.experiment.identification.protein_inference.fm_index.FMIndex;
-import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
 /**
@@ -33,23 +29,17 @@ public class PeptideMapper {
      * A waiting handler.
      */
     private final WaitingHandler waitingHandler;
-    /**
-     * Exception handler used to catch exceptions.
-     */
-    private final ExceptionHandler exceptionHandler;
 
     /**
      * Constructor.
      *
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler
-     * @param exceptionHandler an exception handler
      */
-    public PeptideMapper(IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
+    public PeptideMapper(IdentificationParameters identificationParameters, WaitingHandler waitingHandler) {
 
         this.identificationParameters = identificationParameters;
         this.waitingHandler = waitingHandler;
-        this.exceptionHandler = exceptionHandler;
 
     }
 
@@ -79,7 +69,7 @@ public class PeptideMapper {
 
                             HashMap<String, int[]> proteinIndexes = sequenceIndexes.values().stream().findAny().get();
                             peptide.setProteinMapping(new TreeMap<>(proteinIndexes));
-                            
+
                             HashMap<String, HashMap<Integer, PeptideVariantMatches>> variantMatches = PeptideProteinMapping.getVariantMatches(peptideProteinMappings);
                             peptide.setVariantMatches(variantMatches);
 
@@ -88,12 +78,11 @@ public class PeptideMapper {
                             throw new UnsupportedOperationException("Ambiguous sequence " + peptide.getSequence() + " not supported at this stage of the analysis.");
 
                         }
-
                     }
 
                     waitingHandler.increaseSecondaryProgressCounter();
+                    
                 });
 
     }
-
 }
