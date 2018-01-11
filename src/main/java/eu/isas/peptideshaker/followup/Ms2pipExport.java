@@ -384,7 +384,7 @@ public class Ms2pipExport {
             this.psmIterator = psmIterator;
             this.annotationSettings = identificationParameters.getAnnotationParameters();
             this.sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
-            this.ptmSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingPreferences();
+            this.ptmSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
             featuresGenerator = new FeaturesGenerator(featuresMap);
 
         }
@@ -409,7 +409,7 @@ public class Ms2pipExport {
 
                         if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
 
-                            SpecificAnnotationParameters specificAnnotationSettings = annotationSettings.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
+                            SpecificAnnotationParameters specificAnnotationSettings = annotationSettings.getSpecificAnnotationParameters(spectrumKey, peptideAssumption, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
 
                             Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
 

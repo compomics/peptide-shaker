@@ -1862,7 +1862,7 @@ public class MzIdentMLExport {
                 // add the fragment ion annotation
                 AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
                 Spectrum spectrum = spectrumFactory.getSpectrum(spectrumFileName, spectrumTitle);
-                SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, bestPeptideAssumption, identificationParameters.getSequenceMatchingParameters(), identificationParameters.getModificationLocalizationParameters().getSequenceMatchingPreferences());
+                SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, bestPeptideAssumption, identificationParameters.getSequenceMatchingParameters(), identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters());
                 Stream<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, bestPeptideAssumption.getPeptide());
 
                 // organize the fragment ions by ion type

@@ -15,7 +15,7 @@ import com.compomics.util.parameters.identification.search.ModificationParameter
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSModificationScores;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
-import eu.isas.peptideshaker.ptm.PtmScorer;
+import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
 import eu.isas.peptideshaker.scoring.maps.modifications.PsmPTMMap;
 import eu.isas.peptideshaker.scoring.ModificationScoring;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
@@ -597,7 +597,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 PSMaps psMaps = new PSMaps();
                 psMaps = (PSMaps) identification.getUrParam(psMaps);
                 PsmPTMMap psmPTMMap = psMaps.getPsmPTMMap();
-                PtmScorer ptmScorer = new PtmScorer(psmPTMMap);
+                ModificationLocalizationScorer ptmScorer = new ModificationLocalizationScorer(psmPTMMap);
 
                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                     boolean candidate = false;

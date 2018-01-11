@@ -35,7 +35,7 @@ import com.compomics.util.waiting.Duration;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.protein_inference.ProteinInference;
-import eu.isas.peptideshaker.ptm.PtmScorer;
+import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.psm_scoring.BestMatchSelection;
 import eu.isas.peptideshaker.scoring.psm_scoring.PsmScorer;
@@ -72,7 +72,7 @@ public class PeptideShaker {
     /**
      * The PTM scorer responsible for scoring PTM localization.
      */
-    private PtmScorer ptmScorer;
+    private ModificationLocalizationScorer ptmScorer;
     /**
      * The id importer will import and process the identifications.
      */
@@ -156,7 +156,7 @@ public class PeptideShaker {
         ProteinMap proteinMap = new ProteinMap();
         matchesValidator = new MatchesValidator(psmMap, peptideMap, proteinMap);
         PsmPTMMap psmPTMMap = new PsmPTMMap();
-        ptmScorer = new PtmScorer(psmPTMMap);
+        ptmScorer = new ModificationLocalizationScorer(psmPTMMap);
     }
 
     /**
@@ -168,7 +168,7 @@ public class PeptideShaker {
     public PeptideShaker(ProjectParameters projectParameters, PSMaps psMaps) {
         this.projectParameters = projectParameters;
         matchesValidator = new MatchesValidator(psMaps.getPsmSpecificMap(), psMaps.getPeptideSpecificMap(), psMaps.getProteinMap());
-        ptmScorer = new PtmScorer(psMaps.getPsmPTMMap());
+        ptmScorer = new ModificationLocalizationScorer(psMaps.getPsmPTMMap());
     }
 
     /**

@@ -4,7 +4,6 @@ import com.compomics.util.db.object.DbObject;
 import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.ModificationScoring;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -237,7 +236,7 @@ public class PSModificationScores extends DbObject implements UrParameter {
      * @param possibleModifications the possible modifications in a map: site
      * &gt; modification name
      */
-    public void addAmbiguousModificationSites(int representativeSite, HashMap<Integer, ArrayList<String>> possibleModifications) {
+    public void addAmbiguousModificationSites(int representativeSite, HashMap<Integer, HashSet<String>> possibleModifications) {
 
         ObjectsDB.increaseRWCounter();
         zooActivateWrite();
@@ -280,7 +279,7 @@ public class PSModificationScores extends DbObject implements UrParameter {
             }
         }
 
-        ArrayList<String> modifications = possibleModifications.get(representativeSite);
+        HashSet<String> modifications = possibleModifications.get(representativeSite);
 
         for (String modification : modifications) {
 

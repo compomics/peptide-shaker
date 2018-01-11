@@ -112,7 +112,7 @@ public class PsFragmentSection {
         List<IonMatch> annotations;
         Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
         AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
-        SpecificAnnotationParameters specificAnnotationParameters = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, spectrumIdentificationAssumption, identificationParameters.getSequenceMatchingParameters(), identificationParameters.getModificationLocalizationParameters().getSequenceMatchingPreferences());
+        SpecificAnnotationParameters specificAnnotationParameters = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, spectrumIdentificationAssumption, identificationParameters.getSequenceMatchingParameters(), identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters());
         
         if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
             

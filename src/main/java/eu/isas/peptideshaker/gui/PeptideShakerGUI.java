@@ -111,7 +111,7 @@ import eu.isas.peptideshaker.gui.pride.PrideReshakeGUI;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences.PeptideShakerPathKey;
-import eu.isas.peptideshaker.ptm.PtmScorer;
+import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
 import eu.isas.peptideshaker.scoring.maps.modifications.PsmPTMMap;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -4939,7 +4939,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             PSMaps psMaps = new PSMaps();
             psMaps = (PSMaps) getIdentification().getUrParam(psMaps);
             PsmPTMMap psmPTMMap = psMaps.getPsmPTMMap();
-            PtmScorer ptmScorer = new PtmScorer(psmPTMMap);
+            ModificationLocalizationScorer ptmScorer = new ModificationLocalizationScorer(psmPTMMap);
             Identification identification = getIdentification();
             ProteinMatch proteinMatch = identification.getProteinMatch(selectedProteinKey);
             ptmScorer.scorePTMs(identification, proteinMatch, getIdentificationParameters(), false, null);
@@ -5575,9 +5575,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         AnnotationParameters annotationPreferences = getIdentificationParameters().getAnnotationParameters();
 
-        SpecificAnnotationParameters specificAnnotationParameters = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey,
+        SpecificAnnotationParameters specificAnnotationParameters = annotationPreferences.getSpecificAnnotationParameters(spectrumKey,
                 spectrumIdentificationAssumption, getIdentificationParameters().getSequenceMatchingParameters(),
-                getIdentificationParameters().getModificationLocalizationParameters().getSequenceMatchingPreferences());
+                getIdentificationParameters().getModificationLocalizationParameters().getSequenceMatchingParameters());
 
         if (!defaultAnnotationCheckBoxMenuItem.isSelected()) {
 
@@ -6589,14 +6589,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                     Peptide peptide = peptideAssumption.getPeptide();
                                     SpecificAnnotationParameters exportAnnotationPreferences = new SpecificAnnotationParameters(spectrumKey, peptideAssumption);
-                                    exportAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(exportAnnotationPreferences.getSpectrumKey(), exportAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingParameters(), getIdentificationParameters().getModificationLocalizationParameters().getSequenceMatchingPreferences());
+                                    exportAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(exportAnnotationPreferences.getSpectrumKey(), exportAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingParameters(), getIdentificationParameters().getModificationLocalizationParameters().getSequenceMatchingParameters());
                                     annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, exportAnnotationPreferences, spectrum, peptide);
                                     identifier = peptide.getSequenceWithLowerCasePtms();
                                 } else if (assumption instanceof TagAssumption) {
                                     TagAssumption tagAssumption = (TagAssumption) assumption;
                                     Tag tag = tagAssumption.getTag();
                                     SpecificAnnotationParameters exportAnnotationPreferences = new SpecificAnnotationParameters(spectrumKey, tagAssumption);
-                                    exportAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(exportAnnotationPreferences.getSpectrumKey(), exportAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingParameters(), getIdentificationParameters().getModificationLocalizationParameters().getSequenceMatchingPreferences());
+                                    exportAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(exportAnnotationPreferences.getSpectrumKey(), exportAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingParameters(), getIdentificationParameters().getModificationLocalizationParameters().getSequenceMatchingParameters());
                                     annotations = tagSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, exportAnnotationPreferences, spectrum, tag);
                                     identifier = tag.asSequence(); //@TODO: add PTMs?
                                 } else {

@@ -2335,7 +2335,7 @@ public class QCPanel extends javax.swing.JPanel {
         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
         ModificationParameters ptmSettings = identificationParameters.getSearchParameters().getModificationParameters();
         SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
-        SequenceMatchingParameters ptmSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingPreferences();
+        SequenceMatchingParameters ptmSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
         ArrayList<String> ptmNames = ptmSettings.getAllNotFixedModifications();
         HashMap<String, Integer> modifiedSitesMap = new HashMap<>(ptmNames.size());
@@ -2440,7 +2440,7 @@ public class QCPanel extends javax.swing.JPanel {
         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
         ModificationParameters ptmSettings = identificationParameters.getSearchParameters().getModificationParameters();
         SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
-        SequenceMatchingParameters ptmSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingPreferences();
+        SequenceMatchingParameters ptmSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
         ArrayList<String> ptmNames = ptmSettings.getAllNotFixedModifications();
         HashMap<String, Integer> modifiedPeptidesMap = new HashMap<>(ptmNames.size());
