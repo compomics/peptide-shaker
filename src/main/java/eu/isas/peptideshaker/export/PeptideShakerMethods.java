@@ -476,18 +476,15 @@ public class PeptideShakerMethods {
 
             }
 
-            if (!ptmScoringPreferences.isEstimateFlr()) {
-
                 text.append("with a threshold of ")
                         .append(ptmScoringPreferences.getProbabilisticScoreThreshold())
                         .append(' ');
-
-            }
+                
         }
 
         text.append("as implemented in the compomics-utilities package [PMID 21385435].");
 
-        if (ptmScoringPreferences.isProbabilisticScoreCalculation() && !ptmScoringPreferences.isEstimateFlr()) {
+        if (ptmScoringPreferences.isProbabilisticScoreCalculation()) {
 
             if (ptmScoringPreferences.getSelectedProbabilisticScore() == ModificationLocalizationScore.PhosphoRS) {
 

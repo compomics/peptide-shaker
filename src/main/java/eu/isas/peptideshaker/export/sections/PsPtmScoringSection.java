@@ -61,7 +61,7 @@ public class PsPtmScoringSection {
      *
      * @param ptmScoringPreferences the PTM scoring preferences of this project
      * @param waitingHandler the waiting handler
-     * 
+     *
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file
      */
@@ -96,11 +96,7 @@ public class PsPtmScoringSection {
                     writer.write(ptmScoringPreferences.getSelectedProbabilisticScore().getName());
                     break;
                 case threshold:
-                    if (ptmScoringPreferences.isEstimateFlr()) {
-                        writer.write("Auto");
-                    } else {
-                        writer.write(ptmScoringPreferences.getProbabilisticScoreThreshold() + "");
-                    }
+                    writer.write(Double.toString(ptmScoringPreferences.getProbabilisticScoreThreshold()));
                     break;
                 case neutral_losses:
                     if (ptmScoringPreferences.isProbabilisticScoreNeutralLosses()) {
