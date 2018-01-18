@@ -62,7 +62,8 @@ To start using PeptideShaker, unzip the downloaded file, and double-click the `P
 
   * [Minimum Requirements](#minimum-requirements)
   * [From the Command Line](#from-the-command-line)
-  * [Miniconda and Docker](#miniconda-and-docker)
+  * [Miniconda](#miniconda)
+  * [Docker](#docker)
   * [SearchGUI](#searchgui)
   * [User Defined Modifications](#user-defined-modifications)
   * [Database Help](#database-help)
