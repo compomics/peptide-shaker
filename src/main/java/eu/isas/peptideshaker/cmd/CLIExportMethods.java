@@ -265,6 +265,7 @@ public class CLIExportMethods {
      * peptide sequences
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param waitingHandler waiting handler displaying feedback to the user
+     * @return File file containing the exported report
      *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
@@ -280,7 +281,7 @@ public class CLIExportMethods {
      * an exception occurred while estimating the theoretical coverage of a
      * protein
      */
-    public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, String sample, int replicateNumber,
+    public static File exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, String sample, int replicateNumber,
             ProjectDetails projectDetails, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             IdentificationParameters identificationParameters, int nSurroundingAA, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
             throws IOException, SQLException, ClassNotFoundException,
@@ -294,6 +295,7 @@ public class CLIExportMethods {
         //@TODO: allow format selection
         PSExportFactory.writeExport(exportScheme, reportFile, ExportFormat.text, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator, geneMaps,
                 null, null, null, null, nSurroundingAA, identificationParameters, spectrumCountingPreferences, waitingHandler);
+        return reportFile;
     }
 
     /**

@@ -6609,7 +6609,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                             File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
                             spectrumFiles.add(spectrumFile);
                         }
-
+                        
                         try {
                             ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, cpsFile, progressDialog);
                         } catch (FileNotFoundException e) {
