@@ -30,6 +30,7 @@ import com.compomics.util.experiment.io.identification.idfilereaders.TideIdfileR
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
+import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
@@ -48,6 +49,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import static eu.isas.peptideshaker.fileimport.FileImporter.MOD_MASS_TOLERANCE;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -363,9 +365,9 @@ public class PsmImporter {
         String spectrumFileName = Spectrum.getSpectrumFile(spectrumKey);
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
 
-        HashMap<Integer, HashMap<Double, ArrayList<PeptideAssumption>>> peptideAssumptions = spectrumMatch.getPeptideAssumptionsMap();
+        HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> peptideAssumptions = spectrumMatch.getPeptideAssumptionsMap();
 
-        for (Entry<Integer, HashMap<Double, ArrayList<PeptideAssumption>>> entry : peptideAssumptions.entrySet()) {
+        for (Entry<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> entry : peptideAssumptions.entrySet()) {
 
             int advocateId = entry.getKey();
 
@@ -680,7 +682,7 @@ public class PsmImporter {
                     }
                     if (firstPeptideHit != null) {
 
-                        inputMap.addEntry(advocateId, spectrumFileName, firstPeptideHit.getScore(), firstPeptideHit.getPeptide().isDecoy(sequenceMatchingPreferences));
+                        inputMap.addEntry(advocateId, spectrumFileName, firstPeptideHit.getScore(), PeptideUtils.isDecoy(firstPeptideHit.getPeptide(), sequenceMatchingPreferences));
                         nRetained++;
                         break;
 
@@ -707,7 +709,7 @@ public class PsmImporter {
                     } else {
 
                         // Try to find the best tag hit
-                        HashMap<Double, ArrayList<TagAssumption>> tagsForAdvocate = spectrumMatch.getAllTagAssumptions(advocateId);
+                        TreeMap<Double, ArrayList<TagAssumption>> tagsForAdvocate = spectrumMatch.getAllTagAssumptions(advocateId);
 
                         if (tagsForAdvocate != null) {
 
