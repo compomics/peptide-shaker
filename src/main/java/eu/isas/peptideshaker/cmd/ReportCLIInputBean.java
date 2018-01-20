@@ -27,6 +27,10 @@ public class ReportCLIInputBean {
      */
     private File reportOutputFolder = null;
     /**
+     * Boolean indicating whether the export should be gzipped.
+     */
+    private boolean gzip = false;
+    /**
      * The report types required by the user.
      */
     private final ArrayList<String> reportTypes = new ArrayList<>();
@@ -72,6 +76,11 @@ public class ReportCLIInputBean {
             for (int option : options) {
                 documentationTypes.add(exportFactory.getExportTypeFromCommandLineOption(option));
             }
+        }
+        if (aLine.hasOption(MzidCLIParams.GZIP.id)) {
+            String input = aLine.getOptionValue(MzidCLIParams.GZIP.id);
+            int index = Integer.parseInt(input.trim());
+            gzip = index == 1;
         }
         pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
     }
@@ -164,5 +173,14 @@ public class ReportCLIInputBean {
      */
     public PathSettingsCLIInputBean getPathSettingsCLIInputBean() {
         return pathSettingsCLIInputBean;
+    }
+
+    /**
+     * Returns a boolean indicating whether the export should be gzipped.
+     * 
+     * @return a boolean indicating whether the export should be gzipped
+     */
+    public boolean isGzip() {
+        return gzip;
     }
 }

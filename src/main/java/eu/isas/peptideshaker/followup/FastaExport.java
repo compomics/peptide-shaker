@@ -23,7 +23,6 @@ public class FastaExport {
      * validated proteins (size in the identification features generator).
      *
      * @param destinationFile the file where to write
-     * @param fastaFile the original fasta file
      * @param sequenceProvider the sequence provider
      * @param identification the identification
      * @param exportType the export type (see enum below)
@@ -34,7 +33,7 @@ public class FastaExport {
      *
      * @throws IOException thrown if an error occurs while writing the file.
      */
-    public static void export(File destinationFile, File fastaFile, SequenceProvider sequenceProvider,
+    public static void export(File destinationFile, SequenceProvider sequenceProvider,
             Identification identification, ExportType exportType, WaitingHandler waitingHandler, boolean accessionOnly) throws IOException {
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(destinationFile))) {

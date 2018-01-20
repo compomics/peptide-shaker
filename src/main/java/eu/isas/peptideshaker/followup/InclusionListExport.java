@@ -49,16 +49,11 @@ public class InclusionListExport {
      * @param filterPreferences the general filtering preferences of this
      * project
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @throws IOException thrown if an error occurred while writing the file
      */
     public static void exportInclusionList(File destinationFile, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ArrayList<Integer> proteinFilters, ArrayList<PeptideFilterType> peptideFilters, ExportFormat exportFormat, SearchParameters searchParameters, double rtWindow,
-            WaitingHandler waitingHandler, FilterParameters filterPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            WaitingHandler waitingHandler, FilterParameters filterPreferences) throws IOException {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         if (waitingHandler != null) {

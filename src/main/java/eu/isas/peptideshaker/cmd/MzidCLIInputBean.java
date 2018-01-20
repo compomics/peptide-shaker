@@ -73,6 +73,10 @@ public class MzidCLIInputBean {
      * The version of mzIdentML file to use, 1.1 by default.
      */
     private MzIdentMLVersion mzIdentMLVersion = MzIdentMLVersion.v1_1;
+    /**
+     * Boolean indicating whether the export should be gzipped.
+     */
+    private boolean gzip = false;
 
     /**
      * Parses a MzidCLI command line and stores the input in the attributes.
@@ -129,6 +133,11 @@ public class MzidCLIInputBean {
         }
         if (aLine.hasOption(MzidCLIParams.OUTPUT_FILE.id)) {
             outputFile = new File(aLine.getOptionValue(MzidCLIParams.OUTPUT_FILE.id));
+        }
+        if (aLine.hasOption(MzidCLIParams.GZIP.id)) {
+            String input = aLine.getOptionValue(MzidCLIParams.GZIP.id);
+            int index = Integer.parseInt(input.trim());
+            gzip = index == 1;
         }
 
         pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
@@ -249,11 +258,16 @@ public class MzidCLIInputBean {
      * @return true if the protein sequences are to be included in the mzid
      * export
      */
-    public Boolean getIncludeProteinSequences() {
+    public boolean getIncludeProteinSequences() {
+
         if (includeProteinSequences == null) {
+
             includeProteinSequences = false;
+
         }
+
         return includeProteinSequences;
+
     }
 
     /**
@@ -272,5 +286,14 @@ public class MzidCLIInputBean {
      */
     public PathSettingsCLIInputBean getPathSettingsCLIInputBean() {
         return pathSettingsCLIInputBean;
+    }
+
+    /**
+     * Returns a boolean indicating whether the export should be gzipped.
+     * 
+     * @return a boolean indicating whether the export should be gzipped
+     */
+    public boolean isGzip() {
+        return gzip;
     }
 }

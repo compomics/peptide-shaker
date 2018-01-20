@@ -2,6 +2,9 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.io.biology.protein.FastaSummary;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.waiting.WaitingHandler;
@@ -44,22 +47,12 @@ public class CLIExportMethods {
      * @param identification the identification
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler to display progress
-     *
+     * 
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
-     * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while interacting with the database
-     * @throws SQLException exception thrown whenever an SQL exception occurred
-     * while interacting with the database
-     * @throws ClassNotFoundException exception thrown whenever an exception
-     * occurred while deserializing an object
-     * @throws MzMLUnmarshallerException exception thrown whenever an exception
-     * occurred while reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown if a math
-     * exception occurred when estimating the noise level
      */
     public static void recalibrateSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification,
-            IdentificationParameters identificationParameters, WaitingHandler waitingHandler) {
+            IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException {
         File recalibrationFolder = followUpCLIInputBean.getRecalibrationFolder();
         if (!recalibrationFolder.exists()) {
             recalibrationFolder.mkdir();
@@ -107,27 +100,26 @@ public class CLIExportMethods {
      *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
-     * @param identificationFeaturesGenerator the identification features
-     * generator
+     * @param sequenceProvider the fasta sequence provider
      * @param waitingHandler a waiting handler to display progress
      * @param filteringPreferences the filtering preferences
      *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
-     * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while interacting with the database
-     * @throws SQLException exception thrown whenever an SQL exception occurred
-     * while interacting with the database
-     * @throws ClassNotFoundException exception thrown whenever an exception
-     * occurred while deserializing an object
      */
-    public static void exportAccessions(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler, FilterParameters filteringPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public static void exportAccessions(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, SequenceProvider sequenceProvider, WaitingHandler waitingHandler, FilterParameters filteringPreferences) throws IOException {
+
         File destinationFileTemp = followUpCLIInputBean.getAccessionsExportFile();
+
         if (!destinationFileTemp.exists()) {
+
             destinationFileTemp.createNewFile();
+
         }
+
         File destinationFile = destinationFileTemp;
-        FastaExport.exportAccessions(destinationFile, identification, identificationFeaturesGenerator, FastaExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getAccessionsExportTypeIndex()), waitingHandler, filteringPreferences);
+        FastaExport.export(destinationFile, sequenceProvider, identification, FastaExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getAccessionsExportTypeIndex()), waitingHandler, true);
+
     }
 
     /**
@@ -136,27 +128,26 @@ public class CLIExportMethods {
      *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
-     * @param identificationFeaturesGenerator the identification features
-     * generator
+     * @param sequenceProvider the fasta sequence provider
      * @param waitingHandler a waiting handler to display progress
      * @param filteringPreferences the filtering preferences
      *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
-     * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while interacting with the database
-     * @throws SQLException exception thrown whenever an SQL exception occurred
-     * while interacting with the database
-     * @throws ClassNotFoundException exception thrown whenever an exception
-     * occurred while deserializing an object
      */
-    public static void exportFasta(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler, FilterParameters filteringPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
-        File destinationFileTemp = followUpCLIInputBean.getFastaExportFile();
+    public static void exportFasta(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, SequenceProvider sequenceProvider, WaitingHandler waitingHandler, FilterParameters filteringPreferences) throws IOException {
+
+        File destinationFileTemp = followUpCLIInputBean.getAccessionsExportFile();
+
         if (!destinationFileTemp.exists()) {
+
             destinationFileTemp.createNewFile();
+
         }
+
         File destinationFile = destinationFileTemp;
-        FastaExport.exportFasta(destinationFile, identification, identificationFeaturesGenerator, FastaExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getFastaExportTypeIndex()), waitingHandler, filteringPreferences);
+        FastaExport.export(destinationFile, sequenceProvider, identification, FastaExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getAccessionsExportTypeIndex()), waitingHandler, false);
+
     }
 
     /**
@@ -165,24 +156,26 @@ public class CLIExportMethods {
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
      * @param waitingHandler a waiting handler to display progress
+     * @param sequenceProvider the sequence provider
+     * @param proteinDetailsProvider the protein details provider
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
-     * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while interacting with the database
-     * @throws SQLException exception thrown whenever an SQL exception occurred
-     * while interacting with the database
-     * @throws ClassNotFoundException exception thrown whenever an exception
-     * occurred while deserializing an object
      */
-    public static void exportProgenesis(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler, SequenceMatchingParameters sequenceMatchingPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public static void exportProgenesis(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, SequenceMatchingParameters sequenceMatchingPreferences) throws IOException {
+
         File destinationFileTemp = followUpCLIInputBean.getProgenesisExportFile();
+
         if (!destinationFileTemp.exists()) {
+
             destinationFileTemp.createNewFile();
+
         }
+
         File destinationFile = destinationFileTemp;
-        ProgenesisExport.writeProgenesisExport(destinationFile, identification, ProgenesisExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getProgenesisExportTypeIndex()), waitingHandler, followUpCLIInputBean.getProgenesisTargetedPTMs(), sequenceMatchingPreferences);
+        ProgenesisExport.writeProgenesisExport(destinationFile, sequenceProvider, proteinDetailsProvider, identification, ProgenesisExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getProgenesisExportTypeIndex()), waitingHandler, followUpCLIInputBean.getProgenesisTargetedPTMs(), sequenceMatchingPreferences);
+
     }
 
     /**
@@ -198,26 +191,28 @@ public class CLIExportMethods {
      *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
-     * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while interacting with the database
-     * @throws SQLException exception thrown whenever an SQL exception occurred
-     * while interacting with the database
-     * @throws ClassNotFoundException exception thrown whenever an exception
-     * occurred while deserializing an object
-     * @throws MzMLUnmarshallerException exception thrown whenever an exception
-     * occurred while reading an mzML file
      */
-    public static void exportInclusionList(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, WaitingHandler waitingHandler, FilterParameters filterPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public static void exportInclusionList(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, WaitingHandler waitingHandler, FilterParameters filterPreferences) throws IOException {
+
         ArrayList<InclusionListExport.PeptideFilterType> peptideFilterType = new ArrayList<>();
+
         for (int index : followUpCLIInputBean.getInclusionPeptideFilter()) {
+
             peptideFilterType.add(InclusionListExport.PeptideFilterType.getTypeFromIndex(index));
+
         }
+
         File destinationFileTemp = followUpCLIInputBean.getInclusionFile();
+
         if (!destinationFileTemp.exists()) {
+
             destinationFileTemp.createNewFile();
+
         }
+
         File destinationFile = destinationFileTemp;
         InclusionListExport.exportInclusionList(destinationFile, identification, identificationFeaturesGenerator, followUpCLIInputBean.getInclusionProteinFilter(), peptideFilterType, InclusionListExport.ExportFormat.getTypeFromIndex(followUpCLIInputBean.getInclusionFormat()), searchParameters, followUpCLIInputBean.getInclusionRtWindow(), waitingHandler, filterPreferences);
+
     }
 
     /**
@@ -233,6 +228,8 @@ public class CLIExportMethods {
      * @param identificationFeaturesGenerator the identification features
      * generator
      * @param identificationParameters the identification parameters used
+     * @param sequenceProvider the sequence provider
+     * @param proteinDetailsProvider the protein details provider
      * @param nSurroundingAA the number of amino acids to export on the side of
      * peptide sequences
      * @param spectrumCountingPreferences the spectrum counting preferences
@@ -240,23 +237,11 @@ public class CLIExportMethods {
      *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
-     * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while interacting with the database
-     * @throws SQLException exception thrown whenever an SQL exception occurred
-     * while interacting with the database
-     * @throws ClassNotFoundException exception thrown whenever an exception
-     * occurred while deserializing an object
-     * @throws MzMLUnmarshallerException exception thrown whenever an exception
-     * occurred while reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown whenever
-     * an exception occurred while estimating the theoretical coverage of a
-     * protein
      */
     public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment,
             ProjectDetails projectDetails, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            IdentificationParameters identificationParameters, int nSurroundingAA, SpectrumCountingParameters spectrumCountingPreferences, WaitingHandler waitingHandler)
-            throws IOException, SQLException, ClassNotFoundException,
-            InterruptedException, MzMLUnmarshallerException, MathException {
+            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, int nSurroundingAA, SpectrumCountingParameters spectrumCountingPreferences, WaitingHandler waitingHandler)
+            throws IOException {
 
         PSExportFactory exportFactory = PSExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
@@ -264,8 +249,9 @@ public class CLIExportMethods {
         File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultReportName(experiment, reportName));
 
         //@TODO: allow format selection
-        PSExportFactory.writeExport(exportScheme, reportFile, ExportFormat.text, experiment, projectDetails, identification, identificationFeaturesGenerator, geneMaps,
-                null, null, null, null, nSurroundingAA, identificationParameters, spectrumCountingPreferences, waitingHandler);
+        PSExportFactory.writeExport(exportScheme, reportFile, ExportFormat.text, reportCLIInputBean.isGzip(), experiment, projectDetails, identification, identificationFeaturesGenerator, geneMaps,
+                null, null, null, null, nSurroundingAA, identificationParameters, sequenceProvider, proteinDetailsProvider, spectrumCountingPreferences, waitingHandler);
+        
     }
 
     /**
@@ -280,12 +266,14 @@ public class CLIExportMethods {
      * while reading or writing to a file
      */
     public static void exportDocumentation(ReportCLIInputBean reportCLIInputBean, String reportType, WaitingHandler waitingHandler) throws IOException {
+        
         PSExportFactory exportFactory = PSExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
         File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultDocumentation(reportType));
 
         //@TODO: allow format selection
         PSExportFactory.writeDocumentation(exportScheme, ExportFormat.text, reportFile);
+    
     }
 
     /**
@@ -299,18 +287,9 @@ public class CLIExportMethods {
      *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
-     * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while interacting with the database
-     * @throws SQLException exception thrown whenever an SQL exception occurred
-     * while interacting with the database
-     * @throws ClassNotFoundException exception thrown whenever an exception
-     * occurred while deserializing an object
-     * @throws MzMLUnmarshallerException exception thrown whenever an exception
-     * @throws org.apache.commons.math.MathException exception thrown whenever a
-     * math error occurred
      */
     public static void exportMzId(MzidCLIInputBean mzidCLIInputBean, CpsParent cpsParent, WaitingHandler waitingHandler)
-            throws IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException, SQLException, MathException {
+            throws IOException {
 
         ProjectDetails projectDetails = cpsParent.getProjectDetails();
         projectDetails.setContactFirstName(mzidCLIInputBean.getContactFirstName());
@@ -325,10 +304,15 @@ public class CLIExportMethods {
         projectDetails.setIncludeProteinSequences(mzidCLIInputBean.getIncludeProteinSequences());
         projectDetails.setPrideOutputFolder(mzidCLIInputBean.getOutputFile().getAbsolutePath());
 
+        IdentificationParameters identificationParameters = cpsParent.getIdentificationParameters();
+        FastaSummary fastaSummary = FastaSummary.getSummary(identificationParameters.getSearchParameters().getFastaFile(), 
+                identificationParameters.getSearchParameters().getFastaParameters(), waitingHandler);
+        
         MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), cpsParent.getIdentification(), cpsParent.getProjectDetails(),
-                cpsParent.getShotgunProtocol(), cpsParent.getIdentificationParameters(),
-                cpsParent.getSpectrumCountingParameters(), cpsParent.getIdentificationFeaturesGenerator(),
-                mzidCLIInputBean.getOutputFile(), mzidCLIInputBean.getIncludeProteinSequences(), waitingHandler);
+                identificationParameters, cpsParent.getSequenceProvider(), cpsParent.getProteinDetailsProvider(), fastaSummary, cpsParent.getIdentificationFeaturesGenerator(),
+                mzidCLIInputBean.getOutputFile(), mzidCLIInputBean.getIncludeProteinSequences(), waitingHandler, mzidCLIInputBean.isGzip());
+        
         mzIdentMLExport.createMzIdentMLFile(mzidCLIInputBean.getMzIdentMLVersion());
+        
     }
 }

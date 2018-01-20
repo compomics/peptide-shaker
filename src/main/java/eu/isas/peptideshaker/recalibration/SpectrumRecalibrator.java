@@ -64,10 +64,8 @@ public class SpectrumRecalibrator {
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler displaying the progress and
      * allowing the user to cancel the process. Can be null
-     *
-     * @throws InterruptedException exception thrown whenever a thread got interrupted
      */
-    public void estimateErrors(String spectrumFileName, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws InterruptedException {
+    public void estimateErrors(String spectrumFileName, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) {
         RunMzDeviation fileErrors = new RunMzDeviation(spectrumFileName, identification, identificationParameters, waitingHandler);
         runMzDeviationMap.put(spectrumFileName, fileErrors);
     }

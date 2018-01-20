@@ -4,6 +4,9 @@ import com.compomics.software.cli.CommandLineUtils;
 import eu.isas.peptideshaker.followup.ProgenesisExport;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 import org.apache.commons.cli.CommandLine;
 
 /**
@@ -87,7 +90,7 @@ public class FollowUpCLIInputBean {
     /**
      * The Progenesis targeted PTMs.
      */
-    private ArrayList<String> progenesisTargetedPTMs = new ArrayList<>();
+    private HashSet<String> progenesisTargetedPTMs = new HashSet<>();
     /**
      * The path settings.
      */
@@ -170,12 +173,12 @@ public class FollowUpCLIInputBean {
      *
      * @return the given list of modifications
      */
-    private ArrayList<String> getModificationNames(String commandLineInput) {
-        ArrayList<String> result = new ArrayList<>();
-        for (String input : commandLineInput.split(",")) {
-            result.add(input.trim().toLowerCase());
-        }
-        return result;
+    private HashSet<String> getModificationNames(String commandLineInput) {
+        
+        return Arrays.stream(commandLineInput.split(","))
+                .map(name -> name.trim())
+                .collect(Collectors.toCollection(HashSet::new));
+        
     }
 
     /**
@@ -297,7 +300,7 @@ public class FollowUpCLIInputBean {
      *
      * @return the list of PTMs targeted for the Progenesis PTM export
      */
-    public ArrayList<String> getProgenesisTargetedPTMs() {
+    public HashSet<String> getProgenesisTargetedPTMs() {
         return progenesisTargetedPTMs;
     }
     

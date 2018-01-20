@@ -691,9 +691,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             processingPreferences.setnThreads(nThreads);
         }
 
-        // set up the shotgun protocol
-        shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(searchParameters);
-
         // set the spectrum counting prefrences
         spectrumCountingPreferences = new SpectrumCountingParameters();
 
@@ -709,15 +706,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         peptideShaker.importFiles(waitingHandler, identificationFiles, spectrumFiles,
                 identificationParameters, projectDetails, processingPreferences,
                 spectrumCountingPreferences, false);
-
-        // show the warnings
-        Iterator<String> iterator = peptideShaker.getWarnings().keySet().iterator();
-        while (iterator.hasNext()) {
-            FeedBack warning = peptideShaker.getWarnings().get(iterator.next());
-            if (warning.getType() == FeedBack.FeedBackType.WARNING) {
-                System.out.println(warning.getMessage() + "\n"); // @TODO: better interaction between notes and feedback objetcs...
-            }
-        }
 
         if (!waitingHandler.isRunCanceled()) {
 

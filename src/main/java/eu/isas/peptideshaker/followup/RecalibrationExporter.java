@@ -46,11 +46,10 @@ public class RecalibrationExporter {
      * @param waitingHandler waiting handler displaying progress and used to
      * cancel the process. Can be null. The method does not call RunFinished.
      *
-     * @throws InterruptedException exception thrown whenever a thread got interrupted
      * @throws IOException exception thrown whenever an error occurred while writing the file
      */
     public static void writeRecalibratedSpectra(boolean recalibratePrecursors, boolean recalibrateFragmentIons, File folder,
-            Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws InterruptedException, IOException {
+            Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         SpectrumRecalibrator spectrumRecalibrator = new SpectrumRecalibrator();
@@ -143,41 +142,41 @@ public class RecalibrationExporter {
             }
 
             File file = new File(folder, getRecalibratedFileName(fileName));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-            
-            if (waitingHandler != null) {
-            
-                waitingHandler.setWaitingText("Recalibrating Spectra. Writing Spectra. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ")");
-                waitingHandler.resetSecondaryProgressCounter();
-                waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getNSpectra(fileName));
-            
-            }
-
-            for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {
-
-                if (debug) {
-                    //System.out.println(new Date() + " recalibrating " + spectrumTitle + "\n");
-                }
-
-                Spectrum recalibratedSpectrum = spectrumRecalibrator.recalibrateSpectrum(fileName, spectrumTitle, recalibratePrecursors, recalibrateFragmentIons);
-                recalibratedSpectrum.writeMgf(writer);
-                writer.flush();
-
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                
                 if (waitingHandler != null) {
                     
-                    if (waitingHandler.isRunCanceled()) {
-                        
-                        break;
-                        
-                    }
-                    
-                    waitingHandler.increasePrimaryProgressCounter();
+                    waitingHandler.setWaitingText("Recalibrating Spectra. Writing Spectra. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ")");
+                    waitingHandler.resetSecondaryProgressCounter();
+                    waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getNSpectra(fileName));
                     
                 }
+                
+                for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {
+                    
+                    if (debug) {
+                        //System.out.println(new Date() + " recalibrating " + spectrumTitle + "\n");
+                    }
+                    
+                    Spectrum recalibratedSpectrum = spectrumRecalibrator.recalibrateSpectrum(fileName, spectrumTitle, recalibratePrecursors, recalibrateFragmentIons);
+                    recalibratedSpectrum.writeMgf(writer);
+                    writer.flush();
+                    
+                    if (waitingHandler != null) {
+                        
+                        if (waitingHandler.isRunCanceled()) {
+                            
+                            break;
+                            
+                        }
+                        
+                        waitingHandler.increasePrimaryProgressCounter();
+                        
+                    }
+                }
+                
+                spectrumRecalibrator.clearErrors(fileName);
             }
-
-            spectrumRecalibrator.clearErrors(fileName);
-            writer.close();
         }
     }
 

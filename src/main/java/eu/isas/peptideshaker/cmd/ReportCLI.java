@@ -131,13 +131,7 @@ public class ReportCLI extends CpsParent {
                 waitingHandler.appendReport("PeptideShaker project input missing.", true, true);
                 return 1;
             }
-        } catch (SQLException e) {
-            waitingHandler.appendReport("An error occurred while reading: " + inputFilePath + ". "
-                    + "It looks like another instance of PeptideShaker is still connected to the file. "
-                    + "Please close all instances of PeptideShaker and try again.", true, true);
-            e.printStackTrace();
-            return 1;
-        } catch (Exception e) {
+        } catch (IOException e) {
             waitingHandler.appendReport("An error occurred while reading: " + inputFilePath + ".", true, true);
             e.printStackTrace();
             try {

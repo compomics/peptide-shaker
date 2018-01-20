@@ -13,7 +13,8 @@ public enum ReportCLIParams {
     CPS_FILE("in", "PeptideShaker project (.cpsx or .zip file)", true, true),
     EXPORT_FOLDER("out_reports", "Output folder for report files. (Existing files will be overwritten.)", true, true),
     REPORT_TYPE("reports", "Comma separated list of types of report to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false, true),
-    DOCUMENTATION_TYPE("documentation", "Comma separated list of types of report documentation to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false, true);
+    DOCUMENTATION_TYPE("documentation", "Comma separated list of types of report documentation to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false, true),
+    GZIP("gzip", "Indicates whether the report should be compressed (0: no, 1: yes, default is 0).", false, true);
 
     /**
      * Short Id for the CLI parameter.
@@ -104,6 +105,9 @@ public enum ReportCLIParams {
 
         output += "\nReport Documentation export:\n\n";
         output += "-" + String.format(formatter, DOCUMENTATION_TYPE.id) + DOCUMENTATION_TYPE.description + "\n";
+
+        output += "\nCompression:\n\n";
+        output += "-" + String.format(formatter, GZIP.id) + GZIP.description + "\n";
 
         return output;
     }

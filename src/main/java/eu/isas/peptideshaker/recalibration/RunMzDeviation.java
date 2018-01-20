@@ -262,12 +262,8 @@ public class RunMzDeviation {
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler displaying the progress and
      * allowing the user to cancel the process. Can be null
-     *
-     * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while
      */
-    public RunMzDeviation(String spectrumFileName, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
-            throws InterruptedException {
+    public RunMzDeviation(String spectrumFileName, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) {
 
         AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();

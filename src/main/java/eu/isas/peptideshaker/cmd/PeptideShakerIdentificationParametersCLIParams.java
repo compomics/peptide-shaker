@@ -106,9 +106,6 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.PSM_FDR.id) + " " + IdentificationParametersCLIParams.PSM_FDR.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.PEPTIDE_FDR.id) + " " + IdentificationParametersCLIParams.PEPTIDE_FDR.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.PROTEIN_FDR.id) + " " + IdentificationParametersCLIParams.PROTEIN_FDR.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SEPARATE_PSMs.id) + " " + IdentificationParametersCLIParams.SEPARATE_PSMs.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SEPARATE_PEPTIDES.id) + " " + IdentificationParametersCLIParams.SEPARATE_PEPTIDES.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MERGE_SUBGROUPS.id) + " " + IdentificationParametersCLIParams.MERGE_SUBGROUPS.description + "\n";
 
         output += "\n\nFraction Analysis:\n\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.PROTEIN_FRACTION_MW_CONFIDENCE.id) + " " + IdentificationParametersCLIParams.PROTEIN_FRACTION_MW_CONFIDENCE.description + "\n";
