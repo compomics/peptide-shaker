@@ -21,7 +21,14 @@ public class ProjectExport {
      * The name of the folder where to save the mgf and FASTA file.
      */
     public final static String defaultDataFolder = "data";
+    /**
+     * The name of the folder where to save report files.
+     */
+    public final static String defaultReportsFolder = "reports";
 
+    
+    
+    
     /**
      * Exports the project as zip file.
      *
@@ -36,6 +43,24 @@ public class ProjectExport {
      * reading/writing the file
      */
     public static void exportProjectAsZip(File zipFile, File fastaFile, ArrayList<File> spectrumFiles, File cpsFile, WaitingHandler waitingHandler) throws IOException {
+        ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, null,  cpsFile, waitingHandler);
+    }
+    
+     /**
+     * Exports the project as zip file adding reports to it.
+     *
+     * @param zipFile the destination file
+     * @param fastaFile the FASTA file
+     * @param spectrumFiles the spectrum files
+     * @param reportFiles the report files
+     * @param cpsFile the cps file
+     * @param waitingHandler a waiting handler to display progress to the user
+     * and cancel the process (can be null)
+     *
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing the file
+     */
+    public static void exportProjectAsZip(File zipFile, File fastaFile, ArrayList<File> spectrumFiles, ArrayList<File> reportFiles,  File cpsFile, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Getting FASTA File. Please Wait...");
@@ -90,7 +115,12 @@ public class ProjectExport {
                     for (String dataFilePath : dataFiles) {
                         totalUncompressedSize += new File(dataFilePath).length();
                     }
-
+                    if (reportFiles != null){
+                        for (File reportFile : reportFiles) {
+                            totalUncompressedSize += reportFile.length();
+                        }
+                    }
+                    
                     // add the data files
                     if (waitingHandler != null) {
                         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -117,7 +147,24 @@ public class ProjectExport {
                         File dataFile = new File(dataFilePath);
                         ZipUtils.addFileToZip(defaultDataFolder, dataFile, out, waitingHandler, totalUncompressedSize);
                     }
+                    
+                    if (reportFiles != null && reportFiles.size()> 0){
+                        // create the data folder in the zip file
+                        ZipUtils.addFolderToZip(defaultReportsFolder, out);
 
+                        // add the files to the data folder
+                        for (File reportFile : reportFiles) {
+
+                            if (waitingHandler != null) {
+                                if (waitingHandler.isRunCanceled()) {
+                                    return;
+                                }
+                                waitingHandler.increaseSecondaryProgressCounter();
+                            }
+                            ZipUtils.addFileToZip(defaultReportsFolder, reportFile, out, waitingHandler, totalUncompressedSize);
+                        }
+                    }
+                    
                     if (waitingHandler != null) {
                         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                     }

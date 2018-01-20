@@ -313,6 +313,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 reportCLIInputBean.setReportOutputFolder(cliInputBean.getOutput().getParentFile());
             }
 
+            // array to be filled with all exported reports
+            ArrayList<File> reportFiles = new ArrayList<File>();
+            
             if (reportCLIInputBean.exportNeeded()) {
                 waitingHandler.appendReport("Starting report export.", true, true);
 
@@ -365,9 +368,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
                     spectrumFiles.add(spectrumFile);
                 }
-
+                
                 try {
-                    ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, cpsFile, waitingHandler);
+                    ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, reportFiles, cpsFile, waitingHandler);
                     final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
                     double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
                     waitingHandler.appendReport("Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + " MB)", true, true);

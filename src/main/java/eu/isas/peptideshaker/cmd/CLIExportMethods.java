@@ -234,6 +234,7 @@ public class CLIExportMethods {
      * peptide sequences
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param waitingHandler waiting handler displaying feedback to the user
+     * @return File file containing the exported report
      *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file

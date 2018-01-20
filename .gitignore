@@ -1,3 +1,4 @@
 /target/
 /resources/example_dataset/
 resources/mzidml-core.log
+.DS_Store
