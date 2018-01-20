@@ -1735,9 +1735,9 @@ public class MzIdentMLExport {
 
             // add protein group cv terms
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002470", "PeptideShaker protein group score",
-                    Double.toString(Util.roundDouble(psParameter.getProteinScore(), CONFIDENCE_DECIMALS))));
+                    Double.toString(Util.roundDouble(psParameter.getScore(), CONFIDENCE_DECIMALS))));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002471", "PeptideShaker protein group confidence",
-                    Double.toString(Util.roundDouble(psParameter.getProteinConfidence(), CONFIDENCE_DECIMALS))));
+                    Double.toString(Util.roundDouble(psParameter.getConfidence(), CONFIDENCE_DECIMALS))));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002542", "PeptideShaker protein confidence type",
                     psParameter.getMatchValidationLevel().getName()));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002415", "protein group passes threshold",
@@ -2049,8 +2049,8 @@ public class MzIdentMLExport {
             }
 
             // add peptide shaker score and confidence
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002466", "PeptideShaker PSM score", Double.toString(Util.roundDouble(psmParameter.getPsmScore(), CONFIDENCE_DECIMALS))));
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002467", "PeptideShaker PSM confidence", Double.toString(Util.roundDouble(psmParameter.getPsmConfidence(), CONFIDENCE_DECIMALS))));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002466", "PeptideShaker PSM score", Double.toString(Util.roundDouble(psmParameter.getScore(), CONFIDENCE_DECIMALS))));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002467", "PeptideShaker PSM confidence", Double.toString(Util.roundDouble(psmParameter.getConfidence(), CONFIDENCE_DECIMALS))));
 
             switch (mzIdentMLVersion) {
 
@@ -2159,9 +2159,9 @@ public class MzIdentMLExport {
 
                     PSParameter peptideParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002469", "PeptideShaker peptide confidence",
-                            Double.toString(peptideParameter.getPeptideConfidence())));
+                            Double.toString(peptideParameter.getConfidence())));
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002468", "PeptideShaker peptide score",
-                            Double.toString(peptideParameter.getPeptideScore())));
+                            Double.toString(peptideParameter.getScore())));
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002500", "peptide passes threshold",
                             Boolean.toString(peptideParameter.getMatchValidationLevel().isValidated())));
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002520", "peptide group ID",

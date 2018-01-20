@@ -254,7 +254,7 @@ public class AssumptionFilter extends MatchFilter {
             
             case confidence:
                 PSParameter psParameter = (PSParameter)(identification.getSpectrumMatch(spectrumMatchKey)).getUrParam(PSParameter.dummy);
-                double confidence = psParameter.getProteinConfidence();
+                double confidence = psParameter.getConfidence();
                 return filterItemComparator.passes(input, confidence);
            
             case validationStatus:

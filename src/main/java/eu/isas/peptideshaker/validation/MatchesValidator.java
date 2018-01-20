@@ -463,7 +463,7 @@ public class MatchesValidator {
 
             if (fastaParameters.isTargetDecoy()) {
 
-                if (!noValidated && psParameter.getProteinProbabilityScore() <= scoreThreshold) {
+                if (!noValidated && psParameter.getScore() <= scoreThreshold) {
 
                     boolean filtersPassed = true;
 
@@ -480,7 +480,7 @@ public class MatchesValidator {
                         }
                     }
 
-                    boolean confidenceThresholdPassed = psParameter.getProteinConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
+                    boolean confidenceThresholdPassed = psParameter.getConfidence()>= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
                     boolean enoughHits = !validationQCPreferences.isFirstDecoy() || targetDecoyMap.getnTargetOnly() > nTargetLimit;
 
@@ -550,7 +550,7 @@ public class MatchesValidator {
 
             boolean noValidated = peptideMap.getTargetDecoyResults().noValidated();
 
-            if (!noValidated && psParameter.getPeptideProbabilityScore() <= peptideThreshold) {
+            if (!noValidated && psParameter.getScore() <= peptideThreshold) {
 
                 boolean filtersPassed = true;
 
@@ -567,7 +567,7 @@ public class MatchesValidator {
                     }
                 }
 
-                boolean confidenceThresholdPassed = psParameter.getPeptideConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
+                boolean confidenceThresholdPassed = psParameter.getConfidence()>= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
                 boolean enoughHits = !validationQCPreferences.isFirstDecoy() || peptideMap.getnTargetOnly() > nTargetLimit;
 
@@ -648,7 +648,7 @@ public class MatchesValidator {
 
             }
 
-            if (!noValidated && psParameter.getPsmProbabilityScore() <= psmThreshold) {
+            if (!noValidated && psParameter.getScore() <= psmThreshold) {
 
                 boolean filtersPassed = true;
 
@@ -668,7 +668,7 @@ public class MatchesValidator {
                     }
                 }
 
-                boolean confidenceThresholdPassed = psParameter.getPsmConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
+                boolean confidenceThresholdPassed = psParameter.getConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
                 boolean enoughHits = !validationQCPreferences.isFirstDecoy() || psmMap.getnTargetOnly() > nTargetLimit;
 
@@ -774,7 +774,7 @@ public class MatchesValidator {
                     }
                 }
 
-                boolean confidenceThresholdPassed = psParameter.getPsmConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
+                boolean confidenceThresholdPassed = psParameter.getConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
                 boolean enoughHits = !validationQCPreferences.isFirstDecoy() || targetDecoyMap.getnTargetOnly() > nTargetLimit;
 
@@ -847,7 +847,7 @@ public class MatchesValidator {
 
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
-                probaScore = probaScore * psParameter.getSpectrumMatchProbability();
+                probaScore = probaScore * psParameter.getProbability();
 
                 if (nFractions > 1) {
 
@@ -863,7 +863,7 @@ public class MatchesValidator {
 
                     }
 
-                    double tempScore = psParameter.getSpectrumMatchProbability();
+                    double tempScore = psParameter.getProbability();
 
                     if (tempScore != 1.0 && fractionScore != 0.0) {
 
@@ -921,17 +921,10 @@ public class MatchesValidator {
             }
 
             // Set the global score and grouping key
-            psParameter.setPeptideProbabilityScore(probaScore);
-            String peptideValidationGroup = "";
-
-            if (identificationParameters.getIdValidationParameters().getSeparatePeptides()) {
-
-                psParameter.setSpecificMapKey(peptideValidationGroup);
-
-            }
+            psParameter.setScore(probaScore);
 
             peptideMatch.addUrParam(psParameter);
-            peptideMap.put(psParameter.getPeptideProbabilityScore(), peptideMatch.getIsDecoy());
+            peptideMap.put(psParameter.getScore(), peptideMatch.getIsDecoy());
 
             waitingHandler.increaseSecondaryProgressCounter();
 
@@ -982,12 +975,12 @@ public class MatchesValidator {
 
             if (fastaParameters.isTargetDecoy()) {
 
-                double probability = peptideMap.getProbability(psParameter.getPeptideProbabilityScore());
-                psParameter.setPeptideProbability(probability);
+                double probability = peptideMap.getProbability(psParameter.getScore());
+                psParameter.setProbability(probability);
 
             } else {
 
-                psParameter.setPeptideProbability(1.0);
+                psParameter.setProbability(1.0);
 
             }
 
@@ -1071,7 +1064,7 @@ public class MatchesValidator {
 
                 PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                 PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
-                probaScore = probaScore * psParameter.getPeptideProbability();
+                probaScore = probaScore * psParameter.getProbability();
 
                 if (nFractions > 1) {
 
@@ -1123,9 +1116,9 @@ public class MatchesValidator {
             }
 
             // Set the global score
-            psParameter.setProteinProbabilityScore(probaScore);
+            psParameter.setScore(probaScore);
             proteinMatch.addUrParam(psParameter);
-            proteinMap.put(psParameter.getProteinProbabilityScore(), proteinMatch.isDecoy());
+            proteinMap.put(psParameter.getScore(), proteinMatch.isDecoy());
 
         }
 
@@ -1142,10 +1135,10 @@ public class MatchesValidator {
      * @param fastaParameters the fasta file parameters
      * @param metrics if provided fraction information
      * @param waitingHandler the handler displaying feedback to the user
-     * @param fractionSettings the fraction settings
+     * @param fractionParameters the fraction parameters
      */
     public void attachProteinProbabilities(Identification identification, SequenceProvider sequenceProvider, FastaParameters fastaParameters, Metrics metrics, WaitingHandler waitingHandler,
-            FractionParameters fractionSettings) {
+            FractionParameters fractionParameters) {
 
         waitingHandler.setWaitingText("Attaching Protein Probabilities. Please Wait...");
 
@@ -1166,12 +1159,12 @@ public class MatchesValidator {
 
             if (fastaParameters.isTargetDecoy()) {
 
-                double proteinProbability = proteinMap.getProbability(psParameter.getProteinProbabilityScore());
-                psParameter.setProteinProbability(proteinProbability);
+                double proteinProbability = proteinMap.getProbability(psParameter.getScore());
+                psParameter.setProbability(proteinProbability);
 
             } else {
 
-                psParameter.setProteinProbability(1.0);
+                psParameter.setProbability(1.0);
 
             }
 
@@ -1188,7 +1181,7 @@ public class MatchesValidator {
                 }
 
                 // set the fraction molecular weights
-                if (!proteinMatch.isDecoy() && psParameter.getFractionConfidence(fraction) > fractionSettings.getProteinConfidenceMwPlots()) {
+                if (!proteinMatch.isDecoy() && psParameter.getFractionConfidence(fraction) > fractionParameters.getProteinConfidenceMwPlots()) {
 
                     ArrayList<Double> mw = fractionMW.get(fraction);
 

@@ -101,7 +101,7 @@ public class TargetDecoySeries {
 
         for (double score : hitMap.keySet()) {
             currentPoint = hitMap.get(score);
-            double scoreLog = PSParameter.getScore(score);
+            double scoreLog = PSParameter.transformScore(score);
             scores[counter] = score;
             scoresLog[counter] = scoreLog;
             probaNTotal += (1 - currentPoint.p) * currentPoint.nTarget;

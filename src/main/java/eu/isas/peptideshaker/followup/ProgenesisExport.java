@@ -252,7 +252,7 @@ public class ProgenesisExport {
             writer.write(SEPARATOR);
 
             // score
-            writer.write(Double.toString(psParameter.getPsmConfidence()));
+            writer.write(Double.toString(psParameter.getConfidence()));
             writer.write(SEPARATOR);
 
             // main AC

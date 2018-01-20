@@ -115,7 +115,7 @@ public class PsmFilter extends MatchFilter {
             case confidence:
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(matchKey);
                 PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
-                double confidence = psParameter.getProteinConfidence();
+                double confidence = psParameter.getConfidence();
                 return filterItemComparator.passes(input, confidence);
                 
             case validationStatus:

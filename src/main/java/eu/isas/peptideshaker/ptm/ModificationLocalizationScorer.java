@@ -47,7 +47,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import uk.ac.ebi.jmzidml.model.mzidml.params.PeptideUserParam;
 
 /**
  * This class scores the PSM PTMs using the scores implemented in compomics
@@ -132,7 +131,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                                         modificationFound = true;
                                         PSParameter psParameter = (PSParameter) peptideAssumption.getUrParam(PSParameter.dummy);
-                                        double p = psParameter.getSearchEngineProbability();
+                                        double p = psParameter.getProbability();
 
                                         if (modMatch.getModificationSite() == modSite) {
 
@@ -150,7 +149,7 @@ public class ModificationLocalizationScorer extends DbObject {
                                 if (!modificationAtSite && modificationFound) {
 
                                     PSParameter psParameter = (PSParameter) peptideAssumption.getUrParam(PSParameter.dummy);
-                                    double p = psParameter.getSearchEngineProbability();
+                                    double p = psParameter.getProbability();
 
                                     if (p < secondaryP) {
 
@@ -1614,11 +1613,8 @@ public class ModificationLocalizationScorer extends DbObject {
      * matches
      * @param waitingHandler the handler displaying feedback to the user
      * @param identificationParameters the identification parameters
-     *
-     * @throws Exception exception thrown whenever a problem occurred while
-     * deserializing a match
      */
-    public void scorePeptidePtms(Identification identification, WaitingHandler waitingHandler, IdentificationParameters identificationParameters) throws Exception {
+    public void scorePeptidePtms(Identification identification, WaitingHandler waitingHandler, IdentificationParameters identificationParameters) {
 
         waitingHandler.setWaitingText("Scoring Peptide modification localization. Please Wait...");
 
@@ -1658,7 +1654,7 @@ public class ModificationLocalizationScorer extends DbObject {
      * @param identificationFeaturesGenerator identification features generator
      * used to generate metrics which will be stored for later reuse
      */
-    public void scoreProteinPtms(Identification identification, Metrics metrics, WaitingHandler waitingHandler, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator) throws Exception {
+    public void scoreProteinPtms(Identification identification, Metrics metrics, WaitingHandler waitingHandler, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator) {
 
         waitingHandler.setWaitingText("Scoring Protein modification localization. Please Wait...");
 

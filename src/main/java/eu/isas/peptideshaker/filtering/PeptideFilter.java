@@ -151,7 +151,7 @@ public class PeptideFilter extends MatchFilter {
             case confidence:
                 peptideMatch = identification.getPeptideMatch(matchKey);
                 PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
-                double confidence = psParameter.getProteinConfidence();
+                double confidence = psParameter.getConfidence();
                 return filterItemComparator.passes(input, confidence);
                 
             case proteinInference:

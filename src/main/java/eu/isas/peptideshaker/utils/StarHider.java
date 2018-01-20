@@ -11,7 +11,6 @@ import com.compomics.util.experiment.identification.spectrum_annotation.spectrum
 import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
-import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
@@ -19,20 +18,14 @@ import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.preferences.FilterParameters;
-import java.awt.Toolkit;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.apache.commons.math.MathException;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class provides information whether a hit should be hidden or starred.

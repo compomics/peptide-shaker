@@ -264,7 +264,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      */
     public double getLogScoreLimit() {
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return PSParameter.getScore(scoreLimit);
+        return PSParameter.transformScore(scoreLimit);
     }
 
     /**

@@ -307,7 +307,7 @@ public class PsPeptideSection {
                 
             case confidence:
                 
-                return Double.toString(psParameter.getPeptideConfidence());
+                return Double.toString(psParameter.getConfidence());
                 
             case decoy:
                 
@@ -347,11 +347,11 @@ public class PsPeptideSection {
                 
             case score:
                 
-                return Double.toString(psParameter.getPeptideScore());
+                return Double.toString(PSParameter.transformScore(psParameter.getScore()));
                 
             case raw_score:
                 
-                return Double.toString(psParameter.getPeptideProbabilityScore());
+                return Double.toString(psParameter.getScore());
                 
             case sequence:
                 

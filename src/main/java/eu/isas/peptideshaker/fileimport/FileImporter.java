@@ -573,7 +573,7 @@ public class FileImporter {
 
             LinkedList<SpectrumMatch> idFileSpectrumMatches = null;
             try {
-                if (peptideMapper != null && !peptideMapper.isCanceled()) {
+                if (peptideMapper != null) {
                     idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, identificationParameters.getSearchParameters(), identificationParameters.getSequenceMatchingParameters(), true);
                 } else {
                     idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, identificationParameters.getSearchParameters(), null, true);

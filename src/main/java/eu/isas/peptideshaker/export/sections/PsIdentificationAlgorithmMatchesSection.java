@@ -428,7 +428,7 @@ public class PsIdentificationAlgorithmMatchesSection {
 
             case algorithm_confidence:
 
-                return Double.toString(psParameter.getSearchEngineConfidence());
+                return Double.toString(psParameter.getConfidence());
 
             case algorithm_delta_confidence:
 
@@ -918,7 +918,7 @@ public class PsIdentificationAlgorithmMatchesSection {
 
             case algorithm_confidence:
 
-                return Double.toString(psParameter.getSearchEngineConfidence());
+                return Double.toString(psParameter.getConfidence());
 
             case decoy:
 

@@ -664,16 +664,16 @@ public class PepXmlExport {
         if (mainHit) {
         
             StringBuilder searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"PSM raw score\" value=\"").append(psParameter.getPsmProbabilityScore()).append("\"/>");
+            searchScore.append("<search_score name=\"PSM raw score\" value=\"").append(psParameter.getTransformedScore()).append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"PSM score\" value=\"").append(psParameter.getPsmScore()).append("\"/>");
+            searchScore.append("<search_score name=\"PSM score\" value=\"").append(psParameter.getScore()).append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"PSM PEP\" value=\"").append(psParameter.getSpectrumMatchProbability()).append("\"/>");
+            searchScore.append("<search_score name=\"PSM PEP\" value=\"").append(psParameter.getProbability()).append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"PSM confidence\" value=\"").append(psParameter.getPsmConfidence()).append("\"/>");
+            searchScore.append("<search_score name=\"PSM confidence\" value=\"").append(psParameter.getConfidence()).append("\"/>");
             sw.writeLine(searchScore.toString());
         
         } else {
@@ -685,10 +685,10 @@ public class PepXmlExport {
             searchScore.append("<search_score name=\"Identification algorithm score\" value=\"").append(peptideAssumption.getScore()).append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"Identification algorithm PEP\" value=\"").append(psParameter.getSearchEngineProbability()).append("\"/>");
+            searchScore.append("<search_score name=\"Identification algorithm PEP\" value=\"").append(psParameter.getProbability()).append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"Identification algorithm confidence\" value=\"").append(psParameter.getSearchEngineConfidence()).append("\"/>");
+            searchScore.append("<search_score name=\"Identification algorithm confidence\" value=\"").append(psParameter.getConfidence()).append("\"/>");
             sw.writeLine(searchScore.toString());
         
         }

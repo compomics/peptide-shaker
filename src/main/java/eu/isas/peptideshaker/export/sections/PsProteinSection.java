@@ -375,7 +375,7 @@ public class PsProteinSection {
 
             case confidence:
 
-                return Double.toString(psParameter.getProteinConfidence());
+                return Double.toString(psParameter.getConfidence());
 
             case confident_modification_sites:
 
@@ -535,12 +535,12 @@ public class PsProteinSection {
             case score:
                 
                 return Double.toString(
-                        -10.0 * FastMath.log10(psParameter.getProteinProbabilityScore()));
+                        -10.0 * FastMath.log10(psParameter.getScore()));
                 
             case raw_score:
                 
                 return Double.toString(
-                        psParameter.getProteinProbabilityScore());
+                        psParameter.getScore());
                 
             case spectrum_counting:
                 

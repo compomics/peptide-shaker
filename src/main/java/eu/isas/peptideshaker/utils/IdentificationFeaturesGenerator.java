@@ -2011,7 +2011,7 @@ public class IdentificationFeaturesGenerator {
 
                     if (!proteinPsParameter.getHidden()) {
 
-                        double score = proteinPsParameter.getProteinProbabilityScore();
+                        double score = proteinPsParameter.getScore();
                         int nPeptides = -proteinMatch.getPeptideMatchesKeys().length;
                         int nSpectra = -getNSpectra(proteinKey);
 
@@ -2264,7 +2264,7 @@ public class IdentificationFeaturesGenerator {
 
                 if (!psParameter.getHidden()) {
 
-                    double peptideProbabilityScore = psParameter.getPeptideProbabilityScore();
+                    double peptideProbabilityScore = psParameter.getScore();
 
                     if (!peptideMap.containsKey(peptideProbabilityScore)) {
 
@@ -2392,7 +2392,7 @@ public class IdentificationFeaturesGenerator {
 
                     if (!hasRT) {
 
-                        rt = psParameter.getPsmProbabilityScore();
+                        rt = psParameter.getScore();
 
                     }
 

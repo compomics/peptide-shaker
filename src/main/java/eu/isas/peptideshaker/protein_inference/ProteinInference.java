@@ -3,13 +3,11 @@ package eu.isas.peptideshaker.protein_inference;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
-import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.parameters.identification.search.DigestionParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.ProteinInferenceParameters;
@@ -17,16 +15,11 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.google.common.collect.Sets;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
-import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -536,7 +529,7 @@ public class ProteinInference {
 
             if (!proteinMatch.isDecoy()) {
 
-                double score = proteinMatchParameter.getProteinProbabilityScore();
+                double score = proteinMatchParameter.getScore();
 
                 TreeMap<Integer, TreeMap<Integer, TreeSet<Long>>> scoreMap = orderMap.get(score);
 

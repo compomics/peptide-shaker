@@ -382,15 +382,15 @@ public class PsPsmSection {
                    
             case confidence:
             
-                return Double.toString(psParameter.getPsmConfidence());
+                return Double.toString(psParameter.getConfidence());
                 
             case score:
                 
-                return Double.toString(psParameter.getPsmScore());
+                return Double.toString(PSParameter.transformScore(psParameter.getScore()));
                 
             case raw_score:
                 
-                return Double.toString(psParameter.getPsmProbabilityScore());
+                return Double.toString(psParameter.getScore());
                 
             case validated:
                 

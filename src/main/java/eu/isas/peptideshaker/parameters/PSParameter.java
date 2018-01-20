@@ -7,6 +7,7 @@ import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.apache.commons.math.util.FastMath;
 
@@ -25,43 +26,23 @@ public class PSParameter extends DbObject implements UrParameter {
      */
     static final long serialVersionUID = 2846587135366515967L;
     /**
-     * Posterior error probability estimated for the search engine results.
-     */
-    private double searchEnginePEP;
-    /**
      * The difference in identification algorithm level PEP with the next best
-     * peptide assumption with sequence difference for a given search engine.
+     * peptide assumption.
      */
-    private Double algorithmDeltaPEP;
+    private double algorithmDeltaPEP;
     /**
      * The difference in identification algorithm level PEP with the next best
      * peptide assumption with sequence difference across all search engines.
      */
-    private Double deltaPEP;
+    private double deltaPEP;
     /**
-     * Score for a spectrum match in the dataset.
+     * The score of the match.
      */
-    private double spectrumMatchScore;
+    private double score;
     /**
-     * Spectrum posterior error probability.
+     * The probability of the match.
      */
-    private double spectrumProbability;
-    /**
-     * Probabilistic score for a peptide match.
-     */
-    private double peptideProbabilityScore;
-    /**
-     * Peptide Posterior error probability.
-     */
-    private double peptideProbability;
-    /**
-     * Probabilistic score for a protein match.
-     */
-    private double proteinProbabilityScore;
-    /**
-     * Protein posterior error probability.
-     */
-    private double proteinProbability;
+    private double probability;
     /**
      * The validation level of a given match.
      */
@@ -70,7 +51,7 @@ public class PSParameter extends DbObject implements UrParameter {
      * Boolean indicating whether the validation confidence was manually
      * updated.
      */
-    private Boolean manualValidation = false;
+    private boolean manualValidation = false;
     /**
      * Boolean indicating whether this is a hidden match.
      */
@@ -78,11 +59,7 @@ public class PSParameter extends DbObject implements UrParameter {
     /**
      * Boolean indicating whether this is a starred match.
      */
-    private boolean starred = false; // @TODO would be nice to change this into a symbol/color
-    /**
-     * the key in the corresponding specific map.
-     */
-    private String specificMapKey;
+    private boolean starred = false;
     /**
      * Protein groups can belong to the following groups according to the static
      * field indexing.
@@ -157,207 +134,100 @@ public class PSParameter extends DbObject implements UrParameter {
     }
 
     /**
-     * Returns the peptide posterior error probability.
+     * Returns the match probability.
      *
-     * @return the peptide posterior error probability
+     * @return the match probability
      */
-    public double getPeptideProbability() {
-    
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        
-        return peptideProbability;
-    
-    }
-    
-    public void setGroupClass(int groupClass){
+    public double getProbability() {
 
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
+        return probability;
+
+    }
+
+    /**
+     * Set the probability.
+     *
+     * @param probability the new peptide posterior error probability
+     */
+    public void setProbability(double probability) {
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
+        this.probability = probability;
+
+    }
+
+    public void setGroupClass(int groupClass) {
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
 
         this.proteinInferenceGroupClass = groupClass;
 
     }
 
     /**
-     * Set the peptide posterior error probability. Note: if
-     * PsmScores.scoreRoundingDecimal is not null the scored will be floored
-     * accordingly.
+     * Returns the score.
      *
-     * @param peptideProbability the new peptide posterior error probability
+     * @return the score
      */
-    public void setPeptideProbability(double peptideProbability) {
+    public double getScore() {
 
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
 
-        this.peptideProbability = peptideProbability;
+        return score;
 
     }
-
+    
     /**
-     * Returns the peptide Probabilistic score.
-     *
-     * @return the peptide Probabilistic score
+     * Returns the log transformed score.
+     * 
+     * @return the log transformed score
      */
-    public double getPeptideProbabilityScore() {
-
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-
-        return peptideProbabilityScore;
-
-    }
-
-    /**
-     * Returns the peptide score.
-     *
-     * @return the peptide score
-     */
-    public double getPeptideScore() {
-
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-
-        return getScore(peptideProbabilityScore);
-
-    }
-
-    /**
-     * Returns the peptide confidence.
-     *
-     * @return the peptide confidence
-     */
-    public double getPeptideConfidence() {
-
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-
-        double confidence = 100.0 * (1 - peptideProbability);
+    public double getTransformedScore() {
         
+        return transformScore(getScore());
+        
+    }
+
+    /**
+     * Set the peptide score.
+     *
+     * @param score the score
+     */
+    public void setScore(double score) {
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
+        this.score = score;
+
+    }
+
+    /**
+     * Returns the confidence.
+     *
+     * @return the confidence
+     */
+    public double getConfidence() {
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
+        double confidence = 100.0 * (1 - probability);
+
         return confidence < 0.0 ? 0.0 : confidence;
-        
-    }
-
-    /**
-     * Set the peptide Probabilistic score. Note: if
-     * PsmScores.scoreRoundingDecimal is not null the scored will be floored
-     * accordingly.
-     *
-     * @param peptideProbabilityScore the new peptide Probabilistic score
-     */
-    public void setPeptideProbabilityScore(double peptideProbabilityScore) {
-
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-
-        this.peptideProbabilityScore = peptideProbabilityScore;
-
-    }
-
-    /**
-     * Returns the protein posterior error probability.
-     *
-     * @return the protein posterior error probability
-     */
-    public double getProteinProbability() {
-
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-
-        return proteinProbability;
-
-    }
-
-    /**
-     * Set the protein posterior error probability. Note: if
-     * PsmScores.scoreRoundingDecimal is not null the scored will be floored
-     * accordingly.
-     *
-     * @param proteinProbability the new protein posterior error probability
-     */
-    public void setProteinProbability(double proteinProbability) {
-
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-
-        this.proteinProbability = proteinProbability;
-
-    }
-
-    /**
-     * Returns the protein Probabilistic score.
-     *
-     * @return the protein Probabilistic score
-     */
-    public double getProteinProbabilityScore() {
-
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-
-        return proteinProbabilityScore;
-
-    }
-
-    /**
-     * Returns the protein score.
-     *
-     * @return the protein score
-     */
-    public double getProteinScore() {
-
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-
-        return getScore(proteinProbabilityScore);
-
-    }
-
-    /**
-     * Returns the protein confidence.
-     *
-     * @return the protein confidence
-     */
-    public double getProteinConfidence() {
-
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-
-        double confidence = 100.0 * (1 - proteinProbability);
-        
-        return confidence < 0.0 ? 0.0 : confidence;
-        
-    }
-
-    /**
-     * Set the protein Probabilistic score. Note: if
-     * PsmScores.scoreRoundingDecimal is not null the scored will be floored
-     * accordingly.
-     *
-     * @param proteinProbabilityScore the new protein Probabilistic score
-     */
-    public void setProteinProbabilityScore(double proteinProbabilityScore) {
-
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-
-        this.proteinProbabilityScore = proteinProbabilityScore;
-
-    }
-
-    /**
-     * Returns the search engine posterior error probability.
-     *
-     * @return the search engine posterior error probability
-     */
-    public double getSearchEngineProbability() {
-
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-
-        return searchEnginePEP;
-
-    }
-
-    /**
-     * Set the search engine posterior error probability. Note: if
-     * PsmScores.scoreRoundingDecimal is not null the scored will be floored
-     * accordingly.
-     *
-     * @param searchEngineProbability the new search engine posterior error
-     * probability
-     */
-    public void setSearchEngineProbability(double searchEngineProbability) {
-
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-
-        this.searchEnginePEP = searchEngineProbability;
 
     }
 
@@ -372,7 +242,9 @@ public class PSParameter extends DbObject implements UrParameter {
      */
     public Double getAlgorithmDeltaPEP() {
 
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
 
         return algorithmDeltaPEP;
 
@@ -389,7 +261,9 @@ public class PSParameter extends DbObject implements UrParameter {
      */
     public void setAlgorithmDeltaPEP(Double deltaPEP) {
 
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
 
         this.algorithmDeltaPEP = deltaPEP;
 
@@ -406,7 +280,9 @@ public class PSParameter extends DbObject implements UrParameter {
      */
     public Double getDeltaPEP() {
 
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
 
         return deltaPEP;
 
@@ -423,116 +299,27 @@ public class PSParameter extends DbObject implements UrParameter {
      */
     public void setDeltaPEP(Double deltaPEP) {
 
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
 
         this.deltaPEP = deltaPEP;
 
     }
 
     /**
-     * Returns the search engine confidence.
+     * Sets the qc filters.
      *
-     * @return the search engine confidence
+     * @param qcFilters the qc filters
      */
-    public double getSearchEngineConfidence() {
+    public void setQcFilters(HashMap<String, Boolean> qcFilters) {
 
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
 
-        double confidence = 100.0 * (1 - searchEnginePEP);
-        
-        return confidence < 0.0 ? 0.0 : confidence;
-        
-    }
-
-    /**
-     * Returns the spectrum match posterior error probability.
-     *
-     * @return the spectrum match posterior error probability
-     */
-    public double getSpectrumMatchProbability() {
-
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-
-        return spectrumProbability;
-
-    }
-
-    /**
-     * Set the the PSM posterior error probability. Note: if
-     * PsmScores.scoreRoundingDecimal is not null the scored will be floored
-     * accordingly.
-     *
-     * @param psmProbability the new the PSM posterior error probability
-     */
-    public void setPsmProbability(double psmProbability) {
-
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-
-        this.spectrumProbability = psmProbability;
-
-    }
-    
-    /**
-     * Sets the score for a spectrum match.
-     * 
-     * @param psmProbabilityScore 
-     */
-    public void setPsmProbabilityScore(double psmProbabilityScore) {
-
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-
-        this.spectrumMatchScore = psmProbabilityScore;
-
-    }
-    
-    public void setQcFilters(HashMap<String, Boolean> qcFilters){
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.qcFilters = qcFilters;
-    }
 
-    /**
-     * Returns the the PSM Probabilistic score.
-     *
-     * @return the PSM Probabilistic score
-     */
-    public double getPsmProbabilityScore() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return spectrumMatchScore;
-    }
-
-    /**
-     * Set the PSM Probabilistic score. Note: if PsmScores.scoreRoundingDecimal
-     * is not null the scored will be floored accordingly.
-     *
-     * @param psmProbabilityScore the new PSM Probabilistic score
-     */
-    public void setSpectrumProbabilityScore(double psmProbabilityScore) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-        this.spectrumMatchScore = psmProbabilityScore;
-    }
-
-    /**
-     * Returns the PSM score.
-     *
-     * @return the PSM score
-     */
-    public double getPsmScore() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return getScore(spectrumMatchScore);
-    }
-
-    /**
-     * Returns the PSM confidence.
-     *
-     * @return the PSM confidence
-     */
-    public double getPsmConfidence() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        double confidence = 100.0 * (1 - spectrumProbability);
-        if (confidence <= 0) {
-            confidence = 0;
-        }
-        return confidence;
     }
 
     /**
@@ -541,8 +328,13 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the validation level of the match
      */
     public MatchValidationLevel getMatchValidationLevel() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
         return matchValidationLevel;
+
     }
 
     /**
@@ -551,8 +343,13 @@ public class PSParameter extends DbObject implements UrParameter {
      * @param matchValidationLevel the validation level of the match
      */
     public void setMatchValidationLevel(MatchValidationLevel matchValidationLevel) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         this.matchValidationLevel = matchValidationLevel;
+
     }
 
     /**
@@ -561,8 +358,13 @@ public class PSParameter extends DbObject implements UrParameter {
      * @param hidden boolean indicating whether the match should be hidden
      */
     public void setHidden(boolean hidden) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         this.hidden = hidden;
+
     }
 
     /**
@@ -571,8 +373,13 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return boolean indicating whether a match is hidden or not
      */
     public boolean getHidden() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
         return hidden;
+
     }
 
     /**
@@ -581,8 +388,13 @@ public class PSParameter extends DbObject implements UrParameter {
      * @param starred boolean indicating whether the match should be starred
      */
     public void setStarred(boolean starred) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         this.starred = starred;
+
     }
 
     /**
@@ -591,8 +403,13 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return boolean indicating whether a match is starred or not
      */
     public boolean getStarred() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
         return starred;
+
     }
 
     /**
@@ -601,8 +418,13 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the protein inference class of the protein match.
      */
     public int getProteinInferenceGroupClass() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
         return proteinInferenceGroupClass;
+
     }
 
     /**
@@ -612,11 +434,13 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the group class description
      */
     public String getProteinInferenceClassAsString() {
-        
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
         return getProteinInferenceClassAsString(proteinInferenceGroupClass);
-    
+
     }
 
     /**
@@ -625,20 +449,21 @@ public class PSParameter extends DbObject implements UrParameter {
      *
      * @param matchClass the protein inference class as integer (see static
      * fields)
+     *
      * @return the group class description
      */
     public static String getProteinInferenceClassAsString(int matchClass) {
-    
+
         switch (matchClass) {
-        
+
             case NOT_GROUP:
-            
+
                 return "Single Protein";
-            
+
             case RELATED:
-            
+
                 return "Related Proteins";
-            
+
             case RELATED_AND_UNRELATED:
 
                 return "Related and Unrelated Proteins";
@@ -660,38 +485,42 @@ public class PSParameter extends DbObject implements UrParameter {
      * @param groupClass the protein group class
      */
     public void setProteinInferenceClass(int groupClass) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         this.proteinInferenceGroupClass = groupClass;
+
     }
 
     /**
-     * Returns the match key in the corresponding specific map.
+     * Returns the number of validated peptides per fraction.
      *
-     * @return the match key in the corresponding specific map
+     * @return the number of validated peptides per fraction
      */
-    public String getSpecificMapKey() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return specificMapKey;
-    }
-    
-    public HashMap<String, Integer> getValidatedPeptidesPerFraction(){
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+    public HashMap<String, Integer> getValidatedPeptidesPerFraction() {
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
         return validatedPeptidesPerFraction;
-    }
-    
-    public HashMap<String, Integer> getValidatedSpectraPerFraction(){
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return validatedSpectraPerFraction;
+
     }
 
     /**
-     * Sets the match key in the corresponding specific map.
+     * Returns the number of validated spectra per fraction.
      *
-     * @param specificMapKey the match key in the corresponding specific map
+     * @return the number of validated spectra per fraction
      */
-    public void setSpecificMapKey(String specificMapKey) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
-        this.specificMapKey = specificMapKey;
+    public HashMap<String, Integer> getValidatedSpectraPerFraction() {
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
+        return validatedSpectraPerFraction;
     }
 
     /**
@@ -701,16 +530,34 @@ public class PSParameter extends DbObject implements UrParameter {
      * @param confidence the confidence
      */
     public void setFractionScore(String fraction, Double confidence) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         if (fractionScore == null) {
+
             fractionScore = new HashMap<>(2);
+
         }
+
         fractionScore.put(fraction, confidence);
+
     }
-    
-    public void setFractionScore(HashMap<String, Double> fractionScore){
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+    /**
+     * Sets the fraction score map.
+     *
+     * @param fractionScore the fraction score map
+     */
+    public void setFractionScore(HashMap<String, Double> fractionScore) {
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         this.fractionScore = fractionScore;
+
     }
 
     /**
@@ -720,11 +567,19 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the fraction score
      */
     public Double getFractionScore(String fraction) {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
         if (fractionScore == null) {
+
             return null;
+
         }
+
         return fractionScore.get(fraction);
+
     }
 
     /**
@@ -732,13 +587,15 @@ public class PSParameter extends DbObject implements UrParameter {
      *
      * @return the fractions where this match was found
      */
-    public Set<String> getFractions(){
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        if (fractionScore != null) {
-            return fractionScore.keySet();
-        } else {
-            return null;
-        }
+    public Set<String> getFractions() {
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
+        return fractionScore == null ? null
+                : fractionScore.keySet();
+
     }
 
     /**
@@ -747,8 +604,13 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the fractions where this match was found
      */
     public HashMap<String, Double> getFractionScore() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
         return fractionScore;
+
     }
 
     /**
@@ -758,16 +620,29 @@ public class PSParameter extends DbObject implements UrParameter {
      * @param confidence the confidence
      */
     public void setFractionPEP(String fraction, Double confidence) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         if (fractionPEP == null) {
+
             fractionPEP = new HashMap<>(2);
+
         }
+
         fractionPEP.put(fraction, confidence);
+
     }
-    
-    public void setFractionPEP(HashMap<String, Double> fractionPEP){
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+    public void setFractionPEP(HashMap<String, Double> fractionPEP) {
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         this.fractionPEP = fractionPEP;
+
     }
 
     /**
@@ -777,30 +652,46 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the fraction pep
      */
     public Double getFractionPEP(String fraction) {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        if (fractionPEP == null) {
-            return null;
-        }
-        return fractionPEP.get(fraction);
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
+        return fractionPEP == null ? null : fractionPEP.get(fraction);
+
     }
-    
-    public HashMap<String, Double> getFractionPEP(){
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
+    /**
+     * Returns the fraction pep map.
+     *
+     * @return the fraction pep map
+     */
+    public HashMap<String, Double> getFractionPEP() {
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
         return fractionPEP;
+
     }
 
     /**
      * Returns the fraction confidence.
      *
      * @param fraction the fraction
+     *
      * @return the fraction confidence
      */
     public Double getFractionConfidence(String fraction) {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        if (fractionPEP == null || fractionPEP.get(fraction) == null) {
-            return null;
-        }
-        return 100 * (1 - fractionPEP.get(fraction));
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
+        return fractionPEP == null || fractionPEP.get(fraction) == null ? null
+                : 100 * (1 - fractionPEP.get(fraction));
+
     }
 
     /**
@@ -810,12 +701,14 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the number of validated peptides in the given fraction
      */
     public Integer getFractionValidatedPeptides(String fraction) {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        if (validatedPeptidesPerFraction != null) {
-            return validatedPeptidesPerFraction.get(fraction);
-        } else {
-            return 0;
-        }
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
+        return validatedPeptidesPerFraction == null ? 0
+                : validatedPeptidesPerFraction.get(fraction);
+
     }
 
     /**
@@ -825,8 +718,13 @@ public class PSParameter extends DbObject implements UrParameter {
      * map
      */
     public void setValidatedPeptidesPerFraction(HashMap<String, Integer> validatedPeptidesPerFraction) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         this.validatedPeptidesPerFraction = validatedPeptidesPerFraction;
+
     }
 
     /**
@@ -836,12 +734,14 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the number of validated spectra in the given fraction
      */
     public Integer getFractionValidatedSpectra(String fraction) {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        if (validatedSpectraPerFraction != null) {
-            return validatedSpectraPerFraction.get(fraction);
-        } else {
-            return 0;
-        }
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
+        return validatedSpectraPerFraction == null ? 0
+                : validatedSpectraPerFraction.get(fraction);
+
     }
 
     /**
@@ -850,8 +750,13 @@ public class PSParameter extends DbObject implements UrParameter {
      * @param validatedSpectraPerFraction the validated spectra per fraction map
      */
     public void setValidatedSpectraPepFraction(HashMap<String, Integer> validatedSpectraPerFraction) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         this.validatedSpectraPerFraction = validatedSpectraPerFraction;
+
     }
 
     /**
@@ -861,60 +766,104 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the precursor intensity in the given fraction
      */
     public ArrayList<Double> getPrecursorIntensityPerFraction(String fraction) {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        if (precursorIntensityPerFraction != null) {
-            return precursorIntensityPerFraction.get(fraction);
-        } else {
-            return new ArrayList<>();
-        }
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
+        return precursorIntensityPerFraction == null ? new ArrayList<>(0)
+                : precursorIntensityPerFraction.get(fraction);
+
     }
-    
+
+    /**
+     * Returns the precursor intensity per fraction map.
+     *
+     * @return the precursor intensity per fraction map
+     */
     public HashMap<String, ArrayList<Double>> getPrecursorIntensityPerFraction() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
         return precursorIntensityPerFraction;
+
     }
-    
-    
+
+    /**
+     * Sets the precursor intensity per fraction map.
+     *
+     * @param precursorIntensityAveragePerFraction the precursor intensity per
+     * fraction map
+     */
     public void setPrecursorIntensityAveragePerFraction(HashMap<String, Double> precursorIntensityAveragePerFraction) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         this.precursorIntensityAveragePerFraction = precursorIntensityAveragePerFraction;
+
     }
-    
-    
+
+    /**
+     * Sets the summed precursor intensity per fraction map.
+     *
+     * @param precursorIntensitySummedPerFraction the summed precursor intensity
+     * per fraction map
+     */
     public void setPrecursorIntensitySummedPerFraction(HashMap<String, Double> precursorIntensitySummedPerFraction) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         this.precursorIntensitySummedPerFraction = precursorIntensitySummedPerFraction;
+
     }
 
     /**
      * Get the precursor intensity in the given fraction.
      *
-     * @param precursorIntensityPerFraction the precursor intensities per fraction map
+     * @param precursorIntensityPerFraction the precursor intensities per
+     * fraction map
      */
     public void setPrecursorIntensityPerFraction(HashMap<String, ArrayList<Double>> precursorIntensityPerFraction) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         this.precursorIntensityPerFraction = precursorIntensityPerFraction;
 
-        // calculate the average precursor intensities
-        for (String fraction : precursorIntensityPerFraction.keySet()) {
+        for (Entry<String, ArrayList<Double>> entry : precursorIntensityPerFraction.entrySet()) {
 
-            Double sum = 0.0;
+            String fraction = entry.getKey();
+            double sum = entry.getValue().stream()
+                    .mapToDouble(Double::doubleValue)
+                    .sum();
 
-            for (Double intensity : precursorIntensityPerFraction.get(fraction)) {
-                sum += intensity;
-            }
+            if (precursorIntensitySummedPerFraction != null) {
 
-            if (precursorIntensitySummedPerFraction != null) { //@TODO: is always null?
                 precursorIntensitySummedPerFraction.put(fraction, sum);
+
             }
 
             if (precursorIntensityAveragePerFraction == null) {
+
                 precursorIntensityAveragePerFraction = new HashMap<>(2);
+
             }
+
             if (sum > 0) {
+
                 precursorIntensityAveragePerFraction.put(fraction, sum / precursorIntensityPerFraction.get(fraction).size());
+
             } else {
+
                 precursorIntensityAveragePerFraction.put(fraction, null);
+
             }
         }
     }
@@ -926,17 +875,29 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the average precursor intensity in the given fraction
      */
     public Double getPrecursorIntensityAveragePerFraction(String fraction) {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        if (precursorIntensityAveragePerFraction != null) {
-            return precursorIntensityAveragePerFraction.get(fraction);
-        } else {
-            return null;
-        }
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
+        return precursorIntensityAveragePerFraction == null ? null
+                : precursorIntensityAveragePerFraction.get(fraction);
+
     }
-    
+
+    /**
+     * Returns the fraction precursor intensity average map.
+     *
+     * @return the fraction precursor intensity average map
+     */
     public HashMap<String, Double> getPrecursorIntensityAveragePerFraction() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
         return precursorIntensityAveragePerFraction;
+
     }
 
     /**
@@ -946,31 +907,45 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the summed precursor intensity in the given fraction
      */
     public Double getPrecursorIntensitySummedPerFraction(String fraction) {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        if (precursorIntensitySummedPerFraction != null) {
-            return precursorIntensitySummedPerFraction.get(fraction);
-        } else {
-            return null;
-        }
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
+        return precursorIntensitySummedPerFraction == null ? null
+                : precursorIntensitySummedPerFraction.get(fraction);
+
     }
-    
+
+    /**
+     * Returns the fraction summed intensity map.
+     *
+     * @return the fraction summed intensity map
+     */
     public HashMap<String, Double> getPrecursorIntensitySummedPerFraction() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
         return precursorIntensitySummedPerFraction;
+
     }
-    
+
     /**
      * Indicates whether the match validation was manually inspected.
      *
      * @return a boolean indicating whether the match validation was manually
      * inspected
      */
-    public Boolean getManualValidation() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        if (manualValidation == null) {
-            manualValidation = false;
-        }
+    public boolean getManualValidation() {
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
         return manualValidation;
+
     }
 
     /**
@@ -979,9 +954,14 @@ public class PSParameter extends DbObject implements UrParameter {
      * @param manualValidation a boolean indicating whether the match validation
      * was manually inspected
      */
-    public void setManualValidation(Boolean manualValidation) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+    public void setManualValidation(boolean manualValidation) {
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         this.manualValidation = manualValidation;
+
     }
 
     /**
@@ -991,11 +971,19 @@ public class PSParameter extends DbObject implements UrParameter {
      * @param validated boolean indicating whether the test was passed
      */
     public void setQcResult(String criterion, boolean validated) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         if (qcFilters == null) {
-            qcFilters = new HashMap<>();
+
+            qcFilters = new HashMap<>(1);
+
         }
+
         qcFilters.put(criterion, validated);
+
     }
 
     /**
@@ -1006,11 +994,14 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return a boolean indicating whether the test was passed
      */
     public Boolean isQcPassed(String criterion) {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        if (qcFilters == null) {
-            return null;
-        }
-        return qcFilters.get(criterion);
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
+        return qcFilters == null ? null
+                : qcFilters.get(criterion);
+
     }
 
     /**
@@ -1019,27 +1010,48 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the list of qc checks made for this match in a set
      */
     public Set<String> getQcCriteria() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        if (qcFilters == null) {
-            return new HashSet<>();
-        }
-        return qcFilters.keySet();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
+        return qcFilters == null ? new HashSet<>(0)
+                : qcFilters.keySet();
     }
-    
-    public HashMap<String, Boolean> getQcFilters(){
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+
+    /**
+     * Returns the qc filters map.
+     *
+     * @return the qc filters map
+     */
+    public HashMap<String, Boolean> getQcFilters() {
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
         return qcFilters;
+
     }
 
     /**
      * Resets the results of the QC filters.
      */
     public void resetQcResults() {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         if (qcFilters == null) {
-            qcFilters = new HashMap<>();
+
+            qcFilters = new HashMap<>(1);
+
+        } else {
+
+            qcFilters.clear();
+
         }
-        qcFilters.clear();
     }
 
     /**
@@ -1049,8 +1061,13 @@ public class PSParameter extends DbObject implements UrParameter {
      * match
      */
     public boolean hasQcFilters() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return qcFilters != null;
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
+        return qcFilters != null && !qcFilters.isEmpty();
+
     }
 
     /**
@@ -1060,25 +1077,44 @@ public class PSParameter extends DbObject implements UrParameter {
      * @param score the value of the score
      */
     public void setIntermediateScore(Integer scoreId, Double score) {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         if (intermediateScores == null) {
+
             createIntermediateScoreMap();
+
         }
+
         intermediateScores.put(scoreId, score);
+
     }
-    
-    public void setIntermediateScores(HashMap<Integer, Double> intermediateScores){
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+    public void setIntermediateScores(HashMap<Integer, Double> intermediateScores) {
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         this.intermediateScores = intermediateScores;
+
     }
-    
+
     /**
      * Instantiates the intermediate scores map if null.
      */
     public synchronized void createIntermediateScoreMap() {
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateWrite();
+        ObjectsDB.decreaseRWCounter();
+
         if (intermediateScores == null) {
-            intermediateScores = new HashMap<>();
+
+            intermediateScores = new HashMap<>(1);
+
         }
     }
 
@@ -1090,43 +1126,67 @@ public class PSParameter extends DbObject implements UrParameter {
      * @return the intermediate score
      */
     public Double getIntermediateScore(int scoreId) {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        if (intermediateScores == null) {
-            return null;
-        }
-        return intermediateScores.get(scoreId);
-    }
-    
-    public HashMap<Integer, Double> getIntermediateScores() {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        return intermediateScores;
-    }
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
+        return intermediateScores == null ? null :
+                intermediateScores.get(scoreId);
         
-    
+    }
+
     /**
-     * Returns a score from a raw score where the score = -10*log(rawScore). The maximum score is 100 and raw scores smaller or equal to zero have a score of 100.
+     * Returns the intermediate scores map.
      * 
+     * @return the intermediate scores map
+     */
+    public HashMap<Integer, Double> getIntermediateScores() {
+
+        ObjectsDB.increaseRWCounter();
+        zooActivateRead();
+        ObjectsDB.decreaseRWCounter();
+
+        return intermediateScores;
+
+    }
+
+    /**
+     * Returns a score from a raw score where the score = -10*log(rawScore). The
+     * maximum score is 100 and raw scores smaller or equal to zero have a score
+     * of 100.
+     *
      * @param rawScore the raw score
-     * 
+     *
      * @return the score
      */
-    public static Double getScore(Double rawScore) {
+    public static double transformScore(double rawScore) {
+
         double score;
+        
         if (rawScore <= 0) {
+        
             score = 100;
+
         } else {
+
             score = -10 * FastMath.log10(rawScore);
+
             if (score > 100) {
+
                 score = 100;
+
             }
         }
+
         return score;
+
     }
 
     @Override
     public long getParameterKey() {
-        
+
         return serialVersionUID;
-        
-}
+
+    }
 }

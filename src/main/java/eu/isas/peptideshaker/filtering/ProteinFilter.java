@@ -14,7 +14,6 @@ import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSModificationScores;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -183,7 +182,7 @@ public class ProteinFilter extends MatchFilter {
             case confidence:
                 proteinMatch = identification.getProteinMatch(matchKey);
                PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
-                double confidence = psParameter.getProteinConfidence();
+                double confidence = psParameter.getConfidence();
                 return filterItemComparator.passes(input, confidence);
                 
             case proteinInference:

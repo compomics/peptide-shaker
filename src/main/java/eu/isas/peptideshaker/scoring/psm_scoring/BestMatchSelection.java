@@ -173,7 +173,7 @@ public class BestMatchSelection {
                                 PSParameter psParameter1 = (PSParameter) peptideAssumption1.getUrParam(PSParameter.dummy);
 
                                 double p = multiSE && fastaParameters.isTargetDecoy()
-                                        ? psParameter1.getSearchEngineProbability()
+                                        ? psParameter1.getProbability()
                                         : peptideAssumption1.getScore();
 
                                 int nSE = 1;
@@ -201,7 +201,7 @@ public class BestMatchSelection {
                                                         sequenceMatchingPreferences)) {
 
                                                     PSParameter psParameter2 = (PSParameter) peptideAssumption2.getUrParam(PSParameter.dummy);
-                                                    p *= psParameter2.getSearchEngineProbability();
+                                                    p *= psParameter2.getProbability();
                                                     nSE++;
 
                                                     break searchEngine2loop;
@@ -404,7 +404,7 @@ public class BestMatchSelection {
                                                 found2 = true;
                                                 long key = assumption1.getPeptide().getKey();
                                                 TreeSet<Double> peps = assumptionPEPs.get(key);
-                                                peps.add(assumptionParameter.getSearchEngineProbability());
+                                                peps.add(assumptionParameter.getProbability());
                                                 break;
 
                                             }
@@ -413,7 +413,7 @@ public class BestMatchSelection {
                                         if (!found2) {
 
                                             TreeSet<Double> peps = new TreeSet<>();
-                                            peps.add(assumptionParameter.getSearchEngineProbability());
+                                            peps.add(assumptionParameter.getProbability());
                                             long key = peptideAssumption.getPeptide().getKey();
                                             assumptionPEPs.put(key, peps);
 
@@ -476,24 +476,15 @@ public class BestMatchSelection {
                     spectrumMatch.setBestPeptideAssumption(psAssumption);
 
                     psParameter = new PSParameter();
-                    psParameter.setSpectrumProbabilityScore(retainedP);
+                    psParameter.setScore(retainedP);
 
                     PSParameter matchParameter = (PSParameter) bestPeptideAssumption.getUrParam(psParameter);
-                    psParameter.setSearchEngineProbability(matchParameter.getSearchEngineProbability());
+                    psParameter.setProbability(matchParameter.getProbability());
                     psParameter.setAlgorithmDeltaPEP(matchParameter.getAlgorithmDeltaPEP());
                     psParameter.setDeltaPEP(matchParameter.getDeltaPEP());
 
-                    matchesValidator.getPsmMap().put(psParameter.getPsmProbabilityScore(), PeptideUtils.isDecoy(psPeptide, sequenceProvider));
-
-                    String validationMapKey = "";
-
-                    if (idMatchValidationPreferences.getSeparatePsms()) {
-
-                        validationMapKey += psAssumption.getIdentificationCharge();
-
-                    }
-
-                    psParameter.setSpecificMapKey(validationMapKey);
+                    matchesValidator.getPsmMap().put(psParameter.getScore(), PeptideUtils.isDecoy(psPeptide, sequenceProvider));
+                    
                     spectrumMatch.addUrParam(psParameter);
 
                 }
@@ -518,16 +509,15 @@ public class BestMatchSelection {
 
                     if (!multiSE) {
 
-                        psParameter.setSpectrumProbabilityScore(bestEvalue);
+                        psParameter.setScore(bestEvalue);
 
                     }
 
                     PSParameter matchParameter = (PSParameter) bestAssumption.getUrParam(psParameter);
 
-                    psParameter.setSearchEngineProbability(matchParameter.getSearchEngineProbability());
+                    psParameter.setProbability(matchParameter.getProbability());
                     psParameter.setAlgorithmDeltaPEP(matchParameter.getAlgorithmDeltaPEP());
                     psParameter.setDeltaPEP(matchParameter.getDeltaPEP());
-                    psParameter.setSpecificMapKey(Integer.toString(spectrumMatch.getBestTagAssumption().getIdentificationCharge()));
                     spectrumMatch.addUrParam(psParameter);
 
                 }
