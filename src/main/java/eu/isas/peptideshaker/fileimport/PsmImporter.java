@@ -215,12 +215,8 @@ public class PsmImporter {
      * @param nThreads the number of threads to use
      * @param waitingHandler waiting handler to display progress and allow
      * canceling the import
-     *
-     * @throws InterruptedException exception thrown if a thread gets
-     * interrupted
      */
-    public void importPsms(LinkedList<SpectrumMatch> idFileSpectrumMatches, int nThreads, WaitingHandler waitingHandler)
-            throws InterruptedException {
+    public void importPsms(LinkedList<SpectrumMatch> idFileSpectrumMatches, int nThreads, WaitingHandler waitingHandler) {
 
         idFileSpectrumMatches.parallelStream()
                 .forEach(spectrumMatch -> importPsm(spectrumMatch, new PeptideSpectrumAnnotator(), waitingHandler));
@@ -269,13 +265,13 @@ public class PsmImporter {
      * @param matchAssumptions the match assumptions
      * @param combinedAssumptions the combined assumptions
      */
-    private void mergeTagAssumptions(HashMap<Integer, HashMap<Double, ArrayList<TagAssumption>>> matchAssumptions, HashMap<Integer, HashMap<Double, ArrayList<TagAssumption>>> combinedAssumptions) {
+    private void mergeTagAssumptions(HashMap<Integer, TreeMap<Double, ArrayList<TagAssumption>>> matchAssumptions, HashMap<Integer, TreeMap<Double, ArrayList<TagAssumption>>> combinedAssumptions) {
 
-        for (Entry<Integer, HashMap<Double, ArrayList<TagAssumption>>> entry : matchAssumptions.entrySet()) {
+        for (Entry<Integer, TreeMap<Double, ArrayList<TagAssumption>>> entry : matchAssumptions.entrySet()) {
 
             int algorithm = entry.getKey();
-            HashMap<Double, ArrayList<TagAssumption>> algorithmMap = entry.getValue();
-            HashMap<Double, ArrayList<TagAssumption>> combinedAlgorithmMap = combinedAssumptions.get(algorithm);
+            TreeMap<Double, ArrayList<TagAssumption>> algorithmMap = entry.getValue();
+            TreeMap<Double, ArrayList<TagAssumption>> combinedAlgorithmMap = combinedAssumptions.get(algorithm);
 
             if (combinedAlgorithmMap == null) {
 
@@ -308,13 +304,13 @@ public class PsmImporter {
      * @param matchAssumptions the match assumptions
      * @param combinedAssumptions the combined assumptions
      */
-    private void mergePeptideAssumptions(HashMap<Integer, HashMap<Double, ArrayList<PeptideAssumption>>> matchAssumptions, HashMap<Integer, HashMap<Double, ArrayList<PeptideAssumption>>> combinedAssumptions) {
+    private void mergePeptideAssumptions(HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> matchAssumptions, HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> combinedAssumptions) {
 
-        for (Entry<Integer, HashMap<Double, ArrayList<PeptideAssumption>>> entry : matchAssumptions.entrySet()) {
+        for (Entry<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> entry : matchAssumptions.entrySet()) {
 
             int algorithm = entry.getKey();
-            HashMap<Double, ArrayList<PeptideAssumption>> algorithmMap = entry.getValue();
-            HashMap<Double, ArrayList<PeptideAssumption>> combinedAlgorithmMap = combinedAssumptions.get(algorithm);
+            TreeMap<Double, ArrayList<PeptideAssumption>> algorithmMap = entry.getValue();
+            TreeMap<Double, ArrayList<PeptideAssumption>> combinedAlgorithmMap = combinedAssumptions.get(algorithm);
 
             if (combinedAlgorithmMap == null) {
 
@@ -377,7 +373,7 @@ public class PsmImporter {
 
             }
 
-            HashMap<Double, ArrayList<PeptideAssumption>> assumptionsForAdvocate = entry.getValue();
+            TreeMap<Double, ArrayList<PeptideAssumption>> assumptionsForAdvocate = entry.getValue();
 
             // Map modifications
             HashSet<Double> scores = new HashSet<>(assumptionsForAdvocate.keySet());
@@ -682,7 +678,7 @@ public class PsmImporter {
                     }
                     if (firstPeptideHit != null) {
 
-                        inputMap.addEntry(advocateId, spectrumFileName, firstPeptideHit.getScore(), PeptideUtils.isDecoy(firstPeptideHit.getPeptide(), sequenceMatchingPreferences));
+                        inputMap.addEntry(advocateId, spectrumFileName, firstPeptideHit.getScore(), PeptideUtils.isDecoy(firstPeptideHit.getPeptide(), sequenceProvider));
                         nRetained++;
                         break;
 

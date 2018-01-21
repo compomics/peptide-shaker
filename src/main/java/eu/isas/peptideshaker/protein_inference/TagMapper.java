@@ -36,14 +36,6 @@ import java.util.TreeMap;
 public class TagMapper {
 
     /**
-     * The spectrum factory.
-     */
-    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-    /**
-     * The PTM factory.
-     */
-    private final ModificationFactory modificationFactory = ModificationFactory.getInstance();
-    /**
      * The identification parameters.
      */
     private final IdentificationParameters identificationParameters;
@@ -51,21 +43,15 @@ public class TagMapper {
      * Exception handler.
      */
     private final ExceptionHandler exceptionHandler;
-    /**
-     * Mapper to map the tags to the fasta file.
-     */
-    private final FastaMapper fastaMapper;
 
     /**
      * Constructor.
      *
-     * @param fastaMapper a mapper to map tags to the fasta file
      * @param identificationParameters the identification parameters
      * @param exceptionHandler an exception handler
      */
-    public TagMapper(FastaMapper fastaMapper, IdentificationParameters identificationParameters, ExceptionHandler exceptionHandler) {
+    public TagMapper(IdentificationParameters identificationParameters, ExceptionHandler exceptionHandler) {
 
-        this.fastaMapper = fastaMapper;
         this.identificationParameters = identificationParameters;
         this.exceptionHandler = exceptionHandler;
 
@@ -76,9 +62,10 @@ public class TagMapper {
      *
      * @param spectrumMatches the spectrum matches containing the peptides to
      * map
+     * @param fastaMapper the fasta mapper to use
      * @param waitingHandler a waiting handler
      */
-    public void mapTags(LinkedList<SpectrumMatch> spectrumMatches, WaitingHandler waitingHandler) {
+    public void mapTags(LinkedList<SpectrumMatch> spectrumMatches, FastaMapper fastaMapper, WaitingHandler waitingHandler) {
 
         spectrumMatches.parallelStream().forEach((spectrumMatch) -> {
 
@@ -86,7 +73,7 @@ public class TagMapper {
 
                 if (!waitingHandler.isRunCanceled()) {
 
-                    mapTagsForSpectrumMatch(spectrumMatch);
+                    mapTagsForSpectrumMatch(spectrumMatch, fastaMapper);
                     waitingHandler.increaseSecondaryProgressCounter();
 
                 }
@@ -106,9 +93,10 @@ public class TagMapper {
     /**
      * Maps tags to the protein database.
      *
+     * @param fastaMapper the fasta mapper to use
      * @param spectrumMatch the spectrum match containing the tags to map
      */
-    private void mapTagsForSpectrumMatch(SpectrumMatch spectrumMatch) {
+    private void mapTagsForSpectrumMatch(SpectrumMatch spectrumMatch, FastaMapper fastaMapper) {
 
         SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
         HashMap<Integer, TreeMap<Double, ArrayList<TagAssumption>>> assumptionsMap = spectrumMatch.getTagAssumptionsMap();
@@ -173,9 +161,6 @@ public class TagMapper {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         ModificationParameters modificationProfile = searchParameters.getModificationParameters();
-        
-        // add the fixed PTMs
-        modificationFactory.checkFixedModifications(modificationProfile, tag, identificationParameters.getSequenceMatchingParameters());
 
         // rename the variable modifications
         for (TagComponent tagComponent : tag.getContent()) {
