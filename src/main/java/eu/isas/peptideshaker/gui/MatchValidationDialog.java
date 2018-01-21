@@ -330,7 +330,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     private void populateGUI(TargetDecoyMap targetDecoyMap, String targetDecoyCategory)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
-        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCPreferences();
+        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
         // Validation level
         validationLevelJComboBox.setSelectedItem(psParameter.getMatchValidationLevel().getName());

@@ -60,7 +60,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * The spectrum counting preferences.
      */
-    protected SpectrumCountingParameters spectrumCountingPreferences;
+    protected SpectrumCountingParameters spectrumCountingParameters;
     /**
      * The project details.
      */
@@ -205,7 +205,7 @@ public class CpsParent extends UserPreferencesParent {
         
         // Get PeptideShaker settings
         identificationParameters = psParameters.getIdentificationParameters();
-        spectrumCountingPreferences = psParameters.getSpectrumCountingPreferences();
+        spectrumCountingParameters = psParameters.getSpectrumCountingPreferences();
         projectDetails = psParameters.getProjectDetails();
         metrics = psParameters.getMetrics();
         geneMaps = psParameters.getGeneMaps();
@@ -214,7 +214,7 @@ public class CpsParent extends UserPreferencesParent {
         sequenceProvider = psParameters.getSequenceProvider();
 
         // Set up caches
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, sequenceProvider, metrics, spectrumCountingPreferences);
+        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, sequenceProvider, metrics, spectrumCountingParameters);
         IdentificationFeaturesCache identificationFeaturesCache = psParameters.getIdentificationFeaturesCache();
         
         if (identificationFeaturesCache != null) {
@@ -250,7 +250,7 @@ public class CpsParent extends UserPreferencesParent {
     public void saveProject(WaitingHandler waitingHandler, boolean emptyCache) throws IOException {
         
         CpsExporter.saveAs(cpsFile, waitingHandler, identification, identificationParameters, sequenceProvider, proteinDetailsProvider,
-                spectrumCountingPreferences, projectDetails, filterParameters, metrics, geneMaps,
+                spectrumCountingParameters, projectDetails, filterParameters, metrics, geneMaps,
                 identificationFeaturesGenerator.getIdentificationFeaturesCache(), emptyCache, displayParameters, dbFolder);
 
         loadUserPreferences();
@@ -410,7 +410,7 @@ public class CpsParent extends UserPreferencesParent {
      */
     public SpectrumCountingParameters getSpectrumCountingParameters() {
         
-        return spectrumCountingPreferences;
+        return spectrumCountingParameters;
         
     }
 
@@ -499,7 +499,7 @@ public class CpsParent extends UserPreferencesParent {
      */
     public void setSpectrumCountingParameters(SpectrumCountingParameters spectrumCountingPreferences) {
         
-        this.spectrumCountingPreferences = spectrumCountingPreferences;
+        this.spectrumCountingParameters = spectrumCountingPreferences;
         
         if (identificationFeaturesGenerator != null) {
             
@@ -625,9 +625,9 @@ public class CpsParent extends UserPreferencesParent {
         
         SearchParameters searchParameters = new SearchParameters();
         identificationParameters = new IdentificationParameters(searchParameters);
-        spectrumCountingPreferences = new SpectrumCountingParameters();
-        spectrumCountingPreferences.setSelectedMethod(SpectralCountingMethod.NSAF);
-        spectrumCountingPreferences.setMatchValidationLevel(MatchValidationLevel.doubtful.getIndex());
+        spectrumCountingParameters = new SpectrumCountingParameters();
+        spectrumCountingParameters.setSelectedMethod(SpectralCountingMethod.NSAF);
+        spectrumCountingParameters.setMatchValidationLevel(MatchValidationLevel.doubtful.getIndex());
         
     }
 
@@ -636,7 +636,7 @@ public class CpsParent extends UserPreferencesParent {
      */
     public void resetIdentificationFeaturesGenerator() {
         
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, sequenceProvider, metrics, spectrumCountingPreferences);
+        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, sequenceProvider, metrics, spectrumCountingParameters);
         
     }
 

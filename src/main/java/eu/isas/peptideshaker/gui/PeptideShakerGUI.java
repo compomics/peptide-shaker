@@ -109,8 +109,8 @@ import eu.isas.peptideshaker.gui.exportdialogs.MzIdentMLExportDialog;
 import eu.isas.peptideshaker.gui.filtering.FilterDialog;
 import eu.isas.peptideshaker.gui.pride.PrideReshakeGUI;
 import eu.isas.peptideshaker.scoring.PSMaps;
-import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
-import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences.PeptideShakerPathKey;
+import eu.isas.peptideshaker.preferences.PeptideShakerPathParameters;
+import eu.isas.peptideshaker.preferences.PeptideShakerPathParameters.PeptideShakerPathKey;
 import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
 import eu.isas.peptideshaker.scoring.maps.modifications.PsmPTMMap;
 import eu.isas.peptideshaker.utils.CpsParent;
@@ -493,7 +493,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         if (pathConfigurationFile.exists()) {
 
-            PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
+            PeptideShakerPathParameters.loadPathParametersFromFile(pathConfigurationFile);
 
         }
     }
@@ -533,7 +533,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         }
         try {
 
-            if (!PeptideShakerPathPreferences.getErrorKeys().isEmpty()) {
+            if (!PeptideShakerPathParameters.getErrorKeys().isEmpty()) {
 
                 editPathSettings(null);
 
@@ -3455,7 +3455,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private void validationQcMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validationQcMenuItemActionPerformed
 
         final IdMatchValidationParameters idValidationPreferences = getIdentificationParameters().getIdValidationParameters();
-        final ValidationQcParameters validationQCPreferences = idValidationPreferences.getValidationQCPreferences();
+        final ValidationQcParameters validationQCPreferences = idValidationPreferences.getValidationQCParameters();
         ValidationQCParametersDialog validationQCPreferencesDialog = new ValidationQCParametersDialog(this, this, validationQCPreferences, true);
 
         if (!validationQCPreferencesDialog.isCanceled()) {
@@ -3638,7 +3638,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             for (PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathKey.values()) {
 
-                pathSettings.put(peptideShakerPathKey, PeptideShakerPathPreferences.getPathPreference(peptideShakerPathKey));
+                pathSettings.put(peptideShakerPathKey, PeptideShakerPathParameters.getPathPreference(peptideShakerPathKey));
 
             }
 
@@ -3663,7 +3663,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                             || oldPath != null && newPath == null
                             || oldPath != null && newPath != null && !oldPath.equals(newPath)) {
 
-                        PeptideShakerPathPreferences.setPathPreferences(pathKey, newPath);
+                        PeptideShakerPathParameters.setPathPreferences(pathKey, newPath);
 
                     }
                 }
@@ -3671,7 +3671,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 // write path file preference
                 File destinationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathParameters.configurationFileName);
 
-                PeptideShakerPathPreferences.writeConfigurationToFile(destinationFile);
+                PeptideShakerPathParameters.writeConfigurationToFile(destinationFile);
 
                 if (welcomeDialog != null) {
 

@@ -133,7 +133,7 @@ public class MatchesValidator {
             ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps, IdentificationParameters identificationParameters,
             SpectrumCountingParameters spectrumCountingPreferences, ProcessingParameters processingPreferences) throws InterruptedException, TimeoutException {
 
-        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCPreferences();
+        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
         waitingHandler.setWaitingText("Match Validation and Quality Control. Please Wait...");
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -402,7 +402,7 @@ public class MatchesValidator {
             GeneMaps geneMaps, IdentificationParameters identificationParameters,
             TargetDecoyMap proteinMap, long proteinKey) {
 
-        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCPreferences();
+        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
         TargetDecoyResults targetDecoyResults = proteinMap.getTargetDecoyResults();
         double fdrLimit = targetDecoyResults.getFdrLimit();
@@ -457,7 +457,7 @@ public class MatchesValidator {
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(proteinKey)).getUrParam(psParameter);
         psParameter.resetQcResults();
-        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCPreferences();
+        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
         if (!psParameter.getManualValidation()) {
 
@@ -531,7 +531,7 @@ public class MatchesValidator {
         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
         PSParameter psParameter = (PSParameter) ((PeptideMatch) peptideMatch).getUrParam(PSParameter.dummy);
         psParameter.resetQcResults();
-        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCPreferences();
+        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
         if (fastaParameters.isTargetDecoy()) {
 
@@ -620,7 +620,7 @@ public class MatchesValidator {
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
         PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
         psParameter.resetQcResults();
-        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCPreferences();
+        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
         if (fastaParameters.isTargetDecoy()) {
 
@@ -724,7 +724,7 @@ public class MatchesValidator {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
         PSParameter psParameter = (PSParameter) peptideAssumption.getUrParam(PSParameter.dummy);
-        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCPreferences();
+        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
         if (fastaParameters.isTargetDecoy()) {
 
@@ -1901,7 +1901,7 @@ public class MatchesValidator {
             this.identificationParameters = identificationParameters;
             this.waitingHandler = waitingHandler;
             this.exceptionHandler = exceptionHandler;
-            this.validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCPreferences();
+            this.validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
             this.spectrumCountingPreferences = spectrumCountingPreferences;
 
         }

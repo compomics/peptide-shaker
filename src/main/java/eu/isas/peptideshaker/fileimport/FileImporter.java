@@ -6,14 +6,11 @@ import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identification.IdfileReader;
 import com.compomics.util.experiment.io.identification.IdfileReaderFactory;
-import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.exceptions.exception_handlers.CommandLineExceptionHandler;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
-import com.compomics.util.exceptions.exception_handlers.WaitingDialogExceptionHandler;
 import com.compomics.util.experiment.biology.genes.ProteinGeneDetailsProvider;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.protein_inference.FastaMapper;
@@ -24,7 +21,6 @@ import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.gui.JOptionEditorPane;
-import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.parameters.identification.advanced.GeneParameters;
@@ -32,21 +28,15 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.PeptideVariantsParameters;
 import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
-import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.protein_inference.PeptideMapper;
 import eu.isas.peptideshaker.protein_inference.TagMapper;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.utils.Metrics;
-import org.xml.sax.SAXException;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,11 +48,6 @@ import java.util.stream.Collectors;
  */
 public class FileImporter {
 
-    /**
-     * The class which will load the information into the various maps and do
-     * the associated calculations.
-     */
-    private final PeptideShaker peptideShaker;
     /**
      * A dialog to display feedback to the user.
      */
@@ -109,7 +94,7 @@ public class FileImporter {
     /**
      * A list of spectrum files (can be empty, no spectrum will be imported).
      */
-    private final HashMap<String, File> spectrumFiles;
+    private final HashMap<String, File> spectrumFiles = new HashMap<>();
     /**
      * The processing preferences.
      */
@@ -118,10 +103,6 @@ public class FileImporter {
      * The project details
      */
     private final ProjectDetails projectDetails;
-    /**
-     * The spectrum counting preferences.
-     */
-    private final SpectrumCountingParameters spectrumCountingParameters;
     /**
      * The number of retained first hits.
      */
@@ -179,34 +160,32 @@ public class FileImporter {
      * The total number of hits.
      */
     private long nTotal = 0;
+    /**
+     * The genes maps.
+     */
+    private GeneMaps geneMaps;
 
     /**
      * Constructor for the importer.
      *
-     * @param identificationShaker the identification shaker which will load the
-     * data into the maps and do the preliminary calculations
-     * @param fastaMapper a fasta file mapper
+     * @param identification the identification where to store the matches
      * @param waitingHandler The handler displaying feedback to the user
-     * @param spectrumCountingParameters the spectrum counting parameters
      * @param processingParameters the processing parameters
      * @param identificationParameters the identification parameters
      * @param projectDetails the project details
      * @param metrics metrics of the dataset to be saved for the GUI
      * @param exceptionHandler the exception handler
      */
-    public FileImporter(PeptideShaker identificationShaker,
-            IdentificationParameters identificationParameters, SpectrumCountingParameters spectrumCountingParameters, ProcessingParameters processingParameters, 
+    public FileImporter(Identification identification, IdentificationParameters identificationParameters, ProcessingParameters processingParameters, 
             Metrics metrics, ProjectDetails projectDetails, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
         
-        this.peptideShaker = identificationShaker;
         this.identificationParameters = identificationParameters;
         this.metrics = metrics;
-        this.spectrumFiles = new HashMap<>();
         this.processingParameters = processingParameters;
-        this.spectrumCountingParameters = spectrumCountingParameters;
         this.projectDetails = projectDetails;
         this.waitingHandler = waitingHandler;
         this.exceptionHandler = exceptionHandler;
+            this.identification = identification;
 
         peptideMapper = new PeptideMapper(identificationParameters, waitingHandler);
         tagMapper = new TagMapper(identificationParameters, exceptionHandler);
@@ -217,17 +196,24 @@ public class FileImporter {
      * Imports the identifications from the files.
      *
      * @param idFiles the identification files
+     * @param spectrumFiles the spectrum files
      * 
      * @return 0 if success, 1 if not
      */
-    public int importFiles(ArrayList<File> idFiles) {
+    public int importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles) {
 
-        ArrayList<File> sortedFiles = idFiles.stream()
+        ArrayList<File> sortedIdFiles = idFiles.stream()
                 .collect(Collectors.groupingBy(File::getName, TreeMap::new, Collectors.toList()))
                  .values().stream()
                  .flatMap(List::stream)
                  .distinct()
                 .collect(Collectors.toCollection(ArrayList::new));
+        
+        for (File spectrumFile : spectrumFiles) {
+            
+            this.spectrumFiles.put(spectrumFile.getName(), spectrumFile);
+            
+        }
         
         try {
             
@@ -250,7 +236,7 @@ public class FileImporter {
 
             } else {
 
-                peptideShaker.setGeneMaps(new GeneMaps());
+                geneMaps = new GeneMaps();
 
             }
 
@@ -263,15 +249,13 @@ public class FileImporter {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
             waitingHandler.appendReport("Establishing local database connection.", true, true);
 
-            identification = peptideShaker.getIdentification();
-
             waitingHandler.increasePrimaryProgressCounter();
 
             if (!waitingHandler.isRunCanceled()) {
 
                 waitingHandler.appendReport("Reading identification files.", true, true);
 
-                for (File idFile : sortedFiles) {
+                for (File idFile : sortedIdFiles) {
                    
                     importPsms(idFile);
 
@@ -316,7 +300,7 @@ public class FileImporter {
                     for (String mgfName : missingMgfFiles.values()) {
  
                         File newFile = spectrumFactory.getSpectrumFileFromIdName(mgfName);
-                        spectrumFiles.put(newFile.getName(), newFile);
+                        this.spectrumFiles.put(newFile.getName(), newFile);
                         projectDetails.addSpectrumFile(newFile);
 
                     }
@@ -354,7 +338,6 @@ public class FileImporter {
                         + nPSMs + " first hits imported (" + nTotal + " total) from " + nSpectra + " spectra.", true, true);
                 waitingHandler.appendReport("[" + nRetained + " first hits passed the initial filtering]", true, true);
                 waitingHandler.increaseSecondaryProgressCounter(spectrumFiles.size() - mgfUsed.size());
-                peptideShaker.createProject(inputMap, proteinCount, waitingHandler, exceptionHandler, identificationParameters, processingParameters, spectrumCountingParameters, projectDetails);
             
             }
         } catch (OutOfMemoryError error) {
@@ -453,7 +436,6 @@ public class FileImporter {
      */
     public void importPsms(File idFile) throws IOException {
 
-        identification = identification = peptideShaker.getIdentification();
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         waitingHandler.appendReport("Parsing " + idFile.getName() + ".", true, true);
 
@@ -984,8 +966,53 @@ public class FileImporter {
         ProteinGeneDetailsProvider geneFactory = new ProteinGeneDetailsProvider();
 
         GeneParameters genePreferences = identificationParameters.getGeneParameters();
-        GeneMaps geneMaps = geneFactory.getGeneMaps(genePreferences, fastaSummary, sequenceProvider, proteinDetailsProvider, waitingHandler);
-        peptideShaker.setGeneMaps(geneMaps);
+        geneMaps = geneFactory.getGeneMaps(genePreferences, fastaSummary, sequenceProvider, proteinDetailsProvider, waitingHandler);
 
     }
+
+    /**
+     * Returns the gene maps.
+     * 
+     * @return the gene maps
+     */
+    public GeneMaps getGeneMaps() {
+        return geneMaps;
+    }
+
+    /**
+     * Returns the sequence provider.
+     * 
+     * @return the sequence provider
+     */
+    public SequenceProvider getSequenceProvider() {
+        return sequenceProvider;
+    }
+
+    /**
+     * Returns the details provider.
+     * 
+     * @return the details provider
+     */
+    public ProteinDetailsProvider getProteinDetailsProvider() {
+        return proteinDetailsProvider;
+    }
+
+    /**
+     * Returns the fasta mapper.
+     * 
+     * @return the fasta mapper
+     */
+    public FastaMapper getFastaMapper() {
+        return fastaMapper;
+    }
+
+    public InputMap getInputMap() {
+        return inputMap;
+    }
+
+    public HashMap<String, Integer> getProteinCount() {
+        return proteinCount;
+    }
+    
+    
 }

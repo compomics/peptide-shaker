@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.settings.UtilitiesPathParameters;
-import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
+import eu.isas.peptideshaker.preferences.PeptideShakerPathParameters;
 import java.io.File;
 import java.util.HashMap;
 import org.apache.commons.cli.CommandLine;
@@ -41,7 +41,7 @@ public class PathSettingsCLIInputBean {
             tempFolder = aLine.getOptionValue(PathSettingsCLIParams.ALL.id);
         }
 
-        for (PeptideShakerPathPreferences.PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathPreferences.PeptideShakerPathKey.values()) {
+        for (PeptideShakerPathParameters.PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathParameters.PeptideShakerPathKey.values()) {
             String id = peptideShakerPathKey.getId();
             if (aLine.hasOption(id)) {
                 paths.put(id, aLine.getOptionValue(id));

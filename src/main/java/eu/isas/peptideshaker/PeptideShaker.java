@@ -15,6 +15,7 @@ import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
+import com.compomics.util.experiment.identification.protein_inference.FastaMapper;
 import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
@@ -133,6 +134,27 @@ public class PeptideShaker {
      * The identification object.
      */
     private Identification identification;
+    /**
+     * A fasta file mapper.
+     */
+    private FastaMapper fastaMapper;
+    /**
+     * A provider for protein sequences.
+     */
+    private SequenceProvider sequenceProvider;
+    /**
+     * A provider for protein details.
+     */
+    private ProteinDetailsProvider proteinDetailsProvider;
+    /**
+     * Map of proteins found several times with the number of times they
+     * appeared as first hit.
+     */
+    private HashMap<String, Integer> proteinCount;
+    /**
+     * The input map.
+     */
+    private InputMap inputMap;
 
     /**
      * Empty constructor for instantiation purposes.
@@ -162,14 +184,12 @@ public class PeptideShaker {
      * @param identificationParameters identification parameters
      * @param projectDetails the project details
      * @param processingPreferences the initial processing preferences
-     * @param spectrumCountingPreferences the spectrum counting preferences
-     * @param backgroundThread boolean indicating whether the import should be
-     * done in a background thread (GUI mode) or in the current thread (command
-     * line mode).
+     * @param exceptionHandler the exception handler
      */
     public void importFiles(WaitingHandler waitingHandler, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             IdentificationParameters identificationParameters, ProjectDetails projectDetails,
-            ProcessingParameters processingPreferences, SpectrumCountingParameters spectrumCountingPreferences, boolean backgroundThread) {
+            ProcessingParameters processingPreferences,
+            ExceptionHandler exceptionHandler) {
 
         projectCreationDuration = new Duration();
         projectCreationDuration.start();
@@ -184,22 +204,24 @@ public class PeptideShaker {
         identification = new Identification(objectsDB);
         identification.addObject(ProjectParameters.key, projectParameters);
 
-        fileImporter = new FileImporter(this, waitingHandler, identificationParameters, metrics);
-        fileImporter.importFiles(idFiles, spectrumFiles, processingPreferences, spectrumCountingPreferences, projectDetails, backgroundThread);
+        fileImporter = new FileImporter(identification, identificationParameters, processingPreferences, metrics, projectDetails, waitingHandler, exceptionHandler);
+        fileImporter.importFiles(idFiles, spectrumFiles);
+        
+        geneMaps = fileImporter.getGeneMaps();
+        fastaMapper = fileImporter.getFastaMapper();
+        sequenceProvider = fileImporter.getSequenceProvider();
+        proteinDetailsProvider = fileImporter.getProteinDetailsProvider();
+        inputMap = fileImporter.getInputMap();
+        proteinCount = fileImporter.getProteinCount();
 
     }
 
     /**
      * Creates a PeptideShaker project
      *
-     * @param inputMap the input map
-     * @param proteinCount map of proteins found several times with the number
-     * of times they appeared as first hit
      * @param waitingHandler the handler displaying feedback to the user
      * @param exceptionHandler handler for exceptions
      * @param identificationParameters the identification parameters
-     * @param sequenceProvider a protein sequence provider
-     * @param proteinDetailsProvider the protein details provider
      * @param processingParameters the processing preferences
      * @param spectrumCountingParameters the spectrum counting preferences
      * @param projectDetails the project details
@@ -209,9 +231,9 @@ public class PeptideShaker {
      * @throws java.util.concurrent.TimeoutException exception thrown if a
      * process times out
      */
-    public void createProject(InputMap inputMap, HashMap<String, Integer> proteinCount, WaitingHandler waitingHandler,
-            ExceptionHandler exceptionHandler, IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider,
-            ProcessingParameters processingParameters, SpectrumCountingParameters spectrumCountingParameters, ProjectDetails projectDetails) throws InterruptedException, TimeoutException {
+    public void createProject(IdentificationParameters identificationParameters, ProcessingParameters processingParameters, 
+            SpectrumCountingParameters spectrumCountingParameters, ProjectDetails projectDetails, 
+            WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) throws InterruptedException, TimeoutException {
 
         identification.getObjectsDB().commit();
 

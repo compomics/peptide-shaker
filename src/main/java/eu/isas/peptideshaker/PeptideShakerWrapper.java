@@ -3,7 +3,7 @@ package eu.isas.peptideshaker;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathParameters;
-import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
+import eu.isas.peptideshaker.preferences.PeptideShakerPathParameters;
 import eu.isas.peptideshaker.utils.Properties;
 import java.io.*;
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class PeptideShakerWrapper extends CompomicsWrapper {
             e.printStackTrace();
         }
         try {
-            ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
+            ArrayList<PathKey> errorKeys = PeptideShakerPathParameters.getErrorKeys();
             if (!errorKeys.isEmpty()) {
                 System.out.println("Unable to write in the following configuration folders. Please edit the configuration paths.");
                 for (PathKey pathKey : errorKeys) {
@@ -66,7 +66,7 @@ public class PeptideShakerWrapper extends CompomicsWrapper {
     private void setPathConfiguration() throws IOException {
         File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathParameters.configurationFileName);
         if (pathConfigurationFile.exists()) {
-            PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
+            PeptideShakerPathParameters.loadPathParametersFromFile(pathConfigurationFile);
         }
     }
 

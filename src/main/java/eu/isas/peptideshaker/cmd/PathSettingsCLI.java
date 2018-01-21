@@ -5,7 +5,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
 import static eu.isas.peptideshaker.cmd.PeptideShakerCLI.redirectErrorStream;
-import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
+import eu.isas.peptideshaker.preferences.PeptideShakerPathParameters;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -67,7 +67,7 @@ public class PathSettingsCLI {
         String path = pathSettingsCLIInputBean.getTempFolder();
         if (!path.equals("")) {
             try {
-                PeptideShakerPathPreferences.setAllPathsIn(path);
+                PeptideShakerPathParameters.setAllPathsIn(path);
             } catch (Exception e) {
                 System.out.println("An error occurred when setting the temporary folder path.");
                 e.printStackTrace();
@@ -78,7 +78,7 @@ public class PathSettingsCLI {
         HashMap<String, String> pathInput = pathSettingsCLIInputBean.getPaths();
         for (String id : pathInput.keySet()) {
             try {
-                PeptideShakerPathPreferences.PeptideShakerPathKey peptideShakerPathKey = PeptideShakerPathPreferences.PeptideShakerPathKey.getKeyFromId(id);
+                PeptideShakerPathParameters.PeptideShakerPathKey peptideShakerPathKey = PeptideShakerPathParameters.PeptideShakerPathKey.getKeyFromId(id);
                 if (peptideShakerPathKey == null) {
                     UtilitiesPathParameters.UtilitiesPathKey utilitiesPathKey = UtilitiesPathParameters.UtilitiesPathKey.getKeyFromId(id);
                     if (utilitiesPathKey == null) {
@@ -87,7 +87,7 @@ public class PathSettingsCLI {
                         UtilitiesPathParameters.setPathParameter(utilitiesPathKey, pathInput.get(id));
                     }
                 } else {
-                    PeptideShakerPathPreferences.setPathPreference(peptideShakerPathKey, pathInput.get(id));
+                    PeptideShakerPathParameters.setPathPreference(peptideShakerPathKey, pathInput.get(id));
                 }
             } catch (Exception e) {
                 System.out.println("An error occurred when setting the path " + id + ".");
@@ -99,7 +99,7 @@ public class PathSettingsCLI {
         // Write path file preference
         File destinationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathParameters.configurationFileName);
         try {
-            PeptideShakerPathPreferences.writeConfigurationToFile(destinationFile);
+            PeptideShakerPathParameters.writeConfigurationToFile(destinationFile);
         } catch (Exception e) {
             System.out.println("An error occurred when saving the path preference to " + destinationFile.getAbsolutePath() + ".");
             e.printStackTrace();

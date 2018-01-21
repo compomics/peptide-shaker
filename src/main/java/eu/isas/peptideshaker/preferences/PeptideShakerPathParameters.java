@@ -19,7 +19,7 @@ import java.util.ArrayList;
  *
  * @author Marc Vaudel
  */
-public class PeptideShakerPathPreferences {
+public class PeptideShakerPathParameters {
 
     /**
      * Enum of the paths which can be set in PeptideShaker.
@@ -112,7 +112,7 @@ public class PeptideShakerPathPreferences {
      * @throws FileNotFoundException thrown if an FileNotFoundException occurs
      * @throws IOException thrown if an IOException occurs
      */
-    public static void loadPathPreferencesFromFile(File inputFile) throws FileNotFoundException, IOException {
+    public static void loadPathParametersFromFile(File inputFile) throws FileNotFoundException, IOException {
         BufferedReader br = new BufferedReader(new FileReader(inputFile));
         try {
             String line;
@@ -218,7 +218,7 @@ public class PeptideShakerPathPreferences {
     public static void setPathPreferences(PathKey pathKey, String path) throws IOException {
         if (pathKey instanceof PeptideShakerPathKey) {
             PeptideShakerPathKey peptideShakerPathKey = (PeptideShakerPathKey) pathKey;
-            PeptideShakerPathPreferences.setPathPreference(peptideShakerPathKey, path);
+            PeptideShakerPathParameters.setPathPreference(peptideShakerPathKey, path);
         } else if (pathKey instanceof UtilitiesPathParameters.UtilitiesPathKey) {
             UtilitiesPathParameters.UtilitiesPathKey utilitiesPathKey = (UtilitiesPathParameters.UtilitiesPathKey) pathKey;
             UtilitiesPathParameters.setPathParameter(utilitiesPathKey, path);
@@ -340,7 +340,7 @@ public class PeptideShakerPathPreferences {
     public static ArrayList<PathKey> getErrorKeys() throws IOException {
         ArrayList<PathKey> result = new ArrayList<>();
         for (PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathKey.values()) {
-            String folder = PeptideShakerPathPreferences.getPathPreference(peptideShakerPathKey);
+            String folder = PeptideShakerPathParameters.getPathPreference(peptideShakerPathKey);
             if (folder != null && !UtilitiesPathParameters.testPath(folder)) {
                 result.add(peptideShakerPathKey);
             }

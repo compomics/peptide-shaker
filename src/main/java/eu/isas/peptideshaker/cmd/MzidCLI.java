@@ -10,7 +10,7 @@ import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
 import static eu.isas.peptideshaker.cmd.PeptideShakerCLI.redirectErrorStream;
-import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
+import eu.isas.peptideshaker.preferences.PeptideShakerPathParameters;
 import eu.isas.peptideshaker.utils.CpsParent;
 import java.io.File;
 import java.io.IOException;
@@ -89,7 +89,7 @@ public class MzidCLI extends CpsParent {
         setDbFolder(PeptideShaker.getMatchesFolder());
 
         try {
-            ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
+            ArrayList<PathKey> errorKeys = PeptideShakerPathParameters.getErrorKeys();
             if (!errorKeys.isEmpty()) {
                 System.out.println("Unable to write in the following configuration folders. Please use a temporary folder, "
                         + "the path configuration command line, or edit the configuration paths from the graphical interface.");
@@ -239,7 +239,7 @@ public class MzidCLI extends CpsParent {
     private void setPathConfiguration() throws IOException {
         File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathParameters.configurationFileName);
         if (pathConfigurationFile.exists()) {
-            PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
+            PeptideShakerPathParameters.loadPathParametersFromFile(pathConfigurationFile);
         }
     }
 

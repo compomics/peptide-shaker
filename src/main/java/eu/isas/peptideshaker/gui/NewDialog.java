@@ -5,26 +5,24 @@ import com.compomics.util.gui.filehandling.FileSelectionDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.exceptions.ExceptionHandler;
+import com.compomics.util.exceptions.exception_handlers.WaitingDialogExceptionHandler;
 import com.compomics.util.experiment.ProjectParameters;
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.Sample;
-import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.identification_parameters.IdentificationParametersFactory;
+import com.compomics.util.experiment.io.biology.protein.ProteinDatabase;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.filehandling.TempFilesManager;
-import com.compomics.util.protein_sequences_manager.gui.SequenceDbDetailsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.compression.ZipUtils;
-import com.compomics.util.messages.FeedBack;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.gui.parameters.identification.IdentificationParametersEditionDialog;
+import com.compomics.util.gui.parameters.identification.search.SequenceDbDetailsDialog;
 import com.compomics.util.gui.parameters.tools.ProcessingParametersDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -33,7 +31,6 @@ import com.compomics.util.parameters.identification.advanced.ProteinInferencePar
 import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import com.compomics.util.experiment.io.biology.protein.Header.ProteinDatabase;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ProjectSettingsDialog;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
@@ -44,14 +41,10 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.io.*;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A dialog for selecting the files to load.
@@ -65,10 +58,6 @@ public class NewDialog extends javax.swing.JDialog {
      * The compomics PTM factory.
      */
     private ModificationFactory ptmFactory = ModificationFactory.getInstance();
-    /**
-     * The sequence factory.
-     */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The sample analyzed.
      */
@@ -112,15 +101,11 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * The processing preferences.
      */
-    private ProcessingParameters processingPreferences;
+    private ProcessingParameters processingParameters;
     /**
      * The display preferences.
      */
     private DisplayParameters displayPreferences = new DisplayParameters();
-    /**
-     * Information on the protocol.
-     */
-    private ShotgunProtocol shotgunProtocol = null;
     /*
      * The welcome dialog parent, can be null.
      */
@@ -149,7 +134,7 @@ public class NewDialog extends javax.swing.JDialog {
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = null;
 
-        processingPreferences = new ProcessingParameters();
+        processingParameters = new ProcessingParameters();
 
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -169,7 +154,7 @@ public class NewDialog extends javax.swing.JDialog {
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = welcomeDialog;
 
-        processingPreferences = new ProcessingParameters();
+        processingParameters = new ProcessingParameters();
 
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -186,7 +171,7 @@ public class NewDialog extends javax.swing.JDialog {
         idFilesTxt.setText(idFiles.size() + " file(s) selected");
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         fastaFileTxt.setText("");
-        processingTxt.setText(processingPreferences.getnThreads() + " cores");
+        processingTxt.setText(processingParameters.getnThreads() + " cores");
 
         // set the search parameters
         Vector parameterList = new Vector();
@@ -684,14 +669,8 @@ public class NewDialog extends javax.swing.JDialog {
             this.setVisible(false);
             peptideShakerGUI.setVisible(true);
 
-//            sequenceMatchingPreferences.setMutationMatrix(MutationMatrix.synonymousMutation);
-//            sequenceMatchingPreferences.setMaxMutationsPerPeptide(1);
             peptideShakerGUI.setIdentificationParameters(identificationParameters);
-            if (shotgunProtocol == null) {
-                shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(identificationParameters.getSearchParameters());
-            }
-            peptideShakerGUI.setShotgunProtocol(shotgunProtocol);
-            peptideShakerGUI.setProcessingPreferences(processingPreferences);
+            peptideShakerGUI.setProcessingPreferences(processingParameters);
             peptideShakerGUI.setDisplayParameters(displayPreferences);
             projectDetails = new ProjectDetails();
             projectDetails.setCreationDate(new Date());
@@ -701,7 +680,7 @@ public class NewDialog extends javax.swing.JDialog {
             peptideShakerGUI.updateNotesNotificationCounter();
             peptideShakerGUI.resetDisplayFeaturesGenerator();
             peptideShakerGUI.setSpectrumCountingParameters(spectrumCountingPreferences);
-            
+
             ProjectParameters projectParameters = new ProjectParameters(projectNameIdTxt.getText().trim());
 
             // incrementing the counter for a new PeptideShaker start run via GUI
@@ -751,18 +730,21 @@ public class NewDialog extends javax.swing.JDialog {
 
             // load the identification files
             if (idFiles.size() > 0) {
-                needDialog = true;
+
                 try {
-                    importIdentificationFiles(waitingDialog);
-                } catch (SQLException ex) {
-                    Logger.getLogger(NewDialog.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(NewDialog.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(NewDialog.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(NewDialog.class.getName()).log(Level.SEVERE, null, ex);
+                    
+                needDialog = true;
+                ExceptionHandler exceptionHandler = new WaitingDialogExceptionHandler((WaitingDialog) waitingDialog, "https://github.com/compomics/peptide-shaker/issues");
+                peptideShaker.importFiles(waitingDialog, idFiles, spectrumFiles,
+                        identificationParameters, projectDetails, processingParameters, exceptionHandler);
+                peptideShaker.createProject(identificationParameters, processingParameters, spectrumCountingPreferences, projectDetails, waitingDialog, exceptionHandler);
+                
+                } catch (Exception e) {
+                    
+                    // Put in separate thread
+                    
                 }
+
             }
 
             if (needDialog) {
@@ -775,16 +757,6 @@ public class NewDialog extends javax.swing.JDialog {
             }
 
             if (!needDialog || !waitingDialog.isRunCanceled()) {
-
-                // show the warnings
-                Iterator<String> iterator = peptideShaker.getWarnings().keySet().iterator();
-                int counter = 0;
-                while (iterator.hasNext()) {
-                    FeedBack warning = peptideShaker.getWarnings().get(iterator.next());
-                    if (warning.getType() == FeedBack.FeedBackType.WARNING) {
-                        peptideShakerGUI.addNote("<b>" + ++counter + ") " + warning.getTitle() + "</b><br><br>" + warning.getMessage()); // @TODO: better interaction between notes and feedback objetcs...
-                    }
-                }
 
                 peptideShakerGUI.setProject(projectParameters);
                 peptideShakerGUI.setIdentification(peptideShaker.getIdentification());
@@ -1287,10 +1259,10 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editProcessingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editProcessingButtonActionPerformed
-        ProcessingParametersDialog processingPreferencesDialog = new ProcessingParametersDialog(this, peptideShakerGUI, processingPreferences, true);
+        ProcessingParametersDialog processingPreferencesDialog = new ProcessingParametersDialog(this, peptideShakerGUI, processingParameters, true);
         if (!processingPreferencesDialog.isCanceled()) {
-            processingPreferences = processingPreferencesDialog.getProcessingParameters();
-            processingTxt.setText(processingPreferences.getnThreads() + " cores");
+            processingParameters = processingPreferencesDialog.getProcessingParameters();
+            processingTxt.setText(processingParameters.getnThreads() + " cores");
         }
     }//GEN-LAST:event_editProcessingButtonActionPerformed
 
@@ -1643,16 +1615,6 @@ public class NewDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Imports identifications from identification files.
-     *
-     * @param waitingDialog a dialog to display feedback to the user
-     */
-    private void importIdentificationFiles(WaitingDialog waitingDialog) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-        peptideShaker.importFiles(waitingDialog, idFiles, spectrumFiles,
-                identificationParameters, projectDetails, processingPreferences, spectrumCountingPreferences, true);
-    }
-
-    /**
      * Imports the search parameters from a file.
      *
      * @param file the selected searchGUI file
@@ -1772,7 +1734,7 @@ public class NewDialog extends javax.swing.JDialog {
         }
 
         boolean matchesValidationAdded;
-        ValidationQcParameters validationQCPreferences = tempIdentificationParameters.getIdValidationParameters().getValidationQCPreferences();
+        ValidationQcParameters validationQCPreferences = tempIdentificationParameters.getIdValidationParameters().getValidationQCParameters();
         if (validationQCPreferences == null
                 || validationQCPreferences.getPsmFilters() == null
                 || validationQCPreferences.getPeptideFilters() == null
@@ -2035,7 +1997,7 @@ public class NewDialog extends javax.swing.JDialog {
     private void setIdentificationParameters(IdentificationParameters newIdentificationParameters) {
 
         try {
-            ValidationQcParameters validationQCPreferences = newIdentificationParameters.getIdValidationParameters().getValidationQCPreferences();
+            ValidationQcParameters validationQCPreferences = newIdentificationParameters.getIdValidationParameters().getValidationQCParameters();
             if (validationQCPreferences == null
                     || validationQCPreferences.getPsmFilters() == null
                     || validationQCPreferences.getPeptideFilters() == null
