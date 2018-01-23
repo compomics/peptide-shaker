@@ -227,7 +227,7 @@ public class FollowUpCLI extends CpsParent {
         // export protein accessions
         if (followUpCLIInputBean.accessionExportNeeded()) {
             try {
-                CLIExportMethods.exportAccessions(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterParameters);
+                CLIExportMethods.exportAccessions(followUpCLIInputBean, identification, sequenceProvider, waitingHandler, filterParameters);
                 waitingHandler.appendReport("Protein accessions export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the protein accessions.", true, true);
@@ -239,7 +239,7 @@ public class FollowUpCLI extends CpsParent {
         // export protein details
         if (followUpCLIInputBean.fastaExportNeeded()) {
             try {
-                CLIExportMethods.exportFasta(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterParameters);
+                CLIExportMethods.exportFasta(followUpCLIInputBean, identification, sequenceProvider, waitingHandler, filterParameters);
                 waitingHandler.appendReport("Protein details export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the protein details.", true, true);
@@ -251,7 +251,7 @@ public class FollowUpCLI extends CpsParent {
         // progenesis export
         if (followUpCLIInputBean.progenesisExportNeeded()) {
             try {
-                CLIExportMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingParameters());
+                CLIExportMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, sequenceProvider, proteinDetailsProvider, identificationParameters.getSequenceMatchingParameters());
                 waitingHandler.appendReport("Progenesis export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);

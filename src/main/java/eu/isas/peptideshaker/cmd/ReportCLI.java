@@ -205,7 +205,7 @@ public class ReportCLI extends CpsParent {
             int nSurroundingAAs = 2; //@TODO: this shall not be hard coded
             for (String reportType : reportCLIInputBean.getReportTypes()) {
                 try {
-                    CLIExportMethods.exportReport(reportCLIInputBean, reportType, projectParameters.getProjectUniqueName(), projectDetails, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, nSurroundingAAs, spectrumCountingParameters, waitingHandler);
+                    CLIExportMethods.exportReport(reportCLIInputBean, reportType, projectParameters.getProjectUniqueName(), projectDetails, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, nSurroundingAAs, spectrumCountingParameters, waitingHandler);
                 } catch (Exception e) {
                     waitingHandler.appendReport("An error occurred while exporting the " + reportType + ".", true, true);
                     e.printStackTrace();
