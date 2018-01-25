@@ -312,8 +312,6 @@ public class PSExportFactory implements ExportFactory {
      * section)
      * @param psmKeys the keys of the PSMs to export (mandatory for the PSM
      * section)
-     * @param proteinMatchKey the protein match key when exporting peptides from
-     * a single protein match (optional for the Peptide sections)
      * @param nSurroundingAA the number of surrounding amino acids to export
      * (mandatory for the Peptide section)
      * @param identificationParameters the identification parameters
@@ -329,7 +327,7 @@ public class PSExportFactory implements ExportFactory {
     public static void writeExport(ExportScheme exportScheme, File destinationFile, ExportFormat exportFormat, boolean gzip, String experiment,
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
             long[] proteinKeys, long[] peptideKeys, long[] psmKeys,
-            String proteinMatchKey, int nSurroundingAA, IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, 
+            int nSurroundingAA, IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, 
             SpectrumCountingParameters spectrumCountingPreferences, WaitingHandler waitingHandler)
             throws IOException {
 
