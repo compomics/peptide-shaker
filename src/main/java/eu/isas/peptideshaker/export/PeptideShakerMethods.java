@@ -164,7 +164,7 @@ public class PeptideShakerMethods {
 
         }
 
-        String dbType = fastaSummary.getTypeAsString();
+        String dbType = fastaSummary == null ? "[add database full name]" : fastaSummary.getTypeAsString();
 
         if (dbType == null) {
 
@@ -172,24 +172,33 @@ public class PeptideShakerMethods {
 
         }
 
+        String nTarget = fastaSummary == null ? "[add number of target sequences]" : Integer.toString(fastaSummary.nTarget);
+
         text.append(dbType)
                 .append(" [add reference] (version of [add database version] , ")
-                .append(fastaSummary.nTarget)
+                .append(nTarget)
                 .append(" (target) sequences) database considering the following species: ");
 
-        TreeMap<String, Integer> species = fastaSummary.speciesOccurrence;
-
-        if (species == null || species.isEmpty()) {
+        if (fastaSummary == null) {
 
             text.append("[add species]");
 
         } else {
 
-            text.append(
-                    species.entrySet().stream()
-                            .map(entry -> entry.getKey() + "( " + entry.getValue() + " sequences)")
-                            .collect(Collectors.joining(", ")));
+            TreeMap<String, Integer> species = fastaSummary.speciesOccurrence;
 
+            if (species == null || species.isEmpty()) {
+
+                text.append("[add species]");
+
+            } else {
+
+                text.append(
+                        species.entrySet().stream()
+                                .map(entry -> entry.getKey() + "( " + entry.getValue() + " sequences)")
+                                .collect(Collectors.joining(", ")));
+
+            }
         }
 
         text.append('.');
@@ -476,10 +485,10 @@ public class PeptideShakerMethods {
 
             }
 
-                text.append("with a threshold of ")
-                        .append(ptmScoringPreferences.getProbabilisticScoreThreshold())
-                        .append(' ');
-                
+            text.append("with a threshold of ")
+                    .append(ptmScoringPreferences.getProbabilisticScoreThreshold())
+                    .append(' ');
+
         }
 
         text.append("as implemented in the compomics-utilities package [PMID 21385435].");
@@ -510,10 +519,10 @@ public class PeptideShakerMethods {
      * @return the gene annotation method usage details
      */
     public static String getGeneAnnotation() {
-        
+
         String text = "TODO!";
         return text;
-        
+
     }
 
     /**
@@ -524,21 +533,21 @@ public class PeptideShakerMethods {
      * @return the spectrum counting method usage details
      */
     public static String getSpectrumCounting(SpectrumCountingParameters spectrumCountingPreferences) {
-        
+
         String text = "Spectrum counting abundance indexes were estimated using the ";
-        
+
         if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingParameters.SpectralCountingMethod.EMPAI) {
-            
+
             text += "emPAI index [PMID 15958392].";
-        
+
         } else {
-            
+
             text += "Normalized Spectrum Abundance Factor [PMID 15282323] adapted for better handling of protein inference issues and peptide detectability.";
-       
+
         }
-        
+
         return text;
-        
+
     }
 
     /**
@@ -547,14 +556,14 @@ public class PeptideShakerMethods {
      * @return the ProteomeXchange upload details
      */
     public static String getProteomeXchange() {
-        
+
         String text = "The mass spectrometry data along with the identification results have been deposited to the "
                 + "ProteomeXchange Consortium [PMID 24727771] via the PRIDE partner repository [PMID 16041671] "
                 + "with the dataset identifiers [add dataset identifiers]. During the review process, "
                 + "the data can be accessed with the following credentials upon login to the PRIDE website (http://www.ebi.ac.uk/pride/archive/login): "
                 + "Username: [add username here], Password: [add password here].";
-        
+
         return text;
-        
+
     }
 }

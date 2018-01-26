@@ -2,10 +2,13 @@ package eu.isas.peptideshaker.gui.exportdialogs;
 
 import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.Util;
+import com.compomics.util.experiment.io.biology.protein.FastaParameters;
+import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.io.export.ExportScheme;
 import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.parameters.identification.search.SearchParameters;
 import eu.isas.peptideshaker.export.PeptideShakerMethods;
 import eu.isas.peptideshaker.export.PSExportFactory;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -14,6 +17,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -49,7 +53,9 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
+                    
                 updateMethodsSection();
+                
             }
         });
 
@@ -66,6 +72,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
         waitingLabel.setVisible(true);
         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+        SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
 
         String text = "";
         String tab = "          ";
@@ -88,13 +95,28 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
         }
 
         if (proteinDbCkeck.isSelected()) {
-            text += PeptideShakerMethods.getDatabaseText();
+                
+            FastaParameters fastaParameters = searchParameters.getFastaParameters();
+            FastaSummary fastaSummary;
+            
+            try {
+                
+            fastaSummary = FastaSummary.getSummary(searchParameters.getFastaFile(), fastaParameters, progressDialog);
+            
+            } catch (IOException e) {
+                
+                // Skip the database details
+                fastaSummary = null;
+                
+            }
+            text += PeptideShakerMethods.getDatabaseText(fastaParameters, fastaSummary);
+        
         }
         if (decoyCheck.isSelected()) {
             text += PeptideShakerMethods.getDecoyType();
         }
         if (idParametersCheck.isSelected()) {
-            text += PeptideShakerMethods.getIdentificationSettings(peptideShakerGUI.getIdentificationParameters().getSearchParameters());
+            text += PeptideShakerMethods.getIdentificationSettings(searchParameters);
         }
 
         if (proteinDbCkeck.isSelected() || decoyCheck.isSelected() || idParametersCheck.isSelected()) {
@@ -185,10 +207,11 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
                         String schemeName = "Certificate of Analysis"; //TODO: get this from the PSExportFactory
                         ExportScheme exportScheme = PSExportFactory.getInstance().getExportScheme(schemeName);
                         progressDialog.setTitle("Exporting. Please Wait...");
-                        PSExportFactory.writeExport(exportScheme, selectedFile, exportFormat, peptideShakerGUI.getProjectParameters().getProjectUniqueName(),
+                        PSExportFactory.writeExport(exportScheme, selectedFile, exportFormat, false, peptideShakerGUI.getProjectParameters().getProjectUniqueName(),
                                 peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
-                                peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), null, null, null, null,
+                                peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), null, null, null, 
                                 peptideShakerGUI.getDisplayParameters().getnAASurroundingPeptides(), peptideShakerGUI.getIdentificationParameters(),
+                                peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(),
                                 peptideShakerGUI.getSpectrumCountingParameters(), progressDialog);
 
                         boolean processCancelled = progressDialog.isRunCanceled();

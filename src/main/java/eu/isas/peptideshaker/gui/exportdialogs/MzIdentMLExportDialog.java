@@ -2,15 +2,20 @@ package eu.isas.peptideshaker.gui.exportdialogs;
 
 import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.Util;
+import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
+import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.identification.MzIdentMLVersion;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.io.file.LastSelectedFolder;
+import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.parameters.identification.search.SearchParameters;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.MzIdentMLExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.awt.Color;
 import java.awt.Toolkit;
@@ -88,23 +93,25 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
      */
     private void insertProjectData() {
 
+                    ProjectDetails projectDetails = peptideShakerGUI.getProjectDetails();
+                    
         // use the saved mzIdentML annotation, if any
-        contactFirstNameJTextField.setText(peptideShakerGUI.getProjectDetails().getContactFirstName());
-        contactLastNameJTextField.setText(peptideShakerGUI.getProjectDetails().getContactLastName());
-        contactEmailJTextField.setText(peptideShakerGUI.getProjectDetails().getContactEmail());
-        contactAddressJTextField.setText(peptideShakerGUI.getProjectDetails().getContactAddress());
-        contactUrlJTextField.setText(peptideShakerGUI.getProjectDetails().getContactUrl());
+        contactFirstNameJTextField.setText(projectDetails.getContactFirstName());
+        contactLastNameJTextField.setText(projectDetails.getContactLastName());
+        contactEmailJTextField.setText(projectDetails.getContactEmail());
+        contactAddressJTextField.setText(projectDetails.getContactAddress());
+        contactUrlJTextField.setText(projectDetails.getContactUrl());
 
-        organizationNameJTextField.setText(peptideShakerGUI.getProjectDetails().getOrganizationName());
-        organizationEmailJTextField.setText(peptideShakerGUI.getProjectDetails().getOrganizationEmail());
-        organizationAddressJTextField.setText(peptideShakerGUI.getProjectDetails().getOrganizationAddress());
-        organizationUrlJTextField.setText(peptideShakerGUI.getProjectDetails().getOrganizationUrl());
+        organizationNameJTextField.setText(projectDetails.getOrganizationName());
+        organizationEmailJTextField.setText(projectDetails.getOrganizationEmail());
+        organizationAddressJTextField.setText(projectDetails.getOrganizationAddress());
+        organizationUrlJTextField.setText(projectDetails.getOrganizationUrl());
 
-        includeSequencesCheckBox.setSelected(peptideShakerGUI.getProjectDetails().getIncludeProteinSequences());
+        includeSequencesCheckBox.setSelected(projectDetails.getIncludeProteinSequences());
 
-        if (peptideShakerGUI.getProjectDetails().getMzIdentMLOutputFile() != null
-                && new File(peptideShakerGUI.getProjectDetails().getMzIdentMLOutputFile()).exists()) {
-            outputFolderJTextField.setText(peptideShakerGUI.getProjectDetails().getMzIdentMLOutputFile());
+        if (projectDetails.getMzIdentMLOutputFile() != null
+                && new File(projectDetails.getMzIdentMLOutputFile()).exists()) {
+            outputFolderJTextField.setText(projectDetails.getMzIdentMLOutputFile());
         }
     }
 
@@ -143,6 +150,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         outputFolderJTextField = new javax.swing.JTextField();
         browseOutputFolderJButton = new javax.swing.JButton();
         includeSequencesCheckBox = new javax.swing.JCheckBox();
+        gzipCheckBox = new javax.swing.JCheckBox();
         helpLabel = new javax.swing.JLabel();
         openDialogHelpJButton = new javax.swing.JButton();
         convertJButton = new javax.swing.JButton();
@@ -372,24 +380,26 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         includeSequencesCheckBox.setToolTipText("Select to include the protein sequences in the mzIdentML file");
         includeSequencesCheckBox.setIconTextGap(10);
 
+        gzipCheckBox.setText("gzip");
+
         javax.swing.GroupLayout outputPanelLayout = new javax.swing.GroupLayout(outputPanel);
         outputPanel.setLayout(outputPanelLayout);
         outputPanelLayout.setHorizontalGroup(
             outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, outputPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(outputPanelLayout.createSequentialGroup()
-                        .addComponent(outputFolderLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(outputFolderJTextField))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, outputPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(includeSequencesCheckBox)
-                        .addGap(12, 12, 12)))
+                .addComponent(outputFolderLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(outputFolderJTextField)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(browseOutputFolderJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, outputPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(includeSequencesCheckBox)
+                .addGap(18, 18, 18)
+                .addComponent(gzipCheckBox)
+                .addGap(73, 73, 73))
         );
         outputPanelLayout.setVerticalGroup(
             outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -400,7 +410,9 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                     .addComponent(outputFolderJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(browseOutputFolderJButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(includeSequencesCheckBox)
+                .addGroup(outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(includeSequencesCheckBox)
+                    .addComponent(gzipCheckBox))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -652,41 +664,47 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         new Thread("ConvertThread") {
             @Override
             public void run() {
+                
+                    IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+                    SearchParameters searchParameters = identificationParameters.getSearchParameters();
+                    AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
+                    ProjectDetails projectDetails = peptideShakerGUI.getProjectDetails();
 
                 // save the inserted mzid details with the project
-                peptideShakerGUI.getProjectDetails().setContactFirstName(contactFirstNameJTextField.getText().trim());
-                peptideShakerGUI.getProjectDetails().setContactLastName(contactLastNameJTextField.getText().trim());
-                peptideShakerGUI.getProjectDetails().setContactEmail(contactEmailJTextField.getText().trim());
-                peptideShakerGUI.getProjectDetails().setContactAddress(contactAddressJTextField.getText().trim());
+                projectDetails.setContactFirstName(contactFirstNameJTextField.getText().trim());
+                projectDetails.setContactLastName(contactLastNameJTextField.getText().trim());
+                projectDetails.setContactEmail(contactEmailJTextField.getText().trim());
+                projectDetails.setContactAddress(contactAddressJTextField.getText().trim());
                 if (!contactUrlJTextField.getText().trim().isEmpty()) {
-                    peptideShakerGUI.getProjectDetails().setContactUrl(contactUrlJTextField.getText().trim());
+                    projectDetails.setContactUrl(contactUrlJTextField.getText().trim());
                 } else {
-                    peptideShakerGUI.getProjectDetails().setContactUrl(null);
+                    projectDetails.setContactUrl(null);
                 }
 
-                peptideShakerGUI.getProjectDetails().setOrganizationName(organizationNameJTextField.getText().trim());
-                peptideShakerGUI.getProjectDetails().setOrganizationEmail(organizationEmailJTextField.getText().trim());
-                peptideShakerGUI.getProjectDetails().setOrganizationAddress(organizationAddressJTextField.getText().trim());
+                projectDetails.setOrganizationName(organizationNameJTextField.getText().trim());
+                projectDetails.setOrganizationEmail(organizationEmailJTextField.getText().trim());
+                projectDetails.setOrganizationAddress(organizationAddressJTextField.getText().trim());
                 if (!organizationUrlJTextField.getText().trim().isEmpty()) {
-                    peptideShakerGUI.getProjectDetails().setOrganizationUrl(organizationUrlJTextField.getText().trim());
+                    projectDetails.setOrganizationUrl(organizationUrlJTextField.getText().trim());
                 } else {
-                    peptideShakerGUI.getProjectDetails().setOrganizationUrl(null);
+                    projectDetails.setOrganizationUrl(null);
                 }
 
-                peptideShakerGUI.getProjectDetails().setIncludeProteinSequences(includeSequencesCheckBox.isSelected());
-                peptideShakerGUI.getProjectDetails().setMzIdentOutputFile(outputFolderJTextField.getText());
+                projectDetails.setIncludeProteinSequences(includeSequencesCheckBox.isSelected());
+                projectDetails.setMzIdentOutputFile(outputFolderJTextField.getText());
                 peptideShakerGUI.setDataSaved(false); // @TODO: this might not always be true, e.g., if nothing has changed, but better than not saving at all
 
                 boolean conversionCompleted = false;
 
                 // make sure that all annotations are included
-                double currentIntensityLimit = peptideShakerGUI.getIdentificationParameters().getAnnotationParameters().getAnnotationIntensityLimit();
-                peptideShakerGUI.getIdentificationParameters().getAnnotationParameters().setIntensityLimit(0.0);
+                double currentIntensityLimit = annotationParameters.getAnnotationIntensityLimit();
+                annotationParameters.setIntensityLimit(0.0);
 
                 try {
-                    MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
-                            peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingParameters(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
-                            finalOutputFile, includeSequencesCheckBox.isSelected(), progressDialog, MatchValidationLevel.none, MatchValidationLevel.none, MatchValidationLevel.none);
+                    FastaSummary fastaSummary = FastaSummary.getSummary(searchParameters.getFastaFile(), searchParameters.getFastaParameters(), progressDialog);
+                    MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), projectDetails,
+                            identificationParameters, peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(), fastaSummary, peptideShakerGUI.getIdentificationFeaturesGenerator(),
+                            finalOutputFile, includeSequencesCheckBox.isSelected(), progressDialog, gzipCheckBox.isSelected());
                     mzIdentMLExport.createMzIdentMLFile(mzIdentMLVersion);
 
                     // validate the mzidentml file
@@ -712,7 +730,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                     return;
                 } finally {
                     // reset the annotation level
-                    peptideShakerGUI.getIdentificationParameters().getAnnotationParameters().setIntensityLimit(currentIntensityLimit);
+                    annotationParameters.setIntensityLimit(currentIntensityLimit);
                 }
 
                 // close the progress dialog
@@ -794,6 +812,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
     private javax.swing.JTextField contactUrlJTextField;
     private javax.swing.JLabel contactUrlLabel;
     private javax.swing.JButton convertJButton;
+    private javax.swing.JCheckBox gzipCheckBox;
     private javax.swing.JLabel helpLabel;
     private javax.swing.JCheckBox includeSequencesCheckBox;
     private javax.swing.JButton openDialogHelpJButton;
