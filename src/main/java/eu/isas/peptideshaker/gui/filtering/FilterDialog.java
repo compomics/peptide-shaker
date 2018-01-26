@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.gui.filtering;
 import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.filtering.FilterItemComparator;
 import com.compomics.util.gui.utils.user_choice.ListChooser;
-import com.compomics.util.gui.utils.user_choice.list_choosers.PtmChooser;
+import com.compomics.util.gui.utils.user_choice.list_choosers.ModificationChooser;
 import com.compomics.util.gui.utils.user_choice.list_choosers.StringListChooser;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.filtering.MatchFilter;
@@ -562,7 +562,7 @@ public class FilterDialog extends javax.swing.JDialog {
         if (filterItem.needsModifications()) {
             ArrayList<String> ptms = identificationParameters.getSearchParameters().getModificationParameters().getAllModifications();
             if (ptms != null && ptms.size() > 0) {
-                listChooser = new PtmChooser(parentFrame, ptms, false); //@TODO: allow multiple selection
+                listChooser = new ModificationChooser(parentFrame, ptms, false); //@TODO: allow multiple selection
             }
         } else {
             ArrayList<String> possibilities = filterItem.getPossibilities();

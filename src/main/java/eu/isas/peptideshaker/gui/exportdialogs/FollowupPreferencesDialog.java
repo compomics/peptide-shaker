@@ -1,20 +1,21 @@
 package eu.isas.peptideshaker.gui.exportdialogs;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
+import com.compomics.util.experiment.identification.utils.PeptideUtils;
+import com.compomics.util.experiment.identification.utils.ProteinUtils;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
-import com.compomics.util.experiment.personalization.UrParameter;
+import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import com.compomics.util.gui.utils.user_choice.list_choosers.PtmChooser;
+import com.compomics.util.gui.utils.user_choice.list_choosers.ModificationChooser;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.io.file.LastSelectedFolder;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.followup.ProgenesisExcelExport;
 import eu.isas.peptideshaker.followup.FastaExport;
 import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.PepXmlExport;
@@ -597,15 +598,15 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             progressDialog.setTitle("Exporting PSMs. Please Wait...");
 
             final int userChoice = psmSelectionComboBox.getSelectedIndex();
-            ArrayList<String> ptms = new ArrayList<>();
+            HashSet<String> modifications = new HashSet<>(0);
             if (userChoice == 3) {
-                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getAllNotFixedModifications(), true);
-                if (ptmChooser.isCanceled()) {
+                ModificationChooser modificationChooser = new ModificationChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getAllNotFixedModifications(), true);
+                if (modificationChooser.isCanceled()) {
                     return;
                 }
-                ptms = ptmChooser.getSelectedItems();
+                modifications = modificationChooser.getSelectedItems();
             }
-            final ArrayList<String> ptmSelection = ptms;
+            final HashSet<String> modificationSelection = modifications;
 
             new Thread(new Runnable() {
                 public void run() {
@@ -621,18 +622,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
-                        if (psmSelectionComboBox.getSelectedIndex() == 4) {
-                            ProgenesisExcelExport progenesisExcelExport = new ProgenesisExcelExport(
-                                    progressDialog,
-                                    new ArrayList<>(peptideShakerGUI.getIdentification().getProteinIdentification()),
-                                    peptideShakerGUI.getIdentification(),
-                                    finalOutputFile, peptideShakerGUI.getIdentificationParameters());
-                            progenesisExcelExport.writeProgenesisExcelExport();
-                        } else {
-                            ProgenesisExport.writeProgenesisExport(finalOutputFile, peptideShakerGUI.getIdentification(),
-                                    ProgenesisExport.ExportType.getTypeFromIndex(userChoice), progressDialog, ptmSelection,
-                                    peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
-                        }
+
+                        ProgenesisExport.writeProgenesisExport(finalOutputFile, peptideShakerGUI.getSequenceProvider(),
+                                peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getIdentification(),
+                                ProgenesisExport.ExportType.getTypeFromIndex(userChoice), progressDialog, modificationSelection,
+                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
@@ -753,12 +747,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     // gephi: https://gephi.org/users/supported-graph-formats/spreadsheet/
                     // neo4j: http://blog.neo4j.org/2013/03/importing-data-into-neo4j-spreadsheet.html
                     // make a list of the proteins added as nodes, as to not add them more than once
-                    HashSet<String> proteinsAdded = new HashSet<>();
+                    HashSet<Long> proteinsAdded = new HashSet<>();
 
                     try {
                         // write the nodes
-                        Writer nodeWriter = new BufferedWriter(new FileWriter(new File(selectedFolder, "nodes.txt")));
-                        Writer edgeWriter = new BufferedWriter(new FileWriter(new File(selectedFolder, "edges.txt")));
+                        BufferedWriter nodeWriter = new BufferedWriter(new FileWriter(new File(selectedFolder, "nodes.txt")));
+                        BufferedWriter edgeWriter = new BufferedWriter(new FileWriter(new File(selectedFolder, "edges.txt")));
 
                         // write the header
                         if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Cytoscape")) {
@@ -794,53 +788,71 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         progressDialog.resetPrimaryProgressCounter();
                         progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
 
-                        PSParameter psParameter = new PSParameter();
                         PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
                         PeptideMatch peptideMatch;
 
                         while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-                            String peptideKey = peptideMatch.getKey();
-                            psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
+                            long peptideKey = peptideMatch.getKey();
+                            PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
                             // write the peptide node
                             if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
+
                                 nodeWriter.write("create n={id:'" + peptideKey + "', name:'" + peptideMatch.getPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, false) + "', type:'Peptide'};\n");
+
                             } else {
-                                nodeWriter.write(peptideKey + "\t"
-                                        + peptideMatch.getPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, false)
-                                        + "\tpeptide" + "\t" + psParameter.getMatchValidationLevel() + "\t" + peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters()) + "\n"); // @TODO: add more information?
+
+                                nodeWriter.write(String.join("\t", Long.toString(peptideKey), peptideMatch.getPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, false),
+                                        "peptide", psParameter.getMatchValidationLevel().getName(), Boolean.toString(PeptideUtils.isDecoy(peptideMatch.getPeptide(), peptideShakerGUI.getSequenceProvider())))); // @TODO: add more information?
+                                nodeWriter.newLine();
+
                             }
 
                             // write the peptide to protein edge and the protein nodes
-                            for (String protein : peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters())) {
+                            for (String proteinAccession : peptideMatch.getPeptide().getProteinMapping().keySet()) {
+
+                                long proteinKey = ExperimentObject.asLong(proteinAccession);
 
                                 // write the protein node
-                                if (!proteinsAdded.contains(protein)) {
-                                    proteinsAdded.add(protein);
-                                    ProteinMatch proteinMatch = (ProteinMatch) peptideShakerGUI.getIdentification().retrieveObject(protein);
+                                if (!proteinsAdded.contains(proteinKey)) {
+
+                                    proteinsAdded.add(proteinKey);
+                                    ProteinMatch proteinMatch = (ProteinMatch) peptideShakerGUI.getIdentification().retrieveObject(proteinKey);
+
                                     if (proteinMatch != null) {
-                                        psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+
+                                        psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
                                         if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
-                                            nodeWriter.write("create n={id:'" + protein + "', name:'" + protein + "', type:'Protein'};\n");
+
+                                            nodeWriter.write("create n={id:'" + proteinKey + "', name:'" + proteinAccession + "', type:'Protein'};\n");
+
                                         } else {
-                                            nodeWriter.write(protein + "\t" + protein + "\tprotein" + "\t" + psParameter.getMatchValidationLevel() + "\t" + proteinMatch.isDecoy() + "\n"); // @TODO: add more information?
+
+                                            nodeWriter.write(proteinAccession + "\t" + proteinKey + "\tprotein" + "\t" + psParameter.getMatchValidationLevel().getName() + "\t" + proteinMatch.isDecoy() + "\n"); // @TODO: add more information?
+
                                         }
+
                                     } else {
+
                                         if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
-                                            nodeWriter.write("create n={id:'" + protein + "', name:'" + protein + "', type:'Protein'};\n");
+
+                                            nodeWriter.write("create n={id:'" + proteinAccession + "', name:'" + proteinAccession + "', type:'Protein'};\n");
+
                                         } else {
-                                            nodeWriter.write(protein + "\t" + protein + "\tprotein" + "\t" + "false" + "\t" + SequenceFactory.getInstance().isDecoyAccession(protein) + "\n"); // @TODO: add more information?
+
+                                            nodeWriter.write(proteinAccession + "\t" + proteinAccession + "\tprotein" + "\t" + "shared" + "\t" + ProteinUtils.isDecoy(proteinAccession, peptideShakerGUI.getSequenceProvider()) + "\n"); // @TODO: add more information?
+
                                         }
                                     }
                                 }
 
                                 // write the peptide to protein edge
                                 if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
-                                    edgeWriter.write("start n1=node:node_auto_index(id='" + peptideKey + "'),n2=node:node_auto_index(id='" + protein + "') create unique n1-[:MAPS_TO]->n2;\n");
+                                    edgeWriter.write("start n1=node:node_auto_index(id='" + peptideKey + "'),n2=node:node_auto_index(id='" + proteinAccession + "') create unique n1-[:MAPS_TO]->n2;\n");
                                 } else {
-                                    edgeWriter.write(peptideKey + "\t" + protein + "\tpeptide_to_protein\n");
+                                    edgeWriter.write(peptideKey + "\t" + proteinAccession + "\tpeptide_to_protein\n");
                                 }
                             }
 
@@ -864,16 +876,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     } catch (IOException e) {
                         progressDialog.setRunCanceled();
                         peptideShakerGUI.catchException(e);
-                    } catch (ClassNotFoundException e) {
-                        progressDialog.setRunCanceled();
-                        peptideShakerGUI.catchException(e);
                     } catch (IllegalArgumentException e) {
-                        progressDialog.setRunCanceled();
-                        peptideShakerGUI.catchException(e);
-                    } catch (SQLException e) {
-                        progressDialog.setRunCanceled();
-                        peptideShakerGUI.catchException(e);
-                    } catch (InterruptedException e) {
                         progressDialog.setRunCanceled();
                         peptideShakerGUI.catchException(e);
                     }
@@ -1003,35 +1006,44 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     try {
-                        FastaExport.ExportType exportType;
-                        if (finalAccessionsOnly) {
-                            exportType = FastaExport.ExportType.getTypeFromIndex(proteinExportCmb1.getSelectedIndex());
-                        } else {
-                            exportType = FastaExport.ExportType.getTypeFromIndex(proteinExportCmb2.getSelectedIndex());
-                        }
-                        SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+
+                        SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
+
+                        FastaExport.ExportType exportType = finalAccessionsOnly ? 
+                                FastaExport.ExportType.getTypeFromIndex(proteinExportCmb1.getSelectedIndex())
+                                : FastaExport.ExportType.getTypeFromIndex(proteinExportCmb2.getSelectedIndex());
+
                         IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
+
                         if (exportType == FastaExport.ExportType.non_validated) {
-                            progressDialog.setMaxPrimaryProgressCounter(sequenceFactory.getAccessions().size());
+
+                            progressDialog.setMaxPrimaryProgressCounter(sequenceProvider.getAccessions().size());
+
                         } else {
+
                             progressDialog.setMaxPrimaryProgressCounter(identificationFeaturesGenerator.getNValidatedProteins());
+
                         }
 
-                        FastaExport.export(selectedFile, peptideShakerGUI.getIdentification(), identificationFeaturesGenerator, exportType, progressDialog, peptideShakerGUI.getFilterParameters(), finalAccessionsOnly);
+                        FastaExport.export(selectedFile, sequenceProvider, peptideShakerGUI.getIdentification(), exportType, progressDialog, finalAccessionsOnly);
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
 
                         if (!processCancelled) {
+                            
                             JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Identified proteins exported to "
                                     + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        
                         }
                     } catch (Exception e) {
+                        
                         progressDialog.setRunFinished();
                         e.printStackTrace();
                         JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "An error occurred when exporting the data.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+                    
                     }
                 }
             }.start();
