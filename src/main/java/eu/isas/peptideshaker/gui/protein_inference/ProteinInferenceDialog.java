@@ -4,15 +4,20 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.utils.PeptideUtils;
+import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.parameters.identification.search.DigestionParameters;
 import com.compomics.util.experiment.io.biology.protein.Header;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
+import com.compomics.util.experiment.personalization.ExperimentObject;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.parameters.PSParameter;
@@ -25,6 +30,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.function.Function;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -56,19 +63,15 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
     /**
      * The protein accessions.
      */
-    private ArrayList<String> accessions;
+    private String[] accessions;
     /**
      * The detected unique matches (if any).
      */
-    private ArrayList<String> uniqueMatches = new ArrayList<>();
+    private long[] uniqueMatches;
     /**
      * Associated matches presenting the same proteins or a share.
      */
-    private ArrayList<String> associatedMatches = new ArrayList<>();
-    /**
-     * The sequence factory.
-     */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private long[] associatedMatches;
     /**
      * The PeptideShaker parent frame.
      */
@@ -103,10 +106,10 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      *
      * @param peptideShakerGUI the PeptideShakerGUI parent
      * @param geneMaps the gene maps
-     * @param inspectedMatch the inspected match
+     * @param matchKey the match key
      * @param identification the identifications
      */
-    public ProteinInferenceDialog(PeptideShakerGUI peptideShakerGUI, GeneMaps geneMaps, String inspectedMatch, Identification identification) {
+    public ProteinInferenceDialog(PeptideShakerGUI peptideShakerGUI, GeneMaps geneMaps, long matchKey, Identification identification) {
         super(peptideShakerGUI, true);
 
         this.identification = identification;
@@ -114,31 +117,27 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         this.geneMaps = geneMaps;
 
         try {
-            this.inspectedMatch = (ProteinMatch)identification.retrieveObject(inspectedMatch);
+
+            this.inspectedMatch = identification.getProteinMatch(matchKey);
             previousMainMatch = this.inspectedMatch.getLeadingAccession();
+
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             this.dispose();
         }
 
-        accessions = new ArrayList(Arrays.asList(ProteinMatch.getAccessions(inspectedMatch)));
+        accessions = inspectedMatch.getAccessions();
 
-        for (String proteinAccession : accessions) {
-            if (identification.getProteinIdentification().contains(proteinAccession)) {
-                uniqueMatches.add(proteinAccession);
-            }
-        }
+        uniqueMatches = Arrays.stream(accessions)
+                .mapToLong(accession -> ExperimentObject.asLong(accession))
+                .filter(key -> identification.getProteinIdentification().contains(key))
+                .toArray();
 
-        for (String proteinKey : identification.getProteinIdentification()) {
-            if (ProteinMatch.getNProteins(proteinKey) > 1 && !associatedMatches.contains(proteinKey) && !proteinKey.equals(inspectedMatch)) {
-                for (String proteinAccession : accessions) {
-                    if (proteinKey.contains(proteinAccession)) {
-                        associatedMatches.add(proteinKey);
-                        break;
-                    }
-                }
-            }
-        }
+        associatedMatches = Arrays.stream(accessions)
+                .flatMap(accession -> identification.getProteinMap().get(accession).stream())
+                .distinct()
+                .mapToLong(key -> key)
+                .toArray();
 
         initComponents();
 
@@ -154,7 +153,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         PSParameter psParameter = new PSParameter();
         try {
-            psParameter = (PSParameter)this.inspectedMatch.getUrParam(psParameter);
+            psParameter = (PSParameter) this.inspectedMatch.getUrParam(psParameter);
             // the index should be set in the design according to the PSParameter class static fields!
             groupClassJComboBox.setSelectedIndex(psParameter.getProteinInferenceGroupClass());
         } catch (Exception e) {
@@ -165,9 +164,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         setColumnProperies();
 
         // update the panel border with the nubmer of rows in the table
-        ((TitledBorder) proteinMatchJPanel.getBorder()).setTitle("Candidate Proteins (" + accessions.size() + ")");
-        ((TitledBorder) uniqueHitsJPanel.getBorder()).setTitle("Unique Hits (" + uniqueMatches.size() + ")");
-        ((TitledBorder) relatedHitsJPanel.getBorder()).setTitle("Related Hits (" + associatedMatches.size() + ")");
+        ((TitledBorder) proteinMatchJPanel.getBorder()).setTitle("Candidate Proteins (" + accessions.length + ")");
+        ((TitledBorder) uniqueHitsJPanel.getBorder()).setTitle("Unique Hits (" + uniqueMatches.length + ")");
+        ((TitledBorder) relatedHitsJPanel.getBorder()).setTitle("Related Hits (" + associatedMatches.length + ")");
 
         // set up the protein inference graph
         drawGraph();
@@ -188,10 +187,10 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         HashMap<String, ArrayList<String>> edges = new HashMap<>();
         ArrayList<String> selectedNodes = new ArrayList<>();
 
-        ArrayList<String> peptideKeys = inspectedMatch.getPeptideMatchesKeys();
+        long[] peptideKeys = inspectedMatch.getPeptideMatchesKeys();
 
         try {
-            for (String tempPeptideKey : peptideKeys) {
+            for (long tempPeptideKey : peptideKeys) {
                 addPeptide(tempPeptideKey, nodeToolTips, nodes, nodeProperties, selectedNodes, edges, edgeProperties);
             }
         } catch (Exception e) {
@@ -212,27 +211,21 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * @param selectedNodes the selected nodes
      * @param edges the edges
      * @param edgeProperties the edge properties
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws IOException thrown if an IOException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
      */
-    private void addPeptide(String peptideKey, HashMap<String, String> nodeToolTips, ArrayList<String> nodes, HashMap<String, String> nodeProperties,
-            ArrayList<String> selectedNodes, HashMap<String, ArrayList<String>> edges, HashMap<String, String> edgeProperties) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private void addPeptide(long peptideKey, HashMap<String, String> nodeToolTips, ArrayList<String> nodes, HashMap<String, String> nodeProperties,
+            ArrayList<String> selectedNodes, HashMap<String, ArrayList<String>> edges, HashMap<String, String> edgeProperties) {
 
-        PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(peptideKey);
+        ProteinDetailsProvider proteinDetailsProvider = peptideShakerGUI.getProteinDetailsProvider();
+        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
         String peptideNodeName = "Peptide " + peptideKey;
 
         if (!nodes.contains(peptideNodeName)) {
 
+            HashSet<String> accessionsSet = Sets.newHashSet(accessions);
+
             // get the match validation level
-            PSParameter peptideMatchParameter = (PSParameter)peptideMatch.getUrParam(PSParameter.dummy);
-            String matchValidationLevel;
-            if (peptideMatchParameter != null) {
-                matchValidationLevel = "Validation: " + peptideMatchParameter.getMatchValidationLevel();
-            } else {
-                matchValidationLevel = "Validation: (not available)";
-            }
+            PSParameter peptideMatchParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
+            String matchValidationLevel = "Validation: " + peptideMatchParameter.getMatchValidationLevel();
 
             // get the peptide node tooltip
             String peptideTooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, false, true);
@@ -244,9 +237,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             nodeProperties.put(peptideNodeName, "" + peptideMatchParameter.getMatchValidationLevel().getIndex());
 
             // iterate the proteins
-            ArrayList<String> possibleProteins = peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
-
-            for (String tempProteinAccession : possibleProteins) {
+            for (String tempProteinAccession : peptideMatch.getPeptide().getProteinMapping().keySet()) {
 
                 String proteinNodeKey = "Protein " + tempProteinAccession;
 
@@ -254,34 +245,54 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
                     // add the node
                     nodes.add(proteinNodeKey);
-                    if (accessions.contains(tempProteinAccession)) {
+
+                    if (accessionsSet.contains(tempProteinAccession)) {
+
                         selectedNodes.add(proteinNodeKey);
+
                     }
 
-                    // get the match validation level
-                    ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(tempProteinAccession);
-                    PSParameter proteinMatchParameter = (PSParameter)proteinMatch.getUrParam(PSParameter.dummy);
                     String nodeProperty = "";
-                    if (proteinMatchParameter != null) {
+
+                    // get the match validation level
+                    long tempKey = ExperimentObject.asLong(tempProteinAccession);
+                    ProteinMatch proteinMatch = identification.getProteinMatch(tempKey);
+
+                    if (proteinMatch != null) {
+
+                        PSParameter proteinMatchParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
                         nodeProperty += proteinMatchParameter.getMatchValidationLevel().getIndex();
                         matchValidationLevel = "Validation: " + proteinMatchParameter.getMatchValidationLevel();
+
                     } else {
+
                         nodeProperty += -1;
                         matchValidationLevel = "Validation: (not available)";
+
                     }
 
                     // get the protein evidence level
-                    String proteinEvidenceLevel = sequenceFactory.getHeader(tempProteinAccession).getProteinEvidence();
-                    if (proteinEvidenceLevel != null) {
-                        nodeProperty += "|" + proteinEvidenceLevel;
+                    String proteinEvidenceLevel = null;
+                    Integer level = proteinDetailsProvider.getProteinEvidence(tempProteinAccession);
+
+                    if (level != null) {
+
+                        nodeProperty += "|" + level;
+
                         try {
-                            Integer level = new Integer(proteinEvidenceLevel);
+
                             proteinEvidenceLevel = "Evidence: " + Header.getProteinEvidencAsString(level);
+
                         } catch (NumberFormatException e) {
                             // ignore
                         }
-                    } else {
+
+                    }
+
+                    if (proteinEvidenceLevel == null) {
+
                         proteinEvidenceLevel = "Evidence: (not available)";
+
                     }
 
                     // add the node property
@@ -289,30 +300,29 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
                     // add the tooltip
                     nodeToolTips.put(proteinNodeKey, "<html>" + tempProteinAccession
-                            + "<br>" + sequenceFactory.getHeader(tempProteinAccession).getSimpleProteinDescription()
+                            + "<br>" + proteinDetailsProvider.getSimpleDescription(tempProteinAccession)
                             + "<br><br>" + matchValidationLevel
                             + "<br>" + proteinEvidenceLevel
                             + "<html>");
 
                     // add any new peptides for the proteins
                     if (proteinMatch != null) {
-                        ArrayList<String> secondaryPeptides = proteinMatch.getPeptideMatchesKeys();
-                        for (String tempPeptideKey : secondaryPeptides) {
+
+                        long[] secondaryPeptides = proteinMatch.getPeptideMatchesKeys();
+
+                        for (long tempPeptideKey : secondaryPeptides) {
+
                             addPeptide(tempPeptideKey, nodeToolTips, nodes, nodeProperties, selectedNodes, edges, edgeProperties);
+
                         }
+
                     } else {
-                        // @TODO: is there a faster way of doing this..?
-                        String loweCaseAccession = tempProteinAccession.toLowerCase();
-                        for (String proteinKey : peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterParameters())) {
-                            if (!ProteinMatch.isDecoy(proteinKey)) {
-                                if (proteinKey.toLowerCase().contains(loweCaseAccession)) {
-                                    ArrayList<String> secondaryPeptides = ((ProteinMatch)identification.retrieveObject(proteinKey)).getPeptideMatchesKeys();
-                                    for (String tempPeptideKey : secondaryPeptides) {
-                                        addPeptide(tempPeptideKey, nodeToolTips, nodes, nodeProperties, selectedNodes, edges, edgeProperties);
-                                    }
-                                }
-                            }
-                        }
+
+                        identification.getProteinMap().get(tempProteinAccession).stream()
+                                .flatMap(key -> Arrays.stream(identification.getProteinMatch(key).getPeptideMatchesKeys()).mapToObj(tempPeptideKey -> tempPeptideKey))
+                                .distinct()
+                                .forEach(tempPeptideKey -> addPeptide(tempPeptideKey, nodeToolTips, nodes, nodeProperties, selectedNodes, edges, edgeProperties));
+
                     }
                 }
 
@@ -323,18 +333,21 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 if (!tempEdges.contains(proteinNodeKey)) {
                     tempEdges.add(proteinNodeKey);
 
-                    Protein protein = sequenceFactory.getProtein(tempProteinAccession);
-                    Boolean enzymatic = false;
+                    boolean enzymatic = false;
                     DigestionParameters digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionParameters();
+
                     if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
-                        enzymatic = protein.isEnzymaticPeptide(peptideMatch.getPeptide().getSequence(),
-                                digestionPreferences.getEnzymes(),
-                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
+
+                        enzymatic = PeptideUtils.isEnzymatic(peptideMatch.getPeptide(), peptideShakerGUI.getSequenceProvider(), digestionPreferences.getEnzymes());
+
                     }
 
-                    edgeProperties.put(peptideNodeName + "|" + proteinNodeKey, enzymatic.toString());
+                    edgeProperties.put(peptideNodeName + "|" + proteinNodeKey, Boolean.toString(enzymatic));
+
                 }
+
                 edges.put(peptideNodeName, tempEdges);
+
             }
         }
     }
@@ -779,7 +792,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         PSParameter psParameter = new PSParameter();
 
         try {
-            psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(inspectedMatch.getKey())).getUrParam(psParameter);
+            psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(inspectedMatch.getKey())).getUrParam(psParameter);
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             this.dispose();
@@ -812,7 +825,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
             if (column == 1) {
                 try {
-                    inspectedMatch.setLeadingAccession(accessions.get(row));
+                    inspectedMatch.setLeadingAccession(accessions[row]);
                     peptideShakerGUI.getIdentificationFeaturesGenerator().updateCoverableAA(inspectedMatch.getKey());
                     peptideShakerGUI.getIdentificationFeaturesGenerator().updateSequenceCoverage(inspectedMatch.getKey());
                     peptideShakerGUI.getIdentificationFeaturesGenerator().updateObservableCoverage(inspectedMatch.getKey());
@@ -1052,7 +1065,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public int getRowCount() {
-            return accessions.size();
+            return accessions.length;
         }
 
         @Override
@@ -1092,12 +1105,13 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 0:
                     return (row + 1);
                 case 1:
-                    return inspectedMatch.getLeadingAccession().equals(accessions.get(row));
+                    return inspectedMatch.getLeadingAccession().equals(accessions[row]);
                 case 2:
-                    return peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLink(accessions.get(row));
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLink(accessions[row]);
                 case 3:
                     try {
-                        String description = sequenceFactory.getHeader(accessions.get(row)).getSimpleProteinDescription();
+
+                        String description = peptideShakerGUI.getProteinDetailsProvider().getSimpleDescription(accessions[row]);
                         // if description is not set, return the accession instead - fix for home made fasta headers
                         if (description == null || description.trim().isEmpty()) {
                             description = inspectedMatch.getLeadingAccession();
@@ -1109,14 +1123,14 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     }
                 case 4:
                     try {
-                        return sequenceFactory.getHeader(accessions.get(row)).getGeneName();
+                        return peptideShakerGUI.getProteinDetailsProvider().getGeneName(accessions[row]);
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return "Database Error";
                     }
                 case 5:
                     try {
-                        String geneName = sequenceFactory.getHeader(accessions.get(row)).getGeneName();
+                        String geneName = peptideShakerGUI.getProteinDetailsProvider().getGeneName(accessions[row]);
                         String chromosomeNumber = geneMaps.getChromosome(geneName);
                         return new Chromosome(chromosomeNumber);
                     } catch (Exception e) {
@@ -1125,23 +1139,22 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     }
                 case 6:
                     try {
-                        String proteinEvidenceLevel = sequenceFactory.getHeader(accessions.get(row)).getProteinEvidence();
-                        if (proteinEvidenceLevel != null) {
+                        Integer level = peptideShakerGUI.getProteinDetailsProvider().getProteinEvidence(accessions[row]);
+                        if (level != null) {
                             try {
-                                Integer level = new Integer(proteinEvidenceLevel);
-                                proteinEvidenceLevel = Header.getProteinEvidencAsString(level);
+                                return Header.getProteinEvidencAsString(level);
                             } catch (NumberFormatException e) {
                                 // ignore
                             }
                         }
-                        return proteinEvidenceLevel;
+                        return "";
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return "Database Error";
                     }
                 case 7:
                     try {
-                        return peptideShakerGUI.getIdentificationFeaturesGenerator().hasEnzymaticPeptides(inspectedMatch, accessions.get(row));
+                        return peptideShakerGUI.getIdentificationFeaturesGenerator().hasEnzymaticPeptides(inspectedMatch.getKey());
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return "Database Error";
@@ -1173,7 +1186,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public int getRowCount() {
-            return uniqueMatches.size();
+            return uniqueMatches.length;
         }
 
         @Override
@@ -1201,22 +1214,18 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         @Override
         public Object getValueAt(int row, int column) {
 
-            PSParameter pSParameter = new PSParameter();
-            try {
-                pSParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(uniqueMatches.get(row))).getUrParam(pSParameter);
-            } catch (Exception e) {
-                peptideShakerGUI.catchException(e);
-            }
+            ProteinMatch proteinMatch = identification.getProteinMatch(uniqueMatches[row]);
+            PSParameter psParameter = (PSParameter) (proteinMatch).getUrParam(PSParameter.dummy);
 
             switch (column) {
                 case 0:
                     return (row + 1);
                 case 1:
-                    return peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLinks(new ArrayList<>(Arrays.asList(ProteinMatch.getAccessions(uniqueMatches.get(row)))));
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLinks(proteinMatch.getAccessions());
                 case 2:
-                    return pSParameter.getProteinConfidence();
+                    return psParameter.getConfidence();
                 case 3:
-                    return pSParameter.getMatchValidationLevel().getIndex();
+                    return psParameter.getMatchValidationLevel().getIndex();
                 default:
                     return "";
             }
@@ -1240,7 +1249,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public int getRowCount() {
-            return associatedMatches.size();
+            return associatedMatches.length;
         }
 
         @Override
@@ -1268,21 +1277,18 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         @Override
         public Object getValueAt(int row, int column) {
 
-            PSParameter pSParameter = new PSParameter();
-            try {
-                pSParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(associatedMatches.get(row))).getUrParam(pSParameter);
-            } catch (Exception e) {
-                peptideShakerGUI.catchException(e);
-            }
+            ProteinMatch proteinMatch = identification.getProteinMatch(uniqueMatches[row]);
+            PSParameter psParameter = (PSParameter) (proteinMatch).getUrParam(PSParameter.dummy);
+
             switch (column) {
                 case 0:
                     return (row + 1);
                 case 1:
-                    return peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLinks(new ArrayList<>(Arrays.asList(ProteinMatch.getAccessions(associatedMatches.get(row)))));
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLinks(proteinMatch.getAccessions());
                 case 2:
-                    return pSParameter.getProteinConfidence();
+                    return psParameter.getConfidence();
                 case 3:
-                    return pSParameter.getMatchValidationLevel().getIndex();
+                    return psParameter.getMatchValidationLevel().getIndex();
                 default:
                     return "";
             }

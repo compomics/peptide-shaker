@@ -26,6 +26,7 @@ import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
 import eu.isas.peptideshaker.parameters.PSModificationScores;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -155,10 +156,10 @@ public class DisplayFeaturesGenerator {
      *
      * @return the transformed accession number
      */
-    public String getDatabaseLinks(ArrayList<String> proteinAccessions) {
+    public String getDatabaseLinks(String[] proteinAccessions) {
 
-        return proteinAccessions.isEmpty() ? ""
-                : proteinAccessions.stream()
+        return proteinAccessions.length == 0 ? ""
+                : Arrays.stream(proteinAccessions)
                         .sorted()
                         .map(accession -> getDatabaseLink(accession))
                         .collect(Collectors.joining(", ", "<html>", "</html>"));
