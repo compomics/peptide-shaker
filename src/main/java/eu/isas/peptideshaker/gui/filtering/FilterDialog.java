@@ -9,8 +9,10 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.filtering.MatchFilter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -80,22 +82,15 @@ public class FilterDialog extends javax.swing.JDialog {
         nameTxt.setText(matchFilter.getName());
         descriptionTxt.setText(matchFilter.getDescription());
 
-        String text = "";
-        for (String key : matchFilter.getManualValidation()) {
-            if (!text.equals("")) {
-                text += "; ";
-            }
-            text += key;
-        }
+        
+        String text = matchFilter.getManualValidation().stream()
+                .map(key -> key.toString())
+                .collect(Collectors.joining(";"));
         manualValidationTxt.setText(text);
 
-        text = "";
-        for (String accession : matchFilter.getExceptions()) {
-            if (!text.equals("")) {
-                text += "; ";
-            }
-            text += accession;
-        }
+        text = matchFilter.getExceptions().stream()
+                .map(key -> key.toString())
+                .collect(Collectors.joining(";"));
         exceptionsTxt.setText(text);
 
         setUpTable();
@@ -624,15 +619,12 @@ public class FilterDialog extends javax.swing.JDialog {
      * @param text the text in the text field
      * @return a list of the parsed keys
      */
-    private ArrayList<String> parseAccessions(String text) {
-        ArrayList<String> result = new ArrayList<>();
-        String[] split = text.split(";"); //todo allow other separators
-        for (String part : split) {
-            if (!part.trim().equals("")) {
-                result.add(part.trim());
-            }
-        }
-        return result;
+    private HashSet<Long> parseAccessions(String text) {
+        
+        return Arrays.stream(text.split(";"))
+                .map(key -> new Long(key))
+                .collect(Collectors.toCollection(HashSet::new));
+        
     }
 
     /**
