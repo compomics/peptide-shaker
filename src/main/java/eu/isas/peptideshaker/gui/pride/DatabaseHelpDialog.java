@@ -1,21 +1,17 @@
 package eu.isas.peptideshaker.gui.pride;
 
+import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.experiment.io.biology.protein.converters.DecoyConverter;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
-import com.compomics.util.gui.JOptionEditorPane;
-import com.compomics.util.protein_sequences_manager.gui.SequenceDbDetailsDialog;
+import com.compomics.util.gui.parameters.identification.search.SequenceDbDetailsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.file.LastSelectedFolder;
 import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Color;
-import java.awt.Toolkit;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -29,10 +25,6 @@ import javax.swing.filechooser.FileFilter;
 public class DatabaseHelpDialog extends javax.swing.JDialog {
 
     /**
-     * The PeptideShakerGUI main frame.
-     */
-    private final PeptideShakerGUI peptideShakerGUI;
-    /**
      * The current species, can be null.
      */
     private String species;
@@ -41,29 +33,42 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      */
     private static ProgressDialogX progressDialog;
     /**
-     * The sequence factory.
-     */
-    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-    /**
      * The search parameters.
      */
     private final SearchParameters searchParameters;
+    /**
+     * The selected fasta file.
+     */
+    private File selectedFastaFile = null;
+    /**
+     * The last selected folder.
+     */
+    private LastSelectedFolder lastSelectedFolder;
+    /**
+     * The utilities user parameters.
+     */
+    private UtilitiesUserParameters utilitiesUserParameters;
 
     /**
      * Creates a new DatabaseHelpDialog.
      *
      * @param peptideShakerGUI the PeptideShakerGUI parent
      * @param searchParameters the search parameters
+     * @param lastSelectedFolder the last selected folder
      * @param modal if the dialog is to be modal or not
      * @param species the current species
      */
-    public DatabaseHelpDialog(PeptideShakerGUI peptideShakerGUI, SearchParameters searchParameters, boolean modal, String species) {
+    public DatabaseHelpDialog(PeptideShakerGUI peptideShakerGUI, SearchParameters searchParameters, LastSelectedFolder lastSelectedFolder, boolean modal, String species) {
         super(peptideShakerGUI, modal);
+        
         initComponents();
+        
         this.species = species;
         this.searchParameters = searchParameters;
-        this.peptideShakerGUI = peptideShakerGUI;
+        this.lastSelectedFolder = lastSelectedFolder;
 
+        this.utilitiesUserParameters = UtilitiesUserParameters.loadUserParameters();
+        
         boolean speciesOrTaxonomySet = false;
 
         if (species != null && species.length() > 0) {
@@ -80,6 +85,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
 
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
+        
     }
 
     /**
@@ -316,26 +322,33 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      */
     private void browseDatabaseSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseDatabaseSettingsActionPerformed
 
-        LastSelectedFolder lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();
         File startLocation = null;
-        File utilitiesDbFolder = peptideShakerGUI.getUtilitiesUserParameters().getDbFolder();
+        File utilitiesDbFolder = utilitiesUserParameters.getDbFolder();
+
         if (utilitiesDbFolder != null && utilitiesDbFolder.exists()) {
+
             startLocation = utilitiesDbFolder;
+
         }
+
         if (startLocation == null) {
+
             startLocation = new File(getLastSelectedFolder(lastSelectedFolder));
+
         }
 
         UtilitiesUserParameters utilitiesUserPreferences = UtilitiesUserParameters.loadUserParameters();
+
         if (utilitiesUserPreferences.getDbFolder() != null && utilitiesUserPreferences.getDbFolder().exists()) {
+
             startLocation = utilitiesUserPreferences.getDbFolder();
+
         }
 
-        // First check whether a file has already been selected.
-        // If so, start from that file's parent.
-        if (databaseSettingsTxt.getText() != null && new File(databaseSettingsTxt.getText()).exists()) {
-            File temp = new File(databaseSettingsTxt.getText());
-            startLocation = temp.getParentFile();
+        if (selectedFastaFile != null && selectedFastaFile.exists()) {
+
+            startLocation = selectedFastaFile.getParentFile();
+
         }
 
         JFileChooser fc = new JFileChooser(startLocation);
@@ -343,13 +356,12 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
             @Override
             public boolean accept(File myFile) {
                 return myFile.getName().toLowerCase().endsWith("fasta")
-                        || myFile.getName().toLowerCase().endsWith("fas")
                         || myFile.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "Supported formats: FASTA (.fasta or .fas)";
+                return "Supported formats: FASTA (.fasta)";
             }
         };
 
@@ -357,29 +369,30 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
         int result = fc.showOpenDialog(this);
 
         if (result == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
+            
+            selectedFastaFile = fc.getSelectedFile();
 
-            if (file.getName().contains(" ")) {
-                renameFastaFileName(file);
+            if (selectedFastaFile.getName().contains(" ")) {
+                renameFastaFileName();
             } else {
-                databaseSettingsTxt.setText(file.getAbsolutePath());
-                databaseSettingsTxt.setText(file.getAbsolutePath());
+                databaseSettingsTxt.setText(selectedFastaFile.getAbsolutePath());
+                databaseSettingsTxt.setText(selectedFastaFile.getAbsolutePath());
             }
 
-            lastSelectedFolder.setLastSelectedFolder(SequenceDbDetailsDialog.lastFolderKey, file.getAbsolutePath());
+            lastSelectedFolder.setLastSelectedFolder(SequenceDbDetailsDialog.lastFolderKey, selectedFastaFile.getAbsolutePath());
             targetDecoySettingsButton.setEnabled(true);
 
             // check if the database contains decoys
-            if (!file.getAbsolutePath().endsWith(peptideShakerGUI.getUtilitiesUserParameters().getTargetDecoyFileNameSuffix() + ".fasta")) {
+            if (!selectedFastaFile.getAbsolutePath().endsWith(utilitiesUserParameters.getTargetDecoyFileNameSuffix() + ".fasta")) {
 
                 int value = JOptionPane.showConfirmDialog(this,
                         "The selected FASTA file does not seem to contain decoy sequences.\n"
                         + "Decoys are required by PeptideShaker. Add decoys?", "Add Decoy Sequences?", JOptionPane.YES_NO_OPTION);
 
-                if (value == JOptionPane.NO_OPTION) {
-                    // do nothing
-                } else if (value == JOptionPane.YES_OPTION) {
+                if (value == JOptionPane.YES_OPTION) {
+                
                     targetDecoySettingsButtonActionPerformed(null);
+                
                 }
             }
 
@@ -459,10 +472,16 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        if (databaseSettingsTxt.getText().length() > 0) {
-            searchParameters.setFastaFile(new File(databaseSettingsTxt.getText()));
+        
+        if (selectedFastaFile != null) {
+            
+            searchParameters.setFastaFile(selectedFastaFile);
+            
         }
+        
+        UtilitiesUserParameters.saveUserParameters(utilitiesUserParameters);
         dispose();
+        
     }//GEN-LAST:event_okButtonActionPerformed
 
     /**
@@ -503,197 +522,110 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
     /**
      * Copies the content of the FASTA file to a new file and replaces any white
      * space in the file name with '_' instead.
-     *
-     * @param file the FASTA file
      */
-    public void renameFastaFileName(File file) {
+    public void renameFastaFileName() {
 
         // @TODO: this method should be merged with the identical method in SearchGUI...
-        String tempName = file.getName();
+        String tempName = selectedFastaFile.getName();
         tempName = tempName.replaceAll(" ", "_");
 
-        File renamedFile = new File(file.getParentFile().getAbsolutePath() + File.separator + tempName);
+        File renamedFile = new File(selectedFastaFile.getParentFile().getAbsolutePath() + File.separator + tempName);
 
         boolean success = false;
 
         try {
+            
             success = renamedFile.createNewFile();
 
             if (success) {
-
-                FileReader r = new FileReader(file);
-                BufferedReader br = new BufferedReader(r);
-
-                FileWriter w = new FileWriter(renamedFile);
-                BufferedWriter bw = new BufferedWriter(w);
-
-                String line = br.readLine();
-
-                while (line != null) {
-                    bw.write(line + "\n");
-                    line = br.readLine();
-                }
-
-                bw.close();
-                w.close();
-                br.close();
-                r.close();
+                
+                Util.copyFile(selectedFastaFile, renamedFile, true);
+                
             }
+            
         } catch (IOException e) {
+            
             e.printStackTrace();
+        
         }
 
         if (success) {
+            
             JOptionPane.showMessageDialog(this, "Your FASTA file name contained white space and has been renamed to:\n"
-                    + file.getParentFile().getAbsolutePath() + File.separator + tempName, "Renamed File", JOptionPane.WARNING_MESSAGE);
-            databaseSettingsTxt.setText(file.getParentFile().getAbsolutePath() + File.separator + tempName);
+                    + selectedFastaFile.getParentFile().getAbsolutePath() + File.separator + tempName, "Renamed File", JOptionPane.WARNING_MESSAGE);
+            databaseSettingsTxt.setText(selectedFastaFile.getParentFile().getAbsolutePath() + File.separator + tempName);
             targetDecoySettingsButton.setEnabled(true);
+        
         } else {
+        
             JOptionPane.showMessageDialog(this, "Your FASTA file name contains white space and has to been renamed.",
                     "Please Rename File", JOptionPane.WARNING_MESSAGE);
+        
         }
     }
 
     /**
-     * Adds a decoy database to the current FASTA file.
+     * Appends decoy sequences to the given target database file.
+     *
+     * @param targetFile the target database file
+     * @param progressDialog the progress dialog
      */
-    public void generateTargetDecoyDatabase() {
+    private void generateTargetDecoyDatabase() {
 
-        // @TODO: this method should be merged with the identical method in SearchGUI...
-        progressDialog = new ProgressDialogX(this, peptideShakerGUI,
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true);
-        progressDialog.setPrimaryProgressCounterIndeterminate(true);
-        progressDialog.setTitle("Creating Decoy. Please Wait...");
+        String fastaInput = selectedFastaFile.getAbsolutePath();
 
-        final DatabaseHelpDialog finalRef = this;
+        // set up the new fasta file name
+        String newFasta = fastaInput;
 
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    progressDialog.setVisible(true);
-                } catch (IndexOutOfBoundsException e) {
-                    // ignore
-                }
-            }
-        }, "ProgressDialog").start();
+        // remove the ending .fasta (if there)
+        if (fastaInput.lastIndexOf(".") != -1) {
+            newFasta = fastaInput.substring(0, fastaInput.lastIndexOf("."));
+        }
 
-        new Thread("DecoyThread") {
-            public void run() {
+        // add the target decoy tag
+        newFasta += utilitiesUserParameters.getTargetDecoyFileNameSuffix() + ".fasta";
 
-                String fastaInput = databaseSettingsTxt.getText().trim();
-                try {
-                    progressDialog.setTitle("Importing Database. Please Wait...");
-                    progressDialog.setPrimaryProgressCounterIndeterminate(false);
-                    sequenceFactory.loadFastaFile(new File(fastaInput), progressDialog);
-                } catch (IOException e) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef,
-                            "File " + fastaInput + " not found.",
-                            "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-                    e.printStackTrace();
-                    return;
-                } catch (ClassNotFoundException e) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef, JOptionEditorPane.getJOptionEditorPane("File index of " + fastaInput + " could not be imported.<br>"
-                            + "Please <a href=\"https://github.com/compomics/peptide-shaker/issues\">contact the developers</a>."),
-                            "FASTA Import Error", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    return;
-                } catch (StringIndexOutOfBoundsException e) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef,
-                            e.getMessage(),
-                            "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-                    e.printStackTrace();
-                    return;
-                } catch (IllegalArgumentException e) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef,
-                            e.getMessage(),
-                            "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-                    e.printStackTrace();
-                    return;
-                }
+        try {
 
-                if (sequenceFactory.concatenatedTargetDecoy() && !progressDialog.isRunCanceled()) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef,
-                            "The database already contains decoy sequences.",
-                            "FASTA File Already Decoy!", JOptionPane.WARNING_MESSAGE);
-                    targetDecoySettingsButton.setEnabled(false);
-                    return;
-                }
+            File newFile = new File(newFasta);
 
-                if (!progressDialog.isRunCanceled()) {
+            progressDialog.setTitle("Appending Decoy Sequences. Please Wait...");
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
-                    try {
-                        String newFasta = fastaInput.substring(0, fastaInput.lastIndexOf("."));
-                        newFasta += peptideShakerGUI.getUtilitiesUserParameters().getTargetDecoyFileNameSuffix() + ".fasta";
-                        progressDialog.setTitle("Appending Decoy Sequences. Please Wait...");
-                        sequenceFactory.appendDecoySequences(new File(newFasta), progressDialog);
-                        databaseSettingsTxt.setText(newFasta);
-                        targetDecoySettingsButton.setEnabled(false);
-                    } catch (IllegalArgumentException e) {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(finalRef,
-                                new String[]{"FASTA File Error.", fastaInput + " already contains decoy sequences."},
-                                "FASTA File Error", JOptionPane.WARNING_MESSAGE);
-                        targetDecoySettingsButton.setEnabled(false);
-                        e.printStackTrace();
-                        return;
-                    } catch (OutOfMemoryError error) {
-                        System.err.println("Ran out of memory!");
-                        System.err.println("Memory given to the Java virtual machine: " + Runtime.getRuntime().maxMemory() + ".");
-                        System.err.println("Memory used by the Java virtual machine: " + Runtime.getRuntime().totalMemory() + ".");
-                        System.err.println("Free memory in the Java virtual machine: " + Runtime.getRuntime().freeMemory() + ".");
-                        Runtime.getRuntime().gc();
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(finalRef,
-                                "PeptideShaker used up all the available memory and had to be stopped.\n"
-                                + "Memory boundaries are changed in the the Welcome Dialog (Settings\n"
-                                + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit\n"
-                                + "Java Options).\n\n"
-                                + "More help can be found at our website http://compomics.github.io/projects/peptide-shaker.html.",
-                                "Out Of Memory Error",
-                                JOptionPane.ERROR_MESSAGE);
-                        System.out.println("Ran out of memory!");
-                        error.printStackTrace();
-                        return;
-                    } catch (IOException e) {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(finalRef,
-                                new String[]{"FASTA Import Error.", "File " + fastaInput + " not found."},
-                                "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-                        e.printStackTrace();
-                        return;
-                    } catch (InterruptedException e) {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(finalRef,
-                                new String[]{"FASTA Import Error.", "File " + fastaInput + " could not be imported."},
-                                "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-                        e.printStackTrace();
-                        return;
-                    } catch (ClassNotFoundException e) {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(finalRef,
-                                new String[]{"FASTA Import Error.", "File " + fastaInput + " could not be imported."},
-                                "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-                        e.printStackTrace();
-                        return;
-                    }
-                }
+            DecoyConverter.appendDecoySequences(selectedFastaFile, newFile, progressDialog);
 
-                if (!progressDialog.isRunCanceled()) {
-                    progressDialog.setRunFinished();
-                    targetDecoySettingsButton.setEnabled(false);
-                    JOptionPane.showMessageDialog(finalRef, "Concatenated decoy database created and selected.", "Decoy Created", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    progressDialog.setRunFinished();
-                }
-            }
-        }.start();
+            progressDialog.setTitle("Getting Database Details. Please Wait...");
+
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
+
+            selectedFastaFile = newFile;
+
+        } catch (OutOfMemoryError error) {
+
+            Runtime.getRuntime().gc();
+            JOptionPane.showMessageDialog(this,
+                    "The tool used up all the available memory and had to be stopped.\n"
+                    + "Memory boundaries are set in the Edit menu (Edit > Java Options).",
+                    "Out Of Memory Error",
+                    JOptionPane.ERROR_MESSAGE);
+            System.out.println("Ran out of memory!");
+            error.printStackTrace();
+
+        } catch (FileNotFoundException e) {
+
+            JOptionPane.showMessageDialog(this,
+                    new String[]{"FASTA Import Error.", "File " + fastaInput + " not found."},
+                    "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(this,
+                    new String[]{"FASTA Import Error.", "File " + fastaInput + " could not be imported."},
+                    "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+
+        }
     }
 
     /**
@@ -717,8 +649,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
             databaseSettingsLbl.setToolTipText("Please select a valid '.fasta' or '.fas' database file");
             valid = false;
         } else {
-            File test = new File(databaseSettingsTxt.getText().trim());
-            if (!test.exists()) {
+            if (!selectedFastaFile.exists()) {
                 if (showMessage && valid) {
                     JOptionPane.showMessageDialog(this, "The database file could not be found.", "Search Database Not Found", JOptionPane.WARNING_MESSAGE);
                 }

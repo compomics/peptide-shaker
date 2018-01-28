@@ -8,7 +8,6 @@ import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.identification.identification_parameters.IdentificationParametersFactory;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.io.identification.MzIdentMLIdfileSearchParametersConverter;
-import com.compomics.util.experiment.mass_spectrometry.Charge;
 import com.compomics.util.experiment.mass_spectrometry.proteowizard.MsFormat;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
@@ -3315,17 +3314,17 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         // set the min/max precursor charge
         prideParametersReport += "<br><br><b>Min Precusor Charge:</b> ";
         if (minPrecursorCharge != null) {
-            prideSearchParameters.setMinChargeSearched(new Charge(Charge.PLUS, minPrecursorCharge));
+            prideSearchParameters.setMinChargeSearched(minPrecursorCharge);
             prideParametersReport += minPrecursorCharge;
         } else {
-            prideParametersReport += prideSearchParameters.getMinChargeSearched().value + " (default)";
+            prideParametersReport += prideSearchParameters.getMinChargeSearched() + " (default)";
         }
         prideParametersReport += "<br><b>Max Precusor Charge:</b> ";
         if (maxPrecursorCharge != null) {
-            prideSearchParameters.setMaxChargeSearched(new Charge(Charge.PLUS, maxPrecursorCharge));
+            prideSearchParameters.setMaxChargeSearched(maxPrecursorCharge);
             prideParametersReport += maxPrecursorCharge;
         } else {
-            prideParametersReport += prideSearchParameters.getMaxChargeSearched().value + " (default)";
+            prideParametersReport += prideSearchParameters.getMaxChargeSearched() + " (default)";
         }
 
         // taxonomy and species

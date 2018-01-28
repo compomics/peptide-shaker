@@ -3,15 +3,18 @@ package eu.isas.peptideshaker.gui.pride;
 import com.compomics.software.dialogs.ProteoWizardSetupDialog;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
+import com.compomics.util.experiment.io.biology.protein.FastaParameters;
+import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.mass_spectrometry.proteowizard.MsFormat;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
-import com.compomics.util.protein_sequences_manager.gui.SequenceDbDetailsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.file.LastSelectedFolder;
 import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import com.compomics.util.experiment.io.biology.protein.Header;
+import com.compomics.util.experiment.io.biology.protein.ProteinDatabase;
+import com.compomics.util.gui.parameters.identification.search.SequenceDbDetailsDialog;
+import com.compomics.util.parameters.identification.search.SearchParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -54,10 +57,6 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      * A simple progress dialog.
      */
     private static ProgressDialogX progressDialog;
-    /**
-     * The sequence factory.
-     */
-    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * True if a file is currently being downloaded.
      */
@@ -850,10 +849,10 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                                 // add the file name
                                 String fileName = (String) spectrumTable.getValueAt(i, spectrumTable.getColumn("File").getModelIndex());
                                 selectedFileNames.add(fileName);
-                                
+
                                 // add the link to the file
                                 selectedSpectrumFileLinks.add(link);
-                                
+
                                 // add the file size
                                 Double fileSizeInMB = (Double) spectrumTable.getValueAt(i, spectrumTable.getColumn("Size (MB)").getModelIndex());
                                 int fileSizeInBytes;
@@ -880,7 +879,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                             String link = (String) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("Download").getModelIndex());
                             link = link.substring(link.indexOf("\"") + 1);
                             link = link.substring(0, link.indexOf("\""));
-                            
+
                             String selectedSearchSettingsFileName = (String) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("File").getModelIndex());
 
                             if (!selectedSpectrumFileLinks.contains(link)) {
@@ -932,7 +931,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                     progressDialog.setRunFinished();
 
                     if (download) {
-                        prideReShakeGUI.downloadPrideDatasets(workingFolderTxt.getText(), selectedSpectrumFileLinks, selectedFileNames, 
+                        prideReShakeGUI.downloadPrideDatasets(workingFolderTxt.getText(), selectedSpectrumFileLinks, selectedFileNames,
                                 selectedSearchSettingsFileLink, databaseSettingsTxt.getText(), speciesJTextField.getText(), fileSizes);
                     } else {
                         JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, "No spectrum files found. Reshake canceled.", "File Error", JOptionPane.WARNING_MESSAGE);
@@ -971,20 +970,32 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      */
     private void browseDatabaseSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseDatabaseSettingsButtonActionPerformed
 
-        SequenceDbDetailsDialog sequenceDbDetailsDialog = new SequenceDbDetailsDialog(prideReShakeGUI, prideReShakeGUI.getPeptideShakerGUI().getLastSelectedFolder(), true,
+        SearchParameters searchParameters = prideReShakeGUI.getPeptideShakerGUI().getIdentificationParameters().getSearchParameters();
+        File fastaFile = searchParameters.getFastaFile();
+
+        SequenceDbDetailsDialog sequenceDbDetailsDialog = new SequenceDbDetailsDialog(prideReShakeGUI, fastaFile, searchParameters.getFastaParameters(),
+                prideReShakeGUI.getPeptideShakerGUI().getLastSelectedFolder(), true,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
         boolean success = sequenceDbDetailsDialog.selectDB(true);
         if (success) {
+            
             sequenceDbDetailsDialog.setVisible(true);
+            
+            fastaFile = sequenceDbDetailsDialog.getSelectedFastaFile();
+            searchParameters.setFastaFile(fastaFile);
+            searchParameters.setFastaParameters(sequenceDbDetailsDialog.getFastaParameters());
+ 
         }
 
         lastSelectedFolder.setLastSelectedFolder(sequenceDbDetailsDialog.getLastSelectedFolder());
 
-        if (sequenceFactory.getCurrentFastaFile() != null) {
-            databaseSettingsTxt.setText(sequenceFactory.getCurrentFastaFile().getAbsolutePath());
+        if (fastaFile != null) {
+
+            databaseSettingsTxt.setText(fastaFile.getAbsolutePath());
             checkFastaFile();
+
         }
 
         validateInput(false);
@@ -1185,7 +1196,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 } else {
                     fileSizeInBytes = -1;
                 }
-                
+
                 final String fileName = (String) spectrumTable.getValueAt(row, spectrumTable.getColumn("File").getModelIndex());
                 final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", lastSelectedFolder.getLastSelectedFolder(), "Download Folder", "Select", false);
 
@@ -1575,16 +1586,34 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      * target decoy.
      */
     public void checkFastaFile() {
-        if (sequenceFactory.getCurrentFastaIndex().getMainDatabaseType() != Header.ProteinDatabase.UniProt) {
+        
+        try {
+            
+        SearchParameters searchParameters = prideReShakeGUI.getPeptideShakerGUI().getIdentificationParameters().getSearchParameters();
+        FastaSummary fastaSummary = FastaSummary.getSummary(searchParameters.getFastaFile(), searchParameters.getFastaParameters(), progressDialog);
+        
+        if (!fastaSummary.databaseType.containsKey(ProteinDatabase.UniProt)) {
+            
             showDataBaseHelpDialog();
+ 
         }
-        if (!sequenceFactory.concatenatedTargetDecoy()) {
+        if (!searchParameters.getFastaParameters().isTargetDecoy()) {
+            
             JOptionPane.showMessageDialog(this, "PeptideShaker validation requires the use of a taget-decoy database.\n"
                     + "Some features will be limited if using other types of databases.\n\n"
                     + "Note that using Automatic Decoy Search in Mascot is not supported.\n\n"
                     + "See the PeptideShaker home page for details.",
                     "No Decoys Found",
                     JOptionPane.INFORMATION_MESSAGE);
+        
+        }
+        
+        } catch (IOException exception) {
+            
+            JOptionPane.showMessageDialog(this, "An error occurred while parsing the fasta file.",
+                    "Fasta File Error",
+                    JOptionPane.INFORMATION_MESSAGE);
+            
         }
     }
 
