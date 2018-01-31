@@ -175,7 +175,7 @@ public class ProteinSequencePanel {
 
                     ArrayList<ResidueAnnotation> annotation = blockTooltips.get(blockNumber);
                     if (annotation != null && !annotation.isEmpty()) {
-                        if (blockTooltips.get(blockNumber).get(0).isClickable()) {
+                        if (blockTooltips.get(blockNumber).get(0).clickable) {
                             cme.getTrigger().getComponent().setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
                         }
                     }
