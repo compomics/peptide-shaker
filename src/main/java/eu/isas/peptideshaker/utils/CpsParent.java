@@ -231,9 +231,9 @@ public class CpsParent extends UserPreferencesParent {
 
         }
 
-        loadUserPreferences();
+        loadUserParameters();
         userPreferences.addRecentProject(cpsFile);
-        saveUserPreferences();
+        saveUserParameters();
         
     }
 
@@ -253,9 +253,9 @@ public class CpsParent extends UserPreferencesParent {
                 spectrumCountingParameters, projectDetails, filterParameters, metrics, geneMaps,
                 identificationFeaturesGenerator.getIdentificationFeaturesCache(), emptyCache, displayParameters, dbFolder);
 
-        loadUserPreferences();
+        loadUserParameters();
         userPreferences.addRecentProject(cpsFile);
-        saveUserPreferences();
+        saveUserParameters();
         
     }
 

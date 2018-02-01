@@ -16,7 +16,6 @@ import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSModificationScores;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
-import eu.isas.peptideshaker.scoring.maps.modifications.PsmPTMMap;
 import eu.isas.peptideshaker.scoring.ModificationScoring;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.awt.Color;

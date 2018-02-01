@@ -31,7 +31,7 @@ import com.compomics.util.parameters.identification.advanced.ProteinInferencePar
 import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.gui.preferencesdialogs.ProjectSettingsDialog;
+import eu.isas.peptideshaker.gui.preferencesdialogs.ProjectParametersDialog;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.utils.PsZipUtils;
@@ -670,7 +670,7 @@ public class NewDialog extends javax.swing.JDialog {
             peptideShakerGUI.setVisible(true);
 
             peptideShakerGUI.setIdentificationParameters(identificationParameters);
-            peptideShakerGUI.setProcessingPreferences(processingParameters);
+            peptideShakerGUI.setProcessingParameters(processingParameters);
             peptideShakerGUI.setDisplayParameters(displayPreferences);
             projectDetails = new ProjectDetails();
             projectDetails.setCreationDate(new Date());
@@ -788,12 +788,6 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private void clearDbButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearDbButtonActionPerformed
         fastaFileTxt.setText("");
-        try {
-            sequenceFactory.clearFactory();
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to clear the sequence factory.", "File Error", JOptionPane.WARNING_MESSAGE);
-        }
         validateInput();
 }//GEN-LAST:event_clearDbButtonActionPerformed
 
@@ -1196,7 +1190,7 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private void editSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSettingsButtonActionPerformed
         IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(
-                this, peptideShakerGUI, identificationParameters, PeptideShaker.getConfigurationFile(), Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                this, peptideShakerGUI, identificationParameters, Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), peptideShakerGUI.getLastSelectedFolder(), peptideShakerGUI, true);
 
         if (!identificationParametersEditionDialog.isCanceled()) {
@@ -1210,10 +1204,10 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void projectSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectSettingsButtonActionPerformed
-        ProjectSettingsDialog preferencesDialog = new ProjectSettingsDialog(peptideShakerGUI, spectrumCountingPreferences, displayPreferences);
+        ProjectParametersDialog preferencesDialog = new ProjectParametersDialog(peptideShakerGUI, spectrumCountingPreferences, displayPreferences);
         if (!preferencesDialog.isCanceled()) {
-            spectrumCountingPreferences = preferencesDialog.getSpectrumCountingPreferences();
-            displayPreferences = preferencesDialog.getDisplayPreferences();
+            spectrumCountingPreferences = preferencesDialog.getSpectrumCountingParameters();
+            displayPreferences = preferencesDialog.getDisplayParameters();
         }
     }//GEN-LAST:event_projectSettingsButtonActionPerformed
 
@@ -1363,7 +1357,7 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private void addSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSettingsButtonActionPerformed
         IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(
-                this, peptideShakerGUI, null, PeptideShaker.getConfigurationFile(), Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                this, peptideShakerGUI, null, Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), peptideShakerGUI.getLastSelectedFolder(), null, true);
 
         if (!identificationParametersEditionDialog.isCanceled()) {
@@ -1644,7 +1638,7 @@ public class NewDialog extends javax.swing.JDialog {
         ArrayList<String> missing = new ArrayList<>();
 
         for (String name : modificationProfile.getAllModifications()) {
-            if (!ptmFactory.containsPTM(name)) {
+            if (!ptmFactory.containsModification(name)) {
                 missing.add(name);
                 Modification ptm = ptmFactory.getModification(name);
                 ptm.getMass();

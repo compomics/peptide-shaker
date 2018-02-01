@@ -9,11 +9,12 @@ import com.compomics.util.experiment.biology.ions.impl.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.modification.ModificationtableContent;
-import com.compomics.util.experiment.massspectrometry.spectra.MSnSpectrum;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
+import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
+import com.compomics.util.experiment.personalization.ExperimentObject;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -97,12 +98,10 @@ public class PtmTable extends JTable {
 
         modificationSites = new ArrayList<>();
 
-        if (peptide.isModified()) {
-            for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                if (modMatch.getModification().equals(ptm.getName())) {
-                    modificationSites.add(modMatch.getModificationSite());
-                    nPTM++;
-                }
+        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+            if (modMatch.getModification().equals(ptm.getName())) {
+                modificationSites.add(modMatch.getModificationSite());
+                nPTM++;
             }
         }
 
@@ -231,14 +230,14 @@ public class PtmTable extends JTable {
                 new Vector(),
                 columnHeaders) {
 
-                    public Class getColumnClass(int columnIndex) {
-                        return columnTypes.get(columnIndex);
-                    }
+            public Class getColumnClass(int columnIndex) {
+                return columnTypes.get(columnIndex);
+            }
 
-                    public boolean isCellEditable(int rowIndex, int columnIndex) {
-                        return false;
-                    }
-                });
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return false;
+            }
+        });
 
         // set the max column widths
         int tempWidth = 30; // @TODO: maybe this should not be hardcoded?
@@ -287,21 +286,20 @@ public class PtmTable extends JTable {
 
         AnnotationParameters annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationParameters();
         ModificationtableContent tempContent;
-        PtmtableContent tableContent = new ModificationtableContent();
+        ModificationtableContent tableContent = new ModificationtableContent();
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
         for (String spectrumKey : spectrumKeys) {
-            try {
-                MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
-                SpectrumMatch spectrumMatch = (SpectrumMatch)peptideShakerGUI.getIdentification().retrieveObject(spectrumKey);
+            
+                Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
+                long psmKey = ExperimentObject.asLong(spectrumKey);
+                SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
                 peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationParameters(spectrumKey, spectrumMatch.getBestPeptideAssumption()));
                 peptideShakerGUI.updateAnnotationPreferences();
                 tempContent = ModificationtableContent.getModificationTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences, peptideShakerGUI.getSpecificAnnotationPreferences());
                 tempContent.normalize();
                 tableContent.addAll(tempContent);
-            } catch (Exception e) {
-                peptideShakerGUI.catchException(e);
-            }
+                        
         }
 
         maxAreaChartValue = 0;
@@ -460,24 +458,22 @@ public class PtmTable extends JTable {
 
         AnnotationParameters annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationParameters();
         ModificationtableContent tempContent;
-        PtmtableContent tableContent = new ModificationtableContent();
-        MSnSpectrum spectrum;
+        ModificationtableContent tableContent = new ModificationtableContent();
         SpectrumMatch spectrumMatch;
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         String shortName = ptm.getShortName();
 
         for (String spectrumKey : spectrumKeys) {
-            try {
-                spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
-                spectrumMatch = (SpectrumMatch)peptideShakerGUI.getIdentification().retrieveObject(spectrumKey);
+            
+                Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
+                long psmKey = ExperimentObject.asLong(spectrumKey);
+                spectrumMatch = (SpectrumMatch) peptideShakerGUI.getIdentification().retrieveObject(psmKey);
                 peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationParameters(spectrumKey, spectrumMatch.getBestPeptideAssumption()));
                 peptideShakerGUI.updateAnnotationPreferences();
                 tempContent = ModificationtableContent.getModificationTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences, peptideShakerGUI.getSpecificAnnotationPreferences());
                 tempContent.normalize();
                 tableContent.addAll(tempContent);
-            } catch (Exception e) {
-                peptideShakerGUI.catchException(e);
-            }
+                
         }
 
         for (int aa = 0; aa < peptide.getSequence().length(); aa++) {

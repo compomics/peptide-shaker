@@ -14,7 +14,7 @@ import java.awt.Toolkit;
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
-public class ProjectSettingsDialog extends javax.swing.JDialog {
+public class ProjectParametersDialog extends javax.swing.JDialog {
 
     /**
      * The parent frame.
@@ -41,7 +41,7 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param displayPreferences the display preferences
      */
-    public ProjectSettingsDialog(java.awt.Frame parentFrame, Dialog owner, SpectrumCountingParameters spectrumCountingPreferences, DisplayParameters displayPreferences) {
+    public ProjectParametersDialog(java.awt.Frame parentFrame, Dialog owner, SpectrumCountingParameters spectrumCountingPreferences, DisplayParameters displayPreferences) {
         
         super(owner, true);
         initComponents();
@@ -61,7 +61,7 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param displayPreferences the display preferences
      */
-    public ProjectSettingsDialog(java.awt.Frame parentFrame, SpectrumCountingParameters spectrumCountingPreferences, DisplayParameters displayPreferences) {
+    public ProjectParametersDialog(java.awt.Frame parentFrame, SpectrumCountingParameters spectrumCountingPreferences, DisplayParameters displayPreferences) {
         
         super(parentFrame, true);
         initComponents();
@@ -95,7 +95,7 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
      *
      * @return the display preferences
      */
-    public DisplayParameters getDisplayPreferences() {
+    public DisplayParameters getDisplayParameters() {
         return displayPreferences;
     }
 
@@ -104,7 +104,7 @@ public class ProjectSettingsDialog extends javax.swing.JDialog {
      *
      * @return the spectrum counting preferences
      */
-    public SpectrumCountingParameters getSpectrumCountingPreferences() {
+    public SpectrumCountingParameters getSpectrumCountingParameters() {
         return spectrumCountingPreferences;
     }
 

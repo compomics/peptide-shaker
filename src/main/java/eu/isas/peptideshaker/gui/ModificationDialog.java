@@ -4,6 +4,7 @@ import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 /**
  * A dialog for mapping unknown modifications to the list of supported
@@ -177,11 +178,11 @@ public class ModificationDialog extends javax.swing.JDialog {
      * Loads the list of supported modifications.
      */
     private void loadModifications() {
-        modifications = new ArrayList<>();
-        for (String ptm : ModificationFactory.getInstance().getPTMs()) {
-            modifications.add(ptm);
-        }
-        Collections.sort(modifications);
+        
+        modifications = ModificationFactory.getInstance().getModifications().stream()
+                .sorted()
+                .collect(Collectors.toCollection(ArrayList::new));
+        
     }
 
     /**

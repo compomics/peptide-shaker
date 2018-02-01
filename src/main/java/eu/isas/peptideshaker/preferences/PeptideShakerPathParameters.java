@@ -215,7 +215,7 @@ public class PeptideShakerPathParameters {
      *
      * @throws FileNotFoundException thrown if an FileNotFoundException occurs
      */
-    public static void setPathPreferences(PathKey pathKey, String path) throws IOException {
+    public static void setPathParameters(PathKey pathKey, String path) throws IOException {
         if (pathKey instanceof PeptideShakerPathKey) {
             PeptideShakerPathKey peptideShakerPathKey = (PeptideShakerPathKey) pathKey;
             PeptideShakerPathParameters.setPathPreference(peptideShakerPathKey, path);

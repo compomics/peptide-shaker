@@ -361,7 +361,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             if (taxon == null) {
                                 GeneParametersDialog genePreferencesDialog = new GeneParametersDialog(peptideShakerGUI, genePreferences, identificationParameters.getSearchParameters(), false);
                                 if (!genePreferencesDialog.isCanceled()) {
-                                    genePreferences = genePreferencesDialog.getGenePreferences();
+                                    genePreferences = genePreferencesDialog.getGeneParameters();
                                     identificationParameters.setGeneParameters(genePreferences);
                                     taxon = genePreferences.getSelectedBackgroundSpecies();
                                 }

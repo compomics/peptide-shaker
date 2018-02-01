@@ -19,13 +19,13 @@ public abstract class UserPreferencesParent {
     /**
      * Loads the user preferences.
      */
-    public void loadUserPreferences() {
+    public void loadUserParameters() {
 
         try {
             File file = new File(PeptideShaker.getUserPreferencesFile());
             if (!file.exists()) {
                 userPreferences = new UserParameters();
-                saveUserPreferences();
+                saveUserParameters();
             } else {
                 userPreferences = (UserParameters) SerializationUtils.readObject(file);
             }
@@ -39,7 +39,7 @@ public abstract class UserPreferencesParent {
     /**
      * Saves the user preferences.
      */
-    public void saveUserPreferences() {
+    public void saveUserParameters() {
 
         try {
             File file = new File(PeptideShaker.getUserPreferencesFile());
