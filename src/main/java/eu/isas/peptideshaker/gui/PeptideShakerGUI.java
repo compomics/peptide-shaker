@@ -1,5 +1,8 @@
 package eu.isas.peptideshaker.gui;
 
+import eu.isas.peptideshaker.gui.parameters.ProjectParametersDialog;
+import eu.isas.peptideshaker.gui.parameters.ProjectDetailsDialog;
+import eu.isas.peptideshaker.gui.parameters.SpectrumColorsDialog;
 import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
 import com.compomics.util.experiment.biology.ions.Ion;
 import com.compomics.util.experiment.biology.ions.NeutralLoss;
@@ -18,8 +21,8 @@ import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssu
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import eu.isas.peptideshaker.gui.filtering.FiltersDialog;
 import com.compomics.util.gui.error_handlers.notification.NotificationDialogParent;
-import eu.isas.peptideshaker.gui.exportdialogs.FeaturesPreferencesDialog;
-import eu.isas.peptideshaker.gui.exportdialogs.FollowupPreferencesDialog;
+import eu.isas.peptideshaker.gui.export.FeaturesPreferencesDialog;
+import eu.isas.peptideshaker.gui.export.FollowupPreferencesDialog;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.software.ToolFactory;
@@ -51,7 +54,6 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Annotati
 import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import com.compomics.util.gui.parameters.identification.search.SearchParametersDialog;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.gui.preferencesdialogs.*;
 import eu.isas.peptideshaker.gui.tabpanels.AnnotationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.GOEAPanel;
 import eu.isas.peptideshaker.gui.tabpanels.OverviewPanel;
@@ -67,7 +69,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.preferences.UserParameters;
 import eu.isas.peptideshaker.PeptideShakerWrapper;
-import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
+import eu.isas.peptideshaker.gui.start.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import com.compomics.util.parameters.identification.advanced.GeneParameters;
@@ -105,8 +107,8 @@ import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
-import eu.isas.peptideshaker.gui.exportdialogs.MethodsSectionDialog;
-import eu.isas.peptideshaker.gui.exportdialogs.MzIdentMLExportDialog;
+import eu.isas.peptideshaker.gui.export.MethodsSectionDialog;
+import eu.isas.peptideshaker.gui.export.MzIdentMLExportDialog;
 import eu.isas.peptideshaker.gui.filtering.FilterDialog;
 import eu.isas.peptideshaker.gui.pride.PrideReshakeGUI;
 import eu.isas.peptideshaker.scoring.PSMaps;

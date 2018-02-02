@@ -1,8 +1,6 @@
-package eu.isas.peptideshaker.gui.preferencesdialogs;
+package eu.isas.peptideshaker.gui.parameters;
 
 import com.compomics.util.gui.error_handlers.HelpDialog;
-import eu.isas.peptideshaker.gui.preferencesdialogs.preferences_dialogs.DisplayPreferencesDialog;
-import eu.isas.peptideshaker.gui.preferencesdialogs.preferences_dialogs.SpectrumCountingSettingsDialog;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import java.awt.Dialog;

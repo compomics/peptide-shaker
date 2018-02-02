@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
-import eu.isas.peptideshaker.gui.exportdialogs.MzIdentMLExportDialog;
+import eu.isas.peptideshaker.gui.export.MzIdentMLExportDialog;
 
 /**
  * A dialog for displaying the various save/export options.

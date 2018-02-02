@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.gui.exportdialogs;
+package eu.isas.peptideshaker.gui.export;
 
 import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.Util;
@@ -612,9 +612,9 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
                         .addComponent(cancelButton))
                     .addComponent(introductionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addComponent(featuresPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
+                        .addComponent(featuresPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(outputPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 441, Short.MAX_VALUE)))
+                        .addComponent(outputPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 

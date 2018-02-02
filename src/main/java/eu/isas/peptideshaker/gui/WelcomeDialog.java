@@ -17,7 +17,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.file.LastSelectedFolder;
 import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
+import eu.isas.peptideshaker.gui.start.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideReshakeGUI;
 import java.awt.Image;
 import java.awt.Toolkit;

@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.gui.preferencesdialogs;
+package eu.isas.peptideshaker.gui.parameters;
 
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -117,8 +117,8 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
         detailsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Details"));
         detailsPanel.setOpaque(false);
 
-        projectDetailsJEditorPane.setContentType("text/html"); // NOI18N
         projectDetailsJEditorPane.setEditable(false);
+        projectDetailsJEditorPane.setContentType("text/html"); // NOI18N
         projectDetailsJScrollPane.setViewportView(projectDetailsJEditorPane);
 
         javax.swing.GroupLayout detailsPanelLayout = new javax.swing.GroupLayout(detailsPanel);

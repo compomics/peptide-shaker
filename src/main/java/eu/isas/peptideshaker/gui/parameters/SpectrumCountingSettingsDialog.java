@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.gui.preferencesdialogs.preferences_dialogs;
+package eu.isas.peptideshaker.gui.parameters;
 
 import com.compomics.util.experiment.units.MetricsPrefix;
 import com.compomics.util.experiment.units.StandardUnit;

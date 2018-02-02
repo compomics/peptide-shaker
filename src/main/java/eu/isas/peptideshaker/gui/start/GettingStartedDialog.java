@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.gui.gettingStarted;
+package eu.isas.peptideshaker.gui.start;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.gui.GuiUtilities;

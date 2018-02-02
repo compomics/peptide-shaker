@@ -31,7 +31,7 @@ import com.compomics.util.parameters.identification.advanced.ProteinInferencePar
 import com.compomics.util.parameters.tools.UtilitiesUserParameters;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.gui.preferencesdialogs.ProjectParametersDialog;
+import eu.isas.peptideshaker.gui.parameters.ProjectParametersDialog;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
 import eu.isas.peptideshaker.utils.PsZipUtils;

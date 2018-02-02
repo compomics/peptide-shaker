@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.gui.preferencesdialogs.preferences_dialogs;
+package eu.isas.peptideshaker.gui.parameters;
 
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import javax.swing.JSpinner;

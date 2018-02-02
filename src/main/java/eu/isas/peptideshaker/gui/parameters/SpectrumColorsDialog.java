@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.gui.preferencesdialogs;
+package eu.isas.peptideshaker.gui.parameters;
 
 import com.compomics.util.experiment.biology.ions.Ion;
 import com.compomics.util.experiment.biology.ions.IonFactory;
@@ -125,8 +125,6 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
         annotationColorsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Annotation Colors"));
         annotationColorsPanel.setOpaque(false);
 
-        colorsScrollPane.setOpaque(false);
-
         colorsTable.setModel(new IonLabelColorTableModel(iontypes, neutralLosses));
         colorsTable.setOpaque(false);
         colorsTable.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -191,7 +189,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
         );
         annotatedPeakColorPanelLayout.setVerticalGroup(
             annotatedPeakColorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 24, Short.MAX_VALUE)
         );
 
         backgroundPeakColorPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -216,21 +214,21 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
         );
         backgroundPeakColorPanelLayout.setVerticalGroup(
             backgroundPeakColorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 24, Short.MAX_VALUE)
         );
 
         annotatedWidthLabel.setText("Annotated Peak Width");
 
         backgroundWidthLabel.setText("Background Peak Width");
 
-        annotatedPeakWidthSpinner.setModel(new javax.swing.SpinnerNumberModel(Float.valueOf(1.0f), Float.valueOf(1.0f), null, Float.valueOf(1.0f)));
+        annotatedPeakWidthSpinner.setModel(new javax.swing.SpinnerNumberModel(1.0f, 1.0f, null, 1.0f));
         annotatedPeakWidthSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 annotatedPeakWidthSpinnerStateChanged(evt);
             }
         });
 
-        backgroundPeakWidthSpinner.setModel(new javax.swing.SpinnerNumberModel(Float.valueOf(1.0f), Float.valueOf(1.0f), null, Float.valueOf(1.0f)));
+        backgroundPeakWidthSpinner.setModel(new javax.swing.SpinnerNumberModel(1.0f, 1.0f, null, 1.0f));
         backgroundPeakWidthSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 backgroundPeakWidthSpinnerStateChanged(evt);

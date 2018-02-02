@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.gui.exportdialogs;
+package eu.isas.peptideshaker.gui.export;
 
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.export.ExportWriter;

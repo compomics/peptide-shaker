@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.gui.exportdialogs;
+package eu.isas.peptideshaker.gui.export;
 
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
