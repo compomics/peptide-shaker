@@ -359,14 +359,6 @@ public class Ms2pipExport {
          */
         private final AnnotationParameters annotationSettings;
         /**
-         * the sequence matching preferences.
-         */
-        private final SequenceMatchingParameters sequenceMatchingPreferences;
-        /**
-         * The PTM sequence matching preferences.
-         */
-        private final SequenceMatchingParameters ptmSequenceMatchingPreferences;
-        /**
          * The ms2pip features generator.
          */
         private final FeaturesGenerator featuresGenerator;
@@ -383,8 +375,6 @@ public class Ms2pipExport {
             this.identification = identification;
             this.psmIterator = psmIterator;
             this.annotationSettings = identificationParameters.getAnnotationParameters();
-            this.sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
-            this.ptmSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
             featuresGenerator = new FeaturesGenerator(featuresMap);
 
         }
@@ -409,7 +399,7 @@ public class Ms2pipExport {
 
                         if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
 
-                            SpecificAnnotationParameters specificAnnotationSettings = annotationSettings.getSpecificAnnotationParameters(spectrumKey, peptideAssumption, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
+                            SpecificAnnotationParameters specificAnnotationSettings = annotationSettings.getSpecificAnnotationParameters(spectrumKey, peptideAssumption);
 
                             Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
 

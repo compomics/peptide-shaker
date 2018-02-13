@@ -1,11 +1,12 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
+import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
+import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.table.DefaultTableModel;
@@ -21,70 +22,75 @@ import no.uib.jsparklines.renderers.JSparklinesArrayListBarChartTableCellRendere
 public class ProteinGoTableModel extends DefaultTableModel {
 
     /**
-     * The sequence factory.
-     */
-    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-    /**
-     * The main GUI class.
-     */
-    private PeptideShakerGUI peptideShakerGUI;
-    /**
      * The identification of this project.
      */
-    private Identification identification;
+    private final Identification identification;
+    /**
+     * The protein details provider.
+     */
+    private final ProteinDetailsProvider proteinDetailsProvider;
+    /**
+     * The identification features generator.
+     */
+    private final IdentificationFeaturesGenerator identificationFeaturesGenerator;
+    /**
+     * The display features generator.
+     */
+    private final DisplayFeaturesGenerator displayFeaturesGenerator;
+    /**
+     * Boolean indicating whether scores should be displayed.
+     */
+    private boolean showScores = true;
     /**
      * A list of the protein keys.
      */
-    private ArrayList<String> proteins = null;
+    private ArrayList<Long> proteinGroupKeys = null;
 
     /**
      * Constructor which sets a new table.
      *
-     * @param peptideShakerGUI instance of the main GUI class
-     * @param proteins the proteins
+     * @param identification the identification object
+     * @param proteinDetailsProvider the protein details provider
+     * @param identificationFeaturesGenerator the identification features
+     * generator
+     * @param displayFeaturesGenerator the display features generator
+     * @param proteinGroupKeys the keys of the protein groups to display
+     * @param showScores boolean indicating whether scores should be displayed
      */
-    public ProteinGoTableModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> proteins) {
-        setUpTableModel(peptideShakerGUI, proteins);
+    public ProteinGoTableModel(Identification identification, ProteinDetailsProvider proteinDetailsProvider, IdentificationFeaturesGenerator identificationFeaturesGenerator, DisplayFeaturesGenerator displayFeaturesGenerator, ArrayList<Long> proteinGroupKeys, boolean showScores) {
+
+        this.identification = identification;
+        this.proteinDetailsProvider = proteinDetailsProvider;
+        this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+        this.displayFeaturesGenerator = displayFeaturesGenerator;
+        this.proteinGroupKeys = proteinGroupKeys;
+        this.showScores = showScores;
     }
 
     /**
      * Update the data in the table model without having to reset the whole
      * table model. This keeps the sorting order of the table.
      *
-     * @param peptideShakerGUI instance of the main GUI class
-     * @param proteins the proteins
+     * @param proteinGroupKeys the keys of the protein groups to display
      */
-    public void updateDataModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> proteins) {
-        setUpTableModel(peptideShakerGUI, proteins);
-    }
+    public void updateDataModel(ArrayList<Long> proteinGroupKeys) {
 
-    /**
-     * Set up the table model.
-     *
-     * @param peptideShakerGUI
-     */
-    private void setUpTableModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> proteins) {
-        this.peptideShakerGUI = peptideShakerGUI;
-        identification = peptideShakerGUI.getIdentification();
-        if (identification != null) {
-            this.proteins = proteins;
-        }
+        this.proteinGroupKeys = proteinGroupKeys;
+
     }
 
     /**
      * Reset the protein keys.
      */
     public void reset() {
-        proteins = null;
+        proteinGroupKeys = null;
     }
 
     @Override
     public int getRowCount() {
-        if (proteins != null) {
-            return proteins.size();
-        } else {
-            return 0;
-        }
+
+        return proteinGroupKeys == null ? 0 : proteinGroupKeys.size();
+
     }
 
     @Override
@@ -110,11 +116,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
             case 6:
                 return "MS2 Quant.";
             case 7:
-                if (peptideShakerGUI != null && peptideShakerGUI.getDisplayParameters().showScores()) {
-                    return "Score";
-                } else {
-                    return "Confidence";
-                }
+                return showScores ? "Score" : "Confidence";
             case 8:
                 return "  ";
             default:
@@ -125,106 +127,71 @@ public class ProteinGoTableModel extends DefaultTableModel {
     @Override
     public Object getValueAt(int row, int column) {
 
-        if (!proteins.isEmpty()) {
+        long proteinGroupKey = proteinGroupKeys.get(row);
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinGroupKey);
 
-            try {
-                String proteinKey = proteins.get(row);
-                ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(proteinKey);
-                switch (column) {
-                    case 0:
-                        return row + 1;
-                    case 1:
-                        String mainMatch = proteinMatch.getLeadingAccession();
-                        return peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLink(mainMatch);
-                    case 2:
-                        String description = "";
-                        try {
-                            description = sequenceFactory.getHeader(proteinMatch.getLeadingAccession()).getSimpleProteinDescription();
-                        } catch (Exception e) {
-                            peptideShakerGUI.catchException(e);
-                        }
-                        return description;
-                    case 3:
-                        HashMap<Integer, Double> sequenceCoverage;
-                        try {
-                            sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
-                        } catch (Exception e) {
-                            peptideShakerGUI.catchException(e);
-                            return Double.NaN;
-                        }
-                        Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
-                        Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
-                        Double sequenceCoverageNotValidated = 100 * sequenceCoverage.get(MatchValidationLevel.not_validated.getIndex()); //@TODO: this does not seem to be used?
-                        double possibleCoverage = 100;
-                        try {
-                            possibleCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
-                        } catch (Exception e) {
-                            peptideShakerGUI.catchException(e);
-                        }
-                        ArrayList<Double> doubleValues = new ArrayList<>();
-                        doubleValues.add(sequenceCoverageConfident);
-                        doubleValues.add(sequenceCoverageDoubtful);
-                        doubleValues.add(sequenceCoverageNotValidated);
-                        doubleValues.add(possibleCoverage - sequenceCoverageConfident - sequenceCoverageDoubtful - sequenceCoverageNotValidated);
-                        ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumExceptLastNumber);
-                        return arrrayListDataPoints;
-                    case 4:
-                        try {
-                            double nConfidentPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentPeptides(proteinKey);
-                            double nDoubtfulPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) - nConfidentPeptides;
+        switch (column) {
 
-                            doubleValues = new ArrayList<>();
-                            doubleValues.add(nConfidentPeptides);
-                            doubleValues.add(nDoubtfulPeptides);
-                            doubleValues.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
-                            arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
-                            return arrrayListDataPoints;
-                        } catch (Exception e) {
-                            peptideShakerGUI.catchException(e);
-                            return Double.NaN;
-                        }
-                    case 5:
-                        try {
-                            double nConfidentSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentSpectra(proteinKey);
-                            double nDoubtfulSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) - nConfidentSpectra;
-                            int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
+            case 0:
+                return row + 1;
 
-                            doubleValues = new ArrayList<>();
-                            doubleValues.add(nConfidentSpectra);
-                            doubleValues.add(nDoubtfulSpectra);
-                            doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
-                            arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
-                            return arrrayListDataPoints;
-                        } catch (Exception e) {
-                            peptideShakerGUI.catchException(e);
-                            return Double.NaN;
-                        }
-                    case 6:
-                        try {
-                            return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
-                        } catch (Exception e) {
-                            peptideShakerGUI.catchException(e);
-                            return Double.NaN;
-                        }
-                    case 7:
-                        PSParameter pSParameter = (PSParameter)proteinMatch.getUrParam(PSParameter.dummy);
-                        if (peptideShakerGUI.getDisplayParameters().showScores()) {
-                            return pSParameter.getProteinScore();
-                        } else {
-                            return pSParameter.getProteinConfidence();
-                        }
-                    case 8:
-                        pSParameter = (PSParameter)proteinMatch.getUrParam(PSParameter.dummy);
-                        return pSParameter.getMatchValidationLevel().getIndex();
-                    default:
-                        return "";
-                }
-            } catch (Exception e) {
-                peptideShakerGUI.catchException(e);
+            case 1:
+                String mainMatch = proteinMatch.getLeadingAccession();
+                return displayFeaturesGenerator.getDatabaseLink(mainMatch);
+
+            case 2:
+                return proteinDetailsProvider.getSimpleDescription(proteinMatch.getLeadingAccession());
+
+            case 3:
+                HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinGroupKey);
+                Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                Double sequenceCoverageNotValidated = 100 * sequenceCoverage.get(MatchValidationLevel.not_validated.getIndex()); //@TODO: this does not seem to be used?
+                double possibleCoverage = 100.0 * identificationFeaturesGenerator.getObservableCoverage(proteinGroupKey);
+                ArrayList<Double> doubleValues = new ArrayList<>(4);
+                doubleValues.add(sequenceCoverageConfident);
+                doubleValues.add(sequenceCoverageDoubtful);
+                doubleValues.add(sequenceCoverageNotValidated);
+                doubleValues.add(possibleCoverage - sequenceCoverageConfident - sequenceCoverageDoubtful - sequenceCoverageNotValidated);
+                ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumExceptLastNumber);
+                return arrrayListDataPoints;
+
+            case 4:
+                double nConfidentPeptides = identificationFeaturesGenerator.getNConfidentPeptides(proteinGroupKey);
+                double nDoubtfulPeptides = identificationFeaturesGenerator.getNValidatedPeptides(proteinGroupKey) - nConfidentPeptides;
+
+                doubleValues = new ArrayList<>(3);
+                doubleValues.add(nConfidentPeptides);
+                doubleValues.add(nDoubtfulPeptides);
+                doubleValues.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
+                arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
+                return arrrayListDataPoints;
+
+            case 5:
+                double nConfidentSpectra = identificationFeaturesGenerator.getNConfidentSpectra(proteinGroupKey);
+                double nDoubtfulSpectra = identificationFeaturesGenerator.getNValidatedSpectra(proteinGroupKey) - nConfidentSpectra;
+                int nSpectra = identificationFeaturesGenerator.getNSpectra(proteinGroupKey);
+
+                doubleValues = new ArrayList<>(3);
+                doubleValues.add(nConfidentSpectra);
+                doubleValues.add(nDoubtfulSpectra);
+                doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
+                arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
+                return arrrayListDataPoints;
+
+            case 6:
+                return identificationFeaturesGenerator.getSpectrumCounting(proteinGroupKey);
+
+            case 7:
+                PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
+                return showScores ? psParameter.getScore() : psParameter.getConfidence();
+
+            case 8:
+                psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
+                return psParameter.getMatchValidationLevel().getIndex();
+
+            default:
                 return "";
-            }
-        } else {
-            return null;
         }
     }
 
@@ -241,5 +208,14 @@ public class ProteinGoTableModel extends DefaultTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
+    }
+
+    /**
+     * Returns the list of protein groups in the model.
+     *
+     * @return the list of protein groups in the model
+     */
+    public ArrayList<Long> getProteins() {
+        return proteinGroupKeys;
     }
 }

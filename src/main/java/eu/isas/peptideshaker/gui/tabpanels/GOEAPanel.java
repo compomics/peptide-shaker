@@ -8,10 +8,8 @@ import com.compomics.util.experiment.biology.genes.go.GoDomains;
 import com.compomics.util.experiment.biology.genes.go.GoMapping;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
-import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.XYPlottingDialog;
@@ -20,6 +18,7 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.parameters.identification.advanced.GeneParametersDialog;
+import com.compomics.util.io.json.JsonMarshaller;
 import com.compomics.util.parameters.identification.advanced.GeneParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -40,6 +39,7 @@ import java.io.*;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.RowSorterEvent;
@@ -96,10 +96,6 @@ public class GOEAPanel extends javax.swing.JPanel {
      * The GO mappings table column header tooltips.
      */
     private ArrayList<String> mappingsTableToolTips;
-    /**
-     * The sequence factory.
-     */
-    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The distribution chart panel.
      */
@@ -250,7 +246,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         // use a gray color for no decoy searches
         Color nonValidatedColor = peptideShakerGUI.getSparklineColorNonValidated();
-        if (!sequenceFactory.concatenatedTargetDecoy()) {
+        if (!peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFastaParameters().isTargetDecoy()) {
             nonValidatedColor = peptideShakerGUI.getUtilitiesUserParameters().getSparklineColorNotFound();
         }
         ArrayList<Color> sparklineColors = new ArrayList<>();
@@ -384,16 +380,14 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 progressDialog.setValue(0);
 
                                 int totalNumberOfGoMappedProteinsInProject = 0;
-                                PSParameter psParameter = new PSParameter();
                                 ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(progressDialog);
                                 ProteinMatch proteinMatch;
 
                                 while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
-                                    String proteinKey = proteinMatch.getKey();
-                                    psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+                                    PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
-                                    if (psParameter.getMatchValidationLevel().isValidated() && !ProteinMatch.isDecoy(proteinKey) && !psParameter.getHidden()) {
+                                    if (psParameter.getMatchValidationLevel().isValidated() && !proteinMatch.isDecoy() && !psParameter.getHidden()) {
 
                                         String mainMatch = proteinMatch.getLeadingAccession();
                                         HashSet<String> goTerms = backgroundGoMapping.getGoAccessions(mainMatch);
@@ -467,13 +461,13 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                         // URL to the JSON file for the given GO term
                                         URL u = new URL("https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/" + goAccession);
-                                        
+
                                         JsonMarshaller jsonMarshaller = new JsonMarshaller();
                                         QuickGoTerm result = (QuickGoTerm) jsonMarshaller.fromJson(QuickGoTerm.class, u);
 
                                         // get the domain 
                                         for (DummyResults tempResult : result.results) {
-                                           goDomain = tempResult.aspect;
+                                            goDomain = tempResult.aspect;
                                         }
 
                                         // add the domain to the list
@@ -1765,20 +1759,25 @@ public class GOEAPanel extends javax.swing.JPanel {
         int row = proteinTable.getSelectedRow();
 
         if (row != -1) {
+
             // update the protein selection
-            String selectedProtein = (String) proteinTable.getValueAt(row, proteinTable.getColumn("Accession").getModelIndex());
-            selectedProtein = selectedProtein.substring(selectedProtein.lastIndexOf("\">") + "\">".length(), selectedProtein.lastIndexOf("</font>"));
-            String psmKey = PeptideShakerGUI.NO_SELECTION;
+            ProteinGoTableModel proteinGoTableModel = (ProteinGoTableModel) proteinTable.getModel();
+            int selectedGroupIndex = proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow());
+            long proteinGroupKey = proteinGoTableModel.getProteins().get(selectedGroupIndex);
+
+            long psmKey = PeptideShakerGUI.NO_SELECTION;
 
             // try to select the "best" peptide for the selected peptide
-            String peptideKey = peptideShakerGUI.getDefaultPeptideSelection(selectedProtein);
+            long peptideKey = peptideShakerGUI.getDefaultPeptideSelection(proteinGroupKey);
 
             // try to select the "best" psm for the selected peptide
-            if (!peptideKey.equalsIgnoreCase(PeptideShakerGUI.NO_SELECTION)) {
+            if (peptideKey != PeptideShakerGUI.NO_SELECTION) {
+
                 psmKey = peptideShakerGUI.getDefaultPsmSelection(peptideKey);
+
             }
 
-            peptideShakerGUI.setSelectedItems(selectedProtein, peptideKey, psmKey);
+            peptideShakerGUI.setSelectedItems(proteinGroupKey, peptideKey, psmKey);
         }
     }//GEN-LAST:event_proteinTableKeyReleased
 
@@ -2129,24 +2128,18 @@ public class GOEAPanel extends javax.swing.JPanel {
                         // get the list of matching proteins
                         GeneMaps geneMaps = peptideShakerGUI.getGeneMaps();
                         HashSet<String> goProteins = geneMaps.getProteinsForGoTerm(selectedGoAccession);
-                        HashSet<String> proteinKeys = new HashSet<>(goProteins.size());
                         Identification identification = peptideShakerGUI.getIdentification();
-                        HashMap<String, HashSet<String>> proteinMap = identification.getProteinMap();
-                        for (String goProtein : goProteins) {
-                            HashSet<String> tempKeys = proteinMap.get(goProtein);
-                            if (tempKeys != null) {
-                                proteinKeys.addAll(tempKeys);
-                            }
-                        }
 
-                        ArrayList<String> proteinKeysList = new ArrayList<>(proteinKeys);
-                        identification.loadObjects(proteinKeysList, progressDialog, false);
+                        ArrayList<Long> proteinKeys = goProteins.stream()
+                                .flatMap(accession -> identification.getProteinMap().get(accession).stream())
+                                .distinct()
+                                .collect(Collectors.toCollection(ArrayList::new));
 
                         // update the table
                         if (proteinTable.getModel() instanceof ProteinGoTableModel) {
-                            ((ProteinGoTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI, proteinKeysList);
+                            ((ProteinGoTableModel) proteinTable.getModel()).updateDataModel(proteinKeys);
                         } else {
-                            ProteinGoTableModel proteinTableModel = new ProteinGoTableModel(peptideShakerGUI, proteinKeysList);
+                            ProteinGoTableModel proteinTableModel = new ProteinGoTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getDisplayFeaturesGenerator(), proteinKeys, peptideShakerGUI.getDisplayParameters().showScores());
                             proteinTable.setModel(proteinTableModel);
                         }
 
@@ -2158,10 +2151,10 @@ public class GOEAPanel extends javax.swing.JPanel {
                             // get the number of confident and doubtful matches
                             int nConfident = 0;
                             int nDoubtful = 0;
-                            PSParameter psParameter = new PSParameter();
 
-                            for (String proteinKey : proteinKeys) {
-                                psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(proteinKey)).getUrParam(psParameter);
+                            for (long proteinKey : proteinKeys) {
+
+                                PSParameter psParameter = (PSParameter) (identification.getProteinMatch(proteinKey)).getUrParam(PSParameter.dummy);
                                 MatchValidationLevel level = psParameter.getMatchValidationLevel();
 
                                 if (level == MatchValidationLevel.confident) {
@@ -2191,10 +2184,12 @@ public class GOEAPanel extends javax.swing.JPanel {
                             proteinTable.scrollRectToVisible(proteinTable.getCellRect(0, 0, false));
 
                             // update the protein selection
-                            String selectedProtein = (String) proteinTable.getValueAt(0, proteinTable.getColumn("Accession").getModelIndex());
-                            selectedProtein = selectedProtein.substring(selectedProtein.lastIndexOf("\">") + "\">".length(), selectedProtein.lastIndexOf("</font>"));
-                            peptideShakerGUI.setSelectedItems(selectedProtein, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
+                            ProteinGoTableModel proteinGoTableModel = (ProteinGoTableModel) proteinTable.getModel();
+                            int selectedGroupIndex = proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow());
+                            long proteinGroupKey = proteinGoTableModel.getProteins().get(selectedGroupIndex);
+                            peptideShakerGUI.setSelectedItems(proteinGroupKey, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
                             proteinTableKeyReleased(null);
+
                         }
 
                         progressDialog.setRunFinished();
@@ -2222,6 +2217,7 @@ public class GOEAPanel extends javax.swing.JPanel {
          * The aspect object from the results.
          */
         public class DummyResults {
+
             String aspect;
         }
     }
