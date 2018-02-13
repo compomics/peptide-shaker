@@ -2,7 +2,8 @@ package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
+import com.compomics.util.experiment.io.biology.protein.ProteinDatabase;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.io.IOException;
@@ -24,10 +25,6 @@ public class AnnotationPanel extends javax.swing.JPanel {
      * The PeptideShakerGUI parent.
      */
     private final PeptideShakerGUI peptideShakerGUI;
-    /**
-     * The sequence factory.
-     */
-    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
     /**
      * Creates a new AnnotationPanel.
@@ -37,15 +34,6 @@ public class AnnotationPanel extends javax.swing.JPanel {
     public AnnotationPanel(PeptideShakerGUI peptideShakerGUI) {
         initComponents();
         this.peptideShakerGUI = peptideShakerGUI;
-    }
-
-    /**
-     * Clears the old data.
-     */
-    private void clearOldData() {
-        proteinDescriptionTextArea.setText("");
-        geneNameJTextField.setText("");
-        taxonomyJTextField.setText("");
     }
 
     /**
@@ -1362,33 +1350,25 @@ public class AnnotationPanel extends javax.swing.JPanel {
             currentAccessionNumber = aAccessionNumber;
             accessionNumberJTextField.setText(currentAccessionNumber);
 
-            try {
-                proteinDescriptionTextArea.setText(sequenceFactory.getHeader(aAccessionNumber).getSimpleProteinDescription());
-                String geneName = sequenceFactory.getHeader(aAccessionNumber).getGeneName();
-                geneNameJTextField.setText(geneName);
+            ProteinDetailsProvider proteinDetailsProvider = peptideShakerGUI.getProteinDetailsProvider();
+            String simpleDescription = proteinDetailsProvider.getSimpleDescription(aAccessionNumber);
+            String geneName = proteinDetailsProvider.getGeneName(aAccessionNumber);
+            String taxonomy = proteinDetailsProvider.getTaxonomy(aAccessionNumber);
+            ProteinDatabase proteinDatabase = proteinDetailsProvider.getProteinDatabase(aAccessionNumber);
 
-                if (geneName != null) {
-                    GeneMaps geneMaps = peptideShakerGUI.getGeneMaps();
-                    chromosomeJTextField.setText(geneMaps.getChromosome(geneName));
-                } else {
-                    chromosomeJTextField.setText(null);
-                }
+            proteinDescriptionTextArea.setText(simpleDescription);
+            geneNameJTextField.setText(geneName);
 
-                taxonomyJTextField.setText(sequenceFactory.getHeader(aAccessionNumber).getTaxonomy());
-                databaseJTextField.setText("" + sequenceFactory.getProtein(aAccessionNumber).getDatabaseType());
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while loading the protein information.", "File Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while loading the protein information.", "File Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
-                        e.getLocalizedMessage() + "<br>"
-                        + "Please see the <a href=\"http://compomics.github.io/projects/peptide-shaker.html#troubleshooting\">Troubleshooting section</a>."),
-                        "File Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+            if (geneName != null) {
+                GeneMaps geneMaps = peptideShakerGUI.getGeneMaps();
+                chromosomeJTextField.setText(geneMaps.getChromosome(geneName));
+            } else {
+                chromosomeJTextField.setText(null);
             }
+
+            taxonomyJTextField.setText(taxonomy);
+            databaseJTextField.setText(proteinDatabase.getFullName());
+            
         }
     }
 }

@@ -7,10 +7,10 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.gui.renderers.AlignedTableCellRenderer;
 import com.compomics.util.gui.error_handlers.HelpDialog;
+import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSModificationScores;
@@ -21,7 +21,9 @@ import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -83,46 +85,42 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      * @param peptideKey the peptide key of the investigated peptide
      * @param ptm the PTM investigated
      */
-    public PtmSiteInferenceDialog(PeptideShakerGUI peptideShakerGUI, String peptideKey, Modification ptm) {
+    public PtmSiteInferenceDialog(PeptideShakerGUI peptideShakerGUI, long peptideKey, Modification ptm) {
         super(peptideShakerGUI, true);
 
         this.peptideShakerGUI = peptideShakerGUI;
         this.ptm = ptm;
         double ptmMass = ptm.getMass();
 
-        try {
-            peptideMatch = (PeptideMatch)peptideShakerGUI.getIdentification().retrieveObject(peptideKey);
-            Peptide peptide = peptideMatch.getPeptide();
-            peptidePtmScore = (PSModificationScores) peptideMatch.getUrParam(new PSModificationScores());
-            if (peptidePtmScore != null) {
+        Identification identification = peptideShakerGUI.getIdentification();
+        peptideMatch = identification.getPeptideMatch(peptideKey);
+        Peptide peptide = peptideMatch.getPeptide();
+        peptidePtmScore = (PSModificationScores) peptideMatch.getUrParam(new PSModificationScores());
+        if (peptidePtmScore != null) {
 
-                mainSelection = new boolean[peptide.getSequence().length()];
-                for (String ptmName : peptidePtmScore.getConfidentlyLocalizedModifications()) {
-                    Modification tempPTM = ptmFactory.getModification(ptmName);
-                    if (tempPTM.getMass() == ptmMass) { // @TODO: compare against the accuracy
-                        for (int site : peptidePtmScore.getConfidentSitesForModification(ptmName)) {
-                            mainSelection[site - 1] = true;
-                        }
-                    }
-                }
-
-                secondarySelection = new boolean[peptide.getSequence().length()];
-                for (String ptmName : peptidePtmScore.getAmbiguouslyLocalizedModifications()) {
-                    Modification tempPTM = ptmFactory.getModification(ptmName);
-                    if (tempPTM.getMass() == ptmMass) { // @TODO: compare against the accuracy
-                        for (int site : peptidePtmScore.getAmbiguousModificationsSites(ptmName).keySet()) {
-                            secondarySelection[site - 1] = true;
-                        }
+            mainSelection = new boolean[peptide.getSequence().length()];
+            for (String ptmName : peptidePtmScore.getConfidentlyLocalizedModifications()) {
+                Modification tempPTM = ptmFactory.getModification(ptmName);
+                if (tempPTM.getMass() == ptmMass) { // @TODO: compare against the accuracy
+                    for (int site : peptidePtmScore.getConfidentSitesForModification(ptmName)) {
+                        mainSelection[site - 1] = true;
                     }
                 }
             }
 
-            psms.addAll(peptideShakerGUI.getIdentification().retrieveObjects(peptideMatch.getSpectrumMatchesKeys(), null, false)
-                    .stream().map(object -> (SpectrumMatch) object).collect(Collectors.toCollection(ArrayList::new)));
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-            dispose();
+            secondarySelection = new boolean[peptide.getSequence().length()];
+            for (String ptmName : peptidePtmScore.getAmbiguouslyLocalizedModifications()) {
+                Modification tempPTM = ptmFactory.getModification(ptmName);
+                if (tempPTM.getMass() == ptmMass) { // @TODO: compare against the accuracy
+                    for (int site : peptidePtmScore.getAmbiguousModificationsSites(ptmName).keySet()) {
+                        secondarySelection[site - 1] = true;
+                    }
+                }
+            }
         }
+
+        psms.addAll(identification.retrieveObjects(Arrays.stream(peptideMatch.getSpectrumMatchesKeys()).boxed().collect(Collectors.toList()), null, false)
+                .stream().map(object -> (SpectrumMatch) object).collect(Collectors.toCollection(ArrayList::new)));
 
         initComponents();
 
@@ -132,13 +130,9 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         updateSequenceLabel();
 
         // set the modification tooltip
-        try {
-            String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(
-                    (PeptideMatch)peptideShakerGUI.getIdentification().retrieveObject(peptideKey));
-            sequenceLabel.setToolTipText(tooltip);
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-        }
+        String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(
+                (PeptideMatch) peptideShakerGUI.getIdentification().retrieveObject(peptideKey));
+        sequenceLabel.setToolTipText(tooltip);
 
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
@@ -202,54 +196,50 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      * Updates the sequence label based on the selection in the table.
      */
     private void updateSequenceLabel() {
-        try {
-            DisplayParameters displayPreferences = peptideShakerGUI.getDisplayParameters();
-            ModificationParameters modificationProfile = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters();
-            Peptide peptide = peptideMatch.getPeptide();
-            PSModificationScores ptmScores = new PSModificationScores();
-            ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
-            HashMap<Integer, ArrayList<String>> fixedModifications = DisplayFeaturesGenerator.getFilteredModifications(peptide.getIndexedFixedModifications(), displayPreferences.getDisplayedModifications());
-            HashMap<Integer, ArrayList<String>> confidentLocations = DisplayFeaturesGenerator.getFilteredConfidentModificationsSites(ptmScores, displayPreferences.getDisplayedModifications());
-            HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayPreferences.getDisplayedModifications());
-            HashMap<Integer, ArrayList<String>> secondaryAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayPreferences.getDisplayedModifications());
 
-            String modName = ptm.getName();
-            int aa;
+        DisplayParameters displayPreferences = peptideShakerGUI.getDisplayParameters();
+        ModificationParameters modificationProfile = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters();
+        Peptide peptide = peptideMatch.getPeptide();
+        PSModificationScores ptmScores = new PSModificationScores();
+        ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
+        HashMap<Integer, ArrayList<String>> fixedModifications = DisplayFeaturesGenerator.getFilteredModifications(peptide.getIndexedFixedModifications(), displayPreferences.getDisplayedModifications());
+        HashMap<Integer, ArrayList<String>> confidentLocations = DisplayFeaturesGenerator.getFilteredConfidentModificationsSites(ptmScores, displayPreferences.getDisplayedModifications());
+        HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayPreferences.getDisplayedModifications());
+        HashMap<Integer, ArrayList<String>> secondaryAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayPreferences.getDisplayedModifications());
 
-            for (int i = 0; i < mainSelection.length; i++) {
-                aa = i + 1;
-                if (mainSelection[i]) {
-                    if (!confidentLocations.containsKey(aa)) {
-                        confidentLocations.put(aa, new ArrayList<>());
-                    }
-                    if (!confidentLocations.get(aa).contains(modName)) {
-                        confidentLocations.get(aa).add(modName);
-                    }
-                } else {
-                    if (confidentLocations.containsKey(aa) && confidentLocations.get(aa).contains(modName)) {
-                        confidentLocations.get(aa).remove(modName);
-                    }
+        String modName = ptm.getName();
+        int aa;
+
+        for (int i = 0; i < mainSelection.length; i++) {
+            aa = i + 1;
+            if (mainSelection[i]) {
+                if (!confidentLocations.containsKey(aa)) {
+                    confidentLocations.put(aa, new ArrayList<>());
                 }
-                if (secondarySelection[i]) {
-                    if (!representativeAmbiguousLocations.containsKey(aa)) {
-                        representativeAmbiguousLocations.put(aa, new ArrayList<>());
-                    }
-                    if (!representativeAmbiguousLocations.get(aa).contains(modName)) {
-                        representativeAmbiguousLocations.get(aa).add(modName);
-                    }
-                } else {
-                    if (representativeAmbiguousLocations.containsKey(aa) && representativeAmbiguousLocations.get(aa).contains(modName)) {
-                        representativeAmbiguousLocations.get(aa).remove(modName);
-                    }
+                if (!confidentLocations.get(aa).contains(modName)) {
+                    confidentLocations.get(aa).add(modName);
+                }
+            } else {
+                if (confidentLocations.containsKey(aa) && confidentLocations.get(aa).contains(modName)) {
+                    confidentLocations.get(aa).remove(modName);
                 }
             }
-
-            sequenceLabel.setText(PeptideUtils.getTaggedModifiedSequence(modificationProfile,
-                    peptide, confidentLocations, representativeAmbiguousLocations, secondaryAmbiguousLocations, fixedModifications, true, true, true));
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-            sequenceLabel.setText("Error");
+            if (secondarySelection[i]) {
+                if (!representativeAmbiguousLocations.containsKey(aa)) {
+                    representativeAmbiguousLocations.put(aa, new ArrayList<>());
+                }
+                if (!representativeAmbiguousLocations.get(aa).contains(modName)) {
+                    representativeAmbiguousLocations.get(aa).add(modName);
+                }
+            } else {
+                if (representativeAmbiguousLocations.containsKey(aa) && representativeAmbiguousLocations.get(aa).contains(modName)) {
+                    representativeAmbiguousLocations.get(aa).remove(modName);
+                }
+            }
         }
+
+        sequenceLabel.setText(PeptideUtils.getTaggedModifiedSequence(peptide, modificationProfile, confidentLocations, representativeAmbiguousLocations, secondaryAmbiguousLocations, fixedModifications, true, true, true));
+
     }
 
     /**
@@ -592,30 +582,14 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 Identification identification = peptideShakerGUI.getIdentification();
 
                 // update protein level PTM scoring
-                ArrayList<String> proteins = peptideMatch.getPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
-                PSMaps psMaps = new PSMaps();
-                psMaps = (PSMaps) identification.getUrParam(psMaps);
-                PsmPTMMap psmPTMMap = psMaps.getPsmPTMMap();
-                ModificationLocalizationScorer ptmScorer = new ModificationLocalizationScorer(psmPTMMap);
+                ModificationLocalizationScorer ptmScorer = new ModificationLocalizationScorer();
+                IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+                peptideMatch.getPeptide().getProteinMapping().keySet().parallelStream()
+                        .flatMap(accession -> identification.getProteinMap().get(accession).stream())
+                        .distinct()
+                        .map(key -> identification.getProteinMatch(key))
+                        .forEach(proteinMatch -> ptmScorer.scorePTMs(identification, proteinMatch, identificationParameters, false, null));
 
-                for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
-                    boolean candidate = false;
-                    for (String protein : proteins) {
-                        if (proteinKey.contains(protein)) {
-                            candidate = true;
-                        }
-                    }
-                    if (candidate) {
-                        ProteinMatch proteinMatch = (ProteinMatch)peptideShakerGUI.getIdentification().retrieveObject(proteinKey);
-                        if (proteins.contains(proteinMatch.getLeadingAccession())) {
-                            try {
-                                ptmScorer.scorePTMs(identification, proteinMatch, peptideShakerGUI.getIdentificationParameters(), false, null);
-                            } catch (Exception e) {
-                                peptideShakerGUI.catchException(e);
-                            }
-                        }
-                    }
-                }
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
             }

@@ -334,7 +334,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                     } else {
                         
                         identification.getProteinMap().get(tempProteinAccession).stream()
-                                .flatMap(key -> Arrays.stream(identification.getProteinMatch(key).getPeptideMatchesKeys()).mapToObj(l -> l))
+                                .flatMap(key -> Arrays.stream(identification.getProteinMatch(key).getPeptideMatchesKeys()).boxed())
                                 .distinct()
                                 .forEach(tempPeptideKey -> addPeptide(tempPeptideKey, nodeToolTips, nodes, nodeProperties, selectedNodes, edges, edgeProperties));
                         

@@ -606,7 +606,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             // Instantiate factories
             PeptideShaker.instantiateFacories(utilitiesUserParameters);
             modificationFactory = ModificationFactory.getInstance();
-            enzymeFactory = EnzymeFactory.getInstance();
+            EnzymeFactory.getInstance();
             spectrumFactory = SpectrumFactory.getInstance();
 
             // set the font color for the titlted borders, looks better than the default black
@@ -5575,9 +5575,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         AnnotationParameters annotationParameters = getIdentificationParameters().getAnnotationParameters();
 
-        SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey,
-                spectrumIdentificationAssumption, getIdentificationParameters().getSequenceMatchingParameters(),
-                getIdentificationParameters().getModificationLocalizationParameters().getSequenceMatchingParameters());
+        SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
+                spectrumKey, spectrumIdentificationAssumption);
 
         if (!defaultAnnotationCheckBoxMenuItem.isSelected()) {
 

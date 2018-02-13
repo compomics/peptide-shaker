@@ -908,7 +908,7 @@ public class MatchesValidator {
                 String fractionKey = fractionKeyB.toString();
 
                 fractionPsmMatches.put(fractionKey, Arrays.stream(peptideMatch.getSpectrumMatchesKeys())
-                        .mapToObj(Long::new)
+                        .boxed()
                         .collect(Collectors.toCollection(ArrayList::new)));
 
             }
