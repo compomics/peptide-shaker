@@ -1,9 +1,8 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
-import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import java.util.ArrayList;
@@ -22,17 +21,13 @@ public class ProteinFractionTableModel extends DefaultTableModel {
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The sequence factory.
-     */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-    /**
      * The identification of this project.
      */
     private Identification identification;
     /**
      * A list of ordered protein keys.
      */
-    private ArrayList<String> proteinKeys = null;
+    private long[] proteinKeys = null;
     /**
      * A list of ordered file names.
      */
@@ -105,11 +100,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
 
     @Override
     public int getRowCount() {
-        if (proteinKeys != null) {
-            return proteinKeys.size();
-        } else {
-            return 0;
-        }
+        return proteinKeys == null ? 0 : proteinKeys.length;
     }
 
     @Override
@@ -141,53 +132,34 @@ public class ProteinFractionTableModel extends DefaultTableModel {
     @Override
     public Object getValueAt(int row, int column) {
 
-        try {
-            ProteinMatch proteinMatch = (ProteinMatch)identification.retrieveObject(proteinKeys.get(row));
-            if (column == 0) {
-                return row + 1;
-            } else if (column == 1) {
-                return peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLink(proteinMatch.getLeadingAccession());
-            } else if (column == 2) {
-                String description = "";
-                try {
-                    description = sequenceFactory.getHeader(proteinMatch.getLeadingAccession()).getSimpleProteinDescription();
-                } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                }
-                return description;
-            } else if (column > 2 && column - 3 < fileNames.size()) {
-                String fraction = fileNames.get(column - 3);
-                PSParameter psParameter = new PSParameter();
-                psParameter = (PSParameter)proteinMatch.getUrParam(psParameter);
-                if (psParameter.getFractionScore() != null && psParameter.getFractions().contains(fraction)) {
-                    return psParameter.getFractionConfidence(fraction);
-                } else {
-                    return 0.0;
-                }
-            } else if (column == fileNames.size() + 3) {
-                String mainMatch = proteinMatch.getLeadingAccession();
-                Protein currentProtein = sequenceFactory.getProtein(mainMatch);
-                if (currentProtein != null) {
-                    return sequenceFactory.computeMolecularWeight(mainMatch);
-                } else {
-                    return null;
-                }
-            } else if (column == fileNames.size() + 4) {
-                String proteinKey = proteinKeys.get(row);
-                PSParameter psParameter = new PSParameter();
-                psParameter = (PSParameter)proteinMatch.getUrParam(psParameter);
-                return psParameter.getProteinConfidence();
-            } else if (column == fileNames.size() + 5) {
-                PSParameter psParameter = new PSParameter();
-                psParameter = (PSParameter)proteinMatch.getUrParam(psParameter);
-                return psParameter.getMatchValidationLevel().getIndex();
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinKeys[row]);
+        if (column == 0) {
+            return row + 1;
+        } else if (column == 1) {
+            return peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLink(proteinMatch.getLeadingAccession());
+        } else if (column == 2) {
+            return peptideShakerGUI.getProteinDetailsProvider().getSimpleDescription(proteinMatch.getLeadingAccession());
+        } else if (column > 2 && column - 3 < fileNames.size()) {
+            String fraction = fileNames.get(column - 3);
+            PSParameter psParameter = new PSParameter();
+            psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+            if (psParameter.getFractionScore() != null && psParameter.getFractions().contains(fraction)) {
+                return psParameter.getFractionConfidence(fraction);
             } else {
-                return "";
+                return 0.0;
             }
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-            return "";
+        } else if (column == fileNames.size() + 3) {
+            String mainMatch = proteinMatch.getLeadingAccession();
+            ProteinUtils.computeMolecularWeight(peptideShakerGUI.getSequenceProvider().getSequence(mainMatch));
+        } else if (column == fileNames.size() + 4) {
+            PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
+            return psParameter.getConfidence();
+        } else if (column == fileNames.size() + 5) {
+            PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
+            psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+            return psParameter.getMatchValidationLevel().getIndex();
         }
+        return "";
     }
 
     @Override

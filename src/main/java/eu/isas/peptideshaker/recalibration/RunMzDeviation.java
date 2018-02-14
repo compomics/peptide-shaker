@@ -314,7 +314,7 @@ public class RunMzDeviation {
                     precursorRawMap.get(precursorRT).get(precursorMz).add(error);
 
                     Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumKey);
-                    SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(currentSpectrum.getSpectrumKey(), bestPeptideAssumption, identificationParameters.getSequenceMatchingParameters(), identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters());
+                    SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(currentSpectrum.getSpectrumKey(), bestPeptideAssumption);
                     List<IonMatch> ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
                             currentSpectrum, bestPeptideAssumption.getPeptide()).collect(Collectors.toList());
                     

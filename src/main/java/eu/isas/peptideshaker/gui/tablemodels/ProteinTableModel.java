@@ -1,14 +1,12 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
-import com.compomics.util.experiment.personalization.UrParameter;
-import com.compomics.util.general.BoxedObject;
+import com.compomics.util.experiment.identification.utils.ProteinUtils;
+import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.waiting.WaitingHandler;
@@ -19,11 +17,9 @@ import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.awt.Color;
 import java.awt.Component;
-import java.sql.SQLNonTransientConnectionException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableColumnModel;
@@ -49,48 +45,42 @@ import org.jfree.chart.plot.PlotOrientation;
 public class ProteinTableModel extends SelfUpdatingTableModel {
 
     /**
-     * The sequence factory.
-     */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-    /**
      * The identification of this project.
      */
-    private Identification identification;
+    private final Identification identification;
     /**
      * The identification features generator provides identification information
      * on the matches.
      */
-    private IdentificationFeaturesGenerator identificationFeaturesGenerator;
+    private final IdentificationFeaturesGenerator identificationFeaturesGenerator;
+    /**
+     * The protein details provider.
+     */
+    private final ProteinDetailsProvider proteinDetailsProvider;
+    /**
+     * The protein sequences provider.
+     */
+    private final SequenceProvider sequenceProvider;
     /**
      * The display features generator provides display features.
      */
-    private DisplayFeaturesGenerator displayFeaturesGenerator;
+    private final DisplayFeaturesGenerator displayFeaturesGenerator;
+    /**
+     * The gene maps.
+     */
+    private final GeneMaps geneMaps;
     /**
      * The exception handler catches exceptions.
      */
-    private ExceptionHandler exceptionHandler;
+    private final ExceptionHandler exceptionHandler;
     /**
      * The list of the keys of the protein matches being displayed.
      */
-    private ArrayList<String> proteinKeys = null;
+    private ArrayList<Long> proteinKeys = null;
     /**
      * If true the scores will be shown.
      */
     private boolean showScores = false;
-    /**
-     * The batch size.
-     */
-    private int batchSize = 20;
-    /**
-     * The gene maps.
-     */
-    private GeneMaps geneMaps;
-
-    /**
-     * Constructor which sets a new empty table.
-     */
-    public ProteinTableModel() {
-    }
 
     /**
      * Constructor.
@@ -99,16 +89,20 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * information
      * @param identificationFeaturesGenerator the identification features
      * generator generating the features of the identification
+     * @param proteinDetailsProvider the protein details provider
+     * @param sequenceProvider the protein sequences provider
      * @param geneMaps the gene maps
      * @param displayFeaturesGenerator the display features generator generating
      * the display elements
      * @param exceptionHandler an exception handler catching exceptions
      * @param proteinKeys the keys of the protein matches to display
      */
-    public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
-            DisplayFeaturesGenerator displayFeaturesGenerator, ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
+    public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ProteinDetailsProvider proteinDetailsProvider, SequenceProvider sequenceProvider, GeneMaps geneMaps,
+            DisplayFeaturesGenerator displayFeaturesGenerator, ExceptionHandler exceptionHandler, ArrayList<Long> proteinKeys) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+        this.proteinDetailsProvider = proteinDetailsProvider;
+        this.sequenceProvider = sequenceProvider;
         this.geneMaps = geneMaps;
         this.displayFeaturesGenerator = displayFeaturesGenerator;
         this.exceptionHandler = exceptionHandler;
@@ -119,23 +113,9 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * Update the data in the table model without having to reset the whole
      * table model. This keeps the sorting order of the table.
      *
-     * @param identification the identification containing the protein
-     * information
-     * @param identificationFeaturesGenerator the identification features
-     * generator generating the features of the identification
-     * @param geneMaps the gene maps
-     * @param displayFeaturesGenerator the display features generator generating
-     * the display elements
-     * @param exceptionHandler an exception handler catching exceptions
      * @param proteinKeys the keys of the protein matches to display
      */
-    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
-            DisplayFeaturesGenerator displayFeaturesGenerator, ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
-        this.identification = identification;
-        this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-        this.geneMaps = geneMaps;
-        this.displayFeaturesGenerator = displayFeaturesGenerator;
-        this.exceptionHandler = exceptionHandler;
+    public void updateDataModel(ArrayList<Long> proteinKeys) {
         this.proteinKeys = proteinKeys;
     }
 
@@ -158,11 +138,9 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
 
     @Override
     public int getRowCount() {
-        if (proteinKeys != null) {
-            return proteinKeys.size();
-        } else {
-            return 0;
-        }
+
+        return proteinKeys == null ? 0 : proteinKeys.size();
+
     }
 
     @Override
@@ -196,11 +174,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
             case 10:
                 return "MW";
             case 11:
-                if (showScores) {
-                    return "Score";
-                } else {
-                    return "Confidence";
-                }
+                return showScores ? "Score" : "Confidence";
             case 12:
                 return "";
             default:
@@ -215,236 +189,115 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
 
             int viewIndex = getViewIndex(row);
 
-            try {
-                boolean useDB = !isSelfUpdating();
-                String proteinKey = proteinKeys.get(viewIndex);
-                ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinKey);
+            if (column == 0) {
+                return viewIndex + 1;
+            }
 
-                switch (column) {
-                    case 0:
-                        return viewIndex + 1;
-                    case 1:
-                        PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
-                        if (psParameter == null) {
-                            if (isScrolling) {
-                                return null;
-                            } else if (!useDB) {
-                                dataMissingAtRow(row);
-                                return DisplayParameters.LOADING_MESSAGE;
-                            }
-                        }
-                        return psParameter.getStarred();
-                    case 2:
-                        psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
-                        if (psParameter == null) {
-                            if (isScrolling) {
-                                return null;
-                            } else if (!useDB) {
-                                dataMissingAtRow(row);
-                                return DisplayParameters.LOADING_MESSAGE;
-                            }
-                        }
-                        return psParameter.getProteinInferenceGroupClass();
-                    case 3:
-                        if (proteinMatch == null) {
-                            if (isScrolling) {
-                                return null;
-                            } else if (!useDB) {
-                                dataMissingAtRow(row);
-                                return DisplayParameters.LOADING_MESSAGE;
-                            }
-                        }
-                        if (!isScrolling) {
-                            return displayFeaturesGenerator.getDatabaseLink(proteinMatch.getLeadingAccession());
-                        } else {
-                            return proteinMatch.getLeadingAccession();
-                        }
-                    case 4:
-                        if (proteinMatch == null) {
-                            if (isScrolling) {
-                                return null;
-                            } else if (!useDB) {
-                                dataMissingAtRow(row);
-                                return DisplayParameters.LOADING_MESSAGE;
-                            }
-                        }
-                        String description = null;
-                        try {
-                            description = sequenceFactory.getHeader(proteinMatch.getLeadingAccession()).getSimpleProteinDescription();
-
-                            // if description is not set, return the accession instead - fix for home made fasta headers
-                            if (description == null || description.trim().isEmpty()) {
-                                description = proteinMatch.getLeadingAccession();
-                            }
-                        } catch (Exception e) {
-                            exceptionHandler.catchException(e);
-                        }
-                        return description;
-                    case 5:
-                        if (proteinMatch == null) {
-                            if (isScrolling) {
-                                return null;
-                            } else if (!useDB) {
-                                dataMissingAtRow(row);
-                                return DisplayParameters.LOADING_MESSAGE;
-                            }
-                        }
-                        String geneName = sequenceFactory.getHeader(proteinMatch.getLeadingAccession()).getGeneName();
-                        String chromosomeName = geneMaps.getChromosome(geneName);
-                        if (chromosomeName == null || chromosomeName.length() == 0) {
-                            return new Chromosome(null);
-                        } else {
-                            return new Chromosome(chromosomeName);
-                        }
-                    case 6:
-                        if (isScrolling) {
-                            return null;
-                        }
-                        if (!useDB && (!identificationFeaturesGenerator.sequenceCoverageInCache(proteinKey)
-                                || !identificationFeaturesGenerator.observableCoverageInCache(proteinKey))
-                                && (proteinMatch == null || !identification.proteinDetailsInCache(proteinKey))) {
-                            dataMissingAtRow(row);
-                            return DisplayParameters.LOADING_MESSAGE;
-                        }
-                        HashMap<Integer, Double> sequenceCoverage;
-                        try {
-                            sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
-                        } catch (Exception e) {
-                            exceptionHandler.catchException(e);
-                            return Double.NaN;
-                        }
-                        Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
-                        Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
-                        Double sequenceCoverageNotValidated = 100 * sequenceCoverage.get(MatchValidationLevel.not_validated.getIndex());
-                        double possibleCoverage = 100;
-                        try {
-                            possibleCoverage = 100 * identificationFeaturesGenerator.getObservableCoverage(proteinKey);
-                        } catch (Exception e) {
-                            exceptionHandler.catchException(e);
-                        }
-                        ArrayList<Double> doubleValues = new ArrayList<>();
-                        doubleValues.add(sequenceCoverageConfident);
-                        doubleValues.add(sequenceCoverageDoubtful);
-                        doubleValues.add(sequenceCoverageNotValidated);
-                        doubleValues.add(possibleCoverage - sequenceCoverageConfident - sequenceCoverageDoubtful - sequenceCoverageNotValidated);
-                        ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumExceptLastNumber);
-                        return arrrayListDataPoints;
-                    case 7:
-                        if (isScrolling) {
-                            return null;
-                        }
-                        if (!useDB && (proteinMatch == null
-                                || !identificationFeaturesGenerator.nValidatedPeptidesInCache(proteinKey)
-                                && !identification.proteinDetailsInCache(proteinKey))) {
-                            dataMissingAtRow(row);
-                            return DisplayParameters.LOADING_MESSAGE;
-                        }
-                        double nConfidentPeptides = identificationFeaturesGenerator.getNConfidentPeptides(proteinKey);
-                        double nDoubtfulPeptides = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey) - nConfidentPeptides;
-
-                        doubleValues = new ArrayList<>();
-                        doubleValues.add(nConfidentPeptides);
-                        doubleValues.add(nDoubtfulPeptides);
-                        doubleValues.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
-                        arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
-                        return arrrayListDataPoints;
-                    case 8:
-                        if (isScrolling) {
-                            return null;
-                        }
-                        if (!useDB
-                                && (!identificationFeaturesGenerator.nValidatedSpectraInCache(proteinKey)
-                                || !identificationFeaturesGenerator.nSpectraInCache(proteinKey))
-                                && (proteinMatch == null || !identification.proteinDetailsInCache(proteinKey))) {
-                            dataMissingAtRow(row);
-                            return DisplayParameters.LOADING_MESSAGE;
-                        }
-                        double nConfidentSpectra = identificationFeaturesGenerator.getNConfidentSpectra(proteinKey);
-                        double nDoubtfulSpectra = identificationFeaturesGenerator.getNValidatedSpectra(proteinKey) - nConfidentSpectra;
-                        int nSpectra = identificationFeaturesGenerator.getNSpectra(proteinKey);
-
-                        doubleValues = new ArrayList<>();
-                        doubleValues.add(nConfidentSpectra);
-                        doubleValues.add(nDoubtfulSpectra);
-                        doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
-                        arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
-                        return arrrayListDataPoints;
-                    case 9:
-                        if (isScrolling) {
-                            return null;
-                        }
-                        if (!useDB && !identificationFeaturesGenerator.spectrumCountingInCache(proteinKey)
-                                && (proteinMatch == null || !identification.proteinDetailsInCache(proteinKey))) {
-                            dataMissingAtRow(row);
-                            return DisplayParameters.LOADING_MESSAGE;
-                        }
-                        return identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey);
-                    case 10:
-                        if (isScrolling) {
-                            return null;
-                        }
-                        if (!useDB && proteinMatch == null) {
-                            dataMissingAtRow(row);
-                            return DisplayParameters.LOADING_MESSAGE;
-                        }
-                        String mainMatch = proteinMatch.getLeadingAccession();
-                        Protein currentProtein = sequenceFactory.getProtein(mainMatch);
-                        if (currentProtein != null) {
-                            return sequenceFactory.computeMolecularWeight(mainMatch);
-                        } else {
-                            return null;
-                        }
-                    case 11:
-                        psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
-                        if (psParameter == null) {
-                            if (isScrolling) {
-                                return null;
-                            } else if (!useDB) {
-                                dataMissingAtRow(row);
-                                return DisplayParameters.LOADING_MESSAGE;
-                            }
-                        }
-                        if (psParameter != null) {
-                            if (showScores) {
-                                return psParameter.getProteinScore();
-                            } else {
-                                return psParameter.getProteinConfidence();
-                            }
-                        } else {
-                            return null;
-                        }
-                    case 12:
-                        psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
-                        if (psParameter == null) {
-                            if (isScrolling) {
-                                return null;
-                            } else if (!useDB) {
-                                dataMissingAtRow(row);
-                                return DisplayParameters.LOADING_MESSAGE;
-                            }
-                        }
-                        if (psParameter != null) {
-                            return psParameter.getMatchValidationLevel().getIndex();
-                        } else {
-                            return null;
-                        }
-                    default:
-                        return null;
-                }
-            } catch (SQLNonTransientConnectionException e) {
-                // this one can be ignored i think?
-                return null;
-            } catch (Exception e) {
-                if (exceptionHandler != null) {
-                    exceptionHandler.catchException(e);
-                } else {
-                    throw new IllegalArgumentException("Table not instantiated.");
-                }
+            if (isScrolling) {
                 return null;
             }
-        } else {
-            return null;
+
+            if (!isSelfUpdating()) {
+                dataMissingAtRow(row);
+                return DisplayParameters.LOADING_MESSAGE;
+            }
+
+            long proteinKey = proteinKeys.get(viewIndex);
+
+            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+
+            switch (column) {
+                case 1:
+
+                    PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
+                    return psParameter.getStarred();
+
+                case 2:
+
+                    psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
+                    return psParameter.getProteinInferenceGroupClass();
+
+                case 3:
+
+                    return isScrolling ? proteinMatch.getLeadingAccession()
+                            : displayFeaturesGenerator.getDatabaseLink(proteinMatch.getLeadingAccession());
+
+                case 4:
+
+                    return proteinDetailsProvider.getSimpleDescription(proteinMatch.getLeadingAccession());
+
+                case 5:
+
+                    String geneName = proteinDetailsProvider.getGeneName(proteinMatch.getLeadingAccession());
+                    String chromosomeName = geneMaps.getChromosome(geneName);
+
+                    return chromosomeName.length() == 0 ? new Chromosome(null) : new Chromosome(chromosomeName);
+
+                case 6:
+
+                    HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
+                    Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                    Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                    Double sequenceCoverageNotValidated = 100 * sequenceCoverage.get(MatchValidationLevel.not_validated.getIndex());
+                    double possibleCoverage = 100 * identificationFeaturesGenerator.getObservableCoverage(proteinKey);
+
+                    ArrayList<Double> doubleValues = new ArrayList<>(4);
+                    doubleValues.add(sequenceCoverageConfident);
+                    doubleValues.add(sequenceCoverageDoubtful);
+                    doubleValues.add(sequenceCoverageNotValidated);
+                    doubleValues.add(possibleCoverage - sequenceCoverageConfident - sequenceCoverageDoubtful - sequenceCoverageNotValidated);
+
+                    return new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumExceptLastNumber);
+
+                case 7:
+
+                    double nConfidentPeptides = identificationFeaturesGenerator.getNConfidentPeptides(proteinKey);
+                    double nDoubtfulPeptides = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey) - nConfidentPeptides;
+
+                    doubleValues = new ArrayList<>(3);
+                    doubleValues.add(nConfidentPeptides);
+                    doubleValues.add(nDoubtfulPeptides);
+                    doubleValues.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
+
+                    return new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
+
+                case 8:
+
+                    double nConfidentSpectra = identificationFeaturesGenerator.getNConfidentSpectra(proteinKey);
+                    double nDoubtfulSpectra = identificationFeaturesGenerator.getNValidatedSpectra(proteinKey) - nConfidentSpectra;
+                    int nSpectra = identificationFeaturesGenerator.getNSpectra(proteinKey);
+
+                    doubleValues = new ArrayList<>(3);
+                    doubleValues.add(nConfidentSpectra);
+                    doubleValues.add(nDoubtfulSpectra);
+                    doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
+                    return new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
+
+                case 9:
+
+                    return identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey);
+
+                case 10:
+
+                    return ProteinUtils.computeMolecularWeight(sequenceProvider.getSequence(proteinMatch.getLeadingAccession()));
+
+                case 11:
+                    psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
+
+                    return showScores ? psParameter.getScore() : psParameter.getConfidence();
+
+                case 12:
+                    psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
+
+                    return psParameter.getMatchValidationLevel().getIndex();
+
+                default:
+                    return null;
+            }
         }
+
+        return null;
+
     }
 
     /**
@@ -480,55 +333,21 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     @Override
     protected int loadDataForRows(ArrayList<Integer> rows, WaitingHandler waitingHandler) {
 
-        BoxedObject<Integer> rowProcessed = new BoxedObject<>(0);
-        rows.parallelStream()
-                .map(i -> proteinKeys.get(i))
-                .map(key -> ((ProteinMatch) identification.retrieveObject(key, exceptionHandler)))
-                .forEach(proteinMatch -> {
-                    if (proteinMatch != null && !waitingHandler.isRunCanceled()) {
-                        String proteinKey = proteinMatch.getKey();
-                        try {
-                            identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
-                            identificationFeaturesGenerator.getObservableCoverage(proteinKey);
-                            identificationFeaturesGenerator.getNValidatedPeptides(proteinKey);
-                            identificationFeaturesGenerator.getNValidatedSpectra(proteinKey);
-                            identificationFeaturesGenerator.getNSpectra(proteinKey);
-                            identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
-                            
-                            rowProcessed.setObject(rowProcessed.getObject() + 1);
-                        } catch (Exception e) {
-                            waitingHandler.setRunCanceled();
-                        }
-                    }
+        boolean canceled = rows.parallelStream()
+                .map(i -> ((ProteinMatch) identification.retrieveObject(proteinKeys.get(i))))
+                .anyMatch(proteinMatch -> {
+                    long proteinKey = proteinMatch.getKey();
+                    identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
+                    identificationFeaturesGenerator.getObservableCoverage(proteinKey);
+                    identificationFeaturesGenerator.getNValidatedPeptides(proteinKey);
+                    identificationFeaturesGenerator.getNValidatedSpectra(proteinKey);
+                    identificationFeaturesGenerator.getNSpectra(proteinKey);
+                    identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
+                    return waitingHandler.isRunCanceled();
                 });
-        if (waitingHandler.isRunCanceled()) {
-            return rows.get(rowProcessed.getObject());
-        }
 
-        return rows.get(rows.size() - 1);
-    }
+        return canceled ? rows.get(0) : rows.get(rows.size() - 1);
 
-    @Override
-    protected void loadDataForColumn(int column, WaitingHandler waitingHandler) {
-        try {
-            if (column == 1
-                    || column == 2
-                    || column == 11
-                    || column == 12) {
-                identification.loadObjects(proteinKeys, waitingHandler, false);
-            } else if (column == 3
-                    || column == 4
-                    || column == 5
-                    || column == 6
-                    || column == 7
-                    || column == 8
-                    || column == 9
-                    || column == 10) {
-                identification.loadObjects(proteinKeys, waitingHandler, false);
-            }
-        } catch (Exception e) {
-            catchException(e);
-        }
     }
 
     /**
@@ -595,10 +414,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
 
         // use a gray color for no decoy searches
         Color nonValidatedColor = sparklineColorNotValidated;
-        if (!SequenceFactory.getInstance().isClosed() && !SequenceFactory.getInstance().concatenatedTargetDecoy()) {
-            nonValidatedColor = sparklineColorNotFound;
-        }
-        ArrayList<Color> sparklineColors = new ArrayList<>();
+        ArrayList<Color> sparklineColors = new ArrayList<>(4);
         sparklineColors.add(sparklineColor);
         sparklineColors.add(sparklineColorDoubtful);
         sparklineColors.add(nonValidatedColor);

@@ -64,6 +64,7 @@ import java.awt.event.MouseAdapter;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.Iterator;
+import java.util.TreeMap;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -3373,7 +3374,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      *
      * @return true if all the used id software agree on the top PSM
      */
-    public static int isBestPsmEqualForAllIdSoftware(SpectrumMatch spectrumMatch, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions,
+    public static int isBestPsmEqualForAllIdSoftware(SpectrumMatch spectrumMatch, HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>>  assumptions,
             SequenceMatchingParameters sequenceMatchingPreferences, Integer numberOfAdvocatesUsed) {
 
         HashMap<Integer, ArrayList<PeptideAssumption>> peptideAssumptions = new HashMap<>();
