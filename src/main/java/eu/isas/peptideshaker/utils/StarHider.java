@@ -235,7 +235,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
 
                 validated = true;
 
@@ -285,7 +285,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
 
                 matchFilter.addException(matchKey);
 
@@ -316,7 +316,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
 
                 validated = true;
 
@@ -354,6 +354,7 @@ public class StarHider {
      * @param matchKey the key of the match
      */
     public void unHideProtein(long matchKey) {
+
         ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);
         PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
@@ -365,7 +366,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
 
                 matchFilter.addException(matchKey);
 
@@ -396,7 +397,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
 
                 validated = true;
 
@@ -434,8 +435,8 @@ public class StarHider {
      */
     public void unStarPeptide(long matchKey) {
 
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
+        PeptideMatch peptideMatch = identification.getPeptideMatch(matchKey);
+        PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
 
@@ -445,7 +446,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
 
                 matchFilter.addException(matchKey);
 
@@ -464,8 +465,8 @@ public class StarHider {
      */
     public void hidePeptide(long matchKey) {
 
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
+        PeptideMatch peptideMatch = identification.getPeptideMatch(matchKey);
+        PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
         boolean validated = false;
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
@@ -476,7 +477,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
 
                 validated = true;
 
@@ -515,8 +516,8 @@ public class StarHider {
      */
     public void unHidePeptide(long matchKey) {
 
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) ((PeptideMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
+        PeptideMatch peptideMatch = identification.getPeptideMatch(matchKey);
+        PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
 
@@ -526,7 +527,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
 
                 matchFilter.addException(matchKey);
 
@@ -542,31 +543,29 @@ public class StarHider {
      * Stars a PSM match.
      *
      * @param matchKey the key of the match
-     * @param peptideSpectrumAnnotator the spectrum annotator to use during
-     * filtering
      */
-    public void starPsm(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
+    public void starPsm(long matchKey) {
 
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
+        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(matchKey);
+        PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
         boolean validated = false;
 
-        if (!validated) {
+        for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
 
-            for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
+            if (matchFilter.getExceptions().contains(matchKey)) {
 
-                if (matchFilter.getExceptions().contains(matchKey)) {
+                matchFilter.removeException(matchKey);
 
-                    matchFilter.removeException(matchKey);
-
-                }
-
-                if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
-
-                    validated = true;
-
-                }
             }
+
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
+
+                validated = true;
+
+            }
+        }
+
+        if (!validated) {
 
             PsmFilter psmFilter;
             if (!filterPreferences.getPsmStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
@@ -594,13 +593,11 @@ public class StarHider {
      * Unstars a PSM match.
      *
      * @param matchKey the key of the match
-     * @param peptideSpectrumAnnotator the spectrum annotator to use during
-     * filtering
      */
-    public void unStarPsm(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
+    public void unStarPsm(long matchKey) {
 
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
+        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(matchKey);
+        PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
 
         for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
 
@@ -610,7 +607,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
 
                 matchFilter.addException(matchKey);
 
@@ -626,31 +623,29 @@ public class StarHider {
      * Hides a PSM match.
      *
      * @param matchKey the key of the match
-     * @param peptideSpectrumAnnotator the spectrum annotator to use during
-     * filtering
      */
-    public void hidePsm(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
+    public void hidePsm(long matchKey) {
 
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
+        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(matchKey);
+        PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
         boolean validated = false;
 
-        if (!validated) {
+        for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
 
-            for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
+            if (matchFilter.getExceptions().contains(matchKey)) {
 
-                if (matchFilter.getExceptions().contains(matchKey)) {
+                matchFilter.removeException(matchKey);
 
-                    matchFilter.removeException(matchKey);
-
-                }
-
-                if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
-
-                    validated = true;
-
-                }
             }
+
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
+
+                validated = true;
+
+            }
+        }
+
+        if (!validated) {
 
             PsmFilter psmFilter;
             if (!filterPreferences.getPsmHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
@@ -678,13 +673,11 @@ public class StarHider {
      * Unhides a psm match.
      *
      * @param matchKey the key of the match
-     * @param peptideSpectrumAnnotator the spectrum annotator to use during
-     * filtering
      */
-    public void unHidePsm(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
+    public void unHidePsm(long matchKey) {
 
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) ((SpectrumMatch) identification.retrieveObject(matchKey)).getUrParam(psParameter);
+        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(matchKey);
+        PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
 
         for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
 
@@ -694,7 +687,7 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null)) {
+            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
 
                 matchFilter.addException(matchKey);
 
@@ -718,7 +711,7 @@ public class StarHider {
     public boolean isProteinHidden(long matchKey) {
 
         return filterPreferences.getProteinHideFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null));
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider));
 
     }
 
@@ -734,7 +727,7 @@ public class StarHider {
     public boolean isPeptideHidden(long matchKey) {
 
         return filterPreferences.getPeptideHideFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null));
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider));
 
     }
 
@@ -743,16 +736,14 @@ public class StarHider {
      * filters.
      *
      * @param matchKey the key of the match
-     * @param peptideSpectrumAnnotator the spectrum annotator to use during
-     * filtering
      *
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
      */
-    public boolean isPsmHidden(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
+    public boolean isPsmHidden(long matchKey) {
 
         return filterPreferences.getPsmHideFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, peptideSpectrumAnnotator));
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider));
 
     }
 
@@ -768,7 +759,7 @@ public class StarHider {
     public boolean isProteinStarred(long matchKey) {
 
         return filterPreferences.getProteinStarFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null));
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider));
 
     }
 
@@ -784,7 +775,7 @@ public class StarHider {
     public boolean isPeptideStarred(long matchKey) {
 
         return filterPreferences.getPeptideStarFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null));
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider));
 
     }
 
@@ -793,16 +784,14 @@ public class StarHider {
      * filters.
      *
      * @param matchKey the key of the match
-     * @param peptideSpectrumAnnotator the spectrum annotator to use during
-     * filtering
      *
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
      */
-    public boolean isPsmStarred(long matchKey, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
+    public boolean isPsmStarred(long matchKey) {
 
         return filterPreferences.getPeptideStarFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, peptideSpectrumAnnotator));
+                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider));
 
     }
 
@@ -867,7 +856,7 @@ public class StarHider {
                             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                             PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
 
-                            if (isPsmHidden(spectrumKey, peptideSpectrumAnnotator)) {
+                            if (isPsmHidden(spectrumKey)) {
 
                                 psParameter.setHidden(true);
 
@@ -878,7 +867,7 @@ public class StarHider {
 
                             }
 
-                            psParameter.setStarred(isPsmStarred(spectrumKey, peptideSpectrumAnnotator));
+                            psParameter.setStarred(isPsmStarred(spectrumKey));
 
                         }
 

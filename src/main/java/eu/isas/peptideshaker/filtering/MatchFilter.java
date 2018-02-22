@@ -401,13 +401,12 @@ public abstract class MatchFilter implements Serializable, Filter {
      * @param identificationParameters the identification parameters
      * @param sequenceProvider the protein sequence provider
      * @param proteinDetailsProvider a provider for protein details
-     * @param peptideSpectrumAnnotator the annotator to use to annotate spectra when filtering on psm or assumptions
      *
      * @return a boolean indicating whether a match is validated by a given
      * filter
      */
     public boolean isValidated(long matchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
+            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider) {
 
         if (exceptions.contains(matchKey)) {
             
@@ -427,7 +426,7 @@ public abstract class MatchFilter implements Serializable, Filter {
             Object value = entry.getValue();
             FilterItemComparator filterItemComparator = comparatorsMap.get(itemName);
             
-            if (!isValidated(itemName, filterItemComparator, value, matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, peptideSpectrumAnnotator)) {
+            if (!isValidated(itemName, filterItemComparator, value, matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
             
                 return false;
             
@@ -453,15 +452,13 @@ public abstract class MatchFilter implements Serializable, Filter {
      * generator where to get identification features
      * @param identificationParameters the identification parameters used
      * @param sequenceProvider the protein sequence provider
-     * @param proteinDetailsProvider a provider for protein details
-     * @param peptideSpectrumAnnotator the annotator to use to annotate spectra when filtering on psm or assumptions
      *
      * @return a boolean indicating whether the match designated by the protein
      * key validates the given item using the given comparator and value
      * threshold.
      */
     public abstract boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, long matchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, PeptideSpectrumAnnotator peptideSpectrumAnnotator);
+            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider);
 
     @Override
     public boolean isSameAs(Filter anotherFilter) {
