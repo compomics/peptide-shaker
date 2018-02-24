@@ -3,21 +3,22 @@ package eu.isas.peptideshaker.gui;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.io.biology.protein.FastaParameters;
+import com.compomics.util.experiment.io.biology.protein.FastaSummary;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
+import com.compomics.util.parameters.identification.search.SearchParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
-import eu.isas.peptideshaker.scoring.maps.PeptideSpecificMap;
-import eu.isas.peptideshaker.scoring.maps.ProteinMap;
 import eu.isas.peptideshaker.scoring.maps.SpecificTargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
@@ -53,7 +54,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     /**
      * The key of the match.
      */
-    private String matchKey;
+    private long matchKey;
     /**
      * The ps parameter of the match.
      */
@@ -66,10 +67,10 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * The identification feature generator.
      */
     private IdentificationFeaturesGenerator identificationFeaturesGenerator;
-        /**
-         * The gene maps.
-         */
-        private GeneMaps geneMaps;
+    /**
+     * The gene maps.
+     */
+    private GeneMaps geneMaps;
     /**
      * The exception handler.
      */
@@ -81,11 +82,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     /**
      * The type of match selected.
      */
-    private Type type;
-    /**
-     * The sequence factory.
-     */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    private MatchType type;
     /**
      * The color to use when writing in green.
      */
@@ -97,7 +94,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     /**
      * the identification parameters used,
      */
-    private IdentificationParameters identificationParameters;
+    private final IdentificationParameters identificationParameters;
     /**
      * The filter table column header tooltips.
      */
@@ -106,7 +103,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     /**
      * Type of match selected.
      */
-    private enum Type {
+    public enum MatchType {
 
         PROTEIN,
         PEPTIDE,
@@ -123,189 +120,63 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @param identificationFeaturesGenerator the identification features
      * generator
      * @param geneMaps the gene maps
-     * @param proteinMap the protein map
-     * @param proteinMatchKey the protein match key
+     * @param targetDecoyMap the target decoy map
+     * @param matchKey the protein match key
      * @param identificationParameters the identification parameters used
-     *
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws IOException thrown if an IOException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @param matchType the match type
      */
     public MatchValidationDialog(java.awt.Frame parent, FrameExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
-            ProteinMap proteinMap, String proteinMatchKey, IdentificationParameters identificationParameters)
-            throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            TargetDecoyMap targetDecoyMap, long matchKey, IdentificationParameters identificationParameters, MatchType matchType) {
+
         super(parent, true);
         initComponents();
         setUpGui();
 
-        this.matchKey = proteinMatchKey;
-        psParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinMatchKey)).getUrParam(PSParameter.dummy);
+        this.matchKey = matchKey;
         this.exceptionHandler = exceptionHandler;
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.geneMaps = geneMaps;
         this.identificationParameters = identificationParameters;
+        ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);
+        psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
-        type = Type.PROTEIN;
+        type = matchType;
 
-        TargetDecoyMap targetDecoyMap = proteinMap.getTargetDecoyMap();
-        populateGUI(targetDecoyMap, "Proteins");
+        populateGUI(targetDecoyMap);
 
-        setTitle("Protein Group Validation Quality");
+        switch (type) {
+            case PROTEIN:
+                setTitle("Protein Group Validation Quality");
+                break;
+
+            case PEPTIDE:
+                setTitle("Peptide Validation Quality");
+                break;
+
+            case PSM:
+                setTitle("PSM Validation Quality");
+                break;
+        }
 
         setLocationRelativeTo(parent);
         setVisible(true);
-
-        if (!psParameter.hasQcFilters()) {
-            JOptionPane.showMessageDialog(null,
-                    "No Quality Control filters was implemented in the PeptideShaker version used to create this project.", "No QC Filter",
-                    JOptionPane.WARNING_MESSAGE);
-        }
-    }
-
-    /**
-     * Creates a peptide match validation dialog.
-     *
-     * @param parent the parent frame
-     * @param exceptionHandler the handler catches exception happening when
-     * filling the table
-     * @param identification the identification where to get the match from
-     * @param identificationFeaturesGenerator the identification features
-     * generator
-     * @param geneMaps the gene maps
-     * @param peptideSpecificMap the peptide specific target decoy map
-     * @param peptideMatchKey the peptide match key
-     * @param identificationParameters the identification parameters used
-     *
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws IOException thrown if an IOException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
-     */
-    public MatchValidationDialog(java.awt.Frame parent, FrameExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
-            PeptideSpecificMap peptideSpecificMap, String peptideMatchKey, IdentificationParameters identificationParameters)
-            throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
-        super(parent, true);
-        initComponents();
-        setUpGui();
-
-        this.matchKey = peptideMatchKey;
-        psParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(peptideMatchKey)).getUrParam(PSParameter.dummy);
-        this.exceptionHandler = exceptionHandler;
-        this.identification = identification;
-        this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-        this.geneMaps = geneMaps;
-        this.identificationParameters = identificationParameters;
-        type = Type.PEPTIDE;
-
-        String peptideGroupKey = psParameter.getSpecificMapKey();
-        TargetDecoyMap targetDecoyMap = peptideSpecificMap.getTargetDecoyMap(peptideSpecificMap.getCorrectedKey(peptideGroupKey));
-        String groupName = "";
-        if (peptideSpecificMap.getKeys().size() > 1) {
-            groupName += PeptideSpecificMap.getKeyName(identificationParameters.getSearchParameters().getModificationParameters(), peptideGroupKey) + " ";
-        }
-        groupName += "Peptides";
-        populateGUI(targetDecoyMap, groupName);
-
-        setTitle("Peptide Validation Quality");
-
-        setLocationRelativeTo(parent);
-        setVisible(true);
-
-        if (!psParameter.hasQcFilters()) {
-            JOptionPane.showMessageDialog(null,
-                    "No Quality Control filters was implemented in the PeptideShaker version used to create this project.", "No QC Filter",
-                    JOptionPane.WARNING_MESSAGE);
-        }
-    }
-
-    /**
-     * Creates a PSM match validation dialog.
-     *
-     * @param parent the parent frame
-     * @param exceptionHandler the handler catches exception happening when
-     * filling the table
-     * @param identification the identification where to get the match from
-     * @param identificationFeaturesGenerator the identification features
-     * generator
-     * @param geneMaps the gene maps
-     * @param psmSpecificMap the PSM specific target decoy map
-     * @param psmMatchKey the spectrum match key
-     * @param identificationParameters the identification parameters used
-     *
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws IOException thrown if an IOException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
-     */
-    public MatchValidationDialog(java.awt.Frame parent, FrameExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
-            SpecificTargetDecoyMap psmSpecificMap, String psmMatchKey, IdentificationParameters identificationParameters)
-            throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
-        super(parent, true);
-        initComponents();
-        setUpGui();
-
-        this.matchKey = psmMatchKey;
-        SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(psmMatchKey);
-        psParameter = (PSParameter)spectrumMatch.getUrParam(PSParameter.dummy);
-        this.exceptionHandler = exceptionHandler;
-        this.identification = identification;
-        this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-        this.geneMaps = geneMaps;
-        this.identificationParameters = identificationParameters;
-        type = Type.PSM;
-
-        String fileName = Spectrum.getSpectrumFile(psmMatchKey);
-        Integer charge;
-        if (spectrumMatch.getBestPeptideAssumption() != null) {
-            charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
-        } else if (spectrumMatch.getBestTagAssumption() != null) {
-            charge = spectrumMatch.getBestTagAssumption().getIdentificationCharge().value;
-        } else {
-            throw new IllegalArgumentException("No best match found for spectrum " + psmMatchKey + ".");
-        }
-
-        TargetDecoyMap targetDecoyMap = psmSpecificMap.getTargetDecoyMap(charge, fileName);
-        String groupName = "Charge ";
-        if (!psmSpecificMap.isFileGrouped(charge, fileName)) {
-            groupName += charge + " in file " + fileName;
-        } else {
-            int correctedCharge = psmSpecificMap.getCorrectedCharge(charge);
-            groupName += correctedCharge;
-        }
-        groupName += " PSMs";
-        populateGUI(targetDecoyMap, groupName);
-
-        setTitle("PSM Validation Quality");
-
-        setLocationRelativeTo(parent);
-        setVisible(true);
-
-        if (!psParameter.hasQcFilters()) {
-            JOptionPane.showMessageDialog(null,
-                    "No Quality Control filters was implemented in the PeptideShaker version used to create this project.", "No QC Filter",
-                    JOptionPane.WARNING_MESSAGE);
-        }
     }
 
     /**
      * Set up the GUI.
      */
     private void setUpGui() {
+        
         // make sure that the scroll panes are see-through
         qualityFiltersTableScrollPane.getViewport().setOpaque(false);
 
         // disable column reordering
         qualityFiltersTable.getTableHeader().setReorderingAllowed(false);
 
+        // set the validation combo box
         validationLevelJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        validationLevelJComboBox.setEditable(false);
 
         // set up the table header tooltips
         validationTableToolTips = new ArrayList<>(3);
@@ -319,16 +190,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      *
      * @param identificationFeaturesGenerator
      * @param proteinMap
-     *
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws IOException thrown if an IOException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
      */
-    private void populateGUI(TargetDecoyMap targetDecoyMap, String targetDecoyCategory)
-            throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    private void populateGUI(TargetDecoyMap targetDecoyMap) {
 
         ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
@@ -336,25 +199,50 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         validationLevelJComboBox.setSelectedItem(psParameter.getMatchValidationLevel().getName());
 
         // Database info
-        boolean targetDecoy = sequenceFactory.concatenatedTargetDecoy();
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+        FastaParameters fastaParameters = searchParameters.getFastaParameters();
+        boolean targetDecoy = fastaParameters.isTargetDecoy();
+
         if (!targetDecoy) {
+
             targetDecoyLbl.setText("Target only");
             targetDecoyLbl.setForeground(Color.red);
+
         } else {
+
             targetDecoyLbl.setForeground(green);
+
         }
-        int nTarget = sequenceFactory.getNTargetSequences();
-        nTargetLbl.setText(nTarget + " target sequences");
-        if (nTarget < 10000) {
+
+        try {
+
+            FastaSummary fastaSummary = FastaSummary.getSummary(searchParameters.getFastaFile(), fastaParameters, null);
+            int nTarget = fastaSummary.nTarget;
+            nTargetLbl.setText(nTarget + " target sequences");
+
+            if (nTarget < 10000) {
+
+                nTargetLbl.setForeground(Color.red);
+
+            } else if (nTarget > 1000000) {
+
+                nTargetLbl.setForeground(orange);
+
+            } else {
+
+                nTargetLbl.setForeground(green);
+
+            }
+
+        } catch (IOException iOException) {
+
+            nTargetLbl.setText("Database size not available");
             nTargetLbl.setForeground(Color.red);
-        } else if (nTarget > 100000) {
-            nTargetLbl.setForeground(orange);
-        } else {
-            nTargetLbl.setForeground(green);
+
         }
 
         // Target/Decoy group
-        ((TitledBorder) targetDecoyGroupPanel.getBorder()).setTitle(targetDecoyCategory + " Target/Decoy Distributions");
+        ((TitledBorder) targetDecoyGroupPanel.getBorder()).setTitle("Target/Decoy Distributions");
         targetDecoyGroupPanel.repaint();
         if (targetDecoy) {
             int nTargetOnly = targetDecoyMap.getnTargetOnly();
@@ -391,28 +279,24 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
         // Target/decoy results
         if (targetDecoy) {
-            double confidence = 0;
-
-            if (targetDecoyCategory.equalsIgnoreCase("Proteins")) {
-                confidence = psParameter.getProteinConfidence();
-            } else if (targetDecoyCategory.endsWith("Peptides")) {
-                confidence = psParameter.getPeptideConfidence();
-            } else if (targetDecoyCategory.endsWith("PSMs")) {
-                confidence = psParameter.getPsmConfidence();
-            }
-
+            
+            double confidence = psParameter.getConfidence();
             MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
             validationStatusLbl.setText("Validation Status: " + matchValidationLevel.getName());
+
             switch (matchValidationLevel) {
                 case confident:
                     validationStatusLbl.setForeground(green);
                     break;
+                    
                 case doubtful:
                     validationStatusLbl.setForeground(orange);
                     break;
+
                 case not_validated:
                     validationStatusLbl.setForeground(Color.red);
                     break;
+
                 case none:
                     validationStatusLbl.setForeground(Color.gray);
             }
@@ -621,11 +505,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
         validationLevelJComboBox.setModel(new DefaultComboBoxModel(MatchValidationLevel.getValidationLevelsNames()));
         validationLevelJComboBox.setToolTipText("Validation Level");
-        validationLevelJComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                validationLevelJComboBoxActionPerformed(evt);
-            }
-        });
+        validationLevelJComboBox.setEnabled(false);
 
         validationTypeLabel.setText("Type");
 
@@ -892,144 +772,9 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
 
-        String newValue = validationLevelJComboBox.getSelectedItem().toString();
-
-        if (!newValue.equals(psParameter.getMatchValidationLevel().getName())) {
-
-            MatchValidationLevel matchValidationLevel = MatchValidationLevel.getMatchValidationLevel(newValue);
-            psParameter.setMatchValidationLevel(matchValidationLevel);
-            psParameter.setManualValidation(true);
-
-            try {
-                Metrics metrics = identificationFeaturesGenerator.getMetrics();
-
-                if (type == Type.PROTEIN) {
-                    if (matchValidationLevel == MatchValidationLevel.confident) {
-                        metrics.setnConfidentProteins(metrics.getnConfidentProteins() + 1);
-                    } else if (matchValidationLevel == MatchValidationLevel.doubtful) {
-                        metrics.setnConfidentProteins(metrics.getnConfidentProteins() - 1);
-                    }
-                } else if (type == Type.PEPTIDE) {
-                    PSMaps pSMaps = new PSMaps();
-                    pSMaps = (PSMaps) identification.getUrParam(pSMaps);
-                    ProteinMap proteinMap = pSMaps.getProteinMap();
-                    PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(matchKey);
-
-                    for (String accession : peptideMatch.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingParameters())) {
-
-                        HashSet<String> proteinMatches = identification.getProteinMap().get(accession);
-
-                        if (proteinMatches != null) {
-
-                            identification.loadObjects(new ArrayList<>(proteinMatches), null, false);
-
-                            for (String proteinMatchKey : proteinMatches) {
-
-                                identificationFeaturesGenerator.updateNConfidentPeptides(proteinMatchKey);
-                                PSParameter proteinPSParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinMatchKey)).getUrParam(psParameter);
-                                MatchValidationLevel proteinValidation = proteinPSParameter.getMatchValidationLevel();
-
-                                if (proteinValidation.isValidated()) {
-
-                                    MatchesValidator.updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, geneMaps, identificationParameters, proteinMap, proteinMatchKey);
-                                    proteinPSParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinMatchKey)).getUrParam(proteinPSParameter);
-                                    MatchValidationLevel newValidation = proteinPSParameter.getMatchValidationLevel();
-
-                                    if (newValidation == MatchValidationLevel.confident && proteinValidation == MatchValidationLevel.doubtful) {
-                                        metrics.setnConfidentProteins(metrics.getnConfidentProteins() + 1);
-                                    } else if (newValidation == MatchValidationLevel.doubtful && proteinValidation == MatchValidationLevel.confident) {
-                                        metrics.setnConfidentProteins(metrics.getnConfidentProteins() - 1);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } else if (type == Type.PSM) {
-
-                    PSMaps pSMaps = new PSMaps();
-                    pSMaps = (PSMaps) identification.getUrParam(pSMaps);
-                    PeptideSpecificMap peptideMap = pSMaps.getPeptideSpecificMap();
-                    ProteinMap proteinMap = pSMaps.getProteinMap();
-                    SpectrumMatch spectrumMatch = (SpectrumMatch)identification.retrieveObject(matchKey);
-                    if (spectrumMatch.getBestPeptideAssumption() != null) {
-                        Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                        String peptideKey = peptide.getMatchingKey(identificationParameters.getSequenceMatchingParameters());
-                        identificationFeaturesGenerator.updateNConfidentSpectraForPeptide(peptideKey);
-                        PSParameter peptidePSParameter = (PSParameter)((PeptideMatch)identification.retrieveObject(peptideKey)).getUrParam(psParameter);
-
-                        if (peptidePSParameter.getMatchValidationLevel().isValidated()) {
-
-                            MatchesValidator.updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, geneMaps, identificationParameters, peptideMap, peptideKey);
-                            PeptideMatch peptideMatch = (PeptideMatch)identification.retrieveObject(peptideKey);
-
-                            for (String accession : peptideMatch.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingParameters())) {
-
-                                HashSet<String> proteinMatches = identification.getProteinMap().get(accession);
-
-                                if (proteinMatches != null) {
-
-                                    identification.loadObjects(new ArrayList<>(proteinMatches), null, false);
-
-                                    for (String proteinMatchKey : proteinMatches) {
-
-                                        identificationFeaturesGenerator.updateNConfidentPeptides(proteinMatchKey);
-                                        identificationFeaturesGenerator.updateNConfidentSpectra(proteinMatchKey);
-                                        PSParameter proteinPSParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinMatchKey)).getUrParam(psParameter);
-                                        MatchValidationLevel proteinValidation = proteinPSParameter.getMatchValidationLevel();
-
-                                        if (proteinValidation.isValidated()) {
-
-                                            MatchesValidator.updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, geneMaps,
-                                                    identificationParameters, proteinMap, proteinMatchKey);
-                                            proteinPSParameter = (PSParameter)((ProteinMatch)identification.retrieveObject(proteinMatchKey)).getUrParam(proteinPSParameter);
-                                            MatchValidationLevel newValidation = proteinPSParameter.getMatchValidationLevel();
-
-                                            if (newValidation == MatchValidationLevel.confident && proteinValidation == MatchValidationLevel.doubtful) {
-                                                metrics.setnConfidentProteins(metrics.getnConfidentProteins() + 1);
-                                            } else if (newValidation == MatchValidationLevel.doubtful && proteinValidation == MatchValidationLevel.confident) {
-                                                metrics.setnConfidentProteins(metrics.getnConfidentProteins() - 1);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                validationChanged = true;
-
-            } catch (Exception e) {
-                exceptionHandler.catchException(e);
-            }
-        }
-
         dispose();
+        
     }//GEN-LAST:event_okButtonActionPerformed
-
-    /**
-     * Change the validation level or show a warning if the level cannot be
-     * changed.
-     *
-     * @param evt
-     */
-    private void validationLevelJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validationLevelJComboBoxActionPerformed
-        String newValue = validationLevelJComboBox.getSelectedItem().toString();
-        MatchValidationLevel matchValidationLevel = MatchValidationLevel.getMatchValidationLevel(newValue);
-        if (psParameter.getMatchValidationLevel().isValidated() && (matchValidationLevel == MatchValidationLevel.none || matchValidationLevel == MatchValidationLevel.not_validated)) {
-            JOptionPane.showMessageDialog(this,
-                    "The statistical validation level cannot be changed. Please use the\n"
-                    + "non-statistical levels " + MatchValidationLevel.confident.getName() + " or " + MatchValidationLevel.doubtful.getName() + ".\n\n"
-                    + "To change the statistical validation threshold, use the Validation tab.",
-                    "Validation Level Error", JOptionPane.WARNING_MESSAGE);
-            validationLevelJComboBox.setSelectedItem(psParameter.getMatchValidationLevel().getName());
-        } else if (!psParameter.getMatchValidationLevel().isValidated() && matchValidationLevel != psParameter.getMatchValidationLevel()) {
-            JOptionPane.showMessageDialog(this,
-                    "The statistical validation level cannot be changed. To change\n"
-                    + "the statistical validation threshold, use the Validation tab.",
-                    "Validation Level Error", JOptionPane.WARNING_MESSAGE);
-            validationLevelJComboBox.setSelectedItem(psParameter.getMatchValidationLevel().getName());
-        }
-    }//GEN-LAST:event_validationLevelJComboBoxActionPerformed
 
     /**
      * Close the dialog without saving any changes.

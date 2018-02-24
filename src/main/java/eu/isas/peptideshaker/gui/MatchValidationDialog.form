@@ -151,10 +151,8 @@
                   <Connection code="new DefaultComboBoxModel(MatchValidationLevel.getValidationLevelsNames())" type="code"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Validation Level"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="validationLevelJComboBoxActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="validationTypeLabel">
               <Properties>
