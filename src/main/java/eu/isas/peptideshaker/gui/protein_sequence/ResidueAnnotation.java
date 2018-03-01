@@ -24,7 +24,7 @@ public class ResidueAnnotation {
      * Create a new ResidueAnnotation object.
      *
      * @param annotation the residue annotation as a string
-     * @param identifier a unique (external) identifier for the annotaton
+     * @param identifier a unique (external) identifier for the annotation
      * @param clickable if true the given annotation is clickable
      */
     public ResidueAnnotation(String annotation, long identifier, boolean clickable) {

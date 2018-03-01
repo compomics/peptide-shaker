@@ -69,10 +69,6 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      * The other proteins table column header tooltips.
      */
     private ArrayList<String> otherProteinsTableToolTips;
-    /**
-     * The gene maps
-     */
-    private GeneMaps geneMaps;
 
     /**
      * Create a new ProteinInferencePeptideLevelDialog.
@@ -82,16 +78,14 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      * @param peptideMatchKey the peptide match key
      * @param proteinMatchKey the protein match key
      * @param geneMaps the gene maps
-     * @throws Exception if an exception occurs
      */
-    public ProteinInferencePeptideLevelDialog(PeptideShakerGUI peptideShakerGUI, boolean modal, long peptideMatchKey, Long proteinMatchKey, GeneMaps geneMaps) throws Exception {
+    public ProteinInferencePeptideLevelDialog(PeptideShakerGUI peptideShakerGUI, boolean modal, long peptideMatchKey, Long proteinMatchKey) {
 
         super(peptideShakerGUI, modal);
 
         this.peptideMatchKey = peptideMatchKey;
         this.peptideShakerGUI = peptideShakerGUI;
         this.identification = peptideShakerGUI.getIdentification();
-        this.geneMaps = geneMaps;
 
         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideMatchKey);
 

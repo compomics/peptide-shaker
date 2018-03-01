@@ -76,7 +76,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     /**
      * The list of the keys of the protein matches being displayed.
      */
-    private ArrayList<Long> proteinKeys = null;
+    private long[] proteinKeys = null;
     /**
      * If true the scores will be shown.
      */
@@ -98,7 +98,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * @param proteinKeys the keys of the protein matches to display
      */
     public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ProteinDetailsProvider proteinDetailsProvider, SequenceProvider sequenceProvider, GeneMaps geneMaps,
-            DisplayFeaturesGenerator displayFeaturesGenerator, ExceptionHandler exceptionHandler, ArrayList<Long> proteinKeys) {
+            DisplayFeaturesGenerator displayFeaturesGenerator, ExceptionHandler exceptionHandler, long[] proteinKeys) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.proteinDetailsProvider = proteinDetailsProvider;
@@ -115,7 +115,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      *
      * @param proteinKeys the keys of the protein matches to display
      */
-    public void updateDataModel(ArrayList<Long> proteinKeys) {
+    public void updateDataModel(long[] proteinKeys) {
         this.proteinKeys = proteinKeys;
     }
 
@@ -139,7 +139,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     @Override
     public int getRowCount() {
 
-        return proteinKeys == null ? 0 : proteinKeys.size();
+        return proteinKeys == null ? 0 : proteinKeys.length;
 
     }
 
@@ -202,7 +202,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                 return DisplayParameters.LOADING_MESSAGE;
             }
 
-            long proteinKey = proteinKeys.get(viewIndex);
+            long proteinKey = proteinKeys[viewIndex];
 
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
 
@@ -334,7 +334,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     protected int loadDataForRows(ArrayList<Integer> rows, WaitingHandler waitingHandler) {
 
         boolean canceled = rows.parallelStream()
-                .map(i -> ((ProteinMatch) identification.retrieveObject(proteinKeys.get(i))))
+                .map(i -> ((ProteinMatch) identification.retrieveObject(proteinKeys[i])))
                 .anyMatch(proteinMatch -> {
                     long proteinKey = proteinMatch.getKey();
                     identificationFeaturesGenerator.getSequenceCoverage(proteinKey);

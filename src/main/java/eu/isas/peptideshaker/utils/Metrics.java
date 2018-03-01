@@ -63,7 +63,7 @@ public class Metrics implements Serializable {
     /**
      * The ordered list of protein keys as estimated during the import process.
      */
-    private ArrayList<Long> proteinKeys;
+    private long[] proteinKeys;
     /**
      * The max protein key length.
      */
@@ -312,7 +312,7 @@ public class Metrics implements Serializable {
      *
      * @return the list of ordered protein keys
      */
-    public ArrayList<Long> getProteinKeys() {
+    public long[] getProteinKeys() {
         return proteinKeys;
     }
 
@@ -321,7 +321,7 @@ public class Metrics implements Serializable {
      *
      * @param proteinKeys the list of ordered protein keys
      */
-    public void setProteinKeys(ArrayList<Long> proteinKeys) {
+    public void setProteinKeys(long[] proteinKeys) {
         this.proteinKeys = proteinKeys;
     }
 

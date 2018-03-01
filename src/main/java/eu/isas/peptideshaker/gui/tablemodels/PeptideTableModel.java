@@ -43,7 +43,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     /**
      * A list of ordered peptide keys.
      */
-    private ArrayList<Long> peptideKeys = null;
+    private long[] peptideKeys = null;
     /**
      * The main accession of the protein match to which the list of peptides is
      * attached.
@@ -70,7 +70,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      */
     public PeptideTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             DisplayFeaturesGenerator displayFeaturesGenerator,
-            String proteinAccession, ArrayList<Long> peptideKeys, boolean displayScores, ExceptionHandler exceptionHandler) {
+            String proteinAccession, long[] peptideKeys, boolean displayScores, ExceptionHandler exceptionHandler) {
 
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
@@ -91,7 +91,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      * @param showScores boolean indicating whether the scores should be
      * displayed instead of the confidence
      */
-    public void updateDataModel(String proteinAccession, ArrayList<Long> peptideKeys, boolean showScores) {
+    public void updateDataModel(String proteinAccession, long[] peptideKeys, boolean showScores) {
 
         this.peptideKeys = peptideKeys;
         this.proteinAccession = proteinAccession;
@@ -109,7 +109,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     @Override
     public int getRowCount() {
 
-        return peptideKeys == null ? 0 : peptideKeys.size();
+        return peptideKeys == null ? 0 : peptideKeys.length;
 
     }
 
@@ -147,7 +147,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
 
         int viewIndex = getViewIndex(row);
 
-        if (viewIndex < peptideKeys.size()) {
+        if (viewIndex < peptideKeys.length) {
 
             if (column == 0) {
                 return viewIndex + 1;
@@ -162,7 +162,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                 return DisplayParameters.LOADING_MESSAGE;
             }
             
-            long peptideKey = peptideKeys.get(viewIndex);
+            long peptideKey = peptideKeys[viewIndex];
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 
             switch (column) {
@@ -247,7 +247,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     protected int loadDataForRows(ArrayList<Integer> rows, WaitingHandler waitingHandler) {
 
         boolean canceled = rows.parallelStream()
-                .map(i -> identification.getPeptideMatch(peptideKeys.get(i)))
+                .map(i -> identification.getPeptideMatch(peptideKeys[i]))
                 .map(peptideMatch -> identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideMatch.getKey()))
                 .anyMatch(dummy -> waitingHandler.isRunCanceled());
 

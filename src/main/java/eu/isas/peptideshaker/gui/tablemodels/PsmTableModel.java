@@ -2,10 +2,8 @@ package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
@@ -17,11 +15,7 @@ import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
-import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 /**
  * Table model for a set of peptide to spectrum matches.
@@ -54,7 +48,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
     /**
      * A list of ordered PSM keys.
      */
-    private ArrayList<Long> psmKeys = null;
+    private long[] psmKeys = null;
     /**
      * Indicates whether the scores should be displayed instead of the
      * confidence
@@ -73,7 +67,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
      * @param exceptionHandler handler for the exceptions
      */
     public PsmTableModel(Identification identification, DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters,
-            ArrayList<Long> psmKeys, boolean displayScores, ExceptionHandler exceptionHandler) {
+            long[] psmKeys, boolean displayScores, ExceptionHandler exceptionHandler) {
 
         this.identification = identification;
         this.displayFeaturesGenerator = displayFeaturesGenerator;
@@ -96,7 +90,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
      * @param displayScores boolean indicating whether the scores should be
      * displayed instead of the confidence
      */
-    public void updateDataModel(ArrayList<Long> psmKeys, boolean displayScores) {
+    public void updateDataModel(long[] psmKeys, boolean displayScores) {
 
         this.psmKeys = psmKeys;
         this.showScores = displayScores;
@@ -113,7 +107,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
     @Override
     public int getRowCount() {
 
-        return psmKeys == null ? 0 : psmKeys.size();
+        return psmKeys == null ? 0 : psmKeys.length;
 
     }
 
@@ -151,7 +145,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
 
         int viewIndex = getViewIndex(row);
 
-        if (viewIndex < psmKeys.size()) {
+        if (viewIndex < psmKeys.length) {
 
             if (column == 0) {
                 return viewIndex + 1;
@@ -166,7 +160,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                 return DisplayParameters.LOADING_MESSAGE;
             }
 
-            long psmKey = psmKeys.get(viewIndex);
+            long psmKey = psmKeys[viewIndex];
             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
 
             switch (column) {
@@ -267,10 +261,10 @@ public class PsmTableModel extends SelfUpdatingTableModel {
     protected int loadDataForRows(ArrayList<Integer> rows, WaitingHandler waitingHandler) {
 
         boolean canceled = rows.stream()
-                .map(i -> identification.getSpectrumMatch(psmKeys.get(i)))
+                .map(i -> identification.getSpectrumMatch(psmKeys[i]))
                 .anyMatch(dummy -> waitingHandler.isRunCanceled());
-        
+
         return canceled ? 0 : rows.size();
-        
+
     }
 }

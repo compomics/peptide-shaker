@@ -52,29 +52,9 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 public class MatchValidationDialog extends javax.swing.JDialog {
 
     /**
-     * The key of the match.
-     */
-    private long matchKey;
-    /**
      * The ps parameter of the match.
      */
     private PSParameter psParameter;
-    /**
-     * The identification.
-     */
-    private Identification identification;
-    /**
-     * The identification feature generator.
-     */
-    private IdentificationFeaturesGenerator identificationFeaturesGenerator;
-    /**
-     * The gene maps.
-     */
-    private GeneMaps geneMaps;
-    /**
-     * The exception handler.
-     */
-    private FrameExceptionHandler exceptionHandler;
     /**
      * Indicates whether the validation status of the match changed.
      */
@@ -114,29 +94,19 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * Constructor for a protein match validation dialog.
      *
      * @param parent the parent frame
-     * @param exceptionHandler the handler catches exception happening when
-     * filling the table
      * @param identification the identification where to get the match from
-     * @param identificationFeaturesGenerator the identification features
-     * generator
-     * @param geneMaps the gene maps
      * @param targetDecoyMap the target decoy map
      * @param matchKey the protein match key
      * @param identificationParameters the identification parameters used
      * @param matchType the match type
      */
-    public MatchValidationDialog(java.awt.Frame parent, FrameExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, GeneMaps geneMaps,
+    public MatchValidationDialog(java.awt.Frame parent, Identification identification,
             TargetDecoyMap targetDecoyMap, long matchKey, IdentificationParameters identificationParameters, MatchType matchType) {
 
         super(parent, true);
         initComponents();
         setUpGui();
 
-        this.matchKey = matchKey;
-        this.exceptionHandler = exceptionHandler;
-        this.identification = identification;
-        this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-        this.geneMaps = geneMaps;
         this.identificationParameters = identificationParameters;
         ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);
         psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);

@@ -792,7 +792,7 @@ public class ProteinInference {
 
         if (metrics != null) {
             
-            metrics.setProteinKeys(proteinKeys);
+            metrics.setProteinKeys(proteinKeys.stream().mapToLong(a -> a).toArray());
             metrics.setMaxNPeptides(-maxPeptides);
             metrics.setMaxNSpectra(-maxSpectra);
             metrics.setMaxMW(maxMW);
