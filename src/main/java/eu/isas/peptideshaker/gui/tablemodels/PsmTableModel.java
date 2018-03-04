@@ -56,6 +56,21 @@ public class PsmTableModel extends SelfUpdatingTableModel {
     private boolean showScores = false;
 
     /**
+     * Constructor for an empty table.
+     */
+    public PsmTableModel() {
+
+        this.identification = null;
+        this.displayFeaturesGenerator = null;
+        this.identificationParameters = null;
+        this.psmKeys = new long[0];
+        this.showScores = true;
+        this.exceptionHandler = null;
+        this.inputMap = null;
+
+    }
+
+    /**
      * Constructor which sets a new table.
      *
      * @param identification the identification object containing the matches
@@ -78,7 +93,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
 
         PSMaps pSMaps = new PSMaps();
         pSMaps = (PSMaps) identification.getUrParam(pSMaps);
-        inputMap = pSMaps.getInputMap();
+        this.inputMap = pSMaps.getInputMap();
 
     }
 

@@ -56,6 +56,21 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     private boolean showScores = false;
 
     /**
+     * Constructor for an empty table.
+     */
+    public PeptideTableModel() {
+
+        this.identification = null;
+        this.identificationFeaturesGenerator = null;
+        this.displayFeaturesGenerator = null;
+        this.peptideKeys = new long[0];
+        this.proteinAccession = null;
+        this.showScores = true;
+        this.exceptionHandler = null;
+
+    }
+
+    /**
      * Constructor which sets a new table.
      *
      * @param identification the identification object containing the matches

@@ -83,6 +83,20 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     private boolean showScores = false;
 
     /**
+     * Constructor for an empty table
+     */
+    public ProteinTableModel() {
+        this.identification = null;
+        this.identificationFeaturesGenerator = null;
+        this.proteinDetailsProvider = null;
+        this.sequenceProvider = null;
+        this.geneMaps = null;
+        this.displayFeaturesGenerator = null;
+        this.exceptionHandler = null;
+        this.proteinKeys = new long[0];
+    }
+
+    /**
      * Constructor.
      *
      * @param identification the identification containing the protein
