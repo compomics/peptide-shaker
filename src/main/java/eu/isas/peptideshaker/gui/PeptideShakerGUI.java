@@ -5366,6 +5366,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param modificationMatches the modifications
      */
     public void updateAnnotationMenus(SpecificAnnotationParameters specificAnnotationParameters, int precursorCharge, ArrayList<ModificationMatch> modificationMatches) {
+        
+        // @TODO: Make this independent of annotation parameters to account for selection of multiple assumptions
 
         aIonCheckBoxMenuItem.setSelected(false);
         bIonCheckBoxMenuItem.setSelected(false);

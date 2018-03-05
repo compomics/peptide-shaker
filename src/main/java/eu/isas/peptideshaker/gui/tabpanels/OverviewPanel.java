@@ -4626,13 +4626,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumKey);
 
-                if (currentSpectrum != null) {
-
-                    Collection<Peak> peaks = currentSpectrum.getPeakList();
-
-                    if (peaks == null || peaks.isEmpty()) {
-                        // do nothing, peaks list not found
-                    } else {
+                if (currentSpectrum != null && currentSpectrum.getNPeaks() > 0) {
 
                         boolean newMax = false;
 
@@ -4773,7 +4767,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                         spectrumMainPanel.revalidate();
                         spectrumMainPanel.repaint();
-                    }
+                        
                 }
             }
 
