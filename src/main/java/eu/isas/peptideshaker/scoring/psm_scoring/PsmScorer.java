@@ -273,7 +273,7 @@ public class PsmScorer {
 
                         } else {
 
-                            SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingParameters(), identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters());
+                            SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption);
                             score = psmScoresEstimator.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge(), spectrum, identificationParameters, specificAnnotationPreferences, peptideSpectrumAnnotator, scoreIndex);
 
                         }

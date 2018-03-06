@@ -703,14 +703,12 @@ public class MatchesValidator {
      * @param spectrumMatchKey the key of the spectrum match having this
      * assumption
      * @param peptideAssumption the peptide assumption of interest
-     * @param peptideSpectrumAnnotator a spectrum annotator, can be null
      * @param identificationParameters the identification parameters
      * @param applyQCFilters boolean indicating whether QC filters should be
      * applied
      */
     public static void updatePeptideAssumptionValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SequenceProvider sequenceProvider,
-            ProteinDetailsProvider proteinDetailsProvider, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator,
+            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, IdentificationParameters identificationParameters, 
             InputMap inputMap, long spectrumMatchKey, PeptideAssumption peptideAssumption, boolean applyQCFilters) {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
@@ -754,7 +752,7 @@ public class MatchesValidator {
 
                         PsmFilter psmFilter = (PsmFilter) filter;
                         AssumptionFilter assumptionFilter = psmFilter.getAssumptionFilter();
-                        boolean validated = assumptionFilter.isValidated(spectrumMatchKey, spectrumMatch.getSpectrumKey(), peptideAssumption, identification, identificationFeaturesGenerator, identificationParameters, peptideSpectrumAnnotator);
+                        boolean validated = assumptionFilter.isValidated(spectrumMatchKey, spectrumMatch.getSpectrumKey(), peptideAssumption, identification, identificationFeaturesGenerator, identificationParameters);
                         psParameter.setQcResult(filter.getName(), validated);
 
                         if (!validated) {
@@ -1447,7 +1445,7 @@ public class MatchesValidator {
 
                             for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : scoreList) {
 
-                                updatePeptideAssumptionValidationLevel(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, identificationParameters, peptideSpectrumAnnotator, inputMap, spectrumKey, (PeptideAssumption) spectrumIdentificationAssumption, applyQCFilters);
+                                updatePeptideAssumptionValidationLevel(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, identificationParameters, inputMap, spectrumKey, (PeptideAssumption) spectrumIdentificationAssumption, applyQCFilters);
 
                             }
                         }

@@ -244,7 +244,7 @@ public class ModificationLocalizationScorer extends DbObject {
         if (!modificationsMap.isEmpty()) {
 
             Spectrum spectrum = spectrumFactory.getSpectrum(spectrumMatch.getSpectrumKey());
-            SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), bestPeptideAssumption, identificationParameters.getSequenceMatchingParameters(), identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters());
+            SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), bestPeptideAssumption);
 
             for (double modMass : modificationsMap.keySet()) {
 

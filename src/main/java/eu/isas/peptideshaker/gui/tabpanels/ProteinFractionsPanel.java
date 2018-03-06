@@ -1344,6 +1344,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                     } else {
                         peptideShakerGUI.getStarHider().unStarProtein(proteinKey);
                     }
+        peptideShakerGUI.setDataSaved(false);
                 }
 
                 // open protein link in web browser

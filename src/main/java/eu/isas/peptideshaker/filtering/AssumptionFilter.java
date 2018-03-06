@@ -92,12 +92,12 @@ public class AssumptionFilter extends MatchFilter {
 
     @Override
     public boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, long spectrumMatchKey, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
+            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider) {
         
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
         PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
         
-        return isValidated(itemName, filterItemComparator, value, spectrumMatchKey, spectrumMatch.getSpectrumKey(), peptideAssumption, identification, identificationFeaturesGenerator, identificationParameters, peptideSpectrumAnnotator);
+        return isValidated(itemName, filterItemComparator, value, spectrumMatchKey, spectrumMatch.getSpectrumKey(), peptideAssumption, identification, identificationFeaturesGenerator, identificationParameters);
     
     }
 
@@ -112,14 +112,12 @@ public class AssumptionFilter extends MatchFilter {
      * @param identificationFeaturesGenerator the identification features
      * generator providing identification features
      * @param identificationParameters the identification parameters
-     * @param peptideSpectrumAnnotator the annotator to use to annotate spectra
-     * when filtering on psm or assumptions
      *
      * @return a boolean indicating whether a match is validated by a given
      * filter
      */
     public boolean isValidated(long spectrumMatchKey, String spectrumKey, PeptideAssumption peptideAssumption, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
+            IdentificationParameters identificationParameters) {
 
         if (exceptions.contains(spectrumMatchKey)) {
             
@@ -138,7 +136,7 @@ public class AssumptionFilter extends MatchFilter {
             FilterItemComparator filterItemComparator = comparatorsMap.get(itemName);
             Object value = valuesMap.get(itemName);
             
-            if (!isValidated(itemName, filterItemComparator, value, spectrumMatchKey, spectrumKey, peptideAssumption, identification, identificationFeaturesGenerator, identificationParameters, peptideSpectrumAnnotator)) {
+            if (!isValidated(itemName, filterItemComparator, value, spectrumMatchKey, spectrumKey, peptideAssumption, identification, identificationFeaturesGenerator, identificationParameters)) {
                 
                 return false;
             
@@ -164,15 +162,13 @@ public class AssumptionFilter extends MatchFilter {
      * @param identificationFeaturesGenerator the identification feature
      * generator where to get identification features
      * @param identificationParameters the identification parameters used
-     * @param peptideSpectrumAnnotator the annotator to use to annotate spectra
-     * when filtering on PSM or assumptions
      *
      * @return a boolean indicating whether the match designated by the protein
      * key validates the given item using the given comparator and value
      * threshold.
      */
     public boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, long spectrumMatchKey, String spectrumKey, PeptideAssumption peptideAssumption, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) {
+            IdentificationParameters identificationParameters) {
 
         AssumptionFilterItem filterItem = AssumptionFilterItem.getItem(itemName);
         
@@ -226,6 +222,7 @@ public class AssumptionFilter extends MatchFilter {
                 Peptide peptide = peptideAssumption.getPeptide();
                 AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
                 SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption);
+                PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
                 Map<Integer, ArrayList<IonMatch>> matches = peptideSpectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, spectrum, peptide, true);
                 double nCovered = 0;
                 int nAA = peptide.getSequence().length();

@@ -2040,6 +2040,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 } else {
                     peptideShakerGUI.getStarHider().unStarPsm(psmKey);
                 }
+                peptideShakerGUI.setDataSaved(false);
             }
 
             if (column == 2 && evt != null && evt.getButton() == 1) {
@@ -2121,6 +2122,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     } else {
                         peptideShakerGUI.getStarHider().unStarProtein(proteinKey);
                     }
+                    peptideShakerGUI.setDataSaved(false);
                 }
 
                 // open the gene details dialog
@@ -2152,12 +2154,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     Identification identification = peptideShakerGUI.getIdentification();
                     PSMaps pSMaps = new PSMaps();
                     pSMaps = (PSMaps) identification.getUrParam(pSMaps);
-                        MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, identification,
-                                pSMaps.getProteinMap(), proteinKey,
-                                peptideShakerGUI.getIdentificationParameters(), MatchType.PROTEIN);
-                        if (matchValidationDialog.isValidationChanged()) {
-                            updateProteinPanelTitle();
-                        }
+                    MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, identification,
+                            pSMaps.getProteinMap(), proteinKey,
+                            peptideShakerGUI.getIdentificationParameters(), MatchType.PROTEIN);
+                    if (matchValidationDialog.isValidationChanged()) {
+                        updateProteinPanelTitle();
+                    }
                 }
             }
         } else if (evt.getButton() == MouseEvent.BUTTON3) {
@@ -2209,13 +2211,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 } else {
                     peptideShakerGUI.getStarHider().unStarPeptide(peptideKey);
                 }
+                peptideShakerGUI.setDataSaved(false);
             }
 
             // open the protein inference at the petide level dialog
             if (column == peptideTable.getColumn("PI").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
                 tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
                 long proteinKey = proteinKeys[tableModel.getViewIndex(proteinTable.getSelectedRow())];
-                new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, proteinKey);
+                new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, proteinKey, peptideShakerGUI.getGeneMaps());
             }
 
             // open the match validation level dialog
@@ -3689,16 +3692,16 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * proteins.
      */
     public void updateProteinPanelTitle() {
-        
+
         String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Proteins (";
-            int nValidated = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins();
-            int nConfident = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentProteins();
-            int nProteins = proteinTable.getRowCount();
-            if (nConfident > 0) {
-                title += nValidated + "/" + nProteins + " - " + nConfident + " confident, " + (nValidated - nConfident) + " doubtful";
-            } else {
-                title += nValidated + "/" + nProteins;
-            }
+        int nValidated = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins();
+        int nConfident = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentProteins();
+        int nProteins = proteinTable.getRowCount();
+        if (nConfident > 0) {
+            title += nValidated + "/" + nProteins + " - " + nConfident + " confident, " + (nValidated - nConfident) + " doubtful";
+        } else {
+            title += nValidated + "/" + nProteins;
+        }
         title += ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
         ((TitledBorder) proteinsLayeredPanel.getBorder()).setTitle(title);
         proteinsLayeredPanel.repaint();
@@ -4628,146 +4631,146 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 if (currentSpectrum != null && currentSpectrum.getNPeaks() > 0) {
 
-                        boolean newMax = false;
+                    boolean newMax = false;
 
-                        if (resetMzRange) {
-                            lastMzMaximum = 0;
-                        }
+                    if (resetMzRange) {
+                        lastMzMaximum = 0;
+                    }
 
-                        if (peptideShakerGUI.getSelectedPeptideKey() != PeptideShakerGUI.NO_SELECTION) {
+                    if (peptideShakerGUI.getSelectedPeptideKey() != PeptideShakerGUI.NO_SELECTION) {
 
-                            if (currentSpectrum.getPeakList() != null) {
+                        if (currentSpectrum.getPeakList() != null) {
 
-                                double newMaximum = currentSpectrum.getMaxMz();
+                            double newMaximum = currentSpectrum.getMaxMz();
 
-                                if (lastMzMaximum < newMaximum) {
+                            if (lastMzMaximum < newMaximum) {
 
-                                    lastMzMaximum = newMaximum;
-                                    newMax = true;
+                                lastMzMaximum = newMaximum;
+                                newMax = true;
 
-                                }
                             }
                         }
+                    }
 
-                        double lowerMzZoomRange = 0;
-                        double upperMzZoomRange = lastMzMaximum;
-                        if (spectrumPanel != null && spectrumPanel.getXAxisZoomRangeLowerValue() != 0 && !newMax) { // @TODO: sometimes the range is reset when is should not be...
-                            lowerMzZoomRange = spectrumPanel.getXAxisZoomRangeLowerValue();
-                            upperMzZoomRange = spectrumPanel.getXAxisZoomRangeUpperValue();
-                        }
+                    double lowerMzZoomRange = 0;
+                    double upperMzZoomRange = lastMzMaximum;
+                    if (spectrumPanel != null && spectrumPanel.getXAxisZoomRangeLowerValue() != 0 && !newMax) { // @TODO: sometimes the range is reset when is should not be...
+                        lowerMzZoomRange = spectrumPanel.getXAxisZoomRangeLowerValue();
+                        upperMzZoomRange = spectrumPanel.getXAxisZoomRangeUpperValue();
+                    }
 
-                        // add the data to the spectrum panel
-                        Precursor precursor = currentSpectrum.getPrecursor();
-                        spectrumPanel = new SpectrumPanel(
-                                currentSpectrum.getOrderedMzValues(), currentSpectrum.getIntensityValuesAsArray(),
-                                precursor.getMz(), Charge.toString(spectrumMatch.getBestPeptideAssumption().getIdentificationCharge()),
-                                "", 40, false, false, false, 2, false);
-                        spectrumPanel.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
-                        spectrumPanel.setDeltaMassWindow(peptideShakerGUI.getIdentificationParameters().getAnnotationParameters().getFragmentIonAccuracy());
-                        spectrumPanel.setBorder(null);
-                        spectrumPanel.setDataPointAndLineColor(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumAnnotatedPeakColor(), 0);
-                        spectrumPanel.setPeakWaterMarkColor(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumBackgroundPeakColor());
-                        spectrumPanel.setPeakWidth(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumAnnotatedPeakWidth());
-                        spectrumPanel.setBackgroundPeakWidth(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumBackgroundPeakWidth());
+                    // add the data to the spectrum panel
+                    Precursor precursor = currentSpectrum.getPrecursor();
+                    spectrumPanel = new SpectrumPanel(
+                            currentSpectrum.getOrderedMzValues(), currentSpectrum.getIntensityValuesAsArray(),
+                            precursor.getMz(), Charge.toString(spectrumMatch.getBestPeptideAssumption().getIdentificationCharge()),
+                            "", 40, false, false, false, 2, false);
+                    spectrumPanel.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
+                    spectrumPanel.setDeltaMassWindow(peptideShakerGUI.getIdentificationParameters().getAnnotationParameters().getFragmentIonAccuracy());
+                    spectrumPanel.setBorder(null);
+                    spectrumPanel.setDataPointAndLineColor(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumAnnotatedPeakColor(), 0);
+                    spectrumPanel.setPeakWaterMarkColor(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumBackgroundPeakColor());
+                    spectrumPanel.setPeakWidth(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumAnnotatedPeakWidth());
+                    spectrumPanel.setBackgroundPeakWidth(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumBackgroundPeakWidth());
 
-                        // get the spectrum annotations
-                        PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
-                        Peptide currentPeptide = peptideAssumption.getPeptide();
-                        PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
-                        AnnotationParameters annotationParameters = peptideShakerGUI.getIdentificationParameters().getAnnotationParameters();
-                        SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption);
-                        Stream<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, currentPeptide);
-                        spectrumPanel.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), annotationParameters.getTiesResolution() == SpectrumAnnotator.TiesResolution.mostIntense); //@TODO: the selection of the peak to annotate should be done outside the spectrum panel
-                        spectrumPanel.rescale(lowerMzZoomRange, upperMzZoomRange);
+                    // get the spectrum annotations
+                    PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
+                    Peptide currentPeptide = peptideAssumption.getPeptide();
+                    PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
+                    AnnotationParameters annotationParameters = peptideShakerGUI.getIdentificationParameters().getAnnotationParameters();
+                    SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption);
+                    Stream<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, currentPeptide);
+                    spectrumPanel.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), annotationParameters.getTiesResolution() == SpectrumAnnotator.TiesResolution.mostIntense); //@TODO: the selection of the peak to annotate should be done outside the spectrum panel
+                    spectrumPanel.rescale(lowerMzZoomRange, upperMzZoomRange);
 
-                        // show all or just the annotated peaks
-                        spectrumPanel.showAnnotatedPeaksOnly(!annotationParameters.showAllPeaks());
-                        spectrumPanel.setYAxisZoomExcludesBackgroundPeaks(annotationParameters.yAxisZoomExcludesBackgroundPeaks());
+                    // show all or just the annotated peaks
+                    spectrumPanel.showAnnotatedPeaksOnly(!annotationParameters.showAllPeaks());
+                    spectrumPanel.setYAxisZoomExcludesBackgroundPeaks(annotationParameters.yAxisZoomExcludesBackgroundPeaks());
 
-                        Integer forwardIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getForwardIons().get(0);
-                        Integer rewindIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getRewindIons().get(0);
+                    Integer forwardIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getForwardIons().get(0);
+                    Integer rewindIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getRewindIons().get(0);
 
-                        // add de novo sequencing
-                        spectrumPanel.addAutomaticDeNovoSequencing(currentPeptide, annotations,
-                                forwardIon, rewindIon, annotationParameters.getDeNovoCharge(),
-                                annotationParameters.showForwardIonDeNovoTags(),
-                                annotationParameters.showRewindIonDeNovoTags(), false);
+                    // add de novo sequencing
+                    spectrumPanel.addAutomaticDeNovoSequencing(currentPeptide, annotations,
+                            forwardIon, rewindIon, annotationParameters.getDeNovoCharge(),
+                            annotationParameters.showForwardIonDeNovoTags(),
+                            annotationParameters.showRewindIonDeNovoTags(), false);
 
-                        // add the spectrum panel to the frame
-                        spectrumJPanel.removeAll();
-                        spectrumJPanel.add(spectrumPanel);
-                        spectrumJPanel.revalidate();
-                        spectrumJPanel.repaint();
+                    // add the spectrum panel to the frame
+                    spectrumJPanel.removeAll();
+                    spectrumJPanel.add(spectrumPanel);
+                    spectrumJPanel.revalidate();
+                    spectrumJPanel.repaint();
 
-                        // create and display the fragment ion table
-                        ArrayList<Stream<IonMatch>> allAnnotations = getAnnotationsForAllSelectedSpectra();
-                        DisplayParameters displayParameters = peptideShakerGUI.getDisplayParameters();
+                    // create and display the fragment ion table
+                    ArrayList<Stream<IonMatch>> allAnnotations = getAnnotationsForAllSelectedSpectra();
+                    DisplayParameters displayParameters = peptideShakerGUI.getDisplayParameters();
 
-                        if (!displayParameters.useIntensityIonTable()) {
-                            fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, specificAnnotationParameters.getFragmentIonTypes(),
-                                    specificAnnotationParameters.getNeutralLossesMap(),
-                                    specificAnnotationParameters.getSelectedCharges().contains(1),
-                                    specificAnnotationParameters.getSelectedCharges().contains(2)));
-                        } else {
-                            fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, getSelectedSpectra(), specificAnnotationParameters.getFragmentIonTypes(),
-                                    specificAnnotationParameters.getNeutralLossesMap(),
-                                    specificAnnotationParameters.getSelectedCharges().contains(1),
-                                    specificAnnotationParameters.getSelectedCharges().contains(2)));
-                        }
+                    if (!displayParameters.useIntensityIonTable()) {
+                        fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, specificAnnotationParameters.getFragmentIonTypes(),
+                                specificAnnotationParameters.getNeutralLossesMap(),
+                                specificAnnotationParameters.getSelectedCharges().contains(1),
+                                specificAnnotationParameters.getSelectedCharges().contains(2)));
+                    } else {
+                        fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, getSelectedSpectra(), specificAnnotationParameters.getFragmentIonTypes(),
+                                specificAnnotationParameters.getNeutralLossesMap(),
+                                specificAnnotationParameters.getSelectedCharges().contains(1),
+                                specificAnnotationParameters.getSelectedCharges().contains(2)));
+                    }
 
-                        // create the sequence fragment ion view
-                        secondarySpectrumPlotsJPanel.removeAll();
-                        SequenceFragmentationPanel sequenceFragmentationPanel = new SequenceFragmentationPanel(
-                                peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(spectrumMatch, false, false, false),
-                                annotations, true, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), forwardIon, rewindIon);
-                        sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
-                        sequenceFragmentationPanel.setOpaque(true);
-                        sequenceFragmentationPanel.setBackground(Color.WHITE);
-                        secondarySpectrumPlotsJPanel.add(sequenceFragmentationPanel);
+                    // create the sequence fragment ion view
+                    secondarySpectrumPlotsJPanel.removeAll();
+                    SequenceFragmentationPanel sequenceFragmentationPanel = new SequenceFragmentationPanel(
+                            peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(spectrumMatch, false, false, false),
+                            annotations, true, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), forwardIon, rewindIon);
+                    sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
+                    sequenceFragmentationPanel.setOpaque(true);
+                    sequenceFragmentationPanel.setBackground(Color.WHITE);
+                    secondarySpectrumPlotsJPanel.add(sequenceFragmentationPanel);
 
-                        // create the intensity histograms
-                        secondarySpectrumPlotsJPanel.add(new IntensityHistogram(
-                                annotations, currentSpectrum, annotationParameters.getIntensityThresholdType(),
-                                annotationParameters.getAnnotationIntensityLimit()));
+                    // create the intensity histograms
+                    secondarySpectrumPlotsJPanel.add(new IntensityHistogram(
+                            annotations, currentSpectrum, annotationParameters.getIntensityThresholdType(),
+                            annotationParameters.getAnnotationIntensityLimit()));
 
-                        // create the miniature mass error plot
-                        MassErrorPlot massErrorPlot = new MassErrorPlot(
-                                annotations, currentSpectrum,
-                                specificAnnotationParameters.getFragmentIonAccuracy(),
-                                peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentAccuracyType() == SearchParameters.MassAccuracyType.PPM);
+                    // create the miniature mass error plot
+                    MassErrorPlot massErrorPlot = new MassErrorPlot(
+                            annotations, currentSpectrum,
+                            specificAnnotationParameters.getFragmentIonAccuracy(),
+                            peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentAccuracyType() == SearchParameters.MassAccuracyType.PPM);
 
-                        if (massErrorPlot.getNumberOfDataPointsInPlot() > 0) {
-                            secondarySpectrumPlotsJPanel.add(massErrorPlot);
-                        }
+                    if (massErrorPlot.getNumberOfDataPointsInPlot() > 0) {
+                        secondarySpectrumPlotsJPanel.add(massErrorPlot);
+                    }
 
-                        // update the UI
-                        secondarySpectrumPlotsJPanel.revalidate();
-                        secondarySpectrumPlotsJPanel.repaint();
+                    // update the UI
+                    secondarySpectrumPlotsJPanel.revalidate();
+                    secondarySpectrumPlotsJPanel.repaint();
 
-                        // update the bubble plot
-                        updateBubblePlot();
+                    // update the bubble plot
+                    updateBubblePlot();
 
-                        // disable the spectrum tab if more than two psms are selected
-                        spectrumJTabbedPane.setEnabledAt(2, psmTable.getSelectedRowCount() <= 2);
-                        peptideShakerGUI.enableSpectrumExport(psmTable.getSelectedRowCount() <= 2);
+                    // disable the spectrum tab if more than two psms are selected
+                    spectrumJTabbedPane.setEnabledAt(2, psmTable.getSelectedRowCount() <= 2);
+                    peptideShakerGUI.enableSpectrumExport(psmTable.getSelectedRowCount() <= 2);
 
-                        // move to the bubble plot tab if more than two psms are selected and the spectrum tab was selected
-                        if (psmTable.getSelectedRowCount() > 2 && spectrumJTabbedPane.getSelectedIndex() == 2) {
-                            spectrumJTabbedPane.setSelectedIndex(1);
-                        }
+                    // move to the bubble plot tab if more than two psms are selected and the spectrum tab was selected
+                    if (psmTable.getSelectedRowCount() > 2 && spectrumJTabbedPane.getSelectedIndex() == 2) {
+                        spectrumJTabbedPane.setSelectedIndex(1);
+                    }
 
-                        if (psmTable.getSelectedRowCount() > 2) {
-                            spectrumJTabbedPane.setToolTipTextAt(2, "Available for single or double spectrum selection only");
-                        } else {
-                            spectrumJTabbedPane.setToolTipTextAt(2, null);
-                        }
+                    if (psmTable.getSelectedRowCount() > 2) {
+                        spectrumJTabbedPane.setToolTipTextAt(2, "Available for single or double spectrum selection only");
+                    } else {
+                        spectrumJTabbedPane.setToolTipTextAt(2, null);
+                    }
 
-                        // update the panel border title
-                        updateSpectrumPanelBorderTitle(currentSpectrum);
+                    // update the panel border title
+                    updateSpectrumPanelBorderTitle(currentSpectrum);
 
-                        spectrumMainPanel.revalidate();
-                        spectrumMainPanel.repaint();
-                        
+                    spectrumMainPanel.revalidate();
+                    spectrumMainPanel.repaint();
+
                 }
             }
 
@@ -5746,7 +5749,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * peptide and PSM.
      */
     public void newItemSelection() {
-        
+
         long proteinKey = PeptideShakerGUI.NO_SELECTION;
         long peptideKey = PeptideShakerGUI.NO_SELECTION;
         long psmKey = PeptideShakerGUI.NO_SELECTION;
@@ -5774,54 +5777,54 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * Returns the row of a desired protein.
      *
      * @param proteinKey the key of the protein
-     * 
+     *
      * @return the row of the desired protein
      */
     private int getProteinRow(long proteinKey) {
-        
+
         int modelIndex = IntStream.range(0, proteinKeys.length)
                 .filter(i -> proteinKeys[i] == proteinKey)
                 .findAny()
                 .orElse(-1);
-        
+
         return modelIndex == -1 ? -1 : ((SelfUpdatingTableModel) proteinTable.getModel()).getRowNumber(modelIndex);
-        
+
     }
 
     /**
      * Returns the row of a desired peptide.
      *
      * @param peptideKey the key of the peptide
-     * 
+     *
      * @return the row of the desired peptide
      */
     private int getPeptideRow(long peptideKey) {
-        
+
         int modelIndex = IntStream.range(0, peptideKeys.length)
                 .filter(i -> peptideKeys[i] == peptideKey)
                 .findAny()
                 .orElse(-1);
-        
+
         return modelIndex == -1 ? -1 : ((SelfUpdatingTableModel) peptideTable.getModel()).getRowNumber(modelIndex);
-        
+
     }
 
     /**
      * Returns the row of a desired psm.
      *
      * @param psmKey the key of the psm
-     * 
+     *
      * @return the row of the desired psm
      */
     private int getPsmRow(long psmKey) {
-        
+
         int modelIndex = IntStream.range(0, psmKeys.length)
                 .filter(i -> psmKeys[i] == psmKey)
                 .findAny()
                 .orElse(-1);
-        
+
         return modelIndex == -1 ? -1 : ((SelfUpdatingTableModel) psmTable.getModel()).getRowNumber(modelIndex);
-        
+
     }
 
     /**
@@ -5877,106 +5880,106 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     @Override
     public void annotationClicked(ArrayList<ResidueAnnotation> allAnnotation, ChartMouseEvent cme) {
 
-            final Range oldRange = ((CategoryPlot) coverageChart.getChart().getPlot()).getRangeAxis().getRange();
+        final Range oldRange = ((CategoryPlot) coverageChart.getChart().getPlot()).getRangeAxis().getRange();
 
-            if (allAnnotation.size() == 1 && allAnnotation.get(0).clickable) {
+        if (allAnnotation.size() == 1 && allAnnotation.get(0).clickable) {
 
-                // select the peptide
-                peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), allAnnotation.get(0).identifier, PeptideShakerGUI.NO_SELECTION);
-                updateSelection(true);
+            // select the peptide
+            peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), allAnnotation.get(0).identifier, PeptideShakerGUI.NO_SELECTION);
+            updateSelection(true);
 
-                // update the psms
-                peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), allAnnotation.get(0).identifier, PeptideShakerGUI.NO_SELECTION);
+            // update the psms
+            peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), allAnnotation.get(0).identifier, PeptideShakerGUI.NO_SELECTION);
 
-                // update the psm selection
-                updatePsmSelection(peptideTable.getSelectedRow(), false);
+            // update the psm selection
+            updatePsmSelection(peptideTable.getSelectedRow(), false);
 
-                // new peptide, reset spectrum boundaries
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
-                            updateSpectrum(tableModel.getViewIndex(psmTable.getSelectedRow()), true);
-                        } catch (Exception e) {
-                            peptideShakerGUI.catchException(e);
-                        }
-                    }
-                });
-
-                // reset the range
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        try {
-                            ((CategoryPlot) coverageChart.getChart().getPlot()).getRangeAxis().setRange(oldRange);
-                            coverageChart.revalidate();
-                            coverageChart.repaint();
-                        } catch (Exception e) {
-                            peptideShakerGUI.catchException(e);
-                        }
-                    }
-                });
-
-            } else {
-                // show popup menu
-                JPopupMenu peptidesPopupMenu = new JPopupMenu();
-
-                for (ResidueAnnotation currentAnnotation : allAnnotation) {
-                    if (currentAnnotation.clickable) {
-                        String text = "<html>" + (peptidesPopupMenu.getComponentCount() + 1) + ": " + currentAnnotation.annotation + "</html>";
-                        final long peptideKey = currentAnnotation.identifier;
-                        JMenuItem menuItem = new JMenuItem(text);
-                        menuItem.addActionListener(new java.awt.event.ActionListener() {
-                            public void actionPerformed(java.awt.event.ActionEvent evt) {
-
-                                try {
-                                    // select the peptide
-                                    peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideKey, PeptideShakerGUI.NO_SELECTION);
-                                    updateSelection(true);
-
-                                    // update the psms
-                                    peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideKey, PeptideShakerGUI.NO_SELECTION);
-
-                                    // update the psm selection
-                                    updatePsmSelection(peptideTable.getSelectedRow(), false);
-
-                                    // new peptide, reset spectrum boundaries
-                                    SwingUtilities.invokeLater(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            try {
-                                                SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
-                                                updateSpectrum(tableModel.getViewIndex(psmTable.getSelectedRow()), true);
-                                            } catch (Exception e) {
-                                                peptideShakerGUI.catchException(e);
-                                            }
-                                        }
-                                    });
-
-                                    // reset the range
-                                    // invoke later to give time for components to update
-                                    SwingUtilities.invokeLater(new Runnable() {
-                                        public void run() {
-                                            try {
-                                                ((CategoryPlot) coverageChart.getChart().getPlot()).getRangeAxis().setRange(oldRange);
-                                                coverageChart.revalidate();
-                                                coverageChart.repaint();
-                                            } catch (Exception e) {
-                                                peptideShakerGUI.catchException(e);
-                                            }
-                                        }
-                                    });
-                                } catch (Exception e) {
-                                    peptideShakerGUI.catchException(e);
-                                }
-                            }
-                        });
-                        peptidesPopupMenu.add(menuItem);
+            // new peptide, reset spectrum boundaries
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
+                        updateSpectrum(tableModel.getViewIndex(psmTable.getSelectedRow()), true);
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
                     }
                 }
+            });
 
-                peptidesPopupMenu.show(cme.getTrigger().getComponent(), cme.getTrigger().getX(), cme.getTrigger().getY());
+            // reset the range
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    try {
+                        ((CategoryPlot) coverageChart.getChart().getPlot()).getRangeAxis().setRange(oldRange);
+                        coverageChart.revalidate();
+                        coverageChart.repaint();
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
+                }
+            });
+
+        } else {
+            // show popup menu
+            JPopupMenu peptidesPopupMenu = new JPopupMenu();
+
+            for (ResidueAnnotation currentAnnotation : allAnnotation) {
+                if (currentAnnotation.clickable) {
+                    String text = "<html>" + (peptidesPopupMenu.getComponentCount() + 1) + ": " + currentAnnotation.annotation + "</html>";
+                    final long peptideKey = currentAnnotation.identifier;
+                    JMenuItem menuItem = new JMenuItem(text);
+                    menuItem.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+
+                            try {
+                                // select the peptide
+                                peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideKey, PeptideShakerGUI.NO_SELECTION);
+                                updateSelection(true);
+
+                                // update the psms
+                                peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideKey, PeptideShakerGUI.NO_SELECTION);
+
+                                // update the psm selection
+                                updatePsmSelection(peptideTable.getSelectedRow(), false);
+
+                                // new peptide, reset spectrum boundaries
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
+                                            updateSpectrum(tableModel.getViewIndex(psmTable.getSelectedRow()), true);
+                                        } catch (Exception e) {
+                                            peptideShakerGUI.catchException(e);
+                                        }
+                                    }
+                                });
+
+                                // reset the range
+                                // invoke later to give time for components to update
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    public void run() {
+                                        try {
+                                            ((CategoryPlot) coverageChart.getChart().getPlot()).getRangeAxis().setRange(oldRange);
+                                            coverageChart.revalidate();
+                                            coverageChart.repaint();
+                                        } catch (Exception e) {
+                                            peptideShakerGUI.catchException(e);
+                                        }
+                                    }
+                                });
+                            } catch (Exception e) {
+                                peptideShakerGUI.catchException(e);
+                            }
+                        }
+                    });
+                    peptidesPopupMenu.add(menuItem);
+                }
             }
+
+            peptidesPopupMenu.show(cme.getTrigger().getComponent(), cme.getTrigger().getX(), cme.getTrigger().getY());
+        }
     }
 
     /**

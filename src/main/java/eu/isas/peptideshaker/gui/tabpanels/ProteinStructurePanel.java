@@ -1479,6 +1479,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     } else {
                         peptideShakerGUI.getStarHider().unStarProtein(proteinKey);
                     }
+                    peptideShakerGUI.setDataSaved(false);
                 }
             }
         }
@@ -1518,6 +1519,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 } else {
                     peptideShakerGUI.getStarHider().unStarPeptide(peptideKey);
                 }
+                peptideShakerGUI.setDataSaved(false);
             }
 
             // open the protein inference at the petide level dialog
@@ -1526,7 +1528,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 int proteinIndex = tableModel.getViewIndex(proteinTable.getSelectedRow());
                 long proteinKey = proteinKeys[proteinIndex];
                 long peptideKey = peptideTableMap.get(getPeptideIndex(row));
-                new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, proteinKey);
+                new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, proteinKey, peptideShakerGUI.getGeneMaps());
             }
         }
 

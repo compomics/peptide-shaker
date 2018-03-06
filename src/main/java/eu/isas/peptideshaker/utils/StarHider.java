@@ -263,7 +263,6 @@ public class StarHider {
         }
 
         psParameter.setStarred(true);
-        peptideShakerGUI.setDataSaved(false);
 
     }
 
@@ -293,7 +292,6 @@ public class StarHider {
         }
 
         psParameter.setStarred(false);
-        peptideShakerGUI.setDataSaved(false);
 
     }
 
@@ -344,7 +342,6 @@ public class StarHider {
         }
 
         psParameter.setHidden(true);
-        peptideShakerGUI.setDataSaved(false);
 
     }
 
@@ -374,7 +371,6 @@ public class StarHider {
         }
 
         psParameter.setHidden(true);
-        peptideShakerGUI.setDataSaved(false);
 
     }
 
@@ -424,7 +420,6 @@ public class StarHider {
         }
 
         psParameter.setStarred(true);
-        peptideShakerGUI.setDataSaved(false);
 
     }
 
@@ -454,7 +449,6 @@ public class StarHider {
         }
 
         psParameter.setStarred(false);
-        peptideShakerGUI.setDataSaved(false);
 
     }
 
@@ -505,7 +499,6 @@ public class StarHider {
         }
 
         psParameter.setHidden(true);
-        peptideShakerGUI.setDataSaved(false);
 
     }
 
@@ -535,7 +528,6 @@ public class StarHider {
         }
 
         psParameter.setHidden(false);
-        peptideShakerGUI.setDataSaved(false);
 
     }
 
@@ -585,7 +577,6 @@ public class StarHider {
         }
 
         psParameter.setStarred(true);
-        peptideShakerGUI.setDataSaved(false);
 
     }
 
@@ -615,7 +606,6 @@ public class StarHider {
         }
 
         psParameter.setStarred(false);
-        peptideShakerGUI.setDataSaved(false);
 
     }
 
@@ -665,7 +655,6 @@ public class StarHider {
         }
 
         psParameter.setHidden(true);
-        peptideShakerGUI.setDataSaved(false);
 
     }
 
@@ -695,7 +684,6 @@ public class StarHider {
         }
 
         psParameter.setHidden(false);
-        peptideShakerGUI.setDataSaved(false);
 
     }
 

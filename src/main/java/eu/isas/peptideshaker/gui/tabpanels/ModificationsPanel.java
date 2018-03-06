@@ -2006,6 +2006,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                                 } else {
                                     peptideShakerGUI.getStarHider().unStarPeptide(peptideKey);
                                 }
+                                peptideShakerGUI.setDataSaved(false);
                             } catch (Exception e) {
                                 peptideShakerGUI.catchException(e);
                             }
@@ -2098,6 +2099,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                                 } else {
                                     peptideShakerGUI.getStarHider().unStarPeptide(peptideKey);
                                 }
+                                peptideShakerGUI.setDataSaved(false);
                             } catch (Exception e) {
                                 peptideShakerGUI.catchException(e);
                             }
@@ -2134,6 +2136,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                 } else {
                     peptideShakerGUI.getStarHider().unStarPsm(psmKey);
                 }
+                peptideShakerGUI.setDataSaved(false);
                 selectedPsmsTable.revalidate();
                 selectedPsmsTable.repaint();
             }
@@ -2521,14 +2524,11 @@ public class ModificationsPanel extends javax.swing.JPanel {
             PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
 
             if (!psParameter.getStarred()) {
-
                 peptideShakerGUI.getStarHider().starPsm(psmKey);
-
             } else {
-
                 peptideShakerGUI.getStarHider().unStarPsm(psmKey);
-
             }
+            peptideShakerGUI.setDataSaved(false);
 
             relatedPsmsTable.revalidate();
             relatedPsmsTable.repaint();
@@ -4878,7 +4878,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
      * and PSM.
      */
     public void newItemSelection() {
-        
+
         long peptideKey = getSelectedPeptide();
 
         long psmKey = PeptideShakerGUI.NO_SELECTION;
