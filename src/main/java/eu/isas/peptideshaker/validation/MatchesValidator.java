@@ -115,7 +115,6 @@ public class MatchesValidator {
      * @param exceptionHandler a handler for exceptions
      * @param identificationFeaturesGenerator an identification features
      * generator computing information about the identification matches
-     * @param fastaParameters the fasta file parameters
      * @param sequenceProvider a protein sequence provider
      * @param proteinDetailsProvider a protein details provider
      * @param identificationParameters the identification parameters
@@ -129,8 +128,7 @@ public class MatchesValidator {
      */
     public void validateIdentifications(Identification identification, Metrics metrics, InputMap inputMap,
             WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            FastaParameters fastaParameters, SequenceProvider sequenceProvider,
-            ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps, IdentificationParameters identificationParameters,
+            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps, IdentificationParameters identificationParameters,
             SpectrumCountingParameters spectrumCountingPreferences, ProcessingParameters processingPreferences) throws InterruptedException, TimeoutException {
 
         ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
@@ -162,7 +160,7 @@ public class MatchesValidator {
         for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
 
             PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator,
-                    fastaParameters, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, waitingHandler,
+                    sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, waitingHandler,
                     exceptionHandler, inputMap, false, true);
             pool.submit(runnable);
             psmRunnables.add(runnable);
@@ -252,7 +250,7 @@ public class MatchesValidator {
         for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
 
             PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator,
-                    fastaParameters, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, waitingHandler,
+                    sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, waitingHandler,
                     exceptionHandler, inputMap, true, false);
             pool.submit(runnable);
 
@@ -284,7 +282,7 @@ public class MatchesValidator {
         for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
 
             PeptideValidatorRunnable runnable = new PeptideValidatorRunnable(peptideMatchesIterator, identification, identificationFeaturesGenerator,
-                    fastaParameters, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, waitingHandler, exceptionHandler, metrics);
+                    sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, waitingHandler, exceptionHandler, metrics);
             pool.submit(runnable);
             peptideRunnables.add(runnable);
 
@@ -349,7 +347,7 @@ public class MatchesValidator {
         for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
 
             ProteinValidatorRunnable runnable = new ProteinValidatorRunnable(proteinMatchesIterator, identification, identificationFeaturesGenerator,
-                    fastaParameters, sequenceProvider, proteinDetailsProvider, geneMaps, metrics, identificationParameters, spectrumCountingPreferences,
+                    sequenceProvider, proteinDetailsProvider, geneMaps, metrics, identificationParameters, spectrumCountingPreferences,
                     waitingHandler, exceptionHandler);
             pool.submit(runnable);
             proteinRunnables.add(runnable);
@@ -390,14 +388,13 @@ public class MatchesValidator {
      * @param proteinMap the protein level target/decoy scoring map
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param fastaParameters the fasta file parameters
      * @param sequenceProvider a protein sequence provider
      * @param proteinDetailsProvider a protein details provider
      * @param proteinKey the key of the protein match of interest
      * @param identificationParameters the identification parameters
      */
     public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            FastaParameters fastaParameters, SequenceProvider sequenceProvider,
+            SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider,
             GeneMaps geneMaps, IdentificationParameters identificationParameters,
             TargetDecoyMap proteinMap, long proteinKey) {
@@ -419,7 +416,7 @@ public class MatchesValidator {
 
         boolean noValidated = proteinMap.getTargetDecoyResults().noValidated();
 
-        updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, fastaParameters,
+        updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator,
                 sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters,
                 proteinMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
 
@@ -431,7 +428,6 @@ public class MatchesValidator {
      *
      * @param identification the identification object
      * @param targetDecoyMap the protein level target/decoy map
-     * @param fastaParameters the fasta file parameters
      * @param sequenceProvider a protein sequence provider
      * @param proteinDetailsProvider a protein details provider
      * @param geneMaps the gene maps
@@ -448,8 +444,7 @@ public class MatchesValidator {
      * @param identificationParameters the identification parameters
      */
     public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            FastaParameters fastaParameters, SequenceProvider sequenceProvider,
-            ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps,
+            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps,
             IdentificationParameters identificationParameters, TargetDecoyMap targetDecoyMap,
             double scoreThreshold, double nTargetLimit,
             double confidenceThreshold, boolean noValidated, long proteinKey) {
@@ -461,7 +456,7 @@ public class MatchesValidator {
 
         if (!psParameter.getManualValidation()) {
 
-            if (fastaParameters.isTargetDecoy()) {
+            if (identificationParameters.getSearchParameters().getFastaParameters().isTargetDecoy()) {
 
                 if (!noValidated && psParameter.getScore() <= scoreThreshold) {
 
@@ -470,7 +465,7 @@ public class MatchesValidator {
                     for (Filter filter : validationQCPreferences.getProteinFilters()) {
 
                         ProteinFilter proteinFilter = (ProteinFilter) filter;
-                        boolean validation = proteinFilter.isValidated(proteinKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null);
+                        boolean validation = proteinFilter.isValidated(proteinKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider);
                         psParameter.setQcResult(filter.getName(), validation);
 
                         if (!validation) {
@@ -516,7 +511,6 @@ public class MatchesValidator {
      * @param peptideMap the peptide level target/decoy scoring map
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param fastaParameters the fasta file parameters
      * @param sequenceProvider a protein sequence provider
      * @param proteinDetailsProvider a protein details provider
      * @param geneMaps the gene maps
@@ -524,7 +518,7 @@ public class MatchesValidator {
      * @param peptideKey the key of the peptide match of interest
      */
     public static void updatePeptideMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            FastaParameters fastaParameters, SequenceProvider sequenceProvider,
+            SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps,
             IdentificationParameters identificationParameters, TargetDecoyMap peptideMap, long peptideKey) {
 
@@ -533,7 +527,7 @@ public class MatchesValidator {
         psParameter.resetQcResults();
         ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
-        if (fastaParameters.isTargetDecoy()) {
+        if (identificationParameters.getSearchParameters().getFastaParameters().isTargetDecoy()) {
 
             TargetDecoyResults targetDecoyResults = peptideMap.getTargetDecoyResults();
             double fdrLimit = targetDecoyResults.getFdrLimit();
@@ -557,7 +551,7 @@ public class MatchesValidator {
                 for (Filter filter : validationQCPreferences.getPeptideFilters()) {
 
                     PeptideFilter peptideFilter = (PeptideFilter) filter;
-                    boolean validation = peptideFilter.isValidated(peptideKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, null);
+                    boolean validation = peptideFilter.isValidated(peptideKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider);
                     psParameter.setQcResult(filter.getName(), validation);
 
                     if (!validation) {
@@ -604,17 +598,15 @@ public class MatchesValidator {
      * @param identificationParameters the identification parameters
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param fastaParameters the fasta file parameters
      * @param sequenceProvider a protein sequence provider
      * @param proteinDetailsProvider a protein details provider
      * @param spectrumMatchKey the key of the spectrum match of interest
-     * @param peptideSpectrumAnnotator a spectrum annotator, can be null
      * @param applyQCFilters if true quality control filters will be used
      */
     public static void updateSpectrumMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            FastaParameters fastaParameters, SequenceProvider sequenceProvider,
+            SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps,
-            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator,
+            IdentificationParameters identificationParameters,
             TargetDecoyMap psmMap, long spectrumMatchKey, boolean applyQCFilters) {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
@@ -622,7 +614,7 @@ public class MatchesValidator {
         psParameter.resetQcResults();
         ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
-        if (fastaParameters.isTargetDecoy()) {
+        if (identificationParameters.getSearchParameters().getFastaParameters().isTargetDecoy()) {
 
             double psmThreshold = 0;
             double confidenceThreshold = 100;
@@ -657,7 +649,7 @@ public class MatchesValidator {
                     for (Filter filter : validationQCPreferences.getPsmFilters()) {
 
                         PsmFilter psmFilter = (PsmFilter) filter;
-                        boolean validated = psmFilter.isValidated(spectrumMatchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, peptideSpectrumAnnotator);
+                        boolean validated = psmFilter.isValidated(spectrumMatchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider);
                         psParameter.setQcResult(psmFilter.getName(), validated);
 
                         if (!validated) {
@@ -705,7 +697,6 @@ public class MatchesValidator {
      * filter
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param fastaParameters the fasta file parameters
      * @param sequenceProvider a protein sequence provider
      * @param proteinDetailsProvider a protein details provider
      * @param inputMap the target decoy map of all search engine scores
@@ -718,7 +709,7 @@ public class MatchesValidator {
      * applied
      */
     public static void updatePeptideAssumptionValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            FastaParameters fastaParameters, SequenceProvider sequenceProvider,
+            SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator,
             InputMap inputMap, long spectrumMatchKey, PeptideAssumption peptideAssumption, boolean applyQCFilters) {
 
@@ -726,7 +717,7 @@ public class MatchesValidator {
         PSParameter psParameter = (PSParameter) peptideAssumption.getUrParam(PSParameter.dummy);
         ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
-        if (fastaParameters.isTargetDecoy()) {
+        if (identificationParameters.getSearchParameters().getFastaParameters().isTargetDecoy()) {
 
             TargetDecoyMap targetDecoyMap = inputMap.getTargetDecoyMap(peptideAssumption.getAdvocate());
             double seThreshold = 0;
@@ -1345,10 +1336,6 @@ public class MatchesValidator {
          */
         private final IdentificationFeaturesGenerator identificationFeaturesGenerator;
         /**
-         * The fasta parameters.
-         */
-        private final FastaParameters fastaParameters;
-        /**
          * The sequence provider.
          */
         private final SequenceProvider sequenceProvider;
@@ -1372,10 +1359,6 @@ public class MatchesValidator {
          * Handler for the exceptions.
          */
         private final ExceptionHandler exceptionHandler;
-        /**
-         * The peptide spectrum annotator.
-         */
-        private final PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
         /**
          * List used to store precursor m/z deviations of matches currently
          * validated.
@@ -1403,7 +1386,6 @@ public class MatchesValidator {
          * @param identificationFeaturesGenerator the identification features
          * generator used to estimate, store and retrieve identification
          * features
-         * @param fastaParameters the fasta file parameters
          * @param sequenceProvider a protein sequence provider
          * @param proteinDetailsProvider a protein details provider
          * @param geneMaps the gene maps
@@ -1419,14 +1401,13 @@ public class MatchesValidator {
          * contributions should be stored.
          */
         public PsmValidatorRunnable(SpectrumMatchesIterator psmIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-                FastaParameters fastaParameters, SequenceProvider sequenceProvider,
+                SequenceProvider sequenceProvider,
                 ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps,
                 IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, InputMap inputMap, boolean applyQCFilters, boolean storeContributions) {
 
             this.psmIterator = psmIterator;
             this.identification = identification;
             this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-            this.fastaParameters = fastaParameters;
             this.sequenceProvider = sequenceProvider;
             this.proteinDetailsProvider = proteinDetailsProvider;
             this.geneMaps = geneMaps;
@@ -1455,7 +1436,7 @@ public class MatchesValidator {
 
                     }
 
-                    updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, fastaParameters, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey, applyQCFilters);
+                    updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, psmMap, spectrumKey, applyQCFilters);
 
                     // update assumption validation level
                     HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> assumptions = spectrumMatch.getPeptideAssumptionsMap();
@@ -1466,7 +1447,7 @@ public class MatchesValidator {
 
                             for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : scoreList) {
 
-                                updatePeptideAssumptionValidationLevel(identification, identificationFeaturesGenerator, fastaParameters, sequenceProvider, proteinDetailsProvider, identificationParameters, peptideSpectrumAnnotator, inputMap, spectrumKey, (PeptideAssumption) spectrumIdentificationAssumption, applyQCFilters);
+                                updatePeptideAssumptionValidationLevel(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, identificationParameters, peptideSpectrumAnnotator, inputMap, spectrumKey, (PeptideAssumption) spectrumIdentificationAssumption, applyQCFilters);
 
                             }
                         }
@@ -1573,10 +1554,6 @@ public class MatchesValidator {
          */
         private final IdentificationFeaturesGenerator identificationFeaturesGenerator;
         /**
-         * The fasta parameters.
-         */
-        private final FastaParameters fastaParameters;
-        /**
          * The sequence provider.
          */
         private final SequenceProvider sequenceProvider;
@@ -1621,7 +1598,6 @@ public class MatchesValidator {
          * @param identificationFeaturesGenerator the identification features
          * generator used to estimate, store and retrieve identification
          * features
-         * @param fastaParameters the fasta file parameters
          * @param sequenceProvider a protein sequence provider
          * @param proteinDetailsProvider a protein details provider
          * @param geneMaps the gene maps
@@ -1636,14 +1612,13 @@ public class MatchesValidator {
          * @param metrics the object used to store metrics on the project
          */
         public PeptideValidatorRunnable(PeptideMatchesIterator peptideMatchesIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-                FastaParameters fastaParameters, SequenceProvider sequenceProvider,
+                SequenceProvider sequenceProvider,
                 ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps,
                 IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, Metrics metrics) {
 
             this.peptideMatchesIterator = peptideMatchesIterator;
             this.identification = identification;
             this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-            this.fastaParameters = fastaParameters;
             this.sequenceProvider = sequenceProvider;
             this.proteinDetailsProvider = proteinDetailsProvider;
             this.geneMaps = geneMaps;
@@ -1664,7 +1639,7 @@ public class MatchesValidator {
 
                     long peptideKey = peptideMatch.getKey();
 
-                    updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, fastaParameters, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, peptideMap, peptideKey);
+                    updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, peptideMap, peptideKey);
 
                     // set the fraction details
                     PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
@@ -1816,10 +1791,6 @@ public class MatchesValidator {
          */
         private final IdentificationFeaturesGenerator identificationFeaturesGenerator;
         /**
-         * The fasta parameters.
-         */
-        private final FastaParameters fastaParameters;
-        /**
          * The sequence provider.
          */
         private final SequenceProvider sequenceProvider;
@@ -1874,7 +1845,6 @@ public class MatchesValidator {
          * @param identificationFeaturesGenerator the identification features
          * generator used to estimate, store and retrieve identification
          * features
-         * @param fastaParameters the fasta file parameters
          * @param sequenceProvider a protein sequence provider
          * @param proteinDetailsProvider a protein details provider
          * @param geneMaps the gene maps
@@ -1886,14 +1856,12 @@ public class MatchesValidator {
          * @param exceptionHandler handler for exceptions
          */
         public ProteinValidatorRunnable(ProteinMatchesIterator proteinMatchesIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-                FastaParameters fastaParameters, SequenceProvider sequenceProvider,
-                ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps, Metrics metrics,
+                SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps, Metrics metrics,
                 IdentificationParameters identificationParameters, SpectrumCountingParameters spectrumCountingPreferences, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
 
             this.proteinMatchesIterator = proteinMatchesIterator;
             this.identification = identification;
             this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-            this.fastaParameters = fastaParameters;
             this.sequenceProvider = sequenceProvider;
             this.proteinDetailsProvider = proteinDetailsProvider;
             this.geneMaps = geneMaps;
@@ -1932,7 +1900,7 @@ public class MatchesValidator {
                 while ((proteinMatch = proteinMatchesIterator.next()) != null && !waitingHandler.isRunCanceled()) {
 
                     long proteinKey = proteinMatch.getKey();
-                    updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, fastaParameters, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters,
+                    updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters,
                             proteinMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
 
                     // set the fraction details

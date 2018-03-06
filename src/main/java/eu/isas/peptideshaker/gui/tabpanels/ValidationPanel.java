@@ -7,21 +7,17 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
-import eu.isas.peptideshaker.scoring.maps.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoySeries;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.scoring.PSMaps;
-import eu.isas.peptideshaker.scoring.maps.SpecificTargetDecoyMap;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -91,14 +87,6 @@ public class ValidationPanel extends javax.swing.JPanel {
      * The Target Decoy metrics series of the currently displayed map.
      */
     private TargetDecoySeries targetDecoySeries;
-    /**
-     * The PSMs map: # in the list &gt; map key.
-     */
-    private final HashMap<Integer, HashMap<Integer, String>> psmMap = new HashMap<>();
-    /**
-     * The peptide map: # in the list &gt; map key.
-     */
-    private final HashMap<Integer, String> peptideMap = new HashMap<>();
     /**
      * The confidence plot.
      */
@@ -1350,7 +1338,7 @@ public class ValidationPanel extends javax.swing.JPanel {
 
             if (groupSelectionTable.getSelectedRow() == 0) {
                 applyProteins();
-            } else if (peptideMap.keySet().contains(groupSelectionTable.getSelectedRow())) {
+            } else if (groupSelectionTable.getSelectedRow() == 1) {
                 recalculateProteins();
             } else {
                 recalculatePeptidesAndProteins();
@@ -1499,8 +1487,11 @@ public class ValidationPanel extends javax.swing.JPanel {
                         PSMaps pSMaps = new PSMaps();
                         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
 
-                        MatchesValidator matchesValidator = new MatchesValidator(pSMaps.getPsmSpecificMap(), pSMaps.getPeptideSpecificMap(), pSMaps.getProteinMap());
-                        matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), peptideShakerGUI.getGeneMaps(), pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getExceptionHandler(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingParameters(), peptideShakerGUI.getProcessingParameters());
+                        MatchesValidator matchesValidator = new MatchesValidator(pSMaps.getPsmMap(), pSMaps.getPeptideMap(), pSMaps.getProteinMap());
+                        matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(),
+                                pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getExceptionHandler(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
+                                peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getGeneMaps(),
+                                peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingParameters(), peptideShakerGUI.getProcessingParameters());
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
@@ -2320,124 +2311,24 @@ public class ValidationPanel extends javax.swing.JPanel {
 
                 modifiedMaps.put(cpt, false);
                 ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "Proteins"});
-                TargetDecoyMap targetDecoyMap = pSMaps.getProteinMap().getTargetDecoyMap();
+                TargetDecoyMap targetDecoyMap = pSMaps.getProteinMap();
                 TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
                 originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
                 originalThresholds.put(cpt, targetDecoyResults.getUserInput());
 
-                ArrayList<String> peptideKeys = pSMaps.getPeptideSpecificMap().getKeys();
-                if (peptideKeys.size() == 1) {
-                    String key = peptideKeys.get(0);
-                    peptideMap.put(++cpt, key);
-                    modifiedMaps.put(cpt, false);
-                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "Peptides"});
-                    targetDecoyMap = pSMaps.getPeptideSpecificMap().getTargetDecoyMap(key);
-                    targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                    originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
-                    originalThresholds.put(cpt, targetDecoyResults.getUserInput());
-                } else {
-                    for (String peptideKey : peptideKeys) {
+                modifiedMaps.put(cpt, false);
+                ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "Peptides"});
+                targetDecoyMap = pSMaps.getPeptideMap();
+                targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
+                originalThresholds.put(cpt, targetDecoyResults.getUserInput());
 
-                        if (progressDialog.isRunCanceled()) {
-                            break;
-                        }
-
-                        peptideMap.put(++cpt, peptideKey);
-                        modifiedMaps.put(cpt, false);
-
-                        String title = PeptideSpecificMap.getKeyName(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), peptideKey);
-                        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "Peptides (" + title + ")"});
-                    }
-                }
-
-                SpecificTargetDecoyMap psmSpecificMap = pSMaps.getPsmSpecificMap();
-                ArrayList<Integer> foundCharges = new ArrayList<>(4);
-                for (Integer charge : psmSpecificMap.getPossibleCategories()) {
-                    for (String file : psmSpecificMap.getFilesAtCategory(charge)) {
-                        if (!psmSpecificMap.isFileGrouped(charge, file)) {
-                            foundCharges.add(charge);
-                            if (progressDialog.isRunCanceled()) {
-                                break;
-                            }
-                            HashMap<Integer, String> psmKey = new HashMap<>();
-                            psmKey.put(charge, file);
-                            psmMap.put(++cpt, psmKey);
-                            modifiedMaps.put(cpt, false);
-                            targetDecoyMap = pSMaps.getPsmSpecificMap().getTargetDecoyMap(charge, file);
-                            targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                            originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
-                            originalThresholds.put(cpt, targetDecoyResults.getUserInput());
-                        }
-                    }
-                }
-                HashMap<Integer, ArrayList<Integer>> groupedCharges = new HashMap<>();
-                for (int charge : psmSpecificMap.getCategoriesFromGroupedFiles()) {
-                    int correctedCharge = psmSpecificMap.getCorrectedCharge(charge);
-                    if (correctedCharge == charge) {
-                        HashMap<Integer, String> psmKey = new HashMap<>();
-                        psmKey.put(charge, null);
-                        psmMap.put(++cpt, psmKey);
-                        modifiedMaps.put(cpt, false);
-                        targetDecoyMap = pSMaps.getPsmSpecificMap().getTargetDecoyMap(charge, null);
-                        targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                        originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
-                        originalThresholds.put(cpt, targetDecoyResults.getUserInput());
-                    } else {
-                        ArrayList<Integer> charges = groupedCharges.get(correctedCharge);
-                        if (charges == null) {
-                            charges = new ArrayList<>(4);
-                            groupedCharges.put(correctedCharge, charges);
-                        }
-                        charges.add(charge);
-                    }
-                }
-
-                if (psmMap.size() > 1) {
-                    for (int index : psmMap.keySet()) {
-                        for (int charge : psmMap.get(index).keySet()) {
-                            String file = psmMap.get(index).get(charge);
-                            if (file != null) {
-                                if (peptideShakerGUI.getIdentification().getSpectrumFiles().size() > 1) {
-                                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "PSMs (Charge " + charge + " of file " + file + ")"});
-                                } else {
-                                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "PSMs (Charge " + charge + ")"});
-                                }
-                            } else if (foundCharges.contains(charge)) {
-                                if (groupedCharges.containsKey(charge)) {
-                                    ArrayList<Integer> groupCharges = groupedCharges.get(charge);
-                                    Collections.sort(groupCharges);
-                                    String chargeTxt = "PSMs (Other Charge " + charge + " and Charge ";
-                                    for (int subCharge : groupCharges) {
-                                        if (!chargeTxt.equals("")) {
-                                            chargeTxt += ", ";
-                                        }
-                                        chargeTxt += subCharge;
-                                    }
-                                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, chargeTxt + ")"});
-                                } else {
-                                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "PSMs (Other Charge " + charge + ")"});
-                                }
-                            } else {
-                                ArrayList<Integer> groupCharges = new ArrayList<>();
-                                groupCharges.add(charge);
-                                if (groupedCharges.containsKey(charge)) {
-                                    groupCharges.addAll(groupedCharges.get(charge));
-                                }
-                                Collections.sort(groupCharges);
-                                String chargeTxt = "";
-                                for (int subCharge : groupCharges) {
-                                    if (!chargeTxt.equals("")) {
-                                        chargeTxt += ", ";
-                                    }
-                                    chargeTxt += subCharge;
-                                }
-                                ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "PSMs (Charge " + chargeTxt + ")"});
-                            }
-                        }
-                    }
-                } else {
-                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt, "PSMs"});
-                }
+                modifiedMaps.put(cpt, false);
+                ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt, "PSMs"});
+                targetDecoyMap = pSMaps.getPsmMap();
+                targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
+                originalThresholds.put(cpt, targetDecoyResults.getUserInput());
 
                 if (groupSelectionTable.getRowCount() > 0) {
                     groupSelectionTable.setRowSelectionInterval(0, 0);
@@ -2471,75 +2362,51 @@ public class ValidationPanel extends javax.swing.JPanel {
         PSMaps pSMaps = new PSMaps();
         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
 
-        if (selectedGroup == 0) {
-            return pSMaps.getProteinMap().getTargetDecoyMap();
-        } else if (peptideMap.containsKey(selectedGroup)) {
-
-            return pSMaps.getPeptideSpecificMap().getTargetDecoyMap(peptideMap.get(selectedGroup));
-        } else if (psmMap.containsKey(selectedGroup)) {
-            HashMap<Integer, String> psmKey = psmMap.get(selectedGroup);
-            for (int charge : psmKey.keySet()) {
-                return pSMaps.getPsmSpecificMap().getTargetDecoyMap(charge, psmKey.get(charge));
-            }
+        switch (selectedGroup) {
+            case 0:
+                return pSMaps.getProteinMap();
+            case 1:
+                return pSMaps.getPeptideMap();
+            case 2:
+                return pSMaps.getPsmMap();
+            default:
+                throw new UnsupportedOperationException("No map found at index " + selectedGroup + ".");
         }
-        throw new IllegalArgumentException("Target decoy map not found for selection " + selectedGroup + ".");
     }
 
     /**
      * Method called whenever a new group selection occurred.
      */
     private void groupSelectionChanged() {
+
         PSMaps pSMaps = new PSMaps();
         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
         int selectedGroup = groupSelectionTable.getSelectedRow();
 
         if (selectedGroup == 0) {
-            currentTargetDecoyMap = pSMaps.getProteinMap().getTargetDecoyMap();
-            boolean found = false;
-            // Verify that probabilities are up to date
-            for (int key : psmMap.keySet()) {
-                if (modifiedMaps.get(key)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (found) {
+
+            currentTargetDecoyMap = pSMaps.getProteinMap();
+
+            if (modifiedMaps.get(2)) {
                 int outcome = JOptionPane.showConfirmDialog(this,
                         "Probabilities modifications at the PSM level will influence protein results.\n"
                         + "Recalculate probabilities?", "Apply Changes?", JOptionPane.YES_NO_OPTION);
                 if (outcome == JOptionPane.YES_OPTION) {
                     recalculatePeptidesAndProteins();
                 }
-            } else {
-                for (int key : peptideMap.keySet()) {
-                    if (modifiedMaps.get(key)) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (found) {
-                    int outcome = JOptionPane.showConfirmDialog(this,
-                            "Probabilities modifications at the peptide level will influence protein results.\n"
-                            + "Recalculate probabilities?", "Apply Changes", JOptionPane.YES_NO_OPTION);
-                    if (outcome == JOptionPane.YES_OPTION) {
-                        recalculateProteins();
-                    }
+            } else if (modifiedMaps.get(1)) {
+                int outcome = JOptionPane.showConfirmDialog(this,
+                        "Probabilities modifications at the peptide level will influence protein results.\n"
+                        + "Recalculate probabilities?", "Apply Changes", JOptionPane.YES_NO_OPTION);
+                if (outcome == JOptionPane.YES_OPTION) {
+                    recalculateProteins();
                 }
             }
-        } else if (peptideMap.containsKey(selectedGroup)) {
+        } else if (selectedGroup == 1) {
 
-            currentTargetDecoyMap = pSMaps.getPeptideSpecificMap().getTargetDecoyMap(peptideMap.get(selectedGroup));
-            boolean found = false;
+            currentTargetDecoyMap = pSMaps.getPeptideMap();
 
-            for (int key : psmMap.keySet()) {
-                if (modifiedMaps.get(key)) {
-                    found = true;
-                    break;
-                }
-            }
-
-            if (found) {
+            if (modifiedMaps.get(2)) {
                 int outcome = JOptionPane.showConfirmDialog(this,
                         "Probabilities modifications at the PSM level will influence peptide results.\n"
                         + "Recalculate probabilities?", "Apply Changes?", JOptionPane.YES_NO_OPTION);
@@ -2547,15 +2414,10 @@ public class ValidationPanel extends javax.swing.JPanel {
                     recalculatePeptidesAndProteins();
                 }
             }
-        } else if (psmMap.containsKey(selectedGroup)) {
-            HashMap<Integer, String> psmKey = psmMap.get(selectedGroup);
-            for (int charge : psmKey.keySet()) {
-                currentTargetDecoyMap = pSMaps.getPsmSpecificMap().getTargetDecoyMap(charge, psmKey.get(charge));
-            }
         } else {
-            // this should not happen...
-            clearScreen();
-            return;
+
+            currentTargetDecoyMap = pSMaps.getPsmMap();
+
         }
 
         applyButton.setEnabled(modifiedMaps.get(selectedGroup));
@@ -2564,6 +2426,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         resolutionTxt.setText(Util.roundDouble(pmin, 2) + " %");
         targetDecoySeries = currentTargetDecoyMap.getTargetDecoySeries();
         updateDisplayedComponents();
+
     }
 
     /**
@@ -3017,23 +2880,22 @@ public class ValidationPanel extends javax.swing.JPanel {
             @Override
             public void run() {
 
-                PSMaps pSMaps = new PSMaps();
-                pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-                PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters(), pSMaps);
-
                 try {
-                    miniShaker.spectrumMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getProcessingParameters(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters());
+
+                    PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters());
+                    miniShaker.spectrumMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getProcessingParameters(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSequenceProvider());
+
+                    // update the tracking of probabilities modifications
+                    for (int key : modifiedMaps.keySet()) {
+                        modifiedMaps.put(key, false);
+                    }
+
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
                             "An identification conflict occured. If you can reproduce the error <br>"
                             + "Please <a href=\"https://github.com/compomics/peptide-shaker/issues\">contact the developers</a>."),
                             "Identification Conflict", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
-                }
-
-                // update the tracking of probabilities modifications
-                for (int key : modifiedMaps.keySet()) {
-                    modifiedMaps.put(key, false);
                 }
 
                 progressDialog.setRunFinished();
@@ -3067,12 +2929,10 @@ public class ValidationPanel extends javax.swing.JPanel {
             @Override
             public void run() {
 
-                PSMaps pSMaps = new PSMaps();
-                pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-                PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters(), pSMaps);
+                PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters());
 
                 try {
-                    miniShaker.peptideMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getIdentificationParameters());
+                    miniShaker.peptideMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSequenceProvider());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
                             "An identification conflict occured. If you can reproduce the error <br>"
@@ -3082,9 +2942,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                 }
 
                 modifiedMaps.put(0, false);
-                for (int key : peptideMap.keySet()) {
-                    modifiedMaps.put(key, false);
-                }
+                modifiedMaps.put(1, false);
 
                 progressDialog.setRunFinished();
             }
@@ -3118,12 +2976,12 @@ public class ValidationPanel extends javax.swing.JPanel {
             public void run() {
 
                 try {
-                    PSMaps pSMaps = new PSMaps();
-                    pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-                    PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters(), pSMaps);
 
-                    miniShaker.proteinMapChanged(progressDialog, peptideShakerGUI.getIdentificationParameters().getFractionParameters());
+                    PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters());
+
+                    miniShaker.proteinMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSequenceProvider());
                     modifiedMaps.put(0, false);
+
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
