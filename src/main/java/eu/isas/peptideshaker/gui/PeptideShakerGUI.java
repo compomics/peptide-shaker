@@ -3515,9 +3515,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                             PSMaps pSMaps = new PSMaps();
                             pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
 
-                            MatchesValidator matchesValidator = new MatchesValidator(pSMaps.getPsmSpecificMap(), pSMaps.getPeptideSpecificMap(), pSMaps.getProteinMap());
-                            matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), peptideShakerGUI.getGeneMaps(), pSMaps.getInputMap(), progressDialog, exceptionHandler,
-                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getIdentificationParameters(),
+                            MatchesValidator matchesValidator = new MatchesValidator(pSMaps.getPsmMap(), pSMaps.getPeptideMap(), pSMaps.getProteinMap());
+                            matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), pSMaps.getInputMap(), progressDialog, exceptionHandler,
+                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationParameters(),
                                     peptideShakerGUI.getSpectrumCountingParameters(), peptideShakerGUI.getProcessingParameters());
 
                             progressDialog.setPrimaryProgressCounterIndeterminate(true);
@@ -3761,7 +3761,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             exportProjectMenuItem.setEnabled(true);
 
             // disable the fractions tab if only one mgf file
-            boolean fractions = getIdentification().getSpectrumFiles().size() > 1;
+            boolean fractions = getIdentification().getFractions().size() > 1;
             allTabsJTabbedPane.setEnabledAt(PROTEIN_FRACTIONS_TAB_INDEX, fractions);
             fractionDetailsJMenuItem.setEnabled(fractions);
 
@@ -4986,7 +4986,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @return a list of keys of the currently displayed proteins
      */
-    public ArrayList<Long> getDisplayedProteins() {
+    public long[] getDisplayedProteins() {
 
         int selectedTab = getSelectedTab();
 

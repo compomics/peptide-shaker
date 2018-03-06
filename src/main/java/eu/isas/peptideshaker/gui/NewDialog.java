@@ -1732,7 +1732,6 @@ public class NewDialog extends javax.swing.JDialog {
                     tempIdentificationParameters.getProteinInferenceParameters().setProteinSequenceDatabase(fastaFile);
                 }
 
-                loadFastaFile(fastaFile, progressDialog);
                 fastaFileTxt.setText(fastaFile.getName());
             }
         }

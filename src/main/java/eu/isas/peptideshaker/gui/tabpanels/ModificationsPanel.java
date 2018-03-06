@@ -52,6 +52,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.*;
@@ -3153,13 +3154,13 @@ public class ModificationsPanel extends javax.swing.JPanel {
      * @return a list of the keys of the proteins of the currently displayed
      * peptides
      */
-    public ArrayList<Long> getDisplayedProteinMatches() {
+    public long[] getDisplayedProteinMatches() {
 
         return getDisplayedPeptides().stream()
                 .flatMap(peptideKey -> identification.getPeptideMatch(peptideKey).getPeptide().getProteinMapping().keySet().stream())
-                .flatMap(accession -> identification.getProteinMap().get(accession).stream())
+                .flatMapToLong(accession -> identification.getProteinMap().get(accession).stream().mapToLong(Function.identity()))
                 .distinct()
-                .collect(Collectors.toCollection(ArrayList::new));
+                .toArray();
 
     }
 
@@ -3180,11 +3181,11 @@ public class ModificationsPanel extends javax.swing.JPanel {
      *
      * @return a list of the PSM keys of the currently displayed assumptions
      */
-    public ArrayList<Long> getDisplayedSpectrumMatches() {
+    public long[] getDisplayedSpectrumMatches() {
 
         return getDisplayedPeptides().stream()
-                .flatMap(peptideKey -> Arrays.stream(identification.getPeptideMatch(peptideKey).getSpectrumMatchesKeys()).boxed())
-                .collect(Collectors.toCollection(ArrayList::new));
+                .flatMapToLong(peptideKey -> Arrays.stream(identification.getPeptideMatch(peptideKey).getSpectrumMatchesKeys()))
+                .toArray();
 
     }
 
@@ -3358,10 +3359,9 @@ public class ModificationsPanel extends javax.swing.JPanel {
                     accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " " + searchParameters.getFragmentAccuracyType());
                     intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
 
-                    ((JSparklinesBarChartTableCellRenderer) selectedPsmsTable.getColumn("Charge").getCellRenderer()).setMaxValue(
-                            (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge());
-                    ((JSparklinesBarChartTableCellRenderer) relatedPsmsTable.getColumn("Charge").getCellRenderer()).setMaxValue(
-                            (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge());
+                    int maxCharge = peptideShakerGUI.getMetrics().getMaxCharge();
+                    ((JSparklinesBarChartTableCellRenderer) selectedPsmsTable.getColumn("Charge").getCellRenderer()).setMaxValue((double) maxCharge);
+                    ((JSparklinesBarChartTableCellRenderer) relatedPsmsTable.getColumn("Charge").getCellRenderer()).setMaxValue((double) maxCharge);
 
                     // enable the contextual export options
                     exportModifiedPeptideProfileJButton.setEnabled(true);
@@ -4047,9 +4047,9 @@ public class ModificationsPanel extends javax.swing.JPanel {
             // see if a second mirrored spectrum is to be added
             if (secondSpectrumMatchKey != null) {
 
-                    secondSpectrumMatch = identification.getSpectrumMatch(secondSpectrumMatchKey);
-                    String secondSpectrumKey = secondSpectrumMatch.getSpectrumKey();
-                
+                secondSpectrumMatch = identification.getSpectrumMatch(secondSpectrumMatchKey);
+                String secondSpectrumKey = secondSpectrumMatch.getSpectrumKey();
+
                 currentSpectrum = spectrumFactory.getSpectrum(secondSpectrumKey);
 
                 if (currentSpectrum != null && !currentSpectrum.getPeakMap().isEmpty()) {

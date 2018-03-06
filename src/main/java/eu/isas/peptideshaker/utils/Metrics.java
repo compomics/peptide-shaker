@@ -3,9 +3,12 @@ package eu.isas.peptideshaker.utils;
 import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 
 /**
  * This class contains metrics from the dataset for later use.
@@ -15,7 +18,6 @@ import java.util.TreeSet;
  */
 public class Metrics implements Serializable {
 
-    // @TODO Merge with the IdentificationFeaturesCache.
     /**
      * Serial number for versions compatibility.
      */
@@ -41,9 +43,9 @@ public class Metrics implements Serializable {
      */
     private double maxTagPrecursorErrorPpm = 0;
     /**
-     * The charges found in all PSMs (only the best hit per spectrum).
+     * The charges found in all PSMs (only the best hit per spectrum). Charges are ordered.
      */
-    private final ArrayList<Integer> foundCharges = new ArrayList<>();
+    private int[] foundCharges = new int[0];
     /**
      * The maximal amount of peptides in the proteins of the dataset.
      */
@@ -133,7 +135,7 @@ public class Metrics implements Serializable {
      *
      * @return the found charges.
      */
-    public ArrayList<Integer> getFoundCharges() {
+    public int[] getFoundCharges() {
         return foundCharges;
     }
 
@@ -141,7 +143,7 @@ public class Metrics implements Serializable {
      * Clears the found charges.
      */
     public void clearFoundCharges() {
-        foundCharges.clear();
+        foundCharges = new int[0];
     }
 
     /**
@@ -150,11 +152,21 @@ public class Metrics implements Serializable {
      * @param foundCharges the new charge to add
      */
     public void addFoundCharges(HashSet<Integer> foundCharges) {
-        for (int newCharge : foundCharges) {
-            if (!this.foundCharges.contains(newCharge)) {
-                this.foundCharges.add(newCharge);
-            }
-        }
+        this.foundCharges = IntStream.concat(Arrays.stream(this.foundCharges), foundCharges.stream().mapToInt(Function.identity()))
+                .distinct()
+                .sorted()
+                .toArray();
+    }
+    
+    /**
+     * Returns the maximal charge among found charges.
+     * 
+     * @return the maximal charge
+     */
+    public int getMaxCharge() {
+        
+        return foundCharges[foundCharges.length-1];
+        
     }
 
     /**

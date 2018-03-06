@@ -1665,7 +1665,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     } else if (psmPrecursorChargeJRadioButton.isSelected()) {
 
-                        int maxCharge = ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge();
+                        int maxCharge = peptideShakerGUI.getMetrics().getMaxCharge();
 
                         for (int i = 0; i <= maxCharge; i++) {
                             bins.add((double) i);

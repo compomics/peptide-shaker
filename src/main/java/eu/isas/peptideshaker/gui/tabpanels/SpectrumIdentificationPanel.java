@@ -4094,8 +4094,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         if (identification != null) {
 
+        int maxCharge = peptideShakerGUI.getMetrics().getMaxCharge();
             spectrumTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
-                    (double) ((PSMaps) identification.getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge(), peptideShakerGUI.getSparklineColor()));
+                    (double) maxCharge, peptideShakerGUI.getSparklineColor()));
             spectrumTable.getColumn("Int").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                     SpectrumFactory.getInstance().getMaxIntensity(), peptideShakerGUI.getSparklineColor()));
             spectrumTable.getColumn("RT (min)").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, SpectrumFactory.getInstance().getMinRT() / 60,
