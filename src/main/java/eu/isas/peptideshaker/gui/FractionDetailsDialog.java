@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.Util;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,6 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -32,10 +34,6 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
      * The table column header tooltips.
      */
     private ArrayList<String> tableToolTips;
-    /**
-     * A map of the spectrum file names to the complete file paths.
-     */
-    private HashMap<String, String> spectrumFileNameMap;
 
     /**
      * Creates a new FractionDetailsDialog.
@@ -63,29 +61,36 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
      * Add the data to the table.
      */
     private void addData() {
-        ArrayList<String> spectrumFiles = peptideShakerGUI.getIdentification().getOrderedSpectrumFileNames();
-        spectrumFileNameMap = new HashMap<>();
+        
+        ArrayList<String> fractions = peptideShakerGUI.getIdentification().getFractions();
 
         HashMap<String, XYDataPoint> expectedMolecularWeightRanges = peptideShakerGUI.getIdentificationParameters().getFractionParameters().getFractionMolecularWeightRanges();
-
-        for (int i = 0; i < spectrumFiles.size(); i++) {
+        int lineNumber = 1;
+        
+        for (String fraction : fractions) {
 
             Double lower = 0.0;
             Double upper = 0.0;
 
-            if (expectedMolecularWeightRanges != null && expectedMolecularWeightRanges.containsKey(spectrumFiles.get(i))) {
-                lower = expectedMolecularWeightRanges.get(spectrumFiles.get(i)).getX();
-                upper = expectedMolecularWeightRanges.get(spectrumFiles.get(i)).getY();
+            if (expectedMolecularWeightRanges != null) {
+                
+                XYDataPoint dataPoint = expectedMolecularWeightRanges.get(fraction);
+                
+                if (dataPoint != null) {
+                    
+                lower = dataPoint.getX();
+                upper = dataPoint.getY();
+                
+                }
             }
 
             ((DefaultTableModel) fractionTable.getModel()).addRow(new Object[]{
-                        (i + 1),
-                        Util.getFileName(spectrumFiles.get(i)),
+                        lineNumber++,
+                        Util.getFileName(fraction),
                         lower,
                         upper
                     });
-
-            spectrumFileNameMap.put(Util.getFileName(spectrumFiles.get(i)), spectrumFiles.get(i));
+            
         }
     }
 
@@ -494,16 +499,18 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
      * @param evt the action event
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        
         ArrayList<String> spectrumFiles = new ArrayList<>();
         HashMap<String, XYDataPoint> fractionRanges = new HashMap<>();
 
         for (int i = 0; i < fractionTable.getRowCount(); i++) {
-            String filePath = spectrumFileNameMap.get((String) fractionTable.getValueAt(i, fractionTable.getColumn("Fraction").getModelIndex()));
-            spectrumFiles.add(filePath);
+            
+            String fileName = (String) fractionTable.getValueAt(i, fractionTable.getColumn("Fraction").getModelIndex());
+            spectrumFiles.add(fileName);
 
             Double lower = (Double) fractionTable.getValueAt(i, fractionTable.getColumn("Lower Range (kDa)").getModelIndex());
             Double upper = (Double) fractionTable.getValueAt(i, fractionTable.getColumn("Upper Range (kDa)").getModelIndex());
-            fractionRanges.put(filePath, new XYDataPoint(lower, upper));
+            fractionRanges.put(fileName, new XYDataPoint(lower, upper));
         }
 
         peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
@@ -512,10 +519,11 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
             peptideShakerGUI.getProteinFractionsPanel().displayResults();
         }
 
-        peptideShakerGUI.getIdentification().setOrderedListOfSpectrumFileNames(spectrumFiles);
+        peptideShakerGUI.getIdentification().setFractions(spectrumFiles);
         peptideShakerGUI.getIdentificationParameters().getFractionParameters().setFractionMolecularWeightRanges(fractionRanges);
         this.setVisible(false);
         this.dispose();
+        
     }//GEN-LAST:event_okButtonActionPerformed
 
     /**

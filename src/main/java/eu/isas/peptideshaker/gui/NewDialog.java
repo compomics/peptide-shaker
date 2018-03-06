@@ -12,6 +12,8 @@ import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.identification_parameters.IdentificationParametersFactory;
+import com.compomics.util.experiment.io.biology.protein.FastaParameters;
+import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.biology.protein.ProteinDatabase;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.gui.GuiUtilities;
@@ -732,17 +734,16 @@ public class NewDialog extends javax.swing.JDialog {
             if (idFiles.size() > 0) {
 
                 try {
-                    
-                needDialog = true;
-                ExceptionHandler exceptionHandler = new WaitingDialogExceptionHandler((WaitingDialog) waitingDialog, "https://github.com/compomics/peptide-shaker/issues");
-                peptideShaker.importFiles(waitingDialog, idFiles, spectrumFiles,
-                        identificationParameters, projectDetails, processingParameters, exceptionHandler);
-                peptideShaker.createProject(identificationParameters, processingParameters, spectrumCountingPreferences, projectDetails, waitingDialog, exceptionHandler);
-                
+
+                    needDialog = true;
+                    ExceptionHandler exceptionHandler = new WaitingDialogExceptionHandler((WaitingDialog) waitingDialog, "https://github.com/compomics/peptide-shaker/issues");
+                    peptideShaker.importFiles(waitingDialog, idFiles, spectrumFiles,
+                            identificationParameters, projectDetails, processingParameters, exceptionHandler);
+                    peptideShaker.createProject(identificationParameters, processingParameters, spectrumCountingPreferences, projectDetails, waitingDialog, exceptionHandler);
+
                 } catch (Exception e) {
-                    
+
                     // Put in separate thread
-                    
                 }
 
             }
@@ -800,27 +801,36 @@ public class NewDialog extends javax.swing.JDialog {
     private void browseDbButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseDbButtonActionPerformed
 
         if (identificationParameters == null) {
+
             editSettingsButtonActionPerformed(null);
+
         } else {
 
-            SequenceDbDetailsDialog sequenceDbDetailsDialog = new SequenceDbDetailsDialog(peptideShakerGUI, peptideShakerGUI.getLastSelectedFolder(), true,
+            SearchParameters searchParameters = identificationParameters.getSearchParameters();
+
+            SequenceDbDetailsDialog sequenceDbDetailsDialog = new SequenceDbDetailsDialog(peptideShakerGUI,
+                    searchParameters.getFastaFile(), searchParameters.getFastaParameters(),
+                    peptideShakerGUI.getLastSelectedFolder(), true,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
             boolean success = sequenceDbDetailsDialog.selectDB(true);
-            if (success) {
-                sequenceDbDetailsDialog.setVisible(true);
-            }
 
-            File fastaFile = sequenceFactory.getCurrentFastaFile();
-            if (fastaFile != null) {
-                fastaFileTxt.setText(sequenceFactory.getFileName());
-                if (identificationParameters.getProteinInferenceParameters() == null) {
-                    identificationParameters.setProteinInferenceParameters(new ProteinInferenceParameters());
+            if (success) {
+
+                sequenceDbDetailsDialog.setVisible(true);
+
+                if (!sequenceDbDetailsDialog.isCanceled()) {
+
+                    File fastaFile = sequenceDbDetailsDialog.getSelectedFastaFile();
+                    FastaParameters fastaParameters = sequenceDbDetailsDialog.getFastaParameters();
+                    fastaFileTxt.setText(fastaFile.getName());
+                    identificationParameters.getProteinInferenceParameters().setProteinSequenceDatabase(fastaFile);
+                    searchParameters.setFastaFile(fastaFile);
+                    searchParameters.setFastaParameters(fastaParameters);
+                    checkFastaFile();
+
                 }
-                identificationParameters.getProteinInferenceParameters().setProteinSequenceDatabase(fastaFile);
-                identificationParameters.getSearchParameters().setFastaFile(fastaFile);
-                checkFastaFile();
             }
 
             validateInput();
@@ -1746,7 +1756,7 @@ public class NewDialog extends javax.swing.JDialog {
             identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
         } else {
             boolean matchesValidationChanged = identificationParametersFactory.getIdentificationParameters(tempIdentificationParameters.getName()).getIdValidationParameters().equals(tempIdentificationParameters.getIdValidationParameters());
-            boolean otherSettingsChanged = !identificationParametersFactory.getIdentificationParameters(tempIdentificationParameters.getName()).equalsExceptValidationPreferences(tempIdentificationParameters);
+            boolean otherSettingsChanged = !identificationParametersFactory.getIdentificationParameters(tempIdentificationParameters.getName()).equals(tempIdentificationParameters);
 
             if (otherSettingsChanged || matchesValidationChanged && !matchesValidationAdded) {
 
@@ -1903,70 +1913,38 @@ public class NewDialog extends javax.swing.JDialog {
      * target decoy.
      */
     public void checkFastaFile() {
-        if (sequenceFactory.getCurrentFastaIndex().getMainDatabaseType() != ProteinDatabase.UniProt) {
-            showDataBaseHelpDialog();
-        }
-        if (!sequenceFactory.concatenatedTargetDecoy()) {
-            JOptionPane.showMessageDialog(this, "PeptideShaker validation requires the use of a taget-decoy database.\n"
-                    + "Some features will be limited if using other types of databases.\n\n"
-                    + "Note that using Automatic Decoy Search in Mascot is not supported.\n\n"
-                    + "See the PeptideShaker home page for details.",
-                    "No Decoys Found",
-                    JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
 
-    /**
-     * Loads the FASTA file in the factory.
-     *
-     * @param file the FASTA file
-     * @param progressDialog the progress dialog
-     */
-    private void loadFastaFile(File file, ProgressDialogX progressDialog) {
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+        File fastaFile = searchParameters.getFastaFile();
+        FastaParameters fastaParameters = searchParameters.getFastaParameters();
 
         try {
-            if (progressDialog != null) {
-                progressDialog.setTitle("Importing Database. Please Wait...");
-                progressDialog.setPrimaryProgressCounterIndeterminate(false);
+
+            FastaSummary fastaSummary = FastaSummary.getSummary(fastaFile, fastaParameters, progressDialog);
+
+            Integer nUniprot = fastaSummary.databaseType.get(ProteinDatabase.UniProt);
+            int total = fastaSummary.databaseType.values().stream().mapToInt(a -> a).sum();
+
+            if (nUniprot == null || ((double) nUniprot) / total < 0.4) {
+                showDataBaseHelpDialog();
             }
-            sequenceFactory.loadFastaFile(file, progressDialog);
-            checkFastaFile();
-            if (progressDialog != null) {
-                progressDialog.setRunFinished();
+            if (!fastaParameters.isTargetDecoy()) {
+                JOptionPane.showMessageDialog(this, "PeptideShaker validation requires the use of a taget-decoy database.\n"
+                        + "Some features will be limited if using other types of databases.\n\n"
+                        + "Note that using Automatic Decoy Search in Mascot is not supported.\n\n"
+                        + "See the PeptideShaker home page for details.",
+                        "No Decoys Found",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
+
         } catch (IOException e) {
-            if (progressDialog != null) {
-                progressDialog.setRunFinished();
-            }
-            JOptionPane.showMessageDialog(peptideShakerGUI,
-                    new String[]{"FASTA Import Error.", "File " + file.getAbsolutePath() + " not found."},
-                    "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
+
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            if (progressDialog != null) {
-                progressDialog.setRunFinished();
-            }
-            JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
-                    "File index of " + file.getName() + " could not be imported.<br>"
-                    + "Please <a href=\"https://github.com/compomics/peptide-shaker/issues\">contact the developers</a>."),
-                    "FASTA Import Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        } catch (StringIndexOutOfBoundsException e) {
-            if (progressDialog != null) {
-                progressDialog.setRunFinished();
-            }
-            JOptionPane.showMessageDialog(peptideShakerGUI,
-                    e.getMessage(),
-                    "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            if (progressDialog != null) {
-                progressDialog.setRunFinished();
-            }
-            JOptionPane.showMessageDialog(peptideShakerGUI,
-                    e.getMessage(),
-                    "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "An error occurred while parsing the fasta file.",
+                    "Error while parsing the file",
+                    JOptionPane.INFORMATION_MESSAGE);
+
         }
     }
 

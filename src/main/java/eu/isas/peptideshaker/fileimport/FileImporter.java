@@ -823,6 +823,7 @@ public class FileImporter {
                 mgfUsed.add(fileName);
                 projectDetails.addSpectrumFile(spectrumFile);
                 nSpectra += spectrumFactory.getNSpectra(fileName);
+                identification.addFraction(fileName);
 
             } else {
 

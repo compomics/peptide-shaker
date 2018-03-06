@@ -22,7 +22,6 @@ import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.messages.FeedBack;
 import com.compomics.util.parameters.identification.advanced.FractionParameters;
 import com.compomics.util.parameters.identification.advanced.IdMatchValidationParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
@@ -49,10 +48,8 @@ import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -518,7 +515,7 @@ public class PeptideShaker {
         
         }
         
-        matchesValidator.validateIdentifications(identification, metrics, inputMap, waitingHandler, exceptionHandler, identificationFeaturesGenerator, fastaParameters, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, spectrumCountingParameters, processingParameters);
+        matchesValidator.validateIdentifications(identification, metrics, inputMap, waitingHandler, exceptionHandler, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, spectrumCountingParameters, processingParameters);
         waitingHandler.increasePrimaryProgressCounter();
 
         if (waitingHandler.isRunCanceled()) {

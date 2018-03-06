@@ -327,7 +327,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         // @TODO: this method should be split into smaller methods...
         ArrayList<String> fileNames = new ArrayList<>();
 
-        for (String fileName : identification.getOrderedSpectrumFileNames()) {
+        for (String fileName : identification.getFractions()) {
             fileNames.add(fileName);
         }
 
@@ -512,17 +512,10 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         // molecular mass plot
         DefaultBoxAndWhiskerCategoryDataset mwPlotDataset = new DefaultBoxAndWhiskerCategoryDataset();
 
-        HashMap<String, XYDataPoint> molecularWeights = peptideShakerGUI.getIdentificationParameters().getFractionParameters().getFractionMolecularWeightRanges();
-        ArrayList<String> spectrumFiles = peptideShakerGUI.getIdentification().getOrderedSpectrumFileNames();
+        ArrayList<String> spectrumFiles = peptideShakerGUI.getIdentification().getFractions();
 
         for (int i = 0; i < spectrumFiles.size(); i++) {
 
-//                Double mw = null;
-//
-//                if (molecularWeights != null) {
-//                    mw = molecularWeights.get(spectrumFiles.get(i));
-//                }
-            //mwPlotDataset.addValue(mw, "Expected MW", "" + (i + 1));
             try {
                 if (peptideShakerGUI.getMetrics().getObservedFractionalMassesAll().containsKey(spectrumFiles.get(i))) {
                     mwPlotDataset.add(peptideShakerGUI.getMetrics().getObservedFractionalMassesAll().get(spectrumFiles.get(i)), "Observed MW (kDa)", "" + (i + 1));

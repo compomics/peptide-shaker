@@ -53,6 +53,7 @@ import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
@@ -3977,9 +3978,9 @@ public class ModificationsPanel extends javax.swing.JPanel {
      * Update the spectra according to the currently selected PSM.
      *
      * @param spectrumMatchKey the main spectrum match key
-     * @param secondSpectrumKey the secondary spectrum key
+     * @param secondSpectrumMatchKey the secondary spectrum key
      */
-    public void updateSpectrum(long spectrumMatchKey, String secondSpectrumKey) {
+    public void updateSpectrum(long spectrumMatchKey, Long secondSpectrumMatchKey) {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
@@ -3999,7 +4000,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
             Precursor precursor = currentSpectrum.getPrecursor();
 
-            double[] intensityArray = secondSpectrumKey == null ? currentSpectrum.getIntensityValuesAsArray()
+            double[] intensityArray = secondSpectrumMatchKey == null ? currentSpectrum.getIntensityValuesAsArray()
                     : currentSpectrum.getIntensityValuesNormalizedAsArray();
 
             spectrum = new SpectrumPanel(
@@ -4026,7 +4027,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
             allModifications.addAll(Arrays.stream(peptide.getModificationMatches()).collect(Collectors.toList()));
             PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
             SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption);
-            ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide).collect(Collectors.toCollection(ArrayList::new));
+            Stream<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide);
 
             // add the spectrum annotations
             spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), annotationParameters.getTiesResolution() == SpectrumAnnotator.TiesResolution.mostIntense); //@TODO: the selection of the peak to annotate should be done outside the spectrum panel
@@ -4044,15 +4045,16 @@ public class ModificationsPanel extends javax.swing.JPanel {
                     annotationParameters.showRewindIonDeNovoTags(), false);
 
             // see if a second mirrored spectrum is to be added
-            if (secondSpectrumKey != null) {
+            if (secondSpectrumMatchKey != null) {
 
+                    secondSpectrumMatch = identification.getSpectrumMatch(secondSpectrumMatchKey);
+                    String secondSpectrumKey = secondSpectrumMatch.getSpectrumKey();
+                
                 currentSpectrum = spectrumFactory.getSpectrum(secondSpectrumKey);
 
                 if (currentSpectrum != null && !currentSpectrum.getPeakMap().isEmpty()) {
 
                     precursor = currentSpectrum.getPrecursor();
-                    long secondSpectrumMatchKey = ExperimentObject.asLong(secondSpectrumKey);
-                    secondSpectrumMatch = identification.getSpectrumMatch(secondSpectrumMatchKey);
 
                     spectrum.addMirroredSpectrum(
                             currentSpectrum.getOrderedMzValues(), currentSpectrum.getIntensityValuesNormalizedAsArray(), precursor.getMz(),
@@ -4066,7 +4068,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                     identificationChargeSecondPsm = secondSpectrumMatch.getBestPeptideAssumption().getIdentificationCharge();
                     allModifications.addAll(Arrays.stream(peptide.getModificationMatches()).collect(Collectors.toList()));
                     specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption);
-                    annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide).collect(Collectors.toCollection(ArrayList::new));
+                    annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide);
 
                     spectrum.setAnnotationsMirrored(SpectrumAnnotator.getSpectrumAnnotation(annotations));
 
@@ -4086,7 +4088,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
             String modifiedSequence = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(spectrumMatch, false, false, true);
 
-            if (secondSpectrumKey != null) {
+            if (secondSpectrumMatchKey != null) {
 
                 modifiedSequence += " vs. " + peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(secondSpectrumMatch, false, false, true);
 

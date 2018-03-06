@@ -75,17 +75,14 @@ public class ProteinFractionTableModel extends DefaultTableModel {
         fileNames = new ArrayList<>();
 
         if (identification != null) {
-            try {
-                if (peptideShakerGUI.getDisplayParameters().showValidatedProteinsOnly()) {
-                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(peptideShakerGUI.getFilterParameters()); // show validated proteins only
-                } else {
-                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterParameters()); // show all proteins
-                }
-            } catch (Exception e) {
-                peptideShakerGUI.catchException(e);
+
+            if (peptideShakerGUI.getDisplayParameters().showValidatedProteinsOnly()) {
+                proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(peptideShakerGUI.getFilterParameters()); // show validated proteins only
+            } else {
+                proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterParameters()); // show all proteins
             }
 
-            for (String spectrumFileName : identification.getSpectrumFiles()) {
+            for (String spectrumFileName : identification.getFractions()) {
                 fileNames.add(spectrumFileName);
             }
         }

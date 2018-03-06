@@ -2505,7 +2505,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     pSMaps = (PSMaps) identification.getUrParam(pSMaps);
                     inputMap = pSMaps.getInputMap();
                     advocatesUsed = new ArrayList<>(inputMap.getInputAlgorithmsSorted());
-                    ArrayList<String> spectrumFileNames = identification.getSpectrumFiles();
                     updateOverviewPlots();
 
                     // update the advocates color legend
@@ -2526,6 +2525,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     showSparkLines(peptideShakerGUI.showSparklines());
                     progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
+                    ArrayList<String> spectrumFileNames = identification.getFractions();
                     String[] filesArray = new String[spectrumFileNames.size()];
                     int cpt = 0;
 
@@ -3932,7 +3932,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         int totalNumberOfSpectra = 0;
 
         if (selectedFileName == null) {
-            for (String spectrumFile : identification.getSpectrumFiles()) {
+            for (String spectrumFile : identification.getFractions()) {
                 totalNumberOfSpectra += spectrumFactory.getNSpectra(spectrumFile);
             }
             for (int advocateId : inputMap.getInputAlgorithmsSorted()) {
