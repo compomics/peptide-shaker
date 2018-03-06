@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.function.Function;
 
 /**
  * A dialog for selecting the files to load.
@@ -1922,7 +1923,9 @@ public class NewDialog extends javax.swing.JDialog {
             FastaSummary fastaSummary = FastaSummary.getSummary(fastaFile, fastaParameters, progressDialog);
 
             Integer nUniprot = fastaSummary.databaseType.get(ProteinDatabase.UniProt);
-            int total = fastaSummary.databaseType.values().stream().mapToInt(a -> a).sum();
+            int total = fastaSummary.databaseType.values().stream()
+                    .mapToInt(Function.identity())
+                    .sum();
 
             if (nUniprot == null || ((double) nUniprot) / total < 0.4) {
                 showDataBaseHelpDialog();

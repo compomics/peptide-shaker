@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

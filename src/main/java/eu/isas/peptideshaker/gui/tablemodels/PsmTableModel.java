@@ -184,7 +184,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                     return psParameter.getStarred();
 
                 case 2:
-                    return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftware(spectrumMatch, spectrumMatch.getPeptideAssumptionsMap(), identificationParameters.getSequenceMatchingParameters(), inputMap.getInputAlgorithmsSorted().size());
+                    return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftware(spectrumMatch, identificationParameters.getSequenceMatchingParameters(), inputMap.getInputAlgorithmsSorted().size());
 
                 case 3:
                     return displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true);

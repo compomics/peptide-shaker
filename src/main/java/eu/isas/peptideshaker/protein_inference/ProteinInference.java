@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -792,7 +793,7 @@ public class ProteinInference {
 
         if (metrics != null) {
             
-            metrics.setProteinKeys(proteinKeys.stream().mapToLong(a -> a).toArray());
+            metrics.setProteinKeys(proteinKeys.stream().mapToLong(Function.identity()).toArray());
             metrics.setMaxNPeptides(-maxPeptides);
             metrics.setMaxNSpectra(-maxSpectra);
             metrics.setMaxMW(maxMW);

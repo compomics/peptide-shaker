@@ -54,6 +54,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -3156,9 +3157,10 @@ public class ModificationsPanel extends javax.swing.JPanel {
      */
     public long[] getDisplayedProteinMatches() {
 
-        return getDisplayedPeptides().stream()
-                .flatMap(peptideKey -> identification.getPeptideMatch(peptideKey).getPeptide().getProteinMapping().keySet().stream())
-                .flatMapToLong(accession -> identification.getProteinMap().get(accession).stream().mapToLong(Function.identity()))
+        return Arrays.stream(getDisplayedPeptides())
+                .mapToObj(peptideKey -> identification.getPeptideMatch(peptideKey).getPeptide().getProteinMapping().keySet().stream())
+                .flatMap(Function.identity())
+                .flatMapToLong(accession -> identification.getProteinMap().get(accession).stream().mapToLong(a -> a))
                 .distinct()
                 .toArray();
 
@@ -3169,11 +3171,10 @@ public class ModificationsPanel extends javax.swing.JPanel {
      *
      * @return a list of the keys of the currently displayed peptides
      */
-    public ArrayList<Long> getDisplayedPeptides() {
+    public long[] getDisplayedPeptides() {
 
-        ArrayList<Long> result = new ArrayList<>(displayedPeptides);
-        result.addAll(relatedPeptides);
-        return result;
+        return LongStream.concat(displayedPeptides.stream().mapToLong(a -> a), relatedPeptides.stream().mapToLong(a -> a)).toArray();
+        
     }
 
     /**
@@ -3183,8 +3184,8 @@ public class ModificationsPanel extends javax.swing.JPanel {
      */
     public long[] getDisplayedSpectrumMatches() {
 
-        return getDisplayedPeptides().stream()
-                .flatMapToLong(peptideKey -> Arrays.stream(identification.getPeptideMatch(peptideKey).getSpectrumMatchesKeys()))
+        return Arrays.stream(getDisplayedPeptides())
+                .flatMap(peptideKey -> Arrays.stream(identification.getPeptideMatch(peptideKey).getSpectrumMatchesKeys()))
                 .toArray();
 
     }

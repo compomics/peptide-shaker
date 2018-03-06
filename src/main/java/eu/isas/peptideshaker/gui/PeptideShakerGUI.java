@@ -5015,7 +5015,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @return a list of keys of the currently displayed peptides
      */
-    public ArrayList<Long> getDisplayedPeptides() {
+    public long[] getDisplayedPeptides() {
 
         int selectedTab = getSelectedTab();
 
