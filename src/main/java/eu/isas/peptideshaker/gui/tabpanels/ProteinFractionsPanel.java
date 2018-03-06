@@ -381,7 +381,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                             DigestionParameters digestionParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionParameters();
 
-                            if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected() || digestionParameters.getCleavagePreference() != DigestionParameters.CleavagePreference.enzyme) {
+                            if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected() || digestionParameters.getCleavageParameter() != DigestionParameters.CleavageParameter.enzyme) {
 
                                 includePeptide = true;
 

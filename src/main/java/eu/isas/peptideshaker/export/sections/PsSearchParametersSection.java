@@ -101,12 +101,12 @@ public class PsSearchParametersSection {
                     break;
                 case cleavage:
                     DigestionParameters digestionPreferences = searchParameters.getDigestionParameters();
-                    writer.write(digestionPreferences.getCleavagePreference().toString());
+                    writer.write(digestionPreferences.getCleavageParameter().toString());
                     break;
                 case enzyme:
                     digestionPreferences = searchParameters.getDigestionParameters();
                     StringBuilder content = new StringBuilder();
-                    if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+                    if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
                         for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
                             if (content.length() > 0) {
                                 content.append(", ");
@@ -119,7 +119,7 @@ public class PsSearchParametersSection {
                 case mc:
                     digestionPreferences = searchParameters.getDigestionParameters();
                     content = new StringBuilder();
-                    if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+                    if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
                         for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
                             String enzymeName = enzyme.getName();
                             if (content.length() > 0) {
@@ -134,7 +134,7 @@ public class PsSearchParametersSection {
                 case specificity:
                     digestionPreferences = searchParameters.getDigestionParameters();
                     content = new StringBuilder();
-                    if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+                    if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
                         for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
                             String enzymeName = enzyme.getName();
                             if (content.length() > 0) {

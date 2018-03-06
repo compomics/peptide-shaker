@@ -207,7 +207,7 @@ public class PepXmlExport {
 
             DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
             
-            if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+            if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
             
                 for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
                 

@@ -229,7 +229,7 @@ public class PeptideShakerMethods {
         StringBuilder text = new StringBuilder("The identification settings were as follows: ");
         DigestionParameters digestionPreferences = searchParameters.getDigestionParameters();
 
-        switch (digestionPreferences.getCleavagePreference()) {
+        switch (digestionPreferences.getCleavageParameter()) {
 
             case unSpecific:
                 text.append("No cleavage specificity; ");
@@ -258,7 +258,7 @@ public class PeptideShakerMethods {
                 break;
 
             default:
-                throw new UnsupportedOperationException("Cleavage of type " + digestionPreferences.getCleavagePreference() + " not supported.");
+                throw new UnsupportedOperationException("Cleavage of type " + digestionPreferences.getCleavageParameter() + " not supported.");
 
         }
 

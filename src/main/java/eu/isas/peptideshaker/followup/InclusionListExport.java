@@ -105,7 +105,7 @@ public class InclusionListExport {
                                     Integer peptideMinMissedCleavages = null;
                                     DigestionParameters digestionPreferences = searchParameters.getDigestionParameters();
 
-                                    if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+                                    if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
 
                                         for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
 

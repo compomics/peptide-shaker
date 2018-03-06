@@ -336,7 +336,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     boolean enzymatic = false;
                     DigestionParameters digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionParameters();
 
-                    if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+                    if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
 
                         enzymatic = PeptideUtils.isEnzymatic(peptideMatch.getPeptide(), peptideShakerGUI.getSequenceProvider(), digestionPreferences.getEnzymes());
 

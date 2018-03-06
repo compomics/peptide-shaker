@@ -421,7 +421,7 @@ public class ProteinInference {
 
             DigestionParameters digestionParameters = identificationParameters.getSearchParameters().getDigestionParameters();
 
-            if (digestionParameters.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme
+            if (digestionParameters.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme
                     && Arrays.stream(sharedMatch.getPeptideMatchesKeys())
                             .mapToObj(key -> identification.getPeptideMatch(key))
                             .allMatch(peptideMatch -> !PeptideUtils.isEnzymatic(peptideMatch.getPeptide(), sequenceProvider, digestionParameters.getEnzymes()))) {
@@ -853,7 +853,7 @@ public class ProteinInference {
         
             DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
             
-            if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+            if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
             
                 boolean newEnzymatic = Arrays.stream(newProteinMatch.getPeptideMatchesKeys())
                         .mapToObj(key -> identification.getPeptideMatch(key))

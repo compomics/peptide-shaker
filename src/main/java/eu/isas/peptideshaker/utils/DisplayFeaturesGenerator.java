@@ -902,7 +902,7 @@ public class DisplayFeaturesGenerator {
 
                 DigestionParameters digestionPreferences = searchParameters.getDigestionParameters();
 
-                if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+                if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
 
                     PeptideUtils.isEnzymatic(peptideMatch.getPeptide(), sequenceProvider, digestionPreferences.getEnzymes());
 

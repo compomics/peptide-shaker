@@ -345,7 +345,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                     Boolean enzymatic = false;
                     DigestionParameters digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionParameters();
                     
-                    if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+                    if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
                         
                         enzymatic = PeptideUtils.isEnzymatic(peptideMatch.getPeptide(), peptideShakerGUI.getSequenceProvider(), digestionPreferences.getEnzymes());
                                 

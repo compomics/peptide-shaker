@@ -2702,7 +2702,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     prideSearchParameters.setFastaFile(new File(database));
 
                     // set digestion preferences to default
-                    prideSearchParameters.setDigestionParameters(DigestionParameters.getDefaultPreferences());
+                    prideSearchParameters.setDigestionParameters(DigestionParameters.getDefaultParameters());
 
                     String prideSearchParametersReport = null;
                     ArrayList<File> mgfFiles = new ArrayList<>();
@@ -3226,7 +3226,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         // set the enzyme
         prideParametersReport += "<br><br><b>Enzyme:</b> ";
 
-        DigestionParameters prideDigestionPreferences = DigestionParameters.getDefaultPreferences();
+        DigestionParameters prideDigestionPreferences = DigestionParameters.getDefaultParameters();
         prideSearchParameters.setDigestionParameters(prideDigestionPreferences);
 
         if (!enzymes.isEmpty()) {
@@ -3299,7 +3299,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         }
 
         // set the max missed cleavages
-        if (prideDigestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+        if (prideDigestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
             prideParametersReport += "<b>Maximum Missed Cleavages:</b> ";
             if (maxMissedCleavages != null) {
                 for (Enzyme enzyme : prideDigestionPreferences.getEnzymes()) {

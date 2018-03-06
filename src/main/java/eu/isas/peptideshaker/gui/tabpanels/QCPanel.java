@@ -7,7 +7,6 @@ import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -23,6 +22,7 @@ import com.compomics.util.experiment.identification.filtering.PeptideAssumptionF
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
+import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.parameters.identification.search.DigestionParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import javax.swing.SwingUtilities;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -66,10 +67,6 @@ public class QCPanel extends javax.swing.JPanel {
      * target, non validated decoy).
      */
     private final Color[] histogramColors;
-    /**
-     * The sequence factory.
-     */
-    private final SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * A simple progress dialog.
      */
@@ -1568,7 +1565,7 @@ public class QCPanel extends javax.swing.JPanel {
                                 peptideChart.getCategoryPlot().getDomainAxis().setLabel("Peptide Length");
                                 peptideChart.setTitle("Peptides QC Plot - Peptide Length");
                             } else if (peptideModificationsJRadioButton.isSelected()) {
-                                peptideChart.getCategoryPlot().getRangeAxis().setLabel("#Peptides with the PTM");
+                                peptideChart.getCategoryPlot().getRangeAxis().setLabel("#Peptides with the Modification");
                                 peptideChart.setTitle("Peptides QC Plot - Peptide Modifications");
                                 peptideChart.getCategoryPlot().getDomainAxis().setMaximumCategoryLabelLines(5);
                             } else if (peptideModificationEfficiencyJRadioButton.isSelected()) {
@@ -1741,76 +1738,64 @@ public class QCPanel extends javax.swing.JPanel {
         progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getProteinIdentification().size());
         progressDialog.setValue(0);
 
-        try {
-            Identification identification = peptideShakerGUI.getIdentification();
-            IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
+        IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
 
-            PSParameter proteinParameter = new PSParameter();
-            maxValue = Double.MIN_VALUE;
+        maxValue = Double.MIN_VALUE;
 
-            validatedValues = new ArrayList<>();
-            validatedDoubtfulValues = new ArrayList<>();
-            nonValidatedValues = new ArrayList<>();
-            validatedDecoyValues = new ArrayList<>();
-            nonValidatedDecoyValues = new ArrayList<>();
+        validatedValues = new ArrayList<>();
+        validatedDoubtfulValues = new ArrayList<>();
+        nonValidatedValues = new ArrayList<>();
+        validatedDecoyValues = new ArrayList<>();
+        nonValidatedDecoyValues = new ArrayList<>();
 
-            ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(progressDialog);
-            ProteinMatch proteinMatch;
+        ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(progressDialog);
+        ProteinMatch proteinMatch;
 
-            while ((proteinMatch = proteinMatchesIterator.next()) != null) {
+        while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
-                String proteinKey = proteinMatch.getKey();
+            long proteinKey = proteinMatch.getKey();
 
-                if (progressDialog.isRunCanceled()) {
-                    break;
-                }
-
-                double value = 0;
-
-                if (proteinNumberValidatedPeptidesJRadioButton.isSelected()) {
-                    value = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey);
-                } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
-                    value = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
-                } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
-                    HashMap<Integer, Double> sequenceCoverage;
-                    try {
-                        sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                        sequenceCoverage = new HashMap<>();
-                    }
-                    Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
-                    Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
-                    value = sequenceCoverageConfident + sequenceCoverageDoubtful;
-                } else if (proteinSequenceLengthJRadioButton.isSelected()) {
-                    Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getLeadingAccession());
-                    value = currentProtein.getSequence().length();
-                }
-
-                proteinParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(proteinKey)).getUrParam(proteinParameter);
-
-                if (!proteinParameter.getHidden()) {
-
-                    if (value > maxValue) {
-                        maxValue = value;
-                    }
-                    if (!ProteinMatch.isDecoy(proteinKey)) {
-                        if (proteinParameter.getMatchValidationLevel().isValidated()) {
-                            if (proteinParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                                validatedValues.add(value);
-                            } else {
-                                validatedDoubtfulValues.add(value);
-                            }
-                        } else {
-                            nonValidatedValues.add(value);
-                        }
-                    }
-                }
-
-                progressDialog.increasePrimaryProgressCounter();
+            if (progressDialog.isRunCanceled()) {
+                break;
             }
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
+
+            double value = 0;
+
+            if (proteinNumberValidatedPeptidesJRadioButton.isSelected()) {
+                value = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey);
+            } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+                value = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
+            } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
+                HashMap<Integer, Double> sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+                Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                value = sequenceCoverageConfident + sequenceCoverageDoubtful;
+            } else if (proteinSequenceLengthJRadioButton.isSelected()) {
+                String proteinSequence = peptideShakerGUI.getSequenceProvider().getSequence(proteinMatch.getLeadingAccession());
+                value = proteinSequence.length();
+            }
+
+            PSParameter proteinParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
+
+            if (!proteinParameter.getHidden()) {
+
+                if (value > maxValue) {
+                    maxValue = value;
+                }
+                if (!proteinMatch.isDecoy()) {
+                    if (proteinParameter.getMatchValidationLevel().isValidated()) {
+                        if (proteinParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                            validatedValues.add(value);
+                        } else {
+                            validatedDoubtfulValues.add(value);
+                        }
+                    } else {
+                        nonValidatedValues.add(value);
+                    }
+                }
+            }
+
+            progressDialog.increasePrimaryProgressCounter();
         }
     }
 
@@ -1819,198 +1804,190 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void getPeptideDataset() {
 
-        try {
-            PSParameter peptideParameter = new PSParameter();
-            PSParameter spectrumParameter = new PSParameter();
-            maxValue = Double.MIN_VALUE;
+        maxValue = Double.MIN_VALUE;
 
-            if (peptideValidatedPsmsJRadioButton.isSelected()) {
+        if (peptideValidatedPsmsJRadioButton.isSelected()) {
 
-                progressDialog.setPrimaryProgressCounterIndeterminate(false);
-                progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
-                progressDialog.setValue(0);
+            progressDialog.setPrimaryProgressCounterIndeterminate(false);
+            progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
+            progressDialog.setValue(0);
 
-                // Values for the number of validated PSMs
-                validatedValues = new ArrayList<>();
-                validatedDoubtfulValues = new ArrayList<>();
-                nonValidatedValues = new ArrayList<>();
-                validatedDecoyValues = new ArrayList<>();
-                nonValidatedDecoyValues = new ArrayList<>();
+            // Values for the number of validated PSMs
+            validatedValues = new ArrayList<>();
+            validatedDoubtfulValues = new ArrayList<>();
+            nonValidatedValues = new ArrayList<>();
+            validatedDecoyValues = new ArrayList<>();
+            nonValidatedDecoyValues = new ArrayList<>();
 
-                PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
-                PeptideMatch peptideMatch;
+            PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
+            PeptideMatch peptideMatch;
 
-                while ((peptideMatch = peptideMatchesIterator.next()) != null) {
-                    ;
-                    String peptideKey = peptideMatch.getKey();
+            while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+
+                if (progressDialog.isRunCanceled()) {
+                    break;
+                }
+
+                double value = 0;
+
+                for (long spectrumMatchKey : peptideMatch.getSpectrumMatchesKeys()) {
 
                     if (progressDialog.isRunCanceled()) {
                         break;
                     }
 
-                    double value = 0;
+                    SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumMatchKey);
 
-                    peptideShakerGUI.getIdentification().loadObjects(peptideMatch.getSpectrumMatchesKeys(), progressDialog, false);
-                    for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
+                    PSParameter spectrumParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
 
-                        if (progressDialog.isRunCanceled()) {
-                            break;
-                        }
-
-                        spectrumParameter = (PSParameter) ((SpectrumMatch) peptideShakerGUI.getIdentification().retrieveObject(spectrumKey)).getUrParam(spectrumParameter);
-                        if (spectrumParameter.getMatchValidationLevel().isValidated() && !spectrumParameter.getHidden()) {
-                            value = value + 1;
-                        }
+                    if (spectrumParameter.getMatchValidationLevel().isValidated() && !spectrumParameter.getHidden()) {
+                        value = value + 1;
                     }
-                    if (value > maxValue) {
-                        maxValue = value;
-                    }
-                    peptideParameter = (PSParameter) ((PeptideMatch) peptideShakerGUI.getIdentification().retrieveObject(peptideKey)).getUrParam(peptideParameter);
-
-                    if (!peptideParameter.getHidden()) {
-
-                        if (!peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters())) {
-                            if (peptideParameter.getMatchValidationLevel().isValidated()) {
-                                if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                                    validatedValues.add(value);
-                                } else {
-                                    validatedDoubtfulValues.add(value);
-                                }
-                            } else {
-                                nonValidatedValues.add(value);
-                            }
-                        } else if (peptideParameter.getMatchValidationLevel().isValidated()) {
-                            validatedDecoyValues.add(value);
-                        } else {
-                            nonValidatedDecoyValues.add(value);
-                        }
-                    }
-
-                    progressDialog.increasePrimaryProgressCounter();
                 }
-            } else if (peptideMissedCleavagesJRadioButton.isSelected()) {
-
-                progressDialog.setPrimaryProgressCounterIndeterminate(false);
-                progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
-                progressDialog.setValue(0);
-
-                // Values for the missed cleavages
-                validatedValues = new ArrayList<>();
-                validatedDoubtfulValues = new ArrayList<>();
-                nonValidatedValues = new ArrayList<>();
-                validatedDecoyValues = new ArrayList<>();
-                nonValidatedDecoyValues = new ArrayList<>();
-
-                PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
-                PeptideMatch peptideMatch;
-
-                while ((peptideMatch = peptideMatchesIterator.next()) != null) {
-
-                    String peptideKey = peptideMatch.getKey();
-
-                    if (progressDialog.isRunCanceled()) {
-                        break;
-                    }
-
-                    peptideParameter = (PSParameter) ((PeptideMatch) peptideShakerGUI.getIdentification().retrieveObject(peptideKey)).getUrParam(peptideParameter);
-
-                    if (!peptideParameter.getHidden()) {
-
-                        Double value = null;
-                        DigestionParameters digestionPreferences = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionParameters();
-                        if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
-                            for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
-                                int enzymeMissedCelavages = enzyme.getNmissedCleavages(Peptide.getSequence(peptideKey));
-                                if (value == null || enzymeMissedCelavages < value) {
-                                    value = new Double(enzymeMissedCelavages);
-                                }
-                            }
-                        }
-                        if (value == null) {
-                            value = 0.0;
-                        }
-                        if (value > 0) {
-                            if (value > maxValue) {
-                                maxValue = value;
-                            }
-                        }
-
-                        if (!peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters())) {
-                            if (peptideParameter.getMatchValidationLevel().isValidated()) {
-                                if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                                    validatedValues.add(value);
-                                } else {
-                                    validatedDoubtfulValues.add(value);
-                                }
-                            } else {
-                                nonValidatedValues.add(value);
-                            }
-                        } else if (peptideParameter.getMatchValidationLevel().isValidated()) {
-                            validatedDecoyValues.add(value);
-                        } else {
-                            nonValidatedDecoyValues.add(value);
-                        }
-                    }
-
-                    progressDialog.increasePrimaryProgressCounter();
+                if (value > maxValue) {
+                    maxValue = value;
                 }
-            } else if (peptideLengthJRadioButton.isSelected()) {
 
-                progressDialog.setPrimaryProgressCounterIndeterminate(false);
-                progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
-                progressDialog.setValue(0);
+                PSParameter peptideParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
-                // Values for the peptide length
-                validatedValues = new ArrayList<>();
-                validatedDoubtfulValues = new ArrayList<>();
-                nonValidatedValues = new ArrayList<>();
-                validatedDecoyValues = new ArrayList<>();
-                nonValidatedDecoyValues = new ArrayList<>();
+                if (!peptideParameter.getHidden()) {
 
-                PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
-                PeptideMatch peptideMatch;
-
-                while ((peptideMatch = peptideMatchesIterator.next()) != null) {
-
-                    String peptideKey = peptideMatch.getKey();
-
-                    if (progressDialog.isRunCanceled()) {
-                        break;
-                    }
-
-                    peptideParameter = (PSParameter) ((PeptideMatch) peptideShakerGUI.getIdentification().retrieveObject(peptideKey)).getUrParam(peptideParameter);
-
-                    if (!peptideParameter.getHidden()) {
-
-                        double length = Peptide.getSequence(peptideKey).length();
-                        if (length > 0) {
-                            if (length > maxValue) {
-                                maxValue = length;
-                            }
-                        }
-
-                        if (!peptideMatch.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters())) {
-                            if (peptideParameter.getMatchValidationLevel().isValidated()) {
-                                if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                                    validatedValues.add(length);
-                                } else {
-                                    validatedDoubtfulValues.add(length);
-                                }
+                    if (!peptideMatch.getIsDecoy()) {
+                        if (peptideParameter.getMatchValidationLevel().isValidated()) {
+                            if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                validatedValues.add(value);
                             } else {
-                                nonValidatedValues.add(length);
+                                validatedDoubtfulValues.add(value);
                             }
-                        } else if (peptideParameter.getMatchValidationLevel().isValidated()) {
-                            validatedDecoyValues.add(length);
                         } else {
-                            nonValidatedDecoyValues.add(length);
+                            nonValidatedValues.add(value);
                         }
+                    } else if (peptideParameter.getMatchValidationLevel().isValidated()) {
+                        validatedDecoyValues.add(value);
+                    } else {
+                        nonValidatedDecoyValues.add(value);
                     }
-
-                    progressDialog.increasePrimaryProgressCounter();
                 }
+
+                progressDialog.increasePrimaryProgressCounter();
             }
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
+        } else if (peptideMissedCleavagesJRadioButton.isSelected()) {
+
+            progressDialog.setPrimaryProgressCounterIndeterminate(false);
+            progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
+            progressDialog.setValue(0);
+
+            // Values for the missed cleavages
+            validatedValues = new ArrayList<>();
+            validatedDoubtfulValues = new ArrayList<>();
+            nonValidatedValues = new ArrayList<>();
+            validatedDecoyValues = new ArrayList<>();
+            nonValidatedDecoyValues = new ArrayList<>();
+
+            PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
+            PeptideMatch peptideMatch;
+
+            while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+
+                if (progressDialog.isRunCanceled()) {
+                    break;
+                }
+
+                PSParameter peptideParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
+
+                if (!peptideParameter.getHidden()) {
+
+                    Double value = null;
+                    DigestionParameters digestionParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionParameters();
+                    if (digestionParameters.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
+                        for (Enzyme enzyme : digestionParameters.getEnzymes()) {
+
+                            int enzymeMissedCelavages = enzyme.getNmissedCleavages(peptideMatch.getPeptide().getSequence());
+                            if (value == null || enzymeMissedCelavages < value) {
+                                value = new Double(enzymeMissedCelavages);
+                            }
+                        }
+                    }
+                    if (value == null) {
+                        value = 0.0;
+                    }
+                    if (value > 0) {
+                        if (value > maxValue) {
+                            maxValue = value;
+                        }
+                    }
+
+                    if (!peptideMatch.getIsDecoy()) {
+                        if (peptideParameter.getMatchValidationLevel().isValidated()) {
+                            if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                validatedValues.add(value);
+                            } else {
+                                validatedDoubtfulValues.add(value);
+                            }
+                        } else {
+                            nonValidatedValues.add(value);
+                        }
+                    } else if (peptideParameter.getMatchValidationLevel().isValidated()) {
+                        validatedDecoyValues.add(value);
+                    } else {
+                        nonValidatedDecoyValues.add(value);
+                    }
+                }
+
+                progressDialog.increasePrimaryProgressCounter();
+            }
+        } else if (peptideLengthJRadioButton.isSelected()) {
+
+            progressDialog.setPrimaryProgressCounterIndeterminate(false);
+            progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
+            progressDialog.setValue(0);
+
+            // Values for the peptide length
+            validatedValues = new ArrayList<>();
+            validatedDoubtfulValues = new ArrayList<>();
+            nonValidatedValues = new ArrayList<>();
+            validatedDecoyValues = new ArrayList<>();
+            nonValidatedDecoyValues = new ArrayList<>();
+
+            PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
+            PeptideMatch peptideMatch;
+
+            while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+
+                if (progressDialog.isRunCanceled()) {
+                    break;
+                }
+
+                PSParameter peptideParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
+
+                if (!peptideParameter.getHidden()) {
+
+                    double length = peptideMatch.getPeptide().getSequence().length();
+                    if (length > 0) {
+                        if (length > maxValue) {
+                            maxValue = length;
+                        }
+                    }
+
+                    if (!peptideMatch.getIsDecoy()) {
+                        if (peptideParameter.getMatchValidationLevel().isValidated()) {
+                            if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                validatedValues.add(length);
+                            } else {
+                                validatedDoubtfulValues.add(length);
+                            }
+                        } else {
+                            nonValidatedValues.add(length);
+                        }
+                    } else if (peptideParameter.getMatchValidationLevel().isValidated()) {
+                        validatedDecoyValues.add(length);
+                    } else {
+                        nonValidatedDecoyValues.add(length);
+                    }
+                }
+
+                progressDialog.increasePrimaryProgressCounter();
+            }
         }
     }
 
@@ -2023,115 +2000,104 @@ public class QCPanel extends javax.swing.JPanel {
         progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getSpectrumIdentificationSize());
         progressDialog.setValue(0);
 
-        try {
-            PSParameter psmParameter = new PSParameter();
+        maxValue = Double.MIN_VALUE;
 
-            maxValue = Double.MIN_VALUE;
-            Identification identification = peptideShakerGUI.getIdentification();
+        if (psmPrecursorMassErrorJRadioButton.isSelected()) {
 
-            if (psmPrecursorMassErrorJRadioButton.isSelected()) {
+            // Values for the precursor mass deviation
+            validatedValues = new ArrayList<>();
+            validatedDoubtfulValues = new ArrayList<>();
+            nonValidatedValues = new ArrayList<>();
+            validatedDecoyValues = new ArrayList<>();
+            nonValidatedDecoyValues = new ArrayList<>();
 
-                // Values for the precursor mass deviation
-                validatedValues = new ArrayList<>();
-                validatedDoubtfulValues = new ArrayList<>();
-                nonValidatedValues = new ArrayList<>();
-                validatedDecoyValues = new ArrayList<>();
-                nonValidatedDecoyValues = new ArrayList<>();
+            SpectrumMatchesIterator psmIterator = peptideShakerGUI.getIdentification().getSpectrumMatchesIterator(progressDialog);
+            SpectrumMatch spectrumMatch;
 
-                SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(progressDialog);
-                SpectrumMatch spectrumMatch;
+            while ((spectrumMatch = psmIterator.next()) != null) {
 
-                while ((spectrumMatch = psmIterator.next()) != null) {
-
-                    String spectrumKey = spectrumMatch.getKey();
-
-                    if (progressDialog.isRunCanceled()) {
-                        break;
-                    }
-
-                    psmParameter = (PSParameter) spectrumMatch.getUrParam(psmParameter);
-
-                    if (!psmParameter.getHidden() && spectrumMatch.getBestPeptideAssumption() != null) {
-
-                        Precursor precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
-                        SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
-                        double value = spectrumMatch.getBestPeptideAssumption().getDeltaMass(
-                                precursor.getMz(),
-                                searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection());
-                        if (value > maxValue) {
-                            maxValue = value;
-                        }
-
-                        if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters())) {
-                            if (psmParameter.getMatchValidationLevel().isValidated()) {
-                                if (psmParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                                    validatedValues.add(value);
-                                } else {
-                                    validatedDoubtfulValues.add(value);
-                                }
-                            } else {
-                                nonValidatedValues.add(value);
-                            }
-                        } else if (psmParameter.getMatchValidationLevel().isValidated()) {
-                            validatedDecoyValues.add(value);
-                        } else {
-                            nonValidatedDecoyValues.add(value);
-                        }
-                    }
-
-                    progressDialog.increasePrimaryProgressCounter();
+                if (progressDialog.isRunCanceled()) {
+                    break;
                 }
-            } else if (psmPrecursorChargeJRadioButton.isSelected()) {
 
-                // Values for the precursor charge
-                validatedValues = new ArrayList<>();
-                validatedDoubtfulValues = new ArrayList<>();
-                nonValidatedValues = new ArrayList<>();
-                validatedDecoyValues = new ArrayList<>();
-                nonValidatedDecoyValues = new ArrayList<>();
+                PSParameter psmParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
 
-                SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(progressDialog);
-                SpectrumMatch spectrumMatch;
+                if (!psmParameter.getHidden() && spectrumMatch.getBestPeptideAssumption() != null) {
 
-                while ((spectrumMatch = psmIterator.next()) != null) {
-
-                    String spectrumKey = spectrumMatch.getKey();
-
-                    if (progressDialog.isRunCanceled()) {
-                        break;
+                    Precursor precursor = SpectrumFactory.getInstance().getPrecursor(spectrumMatch.getSpectrumKey());
+                    SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
+                    double value = spectrumMatch.getBestPeptideAssumption().getDeltaMass(
+                            precursor.getMz(),
+                            searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection());
+                    if (value > maxValue) {
+                        maxValue = value;
                     }
 
-                    psmParameter = (PSParameter) spectrumMatch.getUrParam(psmParameter);
-
-                    if (!psmParameter.getHidden() && spectrumMatch.getBestPeptideAssumption() != null) {
-
-                        double value = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
-                        if (value > maxValue) {
-                            maxValue = value;
-                        }
-
-                        if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters())) {
-                            if (psmParameter.getMatchValidationLevel().isValidated()) {
-                                if (psmParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                                    validatedValues.add(value);
-                                } else {
-                                    validatedDoubtfulValues.add(value);
-                                }
+                    if (!PeptideUtils.isDecoy(spectrumMatch.getBestPeptideAssumption().getPeptide(), peptideShakerGUI.getSequenceProvider())) {
+                        if (psmParameter.getMatchValidationLevel().isValidated()) {
+                            if (psmParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                validatedValues.add(value);
                             } else {
-                                nonValidatedValues.add(value);
+                                validatedDoubtfulValues.add(value);
                             }
-                        } else if (psmParameter.getMatchValidationLevel().isValidated()) {
-                            validatedDecoyValues.add(value);
                         } else {
-                            nonValidatedDecoyValues.add(value);
+                            nonValidatedValues.add(value);
                         }
+                    } else if (psmParameter.getMatchValidationLevel().isValidated()) {
+                        validatedDecoyValues.add(value);
+                    } else {
+                        nonValidatedDecoyValues.add(value);
                     }
-
-                    progressDialog.increasePrimaryProgressCounter();
                 }
+
+                progressDialog.increasePrimaryProgressCounter();
             }
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
+        } else if (psmPrecursorChargeJRadioButton.isSelected()) {
+
+            // Values for the precursor charge
+            validatedValues = new ArrayList<>();
+            validatedDoubtfulValues = new ArrayList<>();
+            nonValidatedValues = new ArrayList<>();
+            validatedDecoyValues = new ArrayList<>();
+            nonValidatedDecoyValues = new ArrayList<>();
+
+            SpectrumMatchesIterator psmIterator = peptideShakerGUI.getIdentification().getSpectrumMatchesIterator(progressDialog);
+            SpectrumMatch spectrumMatch;
+
+            while ((spectrumMatch = psmIterator.next()) != null) {
+
+                if (progressDialog.isRunCanceled()) {
+                    break;
+                }
+
+                PSParameter psmParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
+
+                if (!psmParameter.getHidden() && spectrumMatch.getBestPeptideAssumption() != null) {
+
+                    double value = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge();
+                    if (value > maxValue) {
+                        maxValue = value;
+                    }
+
+                    if (!PeptideUtils.isDecoy(spectrumMatch.getBestPeptideAssumption().getPeptide(), peptideShakerGUI.getSequenceProvider())) {
+                        if (psmParameter.getMatchValidationLevel().isValidated()) {
+                            if (psmParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                validatedValues.add(value);
+                            } else {
+                                validatedDoubtfulValues.add(value);
+                            }
+                        } else {
+                            nonValidatedValues.add(value);
+                        }
+                    } else if (psmParameter.getMatchValidationLevel().isValidated()) {
+                        validatedDecoyValues.add(value);
+                    } else {
+                        nonValidatedDecoyValues.add(value);
+                    }
+                }
+
+                progressDialog.increasePrimaryProgressCounter();
+            }
         }
     }
 
@@ -2215,72 +2181,54 @@ public class QCPanel extends javax.swing.JPanel {
      * Returns the dataset for the peptide modification QC plot.
      *
      * @return the dataset for the peptide modification QC plot
-     *
-     * @throws SQLException exception thrown whenever an error occurred while
-     * interacting with the matches database
-     * @throws IOException exception thrown whenever an error occurred while
-     * interacting with the matches database
-     * @throws ClassNotFoundException exception thrown whenever an error
-     * occurred while deserializing a match from the database
-     * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while retrieving a match
      */
-    private DefaultCategoryDataset getPeptideModificationsDataset() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private DefaultCategoryDataset getPeptideModificationsDataset() {
 
         Identification identification = peptideShakerGUI.getIdentification();
-        ModificationParameters ptmSettings = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters();
+        ModificationParameters modificationParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters();
 
-        ArrayList<String> ptmNames = ptmSettings.getAllNotFixedModifications();
-        HashMap<String, Integer> confidentPtmMap = new HashMap<>(ptmNames.size());
-        HashMap<String, Integer> doubtfulPtmMap = new HashMap<>(ptmNames.size());
-        HashMap<String, Integer> notValidatedPtmMap = new HashMap<>(ptmNames.size());
-
-        PSParameter psParameter = new PSParameter();
-
-        ArrayList<String> modifiedPeptides = new ArrayList<>(identification.getPeptideIdentification().size());
-        for (String peptideKey : identification.getPeptideIdentification()) {
-            if (Peptide.isModified(peptideKey)) {
-                modifiedPeptides.add(peptideKey);
-            }
-        }
+        ArrayList<String> modificationNames = modificationParameters.getAllNotFixedModifications();
+        HashMap<String, Integer> confidentModMap = new HashMap<>(modificationNames.size());
+        HashMap<String, Integer> doubtfulModMap = new HashMap<>(modificationNames.size());
+        HashMap<String, Integer> notValidatedModMap = new HashMap<>(modificationNames.size());
 
         progressDialog.setPrimaryProgressCounterIndeterminate(false);
-        progressDialog.setMaxPrimaryProgressCounter(modifiedPeptides.size());
+        progressDialog.setMaxPrimaryProgressCounter(identification.getPeptideIdentification().size());
         progressDialog.setValue(0);
 
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(modifiedPeptides, progressDialog);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(progressDialog);
         PeptideMatch peptideMatch;
 
         while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-            psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
+            PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
             Peptide peptide = peptideMatch.getPeptide();
 
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                String ptmName = modificationMatch.getModification();
+                String modName = modificationMatch.getModification();
                 switch (psParameter.getMatchValidationLevel()) {
                     case confident:
-                        Integer occurrence = confidentPtmMap.get(ptmName);
+                        Integer occurrence = confidentModMap.get(modName);
                         if (occurrence == null) {
-                            confidentPtmMap.put(ptmName, 1);
+                            confidentModMap.put(modName, 1);
                         } else {
-                            confidentPtmMap.put(ptmName, occurrence + 1);
+                            confidentModMap.put(modName, occurrence + 1);
                         }
                         break;
                     case doubtful:
-                        occurrence = doubtfulPtmMap.get(ptmName);
+                        occurrence = doubtfulModMap.get(modName);
                         if (occurrence == null) {
-                            doubtfulPtmMap.put(ptmName, 1);
+                            doubtfulModMap.put(modName, 1);
                         } else {
-                            doubtfulPtmMap.put(ptmName, occurrence + 1);
+                            doubtfulModMap.put(modName, occurrence + 1);
                         }
                         break;
                     default:
-                        occurrence = notValidatedPtmMap.get(ptmName);
+                        occurrence = notValidatedModMap.get(modName);
                         if (occurrence == null) {
-                            notValidatedPtmMap.put(ptmName, 1);
+                            notValidatedModMap.put(modName, 1);
                         } else {
-                            notValidatedPtmMap.put(ptmName, occurrence + 1);
+                            notValidatedModMap.put(modName, occurrence + 1);
                         }
                 }
             }
@@ -2292,22 +2240,22 @@ public class QCPanel extends javax.swing.JPanel {
         }
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for (String ptmName : ptmSettings.getAllNotFixedModifications()) {
-            Integer nConfident = confidentPtmMap.get(ptmName);
+        for (String modName : modificationParameters.getAllNotFixedModifications()) {
+            Integer nConfident = confidentModMap.get(modName);
             if (nConfident == null) {
                 nConfident = 0;
             }
-            dataset.addValue(nConfident, "Confident", ptmName);
-            Integer nDoubtful = confidentPtmMap.get(ptmName);
+            dataset.addValue(nConfident, "Confident", modName);
+            Integer nDoubtful = confidentModMap.get(modName);
             if (nDoubtful == null) {
                 nDoubtful = 0;
             }
-            dataset.addValue(nDoubtful, "Doubtful", ptmName);
-            Integer nNonValidated = notValidatedPtmMap.get(ptmName);
+            dataset.addValue(nDoubtful, "Doubtful", modName);
+            Integer nNonValidated = notValidatedModMap.get(modName);
             if (nNonValidated == null) {
                 nNonValidated = 0;
             }
-            dataset.addValue(nNonValidated, "Not Validated", ptmName);
+            dataset.addValue(nNonValidated, "Not Validated", modName);
         }
 
         return dataset;
@@ -2317,29 +2265,19 @@ public class QCPanel extends javax.swing.JPanel {
      * Returns the dataset for the peptide modification efficiency QC plot.
      *
      * @return the dataset for the peptide modification efficiency QC plot
-     *
-     * @throws SQLException exception thrown whenever an error occurred while
-     * interacting with the matches database
-     * @throws IOException exception thrown whenever an error occurred while
-     * interacting with the matches database
-     * @throws ClassNotFoundException exception thrown whenever an error
-     * occurred while deserializing a match from the database
-     * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while retrieving a match
      */
-    private DefaultCategoryDataset getPeptideModificationEfficiencyDataset() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private DefaultCategoryDataset getPeptideModificationEfficiencyDataset() {
 
-        ModificationFactory ptmFactory = ModificationFactory.getInstance();
+        ModificationFactory modificationFactory = ModificationFactory.getInstance();
 
         Identification identification = peptideShakerGUI.getIdentification();
         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-        ModificationParameters ptmSettings = identificationParameters.getSearchParameters().getModificationParameters();
-        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
-        SequenceMatchingParameters ptmSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+        ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+        SequenceMatchingParameters modificationSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
-        ArrayList<String> ptmNames = ptmSettings.getAllNotFixedModifications();
-        HashMap<String, Integer> modifiedSitesMap = new HashMap<>(ptmNames.size());
-        HashMap<String, Integer> possibleSitesMap = new HashMap<>(ptmNames.size());
+        ArrayList<String> modNames = modificationParameters.getAllNotFixedModifications();
+        HashMap<String, Integer> modifiedSitesMap = new HashMap<>(modNames.size());
+        HashMap<String, Integer> possibleSitesMap = new HashMap<>(modNames.size());
 
         PSParameter psParameter = new PSParameter();
 
@@ -2355,39 +2293,34 @@ public class QCPanel extends javax.swing.JPanel {
             psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
             if (psParameter.getMatchValidationLevel().isValidated()) {
                 Peptide peptide = peptideMatch.getPeptide();
-                HashMap<String, Integer> peptideModificationsMap = null;
-                if (peptide.getModificationMatches() != null) {
-                    peptideModificationsMap = new HashMap<>(peptide.getModificationMatches().size());
-                    for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                        String ptmName = modificationMatch.getModification();
-                        Integer occurrence = peptideModificationsMap.get(ptmName);
-                        if (occurrence == null) {
-                            peptideModificationsMap.put(ptmName, 1);
-                        } else {
-                            peptideModificationsMap.put(ptmName, occurrence + 1);
-                        }
+                HashMap<String, Integer> peptideModificationsMap = new HashMap<>(peptide.getModificationMatches().length);
+                for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                    String modName = modificationMatch.getModification();
+                    Integer occurrence = peptideModificationsMap.get(modName);
+                    if (occurrence == null) {
+                        peptideModificationsMap.put(modName, 1);
+                    } else {
+                        peptideModificationsMap.put(modName, occurrence + 1);
                     }
                 }
-                for (String ptmName : ptmSettings.getAllNotFixedModifications()) {
-                    Modification ptm = ptmFactory.getModification(ptmName);
-                    ArrayList<Integer> possibleSites = peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
+                for (String modName : modificationParameters.getAllNotFixedModifications()) {
+                    Modification modification = modificationFactory.getModification(modName);
+                    HashSet<Integer> possibleSites = peptide.getPotentialModificationSites(modification, peptideShakerGUI.getSequenceProvider(), modificationSequenceMatchingPreferences);
                     if (!possibleSites.isEmpty()) {
-                        if (peptideModificationsMap != null) {
-                            Integer occurrencePeptide = peptideModificationsMap.get(ptmName);
-                            if (occurrencePeptide != null) {
-                                Integer occurrenceDataset = modifiedSitesMap.get(ptmName);
-                                if (occurrenceDataset == null) {
-                                    modifiedSitesMap.put(ptmName, occurrencePeptide);
-                                } else {
-                                    modifiedSitesMap.put(ptmName, occurrenceDataset + occurrencePeptide);
-                                }
+                        Integer occurrencePeptide = peptideModificationsMap.get(modName);
+                        if (occurrencePeptide != null) {
+                            Integer occurrenceDataset = modifiedSitesMap.get(modName);
+                            if (occurrenceDataset == null) {
+                                modifiedSitesMap.put(modName, occurrencePeptide);
+                            } else {
+                                modifiedSitesMap.put(modName, occurrenceDataset + occurrencePeptide);
                             }
                         }
-                        Integer possibleSitesDataset = possibleSitesMap.get(ptmName);
+                        Integer possibleSitesDataset = possibleSitesMap.get(modName);
                         if (possibleSitesDataset == null) {
-                            possibleSitesMap.put(ptmName, possibleSites.size());
+                            possibleSitesMap.put(modName, possibleSites.size());
                         } else {
-                            possibleSitesMap.put(ptmName, possibleSitesDataset + possibleSites.size());
+                            possibleSitesMap.put(modName, possibleSitesDataset + possibleSites.size());
                         }
                     }
                 }
@@ -2400,19 +2333,19 @@ public class QCPanel extends javax.swing.JPanel {
         }
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for (String ptmName : ptmSettings.getAllNotFixedModifications()) {
-            Integer nFound = modifiedSitesMap.get(ptmName);
+        for (String modName : modificationParameters.getAllNotFixedModifications()) {
+            Integer nFound = modifiedSitesMap.get(modName);
             if (nFound == null) {
                 nFound = 0;
             }
-            Integer nPossible = possibleSitesMap.get(ptmName);
+            Integer nPossible = possibleSitesMap.get(modName);
             Double rate = 0.0;
             if (nPossible != null) {
                 rate = (100.0 * nFound) / nPossible;
             }
-            dataset.addValue(rate, "Modified", ptmName);
+            dataset.addValue(rate, "Modified", modName);
             double rest = 100 - rate;
-            dataset.addValue(rest, "Not Modified", ptmName);
+            dataset.addValue(rest, "Not Modified", modName);
         }
 
         return dataset;
@@ -2422,69 +2355,57 @@ public class QCPanel extends javax.swing.JPanel {
      * Returns the dataset for the peptide modification rate QC plot.
      *
      * @return the dataset for the peptide modification rate QC plot
-     *
-     * @throws SQLException exception thrown whenever an error occurred while
-     * interacting with the matches database
-     * @throws IOException exception thrown whenever an error occurred while
-     * interacting with the matches database
-     * @throws ClassNotFoundException exception thrown whenever an error
-     * occurred while deserializing a match from the database
-     * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while retrieving a match
      */
-    private DefaultCategoryDataset getPeptideModificationEnrichmentSpecificityDataset() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private DefaultCategoryDataset getPeptideModificationEnrichmentSpecificityDataset() {
 
-        ModificationFactory ptmFactory = ModificationFactory.getInstance();
+        ModificationFactory modificationFactory = ModificationFactory.getInstance();
 
         Identification identification = peptideShakerGUI.getIdentification();
         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-        ModificationParameters ptmSettings = identificationParameters.getSearchParameters().getModificationParameters();
-        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
-        SequenceMatchingParameters ptmSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+        ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+        SequenceMatchingParameters modificationSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
-        ArrayList<String> ptmNames = ptmSettings.getAllNotFixedModifications();
-        HashMap<String, Integer> modifiedPeptidesMap = new HashMap<>(ptmNames.size());
-        HashMap<String, Integer> possiblyModifiedPeptidesMap = new HashMap<>(ptmNames.size());
-
-        PSParameter psParameter = new PSParameter();
+        ArrayList<String> modNames = modificationParameters.getAllNotFixedModifications();
+        HashMap<String, Integer> modifiedPeptidesMap = new HashMap<>(modNames.size());
+        HashMap<String, Integer> possiblyModifiedPeptidesMap = new HashMap<>(modNames.size());
 
         progressDialog.setPrimaryProgressCounterIndeterminate(false);
         progressDialog.setMaxPrimaryProgressCounter(identification.getPeptideIdentification().size());
         progressDialog.setValue(0);
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(progressDialog);
-PeptideMatch peptideMatch;
+        PeptideMatch peptideMatch;
 
         while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-            psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
+            PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
             if (psParameter.getMatchValidationLevel().isValidated()) {
                 Peptide peptide = peptideMatch.getPeptide();
-                for (String ptmName : ptmSettings.getAllNotFixedModifications()) {
-                    Modification ptm = ptmFactory.getModification(ptmName);
-                    ArrayList<Integer> possibleSites = peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
+                for (String modName : modificationParameters.getAllNotFixedModifications()) {
+                    Modification modification = modificationFactory.getModification(modName);
+                    HashSet<Integer> possibleSites = peptide.getPotentialModificationSites(modification, peptideShakerGUI.getSequenceProvider(), modificationSequenceMatchingPreferences);
                     if (!possibleSites.isEmpty()) {
-                        Integer nPossiblePeptides = possiblyModifiedPeptidesMap.get(ptmName);
+                        Integer nPossiblePeptides = possiblyModifiedPeptidesMap.get(modName);
                         if (nPossiblePeptides == null) {
-                            possiblyModifiedPeptidesMap.put(ptmName, 1);
+                            possiblyModifiedPeptidesMap.put(modName, 1);
                         } else {
-                            possiblyModifiedPeptidesMap.put(ptmName, nPossiblePeptides + 1);
+                            possiblyModifiedPeptidesMap.put(modName, nPossiblePeptides + 1);
                         }
                         boolean modified = false;
                         if (peptide.getModificationMatches() != null) {
                             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                if (modificationMatch.getModification().equals(ptmName)) {
+                                if (modificationMatch.getModification().equals(modName)) {
                                     modified = true;
                                     break;
                                 }
                             }
                         }
                         if (modified) {
-                            Integer nModifiedPeptides = modifiedPeptidesMap.get(ptmName);
+                            Integer nModifiedPeptides = modifiedPeptidesMap.get(modName);
                             if (nModifiedPeptides == null) {
-                                modifiedPeptidesMap.put(ptmName, 1);
+                                modifiedPeptidesMap.put(modName, 1);
                             } else {
-                                modifiedPeptidesMap.put(ptmName, nModifiedPeptides + 1);
+                                modifiedPeptidesMap.put(modName, nModifiedPeptides + 1);
                             }
                         }
                     }
@@ -2498,22 +2419,22 @@ PeptideMatch peptideMatch;
         }
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for (String ptmName : ptmSettings.getAllNotFixedModifications()) {
-            Integer nFound = modifiedPeptidesMap.get(ptmName);
+        for (String modName : modificationParameters.getAllNotFixedModifications()) {
+            Integer nFound = modifiedPeptidesMap.get(modName);
             if (nFound == null) {
                 nFound = 0;
             }
-            Integer nPossible = possiblyModifiedPeptidesMap.get(ptmName);
+            Integer nPossible = possiblyModifiedPeptidesMap.get(modName);
             Double rate = 0.0;
             if (nPossible != null) {
                 rate = (100.0 * nFound) / nPossible;
             }
-            dataset.addValue(rate, "Modified", ptmName);
+            dataset.addValue(rate, "Modified", modName);
             double rest = 0.0;
             if (nPossible != null) {
                 rest = 100 - rate;
             }
-            dataset.addValue(rest, "Not Modified", ptmName);
+            dataset.addValue(rest, "Not Modified", modName);
         }
 
         return dataset;

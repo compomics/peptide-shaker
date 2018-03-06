@@ -369,7 +369,7 @@ public class IdentificationFeaturesGenerator {
 
                 DigestionParameters digestionParameters = identificationParameters.getSearchParameters().getDigestionParameters();
 
-                if (digestionParameters.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+                if (digestionParameters.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
 
                     enzymaticPeptide = PeptideUtils.isEnzymatic(peptide, accession, sequence, digestionParameters.getEnzymes());
 
@@ -456,7 +456,7 @@ public class IdentificationFeaturesGenerator {
         DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
 
         // special case for no cleavage searches
-        if (digestionPreferences.getCleavagePreference() != DigestionParameters.CleavagePreference.enzyme) {
+        if (digestionPreferences.getCleavageParameter() != DigestionParameters.CleavageParameter.enzyme) {
 
             for (int i = 0; i < result.length; i++) {
 
@@ -654,7 +654,7 @@ public class IdentificationFeaturesGenerator {
         ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
         long[] peptideKeys = proteinMatch.getPeptideMatchesKeys();
 
-        return digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme
+        return digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme
                 ? Arrays.stream(peptideKeys)
                         .filter(key -> ((PSParameter) (identification.getSpectrumMatch(key)).getUrParam(PSParameter.dummy)).getMatchValidationLevel().isValidated()
                         && !PeptideUtils.isEnzymatic(
@@ -923,7 +923,7 @@ public class IdentificationFeaturesGenerator {
 
             String proteinSequence = sequenceProvider.getSequence(proteinMatch.getLeadingAccession());
 
-            if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+            if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
 
                 result /= ProteinUtils.getObservableLength(proteinSequence, digestionPreferences.getEnzymes(), maxPepLength);
 
@@ -950,7 +950,7 @@ public class IdentificationFeaturesGenerator {
                     .getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel())
                     .count();
 
-            if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+            if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
 
                 String proteinSequence = sequenceProvider.getSequence(proteinMatch.getLeadingAccession());
                 result = Math.pow(10, result / (ProteinUtils.getNCleavageSites(proteinSequence, digestionPreferences.getEnzymes()) + 1)) - 1;
@@ -1036,7 +1036,7 @@ public class IdentificationFeaturesGenerator {
 
         DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
 
-        if (digestionPreferences.getCleavagePreference() != DigestionParameters.CleavagePreference.enzyme) {
+        if (digestionPreferences.getCleavageParameter() != DigestionParameters.CleavageParameter.enzyme) {
 
             return 1.0;
 
@@ -1279,7 +1279,7 @@ public class IdentificationFeaturesGenerator {
 
         DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
 
-        if (digestionPreferences.getCleavagePreference() == DigestionParameters.CleavagePreference.enzyme) {
+        if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
 
             return Arrays.stream(proteinMatch.getPeptideMatchesKeys())
                     .mapToObj(key -> identification.getPeptideMatch(key))
