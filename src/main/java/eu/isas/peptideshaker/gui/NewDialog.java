@@ -1924,7 +1924,7 @@ public class NewDialog extends javax.swing.JDialog {
 
             Integer nUniprot = fastaSummary.databaseType.get(ProteinDatabase.UniProt);
             int total = fastaSummary.databaseType.values().stream()
-                    .mapToInt(Function.identity())
+                    .mapToInt(a -> a)
                     .sum();
 
             if (nUniprot == null || ((double) nUniprot) / total < 0.4) {

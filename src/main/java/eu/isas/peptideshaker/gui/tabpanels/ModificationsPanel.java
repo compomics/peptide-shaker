@@ -3961,15 +3961,15 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
             if (selectedPsmsTable.getSelectedRow() != -1 && relatedPsmsTable.getSelectedRow() != -1) {
 
-                updateSpectrum(getSelectedPsmsKeys(false).get(0), getSelectedPsmsKeys(true).get(0));
+                updateSpectrum(getSelectedPsmsKeys(false)[0], getSelectedPsmsKeys(true)[0]);
 
             } else if (selectedPsmsTable.getSelectedRow() != -1 && relatedPsmsTable.getSelectedRow() == -1) {
 
-                updateSpectrum(getSelectedPsmsKeys(false).get(0), null);
+                updateSpectrum(getSelectedPsmsKeys(false)[0], null);
 
             } else if (selectedPsmsTable.getSelectedRow() == -1 && relatedPsmsTable.getSelectedRow() != -1) {
 
-                updateSpectrum(getSelectedPsmsKeys(true).get(0), null);
+                updateSpectrum(getSelectedPsmsKeys(true)[0], null);
 
             }
         }
@@ -4212,22 +4212,15 @@ public class ModificationsPanel extends javax.swing.JPanel {
      *
      * @return the keys of the selected PSMs
      */
-    private ArrayList<Long> getSelectedPsmsKeys(boolean relatedPeptide) {
-
-        ArrayList<Long> psmKey = new ArrayList<>();
+    private long[] getSelectedPsmsKeys(boolean relatedPeptide) {
+        
         PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(relatedPeptide));
-        if (relatedPeptide) {
-            int[] selectedRows = relatedPsmsTable.getSelectedRows();
-            for (int row : selectedRows) {
-                psmKey.add(peptideMatch.getSpectrumMatchesKeys()[row]);
-            }
-        } else {
-            int[] selectedRows = selectedPsmsTable.getSelectedRows();
-            for (int row : selectedRows) {
-                psmKey.add(peptideMatch.getSpectrumMatchesKeys()[row]);
-            }
-        }
-        return psmKey;
+        JTable psmTable = relatedPeptide ? relatedPsmsTable : selectedPsmsTable;
+        
+        return Arrays.stream(psmTable.getSelectedRows())
+                .mapToLong(row -> peptideMatch.getSpectrumMatchesKeys()[row])
+                .toArray();
+        
     }
 
     /**
@@ -4235,7 +4228,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
      *
      * @return the keys of the selected PSMs
      */
-    public ArrayList<Long> getSelectedPsmsKeys() {
+    public long[] getSelectedPsmsKeys() {
         return getSelectedPsmsKeys(relatedSelected);
     }
 
@@ -4886,9 +4879,9 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
         long psmKey = PeptideShakerGUI.NO_SELECTION;
         if (selectedPsmsTable.getSelectedRow() != -1) {
-            psmKey = getSelectedPsmsKeys(false).get(0);
+            psmKey = getSelectedPsmsKeys(false)[0];
         } else if (relatedPsmsTable.getSelectedRow() != -1) {
-            psmKey = getSelectedPsmsKeys(true).get(0);
+            psmKey = getSelectedPsmsKeys(true)[0];
         }
 
         peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, peptideKey, psmKey);

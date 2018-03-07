@@ -87,10 +87,12 @@ import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.TagSpectrumAnnotator;
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
+import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.parameters.identification.advanced.IdMatchValidationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpectrumAnnotator;
+import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.personalization.ExperimentObject;
@@ -5044,7 +5046,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @return a list of keys of the currently displayed spectrum matches
      */
-    public ArrayList<Long> getDisplayedSpectrumMatches() {
+    public long[] getDisplayedSpectrumMatches() {
 
         int selectedTab = getSelectedTab();
 
@@ -5066,7 +5068,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @return a list of keys of the currently displayed assumptions
      */
-    public ArrayList<Long> getDisplayedAssumptions() {
+    public long[] getDisplayedAssumptions() {
 
         int selectedTab = getSelectedTab();
 
@@ -5366,9 +5368,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param modificationMatches the modifications
      */
     public void updateAnnotationMenus(SpecificAnnotationParameters specificAnnotationParameters, int precursorCharge, ArrayList<ModificationMatch> modificationMatches) {
-        
-        // @TODO: Make this independent of annotation parameters to account for selection of multiple assumptions
 
+        // @TODO: Make this independent of annotation parameters to account for selection of multiple assumptions
         aIonCheckBoxMenuItem.setSelected(false);
         bIonCheckBoxMenuItem.setSelected(false);
         cIonCheckBoxMenuItem.setSelected(false);
@@ -6229,9 +6230,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     progressDialog.setMaxPrimaryProgressCounter(getIdentification().getSpectrumIdentification().size() + 1);
                     progressDialog.increasePrimaryProgressCounter();
 
-                    int cpt = 0, total = getIdentification().getSpectrumFiles().size();
+                    ProjectDetails projectParameters = cpsParent.getProjectDetails();
+                    ArrayList<String> fileNames = getIdentification().getFractions();
+                    ArrayList<File> mgfFiles = fileNames.stream()
+                            .map(projectParameters::getSpectrumFile)
+                            .collect(Collectors.toCollection(ArrayList::new));
+                    int cpt = 0, total = fileNames.size();
 
-                    for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
+                    for (String spectrumFileName : fileNames) {
 
                         progressDialog.setTitle("Loading Spectrum Files (" + ++cpt + " of " + total + "). Please Wait...");
                         progressDialog.increasePrimaryProgressCounter();
@@ -6240,7 +6246,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                         try {
 
-                            found = cpsParent.loadSpectrumFile(spectrumFileName, spectrumFiles, progressDialog);
+                            found = cpsParent.loadSpectrumFile(spectrumFileName, mgfFiles, progressDialog);
 
                         } catch (Exception e) {
 
@@ -6294,7 +6300,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                                 for (File file : mgfFolder.listFiles()) {
 
-                                    for (String spectrumFileName2 : getIdentification().getSpectrumFiles()) {
+                                    for (String spectrumFileName2 : getIdentification().getFractions()) {
 
                                         try {
 
@@ -6304,7 +6310,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                                                 getProjectDetails().addSpectrumFile(file);
                                                 spectrumFactory.addSpectra(file, progressDialog);
-                                                spectrumFiles.add(file);
+                                                mgfFiles.add(file);
 
                                             }
 
@@ -6316,6 +6322,19 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                         } catch (Exception e) {
                                             // ignore
                                         }
+                                    }
+                                }
+
+                                if (found) {
+
+                                    try {
+
+                                        found = cpsParent.loadSpectrumFile(spectrumFileName, mgfFiles, progressDialog);
+
+                                    } catch (Exception e) {
+
+                                        found = false;
+
                                     }
                                 }
 
@@ -6489,35 +6508,47 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
-        ArrayList<String> selectedSpectra = new ArrayList<>(1);
+        long[] selectedSpectra = null;
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+            
             selectedSpectra = overviewPanel.getSelectedSpectrumKeys();
+        
         } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
-            selectedSpectra.add(spectrumIdentificationPanel.getSelectedSpectrumKey());
+        
+            selectedSpectra = new long[1];
+            selectedSpectra[0] = spectrumIdentificationPanel.getSelectedSpectrumMatchKey();
+        
         } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+        
             selectedSpectra = modificationsPanel.getSelectedPsmsKeys();
+        
         }
 
-        if (!selectedSpectra.isEmpty()) {
+        if (selectedSpectra != null && selectedSpectra.length > 0) {
 
             File selectedFile = getUserSelectedFile("selected_spectra.mgf", ".mgf", "Mascot Generic Format (*.mgf)", "Save As...", false);
 
             if (selectedFile != null) {
-                BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile));
-                try {
-                    for (String spectrumKey : selectedSpectra) {
-                        nSpectrum spectrum = getSpectrum(spectrumKey);
+                
+                try (BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile))) {
+                    
+                    for (long spectrumMatchKey : selectedSpectra) {
+                    
+                        SpectrumMatch spectrumMatch = getIdentification().getSpectrumMatch(spectrumMatchKey);
+                        String spectrumKey = spectrumMatch.getSpectrumKey();
+                        Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
+                        
                         if (spectrum == null) {
                             throw new IllegalArgumentException("Spectrum " + spectrumKey + " not found.");
                         }
+                        
                         bw.write(spectrum.asMgf());
+                    
                     }
 
                     JOptionPane.showMessageDialog(this, "Spectrum saved to " + selectedFile.getPath() + ".",
                             "File Saved", JOptionPane.INFORMATION_MESSAGE);
-                } finally {
-                    bw.close();
                 }
             }
         }
@@ -6533,7 +6564,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
-        HashMap<String, ArrayList<SpectrumIdentificationAssumption>> selectedAssumptions = null;
+        HashMap<Long, ArrayList<SpectrumIdentificationAssumption>> selectedAssumptions = null;
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
             selectedAssumptions = overviewPanel.getSelectedIdentificationAssumptions();
@@ -6554,34 +6585,40 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 TagSpectrumAnnotator tagSpectrumAnnotator = new TagSpectrumAnnotator();
 
                 String separator = "\t";
-                BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile));
-
-                try {
-                    for (String spectrumKey : selectedAssumptions.keySet()) {
-                        Spectrum spectrum = getSpectrum(spectrumKey);
+                
+                try (BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile))) {
+                    
+                    for (long spectrumMatchKey : selectedAssumptions.keySet()) {
+                        
+                        SpectrumMatch spectrumMatch = getIdentification().getSpectrumMatch(spectrumMatchKey);
+                        String spectrumKey = spectrumMatch.getSpectrumKey();
+                        
+                        Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
+                        
                         if (spectrum == null) {
+                        
                             throw new IllegalArgumentException("Spectrum " + spectrumKey + " not found.");
+                        
                         }
+                        
                         ArrayList<IonMatch> annotations = null;
 
-                        ArrayList<SpectrumIdentificationAssumption> assumptions = selectedAssumptions.get(spectrumKey);
+                        ArrayList<SpectrumIdentificationAssumption> assumptions = selectedAssumptions.get(spectrumMatchKey);
                         if (assumptions != null && !assumptions.isEmpty()) {
                             for (SpectrumIdentificationAssumption assumption : assumptions) {
                                 String identifier;
                                 if (assumption instanceof PeptideAssumption) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                     Peptide peptide = peptideAssumption.getPeptide();
-                                    SpecificAnnotationParameters exportAnnotationParameters = new SpecificAnnotationParameters(spectrumKey, peptideAssumption);
-                                    exportAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(exportAnnotationParameters.getSpectrumKey(), exportAnnotationParameters.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingParameters(), getIdentificationParameters().getModificationLocalizationParameters().getSequenceMatchingParameters());
+                                    SpecificAnnotationParameters exportAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption);
                                     annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters, exportAnnotationParameters, spectrum, peptide).collect(Collectors.toCollection(ArrayList::new));
-                                    identifier = peptide.getSequenceWithLowerCasePtms();
+                                    identifier = peptide.getTaggedModifiedSequence(getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, getDisplayParameters().getDisplayedModifications());
                                 } else if (assumption instanceof TagAssumption) {
                                     TagAssumption tagAssumption = (TagAssumption) assumption;
                                     Tag tag = tagAssumption.getTag();
-                                    SpecificAnnotationParameters exportAnnotationParameters = new SpecificAnnotationParameters(spectrumKey, tagAssumption);
-                                    exportAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(exportAnnotationParameters.getSpectrumKey(), exportAnnotationParameters.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingParameters(), getIdentificationParameters().getModificationLocalizationParameters().getSequenceMatchingParameters());
+                                    SpecificAnnotationParameters exportAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, tagAssumption);
                                     annotations = tagSpectrumAnnotator.getSpectrumAnnotation(annotationParameters, exportAnnotationParameters, spectrum, tag);
-                                    identifier = tag.asSequence(); //@TODO: add PTMs?
+                                    identifier = tag.getTaggedModifiedSequence(getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, true, getDisplayParameters().getDisplayedModifications());
                                 } else {
                                     throw new UnsupportedOperationException("Spectrum annotation not implemented for identification assumption of type " + assumption.getClass() + ".");
                                 }
@@ -6609,11 +6646,21 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                     ArrayList<IonMatch> matches = annotationMap.get(mz);
                                     if (matches != null) {
                                         for (IonMatch ionMatch : matches) {
-                                            bw.write(mz + separator + peak.intensity + separator + ionMatch.getPeakAnnotation() + separator + ionMatch.ion.getTheoreticMz(ionMatch.charge) + separator + ionMatch.getAbsoluteError());
+                                            bw.write(String.join(separator, 
+                                                    Double.toString(mz), 
+                                                    Double.toString(peak.intensity), 
+                                                    ionMatch.getPeakAnnotation(), 
+                                                    Double.toString(ionMatch.ion.getTheoreticMz(ionMatch.charge)), 
+                                                    Double.toString(ionMatch.getAbsoluteError())));
                                             bw.newLine();
                                         }
                                     } else {
-                                        bw.write(mz + separator + peak.intensity + separator + separator + separator);
+                                        bw.write(Double.toString(mz));
+                                        bw.write(separator);
+                                        bw.write(Double.toString(peak.intensity));
+                                        bw.write(separator);
+                                        bw.write(separator);
+                                        bw.write(separator);
                                         bw.newLine();
                                     }
                                 }
@@ -6627,7 +6674,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                             HashMap<Double, Peak> peakMap = spectrum.getPeakMap();
                             for (Double mz : spectrum.getOrderedMzValues()) {
                                 Peak peak = peakMap.get(mz);
-                                bw.write(mz + separator + peak.intensity + separator + separator + separator);
+                                        bw.write(Double.toString(mz));
+                                        bw.write(separator);
+                                        bw.write(Double.toString(peak.intensity));
+                                        bw.write(separator);
+                                        bw.write(separator);
+                                        bw.write(separator);
                                 bw.newLine();
                             }
                         }
@@ -6635,8 +6687,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                     JOptionPane.showMessageDialog(this, "Spectrum saved to " + selectedFile.getPath() + ".",
                             "File Saved", JOptionPane.INFORMATION_MESSAGE);
-                } finally {
-                    bw.close();
                 }
             }
         }
@@ -6964,18 +7014,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public void updateTabbedPanes() {
         repaintPanels();
         allTabsJTabbedPaneStateChanged(null);
-    }
-
-    /**
-     * Returns the charges found in the dataset.
-     *
-     * @return the charges found in the dataset
-     */
-    public ArrayList<Integer> getCharges() {
-        if (getMetrics() == null) {
-            return new ArrayList<>();
-        }
-        return getMetrics().getFoundCharges();
     }
 
     /**
@@ -7360,7 +7398,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         File cpsFile = cpsParent.getCpsFile();
                         File fastaFile = PeptideShakerGUI.this.getIdentificationParameters().getProteinInferenceParameters().getProteinSequenceDatabase();
                         ArrayList<File> spectrumFiles = new ArrayList<>();
-                        for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
+                        for (String spectrumFileName : getIdentification().getFractions()) {
                             File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
                             spectrumFiles.add(spectrumFile);
                         }
@@ -7427,11 +7465,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             return PeptideShakerGUI.NO_SELECTION;
 
         }
-        
+
         long[] psmKeys = getIdentificationFeaturesGenerator().getSortedPsmKeys(peptideKey, utilitiesUserParameters.getSortPsmsOnRt(), false);
-        
+
         return psmKeys.length > 0 ? psmKeys[0] : PeptideShakerGUI.NO_SELECTION;
-        
+
     }
 
     /**
@@ -7439,21 +7477,21 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * protein.
      *
      * @param proteinKey the protein to get the peptide for
-     * 
+     *
      * @return the key of the default peptide
      */
     public long getDefaultPeptideSelection(long proteinKey) {
 
         if (proteinKey == PeptideShakerGUI.NO_SELECTION) {
-            
+
             return PeptideShakerGUI.NO_SELECTION;
-        
+
         }
-        
-               long[] peptideKeys = getIdentificationFeaturesGenerator().getSortedPeptideKeys(proteinKey);
-               
-              return peptideKeys.length > 0 ? peptideKeys[0] : PeptideShakerGUI.NO_SELECTION;
-              
+
+        long[] peptideKeys = getIdentificationFeaturesGenerator().getSortedPeptideKeys(proteinKey);
+
+        return peptideKeys.length > 0 ? peptideKeys[0] : PeptideShakerGUI.NO_SELECTION;
+
     }
 
     /**

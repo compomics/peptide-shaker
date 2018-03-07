@@ -2658,7 +2658,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      *
      * @return an ArrayList of the keys of the selected spectra in the PSM table
      */
-    public HashMap<String, ArrayList<SpectrumIdentificationAssumption>> getSelectedIdentificationAssumptions() {
+    public HashMap<Long, ArrayList<SpectrumIdentificationAssumption>> getSelectedIdentificationAssumptions() {
 
         int[] selectedRows = searchResultsTable.getSelectedRows();
         ArrayList<SpectrumIdentificationAssumption> assumptions = new ArrayList<>();
@@ -2667,9 +2667,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             assumptions.add(currentAssumptionsList.get(selectedRows[i]));
         }
 
-        HashMap<String, ArrayList<SpectrumIdentificationAssumption>> result = new HashMap<>(selectedRows.length);
-        String spectrumKey = getSelectedSpectrumKey();
-        result.put(spectrumKey, assumptions);
+        HashMap<Long, ArrayList<SpectrumIdentificationAssumption>> result = new HashMap<>(selectedRows.length);
+        long spectrumMatchKey = getSelectedSpectrumMatchKey();
+        result.put(spectrumMatchKey, assumptions);
 
         return result;
     }
@@ -3828,7 +3828,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         }
                         if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
                             Peptide peptide = ((PeptideAssumption) spectrumIdentificationAssumption).getPeptide();
-                            return peptide.getTaggedModifiedSequence(modificationProfile, true, true, true, !showFixed);
+                            return peptide.getTaggedModifiedSequence(modificationProfile, true, true, true, peptideShakerGUI.getDisplayParameters().getDisplayedModifications());
                         } else if (spectrumIdentificationAssumption instanceof TagAssumption) {
                             TagAssumption tagAssumption = (TagAssumption) spectrumIdentificationAssumption;
                             return tagAssumption.getTag().getTaggedModifiedSequence(
