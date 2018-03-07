@@ -799,11 +799,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             // write the peptide node
                             if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
 
-                                nodeWriter.write("create n={id:'" + peptideKey + "', name:'" + peptideMatch.getPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, false) + "', type:'Peptide'};\n");
+                                nodeWriter.write("create n={id:'" + peptideKey + "', name:'" + peptideMatch.getPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, peptideShakerGUI.getDisplayParameters().getDisplayedModifications()) + "', type:'Peptide'};\n");
 
                             } else {
 
-                                nodeWriter.write(String.join("\t", Long.toString(peptideKey), peptideMatch.getPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, false),
+                                nodeWriter.write(String.join("\t", Long.toString(peptideKey), peptideMatch.getPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, peptideShakerGUI.getDisplayParameters().getDisplayedModifications()),
                                         "peptide", psParameter.getMatchValidationLevel().getName(), Boolean.toString(PeptideUtils.isDecoy(peptideMatch.getPeptide(), peptideShakerGUI.getSequenceProvider())))); // @TODO: add more information?
                                 nodeWriter.newLine();
 

@@ -152,7 +152,7 @@ public class Metrics implements Serializable {
      * @param foundCharges the new charge to add
      */
     public void addFoundCharges(HashSet<Integer> foundCharges) {
-        this.foundCharges = IntStream.concat(Arrays.stream(this.foundCharges), foundCharges.stream().mapToInt(Function.identity()))
+        this.foundCharges = IntStream.concat(Arrays.stream(this.foundCharges), foundCharges.stream().mapToInt(a -> a))
                 .distinct()
                 .sorted()
                 .toArray();

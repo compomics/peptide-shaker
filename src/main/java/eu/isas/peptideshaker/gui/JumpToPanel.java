@@ -148,7 +148,7 @@ public class JumpToPanel extends javax.swing.JPanel {
         } else if (types.get(jumpType).get(currentSelection.get(jumpType)) == Type.PEPTIDE) {
             peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, possibilities.get(jumpType).get(currentSelection.get(jumpType)), PeptideShakerGUI.NO_SELECTION);
             if (peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.MODIFICATIONS_TAB_INDEX
-                    && !peptideShakerGUI.getDisplayedPeptides().contains(possibilities.get(jumpType).get(currentSelection.get(jumpType)))) {
+                    && !Arrays.stream(peptideShakerGUI.getDisplayedPeptides()).anyMatch(key -> key == possibilities.get(jumpType).get(currentSelection.get(jumpType)))) {
                 // warn the user that the current selection is not in the tab
                 indexLabel.setForeground(Color.RED);
             } else {

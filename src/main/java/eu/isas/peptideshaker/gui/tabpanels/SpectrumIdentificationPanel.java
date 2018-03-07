@@ -3551,7 +3551,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                             } else if (spectrumMatch.getBestTagAssumption() != null) {
 
-                                return spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), true, true, true, false, false); //TODO: include fixed ptms
+                                return spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), true, true, true, false, peptideShakerGUI.getDisplayParameters().getDisplayedModifications()); //TODO: include fixed ptms
 
                             }
                         }
@@ -3700,7 +3700,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         sequence = displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true);
                         peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch);
                     } else if (spectrumMatch.getBestTagAssumption() != null) {
-                        sequence = spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), true, true, true, false, false);
+                        sequence = spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), true, true, true, false, peptideShakerGUI.getDisplayParameters().getDisplayedModifications());
                         peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getTagModificationTooltipAsHtml(spectrumMatch.getBestTagAssumption().getTag());
                     } else {
                         throw new IllegalArgumentException("No best hit found for spectrum " + spectrumMatch.getKey());
@@ -3832,7 +3832,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         } else if (spectrumIdentificationAssumption instanceof TagAssumption) {
                             TagAssumption tagAssumption = (TagAssumption) spectrumIdentificationAssumption;
                             return tagAssumption.getTag().getTaggedModifiedSequence(
-                                    peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), true, true, true, !showFixed, false);
+                                    peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), true, true, true, !showFixed, peptideShakerGUI.getDisplayParameters().getDisplayedModifications());
                         } else {
                             throw new UnsupportedOperationException("Sequence display not implemented for assumption " + spectrumIdentificationAssumption.getClass() + ".");
                         }
