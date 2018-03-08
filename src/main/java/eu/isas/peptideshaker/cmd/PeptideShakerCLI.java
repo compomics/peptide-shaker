@@ -16,6 +16,7 @@ import com.compomics.cli.identification_parameters.IdentificationParametersInput
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.exceptions.exception_handlers.CommandLineExceptionHandler;
 import com.compomics.util.experiment.ProjectParameters;
+import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
@@ -372,13 +373,13 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     waitingHandler.setRunCanceled();
                 }
 
-                File fastaFile = identificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase();
                 ArrayList<File> spectrumFiles = new ArrayList<>();
-                for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
+                for (String spectrumFileName : getIdentification().getFractions()) {
                     File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
                     spectrumFiles.add(spectrumFile);
                 }
 
+                File fastaFile = identificationParameters.getSearchParameters().getFastaFile();
                 try {
                     ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, reportFiles, cpsFile, waitingHandler);
                     final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
@@ -679,18 +680,22 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 }
                 if (!found) {
                     waitingHandler.appendReport("FASTA file \'" + fastaFile.getName() + "\' not found.", true, true);
+            waitingHandler.setRunCanceled();
                 }
             }
-
-            if (found) {
-                // see if the protein inference fasta file is also missing
-                File proteinInferenceSequenceDatabase = identificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase();
-                if (!proteinInferenceSequenceDatabase.exists() && proteinInferenceSequenceDatabase.getName().equalsIgnoreCase(fastaFile.getName())) {
-                    identificationParameters.getProteinInferenceParameters().setProteinSequenceDatabase(fastaFile);
-                } else {
-                    waitingHandler.appendReport("FASTA file \'" + proteinInferenceSequenceDatabase.getName() + "\' not found.", true, true);
-                }
-            }
+        }
+        
+        // If not available on the computer, parse summary information about the fasta file
+        try {
+            
+            loadFastaFile(waitingHandler);
+            
+        } catch (IOException e) {
+            
+            e.printStackTrace();
+            waitingHandler.appendReport("An error occurred while parsing the fasta file.", true, true);
+            waitingHandler.setRunCanceled();
+            
         }
 
         // set the processing settings

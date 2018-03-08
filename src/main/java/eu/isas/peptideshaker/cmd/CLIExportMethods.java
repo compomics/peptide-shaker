@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -234,7 +233,6 @@ public class CLIExportMethods {
      * peptide sequences
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param waitingHandler waiting handler displaying feedback to the user
-     * @return File file containing the exported report
      *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
@@ -251,7 +249,7 @@ public class CLIExportMethods {
 
         //@TODO: allow format selection
         PSExportFactory.writeExport(exportScheme, reportFile, ExportFormat.text, reportCLIInputBean.isGzip(), experiment, projectDetails, identification, identificationFeaturesGenerator, geneMaps,
-                null, null, null, null, nSurroundingAA, identificationParameters, sequenceProvider, proteinDetailsProvider, spectrumCountingPreferences, waitingHandler);
+                null, null, null, nSurroundingAA, identificationParameters, sequenceProvider, proteinDetailsProvider, spectrumCountingPreferences, waitingHandler);
         
     }
 

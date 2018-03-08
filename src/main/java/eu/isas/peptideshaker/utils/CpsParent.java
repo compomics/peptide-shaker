@@ -6,6 +6,10 @@ import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.protein_inference.FastaMapper;
+import com.compomics.util.experiment.identification.protein_inference.fm_index.FMIndex;
+import com.compomics.util.experiment.io.biology.protein.FastaParameters;
+import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.search.SearchParameters;
@@ -380,7 +384,22 @@ public class CpsParent extends UserPreferencesParent {
 
         return true;
     }
-
+    
+    /**
+     * Loads the fasta file.
+     * 
+     * @param waitingHandler a waiting handler displaying progress to the user.
+     * Can be null
+     * 
+     * @throws IOException exception thrown if an error occurred while reading or writing the file
+     */
+    public void loadFastaFile(WaitingHandler waitingHandler) throws IOException {
+        
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+        FastaSummary.getSummary(searchParameters.getFastaFile(), searchParameters.getFastaParameters(), waitingHandler);
+        
+    }
+    
     /**
      * Returns the identification object.
      *
@@ -802,7 +821,7 @@ public class CpsParent extends UserPreferencesParent {
             report.append(identificationParameters.getSearchParameters().getFastaFile().getAbsolutePath()).append("<br>");
 
             report.append("<br><b>FASTA File (protein inference):</b><br>");
-            report.append(identificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase().getAbsolutePath()).append("<br>");
+            // @TODO
 
             report.append("<br><br><b>Report:</b><br>");
             

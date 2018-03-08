@@ -15,7 +15,6 @@ import eu.isas.peptideshaker.utils.CpsParent;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -141,35 +140,10 @@ public class FollowUpCLI extends CpsParent {
             return 1;
         }
 
-        // load fasta file
-        try {
-            if (!loadFastaFile(waitingHandler)) {
-                waitingHandler.appendReport("The FASTA file was not found. Please provide its location in the command line parameters.", true, true);
-                try {
-                    PeptideShakerCLI.closePeptideShaker(identification);
-                } catch (Exception e2) {
-                    waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-                    e2.printStackTrace();
-                }
-                return 1;
-            }
-            waitingHandler.appendReport("Protein database " + identificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase().getName() + ".", true, true);
-        } catch (Exception e) {
-            waitingHandler.appendReport("An error occurred while loading the fasta file.", true, true);
-            e.printStackTrace();
-            try {
-                PeptideShakerCLI.closePeptideShaker(identification);
-            } catch (Exception e2) {
-                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-                e2.printStackTrace();
-            }
-            return 1;
-        }
-
         // load the spectrum files
         try {
             if (!loadSpectrumFiles(waitingHandler)) {
-                if (identification.getSpectrumFiles().size() > 1) {
+                if (identification.getFractions().size() > 1) {
                     waitingHandler.appendReport("The spectrum files were not found. Please provide their location in the command line parameters.", true, true);
                 } else {
                     waitingHandler.appendReport("The spectrum file was not found. Please provide its location in the command line parameters", true, true);
@@ -192,6 +166,20 @@ public class FollowUpCLI extends CpsParent {
                 e2.printStackTrace();
             }
             return 1;
+        }
+        
+        // If not available on the computer, parse summary information about the fasta file
+        try {
+            
+            loadFastaFile(waitingHandler);
+            
+        } catch (IOException e) {
+            
+            e.printStackTrace();
+            waitingHandler.appendReport("An error occurred while parsing the fasta file.", true, true);
+            waitingHandler.setRunCanceled();
+            return 1;
+            
         }
 
         // Load project specific PTMs

@@ -826,7 +826,6 @@ public class NewDialog extends javax.swing.JDialog {
                     File fastaFile = sequenceDbDetailsDialog.getSelectedFastaFile();
                     FastaParameters fastaParameters = sequenceDbDetailsDialog.getFastaParameters();
                     fastaFileTxt.setText(fastaFile.getName());
-                    identificationParameters.getProteinInferenceParameters().setProteinSequenceDatabase(fastaFile);
                     searchParameters.setFastaFile(fastaFile);
                     searchParameters.setFastaParameters(fastaParameters);
                     checkFastaFile();
@@ -1518,9 +1517,9 @@ public class NewDialog extends javax.swing.JDialog {
 
         if (fastaFileTxt.getText() != null && fastaFileTxt.getText().length() > 0
                 && identificationParameters != null
-                && identificationParameters.getProteinInferenceParameters() != null
-                && identificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase() != null
-                && identificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase().exists()) {
+                && identificationParameters.getSearchParameters() != null
+                && identificationParameters.getSearchParameters().getFastaFile() != null
+                && identificationParameters.getSearchParameters().getFastaFile().exists()) {
             databaseLabel.setForeground(Color.BLACK);
             databaseLabel.setToolTipText(null);
             fastaFileTxt.setToolTipText(null);
@@ -1677,10 +1676,8 @@ public class NewDialog extends javax.swing.JDialog {
             }
         }
 
-        File fastaFile = tempIdentificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase();
-        if (fastaFile == null) {
-            fastaFile = searchParameters.getFastaFile();
-        }
+        File fastaFile = searchParameters.getFastaFile();
+
         if (fastaFile != null) {
             boolean found = false;
             if (fastaFile.exists()) {
@@ -1726,15 +1723,8 @@ public class NewDialog extends javax.swing.JDialog {
                 }
             }
 
-            if (found) {
-                // see if the protein inference fasta file is also missing
-                File proteinInferenceSequenceDatabase = tempIdentificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase();
-                if (proteinInferenceSequenceDatabase == null || (!proteinInferenceSequenceDatabase.exists() && proteinInferenceSequenceDatabase.getName().equalsIgnoreCase(fastaFile.getName()))) {
-                    tempIdentificationParameters.getProteinInferenceParameters().setProteinSequenceDatabase(fastaFile);
-                }
+            fastaFileTxt.setText(fastaFile.getName());
 
-                fastaFileTxt.setText(fastaFile.getName());
-            }
         }
 
         boolean matchesValidationAdded;
@@ -1995,14 +1985,7 @@ public class NewDialog extends javax.swing.JDialog {
             settingsComboBox.setModel(new javax.swing.DefaultComboBoxModel(parameterList));
             settingsComboBox.setSelectedItem(identificationParameters.getName());
 
-            ProteinInferenceParameters proteinInferencePreferences = identificationParameters.getProteinInferenceParameters();
-            File fastaFile = proteinInferencePreferences.getProteinSequenceDatabase();
-            if (fastaFile == null) { // Backward compatibility
-                fastaFile = identificationParameters.getSearchParameters().getFastaFile();
-                if (fastaFile != null) {
-                    proteinInferencePreferences.setProteinSequenceDatabase(fastaFile);
-                }
-            }
+            File fastaFile = identificationParameters.getSearchParameters().getFastaFile();
             if (fastaFile != null) {
                 fastaFileTxt.setText(fastaFile.getName());
             }

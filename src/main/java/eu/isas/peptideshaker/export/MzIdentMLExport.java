@@ -2551,12 +2551,12 @@ public class MzIdentMLExport {
         }
 
         // add the database
-        File database = identificationParameters.getProteinInferenceParameters().getProteinSequenceDatabase();
+        File fastaFile = identificationParameters.getSearchParameters().getFastaFile();
         bw.write(getCurrentTabSpace());
         bw.write("<SearchDatabase numDatabaseSequences=\"");
         bw.write(fastaSummary.nSequences);
         bw.write("\" location=\"");
-        bw.write(database.toURI().toString());
+        bw.write(fastaFile.toURI().toString());
         bw.write("\" id=\"" + "SearchDB_1\">");
         bw.newLine();
         tabCounter++;
@@ -2578,7 +2578,7 @@ public class MzIdentMLExport {
         bw.newLine();
         tabCounter++;
 
-        writeUserParam(database.getName()); // @TODO: add database type? children of MS:1001013 - database name??? for example: MS:1001104 (database UniProtKB/Swiss-Prot)
+        writeUserParam(fastaFile.getName()); // @TODO: add database type? children of MS:1001013 - database name??? for example: MS:1001104 (database UniProtKB/Swiss-Prot)
 
         tabCounter--;
         bw.write(getCurrentTabSpace());
