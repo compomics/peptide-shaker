@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -256,8 +257,10 @@ public class PrideXmlExport {
      * occurred while deserializing an object
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level
      */
-    public void createPrideXmlFile(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
+    public void createPrideXmlFile(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException, MathException {
 
         // the experiment start tag
         writeExperimentCollectionStartTag();
@@ -347,8 +350,10 @@ public class PrideXmlExport {
      * occurred while deserializing an object
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level
      */
-    private void writePsms(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
+    private void writePsms(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException, MathException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter proteinProbabilities = new PSParameter();
@@ -389,14 +394,14 @@ public class PrideXmlExport {
         parameters.add(new PSParameter());
 
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
-
-        while (proteinMatchesIterator.hasNext()) {
+        ProteinMatch proteinMatch;
+        
+        while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
             if (waitingHandler.isRunCanceled()) {
                 break;
             }
 
-            ProteinMatch proteinMatch = proteinMatchesIterator.next();
             String proteinKey = proteinMatch.getKey();
 
             proteinProbabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinProbabilities);
@@ -410,26 +415,26 @@ public class PrideXmlExport {
             br.write(getCurrentTabSpace() + "<Database>" + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDatabaseType() + "</Database>" + lineBreak);
 
             PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, true, parameters, waitingHandler);
+PeptideMatch peptideMatch;
 
-            while (peptideMatchesIterator.hasNext()) {
+            while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
                 if (waitingHandler.isRunCanceled()) {
                     break;
                 }
 
-                PeptideMatch peptideMatch = peptideMatchesIterator.next();
                 String peptideKey = peptideMatch.getKey();
                 peptideProbabilities = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptideProbabilities);
 
                 PsmIterator psmIterator = identification.getPsmIterator(peptideMatch.getSpectrumMatchesKeys(), parameters, true, waitingHandler);
-
-                while (psmIterator.hasNext()) {
+SpectrumMatch spectrumMatch;
+                
+                while ((spectrumMatch = psmIterator.next()) != null) {
 
                     if (waitingHandler.isRunCanceled()) {
                         break;
                     }
 
-                    SpectrumMatch spectrumMatch = psmIterator.next();
                     String spectrumKey = spectrumMatch.getKey();
                     psmProbabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psmProbabilities);
                     PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
@@ -726,8 +731,10 @@ public class PrideXmlExport {
      * reading/writing a file
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
      * occurred while reading the mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level
      */
-    private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
+    private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException, InterruptedException, ClassNotFoundException, SQLException, MathException {
 
         PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
         Peptide peptide = peptideAssumption.getPeptide();

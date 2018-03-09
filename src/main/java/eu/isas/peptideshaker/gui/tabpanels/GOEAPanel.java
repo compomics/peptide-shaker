@@ -389,10 +389,9 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
                                 parameters.add(psParameter);
                                 ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, false, null, false, null, progressDialog);
+                                ProteinMatch proteinMatch;
+                                while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
-                                while (proteinMatchesIterator.hasNext()) {
-
-                                    ProteinMatch proteinMatch = proteinMatchesIterator.next();
                                     String proteinKey = proteinMatch.getKey();
                                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
 
@@ -540,7 +539,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                     ((ValueAndBooleanDataPoint) ((DefaultTableModel) goMappingsTable.getModel()).getValueAt(
                                             indexes.get(0), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(
-                                                    pValues.get(0) < significanceLevel);
+                                            pValues.get(0) < significanceLevel);
                                     ((DefaultTableModel) goMappingsTable.getModel()).setValueAt(new XYDataPoint(pValues.get(0), pValues.get(0)), indexes.get(0),
                                             goMappingsTable.getColumn("p-value").getModelIndex());
 

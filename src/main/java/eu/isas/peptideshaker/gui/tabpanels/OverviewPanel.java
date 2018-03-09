@@ -4824,7 +4824,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                             // create the intensity histograms
                             secondarySpectrumPlotsJPanel.add(new IntensityHistogram(
-                                    annotations, currentSpectrum,
+                                    annotations, currentSpectrum, annotationPreferences.getIntensityThresholdType(),
                                     annotationPreferences.getAnnotationIntensityLimit()));
 
                             // create the miniature mass error plot
@@ -5874,10 +5874,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null, null); // @TODO: add waiting handler?
                 //proteinMatchesIterator.setBatchSize(20); // @TODO: add?
-
-                while (proteinMatchesIterator.hasNext()) {
+ProteinMatch proteinMatch;
+                while ((proteinMatch = proteinMatchesIterator.next()) != null) {
                     try {
-                        ProteinMatch proteinMatch = proteinMatchesIterator.next();
                         if (proteinMatch.getPeptideMatchesKeys().contains(peptideKey)) {
                             proteinKey = proteinMatch.getKey();
                             peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);

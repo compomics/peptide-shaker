@@ -56,9 +56,11 @@ public class CLIExportMethods {
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level
      */
     public static void recalibrateSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification,
-            IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
+            IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException, MathException {
         File recalibrationFolder = followUpCLIInputBean.getRecalibrationFolder();
         if (!recalibrationFolder.exists()) {
             recalibrationFolder.mkdir();
@@ -202,8 +204,10 @@ public class CLIExportMethods {
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level
      */
-    public static void exportPepnovoTrainingFiles(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public static void exportPepnovoTrainingFiles(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
         File destinationFolder = followUpCLIInputBean.getPepnovoTrainingFolder();
         if (!destinationFolder.exists()) {
             destinationFolder.mkdir();
@@ -265,6 +269,7 @@ public class CLIExportMethods {
      * peptide sequences
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param waitingHandler waiting handler displaying feedback to the user
+     * @return File file containing the exported report
      *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
@@ -280,7 +285,7 @@ public class CLIExportMethods {
      * an exception occurred while estimating the theoretical coverage of a
      * protein
      */
-    public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, String sample, int replicateNumber,
+    public static File exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, String sample, int replicateNumber,
             ProjectDetails projectDetails, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             IdentificationParameters identificationParameters, int nSurroundingAA, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
             throws IOException, SQLException, ClassNotFoundException,
@@ -294,6 +299,7 @@ public class CLIExportMethods {
         //@TODO: allow format selection
         PSExportFactory.writeExport(exportScheme, reportFile, ExportFormat.text, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator, geneMaps,
                 null, null, null, null, nSurroundingAA, identificationParameters, spectrumCountingPreferences, waitingHandler);
+        return reportFile;
     }
 
     /**

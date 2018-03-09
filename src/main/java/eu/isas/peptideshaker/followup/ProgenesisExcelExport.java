@@ -157,11 +157,9 @@ public class ProgenesisExcelExport {
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(new PSParameter());
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
+        ProteinMatch proteinMatch;
 
-        while (proteinMatchesIterator.hasNext()) {
-
-            // get the protein match
-            ProteinMatch proteinMatch = proteinMatchesIterator.next();
+        while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
             // insert the protein details
             insertProteinDetails(proteinMatch.getMainMatch());
@@ -172,11 +170,10 @@ public class ProgenesisExcelExport {
             int proteinStartRow = currentRow;
 
             PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, true, parameters, waitingHandler);
+            PeptideMatch peptideMatch;
 
             // print the peptide details
-            while (peptideMatchesIterator.hasNext()) {
-
-                PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
                 // insert peptide data
                 insertPeptideData(peptideMatch);
@@ -250,14 +247,14 @@ public class ProgenesisExcelExport {
         parameters.add(psParameter);
 
         PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, parameters, false, waitingHandler);
+        SpectrumMatch spectrumMatch;
 
-        while (psmIterator.hasNext()) {
+        while ((spectrumMatch = psmIterator.next()) != null) {
 
             if (waitingHandler.isRunCanceled()) {
                 break;
             }
 
-            SpectrumMatch spectrumMatch = psmIterator.next();
             String spectrumKey = spectrumMatch.getKey();
             psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 

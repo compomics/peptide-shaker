@@ -499,8 +499,8 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
             proteinMatchesIterator.setBatchSize(batchSize);
 
             int i = 0;
-            while (proteinMatchesIterator.hasNext()) {
-                ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            ProteinMatch proteinMatch;
+            while ((proteinMatch = proteinMatchesIterator.next()) != null) {
                 String proteinKey = proteinMatch.getKey();
                 if (waitingHandler.isRunCanceled()) {
                     return rows.get(i);

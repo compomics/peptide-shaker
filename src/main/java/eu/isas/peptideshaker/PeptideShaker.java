@@ -674,10 +674,10 @@ public class PeptideShaker {
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, null, true, waitingHandler);
+            SpectrumMatch spectrumMatch;
 
-            while (psmIterator.hasNext()) {
+            while ((spectrumMatch = psmIterator.next()) != null) {
 
-                SpectrumMatch spectrumMatch = psmIterator.next();
                 String spectrumKey = spectrumMatch.getKey();
                 HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = identification.getAssumptions(spectrumKey);
 
@@ -821,10 +821,10 @@ public class PeptideShaker {
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, false, waitingHandler);
+            SpectrumMatch spectrumMatch;
 
-            while (psmIterator.hasNext()) {
+            while ((spectrumMatch = psmIterator.next()) != null) {
 
-                SpectrumMatch spectrumMatch = psmIterator.next();
                 String spectrumKey = spectrumMatch.getKey();
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
@@ -1021,7 +1021,7 @@ public class PeptideShaker {
     public static File getMatchesFolder() {
         return new File(getMatchesDirectoryParentFile(), PeptideShaker.getMatchesDirectorySubPath());
     }
-    
+
     /**
      * Instantiates the spectrum, sequence, and PTM factories with caches
      * adapted to the memory available as set in the user preferences.

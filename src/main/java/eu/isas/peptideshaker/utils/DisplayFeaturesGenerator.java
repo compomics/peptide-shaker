@@ -805,8 +805,9 @@ public class DisplayFeaturesGenerator {
         }
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null, false, null, null); // @TODO: add waiting handler?
-        while (peptideMatchesIterator.hasNext()) {
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+        PeptideMatch peptideMatch;
+        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+            
             String peptideKey = peptideMatch.getKey();
             String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
             boolean enzymaticPeptide = true;

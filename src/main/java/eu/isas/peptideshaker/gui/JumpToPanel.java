@@ -489,10 +489,10 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(secondaryCandidates, null, false, null, null); // @TODO: waiting handler?
 
-                                        while (peptideMatchesIterator.hasNext()) {
+                                        PeptideMatch peptideMatch;
+                                        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
                                             try {
-                                                PeptideMatch peptideMatch = peptideMatchesIterator.next();
                                                 String peptideKey = peptideMatch.getKey();
                                                 ArrayList<String> proteins = peptideMatch.getTheoreticPeptide().getParentProteinsNoRemapping();
                                                 if (proteins != null) {

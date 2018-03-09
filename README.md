@@ -62,7 +62,8 @@ To start using PeptideShaker, unzip the downloaded file, and double-click the `P
 
   * [Minimum Requirements](#minimum-requirements)
   * [From the Command Line](#from-the-command-line)
-  * [Miniconda and Docker](#miniconda-and-docker)
+  * [Miniconda](#miniconda)
+  * [Docker](#docker)
   * [SearchGUI](#searchgui)
   * [User Defined Modifications](#user-defined-modifications)
   * [Database Help](#database-help)
@@ -97,7 +98,7 @@ For details about the command line see: [PeptideShakerCLI](https://github.com/co
 
 ----
 
-### Miniconda and Docker ###
+### Miniconda ###
 
 PeptideShaker is available as a [Miniconda package](http://conda.pydata.org/miniconda.html) in the [bioconda](https://bioconda.github.io) channel. You can install PeptideShaker with:
 
@@ -105,13 +106,30 @@ PeptideShaker is available as a [Miniconda package](http://conda.pydata.org/mini
 conda install peptide-shaker -c bioconda
 ```
 
-A [Docker](https://www.docker.com/) container is available via the [mulled](https://mulled.github.io/mulled/) project. You can make use of the container via:
+[Go to top of page](#peptideshaker)
+
+----
+
+### Docker ###
+
+
+A [Docker](https://www.docker.com/) container is available via the [biocontainers](https://quai.io/repository/biocaontainers/) project. You can make use of the container via:
 
 ```bash
-docker run quay.io/mulled/peptide-shaker:X.Y.Z--1 peptide-shaker eu.isas.peptideshaker.cmd.PeptideShakerCLI 
+docker run quay.io/biocontainers/peptide-shaker:X.Y.Z--1 peptide-shaker eu.isas.peptideshaker.cmd.PeptideShakerCLI 
 ```
 
 Replace X.Y.Z with the wanted PeptideShaker version number.
+
+In case you need to use your own files, you will need to map (using `-v` Docker parameter) your local folders containing them into the Docker internal file system, like 
+
+
+```bash
+docker run -v /home/my_user/resources:/myresources 
+quay.io/biocontainers/peptide-shaker:X.Y.Z--1 
+peptide-shaker eu.isas.peptideshaker.cmd.PeptideShakerCLI 
+...
+```
 
 [Go to top of page](#peptideshaker)
 

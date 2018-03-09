@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -112,11 +113,13 @@ public class PsPeptideSection {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAA,
             String linePrefix, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
-            throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -143,8 +146,9 @@ public class PsPeptideSection {
         parameters.add(psParameter);
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(keys, parameters, psmSection != null, parameters, waitingHandler);
-
-        while (peptideMatchesIterator.hasNext()) {
+        PeptideMatch peptideMatch;
+        
+        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
             if (waitingHandler != null) {
                 if (waitingHandler.isRunCanceled()) {
@@ -153,7 +157,6 @@ public class PsPeptideSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             String peptideKey = peptideMatch.getKey();
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 

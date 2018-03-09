@@ -573,10 +573,10 @@ public class MzIdentMLExport {
         spectrumKeyToPeptideKeyMap = new HashMap<String, String>();
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters, waitingHandler);
+        PeptideMatch peptideMatch;
 
-        while (peptideMatchesIterator.hasNext()) {
+        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             String peptideKey = peptideMatch.getKey();
             Peptide peptide = peptideMatch.getTheoreticPeptide();
             String peptideSequence = peptide.getSequence();
@@ -633,9 +633,8 @@ public class MzIdentMLExport {
         // re-iterate the peptides to get peptide to protein mapping
         peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters, waitingHandler);
 
-        while (peptideMatchesIterator.hasNext()) {
+        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             String peptideKey = peptideMatch.getKey();
             Peptide peptide = peptideMatch.getTheoreticPeptide();
 
@@ -1226,8 +1225,10 @@ public class MzIdentMLExport {
      * occurred while writing the export
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level
      */
-    private void writeDataCollection() throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    private void writeDataCollection() throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
         br.write(getCurrentTabSpace() + "<DataCollection>" + lineBreak);
         tabCounter++;
         writeInputFileDetails();
@@ -1247,8 +1248,10 @@ public class MzIdentMLExport {
      * occurred while writing the export
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level
      */
-    private void writeDataAnalysis() throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    private void writeDataAnalysis() throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         br.write(getCurrentTabSpace() + "<AnalysisData>" + lineBreak);
         tabCounter++;
@@ -1266,10 +1269,10 @@ public class MzIdentMLExport {
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, true, waitingHandler);
+            SpectrumMatch spectrumMatch;
+            
+            while ((spectrumMatch = psmIterator.next()) != null) {
 
-            while (psmIterator.hasNext()) {
-
-                SpectrumMatch spectrumMatch = psmIterator.next();
                 String spectrumKey = spectrumMatch.getKey();
 
                 writeSpectrumIdentificationResult(spectrumKey, ++psmCount);
@@ -1322,10 +1325,10 @@ public class MzIdentMLExport {
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
+        ProteinMatch proteinMatch;
+        
+        while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
-        while (proteinMatchesIterator.hasNext()) {
-
-            ProteinMatch proteinMatch = proteinMatchesIterator.next();
             String proteinGroupKey = proteinMatch.getKey();
 
             String proteinGroupId = "PAG_" + groupCpt++;
@@ -1347,10 +1350,10 @@ public class MzIdentMLExport {
 
                 ArrayList<String> peptideMatches = identification.getProteinMatch(proteinGroupKey).getPeptideMatchesKeys();
                 PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(peptideMatches, null, false, null, waitingHandler);
+                PeptideMatch peptideMatch;
+                
+                while ((peptideMatch = peptideMatchesIterator.next()) != null) {
 
-                while (peptideMatchesIterator.hasNext()) {
-
-                    PeptideMatch peptideMatch = peptideMatchesIterator.next();
                     String peptideKey = peptideMatch.getKey();
                     String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
 
@@ -1435,9 +1438,11 @@ public class MzIdentMLExport {
      * interacting with the database
      * @throws MzMLUnmarshallerException exception thrown whenever an error
      * occurred while reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown if a math
+     * exception occurred when estimating the noise level
      */
     private void writeSpectrumIdentificationResult(String psmKey, int psmIndex)
-            throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
         String spectrumTitle = Spectrum.getSpectrumTitle(psmKey);
@@ -1572,7 +1577,7 @@ public class MzIdentMLExport {
                                 } else if (ionMatch.ion instanceof ImmoniumIon) {
 
                                     // get the indexes of the corresponding residues
-                                    char residue = ImmoniumIon.getResidue(((ImmoniumIon) ionMatch.ion).getSubType());
+                                    char residue = ((ImmoniumIon) ionMatch.ion).aa;
                                     char[] peptideAsArray = peptideSequence.toCharArray();
                                     for (int i = 0; i < peptideAsArray.length; i++) {
                                         if (peptideAsArray[i] == residue) {
@@ -1645,7 +1650,7 @@ public class MzIdentMLExport {
 
                             ArrayList<String> scoredPtms = psPtmScores.getScoredPTMs();
                             HashSet<String> ptmsCovered = new HashSet<String>(scoredPtms.size());
-                            
+
                             for (String ptmName : scoredPtms) {
 
                                 PTM currentPtm = ptmFactory.getPTM(ptmName);
@@ -1709,7 +1714,7 @@ public class MzIdentMLExport {
 
                             ArrayList<String> scoredPtms = psPtmScores.getScoredPTMs();
                             HashSet<String> ptmsCovered = new HashSet<String>(scoredPtms.size());
-                            
+
                             for (String ptmName : scoredPtms) {
 
                                 if (!ptmsCovered.contains(ptmName)) {
