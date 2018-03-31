@@ -4374,7 +4374,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                                     for (int index : indexesOnProtein) {
 
-                                        fixedPtms.put(modMatch.getModificationSite() + index, modName);
+                                        fixedPtms.put(modMatch.getSite() + index, modName);
 
                                     }
                                 }
@@ -4512,7 +4512,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                                     for (Integer index : indexes) {
 
-                                        fixedPtms.put(modMatch.getModificationSite() + index - 1, modName);
+                                        fixedPtms.put(modMatch.getSite() + index - 1, modName);
 
                                     }
                                 }

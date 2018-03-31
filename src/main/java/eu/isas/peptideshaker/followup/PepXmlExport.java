@@ -607,7 +607,7 @@ public class PepXmlExport {
                 
                 } else {
                 
-                    int site = modificationMatch.getModificationSite();
+                    int site = modificationMatch.getSite();
                     Double modMass = modifiedAminoAcids.get(site);
                     
                     if (modMass == null) {
@@ -708,7 +708,7 @@ public class PepXmlExport {
                     parameterLine = new StringBuilder();
                     parameterLine.append("<parameter name=\"ptm\" value=\"")
                             .append(modificationMatch.getModification())
-                            .append(" (").append(modificationMatch.getModificationSite()).append(")")
+                            .append(" (").append(modificationMatch.getSite()).append(")")
                             .append("\"/>");
                     sw.writeLine(parameterLine.toString());
                 }

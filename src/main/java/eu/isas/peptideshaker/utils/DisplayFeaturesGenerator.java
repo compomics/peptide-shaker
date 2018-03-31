@@ -342,7 +342,7 @@ public class DisplayFeaturesGenerator {
         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
 
             String modName = modMatch.getModification();
-            int modSite = modMatch.getModificationSite();
+            int modSite = modMatch.getSite();
 
             if (modMatch.getVariable()) {
 

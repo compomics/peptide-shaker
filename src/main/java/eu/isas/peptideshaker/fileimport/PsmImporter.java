@@ -752,7 +752,7 @@ public class PsmImporter {
             if (modMatch.getVariable()) {
 
                 double refMass = getRefMass(modMatch.getModification(), searchParameters);
-                int modSite = modMatch.getModificationSite();
+                int modSite = modMatch.getSite();
 
                 if (modSite == 1) {
 
@@ -823,7 +823,7 @@ public class PsmImporter {
             if (modMatch.getVariable() && modMatch != nTermModification) {
 
                 double refMass = getRefMass(modMatch.getModification(), searchParameters);
-                int modSite = modMatch.getModificationSite();
+                int modSite = modMatch.getSite();
 
                 if (modSite == peptideLength) {
 
@@ -900,7 +900,7 @@ public class PsmImporter {
             if (modMatch.getVariable() && modMatch != nTermModification && modMatch != cTermModification) {
 
                 double refMass = getRefMass(modMatch.getModification(), searchParameters);
-                int modSite = modMatch.getModificationSite();
+                int modSite = modMatch.getSite();
                 boolean terminal = false;
                 ArrayList<String> expectedNamesAtSite = expectedNames.get(modSite);
 
@@ -1114,7 +1114,7 @@ public class PsmImporter {
 
                 if (modMatch.getVariable() && modMatch != nTermModification && modMatch != cTermModification && !matchToSiteMap.containsKey(modMatch)) {
 
-                    int modSite = modMatch.getModificationSite();
+                    int modSite = modMatch.getSite();
 
                     for (int candidateSite : expectedNames.keySet()) {
 
@@ -1158,7 +1158,7 @@ public class PsmImporter {
 
                 if (modMatch.getVariable() && modMatch != nTermModification && modMatch != cTermModification && !matchToSiteMap.containsKey(modMatch)) {
 
-                    Integer modSite = correctedIndexes.get(modMatch.getModificationSite());
+                    Integer modSite = correctedIndexes.get(modMatch.getSite());
 
                     if (modSite != null) {
 
@@ -1174,7 +1174,7 @@ public class PsmImporter {
 
                                         matchToSiteMap.put(modMatch, modSite);
                                         modMatch.setModification(modName);
-                                        modMatch.setModificationSite(modSite);
+                                        modMatch.setSite(modSite);
 
                                         if (taken == null) {
 

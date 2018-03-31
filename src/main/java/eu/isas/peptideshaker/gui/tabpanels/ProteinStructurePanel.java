@@ -3121,7 +3121,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     for (ModificationMatch modMatch : modifications) {
                         String modName = modMatch.getModification();
                         if (displayPreferences.isDisplayedPTM(modName)) {
-                            if (modMatch.getModificationSite() == peptideIndex) {
+                            if (modMatch.getSite() == peptideIndex) {
 
                                 Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName);
 

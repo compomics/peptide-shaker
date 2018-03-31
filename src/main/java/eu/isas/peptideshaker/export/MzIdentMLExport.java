@@ -651,7 +651,7 @@ public class MzIdentMLExport {
 
                 } else {
 
-                    site = modMatch.getModificationSite();
+                    site = modMatch.getSite();
 
                 }
 
@@ -659,7 +659,7 @@ public class MzIdentMLExport {
                 bw.write("<Modification monoisotopicMassDelta=\"");
                 bw.write(Double.toString(modification.getRoundedMass()));
                 bw.write("\" residues=\"");
-                bw.write(peptideSequence.charAt(modMatch.getModificationSite() - 1));
+                bw.write(peptideSequence.charAt(modMatch.getSite() - 1));
                 bw.write("\" location=\"");
                 bw.write(site);
                 bw.write("\" >");

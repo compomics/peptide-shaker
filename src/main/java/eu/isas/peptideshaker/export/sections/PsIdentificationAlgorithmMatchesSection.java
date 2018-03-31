@@ -322,7 +322,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                         .filter(modificationMatch -> modificationMatch.getVariable() == variablePtms)
                         .collect(Collectors.groupingBy(ModificationMatch::getModification,
                                 TreeMap::new,
-                                Collectors.mapping(ModificationMatch::getModificationSite,
+                                Collectors.mapping(ModificationMatch::getSite,
                                         Collectors.toCollection(TreeSet::new))));
 
     }

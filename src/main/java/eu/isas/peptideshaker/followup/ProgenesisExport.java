@@ -218,7 +218,7 @@ public class ProgenesisExport {
                     
                     if (modificationMatch.getVariable()) {
                         
-                        int site = modificationMatch.getModificationSite();
+                        int site = modificationMatch.getSite();
                         HashSet<String> modNames = modMap.get(site);
                     
                         if (modNames == null) {

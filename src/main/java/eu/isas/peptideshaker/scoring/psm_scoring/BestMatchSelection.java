@@ -465,7 +465,7 @@ public class BestMatchSelection {
                         for (int i = 0; i < psModificationMatches.length; i++) {
 
                             ModificationMatch seModMatch = psModificationMatches[i];
-                            psModificationMatches[i] = new ModificationMatch(seModMatch.getModification(), seModMatch.getVariable(), seModMatch.getModificationSite());
+                            psModificationMatches[i] = new ModificationMatch(seModMatch.getModification(), seModMatch.getVariable(), seModMatch.getSite());
 
                         }
                     }

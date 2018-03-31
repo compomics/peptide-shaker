@@ -98,7 +98,7 @@ public class ModificationLocalizationScorer extends DbObject {
         HashMap<String, List<Integer>> modificationProfiles = Arrays.stream(psPeptide.getModificationMatches())
                 .collect(Collectors.groupingBy(ModificationMatch::getModification,
                         HashMap::new,
-                        Collectors.mapping(ModificationMatch::getModificationSite, Collectors.toList())));
+                        Collectors.mapping(ModificationMatch::getSite, Collectors.toList())));
 
         for (Entry<String, List<Integer>> entry : modificationProfiles.entrySet()) {
 
@@ -133,7 +133,7 @@ public class ModificationLocalizationScorer extends DbObject {
                                         PSParameter psParameter = (PSParameter) peptideAssumption.getUrParam(PSParameter.dummy);
                                         double p = psParameter.getProbability();
 
-                                        if (modMatch.getModificationSite() == modSite) {
+                                        if (modMatch.getSite() == modSite) {
 
                                             modificationAtSite = true;
 
@@ -463,7 +463,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                         } else {
 
-                            modificationSite = modificationMatch.getModificationSite();
+                            modificationSite = modificationMatch.getSite();
 
                         }
 
@@ -1916,7 +1916,7 @@ public class ModificationLocalizationScorer extends DbObject {
                 HashSet<Integer> oldLocalizations = Arrays.stream(peptide.getModificationMatches())
                         .filter(modificationMatch -> modificationMatch.getVariable() && modificationMatch.getConfident() && modificationMatch.getInferred())
                         .filter(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()).getMass() == modMass)
-                        .map(ModificationMatch::getModificationSite)
+                        .map(ModificationMatch::getSite)
                         .collect(Collectors.toCollection(HashSet::new));
 
                 HashSet<Integer> newLocalizationCandidates = new HashSet<>(oldLocalizations.size());
@@ -1946,7 +1946,7 @@ public class ModificationLocalizationScorer extends DbObject {
                                 ArrayList<Integer> tempLocalizations = Arrays.stream(tempPeptide.getModificationMatches())
                                         .filter(modificationMatch -> modificationMatch.getVariable() && modificationMatch.getConfident() && modificationMatch.getInferred())
                                         .filter(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()).getMass() == modMass)
-                                        .map(ModificationMatch::getModificationSite)
+                                        .map(ModificationMatch::getSite)
                                         .collect(Collectors.toCollection(ArrayList::new));
 
                                 for (int localization : tempLocalizations) {
@@ -1971,7 +1971,7 @@ public class ModificationLocalizationScorer extends DbObject {
                                 ArrayList<Integer> tempLocalizations = Arrays.stream(tempPeptide.getModificationMatches())
                                         .filter(modificationMatch -> modificationMatch.getVariable() && modificationMatch.getConfident() && modificationMatch.getInferred())
                                         .filter(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()).getMass() == modMass)
-                                        .map(ModificationMatch::getModificationSite)
+                                        .map(ModificationMatch::getSite)
                                         .collect(Collectors.toCollection(ArrayList::new));
 
                                 for (int localization : tempLocalizations) {
@@ -2003,7 +2003,7 @@ public class ModificationLocalizationScorer extends DbObject {
                                     ArrayList<Integer> tempLocalizations = Arrays.stream(tempPeptide.getModificationMatches())
                                             .filter(modificationMatch -> modificationMatch.getVariable() && modificationMatch.getConfident() && modificationMatch.getInferred())
                                             .filter(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()).getMass() == modMass)
-                                            .map(ModificationMatch::getModificationSite)
+                                            .map(ModificationMatch::getSite)
                                             .collect(Collectors.toCollection(ArrayList::new));
 
                                     int tempIndex, ref = 0;
@@ -2025,7 +2025,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                                                     Modification modification = modificationFactory.getModification(modificationMatch.getModification());
 
-                                                    if (modification.getMass() != modMass && modificationMatch.getModificationSite() == shiftedLocalization) {
+                                                    if (modification.getMass() != modMass && modificationMatch.getSite() == shiftedLocalization) {
 
                                                         siteOccupied = true;
 
@@ -2076,7 +2076,7 @@ public class ModificationLocalizationScorer extends DbObject {
                                     ArrayList<Integer> tempLocalizations = Arrays.stream(tempPeptide.getModificationMatches())
                                             .filter(modificationMatch -> modificationMatch.getVariable() && modificationMatch.getConfident() && modificationMatch.getInferred())
                                             .filter(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()).getMass() == modMass)
-                                            .map(ModificationMatch::getModificationSite)
+                                            .map(ModificationMatch::getSite)
                                             .collect(Collectors.toCollection(ArrayList::new));
 
                                     int tempIndex, ref = 0;
@@ -2099,7 +2099,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                                                     Modification modification = modificationFactory.getModification(modificationMatch.getModification());
 
-                                                    if (modification.getMass() != modMass && modificationMatch.getModificationSite() == shiftedLocalization) {
+                                                    if (modification.getMass() != modMass && modificationMatch.getSite() == shiftedLocalization) {
 
                                                         siteOccupied = true;
 
@@ -2152,7 +2152,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                             if (modification.getMass() == modMass && !modificationMatch.getConfident()) { // @TODO: compare against the accuracy
 
-                                nonConfidentMatches.put(modificationMatch.getModificationSite(), modificationMatch);
+                                nonConfidentMatches.put(modificationMatch.getSite(), modificationMatch);
 
                             }
                         }
@@ -2194,7 +2194,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                                     }
 
-                                    modificationMatch.setModificationSite(newLocalization);
+                                    modificationMatch.setSite(newLocalization);
                                     modificationMatch.setModification(candidateName);
                                     PSModificationScores psmScores = (PSModificationScores) spectrumMatch.getUrParam(new PSModificationScores());
                                     psmScores.changeRepresentativeSite(candidateName, oldLocalization, newLocalization);
@@ -2308,7 +2308,7 @@ public class ModificationLocalizationScorer extends DbObject {
                     } else {
 
                         ModificationScoring modificationScoring = modificationScores.getModificationScoring(modName);
-                        modificationScoring.setSiteConfidence(modificationMatch.getModificationSite(), ModificationScoring.VERY_CONFIDENT);
+                        modificationScoring.setSiteConfidence(modificationMatch.getSite(), ModificationScoring.VERY_CONFIDENT);
                         modificationMatch.setConfident(true);
                         HashMap<Integer, ArrayList<String>> modificationSites = confidentSites.get(modification.getMass());
 
@@ -2368,7 +2368,7 @@ public class ModificationLocalizationScorer extends DbObject {
                     for (ModificationMatch modMatch : modificationMatches) {
 
                         String modName = modMatch.getModification();
-                        int site = modMatch.getModificationSite();
+                        int site = modMatch.getSite();
                         ModificationScoring modificationScoring = modificationScores.getModificationScoring(modName);
                         modificationScoring.setSiteConfidence(site, ModificationScoring.VERY_CONFIDENT);
                         modMatch.setConfident(true);
@@ -2399,7 +2399,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                         for (int site : orderedDSites) {
 
-                            if (site == modificationMatch.getModificationSite()) {
+                            if (site == modificationMatch.getSite()) {
 
                                 double dScore = modificationScoring.getDeltaScore(site);
 
@@ -2590,7 +2590,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                                     for (ModificationMatch assignedMatch : assignedModifications) {
 
-                                        if (assignedMatch.getModificationSite() == site) {
+                                        if (assignedMatch.getSite() == site) {
 
                                             alreadyOccupied = true;
                                             break;
@@ -2601,7 +2601,7 @@ public class ModificationLocalizationScorer extends DbObject {
                                     if (!alreadyOccupied) {
 
                                         modificationMatch = modificationMatches.get(nAssignedSites);
-                                        modificationMatch.setModificationSite(site);
+                                        modificationMatch.setSite(site);
                                         modificationMatch.setModification(modName);
                                         assignedModifications.add(modificationMatch);
 
