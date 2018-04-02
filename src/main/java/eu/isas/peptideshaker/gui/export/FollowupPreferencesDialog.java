@@ -15,6 +15,9 @@ import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.utils.user_choice.list_choosers.ModificationChooser;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.io.file.LastSelectedFolder;
+import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.followup.FastaExport;
 import eu.isas.peptideshaker.followup.InclusionListExport;
@@ -796,15 +799,30 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             long peptideKey = peptideMatch.getKey();
                             PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
+                                IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+                ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                                String modifiedSequence = peptideMatch.getPeptide().getTaggedModifiedSequence(modificationParameters, peptideShakerGUI.getSequenceProvider(), modificationSequenceMatchingParameters, false, false, true, peptideShakerGUI.getDisplayParameters().getDisplayedModifications());
+
                             // write the peptide node
                             if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
-
-                                nodeWriter.write("create n={id:'" + peptideKey + "', name:'" + peptideMatch.getPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, peptideShakerGUI.getDisplayParameters().getDisplayedModifications()) + "', type:'Peptide'};\n");
+                                String node = String.join("", 
+                                        "create n={id:'", 
+                                        Long.toString(peptideKey),
+                                        "', name:'",
+                                        modifiedSequence,
+                                        "', type:'Peptide'};");
+                                nodeWriter.write(node);
+                                nodeWriter.newLine();
 
                             } else {
 
-                                nodeWriter.write(String.join("\t", Long.toString(peptideKey), peptideMatch.getPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, peptideShakerGUI.getDisplayParameters().getDisplayedModifications()),
-                                        "peptide", psParameter.getMatchValidationLevel().getName(), Boolean.toString(PeptideUtils.isDecoy(peptideMatch.getPeptide(), peptideShakerGUI.getSequenceProvider())))); // @TODO: add more information?
+                                nodeWriter.write(String.join("\t", 
+                                        Long.toString(peptideKey), 
+                                        modifiedSequence,
+                                        "peptide", 
+                                        psParameter.getMatchValidationLevel().getName(), 
+                                        Boolean.toString(PeptideUtils.isDecoy(peptideMatch.getPeptide(), peptideShakerGUI.getSequenceProvider()))));
                                 nodeWriter.newLine();
 
                             }
