@@ -6,7 +6,6 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
@@ -16,13 +15,9 @@ import com.compomics.util.experiment.personalization.ExperimentObject;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A Jump To panel for use in the menu bar in the main frame.
@@ -489,7 +484,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                                         possibilities.get(jumpType).add(peptideKey);
                                                         types.get(jumpType).add(Type.PEPTIDE);
 
-                                                    } else if (Arrays.stream(peptideMatch.getPeptide().getModificationMatches())
+                                                    } else if (Arrays.stream(peptideMatch.getPeptide().getVariableModifications())
                                                             .map(ModificationMatch::getModification)
                                                             .anyMatch(modName -> modName.contains(matchingInput))) {
 

@@ -158,7 +158,6 @@ public class TagMapper {
     private void mapModificationsForTag(Tag tag, int advocateId) {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        ModificationParameters modificationProfile = searchParameters.getModificationParameters();
 
         // rename the variable modifications
         for (TagComponent tagComponent : tag.getContent()) {

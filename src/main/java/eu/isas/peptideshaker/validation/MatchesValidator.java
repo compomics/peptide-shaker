@@ -824,7 +824,7 @@ public class MatchesValidator {
             long peptideKey = peptideMatch.getKey();
 
             foundModifications.addAll(
-                    Arrays.stream(peptideMatch.getPeptide().getModificationMatches())
+                    Arrays.stream(peptideMatch.getPeptide().getVariableModifications())
                             .map(ModificationMatch::getModification)
                             .collect(Collectors.toSet()));
 

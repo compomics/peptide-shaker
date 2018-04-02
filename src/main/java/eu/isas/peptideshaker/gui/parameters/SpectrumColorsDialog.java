@@ -33,7 +33,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
     /**
      * The list of neutral losses.
      */
-    private final ArrayList<NeutralLoss> neutralLosses;
+    private final HashSet<String> neutralLosses;
     /**
      * A reference to PeptideShakerGUI.
      */
@@ -48,8 +48,8 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
         super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
         iontypes = peptideShakerGUI.getIdentificationParameters().getAnnotationParameters().getIonTypes();
-        ModificationParameters ptmSettings = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters();
-        neutralLosses = IonFactory.getNeutralLosses(ptmSettings);
+        ModificationParameters modificationParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters();
+        neutralLosses = IonFactory.getNeutralLosses(modificationParameters);
         initComponents();
         setUpGui();
         setLocationRelativeTo(peptideShakerGUI);

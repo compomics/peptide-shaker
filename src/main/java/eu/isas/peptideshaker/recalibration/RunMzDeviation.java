@@ -16,7 +16,10 @@ import eu.isas.peptideshaker.parameters.PSParameter;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -259,11 +262,12 @@ public class RunMzDeviation {
      *
      * @param spectrumFileName the name of the file of the run
      * @param identification the corresponding identification
+     * @param sequenceProvider the protein sequence provider
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler displaying the progress and
      * allowing the user to cancel the process. Can be null
      */
-    public RunMzDeviation(String spectrumFileName, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) {
+    public RunMzDeviation(String spectrumFileName, Identification identification, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) {
 
         AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
@@ -314,9 +318,12 @@ public class RunMzDeviation {
                     precursorRawMap.get(precursorRT).get(precursorMz).add(error);
 
                     Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumKey);
-                    SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(currentSpectrum.getSpectrumKey(), bestPeptideAssumption);
-                    List<IonMatch> ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
-                            currentSpectrum, bestPeptideAssumption.getPeptide()).collect(Collectors.toList());
+                ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                    SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(currentSpectrum.getSpectrumKey(), bestPeptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                    IonMatch[] ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
+                            currentSpectrum, bestPeptideAssumption.getPeptide(),
+                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters).toArray(IonMatch[]::new);
                     
                     spectrumFragmentMap = new HashMap<>();
 

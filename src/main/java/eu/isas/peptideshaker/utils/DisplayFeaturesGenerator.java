@@ -598,45 +598,6 @@ public class DisplayFeaturesGenerator {
     }
 
     /**
-     * Filters the modification map according to the user's display preferences.
-     *
-     * @param modificationMap the map of modifications to filter (amino acid
-     * &gt; list of modifications, 1 is the first amino acid)
-     * @param displayedModifications list of modifications to display
-     *
-     * @return a map of filtered modifications based on the user display
-     * preferences
-     */
-    public static HashMap<Integer, ArrayList<String>> getFilteredModifications(HashMap<Integer, ArrayList<String>> modificationMap, HashSet<String> displayedModifications) {
-
-        HashMap<Integer, ArrayList<String>> result = new HashMap<>(modificationMap.size());
-
-        for (int aa : modificationMap.keySet()) {
-
-            for (String modName : modificationMap.get(aa)) {
-
-                if (displayedModifications.contains(modName)) {
-
-                    ArrayList<String> mods = result.get(aa);
-
-                    if (mods == null) {
-
-                        mods = new ArrayList<>(1);
-                        result.put(aa, mods);
-
-                    }
-
-                    mods.add(modName);
-
-                }
-            }
-        }
-
-        return result;
-
-    }
-
-    /**
      * Exports the confidently localized modification sites in a map: site &gt;
      * mapped modifications.
      *

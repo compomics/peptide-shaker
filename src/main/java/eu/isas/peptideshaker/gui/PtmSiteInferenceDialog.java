@@ -8,9 +8,11 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.gui.renderers.AlignedTableCellRenderer;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSModificationScores;
@@ -24,7 +26,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
@@ -198,11 +203,22 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     private void updateSequenceLabel() {
 
         DisplayParameters displayPreferences = peptideShakerGUI.getDisplayParameters();
-        ModificationParameters modificationProfile = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters();
+        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+                ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
+                SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                
         Peptide peptide = peptideMatch.getPeptide();
-        PSModificationScores ptmScores = new PSModificationScores();
-        ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
-        HashMap<Integer, ArrayList<String>> fixedModifications = DisplayFeaturesGenerator.getFilteredModifications(peptide.getIndexedFixedModifications(), displayPreferences.getDisplayedModifications());
+        String[] fixedModifications = peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+        HashMap<Integer, ArrayList<String>> indexedFixedModifications = IntStream.range(0, fixedModifications.length)
+                .mapToObj(i -> fixedModifications[i])
+                .filter(modName -> modName != null && displayPreferences.getDisplayedModifications().contains(modName))
+                .collect(Collectors.groupingBy(i -> new Integer(i),
+                        HashMap::new,
+                        Collectors.mapping(Function.identity(),
+                                Collectors.toCollection(ArrayList::new))));
+                
+        PSModificationScores ptmScores = (PSModificationScores) peptideMatch.getUrParam(new PSModificationScores());
         HashMap<Integer, ArrayList<String>> confidentLocations = DisplayFeaturesGenerator.getFilteredConfidentModificationsSites(ptmScores, displayPreferences.getDisplayedModifications());
         HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayPreferences.getDisplayedModifications());
         HashMap<Integer, ArrayList<String>> secondaryAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayPreferences.getDisplayedModifications());
@@ -238,7 +254,8 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
             }
         }
 
-        sequenceLabel.setText(PeptideUtils.getTaggedModifiedSequence(peptide, modificationProfile, confidentLocations, representativeAmbiguousLocations, secondaryAmbiguousLocations, fixedModifications, true, true, true));
+        String taggedModifiedSequence = PeptideUtils.getTaggedModifiedSequence(peptide, modificationParameters, confidentLocations, representativeAmbiguousLocations, secondaryAmbiguousLocations, indexedFixedModifications, true, true, true);
+        sequenceLabel.setText(taggedModifiedSequence);
 
     }
 
