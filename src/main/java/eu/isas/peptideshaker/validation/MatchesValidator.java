@@ -752,7 +752,7 @@ public class MatchesValidator {
 
                         PsmFilter psmFilter = (PsmFilter) filter;
                         AssumptionFilter assumptionFilter = psmFilter.getAssumptionFilter();
-                        boolean validated = assumptionFilter.isValidated(spectrumMatchKey, spectrumMatch.getSpectrumKey(), peptideAssumption, identification, identificationFeaturesGenerator, identificationParameters);
+                        boolean validated = assumptionFilter.isValidated(spectrumMatchKey, spectrumMatch.getSpectrumKey(), peptideAssumption, identification, sequenceProvider, identificationFeaturesGenerator, identificationParameters);
                         psParameter.setQcResult(filter.getName(), validated);
 
                         if (!validated) {

@@ -22,13 +22,12 @@ import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.math.HistogramUtils;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,9 +37,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.apache.commons.math.MathException;
 import org.apache.commons.math.util.FastMath;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class scores peptide spectrum matches.
@@ -273,8 +270,10 @@ public class PsmScorer {
 
                         } else {
 
-                            SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption);
-                            score = psmScoresEstimator.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge(), spectrum, identificationParameters, specificAnnotationPreferences, peptideSpectrumAnnotator, scoreIndex);
+                            ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                            SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                            SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                            score = psmScoresEstimator.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge(), spectrum, identificationParameters, specificAnnotationPreferences, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, peptideSpectrumAnnotator, scoreIndex);
 
                         }
 
@@ -699,7 +698,7 @@ public class PsmScorer {
 
                     if (advocates != null) {
 
-                    String spectrumKey = spectrumMatch.getSpectrumKey();
+                        String spectrumKey = spectrumMatch.getSpectrumKey();
                         String spectrumFileName = Spectrum.getSpectrumFile(spectrumKey);
                         HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> assumptions = spectrumMatch.getPeptideAssumptionsMap();
 

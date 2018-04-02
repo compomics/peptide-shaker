@@ -19,6 +19,8 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
 import eu.isas.peptideshaker.filtering.items.AssumptionFilterItem;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -97,7 +99,7 @@ public class AssumptionFilter extends MatchFilter {
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
         PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
         
-        return isValidated(itemName, filterItemComparator, value, spectrumMatchKey, spectrumMatch.getSpectrumKey(), peptideAssumption, identification, identificationFeaturesGenerator, identificationParameters);
+        return isValidated(itemName, filterItemComparator, value, spectrumMatchKey, spectrumMatch.getSpectrumKey(), peptideAssumption, identification, sequenceProvider, identificationFeaturesGenerator, identificationParameters);
     
     }
 
@@ -109,6 +111,7 @@ public class AssumptionFilter extends MatchFilter {
      * @param peptideAssumption the peptide assumption
      * @param identification the identification where to get the information
      * from
+     * @param sequenceProvider the sequence provider
      * @param identificationFeaturesGenerator the identification features
      * generator providing identification features
      * @param identificationParameters the identification parameters
@@ -116,7 +119,7 @@ public class AssumptionFilter extends MatchFilter {
      * @return a boolean indicating whether a match is validated by a given
      * filter
      */
-    public boolean isValidated(long spectrumMatchKey, String spectrumKey, PeptideAssumption peptideAssumption, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+    public boolean isValidated(long spectrumMatchKey, String spectrumKey, PeptideAssumption peptideAssumption, Identification identification, SequenceProvider sequenceProvider, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             IdentificationParameters identificationParameters) {
 
         if (exceptions.contains(spectrumMatchKey)) {
@@ -136,7 +139,7 @@ public class AssumptionFilter extends MatchFilter {
             FilterItemComparator filterItemComparator = comparatorsMap.get(itemName);
             Object value = valuesMap.get(itemName);
             
-            if (!isValidated(itemName, filterItemComparator, value, spectrumMatchKey, spectrumKey, peptideAssumption, identification, identificationFeaturesGenerator, identificationParameters)) {
+            if (!isValidated(itemName, filterItemComparator, value, spectrumMatchKey, spectrumKey, peptideAssumption, identification, sequenceProvider, identificationFeaturesGenerator, identificationParameters)) {
                 
                 return false;
             
@@ -159,6 +162,7 @@ public class AssumptionFilter extends MatchFilter {
      * @param peptideAssumption the assumption to validate
      * @param identification the identification objects where to get
      * identification matches from
+     * @param sequenceProvider the sequence provider
      * @param identificationFeaturesGenerator the identification feature
      * generator where to get identification features
      * @param identificationParameters the identification parameters used
@@ -167,7 +171,8 @@ public class AssumptionFilter extends MatchFilter {
      * key validates the given item using the given comparator and value
      * threshold.
      */
-    public boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, long spectrumMatchKey, String spectrumKey, PeptideAssumption peptideAssumption, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+    public boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, long spectrumMatchKey, String spectrumKey, PeptideAssumption peptideAssumption, 
+            Identification identification, SequenceProvider sequenceProvider, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             IdentificationParameters identificationParameters) {
 
         AssumptionFilterItem filterItem = AssumptionFilterItem.getItem(itemName);
@@ -221,9 +226,11 @@ public class AssumptionFilter extends MatchFilter {
                 Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
                 Peptide peptide = peptideAssumption.getPeptide();
                 AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
-                SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption);
+                ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                 PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
-                Map<Integer, ArrayList<IonMatch>> matches = peptideSpectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, spectrum, peptide, true);
+                Map<Integer, ArrayList<IonMatch>> matches = peptideSpectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, spectrum, peptide, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, true);
                 double nCovered = 0;
                 int nAA = peptide.getSequence().length();
                 

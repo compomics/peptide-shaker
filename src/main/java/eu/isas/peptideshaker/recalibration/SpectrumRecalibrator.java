@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.recalibration;
 
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Peak;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
@@ -61,12 +62,13 @@ public class SpectrumRecalibrator {
      *
      * @param spectrumFileName the name of the file of the run
      * @param identification the corresponding identification
+     * @param sequenceProvider the sequence provider
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler displaying the progress and
      * allowing the user to cancel the process. Can be null
      */
-    public void estimateErrors(String spectrumFileName, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) {
-        RunMzDeviation fileErrors = new RunMzDeviation(spectrumFileName, identification, identificationParameters, waitingHandler);
+    public void estimateErrors(String spectrumFileName, Identification identification, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) {
+        RunMzDeviation fileErrors = new RunMzDeviation(spectrumFileName, identification, sequenceProvider, identificationParameters, waitingHandler);
         runMzDeviationMap.put(spectrumFileName, fileErrors);
     }
 
