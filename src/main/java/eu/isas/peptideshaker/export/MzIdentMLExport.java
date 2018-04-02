@@ -38,6 +38,7 @@ import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.io.identification.MzIdentMLVersion;
 import com.compomics.util.parameters.identification.search.DigestionParameters;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.scoring.PSMaps;
@@ -635,31 +636,58 @@ public class MzIdentMLExport {
             bw.write(peptideSequence);
             bw.write("</PeptideSequence>");
             bw.newLine();
+            
+            String[] fixedModifications = peptide.getFixedModifications(identificationParameters.getSearchParameters().getModificationParameters(), sequenceProvider, identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters());
 
-            for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-
-                Modification modification = modificationFactory.getModification(modMatch.getModification());
-
-                int site;
-                if (modification.getModificationType().isNTerm()) {
-
-                    site = 0;
-
-                } else if (modification.getModificationType().isCTerm()) {
-
-                    site = peptideSequence.length() + 1;
-
-                } else {
-
-                    site = modMatch.getSite();
-
-                }
+            for (int site = 0 ; site < fixedModifications.length ; site++) {
+                
+                String modName = fixedModifications[site];
+                
+                if (modName != null) {
+                    
+                Modification modification = modificationFactory.getModification(modName);
+                
+                int aa = Math.min(Math.max(site, 1), peptideSequence.length());
 
                 bw.write(getCurrentTabSpace());
                 bw.write("<Modification monoisotopicMassDelta=\"");
                 bw.write(Double.toString(modification.getRoundedMass()));
                 bw.write("\" residues=\"");
-                bw.write(peptideSequence.charAt(modMatch.getSite() - 1));
+                bw.write(peptideSequence.charAt(aa - 1));
+                bw.write("\" location=\"");
+                bw.write(site);
+                bw.write("\" >");
+                bw.newLine();
+
+                CvTerm ptmCvTerm = modification.getCvTerm();
+
+                if (ptmCvTerm != null) {
+
+                    tabCounter++;
+                    writeCvTerm(ptmCvTerm, false);
+                    tabCounter--;
+
+                }
+
+                bw.write(getCurrentTabSpace());
+                bw.write("</Modification>");
+                bw.newLine();
+
+                }
+            }
+
+            for (ModificationMatch modMatch : peptide.getVariableModifications()) {
+
+                Modification modification = modificationFactory.getModification(modMatch.getModification());
+
+                int site = modMatch.getSite();
+                int aa = Math.min(Math.max(site, 1), peptideSequence.length());
+
+                bw.write(getCurrentTabSpace());
+                bw.write("<Modification monoisotopicMassDelta=\"");
+                bw.write(Double.toString(modification.getRoundedMass()));
+                bw.write("\" residues=\"");
+                bw.write(peptideSequence.charAt(aa - 1));
                 bw.write("\" location=\"");
                 bw.write(site);
                 bw.write("\" >");
@@ -1862,8 +1890,10 @@ public class MzIdentMLExport {
                 // add the fragment ion annotation
                 AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
                 Spectrum spectrum = spectrumFactory.getSpectrum(spectrumFileName, spectrumTitle);
-                SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, bestPeptideAssumption);
-                Stream<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, bestPeptideAssumption.getPeptide());
+                ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, bestPeptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                Stream<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, bestPeptideAssumption.getPeptide(), modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
                 // organize the fragment ions by ion type
                 HashMap<String, HashMap<Integer, ArrayList<IonMatch>>> allFragmentIons = new HashMap<>();
@@ -2067,7 +2097,7 @@ public class MzIdentMLExport {
 
                         Peptide peptide = bestPeptideAssumption.getPeptide();
 
-                        if (peptide.getModificationMatches().length > 0) {
+                        if (peptide.getVariableModifications().length > 0) {
 
                             Set<String> scoredModifications = psModificationScores.getScoredModifications();
                             HashSet<String> coveredModifications = new HashSet<>(scoredModifications.size());
@@ -2173,7 +2203,7 @@ public class MzIdentMLExport {
 
                         Peptide peptide = peptideMatch.getPeptide();
 
-                        if (peptide.getModificationMatches().length > 0) {
+                        if (peptide.getVariableModifications().length > 0) {
 
                             Set<String> scoredModifications = psModificationScores.getScoredModifications();
                             HashSet<String> coveredModifications = new HashSet<>(scoredModifications.size());

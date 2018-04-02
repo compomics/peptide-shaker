@@ -15,6 +15,7 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Annotati
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SimpleNoiseDistribution;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
@@ -22,6 +23,7 @@ import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
@@ -120,18 +122,15 @@ public class Ms2pipExport {
      * @param destinationFolder the folder where to write the results
      * @param cpsFileName the name of the cps file
      * @param identification the identification object containing the PSMs
+     * @param sequenceProvider the sequence provider
      * @param featuresMap the ms2pip features map to use
      * @param nThreads the number of threads to use
      *
      * @throws IOException thrown whenever an error occurred while writing or
      * reading a file
      * @throws InterruptedException thrown whenever a thread got interrupted.
-     * @throws SQLException exception thrown whenever an error occurred while
-     * loading the object from the database
-     * @throws ClassNotFoundException exception thrown whenever an error
-     * occurred while casting the database input in the desired match class
      */
-    public void exportFeatures(IdentificationParameters identificationParameters, File destinationFolder, String cpsFileName, Identification identification, FeaturesMap featuresMap, int nThreads) throws IOException, InterruptedException, SQLException, ClassNotFoundException {
+    public void exportFeatures(IdentificationParameters identificationParameters, File destinationFolder, String cpsFileName, Identification identification, SequenceProvider sequenceProvider, FeaturesMap featuresMap, int nThreads) throws IOException, InterruptedException {
 
         this.featuresMap = featuresMap;
 
@@ -153,16 +152,12 @@ public class Ms2pipExport {
             writeLine(i, header);
         }
 
-        PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-        parameters.add(psParameter);
-
         SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
 
         ExecutorService pool = Executors.newFixedThreadPool(nThreads);
 
         for (int i = 0; i < nThreads; i++) {
-            PsmProcessor psmProcessor = new PsmProcessor(identification, psmIterator, identificationParameters);
+            PsmProcessor psmProcessor = new PsmProcessor(sequenceProvider, psmIterator, identificationParameters);
             pool.submit(psmProcessor);
         }
 
@@ -343,9 +338,9 @@ public class Ms2pipExport {
     private class PsmProcessor implements Runnable {
 
         /**
-         * The identification object containing the PSMs.
+         * The identification parameters.
          */
-        private final Identification identification;
+        private final IdentificationParameters identificationParameters;
         /**
          * The iterator to go through the PSMs.
          */
@@ -355,27 +350,27 @@ public class Ms2pipExport {
          */
         private final PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
         /**
-         * The spectrum annotation settings.
-         */
-        private final AnnotationParameters annotationSettings;
-        /**
          * The ms2pip features generator.
          */
         private final FeaturesGenerator featuresGenerator;
+        /**
+         * The protein sequence provider.
+         */
+        private final SequenceProvider sequenceProvider;
 
         /**
          * Constructor.
          *
-         * @param identification the identification object containing the PSMs
+         * @param sequenceProvider the protein sequence provider
          * @param psmIterator the psm iterator
          * @param identificationParameters the identification parameters
          */
-        private PsmProcessor(Identification identification, SpectrumMatchesIterator psmIterator, IdentificationParameters identificationParameters) {
+        private PsmProcessor(SequenceProvider sequenceProvider, SpectrumMatchesIterator psmIterator, IdentificationParameters identificationParameters) {
 
-            this.identification = identification;
             this.psmIterator = psmIterator;
-            this.annotationSettings = identificationParameters.getAnnotationParameters();
+            this.identificationParameters = identificationParameters;
             featuresGenerator = new FeaturesGenerator(featuresMap);
+            this.sequenceProvider = sequenceProvider;
 
         }
 
@@ -399,14 +394,17 @@ public class Ms2pipExport {
 
                         if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
 
-                            SpecificAnnotationParameters specificAnnotationSettings = annotationSettings.getSpecificAnnotationParameters(spectrumKey, peptideAssumption);
+                ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
+                            SpecificAnnotationParameters specificAnnotationSettings = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
                             Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
 
                             Peptide peptide = peptideAssumption.getPeptide();
                             int charge = peptideAssumption.getIdentificationCharge();
 
-                            ArrayList<IonMatch> ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationSettings, specificAnnotationSettings, spectrum, peptide, false);
+                            ArrayList<IonMatch> ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationSettings, spectrum, peptide, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, false);
 
                             SimpleNoiseDistribution binnedCumulativeFunction = spectrum.getIntensityLogDistribution();
 
@@ -431,14 +429,14 @@ public class Ms2pipExport {
                                             case PeptideFragmentIon.C_ION:
                                                 index = 0;
                                                 aaIndex = peptideFragmentIon.getNumber() - 1;
-                                                features = featuresGenerator.getForwardIonsFeatures(peptide, charge, aaIndex);
+                                                features = featuresGenerator.getForwardIonsFeatures(peptide, charge, aaIndex, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                                                 break;
                                             case PeptideFragmentIon.X_ION:
                                             case PeptideFragmentIon.Y_ION:
                                             case PeptideFragmentIon.Z_ION:
                                                 index = 1;
                                                 aaIndex = peptide.getSequence().length() - peptideFragmentIon.getNumber();
-                                                features = featuresGenerator.getComplementaryIonsFeatures(peptide, charge, aaIndex);
+                                                features = featuresGenerator.getComplementaryIonsFeatures(peptide, charge, aaIndex, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                                                 break;
                                             default:
                                                 throw new UnsupportedOperationException("Peptide fragment ion of type " + ion.getSubTypeAsString() + " not supported.");

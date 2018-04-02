@@ -12,6 +12,7 @@ import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
@@ -339,11 +340,13 @@ public class PsPeptideSection {
                 
             case variable_ptms:
                 
-                return PeptideUtils.getPeptideModificationsAsString(peptideMatch.getPeptide(), true);
+                return PeptideUtils.getVariableModificationsAsString(peptideMatch.getPeptide());
                 
             case fixed_ptms:
                 
-                return PeptideUtils.getPeptideModificationsAsString(peptideMatch.getPeptide(), false);
+                ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                return PeptideUtils.getFixedModificationsAsString(peptideMatch.getPeptide(), modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                 
             case score:
                 
@@ -366,8 +369,11 @@ public class PsPeptideSection {
             
             case modified_sequence:
                 
+                modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                HashSet<String> modToExport = new HashSet(modificationParameters.getVariableModifications());
                 return peptideMatch.getPeptide()
-                        .getTaggedModifiedSequence(identificationParameters.getSearchParameters().getModificationParameters(), false, false, true);
+                        .getTaggedModifiedSequence(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, false, false, true, modToExport);
             
             case starred:
                 

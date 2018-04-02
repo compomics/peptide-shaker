@@ -572,7 +572,7 @@ public class PepXmlExport {
             }
         }
         
-        ModificationMatch[] modificationMatches = peptide.getModificationMatches();
+        ModificationMatch[] modificationMatches = peptide.getVariableModifications();
         
         if (modificationMatches.length > 0) {
             
@@ -704,7 +704,6 @@ public class PepXmlExport {
         
         
             for (ModificationMatch modificationMatch : modificationMatches) {
-                if (modificationMatch.getVariable()) {
                     parameterLine = new StringBuilder();
                     parameterLine.append("<parameter name=\"ptm\" value=\"")
                             .append(modificationMatch.getModification())
@@ -712,7 +711,6 @@ public class PepXmlExport {
                             .append("\"/>");
                     sw.writeLine(parameterLine.toString());
                 }
-            }
             
         parameterLine = new StringBuilder();
         parameterLine.append("<parameter name=\"charge\" value=\"")

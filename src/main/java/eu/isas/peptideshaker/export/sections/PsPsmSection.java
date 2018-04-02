@@ -202,16 +202,16 @@ public class PsPsmSection {
                     }
                     writer.newLine();
                     if (fragmentSection != null) {
-                        String fractionPrefix = "";
+                        StringBuilder fractionPrefix = new StringBuilder();
                         if (linePrefix != null) {
-                            fractionPrefix += linePrefix;
+                            fractionPrefix.append(linePrefix);
                         }
-                        fractionPrefix += line + ".";
+                        fractionPrefix.append(line).append(".");
                         writer.increaseDepth();
                         if (spectrumMatch.getBestPeptideAssumption() != null) {
-                            fragmentSection.writeSection(spectrumMatchKey, spectrumMatch.getBestPeptideAssumption(), identificationParameters, fractionPrefix, null);
+                            fragmentSection.writeSection(spectrumMatchKey, spectrumMatch.getBestPeptideAssumption(), sequenceProvider, identificationParameters, fractionPrefix.toString(), null);
                         } else if (spectrumMatch.getBestTagAssumption() != null) {
-                            fragmentSection.writeSection(spectrumMatchKey, spectrumMatch.getBestTagAssumption(), identificationParameters, fractionPrefix, null);
+                            fragmentSection.writeSection(spectrumMatchKey, spectrumMatch.getBestTagAssumption(), sequenceProvider, identificationParameters, fractionPrefix.toString(), null);
                         }
                         writer.decreseDepth();
                     }

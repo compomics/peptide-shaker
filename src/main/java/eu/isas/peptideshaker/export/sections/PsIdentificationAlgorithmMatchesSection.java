@@ -25,19 +25,25 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.parameters.PSParameter;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -196,10 +202,10 @@ public class PsIdentificationAlgorithmMatchesSection {
 
                             psParameter = (PSParameter) assumption.getUrParam(psParameter);
                             PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                            String feature = getPeptideAssumptionFeature(identification, identificationFeaturesGenerator, 
+                            String feature = getPeptideAssumptionFeature(identification, identificationFeaturesGenerator,
                                     sequenceProvider, proteinDetailsProvider,
                                     identificationParameters, linePrefix, nSurroundingAA,
-                                    peptideAssumption, spectrumMatch.getSpectrumKey(), psParameter, 
+                                    peptideAssumption, spectrumMatch.getSpectrumKey(), psParameter,
                                     identificationAlgorithmMatchesFeature, waitingHandler);
                             writer.write(feature);
 
@@ -218,7 +224,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                             }
 
                             fractionPrefix += line + ".";
-                            fragmentSection.writeSection(spectrumMatch.getSpectrumKey(), assumption, identificationParameters, fractionPrefix, null);
+                            fragmentSection.writeSection(spectrumMatch.getSpectrumKey(), assumption, sequenceProvider, identificationParameters, fractionPrefix, null);
 
                         }
 
@@ -290,7 +296,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                             }
 
                             fractionPrefix += line + ".";
-                            fragmentSection.writeSection(spectrumMatch.getSpectrumKey(), assumption, identificationParameters, fractionPrefix, null);
+                            fragmentSection.writeSection(spectrumMatch.getSpectrumKey(), assumption, sequenceProvider, identificationParameters, fractionPrefix, null);
 
                         }
 
@@ -308,22 +314,41 @@ public class PsIdentificationAlgorithmMatchesSection {
      * sites.
      *
      * @param peptide the peptide
+     * @param modificationParameters the modification parameters
+     * @param sequenceProvider the sequence provider
+     * @param modificationSequenceMatchingParameters the modification sequence
+     * matching parameters
      * @param variablePtms if true, only variable PTMs are shown, false return
      * only the fixed PTMs
      *
      * @return the map of the modifications on a peptide sequence
      */
-    private static TreeMap<String, TreeSet<Integer>> getModMap(Peptide peptide, boolean variablePtms) {
+    private static TreeMap<String, TreeSet<Integer>> getModMap(Peptide peptide, ModificationParameters modificationParameters, SequenceProvider sequenceProvider, SequenceMatchingParameters modificationSequenceMatchingParameters, boolean variablePtms) {
 
-        ModificationMatch[] modificationMatches = peptide.getModificationMatches();
+        if (variablePtms) {
 
-        return modificationMatches == null ? new TreeMap<>()
-                : Arrays.stream(modificationMatches)
-                        .filter(modificationMatch -> modificationMatch.getVariable() == variablePtms)
-                        .collect(Collectors.groupingBy(ModificationMatch::getModification,
-                                TreeMap::new,
-                                Collectors.mapping(ModificationMatch::getSite,
-                                        Collectors.toCollection(TreeSet::new))));
+            ModificationMatch[] modificationMatches = peptide.getVariableModifications();
+
+            return modificationMatches == null ? new TreeMap<>()
+                    : Arrays.stream(modificationMatches)
+                            .collect(Collectors.groupingBy(ModificationMatch::getModification,
+                                    TreeMap::new,
+                                    Collectors.mapping(ModificationMatch::getSite,
+                                            Collectors.toCollection(TreeSet::new))));
+
+        } else {
+
+            String[] fixedModifications = peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+
+            return IntStream.range(0, fixedModifications.length)
+                    .mapToObj(i -> fixedModifications[i])
+                    .filter(modName -> modName != null)
+                    .collect(Collectors.groupingBy(Function.identity(),
+                            TreeMap::new,
+                            Collectors.mapping(i -> new Integer(i),
+                                    Collectors.toCollection(TreeSet::new))));
+
+        }
 
     }
 
@@ -397,7 +422,9 @@ public class PsIdentificationAlgorithmMatchesSection {
 
             case variable_ptms:
 
-                TreeMap<String, TreeSet<Integer>> modMap = getModMap(peptideAssumption.getPeptide(), true);
+                ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                TreeMap<String, TreeSet<Integer>> modMap = getModMap(peptideAssumption.getPeptide(), modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, true);
 
                 return modMap.entrySet().stream()
                         .map(entry -> getModificationAsString(entry.getKey(), entry.getValue()))
@@ -405,7 +432,9 @@ public class PsIdentificationAlgorithmMatchesSection {
 
             case fixed_ptms:
 
-                modMap = getModMap(peptideAssumption.getPeptide(), false);
+                modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                modMap = getModMap(peptideAssumption.getPeptide(), modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, false);
 
                 return modMap.entrySet().stream()
                         .map(entry -> getModificationAsString(entry.getKey(), entry.getValue()))
@@ -479,9 +508,11 @@ public class PsIdentificationAlgorithmMatchesSection {
                 spectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
                 Peptide peptide = peptideAssumption.getPeptide();
                 AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
-                SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, peptideAssumption);
+                modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, peptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                 Stream<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
-                        spectrum, peptide);
+                        spectrum, peptide, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                 double coveredIntensity = matches.mapToDouble(ionMatch -> ionMatch.peak.intensity).sum();
                 double coverage = 100 * coveredIntensity / spectrum.getTotalIntensity();
                 return Double.toString(coverage);
@@ -551,7 +582,10 @@ public class PsIdentificationAlgorithmMatchesSection {
 
             case modified_sequence:
 
-                return peptideAssumption.getPeptide().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getModificationParameters(), false, false, true) + "";
+                modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                HashSet<String> modToExport = new HashSet(modificationParameters.getVariableModifications());
+                return peptideAssumption.getPeptide().getTaggedModifiedSequence(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, false, false, true, modToExport);
 
             case spectrum_charge:
 
@@ -592,8 +626,10 @@ public class PsIdentificationAlgorithmMatchesSection {
                 peptide = peptideAssumption.getPeptide();
                 spectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
                 annotationPreferences = identificationParameters.getAnnotationParameters();
-                specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, peptideAssumption);
-                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, peptide);
+                modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, peptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, peptide, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                 int sequenceLength = peptide.getSequence().length();
                 int[] aaCoverage = new int[sequenceLength];
 
@@ -610,8 +646,10 @@ public class PsIdentificationAlgorithmMatchesSection {
                 peptide = peptideAssumption.getPeptide();
                 spectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
                 annotationPreferences = identificationParameters.getAnnotationParameters();
-                specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, peptideAssumption);
-                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, peptide);
+                modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, peptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, peptide, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                 String sequence = peptide.getSequence();
                 sequenceLength = sequence.length();
                 boolean[] coverageForward = new boolean[sequenceLength];
@@ -695,8 +733,10 @@ public class PsIdentificationAlgorithmMatchesSection {
                 peptide = peptideAssumption.getPeptide();
                 spectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
                 annotationPreferences = identificationParameters.getAnnotationParameters();
-                specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, peptideAssumption);
-                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, peptide);
+                modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, peptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, peptide, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                 sequence = peptide.getSequence();
                 sequenceLength = sequence.length();
                 HashMap<Integer, boolean[]> ionCoverage = new HashMap<>(6);
@@ -768,8 +808,10 @@ public class PsIdentificationAlgorithmMatchesSection {
                 peptide = peptideAssumption.getPeptide();
                 spectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
                 annotationPreferences = identificationParameters.getAnnotationParameters();
-                specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, peptideAssumption);
-                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, peptide);
+                modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, peptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, peptide, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                 sequence = peptide.getSequence();
                 sequenceLength = sequence.length();
                 coverageForward = new boolean[sequenceLength];
@@ -978,7 +1020,10 @@ public class PsIdentificationAlgorithmMatchesSection {
 
             case modified_sequence:
 
-                return tagAssumption.getTag().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getModificationParameters(), false, false, true, false);
+                ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                HashSet<String> modToExport = new HashSet(modificationParameters.getVariableModifications());
+                return tagAssumption.getTag().getTaggedModifiedSequence(modificationParameters, false, false, true, false, modificationSequenceMatchingParameters, modToExport);
 
             case spectrum_charge:
 
