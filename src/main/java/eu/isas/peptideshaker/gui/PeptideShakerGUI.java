@@ -151,6 +151,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import com.compomics.util.gui.parameters.identification.advanced.ValidationQCParametersDialogParent;
+import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -2105,7 +2106,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private void annotationPreferencesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationPreferencesMenuActionPerformed
 
         ModificationParameters ptmSettings = getIdentificationParameters().getSearchParameters().getModificationParameters();
-        ArrayList<NeutralLoss> neutralLosses = IonFactory.getNeutralLosses(ptmSettings);
+        HashSet<String> neutralLosses = IonFactory.getNeutralLosses(ptmSettings);
         ArrayList<Integer> reporterIons = new ArrayList<>(IonFactory.getReporterIons(ptmSettings));
         AnnotationParametersDialog annotationSettingsDialog = new AnnotationParametersDialog(this, getIdentificationParameters().getAnnotationParameters(),
                 getIdentificationParameters().getSearchParameters().getFragmentIonAccuracy(), neutralLosses, reporterIons, true);
@@ -3247,8 +3248,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         }
 
-        displayFeaturesGenerator.setDisplayedModifications(getDisplayParameters().getDisplayedModifications());
-
         updateModificationColorCoding();
 
     }//GEN-LAST:event_fixedModsJCheckBoxMenuItemActionPerformed
@@ -3719,7 +3718,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             // Display the variable modifications
             getDisplayParameters().setDefaultSelection(getIdentificationParameters().getSearchParameters().getModificationParameters());
-            getDisplayFeaturesGenerator().setDisplayedModifications(getDisplayParameters().getDisplayedModifications());
 
             overviewPanel.setDisplayOptions(true, true, true, true);
             overviewPanel.updateSeparators();
@@ -5365,9 +5363,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @param specificAnnotationParameters the specific annotation parameters
      * @param precursorCharge the precursor charges
-     * @param modificationMatches the modifications
+     * @param modNames the names of the modifications
      */
-    public void updateAnnotationMenus(SpecificAnnotationParameters specificAnnotationParameters, int precursorCharge, ArrayList<ModificationMatch> modificationMatches) {
+    public void updateAnnotationMenus(SpecificAnnotationParameters specificAnnotationParameters, int precursorCharge, HashSet<String> modNames) {
 
         // @TODO: Make this independent of annotation parameters to account for selection of multiple assumptions
         aIonCheckBoxMenuItem.setSelected(false);
@@ -5455,42 +5453,28 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         lossSplitter.setVisible(true);
         lossMenus.clear();
 
-        HashMap<String, NeutralLoss> neutralLosses = new HashMap<>();
+        // Gather neutral losses
+        TreeSet<String> lossesNames = new TreeSet<>();
 
         // add the general neutral losses
-        for (NeutralLoss neutralLoss : IonFactory.getDefaultNeutralLosses()) {
-
-            neutralLosses.put(neutralLoss.name, neutralLoss);
-
-        }
+        lossesNames.addAll(IonFactory.getDefaultNeutralLosses());
 
         // add the sequence specific neutral losses
-        for (ModificationMatch modMatch : modificationMatches) {
+        lossesNames.addAll(modNames.stream()
+                .flatMap(modName -> modificationFactory.getModification(modName).getNeutralLosses().stream())
+                .map(neutralLoss -> neutralLoss.name)
+                .collect(Collectors.toSet()));
 
-            Modification ptm = modificationFactory.getModification(modMatch.getModification());
-
-            for (NeutralLoss neutralLoss : ptm.getNeutralLosses()) {
-
-                if (!neutralLosses.containsKey(neutralLoss.name)) {
-
-                    neutralLosses.put(neutralLoss.name, neutralLoss);
-
-                }
-            }
-        }
-
-        if (neutralLosses.isEmpty()) {
+        if (lossesNames.isEmpty()) {
 
             lossMenu.setVisible(false);
             lossSplitter.setVisible(false);
 
         } else {
 
-            TreeSet<String> neutralLossesNames = new TreeSet<>(neutralLosses.keySet());
+            for (String neutralLossName : lossesNames) {
 
-            for (String neutralLossName : neutralLossesNames) {
-
-                NeutralLoss neutralLoss = neutralLosses.get(neutralLossName);
+                NeutralLoss neutralLoss = NeutralLoss.getNeutralLoss(neutralLossName);
 
                 boolean selected = false;
 
@@ -5519,7 +5503,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     }
                 });
 
-                lossMenus.put(neutralLosses.get(neutralLossName), lossMenuItem);
+                lossMenus.put(neutralLoss, lossMenuItem);
                 lossMenu.add(lossMenuItem);
 
             }

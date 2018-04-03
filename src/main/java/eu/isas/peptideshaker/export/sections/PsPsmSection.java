@@ -15,6 +15,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
@@ -376,6 +377,20 @@ public class PsPsmSection {
                                     Double.toString(entry.getValue().getRawScore())))
                             .collect(Collectors.joining(","));
                    
+                } else if (bestTagAssumption != null) {
+                    
+                   return spectrumMatch.getAllTagAssumptions()
+                            .filter(tagAssumption -> tagAssumption.getTag().isSameSequenceAndModificationStatusAs(
+                                            bestTagAssumption.getTag(), identificationParameters.getSequenceMatchingParameters()))
+                            .collect(Collectors.toMap(TagAssumption::getAdvocate, 
+                                    Function.identity(), 
+                                    (a, b) -> b.getScore() < a.getScore() ? b : a, 
+                                    TreeMap::new))
+                            .entrySet().stream()
+                            .map(entry -> Util.toString(Advocate.getAdvocate(entry.getKey()).getName(), 
+                                    Double.toString(entry.getValue().getRawScore())))
+                            .collect(Collectors.joining(","));
+                    
                 }
                 
                 return "";
