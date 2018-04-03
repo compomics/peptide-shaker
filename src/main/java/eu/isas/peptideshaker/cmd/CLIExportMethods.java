@@ -44,6 +44,7 @@ public class CLIExportMethods {
      *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
+     * @param sequenceProvider the sequence provider
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler to display progress
      * 
@@ -51,7 +52,7 @@ public class CLIExportMethods {
      * while reading or writing to a file
      */
     public static void recalibrateSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification,
-            IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException {
+            SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException {
         File recalibrationFolder = followUpCLIInputBean.getRecalibrationFolder();
         if (!recalibrationFolder.exists()) {
             recalibrationFolder.mkdir();
@@ -63,7 +64,7 @@ public class CLIExportMethods {
         } else if (followUpCLIInputBean.getRecalibrationMode() == 2) {
             ms1 = false;
         }
-        RecalibrationExporter.writeRecalibratedSpectra(ms1, ms2, recalibrationFolder, identification, identificationParameters, waitingHandler);
+        RecalibrationExporter.writeRecalibratedSpectra(ms1, ms2, recalibrationFolder, identification, sequenceProvider, identificationParameters, waitingHandler);
     }
 
     /**

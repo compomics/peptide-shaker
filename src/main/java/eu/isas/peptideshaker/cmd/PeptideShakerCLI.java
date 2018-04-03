@@ -262,7 +262,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // recalibrate spectra
                 if (followUpCLIInputBean.recalibrationNeeded()) {
                     try {
-                        CLIExportMethods.recalibrateSpectra(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
+                        CLIExportMethods.recalibrateSpectra(followUpCLIInputBean, identification, sequenceProvider, identificationParameters, waitingHandler);
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while recalibrating the spectra.", true, true);
                         e.printStackTrace();
