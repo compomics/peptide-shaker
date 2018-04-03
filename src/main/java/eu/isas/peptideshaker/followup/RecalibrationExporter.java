@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.followup;
 
 import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
@@ -42,6 +43,7 @@ public class RecalibrationExporter {
      * shall be recalibrated
      * @param folder folder where recalibrated files shall be written
      * @param identification identification of the project
+     * @param sequenceProvider the sequence provider
      * @param identificationParameters the identification parameters
      * @param waitingHandler waiting handler displaying progress and used to
      * cancel the process. Can be null. The method does not call RunFinished.
@@ -49,7 +51,7 @@ public class RecalibrationExporter {
      * @throws IOException exception thrown whenever an error occurred while writing the file
      */
     public static void writeRecalibratedSpectra(boolean recalibratePrecursors, boolean recalibrateFragmentIons, File folder,
-            Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException {
+            Identification identification, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         SpectrumRecalibrator spectrumRecalibrator = new SpectrumRecalibrator();
@@ -73,7 +75,7 @@ public class RecalibrationExporter {
                 
             }
 
-            spectrumRecalibrator.estimateErrors(fileName, identification, identificationParameters, waitingHandler);
+            spectrumRecalibrator.estimateErrors(fileName, identification, sequenceProvider, identificationParameters, waitingHandler);
 
             // Debug part
             if (debug) {

@@ -202,59 +202,48 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      */
     private void updateSequenceLabel() {
 
-        DisplayParameters displayPreferences = peptideShakerGUI.getDisplayParameters();
+        DisplayParameters displayParameters = peptideShakerGUI.getDisplayParameters();
         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
                 ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                 SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
                 SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
                 
         Peptide peptide = peptideMatch.getPeptide();
-        String[] fixedModifications = peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-        HashMap<Integer, ArrayList<String>> indexedFixedModifications = IntStream.range(0, fixedModifications.length)
-                .mapToObj(i -> fixedModifications[i])
-                .filter(modName -> modName != null && displayPreferences.getDisplayedModifications().contains(modName))
-                .collect(Collectors.groupingBy(i -> new Integer(i),
-                        HashMap::new,
-                        Collectors.mapping(Function.identity(),
-                                Collectors.toCollection(ArrayList::new))));
+        
+        String[] fixedModifications = DisplayFeaturesGenerator.getDisplayedModifications(
+                peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters), displayParameters.getDisplayedModifications());
                 
         PSModificationScores ptmScores = (PSModificationScores) peptideMatch.getUrParam(new PSModificationScores());
-        HashMap<Integer, ArrayList<String>> confidentLocations = DisplayFeaturesGenerator.getFilteredConfidentModificationsSites(ptmScores, displayPreferences.getDisplayedModifications());
-        HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayPreferences.getDisplayedModifications());
-        HashMap<Integer, ArrayList<String>> secondaryAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayPreferences.getDisplayedModifications());
-
+        String[] confidentLocations = DisplayFeaturesGenerator.getFilteredConfidentModificationsSites(ptmScores, displayParameters.getDisplayedModifications(), peptide.getSequence().length());
+        String[] representativeAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayParameters.getDisplayedModifications(), peptide.getSequence().length());
+       
         String modName = ptm.getName();
-        int aa;
 
         for (int i = 0; i < mainSelection.length; i++) {
-            aa = i + 1;
+            
+            int aa = i + 1;
+            
             if (mainSelection[i]) {
-                if (!confidentLocations.containsKey(aa)) {
-                    confidentLocations.put(aa, new ArrayList<>());
-                }
-                if (!confidentLocations.get(aa).contains(modName)) {
-                    confidentLocations.get(aa).add(modName);
-                }
-            } else {
-                if (confidentLocations.containsKey(aa) && confidentLocations.get(aa).contains(modName)) {
-                    confidentLocations.get(aa).remove(modName);
-                }
+                
+                confidentLocations[aa] = modName;
+                
+            } else if (confidentLocations[aa].equals(modName)) {
+                
+                confidentLocations[aa] = null;
+                
             }
             if (secondarySelection[i]) {
-                if (!representativeAmbiguousLocations.containsKey(aa)) {
-                    representativeAmbiguousLocations.put(aa, new ArrayList<>());
-                }
-                if (!representativeAmbiguousLocations.get(aa).contains(modName)) {
-                    representativeAmbiguousLocations.get(aa).add(modName);
-                }
-            } else {
-                if (representativeAmbiguousLocations.containsKey(aa) && representativeAmbiguousLocations.get(aa).contains(modName)) {
-                    representativeAmbiguousLocations.get(aa).remove(modName);
-                }
+                
+                representativeAmbiguousLocations[aa] = modName;
+                
+            } else if (representativeAmbiguousLocations[aa].equals(modName)) {
+                
+                representativeAmbiguousLocations[aa] = null;
+            
             }
         }
 
-        String taggedModifiedSequence = PeptideUtils.getTaggedModifiedSequence(peptide, modificationParameters, confidentLocations, representativeAmbiguousLocations, secondaryAmbiguousLocations, indexedFixedModifications, true, true, true);
+        String taggedModifiedSequence = PeptideUtils.getTaggedModifiedSequence(peptide, modificationParameters, confidentLocations, representativeAmbiguousLocations, null, fixedModifications, true, true, true);
         sequenceLabel.setText(taggedModifiedSequence);
 
     }

@@ -321,7 +321,7 @@ public class DisplayFeaturesGenerator {
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
 
         String[] fixedModifications = getDisplayedModifications(
-                peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters));
+                peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters), displayParameters.getDisplayedModifications());
         String[] confidentVariableModifications = modificationScores == null ? new String[peptideSequence.length() + 2]
                 : getFilteredConfidentModificationsSites(modificationScores, displayParameters.getDisplayedModifications(), peptideSequence.length());
         String[] ambiguousVariableModificationsRepresentative = modificationScores == null ? new String[peptideSequence.length() + 2]
@@ -333,13 +333,12 @@ public class DisplayFeaturesGenerator {
     /**
      * Returns an array containing only the modifications to display.
      *
-     * @param modificationArray the original array.
+     * @param modificationArray the original array
+     * @param displayedModifications the displayed modifications
      *
      * @return an array containing only the modifications to display
      */
-    public String[] getDisplayedModifications(String[] modificationArray) {
-
-        HashSet<String> displayedModifications = displayParameters.getDisplayedModifications();
+    public static String[] getDisplayedModifications(String[] modificationArray, HashSet<String> displayedModifications) {
 
         String[] result = new String[modificationArray.length];
 
@@ -371,7 +370,7 @@ public class DisplayFeaturesGenerator {
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
 
         String[] fixedModifications = getDisplayedModifications(
-                peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters));
+                peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters), displayParameters.getDisplayedModifications());
 
         String[] confidentModifications = new String[peptide.getSequence().length()];
         String[] ambigousModifications = new String[peptide.getSequence().length()];
@@ -556,7 +555,7 @@ public class DisplayFeaturesGenerator {
         String peptideSequence = peptide.getSequence();
 
         String[] fixedModifications = getDisplayedModifications(
-                peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters));
+                peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters), displayParameters.getDisplayedModifications());
         String[] confidentVariableModifications = modificationScores == null ? new String[peptideSequence.length() + 2]
                 : getFilteredConfidentModificationsSites(modificationScores, displayParameters.getDisplayedModifications(), peptideSequence.length());
         String[] ambiguousVariableModificationsRepresentative = modificationScores == null ? new String[peptideSequence.length() + 2]
