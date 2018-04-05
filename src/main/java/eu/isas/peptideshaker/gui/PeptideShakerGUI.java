@@ -151,6 +151,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import com.compomics.util.gui.parameters.identification.advanced.ValidationQCParametersDialogParent;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -5560,10 +5561,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public SpecificAnnotationParameters getSpecificAnnotationParameters(String spectrumKey, SpectrumIdentificationAssumption spectrumIdentificationAssumption) {
 
+        SequenceProvider sequenceProvider = getSequenceProvider();
+        IdentificationParameters identificationParameters = getIdentificationParameters();
+        ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+        SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+
         AnnotationParameters annotationParameters = getIdentificationParameters().getAnnotationParameters();
 
         SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
-                spectrumKey, spectrumIdentificationAssumption);
+                spectrumKey, spectrumIdentificationAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
         if (!defaultAnnotationCheckBoxMenuItem.isSelected()) {
 
@@ -6570,6 +6576,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             if (selectedFile != null) {
 
+                SequenceProvider sequenceProvider = getSequenceProvider();
+                IdentificationParameters identificationParameters = getIdentificationParameters();
+                ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+
                 AnnotationParameters annotationParameters = getIdentificationParameters().getAnnotationParameters();
                 PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
                 TagSpectrumAnnotator tagSpectrumAnnotator = new TagSpectrumAnnotator();
@@ -6600,15 +6611,21 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                 if (assumption instanceof PeptideAssumption) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                     Peptide peptide = peptideAssumption.getPeptide();
-                                    SpecificAnnotationParameters exportAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption);
-                                    annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters, exportAnnotationParameters, spectrum, peptide).collect(Collectors.toCollection(ArrayList::new));
-                                    identifier = peptide.getTaggedModifiedSequence(getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, getDisplayParameters().getDisplayedModifications());
+                                    SpecificAnnotationParameters exportAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption,
+                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                                    annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters, exportAnnotationParameters, spectrum, peptide,
+                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters).collect(Collectors.toCollection(ArrayList::new));
+                                    identifier = peptide.getTaggedModifiedSequence(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, 
+                                            false, false, true, getDisplayParameters().getDisplayedModifications());
                                 } else if (assumption instanceof TagAssumption) {
                                     TagAssumption tagAssumption = (TagAssumption) assumption;
                                     Tag tag = tagAssumption.getTag();
-                                    SpecificAnnotationParameters exportAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, tagAssumption);
-                                    annotations = tagSpectrumAnnotator.getSpectrumAnnotation(annotationParameters, exportAnnotationParameters, spectrum, tag);
-                                    identifier = tag.getTaggedModifiedSequence(getIdentificationParameters().getSearchParameters().getModificationParameters(), false, false, true, true, getDisplayParameters().getDisplayedModifications());
+                                    SpecificAnnotationParameters exportAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, tagAssumption,
+                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                                    annotations = tagSpectrumAnnotator.getSpectrumAnnotation(annotationParameters, modificationParameters, modificationSequenceMatchingParameters, 
+                                            exportAnnotationParameters, spectrum, tag);
+                                    identifier = tag.getTaggedModifiedSequence(modificationParameters, false, false, true, true, 
+                                            modificationSequenceMatchingParameters, getDisplayParameters().getDisplayedModifications());
                                 } else {
                                     throw new UnsupportedOperationException("Spectrum annotation not implemented for identification assumption of type " + assumption.getClass() + ".");
                                 }
@@ -7045,9 +7062,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * Resets the display features generator.
      */
     public void resetDisplayFeaturesGenerator() {
-        SearchParameters searchParameters = getIdentificationParameters().getSearchParameters();
-        displayFeaturesGenerator = new DisplayFeaturesGenerator(searchParameters.getModificationParameters(), getSequenceProvider(), getProteinDetailsProvider());
-        displayFeaturesGenerator.setDisplayedModifications(getDisplayParameters().getDisplayedModifications());
+        displayFeaturesGenerator = new DisplayFeaturesGenerator(getIdentificationParameters(), getDisplayParameters(), getSequenceProvider(), getProteinDetailsProvider());
     }
 
     /**

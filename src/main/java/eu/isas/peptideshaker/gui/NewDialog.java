@@ -10,7 +10,6 @@ import com.compomics.util.exceptions.exception_handlers.WaitingDialogExceptionHa
 import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
-import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.identification_parameters.IdentificationParametersFactory;
 import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
@@ -60,15 +59,7 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * The compomics PTM factory.
      */
-    private ModificationFactory ptmFactory = ModificationFactory.getInstance();
-    /**
-     * The sample analyzed.
-     */
-    private Sample sample;
-    /**
-     * The replicate number.
-     */
-    private int replicateNumber;
+    private ModificationFactory modificationFactory = ModificationFactory.getInstance();
     /**
      * A reference to the main frame.
      */
@@ -1648,9 +1639,9 @@ public class NewDialog extends javax.swing.JDialog {
         ArrayList<String> missing = new ArrayList<>();
 
         for (String name : modificationProfile.getAllModifications()) {
-            if (!ptmFactory.containsModification(name)) {
+            if (!modificationFactory.containsModification(name)) {
                 missing.add(name);
-                Modification ptm = ptmFactory.getModification(name);
+                Modification ptm = modificationFactory.getModification(name);
                 ptm.getMass();
             } else if (modificationProfile.getColor(name) == null) {
                 modificationProfile.setColor(name, Color.lightGray);
