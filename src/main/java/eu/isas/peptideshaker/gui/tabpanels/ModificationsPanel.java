@@ -4622,7 +4622,6 @@ public class ModificationsPanel extends javax.swing.JPanel {
             
         SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-        AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
         

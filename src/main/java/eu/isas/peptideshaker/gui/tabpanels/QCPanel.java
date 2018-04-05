@@ -22,7 +22,9 @@ import com.compomics.util.experiment.identification.filtering.PeptideAssumptionF
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
+import com.compomics.util.experiment.identification.utils.ModificationUtils;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.search.DigestionParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
@@ -2204,7 +2206,7 @@ public class QCPanel extends javax.swing.JPanel {
             PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
             Peptide peptide = peptideMatch.getPeptide();
 
-            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+            for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
                 String modName = modificationMatch.getModification();
                 switch (psParameter.getMatchValidationLevel()) {
                     case confident:
@@ -2271,6 +2273,7 @@ public class QCPanel extends javax.swing.JPanel {
         ModificationFactory modificationFactory = ModificationFactory.getInstance();
 
         Identification identification = peptideShakerGUI.getIdentification();
+        SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
         SequenceMatchingParameters modificationSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
@@ -2293,8 +2296,8 @@ public class QCPanel extends javax.swing.JPanel {
             psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
             if (psParameter.getMatchValidationLevel().isValidated()) {
                 Peptide peptide = peptideMatch.getPeptide();
-                HashMap<String, Integer> peptideModificationsMap = new HashMap<>(peptide.getModificationMatches().length);
-                for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                HashMap<String, Integer> peptideModificationsMap = new HashMap<>(peptide.getVariableModifications().length);
+                for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
                     String modName = modificationMatch.getModification();
                     Integer occurrence = peptideModificationsMap.get(modName);
                     if (occurrence == null) {
@@ -2305,8 +2308,8 @@ public class QCPanel extends javax.swing.JPanel {
                 }
                 for (String modName : modificationParameters.getAllNotFixedModifications()) {
                     Modification modification = modificationFactory.getModification(modName);
-                    HashSet<Integer> possibleSites = peptide.getPotentialModificationSites(modification, peptideShakerGUI.getSequenceProvider(), modificationSequenceMatchingPreferences);
-                    if (!possibleSites.isEmpty()) {
+                    int[] possibleSites = ModificationUtils.getPossibleModificationSites(peptide, modification, sequenceProvider, modificationSequenceMatchingPreferences);
+                    if (possibleSites.length != 0) {
                         Integer occurrencePeptide = peptideModificationsMap.get(modName);
                         if (occurrencePeptide != null) {
                             Integer occurrenceDataset = modifiedSitesMap.get(modName);
@@ -2318,9 +2321,9 @@ public class QCPanel extends javax.swing.JPanel {
                         }
                         Integer possibleSitesDataset = possibleSitesMap.get(modName);
                         if (possibleSitesDataset == null) {
-                            possibleSitesMap.put(modName, possibleSites.size());
+                            possibleSitesMap.put(modName, possibleSites.length);
                         } else {
-                            possibleSitesMap.put(modName, possibleSitesDataset + possibleSites.size());
+                            possibleSitesMap.put(modName, possibleSitesDataset + possibleSites.length);
                         }
                     }
                 }
@@ -2361,9 +2364,10 @@ public class QCPanel extends javax.swing.JPanel {
         ModificationFactory modificationFactory = ModificationFactory.getInstance();
 
         Identification identification = peptideShakerGUI.getIdentification();
+        SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
-        SequenceMatchingParameters modificationSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+        SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
         ArrayList<String> modNames = modificationParameters.getAllNotFixedModifications();
         HashMap<String, Integer> modifiedPeptidesMap = new HashMap<>(modNames.size());
@@ -2383,8 +2387,8 @@ public class QCPanel extends javax.swing.JPanel {
                 Peptide peptide = peptideMatch.getPeptide();
                 for (String modName : modificationParameters.getAllNotFixedModifications()) {
                     Modification modification = modificationFactory.getModification(modName);
-                    HashSet<Integer> possibleSites = peptide.getPotentialModificationSites(modification, peptideShakerGUI.getSequenceProvider(), modificationSequenceMatchingPreferences);
-                    if (!possibleSites.isEmpty()) {
+                    int[] possibleSites = ModificationUtils.getPossibleModificationSites(peptide, modification, sequenceProvider, modificationSequenceMatchingParameters);
+                    if (possibleSites.length != 0) {
                         Integer nPossiblePeptides = possiblyModifiedPeptidesMap.get(modName);
                         if (nPossiblePeptides == null) {
                             possiblyModifiedPeptidesMap.put(modName, 1);
@@ -2392,12 +2396,10 @@ public class QCPanel extends javax.swing.JPanel {
                             possiblyModifiedPeptidesMap.put(modName, nPossiblePeptides + 1);
                         }
                         boolean modified = false;
-                        if (peptide.getModificationMatches() != null) {
-                            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                if (modificationMatch.getModification().equals(modName)) {
-                                    modified = true;
-                                    break;
-                                }
+                        for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
+                            if (modificationMatch.getModification().equals(modName)) {
+                                modified = true;
+                                break;
                             }
                         }
                         if (modified) {
