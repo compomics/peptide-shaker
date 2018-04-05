@@ -4637,13 +4637,13 @@ public class ModificationsPanel extends javax.swing.JPanel {
                     peptide.getSequence().length(),
                     peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters),
                     peptide.getIndexedVariableModifications());
+            String peptideAnnotation = String.join("-", nTerminalAsString, peptideMatch.getPeptide().getSequence(), cTerminalAsString);
+            String probabilisticScore = peptideShakerGUI.getIdentificationParameters().getModificationLocalizationParameters().getSelectedProbabilisticScore().getName();
 
             SequenceModificationPanel sequenceModificationPanel
-                    = new SequenceModificationPanel(nTerminalAsString + "-"
-                            + peptideMatch.getPeptide().getSequence()
-                            + "-" + cTerminalAsString),
+                    = new SequenceModificationPanel(peptideAnnotation,
                             profiles, true, "D-score",
-                            peptideShakerGUI.getIdentificationParameters().getModificationLocalizationParameters().getSelectedProbabilisticScore().getName());
+                            probabilisticScore);
 
             if (selectedPeptideProfile) {
                 modificationProfileSelectedPeptideJPanel.removeAll();

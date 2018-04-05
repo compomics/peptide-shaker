@@ -9,6 +9,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.gui.genes.GeneDetailsDialog;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.TableProperties;
@@ -20,6 +21,9 @@ import com.compomics.util.pdbfinder.pdb.PdbBlock;
 import com.compomics.util.pdbfinder.pdb.PdbParameter;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
+import com.compomics.util.parameters.identification.IdentificationParameters;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
@@ -3064,7 +3068,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         + " and resno <=" + (peptideEnd - chains[selectedChainIndex - 1].getDifference())
                         + " and chain = " + currentChain + "; color green");
 
-                if (!aminoAcidPattern.getIndexes(chainSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters()).isEmpty()) {
+                if (aminoAcidPattern.getIndexes(chainSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters()).length != 0) {
                     peptideTable.setValueAt(true, i, peptideTable.getColumn("PDB").getModelIndex());
                     peptidePdbArray.add(peptideKey);
                 }
@@ -3097,7 +3101,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         // remove old labels
         jmolPanel.getViewer().evalString("select all; label off");
 
-        DisplayParameters displayPreferences = peptideShakerGUI.getDisplayParameters();
+        DisplayParameters displayParameters = peptideShakerGUI.getDisplayParameters();
+        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+        SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
+        ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+        SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
         // annotate the modified covered residues
         for (int i = 0; i < peptideTable.getRowCount() && !progressDialog.isRunCanceled(); i++) {
@@ -3107,41 +3115,59 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             Peptide peptide = peptideMatch.getPeptide();
             peptideSequence = peptide.getSequence();
 
-            ModificationMatch[] modifications = peptide.getModificationMatches();
+            String[] variableModifications = peptide.getIndexedVariableModifications();
+            String[] fixedModifications = peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
             for (int peptideStart : peptide.getProteinMapping().get(proteinMatch.getLeadingAccession())) {
+
                 if (progressDialog.isRunCanceled()) {
                     break;
                 }
 
                 int peptideEnd = peptideStart + peptideSequence.length();
-                int peptideIndex = 1;
 
-                for (int j = peptideStart + 1; j < peptideEnd && !progressDialog.isRunCanceled(); j++) {
-                    for (ModificationMatch modMatch : modifications) {
-                        String modName = modMatch.getModification();
-                        if (displayPreferences.isDisplayedPTM(modName)) {
-                            if (modMatch.getSite() == peptideIndex) {
+                for (int j = 1; j < peptideEnd && !progressDialog.isRunCanceled(); j++) {
 
-                                Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName);
+                    int aaIndex = j + peptideStart;
+                    String modName = variableModifications[j];
 
-                                jmolPanel.getViewer().evalString(
-                                        "select resno =" + (j - chains[selectedChainIndex - 1].getDifference())
-                                        + " and chain = " + currentChain + "; color ["
-                                        + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "]");
+                    if (modName != null && displayParameters.isDisplayedPTM(modName)) {
 
-                                if (showModificationLabels) {
-                                    jmolPanel.getViewer().evalString(
-                                            "select resno =" + (j - chains[selectedChainIndex - 1].getDifference())
-                                            + " and chain = " + currentChain + " and *.ca; color ["
-                                            + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "];"
-                                            + "label " + modName);
-                                }
-                            }
+                        Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName);
+
+                        jmolPanel.getViewer().evalString(
+                                "select resno =" + (aaIndex - chains[selectedChainIndex - 1].getDifference())
+                                + " and chain = " + currentChain + "; color ["
+                                + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "]");
+
+                        if (showModificationLabels) {
+                            jmolPanel.getViewer().evalString(
+                                    "select resno =" + (aaIndex - chains[selectedChainIndex - 1].getDifference())
+                                    + " and chain = " + currentChain + " and *.ca; color ["
+                                    + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "];"
+                                    + "label " + modName);
                         }
                     }
 
-                    peptideIndex++;
+                    modName = fixedModifications[j];
+
+                    if (modName != null && displayParameters.isDisplayedPTM(modName)) {
+
+                        Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName);
+
+                        jmolPanel.getViewer().evalString(
+                                "select resno =" + (aaIndex - chains[selectedChainIndex - 1].getDifference())
+                                + " and chain = " + currentChain + "; color ["
+                                + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "]");
+
+                        if (showModificationLabels) {
+                            jmolPanel.getViewer().evalString(
+                                    "select resno =" + (aaIndex - chains[selectedChainIndex - 1].getDifference())
+                                    + " and chain = " + currentChain + " and *.ca; color ["
+                                    + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "];"
+                                    + "label " + modName);
+                        }
+                    }
                 }
             }
         }
