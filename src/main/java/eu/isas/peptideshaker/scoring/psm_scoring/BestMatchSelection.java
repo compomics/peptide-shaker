@@ -23,6 +23,7 @@ import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.parameters.identification.advanced.IdMatchValidationParameters;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
@@ -123,7 +124,8 @@ public class BestMatchSelection {
         SequenceMatchingParameters ptmSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
-        IdMatchValidationParameters idMatchValidationPreferences = identificationParameters.getIdValidationParameters();
+        ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+        SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
         PeptideAssumptionFilter idFilter = identificationParameters.getPeptideAssumptionFilter();
 
@@ -260,8 +262,10 @@ public class BestMatchSelection {
 
                                         PeptideAssumption peptideAssumption = assumptionMap.firstEntry().getValue();
                                         Peptide peptide = peptideAssumption.getPeptide();
-                                        SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption);
-                                        Map<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, spectrum, peptide, true);
+                                        SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption,
+                                                modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                                        Map<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, spectrum, peptide,
+                                                modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, true);
                                         int nIons = coveredAminoAcids.size();
                                         nSeMap.put(nIons, coverageMap);
                                         nSeMap.remove(-1);
@@ -269,8 +273,10 @@ public class BestMatchSelection {
                                     }
 
                                     Peptide peptide = peptideAssumption1.getPeptide();
-                                    SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption1);
-                                    Map<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, spectrum, peptide, true);
+                                    SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption1,
+                                                modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                                    Map<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, spectrum, peptide,
+                                                modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, true);
                                     int nIons = coveredAminoAcids.size();
 
                                     coverageMap = nSeMap.get(nIons);
@@ -456,7 +462,7 @@ public class BestMatchSelection {
                     Peptide sePeptide = bestPeptideAssumption.getPeptide();
                     Peptide psPeptide = new Peptide(sePeptide.getSequence());
 
-                    ModificationMatch[] seModificationMatches = sePeptide.getModificationMatches();
+                    ModificationMatch[] seModificationMatches = sePeptide.getVariableModifications();
 
                     if (seModificationMatches.length > 0) {
 
@@ -465,7 +471,7 @@ public class BestMatchSelection {
                         for (int i = 0; i < psModificationMatches.length; i++) {
 
                             ModificationMatch seModMatch = psModificationMatches[i];
-                            psModificationMatches[i] = new ModificationMatch(seModMatch.getModification(), seModMatch.getVariable(), seModMatch.getSite());
+                            psModificationMatches[i] = new ModificationMatch(seModMatch.getModification(), seModMatch.getSite());
 
                         }
                     }
@@ -549,14 +555,14 @@ public class BestMatchSelection {
      * @param spectrumKey the key of the spectrum
      * @param firstHits list of equally scoring peptide matches
      * @param proteinCount map of the number of peptides for every protein
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param sequenceProvider the sequence provider
      * @param identificationParameters the identification parameters
      * @param spectrumAnnotator the spectrum annotator to use
      *
      * @return a first hit from the list of equally scoring peptide matches
      */
     public static PeptideAssumption getBestHit(String spectrumKey, ArrayList<PeptideAssumption> firstHits, HashMap<String, Integer> proteinCount,
-            SequenceMatchingParameters sequenceMatchingPreferences, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator spectrumAnnotator) {
+            SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator spectrumAnnotator) {
 
         if (firstHits.size() == 1) {
             return firstHits.get(0);
@@ -607,13 +613,17 @@ public class BestMatchSelection {
 
         Spectrum spectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
         int maxCoveredAminoAcids = 0;
-        AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
+        AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
+        ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+        SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
         for (PeptideAssumption peptideAssumption : firstHits) {
             
             Peptide peptide = peptideAssumption.getPeptide();
-            SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption);
-            Map<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, spectrum, peptide, true);
+            SpecificAnnotationParameters specificAnnotationPreferences = annotationParameters.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption,
+                                                modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+            Map<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationParameters, specificAnnotationPreferences, spectrum, peptide,
+                                                modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, true);
             int nAas = coveredAminoAcids.size();
             
             if (nAas > maxCoveredAminoAcids) {
