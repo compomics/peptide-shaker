@@ -3107,7 +3107,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         + " and resno <=" + (peptideTempEnd - chains[selectedChainIndex - 1].getDifference())
                         + " and chain = " + currentChain + "; color green");
 
-                if (!aminoAcidPattern.getIndexes(chainSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences()).isEmpty()) {
+                if (!aminoAcidPattern.getIndexes(chainSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences()).isEmpty()) { // @TODO: the PDB rest service changed and no longer provides the sequence...
                     peptideTable.setValueAt(true, i, peptideTable.getColumn("PDB").getModelIndex());
                     peptidePdbArray.add(peptideKey);
                 }
