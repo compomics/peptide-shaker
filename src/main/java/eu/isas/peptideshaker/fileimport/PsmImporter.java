@@ -30,6 +30,7 @@ import com.compomics.util.experiment.io.identification.idfilereaders.TideIdfileR
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
+import com.compomics.util.experiment.identification.utils.ModificationUtils;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
@@ -340,7 +341,7 @@ public class PsmImporter {
 
     /**
      * Import the assumptions. Maps algorithm specific modifications to the
-     * compomics utilities structure. Relocates aberrant modifications and
+     * generic objects. Relocates aberrant modifications and
      * removes assumptions where not all modifications are mapped. Verifies
      * whether there is a best match for the spectrum according to the search
      * engine score.
@@ -353,10 +354,10 @@ public class PsmImporter {
      * canceling the import
      */
     private void importAssumptions(SpectrumMatch spectrumMatch, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler) {
-
+        
         PeptideAssumptionFilter peptideAssumptionFilter = identificationParameters.getPeptideAssumptionFilter();
         SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
-        SequenceMatchingParameters ptmSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+        SequenceMatchingParameters modificationSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
         String spectrumKey = spectrumMatch.getSpectrumKey();
@@ -400,16 +401,14 @@ public class PsmImporter {
                         // Note: this needs to be done for tag based assumptions as well since the protein mapping can return erroneous modifications for some pattern based modifications
                         ModificationParameters modificationProfile = searchParameters.getModificationParameters();
 
-                        ModificationMatch[] modificationMatches = peptide.getModificationMatches();
+                        ModificationMatch[] modificationMatches = peptide.getVariableModifications();
 
                         HashMap<Integer, ArrayList<String>> expectedNames = new HashMap<>(modificationMatches.length);
                         HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<>(modificationMatches.length);
 
                         for (ModificationMatch modMatch : modificationMatches) {
 
-                            HashMap<Integer, ArrayList<String>> tempNames = new HashMap<>(modificationMatches.length);
-
-                            if (modMatch.getVariable()) {
+                            HashMap<Integer, HashSet<String>> tempNames = new HashMap<>(modificationMatches.length);
 
                                 String seMod = modMatch.getModification();
 
@@ -448,7 +447,8 @@ public class PsmImporter {
                                         }
                                     }
 
-                                    tempNames = modificationFactory.getExpectedPTMs(modificationProfile, peptide, omssaName, MOD_MASS_TOLERANCE, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
+                                    Modification modification = modificationFactory.getModification(omssaName);
+                                    tempNames = ModificationUtils.getExpectedModifications(modification.getMass(), modificationProfile, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
 
                                 } else if (fileReader instanceof AndromedaIdfileReader) {
 
@@ -486,7 +486,8 @@ public class PsmImporter {
                                         }
                                     }
 
-                                    tempNames = modificationFactory.getExpectedPTMs(modificationProfile, peptide, andromedaName, MOD_MASS_TOLERANCE, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
+                                    Modification modification = modificationFactory.getModification(andromedaName);
+                                    tempNames = ModificationUtils.getExpectedModifications(modification.getMass(), modificationProfile, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
 
                                 } else if (fileReader instanceof MascotIdfileReader
                                         || fileReader instanceof XTandemIdfileReader
@@ -496,11 +497,11 @@ public class PsmImporter {
                                         || fileReader instanceof TideIdfileReader) {
 
                                     String[] parsedName = seMod.split("@");
-                                    Double seMass;
+                                    Double modMass;
 
                                     try {
 
-                                        seMass = new Double(parsedName[0]);
+                                        modMass = new Double(parsedName[0]);
 
                                     } catch (Exception e) {
 
@@ -510,7 +511,7 @@ public class PsmImporter {
 
                                     }
 
-                                    tempNames = modificationFactory.getExpectedPTMs(modificationProfile, peptide, seMass, MOD_MASS_TOLERANCE, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
+                                    tempNames = ModificationUtils.getExpectedModifications(modMass, modificationProfile, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
 
                                 } else if (fileReader instanceof DirecTagIdfileReader
                                         || fileReader instanceof NovorIdfileReader
@@ -524,7 +525,7 @@ public class PsmImporter {
 
                                     }
 
-                                    tempNames = modificationFactory.getExpectedPTMs(modificationProfile, peptide, modification.getMass(), MOD_MASS_TOLERANCE, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
+                                    tempNames = ModificationUtils.getExpectedModifications(modification.getMass(), modificationProfile, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
 
                                 } else {
 
@@ -558,14 +559,14 @@ public class PsmImporter {
                                         }
                                     }
                                 }
-                            }
                         }
 
-                        if (peptide.getModificationMatches().length > 0) {
+                        if (peptide.getVariableModifications().length > 0) {
 
-                            initialPtmMapping(peptide, expectedNames, modNames, searchParameters);
+                            initialModificationMapping(peptide, expectedNames, modNames, searchParameters);
 
                         }
+                        
                         newAssumptions.add(peptideAssumption);
 
                     } else {
@@ -611,7 +612,7 @@ public class PsmImporter {
                             filterPassed = false;
                             peptideIssue++;
 
-                        } else if (!peptideAssumptionFilter.validateModifications(peptide, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getModificationParameters())) {
+                        } else if (!peptideAssumptionFilter.validateModifications(peptide, sequenceMatchingPreferences, modificationSequenceMatchingPreferences, searchParameters.getModificationParameters())) {
 
                             filterPassed = false;
                             modificationIssue++;
@@ -650,7 +651,7 @@ public class PsmImporter {
 
                     if (!firstHits.isEmpty()) {
 
-                        firstPeptideHit = BestMatchSelection.getBestHit(spectrumKey, firstHits, proteinCount, sequenceMatchingPreferences, identificationParameters, peptideSpectrumAnnotator);
+                        firstPeptideHit = BestMatchSelection.getBestHit(spectrumKey, firstHits, proteinCount, sequenceProvider, identificationParameters, peptideSpectrumAnnotator);
 
                     }
                     if (firstPeptideHit != null) {
@@ -662,7 +663,7 @@ public class PsmImporter {
                     } else if (!firstHitsNoProteins.isEmpty()) {
 
                         // See if a peptide without protein can be a best match
-                        firstPeptideHitNoProtein = BestMatchSelection.getBestHit(spectrumKey, firstHits, proteinCount, sequenceMatchingPreferences, identificationParameters, peptideSpectrumAnnotator);
+                        firstPeptideHitNoProtein = BestMatchSelection.getBestHit(spectrumKey, firstHits, proteinCount, sequenceProvider, identificationParameters, peptideSpectrumAnnotator);
 
                     }
                 }
@@ -716,17 +717,15 @@ public class PsmImporter {
      * match
      * @param searchParameters the search parameters
      */
-    private void initialPtmMapping(Peptide peptide, HashMap<Integer, ArrayList<String>> expectedNames, HashMap<ModificationMatch, ArrayList<String>> modNames, SearchParameters searchParameters) {
+    private void initialModificationMapping(Peptide peptide, HashMap<Integer, ArrayList<String>> expectedNames, HashMap<ModificationMatch, ArrayList<String>> modNames, SearchParameters searchParameters) {
         ModificationParameters modificationProfile = searchParameters.getModificationParameters();
         int peptideLength = peptide.getSequence().length();
 
         // If a terminal modification cannot be elsewhere lock the terminus
         ModificationMatch nTermModification = null;
-        ModificationMatch[] modificationMatches = peptide.getModificationMatches();
+        ModificationMatch[] modificationMatches = peptide.getVariableModifications();
 
         for (ModificationMatch modMatch : modificationMatches) {
-
-            if (modMatch.getVariable()) {
 
                 double refMass = getRefMass(modMatch.getModification(), searchParameters);
                 int modSite = modMatch.getSite();
@@ -790,14 +789,13 @@ public class PsmImporter {
                         }
                     }
                 }
-            }
         }
 
         ModificationMatch cTermModification = null;
 
-        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+        for (ModificationMatch modMatch : peptide.getVariableModifications()) {
 
-            if (modMatch.getVariable() && modMatch != nTermModification) {
+            if (modMatch != nTermModification) {
 
                 double refMass = getRefMass(modMatch.getModification(), searchParameters);
                 int modSite = modMatch.getSite();
@@ -874,7 +872,7 @@ public class PsmImporter {
 
             boolean mapped = false;
 
-            if (modMatch.getVariable() && modMatch != nTermModification && modMatch != cTermModification) {
+            if (modMatch != nTermModification && modMatch != cTermModification) {
 
                 double refMass = getRefMass(modMatch.getModification(), searchParameters);
                 int modSite = modMatch.getSite();
@@ -1087,9 +1085,9 @@ public class PsmImporter {
             // Try to correct incompatible localizations
             HashMap<Integer, ArrayList<Integer>> remap = new HashMap<>(0);
 
-            for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+            for (ModificationMatch modMatch : peptide.getVariableModifications()) {
 
-                if (modMatch.getVariable() && modMatch != nTermModification && modMatch != cTermModification && !matchToSiteMap.containsKey(modMatch)) {
+                if (modMatch != nTermModification && modMatch != cTermModification && !matchToSiteMap.containsKey(modMatch)) {
 
                     int modSite = modMatch.getSite();
 
@@ -1131,9 +1129,9 @@ public class PsmImporter {
 
             HashMap<Integer, Integer> correctedIndexes = ModificationSiteMapping.alignAll(remap);
 
-            for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+            for (ModificationMatch modMatch : peptide.getVariableModifications()) {
 
-                if (modMatch.getVariable() && modMatch != nTermModification && modMatch != cTermModification && !matchToSiteMap.containsKey(modMatch)) {
+                if (modMatch != nTermModification && modMatch != cTermModification && !matchToSiteMap.containsKey(modMatch)) {
 
                     Integer modSite = correctedIndexes.get(modMatch.getSite());
 

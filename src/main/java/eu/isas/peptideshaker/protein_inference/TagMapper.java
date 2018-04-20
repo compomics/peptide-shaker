@@ -166,55 +166,49 @@ public class TagMapper {
 
                 AminoAcidSequence aminoAcidSequence = (AminoAcidSequence) tagComponent;
 
-                for (int aa : aminoAcidSequence.getModificationIndexes()) {
-                    
-                    for (ModificationMatch modificationMatch : aminoAcidSequence.getModificationsAt(aa)) {
-                        
-                        if (modificationMatch.getVariable()) {
-                            
-                            if (advocateId == Advocate.direcTag.getIndex()
-                                    || advocateId == Advocate.pNovo.getIndex()
-                                    || advocateId == Advocate.novor.getIndex()) {
-                                // already mapped
-                                
-                            } else if (advocateId == Advocate.pepnovo.getIndex()) {
-                                
-                                String pepnovoPtmName = modificationMatch.getModification();
-                                PepnovoParameters pepnovoParameters = (PepnovoParameters) searchParameters.getIdentificationAlgorithmParameter(advocateId);
-                                String utilitiesPtmName = pepnovoParameters.getUtilitiesPtmName(pepnovoPtmName);
-                                
-                                if (utilitiesPtmName == null) {
-                                    
-                                    throw new IllegalArgumentException("PepNovo+ PTM " + pepnovoPtmName + " not recognized.");
-                                    
-                                }
-                                
-                                modificationMatch.setModification(utilitiesPtmName);
-                                
-                            } else {
-                                
-                                Advocate notImplemented = Advocate.getAdvocate(advocateId);
-                                
-                                if (notImplemented == null) {
-                                    
-                                    throw new IllegalArgumentException("Advocate of id " + advocateId + " not recognized.");
-                                    
-                                }
-                                
-                                throw new IllegalArgumentException("PTM mapping not implemented for " + Advocate.getAdvocate(advocateId).getName() + ".");
-                            
-                            }
+                for (ModificationMatch modificationMatch : aminoAcidSequence.getVariableModifications()) {
+
+                    if (advocateId == Advocate.direcTag.getIndex()
+                            || advocateId == Advocate.pNovo.getIndex()
+                            || advocateId == Advocate.novor.getIndex()) {
+                        // already mapped
+
+                    } else if (advocateId == Advocate.pepnovo.getIndex()) {
+
+                        String pepnovoPtmName = modificationMatch.getModification();
+                        PepnovoParameters pepnovoParameters = (PepnovoParameters) searchParameters.getIdentificationAlgorithmParameter(advocateId);
+                        String utilitiesPtmName = pepnovoParameters.getUtilitiesPtmName(pepnovoPtmName);
+
+                        if (utilitiesPtmName == null) {
+
+                            throw new IllegalArgumentException("PepNovo+ PTM " + pepnovoPtmName + " not recognized.");
+
                         }
+
+                        modificationMatch.setModification(utilitiesPtmName);
+
+                    } else {
+
+                        Advocate notImplemented = Advocate.getAdvocate(advocateId);
+
+                        if (notImplemented == null) {
+
+                            throw new IllegalArgumentException("Advocate of id " + advocateId + " not recognized.");
+
+                        }
+
+                        throw new IllegalArgumentException("PTM mapping not implemented for " + Advocate.getAdvocate(advocateId).getName() + ".");
+
                     }
                 }
-                
+
             } else if (tagComponent instanceof MassGap) {
                 // no PTM there
-                
+
             } else {
-                
+
                 throw new UnsupportedOperationException("PTM mapping not implemeted for tag component " + tagComponent.getClass() + ".");
-                
+
             }
         }
     }
