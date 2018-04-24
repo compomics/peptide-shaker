@@ -26,6 +26,7 @@ import com.compomics.util.parameters.identification.search.ModificationParameter
 import com.compomics.util.parameters.identification.advanced.ModificationLocalizationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
+import com.compomics.util.experiment.identification.utils.ModificationUtils;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.parameters.tools.ProcessingParameters;
@@ -95,12 +96,12 @@ public class ModificationLocalizationScorer extends DbObject {
 
         String mainSequence = psPeptide.getSequence();
 
-        HashMap<String, List<Integer>> modificationProfiles = Arrays.stream(psPeptide.getModificationMatches())
+        HashMap<String, List<Integer>> modificationParameterss = Arrays.stream(psPeptide.getVariableModifications())
                 .collect(Collectors.groupingBy(ModificationMatch::getModification,
                         HashMap::new,
                         Collectors.mapping(ModificationMatch::getSite, Collectors.toList())));
 
-        for (Entry<String, List<Integer>> entry : modificationProfiles.entrySet()) {
+        for (Entry<String, List<Integer>> entry : modificationParameterss.entrySet()) {
 
             String modName = entry.getKey();
             List<Integer> sites = entry.getValue();
@@ -123,7 +124,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                                 Peptide peptide = peptideAssumption.getPeptide();
 
-                                for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+                                for (ModificationMatch modMatch : peptide.getVariableModifications()) {
 
                                     Modification modification2 = modificationFactory.getModification(modMatch.getModification());
 
@@ -163,12 +164,12 @@ public class ModificationLocalizationScorer extends DbObject {
                 }
 
                 ModificationScoring modificationScoring = modificationScores.getModificationScoring(modName);
-                
+
                 if (modificationScoring == null) {
-                
+
                     modificationScoring = new ModificationScoring(modName);
                     modificationScores.addModificationScoring(modName, modificationScoring);
-                
+
                 }
 
                 if (secondaryP < refP) {
@@ -202,7 +203,7 @@ public class ModificationLocalizationScorer extends DbObject {
         SequenceMatchingParameters sequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
         SequenceMatchingParameters modificationSequenceMatchingParameters = scoringParameters.getSequenceMatchingParameters();
 
-        ModificationParameters modificationProfile = searchParameters.getModificationParameters();
+        ModificationParameters modificationParameters = searchParameters.getModificationParameters();
 
         PSModificationScores modificationScores = new PSModificationScores();
 
@@ -217,34 +218,32 @@ public class ModificationLocalizationScorer extends DbObject {
         PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
         Peptide peptide = bestPeptideAssumption.getPeptide();
 
-        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+        for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
 
-            if (modificationMatch.getVariable()) {
+            Modification refMod = modificationFactory.getModification(modificationMatch.getModification());
+            double modMass = refMod.getMass();
 
-                Modification refMod = modificationFactory.getModification(modificationMatch.getModification());
-                double modMass = refMod.getMass();
+            if (!modificationsMap.containsKey(modMass)) {
 
-                if (!modificationsMap.containsKey(modMass)) {
+                ArrayList<Modification> modifications = modificationParameters.getSameMassNotFixedModifications(modMass).stream()
+                        .map(modification -> modificationFactory.getModification(modification))
+                        .collect(Collectors.toCollection(ArrayList::new));
 
-                    ArrayList<Modification> modifications = modificationProfile.getSameMassNotFixedModifications(modMass).stream()
-                            .map(modification -> modificationFactory.getModification(modification))
-                            .collect(Collectors.toCollection(ArrayList::new));
+                modificationsMap.put(modMass, modifications);
+                nMod.put(modMass, 1);
 
-                    modificationsMap.put(modMass, modifications);
-                    nMod.put(modMass, 1);
+            } else {
 
-                } else {
+                nMod.put(modMass, nMod.get(modMass) + 1);
 
-                    nMod.put(modMass, nMod.get(modMass) + 1);
-
-                }
             }
         }
 
         if (!modificationsMap.isEmpty()) {
 
             Spectrum spectrum = spectrumFactory.getSpectrum(spectrumMatch.getSpectrumKey());
-            SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), bestPeptideAssumption);
+            SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), bestPeptideAssumption,
+                    modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
             for (double modMass : modificationsMap.keySet()) {
 
@@ -252,7 +251,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                 if (scoringParameters.getSelectedProbabilisticScore() == ModificationLocalizationScore.PhosphoRS) {
 
-                    scores = PhosphoRS.getSequenceProbabilities(peptide, modificationsMap.get(modMass), spectrum, sequenceProvider, annotationParameters, specificAnnotationParameters,
+                    scores = PhosphoRS.getSequenceProbabilities(peptide, modificationsMap.get(modMass), modificationParameters, spectrum, sequenceProvider, annotationParameters, specificAnnotationParameters,
                             scoringParameters.isProbabilisticScoreNeutralLosses(), sequenceMatchingParameters,
                             modificationSequenceMatchingParameters, peptideSpectrumAnnotator);
 
@@ -387,7 +386,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
         Peptide peptide = peptideMatch.getPeptide();
         String peptideSequence = peptide.getSequence();
-        ModificationMatch[] originalMatches = peptide.getModificationMatches();
+        ModificationMatch[] originalMatches = peptide.getVariableModifications();
 
         if (originalMatches == null) {
 
@@ -400,8 +399,8 @@ public class ModificationLocalizationScorer extends DbObject {
 
         PSModificationScores peptideScores = new PSModificationScores();
 
-        HashMap<Double, Integer> variableModifications = new HashMap<>(peptide.getNModifications());
-        HashMap<Double, HashMap<Integer, HashSet<String>>> inferredSites = new HashMap<>(peptide.getNModifications());
+        HashMap<Double, Integer> variableModifications = new HashMap<>(peptide.getNVariableModifications());
+        HashMap<Double, HashMap<Integer, HashSet<String>>> inferredSites = new HashMap<>(peptide.getNVariableModifications());
         Modification nTermModConfident = null;
         Modification cTermModConfident = null;
 
@@ -410,120 +409,112 @@ public class ModificationLocalizationScorer extends DbObject {
 
         for (ModificationMatch modificationMatch : originalMatches) {
 
-            if (modificationMatch.getVariable()) {
+            String modName = modificationMatch.getModification();
+            Modification modification = modificationFactory.getModification(modName);
+            double modMass = modification.getMass();
+            boolean maybeNotTerminal = modification.getModificationType() == ModificationType.modaa;
 
-                String modName = modificationMatch.getModification();
-                Modification modification = modificationFactory.getModification(modName);
-                double modMass = modification.getMass();
-                boolean maybeNotTerminal = modification.getModificationType() == ModificationType.modaa;
+            if (!maybeNotTerminal) {
 
-                if (!maybeNotTerminal) {
+                for (String otherPtmName : modificationSettings.getAllNotFixedModifications()) {
 
-                    for (String otherPtmName : modificationSettings.getAllNotFixedModifications()) {
+                    if (!otherPtmName.equals(modName)) {
 
-                        if (!otherPtmName.equals(modName)) {
+                        Modification tempMod = modificationFactory.getModification(otherPtmName);
 
-                            Modification tempMod = modificationFactory.getModification(otherPtmName);
+                        if (tempMod.getMass() == modMass && modification.getModificationType() != tempMod.getModificationType()) {
 
-                            if (tempMod.getMass() == modMass && modification.getModificationType() != tempMod.getModificationType()) {
+                            maybeNotTerminal = true;
+                            break;
 
-                                maybeNotTerminal = true;
-                                break;
-
-                            }
                         }
                     }
                 }
+            }
 
-                if (maybeNotTerminal) {
+            if (maybeNotTerminal) {
 
-                    Integer nMod = variableModifications.get(modMass);
+                Integer nMod = variableModifications.get(modMass);
 
-                    if (nMod == null) {
+                if (nMod == null) {
 
-                        variableModifications.put(modMass, 1);
-
-                    } else {
-
-                        variableModifications.put(modMass, nMod + 1);
-
-                    }
-
-                    if (modificationMatch.getInferred()) {
-
-                        Integer modificationSite;
-
-                        if (modification.getModificationType().isCTerm()) {
-
-                            modificationSite = peptideSequence.length() + 1;
-
-                        } else if (modification.getModificationType().isNTerm()) {
-
-                            modificationSite = 0;
-
-                        } else {
-
-                            modificationSite = modificationMatch.getSite();
-
-                        }
-
-                        HashMap<Integer, HashSet<String>> modificationInferredSites = inferredSites.get(modMass);
-
-                        if (modificationInferredSites == null) {
-
-                            modificationInferredSites = new HashMap<>(1);
-                            inferredSites.put(modMass, modificationInferredSites);
-
-                        }
-
-                        HashSet<String> modificationsAtSite = modificationInferredSites.get(modificationSite);
-
-                        if (modificationsAtSite == null) {
-
-                            modificationsAtSite = new HashSet<>(1);
-                            modificationInferredSites.put(modificationSite, modificationsAtSite);
-
-                        }
-
-                        modificationsAtSite.add(modName);
-
-                    }
+                    variableModifications.put(modMass, 1);
 
                 } else {
 
-                    newModificationMatches.add(modificationMatch);
+                    variableModifications.put(modMass, nMod + 1);
+
+                }
+
+                if (modificationMatch.getInferred()) {
+
+                    Integer modificationSite;
 
                     if (modification.getModificationType().isCTerm()) {
 
-                        if (cTermModConfident != null) {
-
-                            throw new IllegalArgumentException("Multiple PTMs on termini not supported.");
-
-                        }
-
-                        cTermModConfident = modificationFactory.getModification(modName);
+                        modificationSite = peptideSequence.length() + 1;
 
                     } else if (modification.getModificationType().isNTerm()) {
 
-                        if (nTermModConfident != null) {
-
-                            throw new IllegalArgumentException("Multiple PTMs on termini not supported.");
-
-                        }
-
-                        nTermModConfident = modificationFactory.getModification(modName);
+                        modificationSite = 0;
 
                     } else {
 
-                        throw new IllegalArgumentException("Non-terminal PTM should be of type PTM.MODAA.");
+                        modificationSite = modificationMatch.getSite();
 
                     }
+
+                    HashMap<Integer, HashSet<String>> modificationInferredSites = inferredSites.get(modMass);
+
+                    if (modificationInferredSites == null) {
+
+                        modificationInferredSites = new HashMap<>(1);
+                        inferredSites.put(modMass, modificationInferredSites);
+
+                    }
+
+                    HashSet<String> modificationsAtSite = modificationInferredSites.get(modificationSite);
+
+                    if (modificationsAtSite == null) {
+
+                        modificationsAtSite = new HashSet<>(1);
+                        modificationInferredSites.put(modificationSite, modificationsAtSite);
+
+                    }
+
+                    modificationsAtSite.add(modName);
+
                 }
 
             } else {
 
                 newModificationMatches.add(modificationMatch);
 
+                if (modification.getModificationType().isCTerm()) {
+
+                    if (cTermModConfident != null) {
+
+                        throw new IllegalArgumentException("Multiple PTMs on termini not supported.");
+
+                    }
+
+                    cTermModConfident = modificationFactory.getModification(modName);
+
+                } else if (modification.getModificationType().isNTerm()) {
+
+                    if (nTermModConfident != null) {
+
+                        throw new IllegalArgumentException("Multiple PTMs on termini not supported.");
+
+                    }
+
+                    nTermModConfident = modificationFactory.getModification(modName);
+
+                } else {
+
+                    throw new IllegalArgumentException("Non-terminal PTM should be of type PTM.MODAA.");
+
+                }
             }
         }
 
@@ -641,7 +632,7 @@ public class ModificationLocalizationScorer extends DbObject {
                             }
 
                             peptideScores.addConfidentModificationSite(modName, refSite);
-                            ModificationMatch newMatch = new ModificationMatch(modName, true, refSite);
+                            ModificationMatch newMatch = new ModificationMatch(modName, refSite);
                             newMatch.setConfident(true);
                             ArrayList<ModificationMatch> newModMatches = newMatches.get(modMass);
 
@@ -907,7 +898,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                         }
 
-                        ModificationMatch newMatch = new ModificationMatch(modName, true, site);
+                        ModificationMatch newMatch = new ModificationMatch(modName, site);
                         newMatch.setConfident(false);
 
                         if (modificationInferredSites != null && modificationInferredSites.containsKey(representativeSite)) {
@@ -950,7 +941,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
         }
 
-        peptide.setModificationMatches(newModificationMatches.toArray(new ModificationMatch[newModificationMatches.size()]));
+        peptide.setVariableModifications(newModificationMatches.toArray(new ModificationMatch[newModificationMatches.size()]));
 
         peptideMatch.addUrParam(peptideScores);
 
@@ -1408,7 +1399,7 @@ public class ModificationLocalizationScorer extends DbObject {
             Peptide peptide = peptideMatch.getPeptide();
             PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
-            if (psParameter.getMatchValidationLevel().isValidated() && peptide.getModificationMatches().length > 0) {
+            if (psParameter.getMatchValidationLevel().isValidated() && peptide.getNVariableModifications() > 0) {
 
                 PSModificationScores peptideScores = (PSModificationScores) peptideMatch.getUrParam(new PSModificationScores());
 
@@ -1760,34 +1751,31 @@ public class ModificationLocalizationScorer extends DbObject {
                 boolean variableAA = false;
                 Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
 
-                for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
 
-                    if (modificationMatch.getVariable()) {
+                    String modName = modificationMatch.getModification();
+                    Modification modification = modificationFactory.getModification(modName);
 
-                        String modName = modificationMatch.getModification();
-                        Modification modification = modificationFactory.getModification(modName);
+                    if (modification.getModificationType() == ModificationType.modaa) {
 
-                        if (modification.getModificationType() == ModificationType.modaa) {
+                        variableAA = true;
+                        break;
 
-                            variableAA = true;
-                            break;
+                    } else {
 
-                        } else {
+                        double modMass = modification.getMass();
 
-                            double modMass = modification.getMass();
+                        for (String otherModName : ModificationParameters.getAllNotFixedModifications()) {
 
-                            for (String otherModName : ModificationParameters.getAllNotFixedModifications()) {
+                            if (!otherModName.equals(modName)) {
 
-                                if (!otherModName.equals(modName)) {
+                                Modification otherModification = modificationFactory.getModification(otherModName);
 
-                                    Modification otherModification = modificationFactory.getModification(otherModName);
+                                if (otherModification.getMass() == modMass && modification.getModificationType() != otherModification.getModificationType()) {
 
-                                    if (otherModification.getMass() == modMass && modification.getModificationType() != otherModification.getModificationType()) {
+                                    variableAA = true;
+                                    break;
 
-                                        variableAA = true;
-                                        break;
-
-                                    }
                                 }
                             }
                         }
@@ -1798,73 +1786,70 @@ public class ModificationLocalizationScorer extends DbObject {
 
                     boolean confident = true;
 
-                    for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+                    for (ModificationMatch modMatch : peptide.getVariableModifications()) {
 
-                        if (modMatch.getVariable()) {
+                        String modName = modMatch.getModification();
+                        Modification modification = modificationFactory.getModification(modName);
+                        double modMass = modification.getMass();
+                        boolean maybeNotTerminal = modification.getModificationType() == ModificationType.modaa;
 
-                            String modName = modMatch.getModification();
-                            Modification modification = modificationFactory.getModification(modName);
-                            double modMass = modification.getMass();
-                            boolean maybeNotTerminal = modification.getModificationType() == ModificationType.modaa;
+                        if (!maybeNotTerminal) {
 
-                            if (!maybeNotTerminal) {
+                            for (String otherModName : ModificationParameters.getAllNotFixedModifications()) {
 
-                                for (String otherModName : ModificationParameters.getAllNotFixedModifications()) {
+                                if (!otherModName.equals(modName)) {
 
-                                    if (!otherModName.equals(modName)) {
+                                    Modification otherModification = modificationFactory.getModification(otherModName);
 
-                                        Modification otherModification = modificationFactory.getModification(otherModName);
+                                    if (otherModification.getMass() == modMass && modification.getModificationType() != otherModification.getModificationType()) {
 
-                                        if (otherModification.getMass() == modMass && modification.getModificationType() != otherModification.getModificationType()) {
+                                        maybeNotTerminal = true;
+                                        break;
 
-                                            maybeNotTerminal = true;
-                                            break;
-
-                                        }
                                     }
                                 }
                             }
+                        }
 
-                            if (maybeNotTerminal) {
+                        if (maybeNotTerminal) {
 
-                                if (!modMatch.getConfident()) {
+                            if (!modMatch.getConfident()) {
 
-                                    HashSet<Long> spectra = notConfidentPeptideInference.get(modMass);
+                                HashSet<Long> spectra = notConfidentPeptideInference.get(modMass);
 
-                                    if (spectra == null) {
+                                if (spectra == null) {
 
-                                        spectra = new HashSet<>(2);
-                                        notConfidentPeptideInference.put(modMass, spectra);
-
-                                    }
-
-                                    spectra.add(spectrumKey);
-                                    confident = false;
-
-                                } else {
-
-                                    HashMap<String, HashSet<Long>> modMap = confidentPeptideInference.get(modMass);
-
-                                    if (modMap == null) {
-
-                                        modMap = new HashMap<>(2);
-                                        confidentPeptideInference.put(modMass, modMap);
-
-                                    }
-
-                                    String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
-                                    HashSet<Long> spectra = modMap.get(sequence);
-
-                                    if (spectra == null) {
-
-                                        spectra = new HashSet<>(2);
-                                        modMap.put(sequence, spectra);
-
-                                    }
-
-                                    spectra.add(spectrumKey);
+                                    spectra = new HashSet<>(2);
+                                    notConfidentPeptideInference.put(modMass, spectra);
 
                                 }
+
+                                spectra.add(spectrumKey);
+                                confident = false;
+
+                            } else {
+
+                                HashMap<String, HashSet<Long>> modMap = confidentPeptideInference.get(modMass);
+
+                                if (modMap == null) {
+
+                                    modMap = new HashMap<>(2);
+                                    confidentPeptideInference.put(modMass, modMap);
+
+                                }
+
+                                String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
+                                HashSet<Long> spectra = modMap.get(sequence);
+
+                                if (spectra == null) {
+
+                                    spectra = new HashSet<>(2);
+                                    modMap.put(sequence, spectra);
+
+                                }
+
+                                spectra.add(spectrumKey);
+
                             }
                         }
                     }
@@ -1907,14 +1892,13 @@ public class ModificationLocalizationScorer extends DbObject {
                 Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                 String sequence = peptide.getSequence();
 
-                long nMod = Arrays.stream(peptide.getModificationMatches())
-                        .filter(ModificationMatch::getVariable)
+                long nMod = Arrays.stream(peptide.getVariableModifications())
                         .map(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()))
                         .filter(modification -> modification.getMass() == modMass)
                         .count();
 
-                HashSet<Integer> oldLocalizations = Arrays.stream(peptide.getModificationMatches())
-                        .filter(modificationMatch -> modificationMatch.getVariable() && modificationMatch.getConfident() && modificationMatch.getInferred())
+                HashSet<Integer> oldLocalizations = Arrays.stream(peptide.getVariableModifications())
+                        .filter(modificationMatch -> modificationMatch.getConfident() && modificationMatch.getInferred())
                         .filter(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()).getMass() == modMass)
                         .map(ModificationMatch::getSite)
                         .collect(Collectors.toCollection(HashSet::new));
@@ -1935,16 +1919,15 @@ public class ModificationLocalizationScorer extends DbObject {
                             SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
                             Peptide tempPeptide = secondaryMatch.getBestPeptideAssumption().getPeptide();
 
-                            long tempNMod = Arrays.stream(tempPeptide.getModificationMatches())
-                                    .filter(ModificationMatch::getVariable)
+                            long tempNMod = Arrays.stream(tempPeptide.getVariableModifications())
                                     .map(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()))
                                     .filter(modification -> modification.getMass() == modMass)
                                     .count();
 
                             if (tempNMod == nMod) {
 
-                                ArrayList<Integer> tempLocalizations = Arrays.stream(tempPeptide.getModificationMatches())
-                                        .filter(modificationMatch -> modificationMatch.getVariable() && modificationMatch.getConfident() && modificationMatch.getInferred())
+                                ArrayList<Integer> tempLocalizations = Arrays.stream(tempPeptide.getVariableModifications())
+                                        .filter(modificationMatch -> modificationMatch.getConfident() && modificationMatch.getInferred())
                                         .filter(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()).getMass() == modMass)
                                         .map(ModificationMatch::getSite)
                                         .collect(Collectors.toCollection(ArrayList::new));
@@ -1968,8 +1951,8 @@ public class ModificationLocalizationScorer extends DbObject {
                                 SpectrumMatch secondaryMatch = (SpectrumMatch) identification.retrieveObject(tempKey);
                                 Peptide tempPeptide = secondaryMatch.getBestPeptideAssumption().getPeptide();
 
-                                ArrayList<Integer> tempLocalizations = Arrays.stream(tempPeptide.getModificationMatches())
-                                        .filter(modificationMatch -> modificationMatch.getVariable() && modificationMatch.getConfident() && modificationMatch.getInferred())
+                                ArrayList<Integer> tempLocalizations = Arrays.stream(tempPeptide.getVariableModifications())
+                                        .filter(modificationMatch -> modificationMatch.getConfident() && modificationMatch.getInferred())
                                         .filter(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()).getMass() == modMass)
                                         .map(ModificationMatch::getSite)
                                         .collect(Collectors.toCollection(ArrayList::new));
@@ -2000,8 +1983,8 @@ public class ModificationLocalizationScorer extends DbObject {
                                     SpectrumMatch secondaryMatch = (SpectrumMatch) identification.retrieveObject(tempKey);
                                     Peptide tempPeptide = secondaryMatch.getBestPeptideAssumption().getPeptide();
 
-                                    ArrayList<Integer> tempLocalizations = Arrays.stream(tempPeptide.getModificationMatches())
-                                            .filter(modificationMatch -> modificationMatch.getVariable() && modificationMatch.getConfident() && modificationMatch.getInferred())
+                                    ArrayList<Integer> tempLocalizations = Arrays.stream(tempPeptide.getVariableModifications())
+                                            .filter(modificationMatch -> modificationMatch.getConfident() && modificationMatch.getInferred())
                                             .filter(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()).getMass() == modMass)
                                             .map(ModificationMatch::getSite)
                                             .collect(Collectors.toCollection(ArrayList::new));
@@ -2021,7 +2004,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                                                 boolean siteOccupied = false;
 
-                                                for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                                                for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
 
                                                     Modification modification = modificationFactory.getModification(modificationMatch.getModification());
 
@@ -2039,14 +2022,17 @@ public class ModificationLocalizationScorer extends DbObject {
                                                     for (String modName : searchParameters.getModificationParameters().getAllNotFixedModifications()) {
 
                                                         Modification modification = modificationFactory.getModification(modName);
-                                                        
-                                                        
 
-                                                        if (modification.getMass() == modMass && peptide.getPotentialModificationSites(modification, sequenceProvider, modificationSequenceMatchingParameters).contains(shiftedLocalization)) {
+                                                        if (modification.getMass() == modMass) {
 
-                                                            candidatePtm = true;
-                                                            break;
+                                                            int[] possibleSites = ModificationUtils.getPossibleModificationSites(peptide, modification, sequenceProvider, modificationSequenceMatchingParameters);
 
+                                                            if (Arrays.stream(possibleSites).anyMatch(site -> site == shiftedLocalization)) {
+
+                                                                candidatePtm = true;
+                                                                break;
+
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -2073,8 +2059,8 @@ public class ModificationLocalizationScorer extends DbObject {
 
                                     Peptide tempPeptide = secondaryMatch.getBestPeptideAssumption().getPeptide();
 
-                                    ArrayList<Integer> tempLocalizations = Arrays.stream(tempPeptide.getModificationMatches())
-                                            .filter(modificationMatch -> modificationMatch.getVariable() && modificationMatch.getConfident() && modificationMatch.getInferred())
+                                    ArrayList<Integer> tempLocalizations = Arrays.stream(tempPeptide.getVariableModifications())
+                                            .filter(modificationMatch -> modificationMatch.getConfident() && modificationMatch.getInferred())
                                             .filter(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()).getMass() == modMass)
                                             .map(ModificationMatch::getSite)
                                             .collect(Collectors.toCollection(ArrayList::new));
@@ -2095,7 +2081,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                                                 boolean siteOccupied = false;
 
-                                                for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                                                for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
 
                                                     Modification modification = modificationFactory.getModification(modificationMatch.getModification());
 
@@ -2114,11 +2100,16 @@ public class ModificationLocalizationScorer extends DbObject {
 
                                                         Modification modification = modificationFactory.getModification(modName);
 
-                                                        if (modification.getMass() == modMass && peptide.getPotentialModificationSites(modification, sequenceProvider, modificationSequenceMatchingParameters).contains(shiftedLocalization)) {
+                                                        if (modification.getMass() == modMass) {
 
-                                                            candidateModification = true;
-                                                            break;
+                                                            int[] possibleSites = ModificationUtils.getPossibleModificationSites(peptide, modification, sequenceProvider, modificationSequenceMatchingParameters);
 
+                                                            if (Arrays.stream(possibleSites).anyMatch(site -> site == shiftedLocalization)) {
+
+                                                                candidateModification = true;
+                                                                break;
+
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -2145,12 +2136,12 @@ public class ModificationLocalizationScorer extends DbObject {
 
                         HashMap<Integer, ModificationMatch> nonConfidentMatches = new HashMap<>();
 
-                        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                        for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
 
                             String modName = modificationMatch.getModification();
                             Modification modification = modificationFactory.getModification(modName);
 
-                            if (modification.getMass() == modMass && !modificationMatch.getConfident()) { // @TODO: compare against the accuracy
+                            if (modification.getMass() == modMass && !modificationMatch.getConfident()) {
 
                                 nonConfidentMatches.put(modificationMatch.getSite(), modificationMatch);
 
@@ -2180,11 +2171,15 @@ public class ModificationLocalizationScorer extends DbObject {
 
                                         Modification modification = modificationFactory.getModification(modName);
 
-                                        if (modification.getMass() == modMass && peptide.getPotentialModificationSites(modification, sequenceProvider, modificationSequenceMatchingParameters).contains(newLocalization)) {
+                                        if (modification.getMass() == modMass) {
 
-                                            candidateName = modification.getName();
-                                            break;
+                                            int[] possibleSites = ModificationUtils.getPossibleModificationSites(peptide, modification, sequenceProvider, modificationSequenceMatchingParameters);
 
+                                            if (Arrays.stream(possibleSites).anyMatch(site -> site == newLocalization)) {
+
+                                                candidateName = modification.getName();
+                                                break;
+                                            }
                                         }
                                     }
 
@@ -2236,102 +2231,106 @@ public class ModificationLocalizationScorer extends DbObject {
 
         Peptide psPeptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
 
-        if (psPeptide.getNModifications() > 0) {
+        int nVariableModifications = psPeptide.getNVariableModifications();
+
+        if (nVariableModifications > 0) {
 
             SearchParameters searchParameters = identificationParameters.getSearchParameters();
-            ModificationParameters modificationProfile = searchParameters.getModificationParameters();
+            ModificationParameters modificationParameters = searchParameters.getModificationParameters();
             PSModificationScores modificationScores = (PSModificationScores) spectrumMatch.getUrParam(new PSModificationScores());
-            HashMap<Double, ArrayList<ModificationMatch>> modMatchesMap = new HashMap<>(psPeptide.getNModifications());
-            HashMap<Double, HashMap<Integer, String>> possiblePositions = new HashMap<>(psPeptide.getNModifications());
-            HashMap<Double, HashMap<Integer, ArrayList<String>>> confidentSites = new HashMap<>(psPeptide.getNModifications());
+            HashMap<Double, ArrayList<ModificationMatch>> modMatchesMap = new HashMap<>(nVariableModifications);
+            HashMap<Double, HashMap<Integer, String>> possiblePositions = new HashMap<>(nVariableModifications);
+            HashMap<Double, HashMap<Integer, ArrayList<String>>> confidentSites = new HashMap<>(nVariableModifications);
 
-            for (ModificationMatch modificationMatch : psPeptide.getModificationMatches()) {
+            for (ModificationMatch modificationMatch : psPeptide.getVariableModifications()) {
 
-                if (modificationMatch.getVariable()) {
+                String modName = modificationMatch.getModification();
+                Modification modification = modificationFactory.getModification(modName);
+                double modMass = modification.getMass();
+                ArrayList<ModificationMatch> modOccurence = modMatchesMap.get(modMass);
 
-                    String modName = modificationMatch.getModification();
-                    Modification modification = modificationFactory.getModification(modName);
-                    double modMass = modification.getMass();
-                    ArrayList<ModificationMatch> modOccurence = modMatchesMap.get(modMass);
+                if (modOccurence == null) {
 
-                    if (modOccurence == null) {
+                    modOccurence = new ArrayList<>(1);
+                    modMatchesMap.put(modMass, modOccurence);
 
-                        modOccurence = new ArrayList<>(1);
-                        modMatchesMap.put(modMass, modOccurence);
+                }
 
-                    }
+                HashMap<Integer, String> modPossibleSites = possiblePositions.get(modMass);
 
-                    HashMap<Integer, String> modPossibleSites = possiblePositions.get(modMass);
+                if (modPossibleSites == null) {
 
-                    if (modPossibleSites == null) {
+                    modPossibleSites = new HashMap<>(1);
+                    possiblePositions.put(modMass, modPossibleSites);
 
-                        modPossibleSites = new HashMap<>(1);
-                        possiblePositions.put(modMass, modPossibleSites);
+                }
 
-                    }
+                boolean maybeNotTerminal = modification.getModificationType() == ModificationType.modaa;
 
-                    boolean maybeNotTerminal = modification.getModificationType() == ModificationType.modaa;
+                if (!maybeNotTerminal) {
 
-                    if (!maybeNotTerminal) {
+                    for (String otherModName : modificationParameters.getAllNotFixedModifications()) {
 
-                        for (String otherModName : modificationProfile.getAllNotFixedModifications()) {
+                        if (!otherModName.equals(modName)) {
 
-                            if (!otherModName.equals(modName)) {
+                            Modification otherModification = modificationFactory.getModification(otherModName);
 
-                                Modification otherModification = modificationFactory.getModification(otherModName);
+                            if (otherModification.getMass() == modMass && modification.getModificationType() != otherModification.getModificationType()) {
 
-                                if (otherModification.getMass() == modMass && modification.getModificationType() != otherModification.getModificationType()) {
+                                maybeNotTerminal = true;
+                                break;
 
-                                    maybeNotTerminal = true;
-                                    break;
-
-                                }
                             }
                         }
                     }
+                }
 
-                    if (maybeNotTerminal) {
+                if (maybeNotTerminal) {
 
-                        modOccurence.add(modificationMatch);
+                    modOccurence.add(modificationMatch);
 
-                        for (String similarModName : modificationProfile.getSameMassNotFixedModifications(modMass)) {
+                    for (String similarModName : modificationParameters.getSameMassNotFixedModifications(modMass)) {
 
-                            Modification similarModification = modificationFactory.getModification(similarModName);
+                        Modification similarModification = modificationFactory.getModification(similarModName);
 
-                            for (int pos : psPeptide.getPotentialModificationSites(similarModification, sequenceProvider, identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters())) {
+                        if (modification.getMass() == modMass) {
+
+                            int[] possibleSites = ModificationUtils.getPossibleModificationSites(psPeptide, similarModification, sequenceProvider, identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters());
+
+                            for (int pos : possibleSites) {
 
                                 modPossibleSites.put(pos, similarModName);
 
                             }
                         }
+                    }
 
-                    } else {
+                } else {
 
-                        ModificationScoring modificationScoring = modificationScores.getModificationScoring(modName);
-                        modificationScoring.setSiteConfidence(modificationMatch.getSite(), ModificationScoring.VERY_CONFIDENT);
-                        modificationMatch.setConfident(true);
-                        HashMap<Integer, ArrayList<String>> modificationSites = confidentSites.get(modification.getMass());
+                    ModificationScoring modificationScoring = modificationScores.getModificationScoring(modName);
+                    modificationScoring.setSiteConfidence(modificationMatch.getSite(), ModificationScoring.VERY_CONFIDENT);
+                    modificationMatch.setConfident(true);
+                    HashMap<Integer, ArrayList<String>> modificationSites = confidentSites.get(modification.getMass());
 
-                        if (modificationSites == null) {
+                    if (modificationSites == null) {
 
-                            modificationSites = new HashMap<>(1);
-                            confidentSites.put(modMass, modificationSites);
-
-                        }
-
-                        int site = psPeptide.getSequence().length();
-                        ArrayList<String> modNames = modificationSites.get(site);
-
-                        if (modNames == null) {
-
-                            modNames = new ArrayList<>(1);
-                            modificationSites.put(site, modNames);
-
-                        }
-
-                        modNames.add(modName);
+                        modificationSites = new HashMap<>(1);
+                        confidentSites.put(modMass, modificationSites);
 
                     }
+
+                    int site = psPeptide.getSequence().length();
+                    ArrayList<String> modNames = modificationSites.get(site);
+
+                    if (modNames == null) {
+
+                        modNames = new ArrayList<>(1);
+                        modificationSites.put(site, modNames);
+
+                    }
+
+                    modNames.add(modName);
+
                 }
             }
 
@@ -2339,7 +2338,7 @@ public class ModificationLocalizationScorer extends DbObject {
             Set<Double> modMasses = modMatchesMap.keySet();
             TreeMap<Double, TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>>> ambiguousScoreToSiteMap = new TreeMap<>(); // p score -> d-score -> Map PTM mass -> site -> list of modifications
             HashMap<Double, Integer> nRepresentativesMap = new HashMap<>(modMasses.size());
-            ArrayList<ModificationMatch> assignedModifications = new ArrayList<>(psPeptide.getModificationMatches().length);
+            ArrayList<ModificationMatch> assignedModifications = new ArrayList<>(psPeptide.getNVariableModifications());
             TreeMap<Double, TreeMap<Double, TreeMap<Double, TreeSet<Integer>>>> scoreToSiteMap = new TreeMap<>(); // p-score -> d-score -> PTM mass -> list of posssible sites
 
             for (double modMass : modMasses) {

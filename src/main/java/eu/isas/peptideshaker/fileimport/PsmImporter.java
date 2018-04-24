@@ -416,7 +416,7 @@ public class PsmImporter {
 
                                     OmssaParameters omssaParameters = (OmssaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.omssa.getIndex());
 
-                                    if (!omssaParameters.hasPtmIndexes()) {
+                                    if (!omssaParameters.hasModificationIndexes()) {
 
                                         throw new IllegalArgumentException("OMSSA modification indexes not set in the search parameters.");
 
@@ -454,7 +454,7 @@ public class PsmImporter {
 
                                     AndromedaParameters andromedaParameters = (AndromedaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.andromeda.getIndex());
 
-                                    if (!andromedaParameters.hasPtmIndexes()) {
+                                    if (!andromedaParameters.hasModificationIndexes()) {
 
                                         throw new IllegalArgumentException("Andromeda modification indexes not set in the search parameters.");
 
@@ -550,11 +550,11 @@ public class PsmImporter {
 
                                     }
 
-                                    for (String ptmName : tempNames.get(pos)) {
+                                    for (String modName : tempNames.get(pos)) {
 
-                                        if (!namesAtPosition.contains(ptmName)) {
+                                        if (!namesAtPosition.contains(modName)) {
 
-                                            namesAtPosition.add(ptmName);
+                                            namesAtPosition.add(modName);
 
                                         }
                                     }
@@ -808,13 +808,13 @@ public class PsmImporter {
 
                         ArrayList<String> filteredNamesAtSite = new ArrayList<>(expectedNamesAtSite.size());
 
-                        for (String ptmName : expectedNamesAtSite) {
+                        for (String modName : expectedNamesAtSite) {
 
-                            Modification modification = modificationFactory.getModification(ptmName);
+                            Modification modification = modificationFactory.getModification(modName);
 
                             if (Math.abs(modification.getMass() - refMass) < searchParameters.getFragmentIonAccuracyInDaltons(amountPerAminoAcidResidue * peptideLength)) {
 
-                                filteredNamesAtSite.add(ptmName);
+                                filteredNamesAtSite.add(modName);
 
                             }
                         }
