@@ -122,7 +122,7 @@ public class SpectrumExporter {
                         String spectrumKey = spectrumMatch.getKey();
 
                         if (shallExport(spectrumMatch, exportType, sequenceMatchingPreferences)) {
-                            MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
+                            MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey, false);
                             b.write(spectrum.asMgf());
                         }
                         if (waitingHandler != null) {
@@ -140,7 +140,7 @@ public class SpectrumExporter {
                         for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
                             String spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
                             if (!identifiedSpectra.contains(spectrumKey)) {
-                                MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(mgfFile, spectrumTitle);
+                                MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(mgfFile, spectrumTitle, false);
                                 b.write(spectrum.asMgf());
                             }
                             if (waitingHandler != null) {

@@ -112,7 +112,7 @@ public class SpectrumRecalibrator {
             throw new IllegalArgumentException("No m/z deviation statistics found for spectrum file " + fileName + ".");
         }
 
-        MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(fileName, spectrumTitle);
+        MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(fileName, spectrumTitle, false);
         Precursor precursor = spectrum.getPrecursor();
         double precursorMz = precursor.getMz();
         double precursorRT = precursor.getRt();

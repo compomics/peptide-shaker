@@ -739,7 +739,7 @@ SpectrumMatch spectrumMatch;
         PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
         Peptide peptide = peptideAssumption.getPeptide();
         AnnotationSettings annotationPreferences = identificationParameters.getAnnotationPreferences();
-        MSnSpectrum spectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey()));
+        MSnSpectrum spectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey(), false));  
         SpecificAnnotationSettings specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
         ArrayList<IonMatch> matches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
         for (IonMatch annotation : matches) {
@@ -926,7 +926,7 @@ SpectrumMatch spectrumMatch;
                 }
 
                 String spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
-                MSnSpectrum tempSpectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey));
+                MSnSpectrum tempSpectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey, false));
                 if (!tempSpectrum.getPeakList().isEmpty()) {
                     boolean identified = identification.matchExists(spectrumKey);
                     writeSpectrum(tempSpectrum, identified, spectrumCounter);

@@ -5,7 +5,7 @@
     <groupId>eu.isas.peptideshaker</groupId>
     <artifactId>PeptideShaker</artifactId>
     <packaging>jar</packaging>
-    <version>1.16.19</version>
+    <version>1.16.20</version>
     <name>PeptideShaker</name>
     <url>https://github.com/compomics/peptide-shaker</url>
     <description>Interpretation of proteomics identification results</description>
@@ -38,6 +38,15 @@
             <name>Harald Barsnes</name>
             <id>harald</id>
             <email>harald.barsnes AT uib.no</email>
+            <organization>University of Bergen, Norway</organization>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Carlos Horro</name>
+            <id>carlos</id>
+            <email>carlos.horro AT uib.no</email>
             <organization>University of Bergen, Norway</organization>
             <roles>
                 <role>Java Developer</role>
@@ -326,7 +335,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>4.12.2</version>
+            <version>4.12.3</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
