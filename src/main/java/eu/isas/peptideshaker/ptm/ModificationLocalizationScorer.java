@@ -2336,15 +2336,15 @@ public class ModificationLocalizationScorer extends DbObject {
 
             ModificationLocalizationParameters modificationScoringParameters = identificationParameters.getModificationLocalizationParameters();
             Set<Double> modMasses = modMatchesMap.keySet();
-            TreeMap<Double, TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>>> ambiguousScoreToSiteMap = new TreeMap<>(); // p score -> d-score -> Map PTM mass -> site -> list of modifications
+            TreeMap<Double, TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>>> ambiguousScoreToSiteMap = new TreeMap<>(); // p score -> d-score -> Map mod mass -> site -> list of modifications
             HashMap<Double, Integer> nRepresentativesMap = new HashMap<>(modMasses.size());
             ArrayList<ModificationMatch> assignedModifications = new ArrayList<>(psPeptide.getNVariableModifications());
-            TreeMap<Double, TreeMap<Double, TreeMap<Double, TreeSet<Integer>>>> scoreToSiteMap = new TreeMap<>(); // p-score -> d-score -> PTM mass -> list of posssible sites
+            TreeMap<Double, TreeMap<Double, TreeMap<Double, TreeSet<Integer>>>> scoreToSiteMap = new TreeMap<>(); // p-score -> d-score -> mod mass -> list of posssible sites
 
             for (double modMass : modMasses) {
 
                 ArrayList<ModificationMatch> modificationMatches = modMatchesMap.get(modMass);
-                int nPTMs = modificationMatches.size();
+                int nMods = modificationMatches.size();
                 HashMap<Integer, String> modificationPotentialSites = possiblePositions.get(modMass);
                 int nPotentialSites = modificationPotentialSites.size();
                 HashMap<Integer, ArrayList<String>> modificationConfidentSites = confidentSites.get(modMass);
@@ -2356,7 +2356,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                 }
 
-                if (nPotentialSites < nPTMs) {
+                if (nPotentialSites < nMods) {
 
                     throw new IllegalArgumentException("The occurence of modification of mass " + modMass + " (" + modificationMatches.size()
                             + ") is higher than the number of possible sites (" + modificationPotentialSites.size() + ") on sequence " + psPeptide.getSequence()
@@ -2547,7 +2547,7 @@ public class ModificationLocalizationScorer extends DbObject {
                             ArrayList<ModificationMatch> modificationMatches = modMatchesMap.get(modificationMass);
                             HashMap<Integer, String> modificationPotentialSites = possiblePositions.get(modificationMass);
                             HashMap<Integer, ArrayList<String>> modificationConfidentSites = confidentSites.get(modificationMass);
-                            int nPTMs = modificationMatches.size(), nPotentialSites = modificationPotentialSites.size();
+                            int nMods = modificationMatches.size(), nPotentialSites = modificationPotentialSites.size();
 
                             double doubtfulThreshold = modificationScoringParameters.getProbabilisticScoreThreshold();
 
@@ -2555,7 +2555,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                             if (modificationScoringParameters.getSelectedProbabilisticScore() == ModificationLocalizationScore.PhosphoRS) {
 
-                                randomThreshold = (100.0 * nPTMs) / modificationPotentialSites.size();
+                                randomThreshold = (100.0 * nMods) / modificationPotentialSites.size();
 
                             }
 
@@ -2583,7 +2583,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                                 ModificationMatch modificationMatch = null;
 
-                                if (nAssignedSites < nPTMs) {
+                                if (nAssignedSites < nMods) {
 
                                     boolean alreadyOccupied = false;
 
