@@ -39,7 +39,6 @@ import com.compomics.util.experiment.io.identification.idfilereaders.NovorIdfile
 import com.compomics.util.experiment.io.identification.idfilereaders.OnyaseIdfileReader;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.waiting.WaitingHandler;
-import de.proteinms.omxparser.util.OMSSAIdfileReader;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.psm_scoring.BestMatchSelection;
 import java.io.File;
@@ -192,6 +191,7 @@ public class PsmImporter {
      * @param inputMap the input map to use for scoring
      * @param proteinCount the protein count of this project
      * @param singleProteinList list of one hit wonders for this project
+     * @param sequenceProvider the protein sequence provider
      * @param exceptionHandler handler for exceptions
      */
     public PsmImporter(IdentificationParameters identificationParameters, IdfileReader fileReader, File idFile,
@@ -412,45 +412,7 @@ public class PsmImporter {
 
                                 String seMod = modMatch.getModification();
 
-                                if (fileReader instanceof OMSSAIdfileReader) {
-
-                                    OmssaParameters omssaParameters = (OmssaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.omssa.getIndex());
-
-                                    if (!omssaParameters.hasModificationIndexes()) {
-
-                                        throw new IllegalArgumentException("OMSSA modification indexes not set in the search parameters.");
-
-                                    }
-
-                                    int omssaIndex;
-
-                                    try {
-
-                                        omssaIndex = Integer.parseInt(seMod);
-
-                                    } catch (Exception e) {
-
-                                        throw new IllegalArgumentException("Impossible to parse OMSSA modification index " + seMod + ".");
-
-                                    }
-
-                                    String omssaName = omssaParameters.getModificationName(omssaIndex);
-
-                                    if (omssaName == null) {
-
-                                        if (!ignoredModifications.contains(omssaIndex)) {
-
-                                            waitingHandler.appendReport("Impossible to find OMSSA modification of index "
-                                                    + omssaIndex + ". The corresponding peptides will be ignored.", true, true);
-                                            ignoredModifications.add(omssaIndex);
-
-                                        }
-                                    }
-
-                                    Modification modification = modificationFactory.getModification(omssaName);
-                                    tempNames = ModificationUtils.getExpectedModifications(modification.getMass(), modificationProfile, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
-
-                                } else if (fileReader instanceof AndromedaIdfileReader) {
+                                if (fileReader instanceof AndromedaIdfileReader) {
 
                                     AndromedaParameters andromedaParameters = (AndromedaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.andromeda.getIndex());
 
