@@ -6,7 +6,6 @@ import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
@@ -452,6 +451,7 @@ public abstract class MatchFilter implements Serializable, Filter {
      * generator where to get identification features
      * @param identificationParameters the identification parameters used
      * @param sequenceProvider the protein sequence provider
+     * @param proteinDetailsProvider the protein details provider
      *
      * @return a boolean indicating whether the match designated by the protein
      * key validates the given item using the given comparator and value
