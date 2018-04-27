@@ -410,9 +410,52 @@ public class PsmImporter {
 
                             HashMap<Integer, HashSet<String>> tempNames = new HashMap<>(modificationMatches.length);
 
-                                String seMod = modMatch.getModification();
+                            String seMod = modMatch.getModification();
 
-                                if (fileReader instanceof AndromedaIdfileReader) {
+//                            if (fileReader instanceof OMSSAIdfileReader) {
+//
+//                                OmssaParameters omssaParameters = (OmssaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.omssa.getIndex());
+//
+//                                if (!omssaParameters.hasModificationIndexes()) {
+//
+//                                    throw new IllegalArgumentException("OMSSA modification indexes not set in the search parameters.");
+//
+//                                }
+//
+//                                int omssaIndex;
+//
+//                                try {
+//
+//                                    omssaIndex = Integer.parseInt(seMod);
+//
+//                                } catch (Exception e) {
+//
+//                                    throw new IllegalArgumentException("Impossible to parse OMSSA modification index " + seMod + ".");
+//
+//                                }
+//
+//                                String omssaName = omssaParameters.getModificationName(omssaIndex);
+//
+//                                if (omssaName == null) {
+//
+//                                    if (!ignoredModifications.contains(omssaIndex)) {
+//
+//                                        waitingHandler.appendReport("Impossible to find OMSSA modification of index "
+//                                                + omssaIndex + ". The corresponding peptides will be ignored.", true, true);
+//
+//                                        ignoredModifications.add(omssaIndex);
+//
+//                                    }
+//
+//                                }
+//
+//                                Modification modification = modificationFactory.getModification(omssaName);
+//
+//                                tempNames = ModificationUtils.getExpectedModifications(modification.getMass(), modificationProfile, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
+//
+//                            } else 
+                                
+                              if (fileReader instanceof AndromedaIdfileReader) {
 
                                     AndromedaParameters andromedaParameters = (AndromedaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.andromeda.getIndex());
 
