@@ -29,7 +29,6 @@ import com.compomics.util.parameters.identification.advanced.PeptideVariantsPara
 import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.protein_inference.PeptideMapper;
 import eu.isas.peptideshaker.protein_inference.TagMapper;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.utils.Metrics;
@@ -77,9 +76,9 @@ public class FileImporter {
      */
     private final Metrics metrics;
     /**
-     * The mass tolerance to be used to match modifications from search engines and
-     * expected modifications. 0.01 by default, the mass
-     * resolution in X!Tandem result files.
+     * The mass tolerance to be used to match modifications from search engines
+     * and expected modifications. 0.01 by default, the mass resolution in
+     * X!Tandem result files.
      */
     public static final double MOD_MASS_TOLERANCE = 0.01;
     /**
@@ -136,10 +135,6 @@ public class FileImporter {
      */
     private FastaMapper fastaMapper;
     /**
-     * A peptide to protein mapper.
-     */
-    private final PeptideMapper peptideMapper;
-    /**
      * A tag to protein mapper.
      */
     private final TagMapper tagMapper;
@@ -176,20 +171,19 @@ public class FileImporter {
      * @param metrics metrics of the dataset to be saved for the GUI
      * @param exceptionHandler the exception handler
      */
-    public FileImporter(Identification identification, IdentificationParameters identificationParameters, ProcessingParameters processingParameters, 
+    public FileImporter(Identification identification, IdentificationParameters identificationParameters, ProcessingParameters processingParameters,
             Metrics metrics, ProjectDetails projectDetails, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
-        
+
         this.identificationParameters = identificationParameters;
         this.metrics = metrics;
         this.processingParameters = processingParameters;
         this.projectDetails = projectDetails;
         this.waitingHandler = waitingHandler;
         this.exceptionHandler = exceptionHandler;
-            this.identification = identification;
+        this.identification = identification;
 
-        peptideMapper = new PeptideMapper(identificationParameters, waitingHandler);
         tagMapper = new TagMapper(identificationParameters, exceptionHandler);
-        
+
     }
 
     /**
@@ -197,34 +191,34 @@ public class FileImporter {
      *
      * @param idFiles the identification files
      * @param spectrumFiles the spectrum files
-     * 
+     *
      * @return 0 if success, 1 if not
      */
     public int importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles) {
 
         ArrayList<File> sortedIdFiles = idFiles.stream()
                 .collect(Collectors.groupingBy(File::getName, TreeMap::new, Collectors.toList()))
-                 .values().stream()
-                 .flatMap(List::stream)
-                 .distinct()
+                .values().stream()
+                .flatMap(List::stream)
+                .distinct()
                 .collect(Collectors.toCollection(ArrayList::new));
-        
+
         for (File spectrumFile : spectrumFiles) {
-            
+
             this.spectrumFiles.put(spectrumFile.getName(), spectrumFile);
-            
+
         }
-        
+
         try {
-            
-            importSequences(identificationParameters.getSequenceMatchingParameters(), 
-                    identificationParameters.getSearchParameters(), identificationParameters.getPeptideVariantsParameters(), 
+
+            importSequences(identificationParameters.getSequenceMatchingParameters(),
+                    identificationParameters.getSearchParameters(), identificationParameters.getPeptideVariantsParameters(),
                     waitingHandler, exceptionHandler);
 
             if (waitingHandler.isRunCanceled()) {
-            
+
                 return 1;
-            
+
             }
 
             GeneParameters genePreferences = identificationParameters.getGeneParameters();
@@ -257,7 +251,7 @@ public class FileImporter {
                 waitingHandler.appendReport("Reading identification files.", true, true);
 
                 for (File idFile : sortedIdFiles) {
-                   
+
                     importPsms(idFile);
 
                     if (waitingHandler.isRunCanceled()) {
@@ -288,18 +282,18 @@ public class FileImporter {
                                 .map(File::getName)
                                 .sorted()
                                 .collect(Collectors.joining(", "));
-                        
+
                         waitingHandler.appendReport("MGF files missing: " + missingFiles, true, true);
                         identification.close();
                         return 1;
-                    
+
                     }
-                    
+
                     waitingHandler.appendReport("Processing files with the new input.", true, true);
                     ArrayList<File> filesToProcess = new ArrayList<>(missingMgfFiles.keySet());
 
                     for (String mgfName : missingMgfFiles.values()) {
- 
+
                         File newFile = spectrumFactory.getSpectrumFileFromIdName(mgfName);
                         this.spectrumFiles.put(newFile.getName(), newFile);
                         projectDetails.addSpectrumFile(newFile);
@@ -339,7 +333,7 @@ public class FileImporter {
                         + nPSMs + " first hits imported (" + nTotal + " total) from " + nSpectra + " spectra.", true, true);
                 waitingHandler.appendReport("[" + nRetained + " first hits passed the initial filtering]", true, true);
                 waitingHandler.increaseSecondaryProgressCounter(spectrumFiles.size() - mgfUsed.size());
-            
+
             }
         } catch (OutOfMemoryError error) {
 
@@ -432,8 +426,9 @@ public class FileImporter {
      * Imports the PSMs from an identification file.
      *
      * @param idFile the identification file
-     * 
-     * @throws java.io.IOException exception thrown if an error occurred when parsing the file
+     *
+     * @throws java.io.IOException exception thrown if an error occurred when
+     * parsing the file
      */
     public void importPsms(File idFile) throws IOException {
 
@@ -442,14 +437,14 @@ public class FileImporter {
 
         IdfileReader fileReader = null;
         try {
-            
+
             fileReader = readerFactory.getFileReader(idFile);
-        
+
         } catch (OutOfMemoryError error) {
-        
+
             waitingHandler.appendReport("Ran out of memory when parsing \'" + Util.getFileName(idFile) + "\'.", true, true);
             throw new OutOfMemoryError("Ran out of memory when parsing \'" + Util.getFileName(idFile) + "\'.");
-        
+
         }
 
         if (fileReader == null) {
@@ -466,15 +461,7 @@ public class FileImporter {
 
         try {
 
-            if (peptideMapper != null) {
-
-                idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, identificationParameters.getSearchParameters(), identificationParameters.getSequenceMatchingParameters(), true);
-
-            } else {
-
-                idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, identificationParameters.getSearchParameters(), null, true);
-
-            }
+            idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, identificationParameters.getSearchParameters(), identificationParameters.getSequenceMatchingParameters(), true);
 
         } catch (Exception e) {
 
@@ -549,22 +536,16 @@ public class FileImporter {
 
                     }
 
-                    // Map the peptides on protein sequences
-                    waitingHandler.resetSecondaryProgressCounter();
-                    waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches); // @TODO the progress counter should be initialized on the total number of peptides
-                    waitingHandler.appendReport("Mapping peptides to proteins.", true, true);
-                    peptideMapper.mapPeptides(idFileSpectrumMatches, fastaMapper);
-
                     waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                     waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);
 
-                    PsmImporter psmImporter = new PsmImporter(identificationParameters, fileReader, idFile, identification, inputMap, proteinCount, singleProteinList, sequenceProvider, exceptionHandler);
+                    PsmImporter psmImporter = new PsmImporter(identificationParameters, fileReader, idFile, identification, inputMap, proteinCount, singleProteinList, sequenceProvider, fastaMapper);
                     psmImporter.importPsms(idFileSpectrumMatches, processingParameters.getnThreads(), waitingHandler);
 
                     if (waitingHandler.isRunCanceled()) {
-                        
+
                         return;
-                    
+
                     }
 
                     nPSMs += psmImporter.getnPSMs();
@@ -596,7 +577,7 @@ public class FileImporter {
                         metrics.setMaxTagPrecursorErrorPpm(psmImporter.getMaxTagErrorPpm());
 
                     }
-                    
+
                     projectDetails.addIdentificationFiles(idFile);
 
                     int psmsRejected = psmImporter.getPsmsRejected();
@@ -947,7 +928,7 @@ public class FileImporter {
 
         File fastaFile = searchParameters.getFastaFile();
         FastaParameters fastaParameters = searchParameters.getFastaParameters();
-        
+
         waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".", true, true);
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
@@ -975,7 +956,7 @@ public class FileImporter {
 
     /**
      * Returns the gene maps.
-     * 
+     *
      * @return the gene maps
      */
     public GeneMaps getGeneMaps() {
@@ -984,7 +965,7 @@ public class FileImporter {
 
     /**
      * Returns the sequence provider.
-     * 
+     *
      * @return the sequence provider
      */
     public SequenceProvider getSequenceProvider() {
@@ -993,7 +974,7 @@ public class FileImporter {
 
     /**
      * Returns the details provider.
-     * 
+     *
      * @return the details provider
      */
     public ProteinDetailsProvider getProteinDetailsProvider() {
@@ -1002,7 +983,7 @@ public class FileImporter {
 
     /**
      * Returns the fasta mapper.
-     * 
+     *
      * @return the fasta mapper
      */
     public FastaMapper getFastaMapper() {
@@ -1016,6 +997,5 @@ public class FileImporter {
     public HashMap<String, Integer> getProteinCount() {
         return proteinCount;
     }
-    
-    
+
 }
