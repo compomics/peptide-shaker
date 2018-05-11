@@ -51,7 +51,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import static eu.isas.peptideshaker.fileimport.FileImporter.MOD_MASS_TOLERANCE;
+import eu.isas.peptideshaker.protein_inference.PeptideChecker;
+import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
@@ -380,7 +383,7 @@ public class PsmImporter {
             TreeMap<Double, ArrayList<PeptideAssumption>> assumptionsForAdvocate = entry.getValue();
 
             // Map modifications
-            HashSet<Double> scores = new HashSet<>(assumptionsForAdvocate.keySet());
+            TreeSet<Double> scores = new TreeSet<>(assumptionsForAdvocate.keySet());
 
             for (double score : scores) {
 
@@ -530,8 +533,10 @@ public class PsmImporter {
 
                         }
 
+                        // Map peptide to protein
                         proteinMapping(peptide);
-                        
+
+                        // Add new assumption
                         newAssumptions.add(peptideAssumption);
 
                     } else {
@@ -552,6 +557,17 @@ public class PsmImporter {
                 }
             }
 
+            // Score modification localization
+            ModificationLocalizationScorer modificationLocalizationScorer = new ModificationLocalizationScorer();
+            modificationLocalizationScorer.scorePTMs(identification, spectrumMatch, sequenceProvider, identificationParameters, waitingHandler, peptideSpectrumAnnotator);
+            
+            // Set modification sites
+            modificationLocalizationScorer.modificationSiteInference(spectrumMatch, sequenceProvider, identificationParameters);
+            
+            // Update protein mapping based on modification profile
+            spectrumMatch.getAllPeptideAssumptions().forEach(
+                    peptideAssumption -> PeptideChecker.checkPeptide(peptideAssumption.getPeptide(), sequenceProvider, modificationSequenceMatchingPreferences));
+
             // try to find the best peptide hit passing the initial filters
             PeptideAssumption firstPeptideHit = null;
             PeptideAssumption firstPeptideHitNoProtein = null;
@@ -559,15 +575,12 @@ public class PsmImporter {
 
             if (!assumptionsForAdvocate.isEmpty()) {
 
-                ArrayList<Double> advocateScores = new ArrayList<>(assumptionsForAdvocate.keySet());
-                Collections.sort(advocateScores);
-
-                for (double score : advocateScores) {
+                for (Entry<Double, ArrayList<PeptideAssumption>> entry1 : assumptionsForAdvocate.entrySet()) {
 
                     ArrayList<PeptideAssumption> firstHits = new ArrayList<>(1);
                     ArrayList<PeptideAssumption> firstHitsNoProteins = new ArrayList<>(1);
 
-                    for (PeptideAssumption peptideAssumption : assumptionsForAdvocate.get(score)) {
+                    for (PeptideAssumption peptideAssumption : entry1.getValue()) {
 
                         Peptide peptide = peptideAssumption.getPeptide();
                         boolean filterPassed = true;
@@ -670,6 +683,7 @@ public class PsmImporter {
                 }
             }
         }
+
     }
 
     /**
@@ -1138,7 +1152,7 @@ public class PsmImporter {
 
     /**
      * Maps the peptide sequence to the fasta file.
-     * 
+     *
      * @param peptide the peptide to map
      */
     private void proteinMapping(Peptide peptide) {

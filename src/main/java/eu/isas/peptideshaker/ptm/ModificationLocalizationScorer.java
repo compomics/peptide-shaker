@@ -714,7 +714,6 @@ public class ModificationLocalizationScorer extends DbObject {
                 for (int representativeSite : psmScores.getRepresentativeSites()) {
 
                     HashMap<Integer, HashSet<String>> ambiguousMappingAtSite = psmScores.getAmbiguousModificationsAtRepresentativeSite(representativeSite);
-                    int mappingSize = ambiguousMappingAtSite.size();
 
                     for (Entry<Integer, HashSet<String>> entry : ambiguousMappingAtSite.entrySet()) {
 
@@ -2227,7 +2226,7 @@ public class ModificationLocalizationScorer extends DbObject {
      * @param sequenceProvider the sequence provider
      * @param identificationParameters the identification parameters
      */
-    private void modificationSiteInference(SpectrumMatch spectrumMatch, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters) {
+    public void modificationSiteInference(SpectrumMatch spectrumMatch, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters) {
 
         Peptide psPeptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
 

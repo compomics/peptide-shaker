@@ -203,7 +203,7 @@ public class PeptideShaker {
 
         fileImporter = new FileImporter(identification, identificationParameters, processingPreferences, metrics, projectDetails, waitingHandler, exceptionHandler);
         fileImporter.importFiles(idFiles, spectrumFiles);
-        
+
         geneMaps = fileImporter.getGeneMaps();
         fastaMapper = fileImporter.getFastaMapper();
         sequenceProvider = fileImporter.getSequenceProvider();
@@ -228,8 +228,8 @@ public class PeptideShaker {
      * @throws java.util.concurrent.TimeoutException exception thrown if a
      * process times out
      */
-    public void createProject(IdentificationParameters identificationParameters, ProcessingParameters processingParameters, 
-            SpectrumCountingParameters spectrumCountingParameters, ProjectDetails projectDetails, 
+    public void createProject(IdentificationParameters identificationParameters, ProcessingParameters processingParameters,
+            SpectrumCountingParameters spectrumCountingParameters, ProjectDetails projectDetails,
             WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) throws InterruptedException, TimeoutException {
 
         identification.getObjectsDB().commit();
@@ -295,11 +295,11 @@ public class PeptideShaker {
         identification.getObjectsDB().commit();
         System.gc();
 
-            waitingHandler.appendReport("Saving assumptions probabilities.", true, true);
-            
+        waitingHandler.appendReport("Saving assumptions probabilities.", true, true);
+
         attachAssumptionsProbabilities(inputMap, fastaParameters, identificationParameters.getSequenceMatchingParameters(), waitingHandler);
         waitingHandler.increasePrimaryProgressCounter();
-        
+
         if (waitingHandler.isRunCanceled()) {
 
             return;
@@ -324,11 +324,11 @@ public class PeptideShaker {
 
         identification.getObjectsDB().commit();
         System.gc();
-            
-            waitingHandler.appendReport("Computing PSM probabilities.", true, true);
-        
+
+        waitingHandler.appendReport("Computing PSM probabilities.", true, true);
+
         matchesValidator.getPsmMap().estimateProbabilities(waitingHandler);
-        
+
         if (waitingHandler.isRunCanceled()) {
 
             return;
@@ -338,16 +338,16 @@ public class PeptideShaker {
         identification.getObjectsDB().commit();
 
         String report = "Scoring PTMs in PSMs (D-score";
-        
+
         ModificationLocalizationParameters ptmScoringPreferences = identificationParameters.getModificationLocalizationParameters();
         if (ptmScoringPreferences.isProbabilisticScoreCalculation()) {
-        
+
             report += " and " + ptmScoringPreferences.getSelectedProbabilisticScore().getName();
-        
+
         }
-        
+
         report += ")";
-        
+
         waitingHandler.appendReport(report, true, true);
         ptmScorer.scorePsmPtms(identification, sequenceProvider, identificationParameters, metrics, processingParameters, waitingHandler, exceptionHandler);
         waitingHandler.increasePrimaryProgressCounter();
@@ -359,9 +359,9 @@ public class PeptideShaker {
 
         identification.getObjectsDB().commit();
         System.gc();
-        
+
         waitingHandler.increasePrimaryProgressCounter();
-        
+
         if (waitingHandler.isRunCanceled()) {
 
             return;
@@ -431,10 +431,10 @@ public class PeptideShaker {
         identification.getObjectsDB().commit();
         System.gc();
 
-            waitingHandler.appendReport("Computing peptide probabilities.", true, true);
-            
+        waitingHandler.appendReport("Computing peptide probabilities.", true, true);
+
         matchesValidator.getPeptideMap().estimateProbabilities(waitingHandler);
-        
+
         if (waitingHandler.isRunCanceled()) {
 
             return;
@@ -447,7 +447,7 @@ public class PeptideShaker {
         waitingHandler.appendReport("Saving peptide probabilities.", true, true);
         matchesValidator.attachPeptideProbabilities(identification, fastaParameters, waitingHandler);
         waitingHandler.increasePrimaryProgressCounter();
-        
+
         if (waitingHandler.isRunCanceled()) {
 
             return;
@@ -510,11 +510,11 @@ public class PeptideShaker {
 
             }
         } else {
-            
+
             waitingHandler.appendReport("Quality control of matches.", true, true);
-        
+
         }
-        
+
         matchesValidator.validateIdentifications(identification, metrics, inputMap, waitingHandler, exceptionHandler, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, spectrumCountingParameters, processingParameters);
         waitingHandler.increasePrimaryProgressCounter();
 
@@ -576,10 +576,10 @@ public class PeptideShaker {
      */
     public void spectrumMapChanged(Identification identification, WaitingHandler waitingHandler, ProcessingParameters processingPreferences,
             IdentificationParameters identificationParameters, SequenceProvider sequenceProvider) {
-        
+
         FastaParameters fastaParameters = identificationParameters.getSearchParameters().getFastaParameters();
         FractionParameters fractionParameters = identificationParameters.getFractionParameters();
-        
+
         TargetDecoyMap peptideMap = new TargetDecoyMap();
         TargetDecoyMap proteinMap = new TargetDecoyMap();
         matchesValidator.setPeptideMap(peptideMap);
@@ -591,7 +591,7 @@ public class PeptideShaker {
         matchesValidator.fillProteinMap(identification, waitingHandler);
         proteinMap.estimateProbabilities(waitingHandler);
         matchesValidator.attachProteinProbabilities(identification, sequenceProvider, fastaParameters, metrics, waitingHandler, fractionParameters);
-        
+
     }
 
     /**
@@ -605,17 +605,17 @@ public class PeptideShaker {
      */
     public void peptideMapChanged(Identification identification, WaitingHandler waitingHandler,
             IdentificationParameters identificationParameters, SequenceProvider sequenceProvider) {
-        
+
         FastaParameters fastaParameters = identificationParameters.getSearchParameters().getFastaParameters();
         FractionParameters fractionParameters = identificationParameters.getFractionParameters();
-        
+
         TargetDecoyMap proteinMap = new TargetDecoyMap();
         matchesValidator.setProteinMap(proteinMap);
         matchesValidator.attachPeptideProbabilities(identification, fastaParameters, waitingHandler);
         matchesValidator.fillProteinMap(identification, waitingHandler);
         proteinMap.estimateProbabilities(waitingHandler);
         matchesValidator.attachProteinProbabilities(identification, sequenceProvider, fastaParameters, metrics, waitingHandler, fractionParameters);
-        
+
     }
 
     /**
@@ -629,12 +629,12 @@ public class PeptideShaker {
      */
     public void proteinMapChanged(Identification identification, WaitingHandler waitingHandler,
             IdentificationParameters identificationParameters, SequenceProvider sequenceProvider) {
-        
+
         FastaParameters fastaParameters = identificationParameters.getSearchParameters().getFastaParameters();
         FractionParameters fractionParameters = identificationParameters.getFractionParameters();
-        
+
         matchesValidator.attachProteinProbabilities(identification, sequenceProvider, fastaParameters, metrics, waitingHandler, fractionParameters);
- 
+
     }
 
     /**
@@ -968,7 +968,7 @@ public class PeptideShaker {
 
     /**
      * Returns the identification object.
-     * 
+     *
      * @return the identification object
      */
     public Identification getIdentification() {
@@ -1110,9 +1110,9 @@ public class PeptideShaker {
     public static File getMatchesDirectoryParentFile() {
         String matchesParentDirectory = PeptideShaker.getMatchesDirectoryParent();
 
-        return matchesParentDirectory.equals("resources") ? 
-                new File(getJarFilePath(), matchesParentDirectory) : new File(matchesParentDirectory);
-                
+        return matchesParentDirectory.equals("resources")
+                ? new File(getJarFilePath(), matchesParentDirectory) : new File(matchesParentDirectory);
+
     }
 
     /**
