@@ -11,7 +11,7 @@ import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import eu.isas.peptideshaker.filtering.items.ProteinFilterItem;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSModificationScores;
-import eu.isas.peptideshaker.scoring.MatchValidationLevel;
+import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.util.Arrays;
 import java.util.HashMap;

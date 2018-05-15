@@ -31,7 +31,7 @@ import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSModificationScores;
 import eu.isas.peptideshaker.preferences.FilterParameters;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
-import eu.isas.peptideshaker.scoring.MatchValidationLevel;
+import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

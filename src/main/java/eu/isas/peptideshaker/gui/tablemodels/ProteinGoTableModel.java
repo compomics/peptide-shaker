@@ -4,7 +4,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.scoring.MatchValidationLevel;
+import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.util.ArrayList;

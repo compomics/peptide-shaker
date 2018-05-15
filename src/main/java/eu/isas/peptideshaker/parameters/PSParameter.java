@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.parameters;
 import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.db.object.DbObject;
 import com.compomics.util.experiment.personalization.UrParameter;
-import eu.isas.peptideshaker.scoring.MatchValidationLevel;
+import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
