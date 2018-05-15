@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.preferences;
 
+import com.compomics.util.experiment.quantification.spectrumcounting.SpectrumCountingMethod;
 import com.compomics.util.experiment.units.MetricsPrefix;
 import com.compomics.util.experiment.units.StandardUnit;
 import com.compomics.util.experiment.units.UnitOfMeasurement;
@@ -30,18 +31,10 @@ public class SpectrumCountingParameters implements Serializable {
      * Indicates whether the spectrum counting index should be normalized.
      */
     private Boolean normalize = true;
-
-    /**
-     * The spectrum counting methods.
-     */
-    public enum SpectralCountingMethod {
-
-        NSAF, EMPAI
-    };
     /**
      * The currently selected spectrum counting method.
      */
-    private SpectralCountingMethod selectedMethod;
+    private SpectrumCountingMethod selectedMethod;
     /**
      * The minimal match validation level to consider as indexed in the
      * MatchValidationLevel enum.
@@ -53,7 +46,7 @@ public class SpectrumCountingParameters implements Serializable {
      */
     public SpectrumCountingParameters() {
         // Set default preferences
-        selectedMethod = SpectralCountingMethod.NSAF;
+        selectedMethod = SpectrumCountingMethod.NSAF;
         matchValidationLevel = MatchValidationLevel.doubtful.getIndex();
     }
 
@@ -76,7 +69,7 @@ public class SpectrumCountingParameters implements Serializable {
      *
      * @return the current spectrum counting method
      */
-    public SpectralCountingMethod getSelectedMethod() {
+    public SpectrumCountingMethod getSelectedMethod() {
         return selectedMethod;
     }
 
@@ -85,7 +78,7 @@ public class SpectrumCountingParameters implements Serializable {
      *
      * @param selectedMethod the spectral counting method
      */
-    public void setSelectedMethod(SpectralCountingMethod selectedMethod) {
+    public void setSelectedMethod(SpectrumCountingMethod selectedMethod) {
         this.selectedMethod = selectedMethod;
     }
 

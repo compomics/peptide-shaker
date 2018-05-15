@@ -3,12 +3,12 @@ package eu.isas.peptideshaker.export;
 import com.compomics.util.experiment.biology.enzymes.Enzyme;
 import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
-import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.modification.ModificationLocalizationScore;
 import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
+import com.compomics.util.experiment.quantification.spectrumcounting.SpectrumCountingMethod;
 import com.compomics.util.parameters.identification.search.DigestionParameters;
 import com.compomics.util.parameters.identification.advanced.IdMatchValidationParameters;
 import com.compomics.util.parameters.identification.advanced.ModificationLocalizationParameters;
@@ -536,7 +536,7 @@ public class PeptideShakerMethods {
 
         String text = "Spectrum counting abundance indexes were estimated using the ";
 
-        if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingParameters.SpectralCountingMethod.EMPAI) {
+        if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingMethod.EMPAI) {
 
             text += "emPAI index [PMID 15958392].";
 

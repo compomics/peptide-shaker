@@ -31,6 +31,7 @@ import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
+import com.compomics.util.experiment.quantification.spectrumcounting.SpectrumCountingMethod;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import eu.isas.peptideshaker.gui.MatchValidationDialog;
@@ -47,7 +48,6 @@ import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSModificationScores;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
-import eu.isas.peptideshaker.preferences.SpectrumCountingParameters.SpectralCountingMethod;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.awt.*;
@@ -5034,9 +5034,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     ((DefaultTableModel) proteinTable.getModel()).fireTableDataChanged();
 
                     // update spectrum counting column header tooltip
-                    if (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod() == SpectralCountingMethod.NSAF) {
+                    if (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod() == SpectrumCountingMethod.NSAF) {
                         proteinTableToolTips.set(proteinTable.getColumn("MS2 Quant.").getModelIndex(), "Protein MS2 Quantification - NSAF");
-                    } else if (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod() == SpectralCountingMethod.EMPAI) {
+                    } else if (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod() == SpectrumCountingMethod.EMPAI) {
                         proteinTableToolTips.set(proteinTable.getColumn("MS2 Quant.").getModelIndex(), "Protein MS2 Quantification - emPAI");
                     } else {
                         proteinTableToolTips.set(proteinTable.getColumn("MS2 Quant.").getModelIndex(), "Protein MS2 Quantification");

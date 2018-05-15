@@ -7,6 +7,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
+import com.compomics.util.experiment.quantification.spectrumcounting.SpectrumCountingMethod;
 import com.compomics.util.experiment.units.Units;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
@@ -550,48 +551,48 @@ public class PsProteinSection {
             case spectrum_counting_nsaf:
                 
                 return Double.toString(identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
-                        SpectrumCountingParameters.SpectralCountingMethod.NSAF));
+                        SpectrumCountingMethod.NSAF));
                 
             case spectrum_counting_empai:
                 
                 return Double.toString(identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
-                        SpectrumCountingParameters.SpectralCountingMethod.EMPAI));
+                        SpectrumCountingMethod.EMPAI));
                 
             case spectrum_counting_empai_percent:
                 
                 return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
                                 Units.percent, 
-                                SpectrumCountingParameters.SpectralCountingMethod.EMPAI));
+                                SpectrumCountingMethod.EMPAI));
             
             case spectrum_counting_nsaf_percent:
                 
                 return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
                                 Units.percent, 
-                                SpectrumCountingParameters.SpectralCountingMethod.NSAF));
+                                SpectrumCountingMethod.NSAF));
             
             case spectrum_counting_empai_ppm:
 
                 return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
                                 Units.ppm, 
-                                SpectrumCountingParameters.SpectralCountingMethod.EMPAI));
+                                SpectrumCountingMethod.EMPAI));
 
             case spectrum_counting_nsaf_ppm:
 
                 return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
                                 Units.ppm, 
-                                SpectrumCountingParameters.SpectralCountingMethod.NSAF));
+                                SpectrumCountingMethod.NSAF));
 
             case spectrum_counting_empai_fmol:
 
                 return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
                                 Units.fmol, 
-                                SpectrumCountingParameters.SpectralCountingMethod.EMPAI));
+                                SpectrumCountingMethod.EMPAI));
 
             case spectrum_counting_nsaf_fmol:
 
                 return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
                                 Units.fmol, 
-                                SpectrumCountingParameters.SpectralCountingMethod.NSAF));
+                                SpectrumCountingMethod.NSAF));
 
             case starred:
                 

@@ -5,6 +5,7 @@ import com.compomics.util.experiment.units.StandardUnit;
 import com.compomics.util.experiment.units.UnitOfMeasurement;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
+import com.compomics.util.experiment.quantification.spectrumcounting.SpectrumCountingMethod;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -56,7 +57,7 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
     private void populateGUI(SpectrumCountingParameters spectrumCountingPreferences) {
 
         // The spectrum couting method
-        if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingParameters.SpectralCountingMethod.NSAF) {
+        if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingMethod.NSAF) {
             methodCmb.setSelectedIndex(0);
             validationLevelLbl.setText("Spectra Considered:");
         } else {
@@ -188,9 +189,9 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
 
         SpectrumCountingParameters spectrumCountingPreferences = new SpectrumCountingParameters();
         if (methodCmb.getSelectedIndex() == 0) {
-            spectrumCountingPreferences.setSelectedMethod(SpectrumCountingParameters.SpectralCountingMethod.NSAF);
+            spectrumCountingPreferences.setSelectedMethod(SpectrumCountingMethod.NSAF);
         } else if (methodCmb.getSelectedIndex() == 1) {
-            spectrumCountingPreferences.setSelectedMethod(SpectrumCountingParameters.SpectralCountingMethod.EMPAI);
+            spectrumCountingPreferences.setSelectedMethod(SpectrumCountingMethod.EMPAI);
         } else {
             throw new UnsupportedOperationException("Option " + methodCmb.getSelectedIndex() + "not supported.");
         }

@@ -18,6 +18,7 @@ import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
+import com.compomics.util.experiment.quantification.spectrumcounting.SpectrumCountingMethod;
 import com.compomics.util.experiment.units.StandardUnit;
 import com.compomics.util.experiment.units.UnitOfMeasurement;
 import com.compomics.util.math.statistics.Distribution;
@@ -30,7 +31,6 @@ import eu.isas.peptideshaker.parameters.PSParameter;
 import eu.isas.peptideshaker.parameters.PSModificationScores;
 import eu.isas.peptideshaker.preferences.FilterParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
-import eu.isas.peptideshaker.preferences.SpectrumCountingParameters.SpectralCountingMethod;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -717,7 +717,7 @@ public class IdentificationFeaturesGenerator {
      * @return the corresponding spectrum counting metric normalized in the
      * metricsprefix of mol
      */
-    public double getNormalizedSpectrumCounting(long proteinMatchKey, UnitOfMeasurement unit, SpectrumCountingParameters.SpectralCountingMethod method) {
+    public double getNormalizedSpectrumCounting(long proteinMatchKey, UnitOfMeasurement unit, SpectrumCountingMethod method) {
         return getNormalizedSpectrumCounting(proteinMatchKey, metrics, unit, spectrumCountingPreferences.getReferenceMass(), method);
     }
 
@@ -735,7 +735,7 @@ public class IdentificationFeaturesGenerator {
      * @return the corresponding spectrum counting metric normalized in the
      * metrics prefix of mol
      */
-    public double getNormalizedSpectrumCounting(long proteinMatchKey, Metrics metrics, UnitOfMeasurement unit, Double referenceMass, SpectrumCountingParameters.SpectralCountingMethod method) {
+    public double getNormalizedSpectrumCounting(long proteinMatchKey, Metrics metrics, UnitOfMeasurement unit, Double referenceMass, SpectrumCountingMethod method) {
 
         double spectrumCounting = getSpectrumCounting(proteinMatchKey, method);
 
@@ -810,7 +810,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the corresponding spectrum counting metric
      */
-    public Double getSpectrumCounting(long proteinMatchKey, SpectrumCountingParameters.SpectralCountingMethod method) {
+    public Double getSpectrumCounting(long proteinMatchKey, SpectrumCountingMethod method) {
 
         if (method == spectrumCountingPreferences.getSelectedMethod()) {
 
@@ -883,7 +883,7 @@ public class IdentificationFeaturesGenerator {
         ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinMatchKey);
         DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
 
-        if (spectrumCountingPreferences.getSelectedMethod() == SpectralCountingMethod.NSAF) {
+        if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingMethod.NSAF) {
 
             // NSAF
             double result = 0;

@@ -6,40 +6,33 @@ import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.protein_inference.FastaMapper;
-import com.compomics.util.experiment.identification.protein_inference.fm_index.FMIndex;
-import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
+import com.compomics.util.experiment.quantification.spectrumcounting.SpectrumCountingMethod;
 import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.IdentificationParameters;
-import com.compomics.util.parameters.identification.advanced.ProteinInferenceParameters;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.parameters.PeptideShakerParameters;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.preferences.FilterParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
-import eu.isas.peptideshaker.preferences.SpectrumCountingParameters.SpectralCountingMethod;
 import eu.isas.peptideshaker.preferences.UserParameters;
 import eu.isas.peptideshaker.preferences.UserPreferencesParent;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import org.apache.commons.compress.archivers.ArchiveException;
 
 /**
  * Implementing this abstract class allows interacting with a cps files.
@@ -645,7 +638,7 @@ public class CpsParent extends UserPreferencesParent {
         SearchParameters searchParameters = new SearchParameters();
         identificationParameters = new IdentificationParameters(searchParameters);
         spectrumCountingParameters = new SpectrumCountingParameters();
-        spectrumCountingParameters.setSelectedMethod(SpectralCountingMethod.NSAF);
+        spectrumCountingParameters.setSelectedMethod(SpectrumCountingMethod.NSAF);
         spectrumCountingParameters.setMatchValidationLevel(MatchValidationLevel.doubtful.getIndex());
         
     }

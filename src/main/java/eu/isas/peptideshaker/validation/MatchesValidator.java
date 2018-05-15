@@ -116,8 +116,8 @@ public class MatchesValidator {
      * @param sequenceProvider a protein sequence provider
      * @param proteinDetailsProvider a protein details provider
      * @param identificationParameters the identification parameters
-     * @param spectrumCountingPreferences the spectrum counting preferences
-     * @param processingPreferences the processing preferences
+     * @param spectrumCountingParameters the spectrum counting parameters
+     * @param processingParameters the processing parameters
      *
      * @throws java.lang.InterruptedException exception thrown if a thread gets
      * interrupted
@@ -127,7 +127,7 @@ public class MatchesValidator {
     public void validateIdentifications(Identification identification, Metrics metrics, InputMap inputMap,
             WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps, IdentificationParameters identificationParameters,
-            SpectrumCountingParameters spectrumCountingPreferences, ProcessingParameters processingPreferences) throws InterruptedException, TimeoutException {
+            SpectrumCountingParameters spectrumCountingParameters, ProcessingParameters processingParameters) throws InterruptedException, TimeoutException {
 
         ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
@@ -149,13 +149,13 @@ public class MatchesValidator {
         Double intensityLimit = annotationPreferences.getAnnotationIntensityLimit();
         annotationPreferences.setIntensityLimit(0);
 
-        ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
+        ExecutorService pool = Executors.newFixedThreadPool(processingParameters.getnThreads());
 
         SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
 
-        ArrayList<PsmValidatorRunnable> psmRunnables = new ArrayList<>(processingPreferences.getnThreads());
+        ArrayList<PsmValidatorRunnable> psmRunnables = new ArrayList<>(processingParameters.getnThreads());
 
-        for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
+        for (int i = 1; i <= processingParameters.getnThreads(); i++) {
 
             PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator,
                     sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, waitingHandler,
@@ -241,11 +241,11 @@ public class MatchesValidator {
             }
         }
 
-        pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
+        pool = Executors.newFixedThreadPool(processingParameters.getnThreads());
 
         psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
 
-        for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
+        for (int i = 1; i <= processingParameters.getnThreads(); i++) {
 
             PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator,
                     sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, waitingHandler,
@@ -272,12 +272,12 @@ public class MatchesValidator {
         annotationPreferences.setIntensityLimit(intensityLimit);
 
         // validate the peptides
-        pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
-        ArrayList<PeptideValidatorRunnable> peptideRunnables = new ArrayList<>(processingPreferences.getnThreads());
+        pool = Executors.newFixedThreadPool(processingParameters.getnThreads());
+        ArrayList<PeptideValidatorRunnable> peptideRunnables = new ArrayList<>(processingParameters.getnThreads());
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(waitingHandler);
 
-        for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
+        for (int i = 1; i <= processingParameters.getnThreads(); i++) {
 
             PeptideValidatorRunnable runnable = new PeptideValidatorRunnable(peptideMatchesIterator, identification, identificationFeaturesGenerator,
                     sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, waitingHandler, exceptionHandler, metrics);
@@ -337,15 +337,15 @@ public class MatchesValidator {
         metrics.setTotalPeptidesPerFraction(validatedTotalPeptidesPerFraction);
 
         // validate the proteins
-        pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
+        pool = Executors.newFixedThreadPool(processingParameters.getnThreads());
 
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
-        ArrayList<ProteinValidatorRunnable> proteinRunnables = new ArrayList<>(processingPreferences.getnThreads());
+        ArrayList<ProteinValidatorRunnable> proteinRunnables = new ArrayList<>(processingParameters.getnThreads());
 
-        for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
+        for (int i = 1; i <= processingParameters.getnThreads(); i++) {
 
             ProteinValidatorRunnable runnable = new ProteinValidatorRunnable(proteinMatchesIterator, identification, identificationFeaturesGenerator,
-                    sequenceProvider, proteinDetailsProvider, geneMaps, metrics, identificationParameters, spectrumCountingPreferences,
+                    sequenceProvider, proteinDetailsProvider, geneMaps, metrics, identificationParameters, spectrumCountingParameters,
                     waitingHandler, exceptionHandler);
             pool.submit(runnable);
             proteinRunnables.add(runnable);
@@ -1803,9 +1803,9 @@ public class MatchesValidator {
          */
         private final IdentificationParameters identificationParameters;
         /**
-         * The spectrum counting preferences.
+         * The spectrum counting parameters.
          */
-        private final SpectrumCountingParameters spectrumCountingPreferences;
+        private final SpectrumCountingParameters spectrumCountingParameters;
         /**
          * The waiting handler.
          */
@@ -1815,21 +1815,21 @@ public class MatchesValidator {
          */
         private final ExceptionHandler exceptionHandler;
         /**
-         * The validation QC preferences.
+         * The validation QC parameters.
          */
-        private final ValidationQcParameters validationQCPreferences;
+        private final ValidationQcParameters validationQCParameters;
         /**
          * The object used to store metrics on the project.
          */
         private final Metrics metrics;
         /**
          * The total spectrum counting mass contribution of the proteins
-         * according to the validation level specified in the preferences.
+         * according to the validation level specified in the parameters.
          */
         private double totalSpectrumCountingMass = 0;
         /**
          * The total spectrum counting contribution of the proteins according to
-         * the validation level specified in the preferences.
+         * the validation level specified in the parameters.
          */
         private double totalSpectrumCounting = 0;
 
@@ -1846,7 +1846,7 @@ public class MatchesValidator {
          * @param geneMaps the gene maps
          * @param metrics the object used to store metrics on the project
          * @param identificationParameters the identification parameters
-         * @param spectrumCountingPreferences the spectrum counting preferences
+         * @param spectrumCountingPreferences the spectrum counting parameters
          * @param waitingHandler a waiting handler to display progress and allow
          * canceling the process
          * @param exceptionHandler handler for exceptions
@@ -1865,8 +1865,8 @@ public class MatchesValidator {
             this.identificationParameters = identificationParameters;
             this.waitingHandler = waitingHandler;
             this.exceptionHandler = exceptionHandler;
-            this.validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
-            this.spectrumCountingPreferences = spectrumCountingPreferences;
+            this.validationQCParameters = identificationParameters.getIdValidationParameters().getValidationQCParameters();
+            this.spectrumCountingParameters = spectrumCountingPreferences;
 
         }
 
@@ -1878,7 +1878,7 @@ public class MatchesValidator {
                 double desiredThreshold = targetDecoyResults.getUserInput();
                 double nTargetLimit = 100.0 / desiredThreshold;
                 double proteinThreshold = targetDecoyResults.getScoreLimit();
-                double margin = validationQCPreferences.getConfidenceMargin() * proteinMap.getResolution();
+                double margin = validationQCParameters.getConfidenceMargin() * proteinMap.getResolution();
                 double proteinConfidentThreshold = targetDecoyResults.getConfidenceLimit() + margin;
 
                 if (proteinConfidentThreshold > 100) {
@@ -1903,7 +1903,7 @@ public class MatchesValidator {
                     PSParameter psParameter = new PSParameter();
                     psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
 
-                    if (!proteinMatch.isDecoy() && psParameter.getMatchValidationLevel().getIndex() >= spectrumCountingPreferences.getMatchValidationLevel()) {
+                    if (!proteinMatch.isDecoy() && psParameter.getMatchValidationLevel().getIndex() >= spectrumCountingParameters.getMatchValidationLevel()) {
 
                         double tempSpectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
                         totalSpectrumCounting += tempSpectrumCounting;
