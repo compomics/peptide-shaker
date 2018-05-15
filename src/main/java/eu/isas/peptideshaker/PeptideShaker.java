@@ -83,7 +83,7 @@ public class PeptideShaker {
     /**
      * User preferences file.
      */
-    private static String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
+    private static String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences_2.0.cpf";
     /**
      * Default PeptideShaker modifications.
      */
