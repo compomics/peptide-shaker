@@ -18,9 +18,9 @@ import java.util.ArrayList;
 public class PeptideShakerCLIInputBean {
 
     /**
-     * The experiment name.
+     * The project reference.
      */
-    private String iExperimentID = null;
+    private String reference = null;
     /**
      * The sample name.
      */
@@ -82,18 +82,13 @@ public class PeptideShakerCLIInputBean {
      * Construct a PeptideShakerCLIInputBean from an Apache CLI instance.
      *
      * @param aLine the command line
+     * 
      * @throws IOException thrown of IOException occurs
-     * @throws FileNotFoundException thrown if FileNotFoundException occurs
      * @throws ClassNotFoundException thrown of ClassNotFoundException occurs
      */
-    public PeptideShakerCLIInputBean(CommandLine aLine) throws FileNotFoundException, IOException, ClassNotFoundException {
+    public PeptideShakerCLIInputBean(CommandLine aLine) throws IOException, ClassNotFoundException {
 
-        iExperimentID = aLine.getOptionValue(PeptideShakerCLIParams.EXPERIMENT.id);
-        iSampleID = aLine.getOptionValue(PeptideShakerCLIParams.SAMPLE.id);
-
-        if (aLine.hasOption(PeptideShakerCLIParams.REPLICATE.id)) {
-            replicate = new Integer(aLine.getOptionValue(PeptideShakerCLIParams.REPLICATE.id));
-        }
+        reference = aLine.getOptionValue(PeptideShakerCLIParams.REFERENCE.id);
 
         if (aLine.hasOption(PeptideShakerCLIParams.SPECTRUM_FILES.id)) {
             String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SPECTRUM_FILES.id);
@@ -150,7 +145,7 @@ public class PeptideShakerCLIInputBean {
      * @return the experiment name
      */
     public String getiExperimentID() {
-        return iExperimentID;
+        return reference;
     }
 
     /**
@@ -159,7 +154,7 @@ public class PeptideShakerCLIInputBean {
      * @param iExperimentID the experiment name
      */
     public void setiExperimentID(String iExperimentID) {
-        this.iExperimentID = iExperimentID;
+        this.reference = iExperimentID;
     }
 
     /**
@@ -387,18 +382,8 @@ public class PeptideShakerCLIInputBean {
             return false;
         }
 
-        if (!aLine.hasOption(PeptideShakerCLIParams.EXPERIMENT.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.EXPERIMENT.id)).equals("")) {
-            System.out.println("\nExperiment name not specified.\n");
-            return false;
-        }
-
-        if (!aLine.hasOption(PeptideShakerCLIParams.SAMPLE.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.SAMPLE.id)).equals("")) {
-            System.out.println("\nSample name not specified.\n");
-            return false;
-        }
-
-        if (!aLine.hasOption(PeptideShakerCLIParams.REPLICATE.id) || aLine.getOptionValue(PeptideShakerCLIParams.REPLICATE.id) == null) {
-            System.out.println("\nReplicate number not specified.\n");
+        if (!aLine.hasOption(PeptideShakerCLIParams.REFERENCE.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.REFERENCE.id)).equals("")) {
+            System.out.println("\nProject reference not specified.\n");
             return false;
         }
 

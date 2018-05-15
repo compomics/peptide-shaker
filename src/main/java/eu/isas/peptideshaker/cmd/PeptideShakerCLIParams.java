@@ -16,9 +16,7 @@ public enum PeptideShakerCLIParams {
     // IMPORTANT: Any change here must be reported in the wiki: 
     // http://compomics.github.io/projects/peptide-shaker/wiki/peptideshakercli.html
     ///////////////////////////////////////////////////////////////////////////
-    EXPERIMENT("experiment", "Specifies the experiment name.", true),
-    SAMPLE("sample", "Specifies the sample name.", true),
-    REPLICATE("replicate", "The replicate number.", true),
+    REFERENCE("reference", "The reference of the project.", true),
     SPECTRUM_FILES("spectrum_files", "Spectrum files (mgf format), comma separated list or an entire folder.", false),
     IDENTIFICATION_FILES("identification_files", "Identification files (.t.xml, .mzid, .cvs, .omx, .dat, .txt, .pep.xml, .zip), comma separated list or an entire folder.", true),
     PEPTIDESHAKER_OUTPUT("out", "PeptideShaker output file. Note: if file exists it will be overwritten.", true),
@@ -92,9 +90,7 @@ public enum PeptideShakerCLIParams {
         String formatter = "%-35s";
 
         output += "Mandatory Parameters:\n\n";
-        output += "-" + String.format(formatter, EXPERIMENT.id) + " " + EXPERIMENT.description + "\n";
-        output += "-" + String.format(formatter, SAMPLE.id) + " " + SAMPLE.description + "\n";
-        output += "-" + String.format(formatter, REPLICATE.id) + " " + REPLICATE.description + "\n";
+        output += "-" + String.format(formatter, REFERENCE.id) + " " + REFERENCE.description + "\n";
         output += "-" + String.format(formatter, IDENTIFICATION_FILES.id) + " " + IDENTIFICATION_FILES.description + "\n";
         output += "-" + String.format(formatter, PEPTIDESHAKER_OUTPUT.id) + " " + PEPTIDESHAKER_OUTPUT.description + "\n";
 
