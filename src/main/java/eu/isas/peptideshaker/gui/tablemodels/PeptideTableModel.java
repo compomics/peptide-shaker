@@ -8,7 +8,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
-import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;

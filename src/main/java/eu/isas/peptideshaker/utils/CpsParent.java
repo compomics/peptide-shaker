@@ -1,5 +1,8 @@
 package eu.isas.peptideshaker.utils;
 
+import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import com.compomics.util.experiment.identification.IdentificationFeaturesCache;
+import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
 import com.compomics.util.db.object.objects.BlobObject;
 import com.compomics.util.Util;
 import com.compomics.util.db.object.ObjectsDB;
@@ -12,14 +15,14 @@ import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.quantification.spectrumcounting.SpectrumCountingMethod;
-import com.compomics.util.gui.filehandling.TempFilesManager;
+import com.compomics.util.gui.file_handling.TempFilesManager;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.parameters.PeptideShakerParameters;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
-import eu.isas.peptideshaker.preferences.FilterParameters;
+import com.compomics.util.gui.filtering.FilterParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import eu.isas.peptideshaker.preferences.UserParameters;

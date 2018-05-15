@@ -26,7 +26,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
-import eu.isas.peptideshaker.utils.Metrics;
+import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.util.ArrayList;
 import java.util.Collections;

@@ -31,7 +31,7 @@ import com.compomics.util.parameters.identification.advanced.SequenceMatchingPar
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.protein_inference.TagMapper;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
-import eu.isas.peptideshaker.utils.Metrics;
+import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 
 import javax.swing.*;
 import java.io.File;

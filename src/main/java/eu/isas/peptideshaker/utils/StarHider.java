@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.utils;
 
+import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
@@ -14,12 +16,12 @@ import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.filtering.MatchFilter;
-import eu.isas.peptideshaker.filtering.PeptideFilter;
-import eu.isas.peptideshaker.filtering.ProteinFilter;
-import eu.isas.peptideshaker.filtering.PsmFilter;
+import com.compomics.util.experiment.identification.filtering.MatchFilter;
+import com.compomics.util.experiment.identification.filtering.PeptideFilter;
+import com.compomics.util.experiment.identification.filtering.ProteinFilter;
+import com.compomics.util.experiment.identification.filtering.PsmFilter;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
-import eu.isas.peptideshaker.preferences.FilterParameters;
+import com.compomics.util.gui.filtering.FilterParameters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;

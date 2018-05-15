@@ -1,10 +1,10 @@
 package eu.isas.peptideshaker.gui.filtering;
 
 import com.compomics.util.experiment.filtering.Filter;
-import eu.isas.peptideshaker.filtering.MatchFilter;
-import eu.isas.peptideshaker.filtering.PeptideFilter;
-import eu.isas.peptideshaker.filtering.ProteinFilter;
-import eu.isas.peptideshaker.filtering.PsmFilter;
+import com.compomics.util.experiment.identification.filtering.MatchFilter;
+import com.compomics.util.experiment.identification.filtering.PeptideFilter;
+import com.compomics.util.experiment.identification.filtering.ProteinFilter;
+import com.compomics.util.experiment.identification.filtering.PsmFilter;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;

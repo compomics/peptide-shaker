@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
-import com.compomics.util.gui.filehandling.FileDisplayDialog;
-import com.compomics.util.gui.filehandling.FileSelectionDialog;
+import com.compomics.util.gui.file_handling.FileDisplayDialog;
+import com.compomics.util.gui.file_handling.FileSelectionDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
@@ -17,7 +17,7 @@ import com.compomics.util.experiment.io.biology.protein.ProteinDatabase;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.JOptionEditorPane;
-import com.compomics.util.gui.filehandling.TempFilesManager;
+import com.compomics.util.gui.file_handling.TempFilesManager;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.parameters.identification.IdentificationParameters;

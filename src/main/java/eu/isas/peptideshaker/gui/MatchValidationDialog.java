@@ -22,8 +22,8 @@ import com.compomics.util.experiment.identification.validation.MatchValidationLe
 import eu.isas.peptideshaker.scoring.maps.SpecificTargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
-import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
-import eu.isas.peptideshaker.utils.Metrics;
+import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.awt.Color;
 import java.awt.event.MouseEvent;

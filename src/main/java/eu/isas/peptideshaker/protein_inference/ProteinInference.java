@@ -15,7 +15,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.google.common.collect.Sets;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
-import eu.isas.peptideshaker.utils.Metrics;
+import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

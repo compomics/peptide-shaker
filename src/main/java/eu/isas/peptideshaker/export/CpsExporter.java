@@ -10,13 +10,13 @@ import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
-import eu.isas.peptideshaker.preferences.FilterParameters;
+import com.compomics.util.gui.filtering.FilterParameters;
 import eu.isas.peptideshaker.parameters.PeptideShakerParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
-import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
-import eu.isas.peptideshaker.utils.Metrics;
+import com.compomics.util.experiment.identification.IdentificationFeaturesCache;
+import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import java.io.*;
 
 /**

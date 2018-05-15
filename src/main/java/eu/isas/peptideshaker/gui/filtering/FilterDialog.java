@@ -6,7 +6,7 @@ import com.compomics.util.gui.utils.user_choice.ListChooser;
 import com.compomics.util.gui.utils.user_choice.list_choosers.ModificationChooser;
 import com.compomics.util.gui.utils.user_choice.list_choosers.StringListChooser;
 import com.compomics.util.parameters.identification.IdentificationParameters;
-import eu.isas.peptideshaker.filtering.MatchFilter;
+import com.compomics.util.experiment.identification.filtering.MatchFilter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -31,7 +31,7 @@ import com.compomics.util.parameters.identification.advanced.SequenceMatchingPar
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
-import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
