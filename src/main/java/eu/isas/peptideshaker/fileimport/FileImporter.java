@@ -85,7 +85,6 @@ public class FileImporter {
      * The identification parameters.
      */
     private final IdentificationParameters identificationParameters;
-
     /**
      * The identification file reader factory of compomics utilities.
      */

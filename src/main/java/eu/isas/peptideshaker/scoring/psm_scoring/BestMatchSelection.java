@@ -4,7 +4,6 @@ import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
-import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
@@ -22,7 +21,6 @@ import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
-import com.compomics.util.parameters.identification.advanced.IdMatchValidationParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.parameters.PSParameter;
@@ -30,8 +28,6 @@ import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.utils.Metrics;
 import eu.isas.peptideshaker.validation.MatchesValidator;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,8 +37,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import org.apache.commons.math.MathException;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class contains the method for PSM best hit selection.
@@ -77,7 +71,7 @@ public class BestMatchSelection {
      */
     private final SequenceProvider sequenceProvider;
     /**
-     * The fasta parameters.
+     * The FASTA parameters.
      */
     private final FastaParameters fastaParameters;
 
@@ -90,7 +84,7 @@ public class BestMatchSelection {
      * @param matchesValidator the matches validator
      * @param sequenceProvider the sequence provider
      * @param metrics the object where to store dataset metrics
-     * @param fastaParameters the fasta parameters
+     * @param fastaParameters the FASTA parameters
      */
     public BestMatchSelection(Identification identification, HashMap<String, Integer> proteinCount, MatchesValidator matchesValidator, SequenceProvider sequenceProvider, Metrics metrics, FastaParameters fastaParameters) {
 

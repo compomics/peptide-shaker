@@ -725,19 +725,20 @@ public class NewDialog extends javax.swing.JDialog {
             // load the identification files
             if (idFiles.size() > 0) {
 
-                try {
+                needDialog = true;
 
-                    needDialog = true;
-                    ExceptionHandler exceptionHandler = new WaitingDialogExceptionHandler((WaitingDialog) waitingDialog, "https://github.com/compomics/peptide-shaker/issues");
-                    peptideShaker.importFiles(waitingDialog, idFiles, spectrumFiles,
-                            identificationParameters, projectDetails, processingParameters, exceptionHandler);
-                    peptideShaker.createProject(identificationParameters, processingParameters, spectrumCountingPreferences, projectDetails, waitingDialog, exceptionHandler);
-
-                } catch (Exception e) {
-
-                    // Put in separate thread
-                }
-
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            ExceptionHandler exceptionHandler = new WaitingDialogExceptionHandler((WaitingDialog) waitingDialog, "https://github.com/compomics/peptide-shaker/issues");
+                            peptideShaker.importFiles(waitingDialog, idFiles, spectrumFiles, identificationParameters, projectDetails, processingParameters, exceptionHandler);
+                            peptideShaker.createProject(identificationParameters, processingParameters, spectrumCountingPreferences, projectDetails, waitingDialog, exceptionHandler);
+                        } catch (Exception e) {
+                            System.out.println("Failed to import data or create the project!");
+                            e.printStackTrace();
+                        }
+                    }
+                }, "Import data and create project").start();
             }
 
             if (needDialog) {
