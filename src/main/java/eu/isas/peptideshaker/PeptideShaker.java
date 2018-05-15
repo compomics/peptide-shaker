@@ -371,7 +371,7 @@ public class PeptideShaker {
         identification.getObjectsDB().commit();
         System.gc();
 
-        if (ptmScoringPreferences.getAlignNonConfidentPTMs()) {
+        if (ptmScoringPreferences.getAlignNonConfidentModifications()) {
 
             waitingHandler.appendReport("Resolving peptide inference issues.", true, true);
             ptmScorer.peptideInference(identification, sequenceProvider, identificationParameters, waitingHandler);

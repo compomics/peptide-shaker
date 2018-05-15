@@ -124,19 +124,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="projectReferenceLabel" min="-2" pref="130" max="-2" attributes="0"/>
-                          <Component id="sampleNameLabel" min="-2" pref="130" max="-2" attributes="1"/>
-                      </Group>
+                      <Component id="projectReferenceLabel" min="-2" pref="130" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="projectNameIdTxt" pref="520" max="32767" attributes="2"/>
-                          <Component id="sampleNameIdtxt" max="32767" attributes="2"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-                      <Component id="replicateLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                      <Component id="replicateNumberIdtxt" min="-2" pref="66" max="-2" attributes="0"/>
+                      <Component id="projectNameIdTxt" max="32767" attributes="2"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -149,28 +139,12 @@
                           <Component id="projectNameIdTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="projectReferenceLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="sampleNameIdtxt" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="replicateNumberIdtxt" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="replicateLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="sampleNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JTextField" name="replicateNumberIdtxt">
-              <Properties>
-                <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="0"/>
-              </Properties>
-              <Events>
-                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="replicateNumberIdtxtKeyReleased"/>
-              </Events>
-            </Component>
             <Component class="javax.swing.JTextField" name="projectNameIdTxt">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="0"/>
@@ -178,24 +152,6 @@
               <Events>
                 <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="projectNameIdTxtKeyReleased"/>
               </Events>
-            </Component>
-            <Component class="javax.swing.JLabel" name="replicateLabel">
-              <Properties>
-                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="0" green="0" red="ff" type="rgb"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Replicate*"/>
-                <Property name="toolTipText" type="java.lang.String" value="The replicate number"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="sampleNameLabel">
-              <Properties>
-                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="0" green="0" red="ff" type="rgb"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Sample Name*"/>
-                <Property name="toolTipText" type="java.lang.String" value="The name of the sample or experiment"/>
-              </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="projectReferenceLabel">
               <Properties>
@@ -205,14 +161,6 @@
                 <Property name="text" type="java.lang.String" value="Project Reference*"/>
                 <Property name="toolTipText" type="java.lang.String" value="A project name for future reference"/>
               </Properties>
-            </Component>
-            <Component class="javax.swing.JTextField" name="sampleNameIdtxt">
-              <Properties>
-                <Property name="horizontalAlignment" type="int" value="0"/>
-              </Properties>
-              <Events>
-                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="sampleNameIdtxtKeyReleased"/>
-              </Events>
             </Component>
           </SubComponents>
         </Container>

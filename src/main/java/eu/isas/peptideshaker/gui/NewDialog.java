@@ -57,7 +57,7 @@ import java.util.function.Function;
 public class NewDialog extends javax.swing.JDialog {
 
     /**
-     * The compomics PTM factory.
+     * The modification factory.
      */
     private ModificationFactory modificationFactory = ModificationFactory.getInstance();
     /**
@@ -193,12 +193,8 @@ public class NewDialog extends javax.swing.JDialog {
         sampleDetailsPanel = new javax.swing.JPanel();
         loadButton = new javax.swing.JButton();
         projectDetailsPanel = new javax.swing.JPanel();
-        replicateNumberIdtxt = new javax.swing.JTextField();
         projectNameIdTxt = new javax.swing.JTextField();
-        replicateLabel = new javax.swing.JLabel();
-        sampleNameLabel = new javax.swing.JLabel();
         projectReferenceLabel = new javax.swing.JLabel();
-        sampleNameIdtxt = new javax.swing.JTextField();
         processingParametersPanel = new javax.swing.JPanel();
         projectSettingsTxt = new javax.swing.JTextField();
         projectSettingsLabel = new javax.swing.JLabel();
@@ -251,14 +247,6 @@ public class NewDialog extends javax.swing.JDialog {
         projectDetailsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Project Details"));
         projectDetailsPanel.setOpaque(false);
 
-        replicateNumberIdtxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        replicateNumberIdtxt.setText("0");
-        replicateNumberIdtxt.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                replicateNumberIdtxtKeyReleased(evt);
-            }
-        });
-
         projectNameIdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         projectNameIdTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -266,24 +254,9 @@ public class NewDialog extends javax.swing.JDialog {
             }
         });
 
-        replicateLabel.setForeground(new java.awt.Color(255, 0, 0));
-        replicateLabel.setText("Replicate*");
-        replicateLabel.setToolTipText("The replicate number");
-
-        sampleNameLabel.setForeground(new java.awt.Color(255, 0, 0));
-        sampleNameLabel.setText("Sample Name*");
-        sampleNameLabel.setToolTipText("The name of the sample or experiment");
-
         projectReferenceLabel.setForeground(new java.awt.Color(255, 0, 0));
         projectReferenceLabel.setText("Project Reference*");
         projectReferenceLabel.setToolTipText("A project name for future reference");
-
-        sampleNameIdtxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        sampleNameIdtxt.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                sampleNameIdtxtKeyReleased(evt);
-            }
-        });
 
         javax.swing.GroupLayout projectDetailsPanelLayout = new javax.swing.GroupLayout(projectDetailsPanel);
         projectDetailsPanel.setLayout(projectDetailsPanelLayout);
@@ -291,17 +264,9 @@ public class NewDialog extends javax.swing.JDialog {
             projectDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(projectDetailsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(projectDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(projectReferenceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sampleNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(projectReferenceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(projectDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(projectNameIdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 520, Short.MAX_VALUE)
-                    .addComponent(sampleNameIdtxt))
-                .addGap(21, 21, 21)
-                .addComponent(replicateLabel)
-                .addGap(18, 18, 18)
-                .addComponent(replicateNumberIdtxt, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(projectNameIdTxt)
                 .addContainerGap())
         );
         projectDetailsPanelLayout.setVerticalGroup(
@@ -311,12 +276,6 @@ public class NewDialog extends javax.swing.JDialog {
                 .addGroup(projectDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(projectNameIdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(projectReferenceLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(projectDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(sampleNameIdtxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(replicateNumberIdtxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(replicateLabel)
-                    .addComponent(sampleNameLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -710,7 +669,7 @@ public class NewDialog extends javax.swing.JDialog {
             progressCounter++; // resolving protein inference
             progressCounter += 4; // Correcting protein probabilities, Validating identifications at 1% FDR, Scoring PTMs in peptides, Scoring PTMs in proteins.
             progressCounter += 2; // Scoring PTMs in PSMs. Estimating PTM FLR.
-            if (identificationParameters.getModificationLocalizationParameters().getAlignNonConfidentPTMs()) {
+            if (identificationParameters.getModificationLocalizationParameters().getAlignNonConfidentModifications()) {
                 progressCounter++; // Peptide inference
             }
 
@@ -1232,24 +1191,6 @@ public class NewDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_projectNameIdTxtKeyReleased
 
     /**
-     * Validate the input.
-     *
-     * @param evt
-     */
-    private void sampleNameIdtxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_sampleNameIdtxtKeyReleased
-        validateInput();
-    }//GEN-LAST:event_sampleNameIdtxtKeyReleased
-
-    /**
-     * Validate the input.
-     *
-     * @param evt
-     */
-    private void replicateNumberIdtxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_replicateNumberIdtxtKeyReleased
-        validateInput();
-    }//GEN-LAST:event_replicateNumberIdtxtKeyReleased
-
-    /**
      * Open the ProcessingPreferences dialog.
      *
      * @param evt
@@ -1373,31 +1314,49 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void settingsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsComboBoxActionPerformed
+        
         editSettingsButton.setEnabled(settingsComboBox.getSelectedIndex() != 0);
 
         if (settingsComboBox.getSelectedIndex() != 0) {
+
             File identificationParametersFile = IdentificationParametersFactory.getIdentificationParametersFile((String) settingsComboBox.getSelectedItem());
+
             try {
-                identificationParameters = IdentificationParameters.getIdentificationParameters(identificationParametersFile);
 
-                // load project specific PTMs
-                String error = PeptideShaker.loadModifications(identificationParameters.getSearchParameters());
-                if (error != null) {
-                    JOptionPane.showMessageDialog(peptideShakerGUI,
-                            error,
-                            "PTM Definition Changed", JOptionPane.WARNING_MESSAGE);
+                if (!IdentificationParameters.supportedVersion(identificationParametersFile)) {
+
+                    JOptionPane.showMessageDialog(null, "The identification parameters were generated using an older version, please update the parameters.", "File error", JOptionPane.ERROR_MESSAGE);
+
+                } else {
+
+                    identificationParameters = IdentificationParameters.getIdentificationParameters(identificationParametersFile);
+
+                    // load project specific modifications
+                    String error = PeptideShaker.loadModifications(identificationParameters.getSearchParameters());
+
+                    if (error != null) {
+
+                        JOptionPane.showMessageDialog(peptideShakerGUI,
+                                error,
+                                "Modification Definition Changed", JOptionPane.WARNING_MESSAGE);
+
+                    }
+
+                    setIdentificationParameters(identificationParameters);
+
                 }
-
-                setIdentificationParameters(identificationParameters);
             } catch (Exception e) {
+                
                 JOptionPane.showMessageDialog(null,
                         "Failed to import search parameters from: " + identificationParametersFile.getAbsolutePath() + ".", "Search Parameters",
                         JOptionPane.WARNING_MESSAGE);
                 e.printStackTrace();
+            
             }
         }
 
         validateInput();
+
     }//GEN-LAST:event_settingsComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1428,11 +1387,7 @@ public class NewDialog extends javax.swing.JDialog {
     private javax.swing.JButton projectSettingsButton;
     private javax.swing.JLabel projectSettingsLabel;
     private javax.swing.JTextField projectSettingsTxt;
-    private javax.swing.JLabel replicateLabel;
-    private javax.swing.JTextField replicateNumberIdtxt;
     private javax.swing.JPanel sampleDetailsPanel;
-    private javax.swing.JTextField sampleNameIdtxt;
-    private javax.swing.JLabel sampleNameLabel;
     private javax.swing.JComboBox settingsComboBox;
     private javax.swing.JLabel spectrumFilesLabel;
     private javax.swing.JTextField spectrumFilesTxt;
@@ -1456,28 +1411,6 @@ public class NewDialog extends javax.swing.JDialog {
             projectReferenceLabel.setForeground(Color.RED);
             projectReferenceLabel.setToolTipText("Please provide a project reference");
             projectNameIdTxt.setToolTipText("Please provide a project reference");
-            allValid = false;
-        }
-
-        if (sampleNameIdtxt.getText().length() > 0) {
-            sampleNameLabel.setForeground(Color.BLACK);
-            sampleNameLabel.setToolTipText(null);
-            sampleNameIdtxt.setToolTipText(null);
-        } else {
-            sampleNameLabel.setForeground(Color.RED);
-            sampleNameLabel.setToolTipText("Please provide a project sample name");
-            sampleNameIdtxt.setToolTipText("Please provide a project sample name");
-            allValid = false;
-        }
-
-        if (replicateNumberIdtxt.getText().length() > 0) {
-            replicateLabel.setForeground(Color.BLACK);
-            replicateLabel.setToolTipText(null);
-            replicateNumberIdtxt.setToolTipText(null);
-        } else {
-            replicateLabel.setForeground(Color.RED);
-            replicateLabel.setToolTipText("Please provide a replicate number");
-            replicateNumberIdtxt.setToolTipText("Please provide a replicate number");
             allValid = false;
         }
 
@@ -1528,14 +1461,18 @@ public class NewDialog extends javax.swing.JDialog {
         }
 
         if (identificationParameters != null && settingsComboBox.getSelectedIndex() != 0) {
+            
             identificationParametersLabel.setForeground(Color.BLACK);
             identificationParametersLabel.setToolTipText(null);
             settingsComboBox.setToolTipText(null);
+        
         } else {
+        
             identificationParametersLabel.setForeground(Color.RED);
             identificationParametersLabel.setToolTipText("Please set the identification parameters");
             settingsComboBox.setToolTipText("Please set the identification parameters");
             allValid = false;
+        
         }
 
         // enable/disable the Create! button
@@ -1557,25 +1494,6 @@ public class NewDialog extends javax.swing.JDialog {
                 projectReferenceLabel.setForeground(Color.red);
                 return false;
             }
-        }
-        for (String forbiddenChar : Util.forbiddenCharacters) {
-            if (sampleNameIdtxt.getText().contains(forbiddenChar)) {
-                JOptionPane.showMessageDialog(null, "The sample name should not contain " + forbiddenChar + ".\n"
-                        + "Forbidden character in sample name",
-                        "Input Error", JOptionPane.ERROR_MESSAGE);
-                sampleNameLabel.setForeground(Color.red);
-                return false;
-            }
-        }
-
-        try {
-            getReplicateNumber();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Please verify the input for replicate number.\n"
-                    + "Has to be a number!",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            replicateLabel.setForeground(Color.RED);
-            return false;
         }
 
         if (identificationParameters == null) {
@@ -1599,15 +1517,6 @@ public class NewDialog extends javax.swing.JDialog {
         }
 
         return true;
-    }
-
-    /**
-     * Returns the replicate number.
-     *
-     * @return the replicate number
-     */
-    private int getReplicateNumber() {
-        return new Integer(replicateNumberIdtxt.getText().trim());
     }
 
     /**
@@ -1642,8 +1551,8 @@ public class NewDialog extends javax.swing.JDialog {
         for (String name : modificationProfile.getAllModifications()) {
             if (!modificationFactory.containsModification(name)) {
                 missing.add(name);
-                Modification ptm = modificationFactory.getModification(name);
-                ptm.getMass();
+                Modification mod = modificationFactory.getModification(name);
+                mod.getMass();
             } else if (modificationProfile.getColor(name) == null) {
                 modificationProfile.setColor(name, Color.lightGray);
             }
@@ -1653,17 +1562,9 @@ public class NewDialog extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(this, "The following modification is currently not recognized by PeptideShaker: "
                         + missing.get(0) + ".\nPlease import it by editing the search parameters.", "Modification Not Found", JOptionPane.WARNING_MESSAGE);
             } else {
-                String output = "The following modifications are currently not recognized by PeptideShaker:\n";
-                boolean first = true;
-                for (String ptm : missing) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        output += ", ";
-                    }
-                    output += ptm;
-                }
-                output += ".\nPlease import it by editing the search parameters.";
+                String output = "The following modifications are currently not recognized by PeptideShaker:\n"
+                        + String.join(", ", missing)
+                        + ".\nPlease import it by editing the search parameters.";
                 JOptionPane.showMessageDialog(this, output, "Modification Not Found", JOptionPane.WARNING_MESSAGE);
             }
         }
@@ -2116,8 +2017,6 @@ public class NewDialog extends javax.swing.JDialog {
                             break;
                         }
                     }
-                } catch (ClassNotFoundException e) {
-                    equalParameters = false;
                 } catch (IOException e) {
                     equalParameters = false;
                 }
@@ -2142,10 +2041,21 @@ public class NewDialog extends javax.swing.JDialog {
 
             if (parameterFile != null) {
                 try {
-                    importSearchParameters(parameterFile, dataFolders, progressDialog);
+
+                    if (!IdentificationParameters.supportedVersion(parameterFile)) {
+
+                        JOptionPane.showMessageDialog(null, "The identification parameters were generated using an older version, please update the parameters.", "File error", JOptionPane.ERROR_MESSAGE);
+
+                    } else {
+
+                        importSearchParameters(parameterFile, dataFolders, progressDialog);
+
+                    }
                 } catch (Exception e) {
+
                     JOptionPane.showMessageDialog(null, "Error occurred while reading " + parameterFile + ". Please verify the search parameters.", "File error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
+
                 }
             }
 
