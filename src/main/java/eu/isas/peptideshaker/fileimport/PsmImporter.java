@@ -458,9 +458,7 @@ public class PsmImporter {
 
                                 tempNames = ModificationUtils.getExpectedModifications(modification.getMass(), modificationProfile, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
 
-                            } else 
-                                
-                              if (fileReader instanceof AndromedaIdfileReader) {
+                            } else if (fileReader instanceof AndromedaIdfileReader) {
 
                                 AndromedaParameters andromedaParameters = (AndromedaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.andromeda.getIndex());
 
@@ -604,13 +602,17 @@ public class PsmImporter {
             // Score modification localization
             ModificationLocalizationScorer modificationLocalizationScorer = new ModificationLocalizationScorer();
             modificationLocalizationScorer.scorePTMs(identification, spectrumMatch, sequenceProvider, identificationParameters, waitingHandler, peptideSpectrumAnnotator);
-            
+
             // Set modification sites
             modificationLocalizationScorer.modificationSiteInference(spectrumMatch, sequenceProvider, identificationParameters);
-            
+
             // Update protein mapping based on modification profile
-            spectrumMatch.getAllPeptideAssumptions().forEach(
-                    peptideAssumption -> PeptideChecker.checkPeptide(peptideAssumption.getPeptide(), sequenceProvider, modificationSequenceMatchingPreferences));
+            if (identificationParameters.getProteinInferenceParameters().isModificationRefinement()) {
+
+                spectrumMatch.getAllPeptideAssumptions().forEach(
+                        peptideAssumption -> PeptideChecker.checkPeptide(peptideAssumption.getPeptide(), sequenceProvider, modificationSequenceMatchingPreferences));
+
+            }
 
             // try to find the best peptide hit passing the initial filters
             PeptideAssumption firstPeptideHit = null;
