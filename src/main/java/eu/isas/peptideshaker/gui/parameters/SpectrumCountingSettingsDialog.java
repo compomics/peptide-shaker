@@ -4,7 +4,7 @@ import com.compomics.util.experiment.units.MetricsPrefix;
 import com.compomics.util.experiment.units.StandardUnit;
 import com.compomics.util.experiment.units.UnitOfMeasurement;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
+import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import com.compomics.util.experiment.quantification.spectrumcounting.SpectrumCountingMethod;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;

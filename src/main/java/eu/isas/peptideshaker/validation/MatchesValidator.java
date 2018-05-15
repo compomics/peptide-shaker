@@ -38,7 +38,7 @@ import eu.isas.peptideshaker.filtering.items.AssumptionFilterItem;
 import eu.isas.peptideshaker.filtering.items.PeptideFilterItem;
 import eu.isas.peptideshaker.filtering.items.ProteinFilterItem;
 import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
+import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;

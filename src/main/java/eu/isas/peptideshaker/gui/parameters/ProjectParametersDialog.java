@@ -2,7 +2,7 @@ package eu.isas.peptideshaker.gui.parameters;
 
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
-import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
+import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import java.awt.Dialog;
 import java.awt.Toolkit;
 

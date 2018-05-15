@@ -4,7 +4,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import eu.isas.peptideshaker.export.exportfeatures.PsSpectrumCountingFeature;
-import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
+import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.io.IOException;
 import java.util.ArrayList;

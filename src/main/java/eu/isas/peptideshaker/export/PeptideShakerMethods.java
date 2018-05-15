@@ -14,7 +14,7 @@ import com.compomics.util.parameters.identification.advanced.IdMatchValidationPa
 import com.compomics.util.parameters.identification.advanced.ModificationLocalizationParameters;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SpectrumCountingParameters;
+import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
