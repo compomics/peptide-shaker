@@ -28,7 +28,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
-import eu.isas.peptideshaker.parameters.PSParameter;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;

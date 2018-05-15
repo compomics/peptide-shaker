@@ -10,7 +10,7 @@ import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.parameters.PSParameter;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;

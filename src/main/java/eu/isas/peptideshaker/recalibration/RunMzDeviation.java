@@ -12,7 +12,7 @@ import com.compomics.util.experiment.identification.matches_iterators.SpectrumMa
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.math.BasicMathFunctions;
-import eu.isas.peptideshaker.parameters.PSParameter;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;

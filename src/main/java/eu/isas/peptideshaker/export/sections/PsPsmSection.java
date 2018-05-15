@@ -20,10 +20,10 @@ import com.compomics.util.parameters.identification.search.ModificationParameter
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPsmFeature;
-import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.parameters.PSModificationScores;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
+import com.compomics.util.experiment.identification.peptide_shaker.PSModificationScores;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
-import eu.isas.peptideshaker.scoring.ModificationScoring;
+import com.compomics.util.experiment.identification.peptide_shaker.ModificationScoring;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.util.ArrayList;

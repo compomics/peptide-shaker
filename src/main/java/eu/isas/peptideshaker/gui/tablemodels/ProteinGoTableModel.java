@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.gui.tablemodels;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
-import eu.isas.peptideshaker.parameters.PSParameter;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;

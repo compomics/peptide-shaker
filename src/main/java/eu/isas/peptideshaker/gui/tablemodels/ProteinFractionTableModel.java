@@ -4,7 +4,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.parameters.PSParameter;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 

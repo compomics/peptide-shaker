@@ -23,7 +23,7 @@ import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanel;
 import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanelParent;
 import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
-import eu.isas.peptideshaker.parameters.PSParameter;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.IOException;

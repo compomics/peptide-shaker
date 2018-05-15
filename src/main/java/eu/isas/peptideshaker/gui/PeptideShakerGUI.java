@@ -51,7 +51,7 @@ import com.compomics.util.gui.error_handlers.notification.NotesDialog;
 import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
-import com.compomics.util.parameters.tools.UtilitiesUserParameters;
+import com.compomics.util.parameters.UtilitiesUserParameters;
 import com.compomics.util.gui.parameters.identification.search.SearchParametersDialog;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.tabpanels.AnnotationPanel;

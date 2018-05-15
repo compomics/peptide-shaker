@@ -26,7 +26,7 @@ import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.parameters.tools.ProcessingParameters;
-import com.compomics.util.parameters.tools.UtilitiesUserParameters;
+import com.compomics.util.parameters.UtilitiesUserParameters;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathParameters;

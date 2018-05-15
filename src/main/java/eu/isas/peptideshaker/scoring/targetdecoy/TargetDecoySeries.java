@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
-import eu.isas.peptideshaker.parameters.PSParameter;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import java.util.Arrays;
 import java.util.HashMap;
 

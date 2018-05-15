@@ -17,7 +17,7 @@ import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.google.common.collect.Sets;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
-import eu.isas.peptideshaker.parameters.PSParameter;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;

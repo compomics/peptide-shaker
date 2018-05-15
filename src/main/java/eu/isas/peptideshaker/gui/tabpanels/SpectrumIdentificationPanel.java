@@ -30,7 +30,7 @@ import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.spectrum.MassErrorBubblePlot;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.scoring.PSMaps;
-import eu.isas.peptideshaker.parameters.PSParameter;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;

@@ -2,7 +2,7 @@ package eu.isas.peptideshaker.scoring.targetdecoy;
 
 import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.db.object.DbObject;
-import eu.isas.peptideshaker.parameters.PSParameter;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import java.io.Serializable;
 
 /**

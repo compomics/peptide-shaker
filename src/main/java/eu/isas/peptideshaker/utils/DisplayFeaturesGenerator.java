@@ -25,7 +25,7 @@ import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
-import eu.isas.peptideshaker.parameters.PSModificationScores;
+import com.compomics.util.experiment.identification.peptide_shaker.PSModificationScores;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import java.awt.Color;
 import java.util.ArrayList;

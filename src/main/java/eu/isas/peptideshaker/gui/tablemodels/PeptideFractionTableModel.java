@@ -2,7 +2,7 @@ package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
-import eu.isas.peptideshaker.parameters.PSParameter;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;

@@ -13,7 +13,7 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.ProteinInferenceParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import com.google.common.collect.Sets;
-import eu.isas.peptideshaker.parameters.PSParameter;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.utils.Metrics;
 import java.util.ArrayList;

@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.followup;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.parameters.PSParameter;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;

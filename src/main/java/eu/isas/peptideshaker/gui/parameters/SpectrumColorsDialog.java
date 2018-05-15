@@ -7,7 +7,7 @@ import com.compomics.util.parameters.identification.search.ModificationParameter
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.spectrum.IonLabelColorTableModel;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
-import com.compomics.util.parameters.tools.UtilitiesUserParameters;
+import com.compomics.util.parameters.UtilitiesUserParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Color;
 import java.awt.Toolkit;

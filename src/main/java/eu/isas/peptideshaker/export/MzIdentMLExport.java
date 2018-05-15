@@ -42,10 +42,10 @@ import com.compomics.util.parameters.identification.search.ModificationParameter
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.scoring.PSMaps;
-import eu.isas.peptideshaker.parameters.PSParameter;
-import eu.isas.peptideshaker.parameters.PSModificationScores;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
+import com.compomics.util.experiment.identification.peptide_shaker.PSModificationScores;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.scoring.ModificationScoring;
+import com.compomics.util.experiment.identification.peptide_shaker.ModificationScoring;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;

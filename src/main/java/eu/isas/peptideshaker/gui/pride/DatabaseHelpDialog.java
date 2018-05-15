@@ -7,7 +7,7 @@ import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.gui.parameters.identification.search.SequenceDbDetailsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.file.LastSelectedFolder;
-import com.compomics.util.parameters.tools.UtilitiesUserParameters;
+import com.compomics.util.parameters.UtilitiesUserParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Color;
 import java.io.File;

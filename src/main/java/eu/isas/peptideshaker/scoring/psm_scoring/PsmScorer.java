@@ -25,7 +25,7 @@ import com.compomics.util.math.HistogramUtils;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.parameters.PSParameter;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.util.ArrayList;
