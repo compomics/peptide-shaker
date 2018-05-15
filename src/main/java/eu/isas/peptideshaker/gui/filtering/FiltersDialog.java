@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import com.compomics.util.gui.error_handlers.HelpDialog;
+import com.compomics.util.gui.filtering.FilterDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 
 /**
@@ -53,6 +54,10 @@ public class FiltersDialog extends javax.swing.JDialog {
      * The PSM hide filters.
      */
     private HashMap<String, PsmFilter> psmHideFilters;
+    /**
+     * All the modifications that can be used for filtering.
+     */
+    private ArrayList<String> allModifications;
 
     /**
      * Creates a new FiltersDialog.
@@ -67,6 +72,9 @@ public class FiltersDialog extends javax.swing.JDialog {
         setTableProperties();
 
         this.peptideShakerGUI = peptideShakerGUI;
+        
+        allModifications = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getAllModifications();
+        
         setLocationRelativeTo(peptideShakerGUI);
         updateMaps();
         fillTables();
@@ -1381,7 +1389,7 @@ public class FiltersDialog extends javax.swing.JDialog {
      * @param evt the action event
      */
     private void addStarredPsmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addStarredPsmActionPerformed
-        PsmFilter newFilter = (PsmFilter) peptideShakerGUI.createPsmFilter();
+        PsmFilter newFilter = (PsmFilter) createPsmFilter();
         if (newFilter != null) {
             String filterName = newFilter.getName();
             if (psmStarFilters.containsKey(filterName)) {
@@ -1402,7 +1410,7 @@ public class FiltersDialog extends javax.swing.JDialog {
      * @param evt the action event
      */
     private void addStarredProteinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addStarredProteinActionPerformed
-        ProteinFilter newFilter = (ProteinFilter) peptideShakerGUI.createProteinFilter();
+        ProteinFilter newFilter = (ProteinFilter) createProteinFilter();
         if (newFilter != null) {
             String filterName = newFilter.getName();
             if (proteinStarFilters.containsKey(filterName)) {
@@ -1422,7 +1430,7 @@ public class FiltersDialog extends javax.swing.JDialog {
      * @param evt the action event
      */
     private void addHiddenProteinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addHiddenProteinActionPerformed
-        ProteinFilter newFilter = (ProteinFilter) peptideShakerGUI.createProteinFilter();
+        ProteinFilter newFilter = (ProteinFilter) createProteinFilter();
         if (newFilter != null) {
             String filterName = newFilter.getName();
             if (proteinHideFilters.containsKey(filterName)) {
@@ -1442,7 +1450,7 @@ public class FiltersDialog extends javax.swing.JDialog {
      * @param evt the action event
      */
     private void addStarredPeptidesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addStarredPeptidesActionPerformed
-        PeptideFilter newFilter = (PeptideFilter) peptideShakerGUI.createPeptideFilter();
+        PeptideFilter newFilter = (PeptideFilter) createPeptideFilter();
         if (newFilter != null) {
             String filterName = newFilter.getName();
             if (peptideStarFilters.containsKey(filterName)) {
@@ -1462,7 +1470,7 @@ public class FiltersDialog extends javax.swing.JDialog {
      * @param evt the action event
      */
     private void addHiddenPeptidesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addHiddenPeptidesActionPerformed
-        PeptideFilter newFilter = (PeptideFilter) peptideShakerGUI.createPeptideFilter();
+        PeptideFilter newFilter = (PeptideFilter) createPeptideFilter();
         if (newFilter != null) {
             String filterName = newFilter.getName();
             if (peptideHideFilters.containsKey(filterName)) {
@@ -1482,7 +1490,7 @@ public class FiltersDialog extends javax.swing.JDialog {
      * @param evt the action event
      */
     private void addHiddenPsmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addHiddenPsmActionPerformed
-        PsmFilter newFilter = (PsmFilter) peptideShakerGUI.createPsmFilter();
+        PsmFilter newFilter = (PsmFilter) createPsmFilter();
         if (newFilter != null) {
             String filterName = newFilter.getName();
             if (psmHideFilters.containsKey(filterName)) {
@@ -1578,7 +1586,7 @@ public class FiltersDialog extends javax.swing.JDialog {
         if (row >= 0) {
             String selectedFilterName = (String) starredProteinsTable.getValueAt(row, 2);
             ProteinFilter proteinFilter = proteinStarFilters.get(selectedFilterName);
-            peptideShakerGUI.editFilter(proteinFilter);
+            editFilter(proteinFilter);
             updateTables();
         }
     }//GEN-LAST:event_editStarredProteinActionPerformed
@@ -1593,7 +1601,7 @@ public class FiltersDialog extends javax.swing.JDialog {
         if (row >= 0) {
             String selectedFilterName = (String) hiddenProteinsTable.getValueAt(row, 2);
             ProteinFilter proteinFilter = proteinHideFilters.get(selectedFilterName);
-            peptideShakerGUI.editFilter(proteinFilter);
+            editFilter(proteinFilter);
             updateTables();
         }
     }//GEN-LAST:event_editHiddenProteinActionPerformed
@@ -1608,7 +1616,7 @@ public class FiltersDialog extends javax.swing.JDialog {
         if (row >= 0) {
             String selectedFilterName = (String) starredPeptidesTable.getValueAt(row, 2);
             PeptideFilter peptideFilter = peptideStarFilters.get(selectedFilterName);
-            peptideShakerGUI.editFilter(peptideFilter);
+            editFilter(peptideFilter);
             updateTables();
         }
     }//GEN-LAST:event_editStarredPeptidesActionPerformed
@@ -1623,7 +1631,7 @@ public class FiltersDialog extends javax.swing.JDialog {
         if (row >= 0) {
             String selectedFilterName = (String) hiddenPeptidesTable.getValueAt(row, 2);
             PeptideFilter peptideFilter = peptideHideFilters.get(selectedFilterName);
-            peptideShakerGUI.editFilter(peptideFilter);
+            editFilter(peptideFilter);
             updateTables();
         }
     }//GEN-LAST:event_editHiddenPeptidesActionPerformed
@@ -1638,7 +1646,7 @@ public class FiltersDialog extends javax.swing.JDialog {
         if (row >= 0) {
             String selectedFilterName = (String) starredPsmTable.getValueAt(row, 2);
             PsmFilter psmFilter = psmStarFilters.get(selectedFilterName);
-            peptideShakerGUI.editFilter(psmFilter);
+            editFilter(psmFilter);
             updateTables();
         }
     }//GEN-LAST:event_editStarredPsmActionPerformed
@@ -1653,7 +1661,7 @@ public class FiltersDialog extends javax.swing.JDialog {
         if (row >= 0) {
             String selectedFilterName = (String) hiddenPsmTable.getValueAt(row, 2);
             PsmFilter psmFilter = psmHideFilters.get(selectedFilterName);
-            peptideShakerGUI.editFilter(psmFilter);
+            editFilter(psmFilter);
             updateTables();
         }
     }//GEN-LAST:event_editHiddenPsmActionPerformed
@@ -2130,6 +2138,60 @@ public class FiltersDialog extends javax.swing.JDialog {
     private javax.swing.JTabbedPane tabbedPane;
     // End of variables declaration//GEN-END:variables
 
+
+    /**
+     * Creates a new PSM filter.
+     *
+     * @return the new filter, null if canceled
+     */
+    public Filter createPsmFilter() {
+        FilterDialog filterDialog = new FilterDialog(this, new PsmFilter(), allModifications);
+        if (!filterDialog.isCanceled()) {
+            return filterDialog.getFilter();
+        }
+        return null;
+    }
+
+    /**
+     * Creates a new peptide filter.
+     *
+     * @return the new filter, null if canceled
+     */
+    public Filter createPeptideFilter() {
+        FilterDialog filterDialog = new FilterDialog(this, new PeptideFilter(), allModifications);
+        if (!filterDialog.isCanceled()) {
+            return filterDialog.getFilter();
+        }
+        return null;
+    }
+
+    /**
+     * Creates a new protein filter.
+     *
+     * @return the new filter, null if canceled
+     */
+    public Filter createProteinFilter() {
+        FilterDialog filterDialog = new FilterDialog(this, new ProteinFilter(), allModifications);
+        if (!filterDialog.isCanceled()) {
+            return filterDialog.getFilter();
+        }
+        return null;
+    }
+
+    /**
+     * Edits the given filter.
+     *
+     * @param filter the filter to edit
+     *
+     * @return the updated filter, null if canceled
+     */
+    public Filter editFilter(Filter filter) {
+        FilterDialog filterDialog = new FilterDialog(this, (MatchFilter) filter, allModifications);
+        if (!filterDialog.isCanceled()) {
+            return filterDialog.getFilter();
+        }
+        return null;
+    }
     /**
      * Updates the tables with the filters.
      */

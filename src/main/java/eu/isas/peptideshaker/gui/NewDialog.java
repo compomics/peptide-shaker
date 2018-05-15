@@ -28,7 +28,6 @@ import com.compomics.util.gui.parameters.tools.ProcessingParametersDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.parameters.tools.ProcessingParameters;
-import com.compomics.util.parameters.identification.advanced.ProteinInferenceParameters;
 import com.compomics.util.parameters.UtilitiesUserParameters;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
@@ -46,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
-import java.util.function.Function;
 
 /**
  * A dialog for selecting the files to load.
@@ -1152,7 +1150,7 @@ public class NewDialog extends javax.swing.JDialog {
     private void editSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSettingsButtonActionPerformed
         IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(
                 this, peptideShakerGUI, identificationParameters, Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), peptideShakerGUI.getLastSelectedFolder(), peptideShakerGUI, true);
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), peptideShakerGUI.getLastSelectedFolder(), true);
 
         if (!identificationParametersEditionDialog.isCanceled()) {
             setIdentificationParameters(identificationParametersEditionDialog.getIdentificationParameters());
@@ -1301,7 +1299,7 @@ public class NewDialog extends javax.swing.JDialog {
     private void addSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSettingsButtonActionPerformed
         IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(
                 this, peptideShakerGUI, null, Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), peptideShakerGUI.getLastSelectedFolder(), null, true);
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), peptideShakerGUI.getLastSelectedFolder(), true);
 
         if (!identificationParametersEditionDialog.isCanceled()) {
             setIdentificationParameters(identificationParametersEditionDialog.getIdentificationParameters());

@@ -7,7 +7,6 @@ import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
 import com.compomics.util.experiment.biology.ions.Ion;
 import com.compomics.util.experiment.biology.ions.NeutralLoss;
 import com.compomics.util.experiment.biology.ions.IonFactory;
-import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidPattern;
 import com.compomics.util.experiment.biology.aminoacids.AminoAcid;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
@@ -35,12 +34,9 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.genes.ProteinGeneDetailsProvider;
 import com.compomics.util.experiment.biology.ions.Ion.IonType;
 import com.compomics.util.experiment.biology.ions.impl.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.*;
-import com.compomics.util.experiment.identification.matches.ModificationMatch;
-import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
@@ -92,7 +88,6 @@ import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.parameters.identification.advanced.IdMatchValidationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpectrumAnnotator;
-import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.personalization.ExperimentObject;
@@ -111,7 +106,7 @@ import com.compomics.util.experiment.identification.filtering.ProteinFilter;
 import com.compomics.util.experiment.identification.filtering.PsmFilter;
 import eu.isas.peptideshaker.gui.export.MethodsSectionDialog;
 import eu.isas.peptideshaker.gui.export.MzIdentMLExportDialog;
-import eu.isas.peptideshaker.gui.filtering.FilterDialog;
+import com.compomics.util.gui.filtering.FilterDialog;
 import eu.isas.peptideshaker.gui.pride.PrideReshakeGUI;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathParameters;
@@ -132,7 +127,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -146,11 +140,9 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import net.jimmc.jshortcut.JShellLink;
-import org.apache.commons.math.MathException;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
-import com.compomics.util.gui.parameters.identification.advanced.ValidationQCParametersDialogParent;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import java.util.HashSet;
 import java.util.TreeSet;
@@ -162,7 +154,7 @@ import java.util.stream.Collectors;
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
-public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHomeOrMemoryDialogParent, NotificationDialogParent, ValidationQCParametersDialogParent {
+public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHomeOrMemoryDialogParent, NotificationDialogParent {
 
     /**
      * The path to the example dataset.
@@ -2939,8 +2931,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private void projectSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectSettingsMenuItemActionPerformed
 
         IdentificationParameters identificationParameters = getIdentificationParameters();
-        IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(
-                this, identificationParameters, getNormalIcon(), getWaitingIcon(), lastSelectedFolder, this, false);
+        IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(this, 
+                identificationParameters, getNormalIcon(), getWaitingIcon(), lastSelectedFolder, false);
 
     }//GEN-LAST:event_projectSettingsMenuItemActionPerformed
 
@@ -3461,7 +3453,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         final IdMatchValidationParameters idValidationParameters = getIdentificationParameters().getIdValidationParameters();
         final ValidationQcParameters validationQCParameters = idValidationParameters.getValidationQCParameters();
-        ValidationQCParametersDialog validationQCParametersDialog = new ValidationQCParametersDialog(this, this, validationQCParameters, true);
+        ValidationQCParametersDialog validationQCParametersDialog = new ValidationQCParametersDialog(this, validationQCParameters, getIdentificationParameters().getSearchParameters().getModificationParameters().getAllModifications(), true);
 
         if (!validationQCParametersDialog.isCanceled()) {
 
@@ -7661,42 +7653,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             System.out.println("Checking for new version failed. Unknown error.");
             return false;
         }
-    }
-
-    @Override
-    public Filter createPsmFilter() {
-        FilterDialog filterDialog = new FilterDialog(this, new PsmFilter(), getIdentificationParameters());
-        if (!filterDialog.isCanceled()) {
-            return filterDialog.getFilter();
-        }
-        return null;
-    }
-
-    @Override
-    public Filter createPeptideFilter() {
-        FilterDialog filterDialog = new FilterDialog(this, new PeptideFilter(), getIdentificationParameters());
-        if (!filterDialog.isCanceled()) {
-            return filterDialog.getFilter();
-        }
-        return null;
-    }
-
-    @Override
-    public Filter createProteinFilter() {
-        FilterDialog filterDialog = new FilterDialog(this, new ProteinFilter(), getIdentificationParameters());
-        if (!filterDialog.isCanceled()) {
-            return filterDialog.getFilter();
-        }
-        return null;
-    }
-
-    @Override
-    public Filter editFilter(Filter filter) {
-        FilterDialog filterDialog = new FilterDialog(this, (MatchFilter) filter, getIdentificationParameters());
-        if (!filterDialog.isCanceled()) {
-            return filterDialog.getFilter();
-        }
-        return null;
     }
 
     /**
