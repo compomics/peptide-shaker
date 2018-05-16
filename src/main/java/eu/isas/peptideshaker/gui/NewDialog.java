@@ -29,7 +29,6 @@ import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.parameters.UtilitiesUserParameters;
-import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.gui.parameters.ProjectParametersDialog;
@@ -37,7 +36,6 @@ import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
-import eu.isas.peptideshaker.validation.MatchesValidator;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
@@ -1624,28 +1622,15 @@ public class NewDialog extends javax.swing.JDialog {
 
         }
 
-        boolean matchesValidationAdded;
-        ValidationQcParameters validationQCPreferences = tempIdentificationParameters.getIdValidationParameters().getValidationQCParameters();
-        if (validationQCPreferences == null
-                || validationQCPreferences.getPsmFilters() == null
-                || validationQCPreferences.getPeptideFilters() == null
-                || validationQCPreferences.getProteinFilters() == null
-                || validationQCPreferences.getPsmFilters().isEmpty()
-                && validationQCPreferences.getPeptideFilters().isEmpty()
-                && validationQCPreferences.getProteinFilters().isEmpty()) {
-            MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
-            matchesValidationAdded = true;
-        } else {
-            matchesValidationAdded = false;
-        }
-
         if (!identificationParametersFactory.getParametersList().contains(tempIdentificationParameters.getName())) {
+            
             identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
+        
         } else {
-            boolean matchesValidationChanged = identificationParametersFactory.getIdentificationParameters(tempIdentificationParameters.getName()).getIdValidationParameters().equals(tempIdentificationParameters.getIdValidationParameters());
-            boolean otherSettingsChanged = !identificationParametersFactory.getIdentificationParameters(tempIdentificationParameters.getName()).equals(tempIdentificationParameters);
+            
+            boolean parametersChanged = !identificationParametersFactory.getIdentificationParameters(tempIdentificationParameters.getName()).equals(tempIdentificationParameters);
 
-            if (otherSettingsChanged || matchesValidationChanged && !matchesValidationAdded) {
+            if (parametersChanged) {
 
                 int value = JOptionPane.showOptionDialog(null,
                         "A settings file with the name \'" + tempIdentificationParameters.getName() + "\' already exists.\n"
@@ -1671,8 +1656,6 @@ public class NewDialog extends javax.swing.JDialog {
                     default:
                         break;
                 }
-            } else if (matchesValidationAdded) {
-                identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
             }
         }
 
@@ -1858,17 +1841,6 @@ public class NewDialog extends javax.swing.JDialog {
     private void setIdentificationParameters(IdentificationParameters newIdentificationParameters) {
 
         try {
-            ValidationQcParameters validationQCPreferences = newIdentificationParameters.getIdValidationParameters().getValidationQCParameters();
-            if (validationQCPreferences == null
-                    || validationQCPreferences.getPsmFilters() == null
-                    || validationQCPreferences.getPeptideFilters() == null
-                    || validationQCPreferences.getProteinFilters() == null
-                    || validationQCPreferences.getPsmFilters().isEmpty()
-                    && validationQCPreferences.getPeptideFilters().isEmpty()
-                    && validationQCPreferences.getProteinFilters().isEmpty()) {
-                MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
-                identificationParametersFactory.addIdentificationParameters(newIdentificationParameters);
-            }
 
             this.identificationParameters = newIdentificationParameters;
 
