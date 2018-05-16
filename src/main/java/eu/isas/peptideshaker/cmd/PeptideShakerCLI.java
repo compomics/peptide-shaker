@@ -28,6 +28,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.parameters.UtilitiesUserParameters;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
+import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathParameters;
 import eu.isas.peptideshaker.utils.CpsParent;
@@ -707,6 +708,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         // set the spectrum counting prefrences
         spectrumCountingParameters = new SpectrumCountingParameters();
+        
+        // Set the project type
+        // @TODO: make it a user setting
+        projectType = ProjectType.protein;
 
         // incrementing the counter for a new PeptideShaker start run via GUI
         if (utilitiesUserParameters.isAutoUpdate()) {
@@ -719,7 +724,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // import the files
         peptideShaker.importFiles(waitingHandler, identificationFiles, spectrumFiles,
                 identificationParameters, projectDetails, processingParameters, exceptionHandler);
-        peptideShaker.createProject(identificationParameters, processingParameters, spectrumCountingParameters, projectDetails, waitingHandler, exceptionHandler);
+        peptideShaker.createProject(identificationParameters, processingParameters, spectrumCountingParameters, projectDetails, projectType, waitingHandler, exceptionHandler);
 
         if (!waitingHandler.isRunCanceled()) {
 

@@ -1491,7 +1491,8 @@ public class ValidationPanel extends javax.swing.JPanel {
                         matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(),
                                 pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getExceptionHandler(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
                                 peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getGeneMaps(),
-                                peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingParameters(), peptideShakerGUI.getProcessingParameters());
+                                peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingParameters(), 
+                                peptideShakerGUI.getProjectType(), peptideShakerGUI.getProcessingParameters());
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
@@ -2883,7 +2884,9 @@ public class ValidationPanel extends javax.swing.JPanel {
                 try {
 
                     PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters());
-                    miniShaker.spectrumMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getProcessingParameters(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSequenceProvider());
+                    miniShaker.spectrumMapChanged(peptideShakerGUI.getIdentification(), progressDialog, 
+                            peptideShakerGUI.getProcessingParameters(), peptideShakerGUI.getIdentificationParameters(), 
+                            peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProjectType());
 
                     // update the tracking of probabilities modifications
                     for (int key : modifiedMaps.keySet()) {

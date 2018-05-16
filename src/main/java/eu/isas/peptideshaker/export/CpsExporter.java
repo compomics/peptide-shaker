@@ -17,6 +17,7 @@ import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCo
 import eu.isas.peptideshaker.scoring.PSMaps;
 import com.compomics.util.experiment.identification.IdentificationFeaturesCache;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import java.io.*;
 
 /**
@@ -40,6 +41,7 @@ public class CpsExporter {
      * @param filterParameters the filtering preferences
      * @param displayParameters the display preferences
      * @param metrics the dataset
+     * @param projectType the project type
      * @param geneMaps the gene maps
      * @param identificationFeaturesCache the identification features cache
      * @param emptyCache a boolean indicating whether the object cache should be
@@ -60,6 +62,7 @@ public class CpsExporter {
             FilterParameters filterParameters,
             Metrics metrics, 
             GeneMaps geneMaps,
+            ProjectType projectType,
             IdentificationFeaturesCache identificationFeaturesCache, 
             boolean emptyCache,
             DisplayParameters displayParameters, 
@@ -76,7 +79,7 @@ public class CpsExporter {
             if (!identification.contains(PeptideShakerParameters.key)) {
 
                 PeptideShakerParameters peptideShakerParameters = new PeptideShakerParameters(identificationParameters, spectrumCountingParameters,
-                        projectDetails, filterParameters, displayParameters, metrics, sequenceProvider, proteinDetailsProvider, geneMaps, identificationFeaturesCache);
+                        projectDetails, filterParameters, displayParameters, metrics, sequenceProvider, proteinDetailsProvider, geneMaps, projectType, identificationFeaturesCache);
 
                 BlobObject blobObject = new BlobObject(peptideShakerParameters);
                 identification.addObject(PeptideShakerParameters.key, blobObject);

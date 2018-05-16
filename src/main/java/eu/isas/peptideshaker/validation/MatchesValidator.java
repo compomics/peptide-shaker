@@ -45,6 +45,7 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -117,6 +118,7 @@ public class MatchesValidator {
      * @param proteinDetailsProvider a protein details provider
      * @param identificationParameters the identification parameters
      * @param spectrumCountingParameters the spectrum counting parameters
+     * @param projectType the project type
      * @param processingParameters the processing parameters
      *
      * @throws java.lang.InterruptedException exception thrown if a thread gets
@@ -127,7 +129,7 @@ public class MatchesValidator {
     public void validateIdentifications(Identification identification, Metrics metrics, InputMap inputMap,
             WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps, IdentificationParameters identificationParameters,
-            SpectrumCountingParameters spectrumCountingParameters, ProcessingParameters processingParameters) throws InterruptedException, TimeoutException {
+            SpectrumCountingParameters spectrumCountingParameters, ProjectType projectType, ProcessingParameters processingParameters) throws InterruptedException, TimeoutException {
 
         ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
@@ -271,109 +273,115 @@ public class MatchesValidator {
 
         annotationPreferences.setIntensityLimit(intensityLimit);
 
-        // validate the peptides
-        pool = Executors.newFixedThreadPool(processingParameters.getnThreads());
-        ArrayList<PeptideValidatorRunnable> peptideRunnables = new ArrayList<>(processingParameters.getnThreads());
+        if (projectType == ProjectType.peptide || projectType == ProjectType.protein) {
 
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(waitingHandler);
+            // validate the peptides
+            pool = Executors.newFixedThreadPool(processingParameters.getnThreads());
+            ArrayList<PeptideValidatorRunnable> peptideRunnables = new ArrayList<>(processingParameters.getnThreads());
 
-        for (int i = 1; i <= processingParameters.getnThreads(); i++) {
+            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(waitingHandler);
 
-            PeptideValidatorRunnable runnable = new PeptideValidatorRunnable(peptideMatchesIterator, identification, identificationFeaturesGenerator,
-                    sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, waitingHandler, exceptionHandler, metrics);
-            pool.submit(runnable);
-            peptideRunnables.add(runnable);
+            for (int i = 1; i <= processingParameters.getnThreads(); i++) {
 
-        }
-
-        if (waitingHandler.isRunCanceled()) {
-
-            pool.shutdownNow();
-            return;
-
-        }
-
-        pool.shutdown();
-
-        if (!pool.awaitTermination(identification.getPeptideIdentification().size(), TimeUnit.MINUTES)) {
-
-            throw new InterruptedException("Peptide matches validation timed out. Please contact the developers.");
-
-        }
-
-        HashMap<String, Integer> validatedTotalPeptidesPerFraction = new HashMap<>();
-        ArrayList<Double> validatedPeptideLengths = new ArrayList<>();
-
-        for (PeptideValidatorRunnable runnable : peptideRunnables) {
-
-            HashMap<String, Integer> threadValidatedTotalPeptidesPerFraction = runnable.getValidatedTotalPeptidesPerFraction();
-
-            for (String fraction : threadValidatedTotalPeptidesPerFraction.keySet()) {
-
-                Integer nValidated = validatedTotalPeptidesPerFraction.get(fraction);
-
-                if (nValidated == null) {
-
-                    nValidated = 0;
-
-                }
-
-                nValidated += threadValidatedTotalPeptidesPerFraction.get(fraction);
-                validatedTotalPeptidesPerFraction.put(fraction, nValidated);
+                PeptideValidatorRunnable runnable = new PeptideValidatorRunnable(peptideMatchesIterator, identification, identificationFeaturesGenerator,
+                        sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, waitingHandler, exceptionHandler, metrics);
+                pool.submit(runnable);
+                peptideRunnables.add(runnable);
 
             }
 
-            validatedPeptideLengths.addAll(runnable.getValidatedPeptideLengths());
+            if (waitingHandler.isRunCanceled()) {
 
+                pool.shutdownNow();
+                return;
+
+            }
+
+            pool.shutdown();
+
+            if (!pool.awaitTermination(identification.getPeptideIdentification().size(), TimeUnit.MINUTES)) {
+
+                throw new InterruptedException("Peptide matches validation timed out. Please contact the developers.");
+
+            }
+
+            HashMap<String, Integer> validatedTotalPeptidesPerFraction = new HashMap<>();
+            ArrayList<Double> validatedPeptideLengths = new ArrayList<>();
+
+            for (PeptideValidatorRunnable runnable : peptideRunnables) {
+
+                HashMap<String, Integer> threadValidatedTotalPeptidesPerFraction = runnable.getValidatedTotalPeptidesPerFraction();
+
+                for (String fraction : threadValidatedTotalPeptidesPerFraction.keySet()) {
+
+                    Integer nValidated = validatedTotalPeptidesPerFraction.get(fraction);
+
+                    if (nValidated == null) {
+
+                        nValidated = 0;
+
+                    }
+
+                    nValidated += threadValidatedTotalPeptidesPerFraction.get(fraction);
+                    validatedTotalPeptidesPerFraction.put(fraction, nValidated);
+
+                }
+
+                validatedPeptideLengths.addAll(runnable.getValidatedPeptideLengths());
+
+            }
+
+            if (validatedPeptideLengths.size() >= 100) {
+
+                NonSymmetricalNormalDistribution lengthDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(validatedPeptideLengths);
+                metrics.setPeptideLengthDistribution(lengthDistribution);
+
+            }
+
+            metrics.setTotalPeptidesPerFraction(validatedTotalPeptidesPerFraction);
+
+            if (projectType == ProjectType.protein) {
+
+                // validate the proteins
+                pool = Executors.newFixedThreadPool(processingParameters.getnThreads());
+
+                ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
+                ArrayList<ProteinValidatorRunnable> proteinRunnables = new ArrayList<>(processingParameters.getnThreads());
+
+                for (int i = 1; i <= processingParameters.getnThreads(); i++) {
+
+                    ProteinValidatorRunnable runnable = new ProteinValidatorRunnable(proteinMatchesIterator, identification, identificationFeaturesGenerator,
+                            sequenceProvider, proteinDetailsProvider, geneMaps, metrics, identificationParameters, spectrumCountingParameters,
+                            waitingHandler, exceptionHandler);
+                    pool.submit(runnable);
+                    proteinRunnables.add(runnable);
+
+                }
+
+                if (waitingHandler.isRunCanceled()) {
+
+                    pool.shutdownNow();
+                    return;
+
+                }
+
+                pool.shutdown();
+
+                if (!pool.awaitTermination(identification.getProteinIdentification().size(), TimeUnit.MINUTES)) {
+
+                    throw new InterruptedException("Protein matches validation timed out. Please contact the developers.");
+
+                }
+
+                metrics.setTotalSpectrumCounting(proteinRunnables.stream()
+                        .mapToDouble(ProteinValidatorRunnable::getTotalSpectrumCounting)
+                        .sum());
+
+                metrics.setTotalSpectrumCountingMass(proteinRunnables.stream()
+                        .mapToDouble(ProteinValidatorRunnable::getTotalSpectrumCountingMass)
+                        .sum());
+            }
         }
-
-        if (validatedPeptideLengths.size() >= 100) {
-
-            NonSymmetricalNormalDistribution lengthDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(validatedPeptideLengths);
-            metrics.setPeptideLengthDistribution(lengthDistribution);
-
-        }
-
-        metrics.setTotalPeptidesPerFraction(validatedTotalPeptidesPerFraction);
-
-        // validate the proteins
-        pool = Executors.newFixedThreadPool(processingParameters.getnThreads());
-
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
-        ArrayList<ProteinValidatorRunnable> proteinRunnables = new ArrayList<>(processingParameters.getnThreads());
-
-        for (int i = 1; i <= processingParameters.getnThreads(); i++) {
-
-            ProteinValidatorRunnable runnable = new ProteinValidatorRunnable(proteinMatchesIterator, identification, identificationFeaturesGenerator,
-                    sequenceProvider, proteinDetailsProvider, geneMaps, metrics, identificationParameters, spectrumCountingParameters,
-                    waitingHandler, exceptionHandler);
-            pool.submit(runnable);
-            proteinRunnables.add(runnable);
-
-        }
-
-        if (waitingHandler.isRunCanceled()) {
-
-            pool.shutdownNow();
-            return;
-
-        }
-
-        pool.shutdown();
-
-        if (!pool.awaitTermination(identification.getProteinIdentification().size(), TimeUnit.MINUTES)) {
-
-            throw new InterruptedException("Protein matches validation timed out. Please contact the developers.");
-
-        }
-
-        metrics.setTotalSpectrumCounting(proteinRunnables.stream()
-                .mapToDouble(ProteinValidatorRunnable::getTotalSpectrumCounting)
-                .sum());
-
-        metrics.setTotalSpectrumCountingMass(proteinRunnables.stream()
-                .mapToDouble(ProteinValidatorRunnable::getTotalSpectrumCountingMass)
-                .sum());
 
     }
 
@@ -473,7 +481,7 @@ public class MatchesValidator {
                         }
                     }
 
-                    boolean confidenceThresholdPassed = psParameter.getConfidence()>= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
+                    boolean confidenceThresholdPassed = psParameter.getConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
                     boolean enoughHits = !validationQCPreferences.isFirstDecoy() || targetDecoyMap.getnTargetOnly() > nTargetLimit;
 
@@ -559,7 +567,7 @@ public class MatchesValidator {
                     }
                 }
 
-                boolean confidenceThresholdPassed = psParameter.getConfidence()>= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
+                boolean confidenceThresholdPassed = psParameter.getConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
                 boolean enoughHits = !validationQCPreferences.isFirstDecoy() || peptideMap.getnTargetOnly() > nTargetLimit;
 
@@ -706,7 +714,7 @@ public class MatchesValidator {
      * applied
      */
     public static void updatePeptideAssumptionValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, IdentificationParameters identificationParameters, 
+            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, IdentificationParameters identificationParameters,
             InputMap inputMap, long spectrumMatchKey, PeptideAssumption peptideAssumption, boolean applyQCFilters) {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);

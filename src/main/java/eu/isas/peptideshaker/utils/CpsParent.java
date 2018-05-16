@@ -28,6 +28,7 @@ import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCo
 import eu.isas.peptideshaker.preferences.UserParameters;
 import eu.isas.peptideshaker.preferences.UserPreferencesParent;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
+import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import java.io.File;
 import java.io.IOException;
@@ -105,6 +106,10 @@ public class CpsParent extends UserPreferencesParent {
      * All parameters of a project
      */
     public ProjectParameters projectParameters;
+    /**
+     * The project type.
+     */
+    protected ProjectType projectType;
 
     /**
      * Empty constructor for instantiation purposes.
@@ -212,6 +217,7 @@ public class CpsParent extends UserPreferencesParent {
         filterParameters = psParameters.getFilterParameters();
         displayParameters = psParameters.getDisplayParameters();
         sequenceProvider = psParameters.getSequenceProvider();
+        projectType = psParameters.getProjectType();
 
         // Set up caches
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, sequenceProvider, metrics, spectrumCountingParameters);
@@ -250,7 +256,7 @@ public class CpsParent extends UserPreferencesParent {
     public void saveProject(WaitingHandler waitingHandler, boolean emptyCache) throws IOException {
         
         CpsExporter.saveAs(cpsFile, waitingHandler, identification, identificationParameters, sequenceProvider, proteinDetailsProvider,
-                spectrumCountingParameters, projectDetails, filterParameters, metrics, geneMaps,
+                spectrumCountingParameters, projectDetails, filterParameters, metrics, geneMaps, projectType,
                 identificationFeaturesGenerator.getIdentificationFeaturesCache(), emptyCache, displayParameters, dbFolder);
 
         loadUserParameters();
@@ -719,8 +725,24 @@ public class CpsParent extends UserPreferencesParent {
         return proteinDetailsProvider;
         
     }
+
+    /**
+     * Returns the project type.
+     * 
+     * @return the project type
+     */
+    public ProjectType getProjectType() {
+        return projectType;
+    }
     
-    
+    /**
+     * Sets the project type.
+     * 
+     * @param projectType the project type
+     */
+    public void setProjectType(ProjectType projectType) {
+        this.projectType = projectType;
+    }
 
     /**
      * Returns an extended HTML project report.

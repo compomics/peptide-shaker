@@ -43,6 +43,7 @@ import eu.isas.peptideshaker.scoring.psm_scoring.PsmScorer;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 
 import java.io.File;
@@ -132,10 +133,6 @@ public class PeptideShaker {
      */
     private Identification identification;
     /**
-     * A fasta file mapper.
-     */
-    private FastaMapper fastaMapper;
-    /**
      * A provider for protein sequences.
      */
     private SequenceProvider sequenceProvider;
@@ -205,7 +202,6 @@ public class PeptideShaker {
         fileImporter.importFiles(idFiles, spectrumFiles);
 
         geneMaps = fileImporter.getGeneMaps();
-        fastaMapper = fileImporter.getFastaMapper();
         sequenceProvider = fileImporter.getSequenceProvider();
         proteinDetailsProvider = fileImporter.getProteinDetailsProvider();
         inputMap = fileImporter.getInputMap();
@@ -220,6 +216,7 @@ public class PeptideShaker {
      * @param exceptionHandler handler for exceptions
      * @param identificationParameters the identification parameters
      * @param processingParameters the processing preferences
+     * @param projectType the project type
      * @param spectrumCountingParameters the spectrum counting preferences
      * @param projectDetails the project details
      *
@@ -229,7 +226,7 @@ public class PeptideShaker {
      * process times out
      */
     public void createProject(IdentificationParameters identificationParameters, ProcessingParameters processingParameters,
-            SpectrumCountingParameters spectrumCountingParameters, ProjectDetails projectDetails,
+            SpectrumCountingParameters spectrumCountingParameters, ProjectDetails projectDetails, ProjectType projectType,
             WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) throws InterruptedException, TimeoutException {
 
         identification.getObjectsDB().commit();
@@ -336,60 +333,47 @@ public class PeptideShaker {
         }
 
         identification.getObjectsDB().commit();
-
-        String report = "Scoring PTMs in PSMs (D-score";
-
-        ModificationLocalizationParameters ptmScoringPreferences = identificationParameters.getModificationLocalizationParameters();
-        if (ptmScoringPreferences.isProbabilisticScoreCalculation()) {
-
-            report += " and " + ptmScoringPreferences.getSelectedProbabilisticScore().getName();
-
-        }
-
-        report += ")";
-
-        waitingHandler.appendReport(report, true, true);
-        ptmScorer.scorePsmPtms(identification, sequenceProvider, identificationParameters, metrics, processingParameters, waitingHandler, exceptionHandler);
-        waitingHandler.increasePrimaryProgressCounter();
-
-        if (waitingHandler.isRunCanceled()) {
-
-            return;
-        }
-
-        identification.getObjectsDB().commit();
         System.gc();
 
-        waitingHandler.increasePrimaryProgressCounter();
+        if (projectType == ProjectType.peptide || projectType == ProjectType.protein) {
 
-        if (waitingHandler.isRunCanceled()) {
+            ModificationLocalizationParameters modificationScoringPreferences = identificationParameters.getModificationLocalizationParameters();
 
-            return;
+            if (modificationScoringPreferences.getAlignNonConfidentModifications()) {
 
-        }
+                waitingHandler.appendReport("Resolving peptide inference issues.", true, true);
+                ptmScorer.peptideInference(identification, sequenceProvider, identificationParameters, waitingHandler);
 
-        identification.getObjectsDB().commit();
-        System.gc();
+                waitingHandler.increasePrimaryProgressCounter();
 
-        if (ptmScoringPreferences.getAlignNonConfidentModifications()) {
+                if (waitingHandler.isRunCanceled()) {
 
-            waitingHandler.appendReport("Resolving peptide inference issues.", true, true);
-            ptmScorer.peptideInference(identification, sequenceProvider, identificationParameters, waitingHandler);
+                    return;
 
-            waitingHandler.increasePrimaryProgressCounter();
-
-            if (waitingHandler.isRunCanceled()) {
-
-                return;
-
+                }
             }
+
+            identification.getObjectsDB().commit();
+            System.gc();
+
         }
 
-        identification.getObjectsDB().commit();
-        System.gc();
+        String reportTxt;
+        switch (projectType) {
+            case psm:
+                reportTxt = "Saving probabilities";
+                break;
+            case peptide:
+                reportTxt = "Saving probabilities, building peptides.";
+                break;
+            default:
+                reportTxt = "Saving probabilities, building peptides and proteins.";
+        }
 
-        waitingHandler.appendReport("Saving probabilities, building peptides and proteins.", true, true);
-        attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(sequenceProvider, identificationParameters.getSequenceMatchingParameters(), fastaParameters, waitingHandler);
+        waitingHandler.appendReport(reportTxt, true, true);
+        waitingHandler.setWaitingText(reportTxt + " Please Wait...");
+
+        attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(sequenceProvider, identificationParameters.getSequenceMatchingParameters(), projectType, fastaParameters, waitingHandler);
         waitingHandler.increasePrimaryProgressCounter();
 
         if (waitingHandler.isRunCanceled()) {
@@ -403,10 +387,55 @@ public class PeptideShaker {
 
         ProteinInference proteinInference = new ProteinInference();
 
-        if (identificationParameters.getProteinInferenceParameters().getSimplifyGroups()) {
+        if (projectType == ProjectType.protein) {
 
-            waitingHandler.appendReport("Simplifying protein groups.", true, true);
-            proteinInference.removeRedundantGroups(identification, identificationParameters, sequenceProvider, proteinDetailsProvider, waitingHandler);
+            if (identificationParameters.getProteinInferenceParameters().getSimplifyGroups()) {
+
+                waitingHandler.appendReport("Simplifying protein groups.", true, true);
+                proteinInference.removeRedundantGroups(identification, identificationParameters, sequenceProvider, proteinDetailsProvider, waitingHandler);
+                waitingHandler.increasePrimaryProgressCounter();
+
+                if (waitingHandler.isRunCanceled()) {
+
+                    return;
+
+                }
+            }
+
+            identification.getObjectsDB().commit();
+            System.gc();
+
+        }
+
+        if (projectType == ProjectType.peptide || projectType == ProjectType.protein) {
+
+            waitingHandler.appendReport("Generating peptide map.", true, true);
+            matchesValidator.fillPeptideMaps(identification, metrics, waitingHandler, identificationParameters);
+
+            if (waitingHandler.isRunCanceled()) {
+
+                return;
+
+            }
+
+            identification.getObjectsDB().commit();
+            System.gc();
+
+            waitingHandler.appendReport("Computing peptide probabilities.", true, true);
+
+            matchesValidator.getPeptideMap().estimateProbabilities(waitingHandler);
+
+            if (waitingHandler.isRunCanceled()) {
+
+                return;
+
+            }
+
+            identification.getObjectsDB().commit();
+            System.gc();
+
+            waitingHandler.appendReport("Saving peptide probabilities.", true, true);
+            matchesValidator.attachPeptideProbabilities(identification, fastaParameters, waitingHandler);
             waitingHandler.increasePrimaryProgressCounter();
 
             if (waitingHandler.isRunCanceled()) {
@@ -414,87 +443,53 @@ public class PeptideShaker {
                 return;
 
             }
+
+            identification.getObjectsDB().commit();
+            System.gc();
+
+            if (projectType == ProjectType.protein) {
+
+                waitingHandler.appendReport("Generating protein map.", true, true);
+                matchesValidator.fillProteinMap(identification, waitingHandler);
+                waitingHandler.increasePrimaryProgressCounter();
+
+                if (waitingHandler.isRunCanceled()) {
+
+                    return;
+
+                }
+
+                identification.getObjectsDB().commit();
+                System.gc();
+
+                waitingHandler.appendReport("Resolving protein inference issues, inferring peptide and protein PI status.", true, true); // could be slow
+                proteinInference.inferPiStatus(identification, metrics, matchesValidator.getProteinMap(), identificationParameters, sequenceProvider, proteinDetailsProvider, waitingHandler);
+                waitingHandler.increasePrimaryProgressCounter();
+
+                if (waitingHandler.isRunCanceled()) {
+
+                    return;
+
+                }
+
+                identification.getObjectsDB().commit();
+                System.gc();
+
+                waitingHandler.appendReport("Saving protein probabilities.", true, true);
+                matchesValidator.attachProteinProbabilities(identification, sequenceProvider, fastaParameters, metrics, waitingHandler, identificationParameters.getFractionParameters());
+                waitingHandler.increasePrimaryProgressCounter();
+
+                if (waitingHandler.isRunCanceled()) {
+
+                    return;
+
+                }
+
+                identification.getObjectsDB().commit();
+                System.gc();
+
+            }
         }
-
-        identification.getObjectsDB().commit();
-        System.gc();
-
-        waitingHandler.appendReport("Generating peptide map.", true, true);
-        matchesValidator.fillPeptideMaps(identification, metrics, waitingHandler, identificationParameters);
-
-        if (waitingHandler.isRunCanceled()) {
-
-            return;
-
-        }
-
-        identification.getObjectsDB().commit();
-        System.gc();
-
-        waitingHandler.appendReport("Computing peptide probabilities.", true, true);
-
-        matchesValidator.getPeptideMap().estimateProbabilities(waitingHandler);
-
-        if (waitingHandler.isRunCanceled()) {
-
-            return;
-
-        }
-
-        identification.getObjectsDB().commit();
-        System.gc();
-
-        waitingHandler.appendReport("Saving peptide probabilities.", true, true);
-        matchesValidator.attachPeptideProbabilities(identification, fastaParameters, waitingHandler);
-        waitingHandler.increasePrimaryProgressCounter();
-
-        if (waitingHandler.isRunCanceled()) {
-
-            return;
-
-        }
-
-        identification.getObjectsDB().commit();
-        System.gc();
-
-        waitingHandler.appendReport("Generating protein map.", true, true);
-        matchesValidator.fillProteinMap(identification, waitingHandler);
-        waitingHandler.increasePrimaryProgressCounter();
-
-        if (waitingHandler.isRunCanceled()) {
-
-            return;
-
-        }
-
-        identification.getObjectsDB().commit();
-        System.gc();
-
-        waitingHandler.appendReport("Resolving protein inference issues, inferring peptide and protein PI status.", true, true); // could be slow
-        proteinInference.inferPiStatus(identification, metrics, matchesValidator.getProteinMap(), identificationParameters, sequenceProvider, proteinDetailsProvider, waitingHandler);
-        waitingHandler.increasePrimaryProgressCounter();
-
-        if (waitingHandler.isRunCanceled()) {
-
-            return;
-
-        }
-
-        identification.getObjectsDB().commit();
-        System.gc();
-
-        waitingHandler.appendReport("Saving protein probabilities.", true, true);
-        matchesValidator.attachProteinProbabilities(identification, sequenceProvider, fastaParameters, metrics, waitingHandler, identificationParameters.getFractionParameters());
-        waitingHandler.increasePrimaryProgressCounter();
-
-        if (waitingHandler.isRunCanceled()) {
-
-            return;
-
-        }
-
-        identification.getObjectsDB().commit();
-        System.gc();
 
         if (fastaParameters.isTargetDecoy()) {
 
@@ -515,7 +510,12 @@ public class PeptideShaker {
 
         }
 
-        matchesValidator.validateIdentifications(identification, metrics, inputMap, waitingHandler, exceptionHandler, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, spectrumCountingParameters, processingParameters);
+        matchesValidator.validateIdentifications(identification, metrics, inputMap,
+                waitingHandler, exceptionHandler,
+                identificationFeaturesGenerator, sequenceProvider,
+                proteinDetailsProvider, geneMaps,
+                identificationParameters, spectrumCountingParameters,
+                projectType, processingParameters);
         waitingHandler.increasePrimaryProgressCounter();
 
         if (waitingHandler.isRunCanceled()) {
@@ -527,34 +527,41 @@ public class PeptideShaker {
         identification.getObjectsDB().commit();
         System.gc();
 
-        waitingHandler.appendReport("Scoring PTMs in peptides.", true, true);
-        ptmScorer.scorePeptidePtms(identification, waitingHandler, identificationParameters);
-        waitingHandler.increasePrimaryProgressCounter();
+        if (projectType == ProjectType.peptide || projectType == ProjectType.protein) {
 
-        if (waitingHandler.isRunCanceled()) {
+            waitingHandler.appendReport("Scoring PTMs in peptides.", true, true);
+            ptmScorer.scorePeptidePtms(identification, waitingHandler, identificationParameters);
+            waitingHandler.increasePrimaryProgressCounter();
 
-            return;
+            if (waitingHandler.isRunCanceled()) {
 
+                return;
+
+            }
+
+            identification.getObjectsDB().commit();
+            System.gc();
+
+            if (projectType == ProjectType.protein) {
+
+                waitingHandler.appendReport("Scoring PTMs in proteins.", true, true);
+                ptmScorer.scoreProteinPtms(identification, metrics, waitingHandler, identificationParameters, identificationFeaturesGenerator);
+                waitingHandler.increasePrimaryProgressCounter();
+
+                if (waitingHandler.isRunCanceled()) {
+
+                    return;
+
+                }
+
+                identification.getObjectsDB().commit();
+                System.gc();
+
+            }
         }
-
-        identification.getObjectsDB().commit();
-        System.gc();
-
-        waitingHandler.appendReport("Scoring PTMs in proteins.", true, true);
-        ptmScorer.scoreProteinPtms(identification, metrics, waitingHandler, identificationParameters, identificationFeaturesGenerator);
-        waitingHandler.increasePrimaryProgressCounter();
-
-        if (waitingHandler.isRunCanceled()) {
-
-            return;
-
-        }
-
-        identification.getObjectsDB().commit();
-        System.gc();
 
         projectCreationDuration.end();
-        report = "Identification processing completed (" + projectCreationDuration.toString() + ").";
+        String report = "Identification processing completed (" + projectCreationDuration.toString() + ").";
 
         waitingHandler.appendReport(report, true, true);
         waitingHandler.appendReportEndLine();
@@ -573,9 +580,10 @@ public class PeptideShaker {
      * @param processingPreferences the processing preferences
      * @param identificationParameters the identification parameters
      * @param sequenceProvider a protein sequence provider
+     * @param projectType the project type
      */
     public void spectrumMapChanged(Identification identification, WaitingHandler waitingHandler, ProcessingParameters processingPreferences,
-            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider) {
+            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProjectType projectType) {
 
         FastaParameters fastaParameters = identificationParameters.getSearchParameters().getFastaParameters();
         FractionParameters fractionParameters = identificationParameters.getFractionParameters();
@@ -584,7 +592,8 @@ public class PeptideShaker {
         TargetDecoyMap proteinMap = new TargetDecoyMap();
         matchesValidator.setPeptideMap(peptideMap);
         matchesValidator.setProteinMap(proteinMap);
-        attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(sequenceProvider, identificationParameters.getSequenceMatchingParameters(), identificationParameters.getSearchParameters().getFastaParameters(), waitingHandler);
+        attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(sequenceProvider, identificationParameters.getSequenceMatchingParameters(),
+                projectType, identificationParameters.getSearchParameters().getFastaParameters(), waitingHandler);
         matchesValidator.fillPeptideMaps(identification, metrics, waitingHandler, identificationParameters);
         peptideMap.estimateProbabilities(waitingHandler);
         matchesValidator.attachPeptideProbabilities(identification, fastaParameters, waitingHandler);
@@ -897,12 +906,13 @@ public class PeptideShaker {
      *
      * @param sequenceProvider a protein sequence provider
      * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param projectType the project type
      * @param fastaParameters the fasta parsing parameters
      * @param waitingHandler the handler displaying feedback to the user
      */
-    private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(SequenceProvider sequenceProvider, SequenceMatchingParameters sequenceMatchingPreferences, FastaParameters fastaParameters, WaitingHandler waitingHandler) {
-
-        waitingHandler.setWaitingText("Attaching Spectrum Probabilities - Building Peptides and Proteins. Please Wait...");
+    private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(
+            SequenceProvider sequenceProvider, SequenceMatchingParameters sequenceMatchingPreferences,
+            ProjectType projectType, FastaParameters fastaParameters, WaitingHandler waitingHandler) {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
@@ -930,7 +940,11 @@ public class PeptideShaker {
 
             }
 
-            identification.buildPeptidesAndProteins(spectrumMatch, sequenceMatchingPreferences, sequenceProvider);
+            if (projectType == ProjectType.peptide || projectType == ProjectType.protein) {
+
+                identification.buildPeptidesAndProteins(spectrumMatch, sequenceMatchingPreferences, sequenceProvider, projectType == ProjectType.protein);
+
+            }
 
             waitingHandler.increaseSecondaryProgressCounter();
 

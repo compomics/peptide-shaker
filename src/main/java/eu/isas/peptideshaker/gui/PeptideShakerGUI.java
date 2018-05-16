@@ -100,13 +100,9 @@ import com.compomics.util.gui.parameters.identification.advanced.ValidationQCPar
 import com.compomics.util.parameters.tools.ProcessingParameters;
 import eu.isas.peptideshaker.export.ProjectExport;
 import com.compomics.util.experiment.identification.filtering.AssumptionFilter;
-import com.compomics.util.experiment.identification.filtering.MatchFilter;
-import com.compomics.util.experiment.identification.filtering.PeptideFilter;
-import com.compomics.util.experiment.identification.filtering.ProteinFilter;
 import com.compomics.util.experiment.identification.filtering.PsmFilter;
 import eu.isas.peptideshaker.gui.export.MethodsSectionDialog;
 import eu.isas.peptideshaker.gui.export.MzIdentMLExportDialog;
-import com.compomics.util.gui.filtering.FilterDialog;
 import eu.isas.peptideshaker.gui.pride.PrideReshakeGUI;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathParameters;
@@ -144,6 +140,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
+import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -3512,7 +3509,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                             MatchesValidator matchesValidator = new MatchesValidator(pSMaps.getPsmMap(), pSMaps.getPeptideMap(), pSMaps.getProteinMap());
                             matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), pSMaps.getInputMap(), progressDialog, exceptionHandler,
                                     peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationParameters(),
-                                    peptideShakerGUI.getSpectrumCountingParameters(), peptideShakerGUI.getProcessingParameters());
+                                    peptideShakerGUI.getSpectrumCountingParameters(), peptideShakerGUI.getProjectType(), peptideShakerGUI.getProcessingParameters());
 
                             progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
@@ -7082,6 +7079,24 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public void setMetrics(Metrics metrics) {
         cpsParent.setMetrics(metrics);
+    }
+    
+    /**
+     * Returns the project type.
+     * 
+     * @return the project type
+     */
+    public ProjectType getProjectType() {
+        return cpsParent.getProjectType();
+    }
+    
+    /**
+     * Sets the project type.
+     * 
+     * @param projectType the project type
+     */
+    public void setProjectType(ProjectType projectType) {
+        cpsParent.setProjectType(projectType);
     }
 
     /**

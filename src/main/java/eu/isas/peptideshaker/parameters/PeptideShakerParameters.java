@@ -14,6 +14,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import com.compomics.util.experiment.identification.IdentificationFeaturesCache;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import java.io.Serializable;
 
 /**
@@ -68,6 +69,10 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      */
     private final IdentificationFeaturesCache identificationFeaturesCache;
     /**
+     * The type of project.
+     */
+    private ProjectType projectType;
+    /**
      * The key of the object when stored in settings table of a cps file.
      */
     public static final long key = ExperimentObject.asLong("PeptideShaker_parameters");
@@ -84,6 +89,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      * @param sequenceProvider the sequence provider
      * @param proteinDetailsProvider the protein details provider
      * @param geneMaps The gene maps
+     * @param projectType the project type
      * @param identificationFeaturesCache The identification features cache
      */
     public PeptideShakerParameters(IdentificationParameters identificationParameters,
@@ -95,6 +101,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
             SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider,
             GeneMaps geneMaps,
+            ProjectType projectType,
             IdentificationFeaturesCache identificationFeaturesCache) {
         
         this.identificationParameters = identificationParameters;
@@ -106,6 +113,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
         this.sequenceProvider = sequenceProvider;
         this.proteinDetailsProvider = proteinDetailsProvider;
         this.geneMaps = geneMaps;
+        this.projectType = projectType;
         this.identificationFeaturesCache = identificationFeaturesCache;
     
     }
@@ -245,4 +253,18 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
     public long getParameterKey() {
         return getId();
     }
+
+    /**
+     * Returns the project type.
+     * 
+     * @return the project type
+     */
+    public ProjectType getProjectType() {
+        
+        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        
+        return projectType;
+    }
+    
+    
 }

@@ -30,6 +30,7 @@ import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.parameters.UtilitiesUserParameters;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
+import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.gui.parameters.ProjectParametersDialog;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
@@ -110,6 +111,10 @@ public class NewDialog extends javax.swing.JDialog {
      * The project details.
      */
     private ProjectDetails projectDetails = new ProjectDetails();
+    /**
+     * The project type.
+     */
+    private ProjectType projectType = ProjectType.protein;
     /**
      * The identification parameters factory.
      */
@@ -689,7 +694,7 @@ public class NewDialog extends javax.swing.JDialog {
                         try {
                             ExceptionHandler exceptionHandler = new WaitingDialogExceptionHandler((WaitingDialog) waitingDialog, "https://github.com/compomics/peptide-shaker/issues");
                             peptideShaker.importFiles(waitingDialog, idFiles, spectrumFiles, identificationParameters, projectDetails, processingParameters, exceptionHandler);
-                            peptideShaker.createProject(identificationParameters, processingParameters, spectrumCountingPreferences, projectDetails, waitingDialog, exceptionHandler);
+                            peptideShaker.createProject(identificationParameters, processingParameters, spectrumCountingPreferences, projectDetails, projectType, waitingDialog, exceptionHandler);
                         } catch (Exception e) {
                             System.out.println("Failed to import data or create the project!");
                             e.printStackTrace();
@@ -713,6 +718,7 @@ public class NewDialog extends javax.swing.JDialog {
                 peptideShakerGUI.setIdentification(peptideShaker.getIdentification());
                 peptideShakerGUI.setMetrics(peptideShaker.getMetrics());
                 peptideShakerGUI.setGeneMaps(peptideShaker.getGeneMaps());
+                peptideShakerGUI.setProjectType(projectType);
                 peptideShakerGUI.setIdentificationFeaturesGenerator(peptideShaker.getIdentificationFeaturesGenerator());
                 peptideShakerGUI.displayResults();
                 peptideShakerGUI.initiateDisplay(); // display the overview tab
