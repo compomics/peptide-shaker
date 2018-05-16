@@ -54,9 +54,11 @@ import java.util.Map.Entry;
 import static eu.isas.peptideshaker.fileimport.FileImporter.MOD_MASS_TOLERANCE;
 import eu.isas.peptideshaker.protein_inference.PeptideChecker;
 import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
+import java.util.Arrays;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * This class can be used to import PSMs from search engine results.
@@ -404,7 +406,7 @@ public class PsmImporter {
                         // map the algorithm specific modifications on utilities modifications
                         // If there are not enough sites to put them all on the sequence, add an unknown modification
                         // Note: this needs to be done for tag based assumptions as well since the protein mapping can return erroneous modifications for some pattern based modifications
-                        ModificationParameters modificationProfile = searchParameters.getModificationParameters();
+                        ModificationParameters modificationParameters = searchParameters.getModificationParameters();
 
                         ModificationMatch[] modificationMatches = peptide.getVariableModifications();
 
@@ -456,7 +458,7 @@ public class PsmImporter {
 
                                 Modification modification = modificationFactory.getModification(omssaName);
 
-                                tempNames = ModificationUtils.getExpectedModifications(modification.getMass(), modificationProfile, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
+                                tempNames = ModificationUtils.getExpectedModifications(modification.getMass(), modificationParameters, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
 
                             } else if (fileReader instanceof AndromedaIdfileReader) {
 
@@ -495,7 +497,7 @@ public class PsmImporter {
                                 }
 
                                 Modification modification = modificationFactory.getModification(andromedaName);
-                                tempNames = ModificationUtils.getExpectedModifications(modification.getMass(), modificationProfile, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
+                                tempNames = ModificationUtils.getExpectedModifications(modification.getMass(), modificationParameters, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
 
                             } else if (fileReader instanceof MascotIdfileReader
                                     || fileReader instanceof XTandemIdfileReader
@@ -519,7 +521,7 @@ public class PsmImporter {
 
                                 }
 
-                                tempNames = ModificationUtils.getExpectedModifications(modMass, modificationProfile, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
+                                tempNames = ModificationUtils.getExpectedModifications(modMass, modificationParameters, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
 
                             } else if (fileReader instanceof DirecTagIdfileReader
                                     || fileReader instanceof NovorIdfileReader
@@ -533,7 +535,7 @@ public class PsmImporter {
 
                                 }
 
-                                tempNames = ModificationUtils.getExpectedModifications(modification.getMass(), modificationProfile, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
+                                tempNames = ModificationUtils.getExpectedModifications(modification.getMass(), modificationParameters, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
 
                             } else {
 
@@ -578,6 +580,9 @@ public class PsmImporter {
                         // Map peptide to protein
                         proteinMapping(peptide);
 
+                        // Estimate mass
+                        peptide.getMass(modificationParameters, sequenceProvider, modificationSequenceMatchingPreferences);
+
                         // Add new assumption
                         newAssumptions.add(peptideAssumption);
 
@@ -597,21 +602,6 @@ public class PsmImporter {
                     assumptionsForAdvocate.remove(score);
 
                 }
-            }
-
-            // Score modification localization
-            ModificationLocalizationScorer modificationLocalizationScorer = new ModificationLocalizationScorer();
-            modificationLocalizationScorer.scorePTMs(identification, spectrumMatch, sequenceProvider, identificationParameters, waitingHandler, peptideSpectrumAnnotator);
-
-            // Set modification sites
-            modificationLocalizationScorer.modificationSiteInference(spectrumMatch, sequenceProvider, identificationParameters);
-
-            // Update protein mapping based on modification profile
-            if (identificationParameters.getProteinInferenceParameters().isModificationRefinement()) {
-
-                spectrumMatch.getAllPeptideAssumptions().forEach(
-                        peptideAssumption -> PeptideChecker.checkPeptide(peptideAssumption.getPeptide(), sequenceProvider, modificationSequenceMatchingPreferences));
-
             }
 
             // try to find the best peptide hit passing the initial filters
@@ -729,7 +719,6 @@ public class PsmImporter {
                 }
             }
         }
-
     }
 
     /**
@@ -1208,19 +1197,46 @@ public class PsmImporter {
         ArrayList<PeptideProteinMapping> peptideProteinMappings = fastaMapper.getProteinMapping(peptide.getSequence(), sequenceMatchingPreferences);
         HashMap<String, HashMap<String, int[]>> sequenceIndexes = PeptideProteinMapping.getPeptideProteinIndexesMap(peptideProteinMappings);
 
+        TreeMap<String, int[]> proteinIndexes;
+
         if (sequenceIndexes.size() == 1) {
 
-            HashMap<String, int[]> proteinIndexes = sequenceIndexes.values().stream().findAny().get();
-            peptide.setProteinMapping(new TreeMap<>(proteinIndexes));
+            proteinIndexes = new TreeMap<>(sequenceIndexes.values().stream().findAny().get());
 
-            HashMap<String, HashMap<Integer, PeptideVariantMatches>> variantMatches = PeptideProteinMapping.getVariantMatches(peptideProteinMappings);
-            peptide.setVariantMatches(variantMatches);
+        } else {
 
-        } else if (sequenceIndexes.size() > 1) {
+            proteinIndexes = new TreeMap<>();
 
-            throw new UnsupportedOperationException("Ambiguous sequence " + peptide.getSequence() + " not supported at this stage of the analysis.");
+            for (HashMap<String, int[]> tempIndexes : sequenceIndexes.values()) {
 
+                for (Entry<String, int[]> entry : tempIndexes.entrySet()) {
+
+                    String accession = entry.getKey();
+                    int[] newIndexes = entry.getValue();
+                    int[] currentIndexes = proteinIndexes.get(accession);
+
+                    if (currentIndexes == null) {
+
+                        proteinIndexes.put(accession, newIndexes);
+
+                    } else {
+
+                        int[] mergedIndexes = IntStream.concat(Arrays.stream(currentIndexes), Arrays.stream(newIndexes))
+                                .distinct()
+                                .sorted()
+                                .toArray();
+                        proteinIndexes.put(accession, mergedIndexes);
+
+                    }
+                }
+            }
         }
+
+        peptide.setProteinMapping(proteinIndexes);
+
+        HashMap<String, HashMap<Integer, PeptideVariantMatches>> variantMatches = PeptideProteinMapping.getVariantMatches(peptideProteinMappings);
+        peptide.setVariantMatches(variantMatches);
+        
     }
 
     /**
