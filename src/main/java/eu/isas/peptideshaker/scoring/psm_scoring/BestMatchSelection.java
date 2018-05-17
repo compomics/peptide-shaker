@@ -22,8 +22,10 @@ import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
+import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
+import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,6 +35,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import uk.ac.ebi.jmzidml.model.mzidml.params.PeptideUserParam;
 
 /**
  * This class contains the method for PSM best hit selection.
@@ -86,10 +89,11 @@ public class BestMatchSelection {
      *
      * @param spectrumMatch the spectrum match
      * @param inputMap The input map
+     * @param psmTargetDecoyMap the psm target decoy map
      * @param waitingHandler the handler displaying feedback to the user
      * @param identificationParameters the identification parameters
      */
-    public void selectBestHit(SpectrumMatch spectrumMatch, InputMap inputMap, WaitingHandler waitingHandler,
+    public void selectBestHit(SpectrumMatch spectrumMatch, InputMap inputMap, TargetDecoyMap psmTargetDecoyMap, WaitingHandler waitingHandler,
             IdentificationParameters identificationParameters) {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -187,6 +191,8 @@ public class BestMatchSelection {
                                     }
                                 }
                             }
+                            
+                            psmTargetDecoyMap.put(p, PeptideUtils.isDecoy(peptide1, sequenceProvider));
 
                             TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, TreeMap<Double, TreeMap<Long, PeptideAssumption>>>>> pMap = peptideAssumptions.get(p);
 

@@ -145,7 +145,7 @@ public class TargetDecoyMap extends DbObject {
      * @param score The given score
      * @param isDecoy boolean indicating whether the hit is decoy
      */
-    public void put(Double score, boolean isDecoy) {
+    public void put(double score, boolean isDecoy) {
         
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         
@@ -176,7 +176,7 @@ public class TargetDecoyMap extends DbObject {
      *
      * @return the target decoy point of the map at the given score
      */
-    public synchronized TargetDecoyPoint createTargetDecoyPoint(Double score) {
+    public synchronized TargetDecoyPoint createTargetDecoyPoint(double score) {
         
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         
@@ -200,7 +200,7 @@ public class TargetDecoyMap extends DbObject {
      * @param score the given score
      * @param isDecoy boolean indicating whether the hit is decoy
      */
-    public void remove(Double score, boolean isDecoy) {
+    public void remove(double score, boolean isDecoy) {
 
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
 
@@ -228,7 +228,7 @@ public class TargetDecoyMap extends DbObject {
 
         HashSet<Double> currentScores = new HashSet<>(hitMap.keySet());
 
-        for (Double score : currentScores) {
+        for (double score : currentScores) {
 
             TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
 
@@ -571,7 +571,7 @@ public class TargetDecoyMap extends DbObject {
      *
      * @return a boolean indicating if a suspicious input was detected
      */
-    public boolean suspiciousInput(Double initialFDR) {
+    public boolean suspiciousInput(double initialFDR) {
 
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
 

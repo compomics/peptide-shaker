@@ -235,6 +235,7 @@ public class PeptideShaker {
         identification.getObjectsDB().commit();
 
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, sequenceProvider, metrics, spectrumCountingParameters);
+        matchesValidator = new MatchesValidator(new TargetDecoyMap(), new TargetDecoyMap(), new TargetDecoyMap());
 
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -287,9 +288,7 @@ public class PeptideShaker {
         waitingHandler.increasePrimaryProgressCounter();
 
         if (waitingHandler.isRunCanceled()) {
-
             return;
-
         }
 
         identification.getObjectsDB().commit();
@@ -301,9 +300,7 @@ public class PeptideShaker {
         waitingHandler.increasePrimaryProgressCounter();
 
         if (waitingHandler.isRunCanceled()) {
-
             return;
-
         }
 
         identification.getObjectsDB().commit();
@@ -314,9 +311,7 @@ public class PeptideShaker {
         matchesValidator.getPsmMap().estimateProbabilities(waitingHandler);
 
         if (waitingHandler.isRunCanceled()) {
-
             return;
-
         }
 
         identification.getObjectsDB().commit();
@@ -364,9 +359,7 @@ public class PeptideShaker {
         waitingHandler.increasePrimaryProgressCounter();
 
         if (waitingHandler.isRunCanceled()) {
-
             return;
-
         }
 
         identification.getObjectsDB().commit();
@@ -383,9 +376,7 @@ public class PeptideShaker {
                 waitingHandler.increasePrimaryProgressCounter();
 
                 if (waitingHandler.isRunCanceled()) {
-
                     return;
-
                 }
             }
 
@@ -413,9 +404,7 @@ public class PeptideShaker {
             matchesValidator.getPeptideMap().estimateProbabilities(waitingHandler);
 
             if (waitingHandler.isRunCanceled()) {
-
                 return;
-
             }
 
             identification.getObjectsDB().commit();
@@ -426,9 +415,7 @@ public class PeptideShaker {
             waitingHandler.increasePrimaryProgressCounter();
 
             if (waitingHandler.isRunCanceled()) {
-
                 return;
-
             }
 
             identification.getObjectsDB().commit();
@@ -441,9 +428,7 @@ public class PeptideShaker {
                 waitingHandler.increasePrimaryProgressCounter();
 
                 if (waitingHandler.isRunCanceled()) {
-
                     return;
-
                 }
 
                 identification.getObjectsDB().commit();
@@ -454,9 +439,7 @@ public class PeptideShaker {
                 waitingHandler.increasePrimaryProgressCounter();
 
                 if (waitingHandler.isRunCanceled()) {
-
                     return;
-
                 }
 
                 identification.getObjectsDB().commit();
@@ -467,9 +450,7 @@ public class PeptideShaker {
                 waitingHandler.increasePrimaryProgressCounter();
 
                 if (waitingHandler.isRunCanceled()) {
-
                     return;
-
                 }
 
                 identification.getObjectsDB().commit();
@@ -508,9 +489,7 @@ public class PeptideShaker {
         waitingHandler.increasePrimaryProgressCounter();
 
         if (waitingHandler.isRunCanceled()) {
-
             return;
-
         }
 
         identification.getObjectsDB().commit();
@@ -523,9 +502,7 @@ public class PeptideShaker {
             waitingHandler.increasePrimaryProgressCounter();
 
             if (waitingHandler.isRunCanceled()) {
-
                 return;
-
             }
 
             identification.getObjectsDB().commit();
@@ -538,9 +515,7 @@ public class PeptideShaker {
                 waitingHandler.increasePrimaryProgressCounter();
 
                 if (waitingHandler.isRunCanceled()) {
-
                     return;
-
                 }
 
                 identification.getObjectsDB().commit();
@@ -672,7 +647,7 @@ public class PeptideShaker {
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler
      */
-    private void psmProcessing(SpectrumMatch spectrumMatch, InputMap inputMap,
+    private void psmProcessing(SpectrumMatch spectrumMatch, InputMap inputMap, 
             BestMatchSelection bestMatchSelection, IdentificationParameters identificationParameters,
             WaitingHandler waitingHandler) {
 
@@ -688,7 +663,7 @@ public class PeptideShaker {
 
         attachAssumptionsProbabilities(spectrumMatch, inputMap, fastaParameters, sequenceMatchingParameters, waitingHandler);
 
-        bestMatchSelection.selectBestHit(spectrumMatch, inputMap, waitingHandler, identificationParameters);
+        bestMatchSelection.selectBestHit(spectrumMatch, inputMap, matchesValidator.getPsmMap(), waitingHandler, identificationParameters);
 
         if (spectrumMatch.getBestPeptideAssumption() != null) {
 
