@@ -1916,7 +1916,8 @@ public class MatchesValidator {
                         double tempSpectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
                         totalSpectrumCounting += tempSpectrumCounting;
 
-                        double molecularWeight = ProteinUtils.computeMolecularWeight(proteinMatch.getLeadingAccession());
+                        double molecularWeight = ProteinUtils.computeMolecularWeight(
+                                sequenceProvider.getSequence(proteinMatch.getLeadingAccession()));
                         double massContribution = molecularWeight * tempSpectrumCounting;
                         totalSpectrumCountingMass += massContribution;
 

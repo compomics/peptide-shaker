@@ -582,7 +582,8 @@ public class ProteinInference {
                 String mainAccession = proteinMatch.getLeadingAccession();
 
                 // Save maximal mw
-                double mw = ProteinUtils.computeMolecularWeight(mainAccession);
+                String proteinSequence = sequenceProvider.getSequence(mainAccession);
+                double mw = ProteinUtils.computeMolecularWeight(proteinSequence);
 
                 if (mw > maxMW) {
 
@@ -861,7 +862,7 @@ public class ProteinInference {
                         .anyMatch(peptideMatch -> PeptideUtils.isEnzymatic(peptideMatch.getPeptide(), newAccession, sequenceProvider.getSequence(newAccession), digestionPreferences.getEnzymes()));
                 boolean oldEnzymatic = Arrays.stream(oldProteinMatch.getPeptideMatchesKeys())
                         .mapToObj(key -> identification.getPeptideMatch(key))
-                        .anyMatch(peptideMatch -> PeptideUtils.isEnzymatic(peptideMatch.getPeptide(), oldAccession, sequenceProvider.getSequence(newAccession), digestionPreferences.getEnzymes()));
+                        .anyMatch(peptideMatch -> PeptideUtils.isEnzymatic(peptideMatch.getPeptide(), oldAccession, sequenceProvider.getSequence(oldAccession), digestionPreferences.getEnzymes()));
                 
                 if (newEnzymatic && !oldEnzymatic) {
                 

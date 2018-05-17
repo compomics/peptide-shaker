@@ -79,7 +79,7 @@ public class PeptideShaker {
     /**
      * The PTM scorer responsible for scoring PTM localization.
      */
-    private ModificationLocalizationScorer ptmScorer;
+    private ModificationLocalizationScorer modificationLocalizationScorer = new ModificationLocalizationScorer();
     /**
      * The id importer will import and process the identifications.
      */
@@ -324,14 +324,12 @@ public class PeptideShaker {
             if (modificationScoringPreferences.getAlignNonConfidentModifications()) {
 
                 waitingHandler.appendReport("Resolving peptide inference issues.", true, true);
-                ptmScorer.peptideInference(identification, sequenceProvider, identificationParameters, waitingHandler);
+                modificationLocalizationScorer.peptideInference(identification, sequenceProvider, identificationParameters, waitingHandler);
 
                 waitingHandler.increasePrimaryProgressCounter();
 
                 if (waitingHandler.isRunCanceled()) {
-
                     return;
-
                 }
             }
 
@@ -498,7 +496,7 @@ public class PeptideShaker {
         if (projectType == ProjectType.peptide || projectType == ProjectType.protein) {
 
             waitingHandler.appendReport("Scoring PTMs in peptides.", true, true);
-            ptmScorer.scorePeptidePtms(identification, waitingHandler, identificationParameters);
+            modificationLocalizationScorer.scorePeptidePtms(identification, waitingHandler, identificationParameters);
             waitingHandler.increasePrimaryProgressCounter();
 
             if (waitingHandler.isRunCanceled()) {
@@ -511,7 +509,7 @@ public class PeptideShaker {
             if (projectType == ProjectType.protein) {
 
                 waitingHandler.appendReport("Scoring PTMs in proteins.", true, true);
-                ptmScorer.scoreProteinPtms(identification, metrics, waitingHandler, identificationParameters, identificationFeaturesGenerator);
+                modificationLocalizationScorer.scoreProteinPtms(identification, metrics, waitingHandler, identificationParameters, identificationFeaturesGenerator);
                 waitingHandler.increasePrimaryProgressCounter();
 
                 if (waitingHandler.isRunCanceled()) {
@@ -668,7 +666,6 @@ public class PeptideShaker {
         if (spectrumMatch.getBestPeptideAssumption() != null) {
 
             // Score modification localization
-            ModificationLocalizationScorer modificationLocalizationScorer = new ModificationLocalizationScorer();
             modificationLocalizationScorer.scorePTMs(identification, spectrumMatch, sequenceProvider, identificationParameters, waitingHandler, peptideSpectrumAnnotator);
 
             // Set modification sites

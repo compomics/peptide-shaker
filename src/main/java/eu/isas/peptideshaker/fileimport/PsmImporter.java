@@ -1236,7 +1236,7 @@ public class PsmImporter {
 
         HashMap<String, HashMap<Integer, PeptideVariantMatches>> variantMatches = PeptideProteinMapping.getVariantMatches(peptideProteinMappings);
         peptide.setVariantMatches(variantMatches);
-        
+
     }
 
     /**

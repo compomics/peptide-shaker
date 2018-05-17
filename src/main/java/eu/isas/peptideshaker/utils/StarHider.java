@@ -899,7 +899,8 @@ public class StarHider {
                     // update the observed fractional molecular weights per fraction
                     if (!psParameter.getHidden() && psParameter.getMatchValidationLevel().isValidated() && !proteinMatch.isDecoy()) {
 
-                        Double proteinMW = ProteinUtils.computeMolecularWeight(proteinMatch.getLeadingAccession());
+                        String proteinSequence = sequenceProvider.getSequence(proteinMatch.getLeadingAccession());
+                        double proteinMW = ProteinUtils.computeMolecularWeight(proteinSequence);
 
                         for (String fraction : psParameter.getFractions()) {
 
