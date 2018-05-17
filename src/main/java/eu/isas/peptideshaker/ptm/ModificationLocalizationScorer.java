@@ -1632,86 +1632,6 @@ public class ModificationLocalizationScorer extends DbObject {
     }
 
     /**
-     * Scores the PTMs of all protein matches contained in an identification
-     * object.
-     *
-     * @param identification identification object containing the identification
-     * matches
-     * @param metrics if provided, metrics on proteins will be saved while
-     * iterating the matches
-     * @param waitingHandler the handler displaying feedback to the user
-     * @param identificationParameters the identification parameters
-     * @param identificationFeaturesGenerator identification features generator
-     * used to generate metrics which will be stored for later reuse
-     */
-    public void scoreProteinPtms(Identification identification, Metrics metrics, WaitingHandler waitingHandler, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator) {
-
-        waitingHandler.setWaitingText("Scoring Protein modification localization. Please Wait...");
-
-        int max = identification.getProteinIdentification().size();
-        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressCounter(max);
-
-        // If needed, while we are iterating proteins, we will take the maximal spectrum counting value and number of validated proteins as well.
-        int nValidatedProteins = 0;
-        int nConfidentProteins = 0;
-        double tempSpectrumCounting, maxSpectrumCounting = 0;
-
-        for (long proteinKey : identification.getProteinIdentification()) {
-
-            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-
-            scorePTMs(identification, proteinMatch, identificationParameters, false, waitingHandler);
-
-            if (metrics != null) {
-
-                PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
-
-                if (psParameter.getMatchValidationLevel().isValidated()) {
-
-                    nValidatedProteins++;
-
-                    if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-
-                        nConfidentProteins++;
-
-                    }
-                }
-
-                if (identificationFeaturesGenerator != null) {
-
-                    tempSpectrumCounting = identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey);
-
-                    if (tempSpectrumCounting > maxSpectrumCounting) {
-
-                        maxSpectrumCounting = tempSpectrumCounting;
-
-                    }
-                }
-            }
-
-            waitingHandler.increaseSecondaryProgressCounter();
-
-            if (waitingHandler.isRunCanceled()) {
-
-                return;
-
-            }
-        }
-
-        if (metrics != null) {
-
-            metrics.setMaxSpectrumCounting(maxSpectrumCounting);
-            metrics.setnValidatedProteins(nValidatedProteins);
-            metrics.setnConfidentProteins(nConfidentProteins);
-
-        }
-
-        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-
-    }
-
-    /**
      * Infers the PTM localization and its confidence for the best match of
      * every spectrum.
      *
@@ -1729,7 +1649,6 @@ public class ModificationLocalizationScorer extends DbObject {
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-        SequenceMatchingParameters sequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         ModificationParameters ModificationParameters = searchParameters.getModificationParameters();
 

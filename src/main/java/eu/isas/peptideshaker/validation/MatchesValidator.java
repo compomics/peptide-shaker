@@ -117,7 +117,6 @@ public class MatchesValidator {
      * @param sequenceProvider a protein sequence provider
      * @param proteinDetailsProvider a protein details provider
      * @param identificationParameters the identification parameters
-     * @param spectrumCountingParameters the spectrum counting parameters
      * @param projectType the project type
      * @param processingParameters the processing parameters
      *
@@ -129,7 +128,7 @@ public class MatchesValidator {
     public void validateIdentifications(Identification identification, Metrics metrics, InputMap inputMap,
             WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps, IdentificationParameters identificationParameters,
-            SpectrumCountingParameters spectrumCountingParameters, ProjectType projectType, ProcessingParameters processingParameters) throws InterruptedException, TimeoutException {
+            ProjectType projectType, ProcessingParameters processingParameters) throws InterruptedException, TimeoutException {
 
         ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
@@ -351,7 +350,7 @@ public class MatchesValidator {
                 for (int i = 1; i <= processingParameters.getnThreads(); i++) {
 
                     ProteinValidatorRunnable runnable = new ProteinValidatorRunnable(proteinMatchesIterator, identification, identificationFeaturesGenerator,
-                            sequenceProvider, proteinDetailsProvider, geneMaps, metrics, identificationParameters, spectrumCountingParameters,
+                            sequenceProvider, proteinDetailsProvider, geneMaps, metrics, identificationParameters,
                             waitingHandler, exceptionHandler);
                     pool.submit(runnable);
                     proteinRunnables.add(runnable);
@@ -372,14 +371,14 @@ public class MatchesValidator {
                     throw new InterruptedException("Protein matches validation timed out. Please contact the developers.");
 
                 }
-
-                metrics.setTotalSpectrumCounting(proteinRunnables.stream()
-                        .mapToDouble(ProteinValidatorRunnable::getTotalSpectrumCounting)
-                        .sum());
-
-                metrics.setTotalSpectrumCountingMass(proteinRunnables.stream()
-                        .mapToDouble(ProteinValidatorRunnable::getTotalSpectrumCountingMass)
-                        .sum());
+                
+                long[] validatedTargetProteinKeys = proteinRunnables.stream()
+                        .flatMap(runnable -> runnable.getValidatedProteinMatches().stream())
+                        .mapToLong(a -> a)
+                        .toArray();
+                
+                metrics.setValidatedTargetProteinKeys(validatedTargetProteinKeys);
+                
             }
         }
 
@@ -1811,10 +1810,6 @@ public class MatchesValidator {
          */
         private final IdentificationParameters identificationParameters;
         /**
-         * The spectrum counting parameters.
-         */
-        private final SpectrumCountingParameters spectrumCountingParameters;
-        /**
          * The waiting handler.
          */
         private final WaitingHandler waitingHandler;
@@ -1831,15 +1826,9 @@ public class MatchesValidator {
          */
         private final Metrics metrics;
         /**
-         * The total spectrum counting mass contribution of the proteins
-         * according to the validation level specified in the parameters.
+         * Keep track of the validated target protein matches.
          */
-        private double totalSpectrumCountingMass = 0;
-        /**
-         * The total spectrum counting contribution of the proteins according to
-         * the validation level specified in the parameters.
-         */
-        private double totalSpectrumCounting = 0;
+        private HashSet<Long> validatedProteinMatches = new HashSet<>();
 
         /**
          * Constructor.
@@ -1861,7 +1850,7 @@ public class MatchesValidator {
          */
         public ProteinValidatorRunnable(ProteinMatchesIterator proteinMatchesIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
                 SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps, Metrics metrics,
-                IdentificationParameters identificationParameters, SpectrumCountingParameters spectrumCountingPreferences, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
+                IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
 
             this.proteinMatchesIterator = proteinMatchesIterator;
             this.identification = identification;
@@ -1874,7 +1863,6 @@ public class MatchesValidator {
             this.waitingHandler = waitingHandler;
             this.exceptionHandler = exceptionHandler;
             this.validationQCParameters = identificationParameters.getIdValidationParameters().getValidationQCParameters();
-            this.spectrumCountingParameters = spectrumCountingPreferences;
 
         }
 
@@ -1890,9 +1878,7 @@ public class MatchesValidator {
                 double proteinConfidentThreshold = targetDecoyResults.getConfidenceLimit() + margin;
 
                 if (proteinConfidentThreshold > 100) {
-
                     proteinConfidentThreshold = 100;
-
                 }
 
                 boolean noValidated = proteinMap.getTargetDecoyResults().noValidated();
@@ -1906,30 +1892,18 @@ public class MatchesValidator {
                     long proteinKey = proteinMatch.getKey();
                     updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters,
                             proteinMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
-
-                    // set the fraction details
-                    PSParameter psParameter = new PSParameter();
-                    psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
-
-                    if (!proteinMatch.isDecoy() && psParameter.getMatchValidationLevel().getIndex() >= spectrumCountingParameters.getMatchValidationLevel()) {
-
-                        double tempSpectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
-                        totalSpectrumCounting += tempSpectrumCounting;
-
-                        double molecularWeight = ProteinUtils.computeMolecularWeight(
-                                sequenceProvider.getSequence(proteinMatch.getLeadingAccession()));
-                        double massContribution = molecularWeight * tempSpectrumCounting;
-                        totalSpectrumCountingMass += massContribution;
-
-                    }
+                    
+                    PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
                     // Load the coverage in cache
                     if (!proteinMatch.isDecoy() && psParameter.getMatchValidationLevel().isValidated()) {
 
                         identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
+                        validatedProteinMatches.add(proteinKey);
 
                     }
 
+                    // set the fraction details
                     // @TODO: could be a better more elegant way of doing this?
                     HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<>();
                     HashMap<String, Integer> validatedPeptidesPerFraction = new HashMap<>();
@@ -2001,9 +1975,7 @@ public class MatchesValidator {
                         }
 
                         if (waitingHandler.isRunCanceled()) {
-
                             return;
-
                         }
                     }
 
@@ -2041,9 +2013,7 @@ public class MatchesValidator {
                 setMaxValues(maxValidatedPeptidesFractionLevel, maxValidatedSpectraFractionLevel, maxProteinAveragePrecursorIntensity, maxProteinSummedPrecursorIntensity);
 
             } catch (Exception e) {
-
                 exceptionHandler.catchException(e);
-
             }
         }
 
@@ -2087,29 +2057,12 @@ public class MatchesValidator {
         }
 
         /**
-         * Returns the spectrum counting mass contribution of the validated
-         * proteins.
-         *
-         * @return the spectrum counting mass contribution of the validated
-         * proteins
+         * Returns the keys of the validated target protein matches.
+         * 
+         * @return the keys of the validated target protein matches
          */
-        public double getTotalSpectrumCountingMass() {
-
-            return totalSpectrumCountingMass;
-
-        }
-
-        /**
-         * Returns the spectrum counting contribution of the proteins iterated
-         * by this runnable.
-         *
-         * @return the spectrum counting contribution of the proteins iterated
-         * by this runnable
-         */
-        public double getTotalSpectrumCounting() {
-
-            return totalSpectrumCounting;
-
+        public HashSet<Long> getValidatedProteinMatches() {
+            return validatedProteinMatches;
         }
     }
 }

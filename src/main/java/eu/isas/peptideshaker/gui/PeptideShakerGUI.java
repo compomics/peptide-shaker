@@ -141,6 +141,7 @@ import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
+import eu.isas.peptideshaker.processing.ProteinProcessor;
 import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -2928,7 +2929,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private void projectSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectSettingsMenuItemActionPerformed
 
         IdentificationParameters identificationParameters = getIdentificationParameters();
-        IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(this, 
+        IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(this,
                 identificationParameters, getNormalIcon(), getWaitingIcon(), lastSelectedFolder, false);
 
     }//GEN-LAST:event_projectSettingsMenuItemActionPerformed
@@ -3508,10 +3509,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                             MatchesValidator matchesValidator = new MatchesValidator(pSMaps.getPsmMap(), pSMaps.getPeptideMap(), pSMaps.getProteinMap());
                             matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), pSMaps.getInputMap(), progressDialog, exceptionHandler,
-                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationParameters(),
-                                    peptideShakerGUI.getSpectrumCountingParameters(), peptideShakerGUI.getProjectType(), peptideShakerGUI.getProcessingParameters());
+                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(),
+                                    peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getProjectType(), peptideShakerGUI.getProcessingParameters());
 
                             progressDialog.setPrimaryProgressCounterIndeterminate(true);
+
+                            ProteinProcessor proteinProcessor = new ProteinProcessor(
+                                    peptideShakerGUI.getIdentification(),
+                                    peptideShakerGUI.getIdentificationParameters(),
+                                    peptideShakerGUI.getIdentificationFeaturesGenerator());
+                            proteinProcessor.processProteins(new ModificationLocalizationScorer(), peptideShakerGUI.getMetrics(), progressDialog, peptideShakerGUI.getExceptionHandler(), peptideShakerGUI.getProcessingParameters());
 
                             if (!progressDialog.isRunCanceled()) {
 
@@ -6604,16 +6611,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                                     annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters, exportAnnotationParameters, spectrum, peptide,
                                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters).collect(Collectors.toCollection(ArrayList::new));
-                                    identifier = peptide.getTaggedModifiedSequence(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, 
+                                    identifier = peptide.getTaggedModifiedSequence(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters,
                                             false, false, true, getDisplayParameters().getDisplayedModifications());
                                 } else if (assumption instanceof TagAssumption) {
                                     TagAssumption tagAssumption = (TagAssumption) assumption;
                                     Tag tag = tagAssumption.getTag();
                                     SpecificAnnotationParameters exportAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, tagAssumption,
                                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-                                    annotations = tagSpectrumAnnotator.getSpectrumAnnotation(annotationParameters, modificationParameters, modificationSequenceMatchingParameters, 
+                                    annotations = tagSpectrumAnnotator.getSpectrumAnnotation(annotationParameters, modificationParameters, modificationSequenceMatchingParameters,
                                             exportAnnotationParameters, spectrum, tag);
-                                    identifier = tag.getTaggedModifiedSequence(modificationParameters, false, false, true, true, 
+                                    identifier = tag.getTaggedModifiedSequence(modificationParameters, false, false, true, true,
                                             modificationSequenceMatchingParameters, getDisplayParameters().getDisplayedModifications());
                                 } else {
                                     throw new UnsupportedOperationException("Spectrum annotation not implemented for identification assumption of type " + assumption.getClass() + ".");
@@ -7080,19 +7087,19 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public void setMetrics(Metrics metrics) {
         cpsParent.setMetrics(metrics);
     }
-    
+
     /**
      * Returns the project type.
-     * 
+     *
      * @return the project type
      */
     public ProjectType getProjectType() {
         return cpsParent.getProjectType();
     }
-    
+
     /**
      * Sets the project type.
-     * 
+     *
      * @param projectType the project type
      */
     public void setProjectType(ProjectType projectType) {

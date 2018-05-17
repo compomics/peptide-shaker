@@ -44,7 +44,10 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
+import com.compomics.util.experiment.quantification.spectrumcounting.ScalingFactorsEstimators;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
+import eu.isas.peptideshaker.processing.ProteinProcessor;
+import eu.isas.peptideshaker.processing.PsmProcessor;
 import eu.isas.peptideshaker.protein_inference.PeptideChecker;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 
@@ -296,7 +299,8 @@ public class PeptideShaker {
 
         waitingHandler.appendReport("Saving assumptions probabilities, selecting best match, scoring modification localization.", true, true);
 
-        psmProcessing(inputMap, identificationParameters, waitingHandler);
+        PsmProcessor psmProcessor = new PsmProcessor(identification, sequenceProvider, proteinCount, matchesValidator, modificationLocalizationScorer);
+        psmProcessor.processPsms(inputMap, identificationParameters, waitingHandler);
         waitingHandler.increasePrimaryProgressCounter();
 
         if (waitingHandler.isRunCanceled()) {
@@ -482,7 +486,7 @@ public class PeptideShaker {
                 waitingHandler, exceptionHandler,
                 identificationFeaturesGenerator, sequenceProvider,
                 proteinDetailsProvider, geneMaps,
-                identificationParameters, spectrumCountingParameters,
+                identificationParameters,
                 projectType, processingParameters);
         waitingHandler.increasePrimaryProgressCounter();
 
@@ -508,8 +512,23 @@ public class PeptideShaker {
 
             if (projectType == ProjectType.protein) {
 
-                waitingHandler.appendReport("Scoring PTMs in proteins.", true, true);
-                modificationLocalizationScorer.scoreProteinPtms(identification, metrics, waitingHandler, identificationParameters, identificationFeaturesGenerator);
+                waitingHandler.appendReport("Estimating spectrum counting scaling values.", true, true);
+
+                ScalingFactorsEstimators scalingFactors = new ScalingFactorsEstimators(spectrumCountingParameters);
+                scalingFactors.estimateScalingFactors(identification, metrics, sequenceProvider, identificationFeaturesGenerator, waitingHandler, exceptionHandler, processingParameters);
+
+                waitingHandler.increasePrimaryProgressCounter();
+
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
+
+                identification.getObjectsDB().commit();
+                System.gc();
+
+                waitingHandler.appendReport("Scoring PTMs in proteins, gathering summary statistics.", true, true);
+                ProteinProcessor proteinProcessor = new ProteinProcessor(identification, identificationParameters, identificationFeaturesGenerator);
+                proteinProcessor.processProteins(modificationLocalizationScorer, metrics, waitingHandler, exceptionHandler, processingParameters);
                 waitingHandler.increasePrimaryProgressCounter();
 
                 if (waitingHandler.isRunCanceled()) {
@@ -606,324 +625,6 @@ public class PeptideShaker {
 
         matchesValidator.attachProteinProbabilities(identification, sequenceProvider, fastaParameters, metrics, waitingHandler, fractionParameters);
 
-    }
-
-    /**
-     * Iterates the spectrum matches and saves assumption probabilities, selects
-     * best hits, scores modification localization, and refines protein mapping
-     * accordingly.
-     *
-     * @param inputMap the input map
-     * @param identificationParameters the identification parameters
-     * @param waitingHandler a waiting handler
-     */
-    private void psmProcessing(InputMap inputMap, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) {
-
-        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
-
-        FastaParameters fastaParameters = identificationParameters.getSearchParameters().getFastaParameters();
-        BestMatchSelection bestMatchSelection = new BestMatchSelection(identification, proteinCount, sequenceProvider, fastaParameters);
-
-        identification.getSpectrumIdentification().values().stream()
-                .flatMap(HashSet::parallelStream)
-                .map(key -> identification.getSpectrumMatch(key))
-                .forEach(spectrumMatch -> psmProcessing(spectrumMatch, inputMap, bestMatchSelection, identificationParameters, waitingHandler));
-
-        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-
-    }
-
-    /**
-     * Saves assumption probabilities, selects best hit, scores modification
-     * localization, and refines protein mapping accordingly for the given
-     * spectrum match.
-     *
-     * @param spectrumMatch the spectrum match to process
-     * @param inputMap the input map
-     * @param bestMatchSelection best match selection object
-     * @param identificationParameters the identification parameters
-     * @param waitingHandler a waiting handler
-     */
-    private void psmProcessing(SpectrumMatch spectrumMatch, InputMap inputMap, 
-            BestMatchSelection bestMatchSelection, IdentificationParameters identificationParameters,
-            WaitingHandler waitingHandler) {
-
-        if (waitingHandler.isRunCanceled()) {
-            return;
-        }
-
-        FastaParameters fastaParameters = identificationParameters.getSearchParameters().getFastaParameters();
-        SequenceMatchingParameters sequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
-        SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-
-        PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
-
-        attachAssumptionsProbabilities(spectrumMatch, inputMap, fastaParameters, sequenceMatchingParameters, waitingHandler);
-
-        bestMatchSelection.selectBestHit(spectrumMatch, inputMap, matchesValidator.getPsmMap(), waitingHandler, identificationParameters);
-
-        if (spectrumMatch.getBestPeptideAssumption() != null) {
-
-            // Score modification localization
-            modificationLocalizationScorer.scorePTMs(identification, spectrumMatch, sequenceProvider, identificationParameters, waitingHandler, peptideSpectrumAnnotator);
-
-            // Set modification sites
-            modificationLocalizationScorer.modificationSiteInference(spectrumMatch, sequenceProvider, identificationParameters);
-
-            // Update protein mapping based on modification profile
-            if (identificationParameters.getProteinInferenceParameters().isModificationRefinement()) {
-
-                spectrumMatch.getAllPeptideAssumptions().forEach(
-                        peptideAssumption -> PeptideChecker.checkPeptide(peptideAssumption.getPeptide(), sequenceProvider, modificationSequenceMatchingParameters));
-
-            }
-        }
-
-        waitingHandler.increaseSecondaryProgressCounter();
-
-    }
-
-    /**
-     * Attaches the spectrum posterior error probabilities to the peptide
-     * assumptions.
-     *
-     * @param inputMap map of the input scores
-     * @param fastaParameters the fasta parsing parameters
-     * @param sequenceMatchingPreferences the sequence matching preferences
-     * @param waitingHandler the handler displaying feedback to the user
-     */
-    private void attachAssumptionsProbabilities(SpectrumMatch spectrumMatch, InputMap inputMap, FastaParameters fastaParameters, SequenceMatchingParameters sequenceMatchingPreferences, WaitingHandler waitingHandler) {
-
-        // Peptides
-        HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> peptideAssumptionsMap = spectrumMatch.getPeptideAssumptionsMap();
-        TreeMap<Double, ArrayList<PSParameter>> pepToParameterMap = new TreeMap<>();
-
-        for (Entry<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> entry : peptideAssumptionsMap.entrySet()) {
-
-            int searchEngine = entry.getKey();
-            TreeMap<Double, ArrayList<PeptideAssumption>> seMapping = entry.getValue();
-            double previousP = 0;
-            ArrayList<PSParameter> previousAssumptionsParameters = new ArrayList<>();
-            PeptideAssumption previousAssumption = null;
-
-            for (Entry<Double, ArrayList<PeptideAssumption>> entry2 : seMapping.entrySet()) {
-
-                int eValue = entry.getKey();
-                ArrayList<PeptideAssumption> peptideAssumptions = entry2.getValue();
-
-                for (PeptideAssumption assumption : peptideAssumptions) {
-
-                    PSParameter psParameter = (PSParameter) assumption.getUrParam(PSParameter.dummy);
-
-                    if (psParameter == null) {
-
-                        psParameter = new PSParameter();
-
-                    }
-
-                    if (fastaParameters.isTargetDecoy()) {
-
-                        double newP = inputMap.getProbability(searchEngine, eValue);
-                        double pep = previousP;
-
-                        if (newP > previousP) {
-
-                            pep = newP;
-                            previousP = newP;
-
-                        }
-
-                        psParameter.setProbability(pep);
-
-                        ArrayList<PSParameter> pSParameters = pepToParameterMap.get(pep);
-
-                        if (pSParameters == null) {
-
-                            pSParameters = new ArrayList<>(1);
-                            pepToParameterMap.put(pep, pSParameters);
-
-                        }
-
-                        pSParameters.add(psParameter);
-
-                        if (previousAssumption != null) {
-
-                            Peptide newPeptide = assumption.getPeptide();
-                            Peptide previousPeptide = previousAssumption.getPeptide();
-
-                            if (!newPeptide.isSameSequenceAndModificationStatus(previousPeptide, sequenceMatchingPreferences)) {
-
-                                for (PSParameter previousParameter : previousAssumptionsParameters) {
-
-                                    double deltaPEP = pep - previousParameter.getProbability();
-                                    previousParameter.setAlgorithmDeltaPEP(deltaPEP);
-
-                                }
-
-                                previousAssumptionsParameters.clear();
-
-                            }
-                        }
-
-                        previousAssumption = assumption;
-                        previousAssumptionsParameters.add(psParameter);
-
-                    } else {
-
-                        psParameter.setProbability(1.0);
-
-                    }
-
-                    assumption.addUrParam(psParameter);
-
-                }
-            }
-
-            for (PSParameter previousParameter : previousAssumptionsParameters) {
-
-                double deltaPEP = 1 - previousParameter.getProbability();
-                previousParameter.setAlgorithmDeltaPEP(deltaPEP);
-
-            }
-        }
-
-        // Compute the delta pep score accross all search engines
-        Double previousPEP = null;
-        ArrayList<PSParameter> previousParameters = new ArrayList<>();
-
-        for (Entry<Double, ArrayList<PSParameter>> entry : pepToParameterMap.entrySet()) {
-
-            double pep = entry.getKey();
-
-            if (previousPEP != null) {
-
-                for (PSParameter previousParameter : previousParameters) {
-
-                    double delta = pep - previousPEP;
-                    previousParameter.setDeltaPEP(delta);
-
-                }
-            }
-
-            previousParameters = entry.getValue();
-            previousPEP = pep;
-
-        }
-
-        for (PSParameter previousParameter : previousParameters) {
-
-            double delta = 1 - previousParameter.getProbability();
-            previousParameter.setDeltaPEP(delta);
-
-        }
-
-        waitingHandler.increaseSecondaryProgressCounter();
-
-        if (waitingHandler.isRunCanceled()) {
-
-            return;
-
-        }
-
-        // Assumptions
-        HashMap<Integer, TreeMap<Double, ArrayList<TagAssumption>>> tagAssumptionsMap = spectrumMatch.getTagAssumptionsMap();
-
-        for (Entry<Integer, TreeMap<Double, ArrayList<TagAssumption>>> entry : tagAssumptionsMap.entrySet()) {
-
-            int algorithm = entry.getKey();
-            TreeMap<Double, ArrayList<TagAssumption>> seMapping = entry.getValue();
-            double previousP = 0;
-            ArrayList<PSParameter> previousAssumptionsParameters = new ArrayList<>();
-            TagAssumption previousAssumption = null;
-
-            for (Entry<Double, ArrayList<TagAssumption>> entry2 : seMapping.entrySet()) {
-
-                double score = entry2.getKey();
-
-                for (TagAssumption assumption : entry2.getValue()) {
-
-                    PSParameter psParameter = new PSParameter();
-                    psParameter = (PSParameter) assumption.getUrParam(psParameter);
-
-                    if (psParameter == null) {
-
-                        psParameter = new PSParameter();
-
-                    }
-
-                    if (fastaParameters.isTargetDecoy()) {
-
-                        double newP = inputMap.getProbability(algorithm, score);
-                        double pep = previousP;
-
-                        if (newP > previousP) {
-
-                            pep = newP;
-                            previousP = newP;
-
-                        }
-
-                        psParameter.setProbability(pep);
-
-                        ArrayList<PSParameter> pSParameters = pepToParameterMap.get(pep);
-
-                        if (pSParameters == null) {
-
-                            pSParameters = new ArrayList<>(1);
-                            pepToParameterMap.put(pep, pSParameters);
-
-                        }
-
-                        pSParameters.add(psParameter);
-
-                        if (previousAssumption != null) {
-
-                            boolean same = false;
-                            Tag newTag = ((TagAssumption) assumption).getTag();
-                            Tag previousTag = previousAssumption.getTag();
-
-                            if (newTag.isSameSequenceAndModificationStatusAs(previousTag, sequenceMatchingPreferences)) {
-
-                                same = true;
-
-                            }
-
-                            if (!same) {
-
-                                for (PSParameter previousParameter : previousAssumptionsParameters) {
-
-                                    double deltaPEP = pep - previousParameter.getProbability();
-                                    previousParameter.setAlgorithmDeltaPEP(deltaPEP);
-
-                                }
-
-                                previousAssumptionsParameters.clear();
-
-                            }
-                        }
-
-                        previousAssumption = assumption;
-                        previousAssumptionsParameters.add(psParameter);
-
-                    } else {
-
-                        psParameter.setProbability(1.0);
-
-                    }
-
-                    assumption.addUrParam(psParameter);
-
-                }
-            }
-
-            for (PSParameter previousParameter : previousAssumptionsParameters) {
-
-                double deltaPEP = 1 - previousParameter.getProbability();
-                previousParameter.setAlgorithmDeltaPEP(deltaPEP);
-
-            }
-        }
     }
 
     /**

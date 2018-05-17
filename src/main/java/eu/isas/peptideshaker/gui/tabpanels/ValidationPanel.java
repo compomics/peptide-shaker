@@ -11,6 +11,8 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoySeries;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.processing.ProteinProcessor;
+import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.awt.BasicStroke;
@@ -1491,10 +1493,15 @@ public class ValidationPanel extends javax.swing.JPanel {
                         matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(),
                                 pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getExceptionHandler(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
                                 peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getGeneMaps(),
-                                peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingParameters(), 
-                                peptideShakerGUI.getProjectType(), peptideShakerGUI.getProcessingParameters());
+                                peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getProjectType(), peptideShakerGUI.getProcessingParameters());
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(true);
+
+                        ProteinProcessor proteinProcessor = new ProteinProcessor(
+                                peptideShakerGUI.getIdentification(),
+                                peptideShakerGUI.getIdentificationParameters(),
+                                peptideShakerGUI.getIdentificationFeaturesGenerator());
+                        proteinProcessor.processProteins(new ModificationLocalizationScorer(), peptideShakerGUI.getMetrics(), progressDialog, peptideShakerGUI.getExceptionHandler(), peptideShakerGUI.getProcessingParameters());
 
                         if (!progressDialog.isRunCanceled()) {
                             // update the other tabs
@@ -2884,8 +2891,8 @@ public class ValidationPanel extends javax.swing.JPanel {
                 try {
 
                     PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters());
-                    miniShaker.spectrumMapChanged(peptideShakerGUI.getIdentification(), progressDialog, 
-                            peptideShakerGUI.getProcessingParameters(), peptideShakerGUI.getIdentificationParameters(), 
+                    miniShaker.spectrumMapChanged(peptideShakerGUI.getIdentification(), progressDialog,
+                            peptideShakerGUI.getProcessingParameters(), peptideShakerGUI.getIdentificationParameters(),
                             peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProjectType());
 
                     // update the tracking of probabilities modifications
