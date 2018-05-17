@@ -371,14 +371,14 @@ public class MatchesValidator {
                     throw new InterruptedException("Protein matches validation timed out. Please contact the developers.");
 
                 }
-                
+
                 long[] validatedTargetProteinKeys = proteinRunnables.stream()
                         .flatMap(runnable -> runnable.getValidatedProteinMatches().stream())
                         .mapToLong(a -> a)
                         .toArray();
-                
+
                 metrics.setValidatedTargetProteinKeys(validatedTargetProteinKeys);
-                
+
             }
         }
 
@@ -923,9 +923,7 @@ public class MatchesValidator {
             waitingHandler.increaseSecondaryProgressCounter();
 
             if (waitingHandler.isRunCanceled()) {
-
                 return;
-
             }
         }
 
@@ -933,7 +931,7 @@ public class MatchesValidator {
 
         if (metrics != null) {
 
-// set the fraction psm matches
+            // set the fraction psm matches
             metrics.setFractionPsmMatches(fractionPsmMatches);
 
             // set the ptms
@@ -1892,7 +1890,7 @@ public class MatchesValidator {
                     long proteinKey = proteinMatch.getKey();
                     updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters,
                             proteinMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
-                    
+
                     PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
                     // Load the coverage in cache
@@ -2058,7 +2056,7 @@ public class MatchesValidator {
 
         /**
          * Returns the keys of the validated target protein matches.
-         * 
+         *
          * @return the keys of the validated target protein matches
          */
         public HashSet<Long> getValidatedProteinMatches() {
