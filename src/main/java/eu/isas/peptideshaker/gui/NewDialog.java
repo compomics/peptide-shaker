@@ -268,7 +268,7 @@ public class NewDialog extends javax.swing.JDialog {
                 .addComponent(projectReferenceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(projectNameIdTxt)
-                .addContainerGap())
+                .addGap(164, 164, 164))
         );
         projectDetailsPanelLayout.setVerticalGroup(
             projectDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

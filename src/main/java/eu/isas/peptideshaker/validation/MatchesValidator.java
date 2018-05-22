@@ -38,7 +38,6 @@ import com.compomics.util.experiment.identification.filtering.items.AssumptionFi
 import com.compomics.util.experiment.identification.filtering.items.PeptideFilterItem;
 import com.compomics.util.experiment.identification.filtering.items.ProteinFilterItem;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
-import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
@@ -201,41 +200,43 @@ public class MatchesValidator {
             } else {
 
                 // There are not enough precursors, disable probabilistic precursor filter
-                for (Filter filter : validationQCPreferences.getPsmFilters()) {
+                if (validationQCPreferences.getPsmFilters() != null) {
+                    for (Filter filter : validationQCPreferences.getPsmFilters()) {
 
-                    PsmFilter psmFilter = (PsmFilter) filter;
+                        PsmFilter psmFilter = (PsmFilter) filter;
 
-                    if (psmFilter.getItemsNames().contains(AssumptionFilterItem.precrusorMzErrorStat.name)) {
+                        if (psmFilter.getItemsNames().contains(AssumptionFilterItem.precrusorMzErrorStat.name)) {
 
-                        psmFilter.removeFilterItem(AssumptionFilterItem.precrusorMzErrorStat.name);
-                        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+                            psmFilter.removeFilterItem(AssumptionFilterItem.precrusorMzErrorStat.name);
+                            SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
-                        if (searchParameters.isPrecursorAccuracyTypePpm()) {
+                            if (searchParameters.isPrecursorAccuracyTypePpm()) {
 
-                            psmFilter.setFilterItem(AssumptionFilterItem.precrusorMzErrorPpm.name, FilterItemComparator.lowerOrEqual, searchParameters.getPrecursorAccuracy());
+                                psmFilter.setFilterItem(AssumptionFilterItem.precrusorMzErrorPpm.name, FilterItemComparator.lowerOrEqual, searchParameters.getPrecursorAccuracy());
 
-                        } else {
+                            } else {
 
-                            psmFilter.setFilterItem(AssumptionFilterItem.precrusorMzErrorDa.name, FilterItemComparator.lowerOrEqual, searchParameters.getPrecursorAccuracy());
+                                psmFilter.setFilterItem(AssumptionFilterItem.precrusorMzErrorDa.name, FilterItemComparator.lowerOrEqual, searchParameters.getPrecursorAccuracy());
 
+                            }
                         }
-                    }
 
-                    AssumptionFilter assumptionFilter = psmFilter.getAssumptionFilter();
+                        AssumptionFilter assumptionFilter = psmFilter.getAssumptionFilter();
 
-                    if (assumptionFilter.getItemsNames().contains(AssumptionFilterItem.precrusorMzErrorStat.name)) {
+                        if (assumptionFilter.getItemsNames().contains(AssumptionFilterItem.precrusorMzErrorStat.name)) {
 
-                        assumptionFilter.removeFilterItem(AssumptionFilterItem.precrusorMzErrorStat.name);
-                        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+                            assumptionFilter.removeFilterItem(AssumptionFilterItem.precrusorMzErrorStat.name);
+                            SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
-                        if (searchParameters.isPrecursorAccuracyTypePpm()) {
+                            if (searchParameters.isPrecursorAccuracyTypePpm()) {
 
-                            assumptionFilter.setFilterItem(AssumptionFilterItem.precrusorMzErrorPpm.name, FilterItemComparator.lowerOrEqual, searchParameters.getPrecursorAccuracy());
+                                assumptionFilter.setFilterItem(AssumptionFilterItem.precrusorMzErrorPpm.name, FilterItemComparator.lowerOrEqual, searchParameters.getPrecursorAccuracy());
 
-                        } else {
+                            } else {
 
-                            assumptionFilter.setFilterItem(AssumptionFilterItem.precrusorMzErrorDa.name, FilterItemComparator.lowerOrEqual, searchParameters.getPrecursorAccuracy());
+                                assumptionFilter.setFilterItem(AssumptionFilterItem.precrusorMzErrorDa.name, FilterItemComparator.lowerOrEqual, searchParameters.getPrecursorAccuracy());
 
+                            }
                         }
                     }
                 }
@@ -467,16 +468,18 @@ public class MatchesValidator {
 
                     boolean filtersPassed = true;
 
-                    for (Filter filter : validationQCPreferences.getProteinFilters()) {
+                    if (validationQCPreferences.getProteinFilters() != null) {
+                        for (Filter filter : validationQCPreferences.getProteinFilters()) {
 
-                        ProteinFilter proteinFilter = (ProteinFilter) filter;
-                        boolean validation = proteinFilter.isValidated(proteinKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider);
-                        psParameter.setQcResult(filter.getName(), validation);
+                            ProteinFilter proteinFilter = (ProteinFilter) filter;
+                            boolean validation = proteinFilter.isValidated(proteinKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider);
+                            psParameter.setQcResult(filter.getName(), validation);
 
-                        if (!validation) {
+                            if (!validation) {
 
-                            filtersPassed = false;
+                                filtersPassed = false;
 
+                            }
                         }
                     }
 
@@ -553,16 +556,18 @@ public class MatchesValidator {
 
                 boolean filtersPassed = true;
 
-                for (Filter filter : validationQCPreferences.getPeptideFilters()) {
+                if (validationQCPreferences.getPeptideFilters() != null) {
+                    for (Filter filter : validationQCPreferences.getPeptideFilters()) {
 
-                    PeptideFilter peptideFilter = (PeptideFilter) filter;
-                    boolean validation = peptideFilter.isValidated(peptideKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider);
-                    psParameter.setQcResult(filter.getName(), validation);
+                        PeptideFilter peptideFilter = (PeptideFilter) filter;
+                        boolean validation = peptideFilter.isValidated(peptideKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider);
+                        psParameter.setQcResult(filter.getName(), validation);
 
-                    if (!validation) {
+                        if (!validation) {
 
-                        filtersPassed = false;
+                            filtersPassed = false;
 
+                        }
                     }
                 }
 
@@ -649,7 +654,7 @@ public class MatchesValidator {
 
                 boolean filtersPassed = true;
 
-                if (applyQCFilters) {
+                if (applyQCFilters && validationQCPreferences.getPsmFilters() != null) {
 
                     for (Filter filter : validationQCPreferences.getPsmFilters()) {
 

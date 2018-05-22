@@ -567,6 +567,7 @@ public class ProteinInference {
                 if (nSpectraList == null) {
 
                     nSpectraList = new TreeSet<>();
+                    nPeptidesMap.put(nSpectra, nSpectraList);
                     
                     if (nSpectra > maxSpectra) {
                         
@@ -795,8 +796,8 @@ public class ProteinInference {
         if (metrics != null) {
             
             metrics.setProteinKeys(proteinKeys.stream().mapToLong(a -> a).toArray());
-            metrics.setMaxNPeptides(-maxPeptides);
-            metrics.setMaxNSpectra(-maxSpectra);
+            metrics.setMaxNPeptides(maxPeptides);
+            metrics.setMaxNSpectra(maxSpectra);
             metrics.setMaxMW(maxMW);
             metrics.setMaxProteinKeyLength(maxProteinKeyLength);
             
