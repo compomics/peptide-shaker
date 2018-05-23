@@ -404,7 +404,7 @@ public class Ms2pipExport {
                             Peptide peptide = peptideAssumption.getPeptide();
                             int charge = peptideAssumption.getIdentificationCharge();
 
-                            ArrayList<IonMatch> ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationSettings, spectrum, peptide, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, false);
+                            IonMatch[] ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationSettings, spectrum, peptide, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, false);
 
                             SimpleNoiseDistribution binnedCumulativeFunction = spectrum.getIntensityLogDistribution();
 

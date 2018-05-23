@@ -113,7 +113,7 @@ public class PsFragmentSection {
             
         }
 
-        List<IonMatch> annotations;
+        IonMatch[] annotations;
         Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
         AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
@@ -125,7 +125,7 @@ public class PsFragmentSection {
             PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdentificationAssumption;
             PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
             annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationParameters,
-                    spectrum, peptideAssumption.getPeptide(), modificationParameters, sequenceProvider, modificationSequenceMatchingParameters).collect(Collectors.toList());
+                    spectrum, peptideAssumption.getPeptide(), modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
             
         } else if (spectrumIdentificationAssumption instanceof TagAssumption) {
             
@@ -140,7 +140,7 @@ public class PsFragmentSection {
         
         }
 
-        HashMap<Double, ArrayList<IonMatch>> sortedAnnotation = new HashMap<>(annotations.size());
+        HashMap<Double, ArrayList<IonMatch>> sortedAnnotation = new HashMap<>(annotations.length);
         
         for (IonMatch ionMatch : annotations) {
             
@@ -163,7 +163,7 @@ public class PsFragmentSection {
             
             waitingHandler.setWaitingText("Exporting. Please Wait...");
             waitingHandler.resetSecondaryProgressCounter();
-            waitingHandler.setMaxSecondaryProgressCounter(annotations.size());
+            waitingHandler.setMaxSecondaryProgressCounter(annotations.length);
             
         }
 

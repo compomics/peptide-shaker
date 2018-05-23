@@ -323,7 +323,7 @@ public class RunMzDeviation {
                     SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(currentSpectrum.getSpectrumKey(), bestPeptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                     IonMatch[] ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
                             currentSpectrum, bestPeptideAssumption.getPeptide(),
-                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters).toArray(IonMatch[]::new);
+                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                     
                     spectrumFragmentMap = new HashMap<>();
 

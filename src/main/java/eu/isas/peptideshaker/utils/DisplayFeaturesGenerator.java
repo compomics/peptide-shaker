@@ -374,8 +374,8 @@ public class DisplayFeaturesGenerator {
         String[] fixedModifications = getDisplayedModifications(
                 peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters), displayParameters.getDisplayedModifications());
 
-        String[] confidentModifications = new String[peptide.getSequence().length()];
-        String[] ambigousModifications = new String[peptide.getSequence().length()];
+        String[] confidentModifications = new String[peptide.getSequence().length() + 2];
+        String[] ambigousModifications = new String[peptide.getSequence().length() + 2];
 
         for (ModificationMatch modMatch : peptide.getVariableModifications()) {
 

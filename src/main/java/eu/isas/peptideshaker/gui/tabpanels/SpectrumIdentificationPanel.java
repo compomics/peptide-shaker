@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidSequence;
 import com.compomics.util.experiment.biology.ions.Charge;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
@@ -12,11 +11,8 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Spectrum
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
-import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.TagSpectrumAnnotator;
-import com.compomics.util.experiment.identification.amino_acid_tags.TagComponent;
-import com.compomics.util.experiment.identification.amino_acid_tags.MassGap;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
@@ -65,7 +61,6 @@ import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -3025,7 +3020,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         int maxPrecursorCharge = 1;
                         String modifiedSequence = "";
                         HashSet<String> allModifications = new HashSet<>();
-                        ArrayList<Stream<IonMatch>> allAnnotations = new ArrayList<>();
+                        ArrayList<IonMatch[]> allAnnotations = new ArrayList<>();
                         ArrayList<Spectrum> allSpectra = new ArrayList<>();
                         ArrayList<String> selectedIndexes = new ArrayList<>();
 
@@ -3047,7 +3042,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
                                     specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, currentAssumption,
                                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-                                    Stream<IonMatch> annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide,
+                                    IonMatch[] annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide,
                                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
                                     allAnnotations.add(annotations);
@@ -3094,11 +3089,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, currentAssumption,
                                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                                     TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
-                                    ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, modificationParameters, modificationSequenceMatchingParameters,
+                                    IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, modificationParameters, modificationSequenceMatchingParameters,
                                             specificAnnotationParameters, currentSpectrum, tagAssumption.getTag());
 
                                     // add the spectrum annotations
-                                    spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations.stream()), annotationParameters.getTiesResolution() == SpectrumAnnotator.TiesResolution.mostIntense); //@TODO: the selection of the peak to annotate should be done outside the spectrum panel
+                                    spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), annotationParameters.getTiesResolution() == SpectrumAnnotator.TiesResolution.mostIntense); //@TODO: the selection of the peak to annotate should be done outside the spectrum panel
 
                                     // add de novo sequencing
                                     spectrum.addAutomaticDeNovoSequencing(tagAssumption.getTag(), annotations,

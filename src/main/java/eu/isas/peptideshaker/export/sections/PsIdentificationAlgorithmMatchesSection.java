@@ -511,9 +511,11 @@ public class PsIdentificationAlgorithmMatchesSection {
                 modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                 modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
                 SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, peptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-                Stream<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
+                IonMatch[] matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
                         spectrum, peptide, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-                double coveredIntensity = matches.mapToDouble(ionMatch -> ionMatch.peak.intensity).sum();
+                double coveredIntensity = Arrays.stream(matches)
+                        .mapToDouble(ionMatch -> ionMatch.peak.intensity)
+                        .sum();
                 double coverage = 100 * coveredIntensity / spectrum.getTotalIntensity();
                 return Double.toString(coverage);
 
@@ -633,7 +635,8 @@ public class PsIdentificationAlgorithmMatchesSection {
                 int sequenceLength = peptide.getSequence().length();
                 int[] aaCoverage = new int[sequenceLength];
 
-                matches.filter(ionMatch -> ionMatch.ion instanceof PeptideFragmentIon)
+                Arrays.stream(matches)
+                        .filter(ionMatch -> ionMatch.ion instanceof PeptideFragmentIon)
                         .forEach(ionMatch -> aaCoverage[((PeptideFragmentIon) ionMatch.ion).getNumber() - 1] = 1);
 
                 double nIons = Arrays.stream(aaCoverage).sum();
@@ -655,7 +658,8 @@ public class PsIdentificationAlgorithmMatchesSection {
                 boolean[] coverageForward = new boolean[sequenceLength];
                 boolean[] coverageRewind = new boolean[sequenceLength];
 
-                matches.filter(ionMatch -> ionMatch.ion instanceof PeptideFragmentIon)
+                Arrays.stream(matches)
+                        .filter(ionMatch -> ionMatch.ion instanceof PeptideFragmentIon)
                         .map(ionMatch -> ((PeptideFragmentIon) ionMatch.ion))
                         .forEach(peptideFragmentIon -> {
                             if (PeptideFragmentIon.isForward(peptideFragmentIon.getSubType())) {
@@ -747,7 +751,8 @@ public class PsIdentificationAlgorithmMatchesSection {
                 ionCoverage.put(PeptideFragmentIon.Y_ION, new boolean[sequenceLength]);
                 ionCoverage.put(PeptideFragmentIon.Z_ION, new boolean[sequenceLength]);
 
-                matches.filter(ionMatch -> ionMatch.charge == 1 && ionMatch.ion instanceof PeptideFragmentIon && !ionMatch.ion.hasNeutralLosses())
+                Arrays.stream(matches)
+                        .filter(ionMatch -> ionMatch.charge == 1 && ionMatch.ion instanceof PeptideFragmentIon && !ionMatch.ion.hasNeutralLosses())
                         .map(ionMatch -> ((PeptideFragmentIon) ionMatch.ion))
                         .forEach(peptideFragmentIon -> ionCoverage.get(peptideFragmentIon.getSubType())[peptideFragmentIon.getNumber() - 1] = true);
 
@@ -817,7 +822,8 @@ public class PsIdentificationAlgorithmMatchesSection {
                 coverageForward = new boolean[sequenceLength];
                 coverageRewind = new boolean[sequenceLength];
 
-                matches.filter(ionMatch -> ionMatch.ion instanceof PeptideFragmentIon)
+                Arrays.stream(matches)
+                        .filter(ionMatch -> ionMatch.ion instanceof PeptideFragmentIon)
                         .map(ionMatch -> ((PeptideFragmentIon) ionMatch.ion))
                         .forEach(peptideFragmentIon -> {
                             if (PeptideFragmentIon.isForward(peptideFragmentIon.getSubType())) {

@@ -3949,7 +3949,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             int[] selectedPsmRows = psmTable.getSelectedRows();
             SelfUpdatingTableModel psmTableModel = (SelfUpdatingTableModel) psmTable.getModel();
 
-            ArrayList<Stream<IonMatch>> allAnnotations = new ArrayList<>();
+            ArrayList<IonMatch[]> allAnnotations = new ArrayList<>();
             ArrayList<Spectrum> allSpectra = new ArrayList<>();
 
             SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
@@ -3987,7 +3987,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption,
                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                     peptides.add(peptide);
-                    Stream<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide,
+                    IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide,
                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                     allAnnotations.add(annotations);
                     allSpectra.add(currentSpectrum);
@@ -4664,7 +4664,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption,
                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-                    Stream<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, currentPeptide,
+                    IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, currentPeptide,
                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                     spectrumPanel.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), annotationParameters.getTiesResolution() == SpectrumAnnotator.TiesResolution.mostIntense); //@TODO: the selection of the peak to annotate should be done outside the spectrum panel
                     spectrumPanel.rescale(lowerMzZoomRange, upperMzZoomRange);
@@ -4690,7 +4690,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     spectrumJPanel.repaint();
 
                     // create and display the fragment ion table
-                    ArrayList<Stream<IonMatch>> allAnnotations = getAnnotationsForAllSelectedSpectra();
+                    ArrayList<IonMatch[]> allAnnotations = getAnnotationsForAllSelectedSpectra();
                     DisplayParameters displayParameters = peptideShakerGUI.getDisplayParameters();
 
                     if (!displayParameters.useIntensityIonTable()) {
@@ -5089,9 +5089,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      *
      * @return an arraylist of the spectrum annotations
      */
-    private ArrayList<Stream<IonMatch>> getAnnotationsForAllSelectedSpectra() {
+    private ArrayList<IonMatch[]> getAnnotationsForAllSelectedSpectra() {
 
-        ArrayList<Stream<IonMatch>> allAnnotations = new ArrayList<>();
+        ArrayList<IonMatch[]> allAnnotations = new ArrayList<>();
 
         int[] selectedRows = psmTable.getSelectedRows();
         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
@@ -5119,7 +5119,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 Peptide peptide = peptideAssumption.getPeptide();
                 SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption,
                         modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-                Stream<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide,
+                IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide,
                         modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                 allAnnotations.add(annotations);
                 currentSpectrumKey = spectrumKey;

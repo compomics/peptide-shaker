@@ -4032,7 +4032,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
             PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
             SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption,
                     modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-            Stream<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide,
+            IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide,
                     modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
             // add the spectrum annotations

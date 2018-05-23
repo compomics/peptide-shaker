@@ -6620,7 +6620,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                         }
 
-                        ArrayList<IonMatch> annotations = null;
+                        IonMatch[] annotations = null;
 
                         ArrayList<SpectrumIdentificationAssumption> assumptions = selectedAssumptions.get(spectrumMatchKey);
                         if (assumptions != null && !assumptions.isEmpty()) {
@@ -6632,7 +6632,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                     SpecificAnnotationParameters exportAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption,
                                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                                     annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters, exportAnnotationParameters, spectrum, peptide,
-                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters).collect(Collectors.toCollection(ArrayList::new));
+                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                                     identifier = peptide.getTaggedModifiedSequence(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters,
                                             false, false, true, getDisplayParameters().getDisplayedModifications());
                                 } else if (assumption instanceof TagAssumption) {

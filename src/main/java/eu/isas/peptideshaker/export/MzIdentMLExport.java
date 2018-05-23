@@ -1893,12 +1893,12 @@ public class MzIdentMLExport {
                 ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                 SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
                 SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, bestPeptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-                Stream<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, bestPeptideAssumption.getPeptide(), modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                IonMatch[] matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, bestPeptideAssumption.getPeptide(), modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
                 // organize the fragment ions by ion type
                 HashMap<String, HashMap<Integer, ArrayList<IonMatch>>> allFragmentIons = new HashMap<>();
 
-                for (IonMatch ionMatch : matches.toArray(IonMatch[]::new)) {
+                for (IonMatch ionMatch : matches) {
 
                     if (ionMatch.ion.getType() == IonType.PEPTIDE_FRAGMENT_ION
                             || ionMatch.ion.getType() == IonType.IMMONIUM_ION
