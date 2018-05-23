@@ -717,6 +717,9 @@ public class NewDialog extends javax.swing.JDialog {
                 peptideShakerGUI.setMetrics(peptideShaker.getMetrics());
                 peptideShakerGUI.setGeneMaps(peptideShaker.getGeneMaps());
                 peptideShakerGUI.setProjectType(projectType);
+                peptideShakerGUI.setSequenceProvider(peptideShaker.getSequenceProvider());
+                peptideShakerGUI.setProteinDetailsProvider(peptideShaker.getProteinDetailsProvider());
+                peptideShakerGUI.resetDisplayFeaturesGenerator();
                 peptideShakerGUI.setIdentificationFeaturesGenerator(peptideShaker.getIdentificationFeaturesGenerator());
                 peptideShakerGUI.displayResults();
                 peptideShakerGUI.initiateDisplay(); // display the overview tab

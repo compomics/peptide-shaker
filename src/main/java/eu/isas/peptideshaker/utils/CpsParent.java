@@ -716,6 +716,17 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
+     * Sets the sequence provider.
+     * 
+     * @param sequenceProvider the sequence provider
+     */
+    public void setSequenceProvider(SequenceProvider sequenceProvider) {
+        
+        this.sequenceProvider = sequenceProvider;
+    
+    }
+
+    /**
      * Returns the protein details provider.
      * 
      * @return the protein details provider
@@ -724,6 +735,17 @@ public class CpsParent extends UserPreferencesParent {
         
         return proteinDetailsProvider;
         
+    }
+
+    /**
+     * Sets the protein details provider.
+     * 
+     * @param proteinDetailsProvider the protein details provider
+     */
+    public void setProteinDetailsProvider(ProteinDetailsProvider proteinDetailsProvider) {
+        
+        this.proteinDetailsProvider = proteinDetailsProvider;
+    
     }
 
     /**

@@ -1,11 +1,8 @@
 package eu.isas.peptideshaker;
 
 import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
-import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
-import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.exceptions.ExceptionHandler;
@@ -14,8 +11,6 @@ import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
-import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
-import com.compomics.util.experiment.identification.protein_inference.FastaMapper;
 import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
@@ -38,17 +33,14 @@ import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCo
 import eu.isas.peptideshaker.protein_inference.ProteinInference;
 import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
-import eu.isas.peptideshaker.scoring.psm_scoring.BestMatchSelection;
 import eu.isas.peptideshaker.scoring.psm_scoring.PsmScorer;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
-import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.quantification.spectrumcounting.ScalingFactorsEstimators;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.processing.ProteinProcessor;
 import eu.isas.peptideshaker.processing.PsmProcessor;
-import eu.isas.peptideshaker.protein_inference.PeptideChecker;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 
 import java.io.File;
@@ -57,9 +49,6 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -716,6 +705,26 @@ public class PeptideShaker {
 
         return identification;
 
+    }
+
+    /**
+     * Returns the sequence provider.
+     *
+     * @return the sequence provider
+     */
+    public SequenceProvider getSequenceProvider() {
+
+        return sequenceProvider;
+
+    }
+
+    /**
+     * Returns the protein details provider.
+     * 
+     * @return the protein details provider
+     */
+    public ProteinDetailsProvider getProteinDetailsProvider() {
+        return proteinDetailsProvider;
     }
 
     /**

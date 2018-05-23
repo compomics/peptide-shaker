@@ -4177,6 +4177,17 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
+     * Sets the sequence provider.
+     * 
+     * @param sequenceProvider the sequence provider
+     */
+    public void setSequenceProvider(SequenceProvider sequenceProvider) {
+        
+        cpsParent.setSequenceProvider(sequenceProvider);
+    
+    }
+
+    /**
      * Returns the protein details provider.
      *
      * @return the protein details provider
@@ -4185,6 +4196,17 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         return cpsParent.getProteinDetailsProvider();
 
+    }
+
+    /**
+     * Sets the protein details provider.
+     * 
+     * @param proteinDetailsProvider the protein details provider
+     */
+    public void setProteinDetailsProvider(ProteinDetailsProvider proteinDetailsProvider) {
+        
+        cpsParent.setProteinDetailsProvider(proteinDetailsProvider);
+    
     }
 
     /**
