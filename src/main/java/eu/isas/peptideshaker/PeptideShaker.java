@@ -963,9 +963,9 @@ public class PeptideShaker {
     }
 
     /**
-     * Retrieves the version number set in the pom file.
+     * Retrieves the path to the jar file.
      *
-     * @return the version number of PeptideShaker
+     * @return the path to the jar file
      */
     public static String getJarFilePath() {
 
