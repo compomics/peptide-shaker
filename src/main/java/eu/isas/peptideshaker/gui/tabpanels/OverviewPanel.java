@@ -4981,7 +4981,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterParameters());
 
                     progressDialog.setPrimaryProgressCounterIndeterminate(true);
-                    progressDialog.setTitle("Preparing Overview. Please Wait..."); // @TODO: not sure why the progress bar seems to be stuck here...
+                    progressDialog.setTitle("Preparing Overview. Please Wait...");
 
                     // change the peptide shaker icon to a "waiting version" // @TODO: not really sure why we need to set this again here, but seems to be needed
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
@@ -5661,64 +5661,64 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 peptideShakerGUI.setSelectedItems(tempProteinMatch.getKey(), peptideKey, psmKey);
 
             }
+        }
 
-            if (proteinKey != PeptideShakerGUI.NO_SELECTION) {
+        if (proteinKey != PeptideShakerGUI.NO_SELECTION) {
 
-                proteinRow = getProteinRow(proteinKey);
+            proteinRow = getProteinRow(proteinKey);
 
-            }
+        }
 
-            if (proteinKeys.length == 0) {
+        if (proteinKeys.length == 0) {
 
-                clearData();
-                return;
+            clearData();
+            return;
 
-            }
+        }
 
-            if (proteinRow == -1) {
+        if (proteinRow == -1) {
 
-                peptideShakerGUI.resetSelectedItems();
-                proteinTableMouseReleased(null);
+            peptideShakerGUI.resetSelectedItems();
+            proteinTableMouseReleased(null);
 
-            } else if (proteinTable.getSelectedRow() != proteinRow) {
+        } else if (proteinTable.getSelectedRow() != proteinRow) {
 
-                proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
+            proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
 
-                if (scrollToVisible) {
+            if (scrollToVisible) {
 
-                    proteinTable.scrollRectToVisible(proteinTable.getCellRect(proteinRow, 0, false));
-
-                }
-
-                proteinTableMouseReleased(null);
+                proteinTable.scrollRectToVisible(proteinTable.getCellRect(proteinRow, 0, false));
 
             }
 
-            int peptideRow = 0;
-            if (peptideKey != PeptideShakerGUI.NO_SELECTION) {
-                peptideRow = getPeptideRow(peptideKey);
-            }
+            proteinTableMouseReleased(null);
 
-            if (peptideTable.getSelectedRow() != peptideRow && peptideRow != -1) {
-                peptideTable.setRowSelectionInterval(peptideRow, peptideRow);
-                if (scrollToVisible) {
-                    peptideTable.scrollRectToVisible(peptideTable.getCellRect(peptideRow, 0, false));
-                }
-                peptideTableMouseReleased(null);
-            }
+        }
 
-            int psmRow = 0;
-            if (psmKey != PeptideShakerGUI.NO_SELECTION) {
-                psmRow = getPsmRow(psmKey);
-            }
+        int peptideRow = 0;
+        if (peptideKey != PeptideShakerGUI.NO_SELECTION) {
+            peptideRow = getPeptideRow(peptideKey);
+        }
 
-            if (psmTable.getSelectedRow() != psmRow && psmRow != -1 && psmRow < psmTable.getRowCount()) {
-                psmTable.setRowSelectionInterval(psmRow, psmRow);
-                if (scrollToVisible) {
-                    psmTable.scrollRectToVisible(psmTable.getCellRect(psmRow, 0, false));
-                }
-                psmTableMouseReleased(null);
+        if (peptideTable.getSelectedRow() != peptideRow && peptideRow != -1) {
+            peptideTable.setRowSelectionInterval(peptideRow, peptideRow);
+            if (scrollToVisible) {
+                peptideTable.scrollRectToVisible(peptideTable.getCellRect(peptideRow, 0, false));
             }
+            peptideTableMouseReleased(null);
+        }
+
+        int psmRow = 0;
+        if (psmKey != PeptideShakerGUI.NO_SELECTION) {
+            psmRow = getPsmRow(psmKey);
+        }
+
+        if (psmTable.getSelectedRow() != psmRow && psmRow != -1 && psmRow < psmTable.getRowCount()) {
+            psmTable.setRowSelectionInterval(psmRow, psmRow);
+            if (scrollToVisible) {
+                psmTable.scrollRectToVisible(psmTable.getCellRect(psmRow, 0, false));
+            }
+            psmTableMouseReleased(null);
         }
     }
 
