@@ -196,6 +196,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     int[] startIndexes = peptideMatch.getPeptide().getProteinMapping().get(proteinAccession);
 
                     return new StartIndexes(Arrays.stream(startIndexes)
+                            .map(site -> site + 1)
                             .boxed()
                             .collect(Collectors.toCollection(ArrayList::new)));
 

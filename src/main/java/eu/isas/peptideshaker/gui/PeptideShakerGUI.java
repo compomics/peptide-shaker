@@ -77,6 +77,7 @@ import com.compomics.software.settings.gui.PathParametersDialog;
 import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
+import com.compomics.util.experiment.biology.genes.ProteinGeneDetailsProvider;
 import com.compomics.util.experiment.biology.modifications.ModificationType;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.filtering.Filter;
@@ -398,6 +399,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             TITLED_BORDER_HORIZONTAL_PADDING = "   ";
             TITLED_BORDER_HORIZONTAL_PADDING_HTML = "&nbsp;&nbsp;&nbsp;";
 
+        }
+        
+        // load gene mappings
+        ProteinGeneDetailsProvider geneFactory = new ProteinGeneDetailsProvider();
+        try {
+            geneFactory.initialize(PeptideShaker.getJarFilePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "An error occurred while loading the gene mappings.", "Gene Mapping File Error", JOptionPane.ERROR_MESSAGE);
         }
 
         // load the species mapping

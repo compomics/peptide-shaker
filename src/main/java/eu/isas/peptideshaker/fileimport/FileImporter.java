@@ -32,6 +32,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.protein_inference.TagMapper;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import eu.isas.peptideshaker.PeptideShaker;
 
 import javax.swing.*;
 import java.io.File;
@@ -947,6 +948,12 @@ public class FileImporter {
     public void importGenes() {
 
         ProteinGeneDetailsProvider geneFactory = new ProteinGeneDetailsProvider();
+        try {
+            geneFactory.initialize(PeptideShaker.getJarFilePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "An error occurred while loading the gene mappings.", "Gene Mapping File Error", JOptionPane.ERROR_MESSAGE);
+        }
 
         GeneParameters genePreferences = identificationParameters.getGeneParameters();
         geneMaps = geneFactory.getGeneMaps(genePreferences, fastaSummary, sequenceProvider, proteinDetailsProvider, waitingHandler);

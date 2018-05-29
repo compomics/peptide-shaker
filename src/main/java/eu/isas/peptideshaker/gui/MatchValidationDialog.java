@@ -1,47 +1,33 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
-import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
-import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
-import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import eu.isas.peptideshaker.scoring.PSMaps;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
-import eu.isas.peptideshaker.scoring.maps.SpecificTargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
-import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
-import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
-import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class displays information about the validation of a match.
@@ -108,26 +94,30 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         setUpGui();
 
         this.identificationParameters = identificationParameters;
-        ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);
-        psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
         type = matchType;
 
-        populateGUI(targetDecoyMap);
-
         switch (type) {
             case PROTEIN:
+                ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);
+                psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
                 setTitle("Protein Group Validation Quality");
                 break;
 
             case PEPTIDE:
+                PeptideMatch peptideMatch = identification.getPeptideMatch(matchKey);
+                psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
                 setTitle("Peptide Validation Quality");
                 break;
 
             case PSM:
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(matchKey);
+                psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
                 setTitle("PSM Validation Quality");
                 break;
         }
+        
+        populateGUI(targetDecoyMap);
 
         setLocationRelativeTo(parent);
         setVisible(true);
