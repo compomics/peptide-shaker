@@ -432,9 +432,6 @@
               </Layout>
               <SubComponents>
                 <Container class="javax.swing.JScrollPane" name="proteinScrollPane">
-                  <Properties>
-                    <Property name="opaque" type="boolean" value="false"/>
-                  </Properties>
                   <AuxValues>
                     <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
                   </AuxValues>
@@ -689,9 +686,6 @@
               </Layout>
               <SubComponents>
                 <Container class="javax.swing.JScrollPane" name="peptideScrollPane">
-                  <Properties>
-                    <Property name="opaque" type="boolean" value="false"/>
-                  </Properties>
                   <AuxValues>
                     <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
                   </AuxValues>
@@ -894,9 +888,6 @@
               </Layout>
               <SubComponents>
                 <Container class="javax.swing.JScrollPane" name="pdbJScrollPane">
-                  <Properties>
-                    <Property name="opaque" type="boolean" value="false"/>
-                  </Properties>
                   <AuxValues>
                     <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
                   </AuxValues>
@@ -1094,9 +1085,6 @@
               </Layout>
               <SubComponents>
                 <Container class="javax.swing.JScrollPane" name="pdbChainsJScrollPane">
-                  <Properties>
-                    <Property name="opaque" type="boolean" value="false"/>
-                  </Properties>
                   <AuxValues>
                     <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
                   </AuxValues>

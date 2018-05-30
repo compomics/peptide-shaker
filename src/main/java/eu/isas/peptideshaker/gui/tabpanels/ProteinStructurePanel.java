@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -54,6 +55,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import no.uib.jsparklines.data.StartIndexes;
 import no.uib.jsparklines.data.XYDataPoint;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
@@ -62,6 +64,7 @@ import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerIconTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
+import no.uib.jsparklines.renderers.JSparklinesMultiIntervalChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jmol.adapter.smarter.SmarterJmolAdapter;
 import org.jmol.api.JmolAdapter;
@@ -351,7 +354,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         peptideInferenceTooltipMap.put(PSParameter.UNRELATED, "Belongs to unrelated proteins");
 
         peptideTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), peptideInferenceColorMap, peptideInferenceTooltipMap));
-        peptideTable.getColumn("Start").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, 100d, peptideShakerGUI.getSparklineColor()));
+        peptideTable.getColumn("Start").setCellRenderer(new JSparklinesMultiIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, 100d, peptideShakerGUI.getSparklineColor()));
         peptideTable.getColumn("PDB").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/pdb.png")),
                 null,
@@ -1621,7 +1624,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 chains = lParam.getBlocks();
 
                 // Get the protein sequence
-                SelfUpdatingTableModel proteinTableModel = (SelfUpdatingTableModel) peptideTable.getModel();
+                SelfUpdatingTableModel proteinTableModel = (SelfUpdatingTableModel) proteinTable.getModel();
                 int proteinIndex = proteinTableModel.getViewIndex(proteinTable.getSelectedRow());
                 long proteinKey = proteinKeys[proteinIndex];
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
@@ -2609,7 +2612,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 if (!psParameter.getHidden()) {
 
                     // find and add the peptide start and end indexes
-                    int[] peptideStart = peptideMatch.getPeptide().getProteinMapping().get(proteinAccession);
+                    StartIndexes startIndexes = new StartIndexes(Arrays.stream(peptideMatch.getPeptide().getProteinMapping().get(proteinAccession))
+                            .map(site -> site + 1)
+                            .boxed()
+                            .collect(Collectors.toCollection(ArrayList::new)));
+                    
                     int proteinInferenceType = psParameter.getProteinInferenceGroupClass();
 
                     // @TODO: should be replaced by a table model!!!
@@ -2618,7 +2625,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         psParameter.getStarred(),
                         proteinInferenceType,
                         peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true),
-                        peptideStart,//@TODO: allow multiple start indexes
+                        startIndexes,
                         false,
                         psParameter.getMatchValidationLevel().getIndex()
                     });
@@ -2646,11 +2653,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             peptidesPanel.repaint();
 
             String proteinSequence = peptideShakerGUI.getSequenceProvider().getSequence(proteinAccession);
-            peptideTable.getColumn("Start").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(
+            peptideTable.getColumn("Start").setCellRenderer(new JSparklinesMultiIntervalChartTableCellRenderer(
                     PlotOrientation.HORIZONTAL, (double) proteinSequence.length(),
                     ((double) proteinSequence.length()) / 50, peptideShakerGUI.getSparklineColor()));
-            ((JSparklinesIntervalChartTableCellRenderer) peptideTable.getColumn("Start").getCellRenderer()).showReferenceLine(true, 0.02, Color.BLACK);
-            ((JSparklinesIntervalChartTableCellRenderer) peptideTable.getColumn("Start").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() - 10);
+            ((JSparklinesMultiIntervalChartTableCellRenderer) peptideTable.getColumn("Start").getCellRenderer()).showReferenceLine(true, 0.02, Color.BLACK);
+            ((JSparklinesMultiIntervalChartTableCellRenderer) peptideTable.getColumn("Start").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() - 10);
 
             // select the peptide in the table
             if (peptideTable.getRowCount() > 0) {
@@ -2983,7 +2990,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) pdbChainsJTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesIntervalChartTableCellRenderer) pdbChainsJTable.getColumn("PDB-Protein").getCellRenderer()).showNumbers(!showSparkLines);
 
-        ((JSparklinesIntervalChartTableCellRenderer) peptideTable.getColumn("Start").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesMultiIntervalChartTableCellRenderer) peptideTable.getColumn("Start").getCellRenderer()).showNumbers(!showSparkLines);
 
         proteinTable.revalidate();
         proteinTable.repaint();
@@ -3124,7 +3131,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 for (int j = 1; j < peptideEnd && !progressDialog.isRunCanceled(); j++) {
 
                     int aaIndex = j + peptideStart;
-                    String modName = variableModifications[j];
+                    String modName = null; //variableModifications[j]; @TODO: re-add when the ptms have returned
 
                     if (modName != null && displayParameters.isDisplayedPTM(modName)) {
 
@@ -3144,7 +3151,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         }
                     }
 
-                    modName = fixedModifications[j];
+                    modName = null; //fixedModifications[j]; @TODO: re-add when the ptms have returned
 
                     if (modName != null && displayParameters.isDisplayedPTM(modName)) {
 
@@ -3488,13 +3495,29 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      */
     private int getPeptideRow(final long peptideKey) {
 
-        int modelIndex = peptideTableMap.entrySet().stream()
-                .filter(entry -> entry.getValue() == peptideKey)
-                .map(entry -> entry.getKey())
-                .findAny()
-                .orElse(-1);
-
-        return modelIndex == -1 ? -1 : ((SelfUpdatingTableModel) peptideTable.getModel()).getRowNumber(modelIndex);
+        int index = -1;
+        for (int key : peptideTableMap.keySet()) {
+            if (peptideTableMap.get(key).equals(peptideKey)) {
+                index = key;
+                break;
+            }
+        }
+        for (int row = 0; row < peptideTable.getRowCount(); row++) {
+            if ((Integer) peptideTable.getValueAt(row, 0) == index) {
+                return row;
+            }
+        }
+        return -1;
+        
+        
+        // only works if/when the peptide table model is transformed into a SelfUpdatingTableModel
+//        int modelIndex = peptideTableMap.entrySet().stream()
+//                .filter(entry -> entry.getValue() == peptideKey)
+//                .map(entry -> entry.getKey())
+//                .findAny()
+//                .orElse(-1);
+//
+//        return modelIndex == -1 ? -1 : ((SelfUpdatingTableModel) peptideTable.getModel()).getRowNumber(modelIndex);
 
     }
 

@@ -2023,7 +2023,7 @@ public class NewDialog extends javax.swing.JDialog {
 
                     if (!IdentificationParameters.supportedVersion(parameterFile)) {
 
-                        JOptionPane.showMessageDialog(null, "The identification parameters were generated using an older version, please update the parameters.", "File error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "The parameters were generated using an older version. Please update the parameters.", "File Error", JOptionPane.WARNING_MESSAGE);
 
                     } else {
 
@@ -2032,7 +2032,7 @@ public class NewDialog extends javax.swing.JDialog {
                     }
                 } catch (Exception e) {
 
-                    JOptionPane.showMessageDialog(null, "Error occurred while reading " + parameterFile + ". Please verify the search parameters.", "File error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error occurred while reading " + parameterFile + ". Please verify the search parameters.", "File Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
 
                 }
