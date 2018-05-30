@@ -2023,7 +2023,7 @@ public class NewDialog extends javax.swing.JDialog {
 
                     if (!IdentificationParameters.supportedVersion(parameterFile)) {
 
-                        JOptionPane.showMessageDialog(null, "The parameters were generated using an older version. Please update the parameters.", "File Error", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "The parameters were generated using an older version. Please update the parameters.", "Outdated Parameters", JOptionPane.WARNING_MESSAGE);
 
                     } else {
 
