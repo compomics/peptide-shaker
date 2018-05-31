@@ -722,7 +722,7 @@ public class StarHider {
     }
 
     /**
-     * Tests whether a psm match should be hidden according to the implemented
+     * Tests whether a PSM match should be hidden according to the implemented
      * filters.
      *
      * @param matchKey the key of the match
@@ -780,7 +780,7 @@ public class StarHider {
      */
     public boolean isPsmStarred(long matchKey) {
 
-        return filterPreferences.getPeptideStarFilters().values().stream()
+        return filterPreferences.getPsmStarFilters().values().stream()
                 .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider));
 
     }

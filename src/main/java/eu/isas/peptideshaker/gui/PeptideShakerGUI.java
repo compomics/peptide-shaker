@@ -358,7 +358,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private boolean openingExistingProject = false;
     /**
-     * Utility class to star or hide matches
+     * Utility class to star or hide matches.
      */
     private StarHider starHider;
 
@@ -7059,6 +7059,18 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @return the object responsible for starring/hiding matches
      */
     public StarHider getStarHider() {
+
+        progressDialog = new ProgressDialogX(this,
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                        true);
+        
+        if (starHider == null) {
+            starHider = new StarHider(getIdentification(), getFilterParameters(), getSequenceProvider(), getProteinDetailsProvider(),
+                    getGeneMaps(), getIdentificationFeaturesGenerator(), getIdentificationParameters(), getMetrics(), progressDialog,
+                    getProcessingParameters().getnThreads(), exceptionHandler);
+        }
+
         return starHider;
     }
 
