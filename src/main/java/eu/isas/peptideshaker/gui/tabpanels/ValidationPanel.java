@@ -2324,14 +2324,14 @@ public class ValidationPanel extends javax.swing.JPanel {
                 originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
                 originalThresholds.put(cpt, targetDecoyResults.getUserInput());
 
-                modifiedMaps.put(cpt, false);
+                modifiedMaps.put(++cpt, false);
                 ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "Peptides"});
                 targetDecoyMap = pSMaps.getPeptideMap();
                 targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
                 originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
                 originalThresholds.put(cpt, targetDecoyResults.getUserInput());
 
-                modifiedMaps.put(cpt, false);
+                modifiedMaps.put(++cpt, false);
                 ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt, "PSMs"});
                 targetDecoyMap = pSMaps.getPsmMap();
                 targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
