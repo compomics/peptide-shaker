@@ -4114,7 +4114,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * Updates the annotations in the selected tab.
      */
     public void updateSpectrumAnnotations() {
-
+        
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
         IdentificationParameters identificationParameters = getIdentificationParameters();
         AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
@@ -5501,6 +5501,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         } else {
 
+            int lossCounter = 0;
+            
             for (String neutralLossName : lossesNames) {
 
                 NeutralLoss neutralLoss = NeutralLoss.getNeutralLoss(neutralLossName);
@@ -5533,7 +5535,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 });
 
                 lossMenus.put(neutralLoss, lossMenuItem);
-                lossMenu.add(lossMenuItem);
+                lossMenu.add(lossMenuItem, lossCounter++);
 
             }
 
@@ -5577,8 +5579,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-     * returns the specific annotation parameters corresponding to the given
-     * spectrum, hit, and the menu selection.
+     * Returns the specific annotation parameters corresponding to the given
+     * spectrum, hit, and the menu selections.
      *
      * @param spectrumKey the key of the spectrum
      * @param spectrumIdentificationAssumption the spectrum annotation
