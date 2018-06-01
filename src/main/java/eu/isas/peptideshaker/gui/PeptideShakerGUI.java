@@ -112,6 +112,7 @@ import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
 import eu.isas.peptideshaker.utils.CpsParent;
 import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.StarHider;
 import eu.isas.peptideshaker.validation.MatchesValidator;
@@ -160,22 +161,17 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private final String EXAMPLE_DATASET_PATH = "/resources/example_dataset/HeLa Example.cpsx";
     /**
-     * Convenience static string indicating that no selection was done by the
-     * user.
-     */
-    public final static long NO_SELECTION = ExperimentObject.asLong("NO SELECTION");
-    /**
      * The currently selected protein key.
      */
-    private long selectedProteinKey = NO_SELECTION;
+    private long selectedProteinKey = NO_KEY;
     /**
      * The currently selected peptide key.
      */
-    private long selectedPeptideKey = NO_SELECTION;
+    private long selectedPeptideKey = NO_KEY;
     /**
      * The currently selected spectrum key.
      */
-    private long selectedPsmKey = NO_SELECTION;
+    private long selectedPsmKey = NO_KEY;
     /**
      * The Overview tab index.
      */
@@ -4495,7 +4491,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public void resetSelectedItems() {
 
-        setSelectedItems(NO_SELECTION, NO_SELECTION, NO_SELECTION);
+        setSelectedItems(NO_KEY, NO_KEY, NO_KEY);
 
     }
 
@@ -4568,9 +4564,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public void clearData(boolean clearDatabaseFolder, boolean updateGuiComponents) {
 
         // reset the preferences
-        selectedProteinKey = NO_SELECTION;
-        selectedPeptideKey = NO_SELECTION;
-        selectedPsmKey = NO_SELECTION;
+        selectedProteinKey = NO_KEY;
+        selectedPeptideKey = NO_KEY;
+        selectedPsmKey = NO_KEY;
 
         cpsParent.setProjectDetails(null);
 
@@ -7525,15 +7521,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public long getDefaultPsmSelection(long peptideKey) {
 
-        if (peptideKey == PeptideShakerGUI.NO_SELECTION) {
-
-            return PeptideShakerGUI.NO_SELECTION;
-
+        if (peptideKey == NO_KEY) {
+            return NO_KEY;
         }
 
         long[] psmKeys = getIdentificationFeaturesGenerator().getSortedPsmKeys(peptideKey, utilitiesUserParameters.getSortPsmsOnRt(), false);
 
-        return psmKeys.length > 0 ? psmKeys[0] : PeptideShakerGUI.NO_SELECTION;
+        return psmKeys.length > 0 ? psmKeys[0] : NO_KEY;
 
     }
 
@@ -7547,15 +7541,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public long getDefaultPeptideSelection(long proteinKey) {
 
-        if (proteinKey == PeptideShakerGUI.NO_SELECTION) {
+        if (proteinKey == NO_KEY) {
 
-            return PeptideShakerGUI.NO_SELECTION;
+            return NO_KEY;
 
         }
 
         long[] peptideKeys = getIdentificationFeaturesGenerator().getSortedPeptideKeys(proteinKey);
 
-        return peptideKeys.length > 0 ? peptideKeys[0] : PeptideShakerGUI.NO_SELECTION;
+        return peptideKeys.length > 0 ? peptideKeys[0] : NO_KEY;
 
     }
 

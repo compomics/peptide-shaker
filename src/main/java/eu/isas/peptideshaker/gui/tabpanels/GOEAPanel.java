@@ -72,6 +72,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer3D;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.Layer;
+import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
 
 /**
  * The PeptideShaker GO Enrichment Analysis tab.
@@ -1765,13 +1766,13 @@ public class GOEAPanel extends javax.swing.JPanel {
             int selectedGroupIndex = proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow());
             long proteinGroupKey = proteinGoTableModel.getProteins().get(selectedGroupIndex);
 
-            long psmKey = PeptideShakerGUI.NO_SELECTION;
+            long psmKey = NO_KEY;
 
             // try to select the "best" peptide for the selected peptide
             long peptideKey = peptideShakerGUI.getDefaultPeptideSelection(proteinGroupKey);
 
             // try to select the "best" psm for the selected peptide
-            if (peptideKey != PeptideShakerGUI.NO_SELECTION) {
+            if (peptideKey != NO_KEY) {
 
                 psmKey = peptideShakerGUI.getDefaultPsmSelection(peptideKey);
 
@@ -2187,7 +2188,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             ProteinGoTableModel proteinGoTableModel = (ProteinGoTableModel) proteinTable.getModel();
                             int selectedGroupIndex = proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow());
                             long proteinGroupKey = proteinGoTableModel.getProteins().get(selectedGroupIndex);
-                            peptideShakerGUI.setSelectedItems(proteinGroupKey, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
+                            peptideShakerGUI.setSelectedItems(proteinGroupKey, NO_KEY, NO_KEY);
                             proteinTableKeyReleased(null);
 
                         }

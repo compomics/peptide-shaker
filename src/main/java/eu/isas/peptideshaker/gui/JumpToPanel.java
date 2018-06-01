@@ -13,6 +13,7 @@ import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
+import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -138,10 +139,10 @@ public class JumpToPanel extends javax.swing.JPanel {
         indexLabel.setForeground(Color.BLACK);
 
         if (types.get(jumpType).get(currentSelection.get(jumpType)) == Type.PROTEIN) {
-            peptideShakerGUI.setSelectedItems(possibilities.get(jumpType).get(currentSelection.get(jumpType)), PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
+            peptideShakerGUI.setSelectedItems(possibilities.get(jumpType).get(currentSelection.get(jumpType)), NO_KEY, NO_KEY);
             peptideShakerGUI.updateSelectionInCurrentTab();
         } else if (types.get(jumpType).get(currentSelection.get(jumpType)) == Type.PEPTIDE) {
-            peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, possibilities.get(jumpType).get(currentSelection.get(jumpType)), PeptideShakerGUI.NO_SELECTION);
+            peptideShakerGUI.setSelectedItems(NO_KEY, possibilities.get(jumpType).get(currentSelection.get(jumpType)), NO_KEY);
             if (peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.MODIFICATIONS_TAB_INDEX
                     && !Arrays.stream(peptideShakerGUI.getDisplayedPeptides()).anyMatch(key -> key == possibilities.get(jumpType).get(currentSelection.get(jumpType)))) {
                 // warn the user that the current selection is not in the tab
@@ -150,7 +151,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                 peptideShakerGUI.updateSelectionInCurrentTab();
             }
         } else {
-            peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION, possibilities.get(jumpType).get(currentSelection.get(jumpType)));
+            peptideShakerGUI.setSelectedItems(NO_KEY, NO_KEY, possibilities.get(jumpType).get(currentSelection.get(jumpType)));
             peptideShakerGUI.updateSelectionInCurrentTab();
         }
         String label = "(" + (currentSelection.get(jumpType) + 1) + " of " + possibilities.get(jumpType).size() + ")";

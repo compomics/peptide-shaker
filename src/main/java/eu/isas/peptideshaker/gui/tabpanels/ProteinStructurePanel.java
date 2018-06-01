@@ -5,6 +5,7 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidPattern;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
+import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -1426,7 +1427,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
                 long proteinKey = proteinKeys[proteinIndex];
-                peptideShakerGUI.setSelectedItems(proteinKey, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
+                peptideShakerGUI.setSelectedItems(proteinKey, NO_KEY, NO_KEY);
 
                 // update the pdb file table
                 updatePdbTable(proteinKey);
@@ -1501,7 +1502,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
         if (evt != null) {
-            peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
+            peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), NO_KEY, NO_KEY);
         }
 
         int row = peptideTable.getSelectedRow();
@@ -1579,7 +1580,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             int peptideRow = 0;
             long peptideKey = peptideShakerGUI.getSelectedPeptideKey();
 
-            if (peptideKey != PeptideShakerGUI.NO_SELECTION) {
+            if (peptideKey != NO_KEY) {
                 peptideRow = getPeptideRow(peptideKey);
             }
 
@@ -2663,7 +2664,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             if (peptideTable.getRowCount() > 0) {
                 int peptideRow = 0;
                 long peptideKey = peptideShakerGUI.getSelectedPeptideKey();
-                if (peptideKey != PeptideShakerGUI.NO_SELECTION) {
+                if (peptideKey != NO_KEY) {
                     peptideRow = getPeptideRow(peptideKey);
                 }
 
@@ -3347,14 +3348,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         long proteinKey = peptideShakerGUI.getSelectedProteinKey();
         long peptideKey = peptideShakerGUI.getSelectedPeptideKey();
 
-        if (proteinKey != PeptideShakerGUI.NO_SELECTION) {
+        if (proteinKey != NO_KEY) {
             int proteinRow = getProteinRow(proteinKey);
             if (proteinRow != -1 && proteinRow < proteinTable.getRowCount()) {
                 proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
             }
         }
 
-        if (peptideKey != PeptideShakerGUI.NO_SELECTION) {
+        if (peptideKey != NO_KEY) {
             int peptideRow = getPeptideRow(peptideKey);
             if (peptideRow != -1) {
                 peptideTable.setRowSelectionInterval(peptideRow, peptideRow);
@@ -3376,9 +3377,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         long psmKey = peptideShakerGUI.getSelectedPsmKey();
         Identification identification = peptideShakerGUI.getIdentification();
 
-        if (proteinKey == PeptideShakerGUI.NO_SELECTION
-                && peptideKey == PeptideShakerGUI.NO_SELECTION
-                && psmKey != PeptideShakerGUI.NO_SELECTION) {
+        if (proteinKey == NO_KEY
+                && peptideKey == NO_KEY
+                && psmKey != NO_KEY) {
             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
             if (spectrumMatch.getBestPeptideAssumption() != null) {
                 Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
@@ -3386,7 +3387,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             }
         }
 
-        if (proteinKey == PeptideShakerGUI.NO_SELECTION && peptideKey != PeptideShakerGUI.NO_SELECTION) {
+        if (proteinKey == NO_KEY && peptideKey != NO_KEY) {
 
             final long peptideKeyFinal = peptideKey;
             ProteinMatch tempProteinMatch = identification.getProteinIdentification().parallelStream()
@@ -3402,7 +3403,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
             }
 
-            if (proteinKey != PeptideShakerGUI.NO_SELECTION) {
+            if (proteinKey != NO_KEY) {
                 proteinRow = getProteinRow(proteinKey);
             }
 
@@ -3423,7 +3424,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             }
 
             int peptideRow = 0;
-            if (peptideKey != PeptideShakerGUI.NO_SELECTION) {
+            if (peptideKey != NO_KEY) {
                 peptideRow = getPeptideRow(peptideKey);
             }
 
@@ -3435,7 +3436,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 peptideTableMouseReleased(null);
             }
 
-            if (psmKey != PeptideShakerGUI.NO_SELECTION) {
+            if (psmKey != NO_KEY) {
                 peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideShakerGUI.getSelectedPeptideKey(), psmKey);
             }
         }
@@ -3447,8 +3448,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      */
     public void newItemSelection() {
 
-        long proteinKey = PeptideShakerGUI.NO_SELECTION;
-        long peptideKey = PeptideShakerGUI.NO_SELECTION;
+        long proteinKey = NO_KEY;
+        long peptideKey = NO_KEY;
         long psmKey = peptideShakerGUI.getSelectedPsmKey();
 
         if (proteinTable.getSelectedRow() != -1) {

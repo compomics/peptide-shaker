@@ -4,9 +4,8 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.io.biology.protein.ProteinDatabase;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
-import com.compomics.util.gui.JOptionEditorPane;
+import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import java.io.IOException;
 import javax.swing.JOptionPane;
 
 /**
@@ -1344,7 +1343,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
         // only update if new accession number
         if (aAccessionNumber != null
-                && !aAccessionNumber.equals(PeptideShakerGUI.NO_SELECTION)
+                && !aAccessionNumber.equals(NO_KEY)
                 && !currentAccessionNumber.equalsIgnoreCase(aAccessionNumber)) {
 
             currentAccessionNumber = aAccessionNumber;

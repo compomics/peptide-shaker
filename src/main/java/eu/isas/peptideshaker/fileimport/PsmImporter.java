@@ -6,6 +6,7 @@ import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.modifications.ModificationType;
 import com.compomics.util.experiment.biology.proteins.Peptide;
+import static com.compomics.util.experiment.biology.proteins.Peptide.getKey;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.gui.parameters.identification.IdentificationAlgorithmParameter;
@@ -385,7 +386,6 @@ public class PsmImporter {
 
             TreeMap<Double, ArrayList<PeptideAssumption>> assumptionsForAdvocate = entry.getValue();
 
-            // Map modifications
             TreeSet<Double> scores = new TreeSet<>(assumptionsForAdvocate.keySet());
 
             for (double score : scores) {
@@ -398,10 +398,14 @@ public class PsmImporter {
                 for (PeptideAssumption peptideAssumption : oldAssumptions) {
 
                     Peptide peptide = peptideAssumption.getPeptide();
+
                     String peptideSequence = peptide.getSequence();
 
-                    // kick out peptides that are too long or too short
+                    // Ignore peptides that are too long or too short
                     if (peptideSequence.length() >= peptideAssumptionFilter.getMinPepLength() && peptideSequence.length() <= peptideAssumptionFilter.getMaxPepLength()) {
+
+                        // Map peptide to protein
+                        proteinMapping(peptide);
 
                         // map the algorithm specific modifications on utilities modifications
                         // If there are not enough sites to put them all on the sequence, add an unknown modification
@@ -506,22 +510,17 @@ public class PsmImporter {
                                     || fileReader instanceof PepxmlIdfileReader
                                     || fileReader instanceof TideIdfileReader) {
 
-                                String[] parsedName = seMod.split("@");
-                                Double modMass;
-
                                 try {
 
-                                    modMass = new Double(parsedName[0]);
+                                    double modMass = Double.parseDouble(seMod.substring(0, seMod.indexOf('@')));
+                                    tempNames = ModificationUtils.getExpectedModifications(modMass, modificationParameters, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
 
                                 } catch (Exception e) {
 
-                                    throw new IllegalArgumentException("Impossible to parse \'" + seMod + "\' as a tagged modification.\n"
+                                    throw new IllegalArgumentException("Impossible to parse \'" + seMod + "\' as a modification.\n"
                                             + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in spectrum file "
                                             + spectrumFileName + ".\n" + "Identification file: " + idFile.getName());
-
                                 }
-
-                                tempNames = ModificationUtils.getExpectedModifications(modMass, modificationParameters, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
 
                             } else if (fileReader instanceof DirecTagIdfileReader
                                     || fileReader instanceof NovorIdfileReader
@@ -577,15 +576,22 @@ public class PsmImporter {
 
                         }
 
-                        // Map peptide to protein
-                        proteinMapping(peptide);
+                        if (peptideAssumptionFilter.validateModifications(peptide, sequenceMatchingPreferences, modificationSequenceMatchingPreferences, searchParameters.getModificationParameters())) {
 
-                        // Estimate mass
-                        peptide.getMass(modificationParameters, sequenceProvider, modificationSequenceMatchingPreferences);
+                            // Set peptide key
+                            peptide.setKey(Peptide.getKey(peptide.getSequence(), peptide.getVariableModifications()));
 
-                        // Add new assumption
-                        newAssumptions.add(peptideAssumption);
+                            // Estimate mass
+                            peptide.getMass(modificationParameters, sequenceProvider, modificationSequenceMatchingPreferences);
 
+                            // Add new assumption
+                            newAssumptions.add(peptideAssumption);
+
+                        } else {
+
+                            modificationIssue++;
+
+                        }
                     } else {
 
                         peptideIssue++;
@@ -625,11 +631,6 @@ public class PsmImporter {
 
                             filterPassed = false;
                             peptideIssue++;
-
-                        } else if (!peptideAssumptionFilter.validateModifications(peptide, sequenceMatchingPreferences, modificationSequenceMatchingPreferences, searchParameters.getModificationParameters())) {
-
-                            filterPassed = false;
-                            modificationIssue++;
 
                         } else if (!peptideAssumptionFilter.validatePrecursor(peptideAssumption, spectrumKey, spectrumFactory, searchParameters)) {
 
@@ -732,7 +733,9 @@ public class PsmImporter {
      * @param searchParameters the search parameters
      */
     private void modificationLocalization(Peptide peptide, HashMap<Integer, ArrayList<String>> expectedNames, HashMap<ModificationMatch, ArrayList<String>> modNames, SearchParameters searchParameters) {
-        ModificationParameters modificationProfile = searchParameters.getModificationParameters();
+        
+        ModificationParameters modificationParameters = searchParameters.getModificationParameters();
+        
         int peptideLength = peptide.getSequence().length();
 
         // If a terminal modification cannot be elsewhere lock the terminus
@@ -771,7 +774,7 @@ public class PsmImporter {
 
                             boolean otherPossibleMod = false;
 
-                            for (String tempName : modificationProfile.getAllNotFixedModifications()) {
+                            for (String tempName : modificationParameters.getAllNotFixedModifications()) {
 
                                 if (!tempName.equals(modName)) {
 
@@ -841,7 +844,7 @@ public class PsmImporter {
 
                                 boolean otherPossibleMod = false;
 
-                                for (String tempName : modificationProfile.getAllNotFixedModifications()) {
+                                for (String tempName : modificationParameters.getAllNotFixedModifications()) {
 
                                     if (!tempName.equals(modName)) {
 

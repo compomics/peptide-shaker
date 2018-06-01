@@ -27,6 +27,7 @@ import com.compomics.util.experiment.identification.validation.MatchValidationLe
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -445,15 +446,12 @@ public class BestMatchSelection {
                 ModificationMatch[] seModificationMatches = sePeptide.getVariableModifications();
 
                 if (seModificationMatches.length > 0) {
-
-                    ModificationMatch[] psModificationMatches = new ModificationMatch[seModificationMatches.length];
-
-                    for (int i = 0; i < psModificationMatches.length; i++) {
-
-                        ModificationMatch seModMatch = psModificationMatches[i];
-                        psModificationMatches[i] = new ModificationMatch(seModMatch.getModification(), seModMatch.getSite());
-
-                    }
+                    
+                    psPeptide.setVariableModifications(
+                            Arrays.stream(seModificationMatches)
+                            .map(modMatch -> new ModificationMatch(modMatch.getModification(), modMatch.getSite()))
+                            .toArray(ModificationMatch[]::new)
+                    );
                 }
 
                 psPeptide.setProteinMapping(sePeptide.getProteinMapping());

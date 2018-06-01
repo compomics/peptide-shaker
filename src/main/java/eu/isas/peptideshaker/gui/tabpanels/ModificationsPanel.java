@@ -11,6 +11,7 @@ import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
+import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -54,7 +55,6 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
-import java.util.stream.Stream;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
@@ -3399,8 +3399,8 @@ public class ModificationsPanel extends javax.swing.JPanel {
         // @TODO: if the given peptide has more than one ptm -> the user must choose the ptm to display 
         long selectedKey = peptideShakerGUI.getSelectedPeptideKey();
 
-        if (selectedKey == PeptideShakerGUI.NO_SELECTION
-                && peptideShakerGUI.getSelectedPsmKey() != PeptideShakerGUI.NO_SELECTION) {
+        if (selectedKey == NO_KEY
+                && peptideShakerGUI.getSelectedPsmKey() != NO_KEY) {
 
             long psmKey = peptideShakerGUI.getSelectedPsmKey();
 
@@ -3414,7 +3414,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
             }
         }
 
-        if (selectedKey != PeptideShakerGUI.NO_SELECTION) {
+        if (selectedKey != NO_KEY) {
 
             // @TODO: the selection should not be updated if it's the same as the current one, e.g, when moving back and forth between tabs
             int row = 0;
@@ -3956,7 +3956,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
         }
 
-        if (getSelectedPeptide() != PeptideShakerGUI.NO_SELECTION) {
+        if (getSelectedPeptide() != NO_KEY) {
 
             if (selectedPsmsTable.getSelectedRow() != -1 && relatedPsmsTable.getSelectedRow() != -1) {
 
@@ -4169,7 +4169,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
             if (relatedPeptides.isEmpty()) {
 
-                return PeptideShakerGUI.NO_SELECTION;
+                return NO_KEY;
 
             }
 
@@ -4187,7 +4187,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
             if (displayedPeptides.isEmpty()) {
 
-                return PeptideShakerGUI.NO_SELECTION;
+                return NO_KEY;
 
             }
 
@@ -4900,14 +4900,14 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
         long peptideKey = getSelectedPeptide();
 
-        long psmKey = PeptideShakerGUI.NO_SELECTION;
+        long psmKey = NO_KEY;
         if (selectedPsmsTable.getSelectedRow() != -1) {
             psmKey = getSelectedPsmsKeys(false)[0];
         } else if (relatedPsmsTable.getSelectedRow() != -1) {
             psmKey = getSelectedPsmsKeys(true)[0];
         }
 
-        peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, peptideKey, psmKey);
+        peptideShakerGUI.setSelectedItems(NO_KEY, peptideKey, psmKey);
     }
 
     /**

@@ -1,19 +1,17 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidPattern;
 import com.compomics.util.experiment.biology.proteins.Peptide;
-import com.compomics.util.experiment.biology.proteins.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.gui.genes.GeneDetailsDialog;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.parameters.identification.search.DigestionParameters;
@@ -26,8 +24,6 @@ import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,7 +36,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
-import no.uib.jsparklines.data.XYDataPoint;
 import no.uib.jsparklines.extra.ChartPanelTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesArrayListBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
@@ -708,9 +703,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         long psmKey = peptideShakerGUI.getSelectedPsmKey();
         Identification identification = peptideShakerGUI.getIdentification();
 
-        if (proteinKey == PeptideShakerGUI.NO_SELECTION
-                && peptideKey == PeptideShakerGUI.NO_SELECTION
-                && psmKey != PeptideShakerGUI.NO_SELECTION) {
+        if (proteinKey == NO_KEY
+                && peptideKey == NO_KEY
+                && psmKey != NO_KEY) {
             SpectrumMatch spectrumMatch = (SpectrumMatch) peptideShakerGUI.getIdentification().retrieveObject(psmKey);
             if (spectrumMatch.getBestPeptideAssumption() != null) {
                 Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
@@ -718,7 +713,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             }
         }
 
-        if (proteinKey == PeptideShakerGUI.NO_SELECTION && peptideKey != PeptideShakerGUI.NO_SELECTION) {
+        if (proteinKey == NO_KEY && peptideKey != NO_KEY) {
 
             final long peptideKeyFinal = peptideKey;
             ProteinMatch tempProteinMatch = identification.getProteinIdentification().parallelStream()
@@ -735,7 +730,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             }
         }
 
-        if (proteinKey != PeptideShakerGUI.NO_SELECTION) {
+        if (proteinKey != NO_KEY) {
 
             proteinRow = getProteinRow(proteinKey);
 
@@ -1750,9 +1745,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      */
     public void newItemSelection() {
 
-        long proteinKey = PeptideShakerGUI.NO_SELECTION;
-        long peptideKey = PeptideShakerGUI.NO_SELECTION;
-        long psmKey = PeptideShakerGUI.NO_SELECTION;
+        long proteinKey = NO_KEY;
+        long peptideKey = NO_KEY;
+        long psmKey = NO_KEY;
 
         if (proteinTable.getSelectedRow() != -1) {
 
@@ -1764,7 +1759,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             peptideKey = peptideShakerGUI.getDefaultPeptideSelection(proteinKey);
 
             // try to select the "best" psm for the selected peptide
-            if (peptideKey != PeptideShakerGUI.NO_SELECTION) {
+            if (peptideKey != NO_KEY) {
 
                 psmKey = peptideShakerGUI.getDefaultPsmSelection(peptideKey);
 

@@ -9,6 +9,7 @@ import com.compomics.util.experiment.identification.spectrum_assumptions.Peptide
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
+import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -64,7 +65,6 @@ import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.stream.Stream;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -2644,7 +2644,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         String spectrumKey = getSelectedSpectrumKey();
 
-        return spectrumKey == null ? PeptideShakerGUI.NO_SELECTION : ExperimentObject.asLong(spectrumKey);
+        return spectrumKey == null ? NO_KEY : ExperimentObject.asLong(spectrumKey);
     }
 
     /**
@@ -2676,7 +2676,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         long spectrumKey = peptideShakerGUI.getSelectedPsmKey();
 
-        if (spectrumKey == PeptideShakerGUI.NO_SELECTION) {
+        if (spectrumKey == NO_KEY) {
             spectrumTable.setRowSelectionInterval(0, 0);
             spectrumTable.scrollRectToVisible(spectrumTable.getCellRect(0, 0, false));
             spectrumSelectionChanged();
@@ -2689,14 +2689,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * Provides to the PeptideShakerGUI instance the currently selected PSM.
      */
     private void newItemSelection() {
-        peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION, getSelectedSpectrumMatchKey());
+        peptideShakerGUI.setSelectedItems(NO_KEY, NO_KEY, getSelectedSpectrumMatchKey());
     }
 
     /**
      * Clears the currently selected PSM.
      */
     private void clearItemSelection() {
-        peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
+        peptideShakerGUI.setSelectedItems(NO_KEY, NO_KEY, NO_KEY);
     }
 
     /**
