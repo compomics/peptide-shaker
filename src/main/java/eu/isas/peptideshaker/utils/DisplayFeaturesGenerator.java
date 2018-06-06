@@ -174,7 +174,7 @@ public class DisplayFeaturesGenerator {
 
     /**
      * Returns the protein accession number as a web link to the given protein
-     * at http://srs.ebi.ac.uk.
+     * at https://srs.ebi.ac.uk.
      *
      * @param proteinAccession the protein accession number
      * @param database the protein database
@@ -183,7 +183,7 @@ public class DisplayFeaturesGenerator {
     public String getSrsAccessionLink(String proteinAccession, String database) {
 
         return String.join("",
-                "http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+%5b",
+                "https://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+%5b",
                 database,
                 "-AccNumber:",
                 proteinAccession,
@@ -193,20 +193,20 @@ public class DisplayFeaturesGenerator {
 
     /**
      * Returns the protein accession number as a web link to the given protein
-     * at http://www.uniprot.org/uniprot.
+     * at https://www.uniprot.org/uniprot.
      *
      * @param proteinAccession the protein accession number
      * @return the protein accession web link
      */
     public String getUniProtAccessionLink(String proteinAccession) {
 
-        return "http://www.uniprot.org/uniprot/" + proteinAccession;
+        return "https://www.uniprot.org/uniprot/" + proteinAccession;
 
     }
 
     /**
      * Returns the protein accession number as a web link to the given protein
-     * at http://www.nextprot.org.
+     * at https://www.nextprot.org.
      *
      * @param proteinAccession the protein accession number
      * @return the protein accession web link
@@ -214,20 +214,20 @@ public class DisplayFeaturesGenerator {
     public String getNextProtAccessionLink(String proteinAccession) {
 
         proteinAccession = proteinAccession.substring(0, proteinAccession.lastIndexOf("-")); // have to remove the isoform info
-        return "http://www.nextprot.org/db/entry/" + proteinAccession;
+        return "https://www.nextprot.org/db/entry/" + proteinAccession;
 
     }
 
     /**
      * Returns the protein accession number as a web link to the given protein
-     * at http://www.ncbi.nlm.nih.gov/protein.
+     * at https://www.ncbi.nlm.nih.gov/protein.
      *
      * @param proteinAccession the protein accession number
      * @return the protein accession web link
      */
     public String getNcbiAccessionLink(String proteinAccession) {
 
-        return "http://www.ncbi.nlm.nih.gov/protein/" + proteinAccession;
+        return "https://www.ncbi.nlm.nih.gov/protein/" + proteinAccession;
 
     }
 
@@ -240,7 +240,7 @@ public class DisplayFeaturesGenerator {
      */
     public static String getPrideAccessionLink(String projectAccession) {
 
-        return "http://www.ebi.ac.uk/pride/directLink.do?experimentAccessionNumber=" + projectAccession;
+        return "https://www.ebi.ac.uk/pride/directLink.do?experimentAccessionNumber=" + projectAccession;
 
     }
 
@@ -253,7 +253,7 @@ public class DisplayFeaturesGenerator {
      */
     public static String getPrideProjectArchiveLink(String projectAccession) {
 
-        return "http://www.ebi.ac.uk/pride/archive/projects/" + projectAccession;
+        return "https://www.ebi.ac.uk/pride/archive/projects/" + projectAccession;
 
     }
 
@@ -268,7 +268,7 @@ public class DisplayFeaturesGenerator {
     public static String getPrideAssayArchiveLink(String projectAccession, String assayAccession) {
 
         return String.join("",
-                "http://www.ebi.ac.uk/pride/archive/projects/",
+                "https://www.ebi.ac.uk/pride/archive/projects/",
                 projectAccession,
                 "/assays/",
                 assayAccession);

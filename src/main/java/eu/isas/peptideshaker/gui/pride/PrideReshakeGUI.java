@@ -700,7 +700,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
                     "PRIDE web service access error. Cannot open:<br>"
                     + url + "<br>"
-                    + "Please contact the <a href=\"http://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
+                    + "Please contact the <a href=\"https://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
                     "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
         }
 
@@ -1140,7 +1140,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             }
         });
 
-        peptideShakerPublicationLabel.setText("<html>Please cite PeptideShaker as <a href=\"http://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html\">Vaudel <i>et al.</i>: Nature Biotechnol. 2015 Jan;33(1):22–24</a>.</html>\n\n");
+        peptideShakerPublicationLabel.setText("<html>Please cite PeptideShaker as <a href=\"https://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html\">Vaudel <i>et al.</i>: Nature Biotechnol. 2015 Jan;33(1):22–24</a>.</html>\n\n");
         peptideShakerPublicationLabel.setToolTipText("Open the PeptideShaker publication");
         peptideShakerPublicationLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -1507,7 +1507,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      */
     private void aboutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://compomics.github.io/projects/peptide-shaker.html");
+        BareBonesBrowserLaunch.openURL("https://compomics.github.io/projects/peptide-shaker.html");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_aboutButtonActionPerformed
 
@@ -1518,7 +1518,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      */
     private void peptideShakerPublicationLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerPublicationLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html");
+        BareBonesBrowserLaunch.openURL("https://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_peptideShakerPublicationLabelMouseClicked
 
@@ -1901,7 +1901,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
                         "PRIDE web service access error. Cannot open:<br>"
                         + url + "<br>"
-                        + "Please contact the <a href=\"http://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
+                        + "Please contact the <a href=\"https://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
                         "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
             }
 
@@ -2067,7 +2067,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
                         "PRIDE web service access error. Cannot open:<br>"
                         + url + "<br>"
-                        + "Please contact the <a href=\"http://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
+                        + "Please contact the <a href=\"https://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
                         "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
             }
         } else {
@@ -2196,7 +2196,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
                         "PRIDE web service access error. Cannot open:<br>"
                         + url + "<br>"
-                        + "Please contact the <a href=\"http://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
+                        + "Please contact the <a href=\"https://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
                         "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
             }
 
@@ -2392,7 +2392,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, JOptionEditorPane.getJOptionEditorPane(
                             "PRIDE web service access error. Cannot open:<br>"
                             + url + "<br>"
-                            + "Please contact the <a href=\"http://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
+                            + "Please contact the <a href=\"https://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
                             "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
                 }
 
@@ -2599,7 +2599,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, JOptionEditorPane.getJOptionEditorPane(
                             "PRIDE web service access error. Cannot open:<br>"
                             + url + "<br>"
-                            + "Please contact the <a href=\"http://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
+                            + "Please contact the <a href=\"https://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
                             "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
                 }
 

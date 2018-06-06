@@ -866,7 +866,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                                 JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, JOptionEditorPane.getJOptionEditorPane(
                                         "PRIDE web service access error. Cannot open:<br>"
                                         + link + "<br>"
-                                        + "Please contact the <a href=\"http://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
+                                        + "Please contact the <a href=\"https://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
                                         "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
                                 System.out.println("Not found: " + link + "!");
                             }
@@ -912,7 +912,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                                     JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, JOptionEditorPane.getJOptionEditorPane(
                                             "PRIDE web service access error. Cannot open:<br>"
                                             + link + "<br>"
-                                            + "Please contact the <a href=\"http://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
+                                            + "Please contact the <a href=\"https://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
                                             "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
                                     System.out.println("Not found: " + link + "!");
                                 }
@@ -1302,7 +1302,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      */
     private void aboutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://compomics.github.io/projects/peptide-shaker.html");
+        BareBonesBrowserLaunch.openURL("https://compomics.github.io/projects/peptide-shaker.html");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_aboutButtonActionPerformed
 
@@ -1391,7 +1391,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      */
     private void databaseSettingsLblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_databaseSettingsLblMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://compomics.github.io/projects/searchgui/wiki/databasehelp.html");
+        BareBonesBrowserLaunch.openURL("https://compomics.github.io/projects/searchgui/wiki/databasehelp.html");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_databaseSettingsLblMouseClicked
 
@@ -1441,7 +1441,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 combinedSearch = option == JOptionPane.YES_OPTION;
             }
 
-            String link = "http://www.uniprot.org/uniprot/?query=";
+            String link = "https://www.uniprot.org/uniprot/?query=";
 
             for (int i = 0; i < allSpecies.length; i++) {
 
@@ -1460,7 +1460,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                     }
                     link += "organism%3A%22" + species + "%22";
                 } else {
-                    link = "http://www.uniprot.org/uniprot/?query=organism%3A%22" + species + "%22&sort=score";
+                    link = "https://www.uniprot.org/uniprot/?query=organism%3A%22" + species + "%22&sort=score";
                     this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
                     BareBonesBrowserLaunch.openURL(link);
                     this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1625,7 +1625,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
                 "We strongly recommend the use of UniProt databases. Some<br>"
                 + "features will be limited if using other databases.<br><br>"
-                + "See <a href=\"http://compomics.github.io/projects/searchgui/wiki/databasehelp.html\">Database Help</a> for details."),
+                + "See <a href=\"https://compomics.github.io/projects/searchgui/wiki/databasehelp.html\">Database Help</a> for details."),
                 "Database Information", JOptionPane.WARNING_MESSAGE);
     }
 

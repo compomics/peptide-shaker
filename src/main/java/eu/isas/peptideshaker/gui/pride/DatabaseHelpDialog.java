@@ -407,7 +407,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      */
     private void databaseHelpSettingsJLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_databaseHelpSettingsJLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://compomics.github.io/projects/searchgui/wiki/databasehelp.html");
+        BareBonesBrowserLaunch.openURL("https://compomics.github.io/projects/searchgui/wiki/databasehelp.html");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_databaseHelpSettingsJLabelMouseClicked
 
@@ -439,7 +439,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
         // @TODO: for "Mus musculus (Mouse)" get rid of "(Mouse)" before searching
         if (downloadUniProtJLabel.isEnabled()) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-            BareBonesBrowserLaunch.openURL("http://www.uniprot.org/uniprot/?query=%28organism%3A%22" + species + "%22%29&sort=score");
+            BareBonesBrowserLaunch.openURL("https://www.uniprot.org/uniprot/?query=%28organism%3A%22" + species + "%22%29&sort=score");
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_downloadUniProtJLabelMouseClicked

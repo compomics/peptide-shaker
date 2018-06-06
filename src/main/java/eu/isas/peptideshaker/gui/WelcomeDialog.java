@@ -552,7 +552,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void compomicsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compomicsButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://compomics.wordpress.com");
+        BareBonesBrowserLaunch.openURL("https://compomics.com");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_compomicsButtonActionPerformed
 
@@ -610,7 +610,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void isasButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_isasButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.isas.de");
+        BareBonesBrowserLaunch.openURL("https://www.isas.de");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_isasButtonActionPerformed
 

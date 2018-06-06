@@ -253,7 +253,7 @@ public class ReportCLI extends CpsParent {
         return System.getProperty("line.separator")
                 + "The PeptideShaker report command line takes a cpsx file and generates various types of reports." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
-                + "For further help see http://compomics.github.io/projects/peptide-shaker.html and http://compomics.github.io/projects/peptide-shaker/wiki/peptideshakercli.html." + System.getProperty("line.separator")
+                + "For further help see https://compomics.github.io/projects/peptide-shaker.html and https://compomics.github.io/projects/peptide-shaker/wiki/peptideshakercli.html." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "Or contact the developers at https://groups.google.com/group/peptide-shaker." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")

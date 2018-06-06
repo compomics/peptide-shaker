@@ -363,7 +363,7 @@ public class MzIdentMLExport {
         bw.write(getCurrentTabSpace());
         bw.write("<AnalysisSoftware name=\"PeptideShaker\" version=\"");
         bw.write(peptideShakerVersion);
-        bw.write("\" id=\"ID_software\" uri=\"http://compomics.github.io/projects/peptide-shaker.html\">");
+        bw.write("\" id=\"ID_software\" uri=\"https://compomics.github.io/projects/peptide-shaker.html\">");
         bw.newLine();
         tabCounter++;
 
@@ -530,7 +530,7 @@ public class MzIdentMLExport {
 
         writeCvTerm(new CvTerm("PSI-MS", "MS:1000586", "contact name", "PeptideShaker developers"));
         writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", "Proteomics Unit, Building for Basic Biology, University of Bergen, Jonas Liesvei 91, N-5009 Bergen, Norway"));
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact URL", "http://compomics.github.io/projects/peptide-shaker.html"));
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact URL", "https://compomics.github.io/projects/peptide-shaker.html"));
         writeCvTerm(new CvTerm("PSI-MS", "MS:1000589", "contact email", "peptide-shaker@googlegroups.com"));
         tabCounter--;
 
@@ -2691,7 +2691,7 @@ public class MzIdentMLExport {
         switch (mzIdentMLVersion) {
 
             case v1_1:
-                bw.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                bw.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\" xmlns:xsi=\"https://www.w3.org/2001/XMLSchema-instance\" "
                         + "xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd\" "
                         + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\" version=\"1.1.0\" "
                         + "creationDate=\"" + df.format(new Date()) + "\">");
@@ -2699,7 +2699,7 @@ public class MzIdentMLExport {
                 break;
 
             case v1_2:
-                bw.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                bw.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\" xmlns:xsi=\"https://www.w3.org/2001/XMLSchema-instance\" "
                         + "xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.2 http://www.psidev.info/files/mzIdentML1.2.0.xsd\" "
                         + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.2\" version=\"1.2.0\" "
                         + "creationDate=\"" + df.format(new Date()) + "\">");

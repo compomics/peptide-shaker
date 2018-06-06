@@ -6,7 +6,7 @@ import javax.swing.JDialog;
 
 /**
  * A dialog for using PRIDE free text search via
- * http://www.ebi.ac.uk/pride/archive/simpleSearch.
+ * https://www.ebi.ac.uk/pride/archive/simpleSearch.
  *
  * @author Harald Barsnes
  */
@@ -148,12 +148,12 @@ public class PrideFreeTextSearchDialog extends javax.swing.JDialog {
 
     /**
      * Open the search result at
-     * http://www.ebi.ac.uk/pride/archive/simpleSearch.
+     * https://www.ebi.ac.uk/pride/archive/simpleSearch.
      *
      * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/pride/archive/simpleSearch?q=" + searchTextField.getText().trim() + "&submit=Search");
+        BareBonesBrowserLaunch.openURL("https://www.ebi.ac.uk/pride/archive/simpleSearch?q=" + searchTextField.getText().trim() + "&submit=Search");
     }//GEN-LAST:event_okButtonActionPerformed
 
     /**

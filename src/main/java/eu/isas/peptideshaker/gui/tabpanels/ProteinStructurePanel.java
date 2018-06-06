@@ -1729,7 +1729,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     int selectedPdbIndex = (Integer) pdbMatchesJTable.getValueAt(pdbMatchesJTable.getSelectedRow(), 0);
                     PdbParameter lParam = uniProtPdb.getPdbs().get(selectedPdbIndex - 1);
 
-                    String link = "http://www.rcsb.org/pdb/files/" + lParam.getPdbaccession() + ".pdb";
+                    String link = "https://www.rcsb.org/pdb/files/" + lParam.getPdbaccession() + ".pdb";
 
                     jmolPanel.getViewer().openFile(link);
                     if (ribbonModel) {
@@ -3020,13 +3020,13 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
     /**
      * Returns the PDB accession number as a web link to the given structure at
-     * http://www.rcsb.org.
+     * https://www.rcsb.org.
      *
      * @param pdbAccession the PDB accession number
      * @return the PDB accession web link
      */
     public String getPDBAccesionLink(String pdbAccession) {
-        return "http://www.rcsb.org/pdb/explore/explore.do?structureId=" + pdbAccession;
+        return "https://www.rcsb.org/pdb/explore/explore.do?structureId=" + pdbAccession;
     }
 
     /**

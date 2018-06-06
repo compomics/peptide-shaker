@@ -560,7 +560,7 @@ public class PeptideShakerMethods {
         String text = "The mass spectrometry data along with the identification results have been deposited to the "
                 + "ProteomeXchange Consortium [PMID 24727771] via the PRIDE partner repository [PMID 16041671] "
                 + "with the dataset identifiers [add dataset identifiers]. During the review process, "
-                + "the data can be accessed with the following credentials upon login to the PRIDE website (http://www.ebi.ac.uk/pride/archive/login): "
+                + "the data can be accessed with the following credentials upon login to the PRIDE website (https://www.ebi.ac.uk/pride/archive/login): "
                 + "Username: [add username here], Password: [add password here].";
 
         return text;

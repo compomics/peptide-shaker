@@ -123,7 +123,7 @@ public class PepXmlExport {
     private void writeMsmsPipelineAnalysis(SimpleXmlWriter sw, String peptideShakerVersion, File destinationFile, Identification identification, IdentificationParameters identificationParameters,
             WaitingHandler waitingHandler) throws IOException {
 
-        sw.writeLine("<msms_pipeline_analysis xmlns=\"http://regis-web.systemsbiology.net/pepXML\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+        sw.writeLine("<msms_pipeline_analysis xmlns=\"https://regis-web.systemsbiology.net/pepXML\" xmlns:xsi=\"https://www.w3.org/2001/XMLSchema-instance\" "
                 + "xsi:schemaLocation=\"http://sashimi.sourceforge.net/schema_revision/pepXML/pepXML_v117.xsd\" summary_xml=\"" + destinationFile.getAbsolutePath() + "\">");
 
         writeAnalysisSummary(sw, peptideShakerVersion);

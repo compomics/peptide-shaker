@@ -825,7 +825,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void loadDastyJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadDastyJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/dasty/client/index.html?q=" + accessionNumberJTextField.getText());
+        BareBonesBrowserLaunch.openURL("https://www.ebi.ac.uk/dasty/client/index.html?q=" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadDastyJButtonActionPerformed
 
@@ -836,7 +836,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void loadUniProtJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadUniProtJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.uniprot.org/uniprot/" + accessionNumberJTextField.getText());
+        BareBonesBrowserLaunch.openURL("https://www.uniprot.org/uniprot/" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadUniProtJButtonActionPerformed
 
@@ -847,7 +847,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void loadReactomeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadReactomeJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.reactome.org/cgi-bin/link?SOURCE=UNIPROT&ID=" + accessionNumberJTextField.getText());
+        BareBonesBrowserLaunch.openURL("https://www.reactome.org/cgi-bin/link?SOURCE=UNIPROT&ID=" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadReactomeJButtonActionPerformed
 
@@ -858,7 +858,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void loadStringJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadStringJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://string-db.org/newstring_cgi/show_input_page.pl?identifier=" + accessionNumberJTextField.getText());
+        BareBonesBrowserLaunch.openURL("https://string-db.org/newstring_cgi/show_input_page.pl?identifier=" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadStringJButtonActionPerformed
 
@@ -869,7 +869,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void loadDavidJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadDavidJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://david.abcc.ncifcrf.gov/api.jsp?type=UNIPROT_ACCESSION&ids=" + accessionNumberJTextField.getText() + "&tool=summary");
+        BareBonesBrowserLaunch.openURL("https://david.abcc.ncifcrf.gov/api.jsp?type=UNIPROT_ACCESSION&ids=" + accessionNumberJTextField.getText() + "&tool=summary");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadDavidJButtonActionPerformed
 
@@ -880,7 +880,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void loadIntActJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadIntActJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/intact/pages/interactions/interactions.xhtml?query=" + accessionNumberJTextField.getText());
+        BareBonesBrowserLaunch.openURL("https://www.ebi.ac.uk/intact/pages/interactions/interactions.xhtml?query=" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadIntActJButtonActionPerformed
 
@@ -891,7 +891,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void loadQuickGOJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadQuickGOJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/QuickGO/annotations?geneProductId=" + accessionNumberJTextField.getText());
+        BareBonesBrowserLaunch.openURL("https://www.ebi.ac.uk/QuickGO/annotations?geneProductId=" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadQuickGOJButtonActionPerformed
 
@@ -902,7 +902,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void loadInterProJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadInterProJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/interpro/ISearch?query=" + accessionNumberJTextField.getText());
+        BareBonesBrowserLaunch.openURL("https://www.ebi.ac.uk/interpro/ISearch?query=" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadInterProJButtonActionPerformed
 
@@ -913,7 +913,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void webDastyLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webDastyLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/dasty");
+        BareBonesBrowserLaunch.openURL("https://www.ebi.ac.uk/dasty");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_webDastyLabelMouseClicked
 
@@ -942,7 +942,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void webUniProtLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webUniProtLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.uniprot.org");
+        BareBonesBrowserLaunch.openURL("https://www.uniprot.org");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_webUniProtLabelMouseClicked
 
@@ -971,7 +971,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void webReactomeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webReactomeLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.reactome.org");
+        BareBonesBrowserLaunch.openURL("https://www.reactome.org");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_webReactomeLabelMouseClicked
 
@@ -1000,7 +1000,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void webStringLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webStringLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://string-db.org");
+        BareBonesBrowserLaunch.openURL("https://string-db.org");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_webStringLabelMouseClicked
 
@@ -1058,7 +1058,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void webInterProLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webInterProLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/interpro");
+        BareBonesBrowserLaunch.openURL("https://www.ebi.ac.uk/interpro");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_webInterProLabelMouseClicked
 
@@ -1087,7 +1087,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void webIntActLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webIntActLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/intact");
+        BareBonesBrowserLaunch.openURL("https://www.ebi.ac.uk/intact");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_webIntActLabelMouseClicked
 
@@ -1161,7 +1161,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void webDavidLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webDavidLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://david.abcc.ncifcrf.gov");
+        BareBonesBrowserLaunch.openURL("https://david.abcc.ncifcrf.gov");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_webDavidLabelMouseClicked
 
@@ -1190,7 +1190,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void picrLinkJLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_picrLinkJLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/Tools/picr/");
+        BareBonesBrowserLaunch.openURL("https://www.ebi.ac.uk/Tools/picr/");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_picrLinkJLabelMouseClicked
 
@@ -1201,7 +1201,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void loadNextProtJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadNextProtJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.nextprot.org/db/entry/NX_" + accessionNumberJTextField.getText());
+        BareBonesBrowserLaunch.openURL("https://www.nextprot.org/db/entry/NX_" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadNextProtJButtonActionPerformed
 
@@ -1212,7 +1212,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void webNextProtLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webNextProtLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.nextprot.org/db/");
+        BareBonesBrowserLaunch.openURL("https://www.nextprot.org/db/");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_webNextProtLabelMouseClicked
 
@@ -1241,7 +1241,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void loadPdbJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadPdbJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.rcsb.org/pdb/protein/" + accessionNumberJTextField.getText());
+        BareBonesBrowserLaunch.openURL("https://www.rcsb.org/pdb/protein/" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadPdbJButtonActionPerformed
 
@@ -1252,7 +1252,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void webPdbLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webPdbLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.rcsb.org/pdb/");
+        BareBonesBrowserLaunch.openURL("https://www.rcsb.org/pdb/");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_webPdbLabelMouseClicked
 
