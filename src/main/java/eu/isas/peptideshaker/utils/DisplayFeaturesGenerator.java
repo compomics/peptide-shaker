@@ -421,6 +421,8 @@ public class DisplayFeaturesGenerator {
         StringBuilder tooltip = new StringBuilder();
         tooltip.append("<html>");
 
+        ArrayList<String> alreadyAnnotated = new ArrayList<>();
+
         for (int aa = 1; aa <= peptideSequence.length(); aa++) {
 
             int aaIndex = aa - 1;
@@ -430,8 +432,28 @@ public class DisplayFeaturesGenerator {
             String confidentMod = confidentLocations[aa];
             String ambiguousMod = representativeAmbiguousLocations[aa];
 
-            ModificationUtils.appendTaggedResidue(tooltip, aminoAcid, confidentMod, ambiguousMod, null, fixedMod, modificationParameters, true, true);
+            if (fixedMod != null || confidentMod != null || ambiguousMod != null) {
 
+                StringBuilder tempTooltip = new StringBuilder(); // @TODO: should be a way of doing this without needing this second string builder..?
+                ModificationUtils.appendTaggedResidue(tempTooltip, aminoAcid, confidentMod, ambiguousMod, null, fixedMod, modificationParameters, true, true);
+                String currentResidueAnnotation = tempTooltip.toString();
+                
+                if (!alreadyAnnotated.contains(currentResidueAnnotation)) {
+
+                    tooltip.append(currentResidueAnnotation).append(": ");
+
+                    if (fixedMod != null) {
+                        tooltip.append(fixedMod).append(" (fixed))<br>");
+                    } else if (confidentMod != null) {
+                        tooltip.append(confidentMod).append(" (confident))<br>");
+                    } else if (ambiguousMod != null) {
+                        tooltip.append(ambiguousMod).append(" (not confident))<br>");
+                    }
+                    
+                    alreadyAnnotated.add(tempTooltip.toString());
+                }
+
+            }
         }
 
         tooltip.append("</html>");
@@ -553,7 +575,7 @@ public class DisplayFeaturesGenerator {
 
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
-        
+
         String peptideSequence = peptide.getSequence();
 
         String[] fixedModifications = getDisplayedModifications(

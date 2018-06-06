@@ -4619,20 +4619,20 @@ public class ModificationsPanel extends javax.swing.JPanel {
     private void updateModificationProfile(PeptideMatch peptideMatch, boolean selectedPeptideProfile) {
 
         try {
-            
-        SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
-        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-        ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
-        SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-        
+
+            SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
+            IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+            ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+            SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+
             PSModificationScores scores = (PSModificationScores) peptideMatch.getUrParam(new PSModificationScores());
             ArrayList<com.compomics.util.gui.protein.ModificationProfile> profiles = getModificationProfile(peptideMatch.getPeptide(), scores);
 
             Peptide peptide = peptideMatch.getPeptide();
-            String nTerminalAsString = PeptideUtils.getNtermAsString(
+            String nTerminalAsString = PeptideUtils.getNtermAsString(true,
                     peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters),
                     peptide.getIndexedVariableModifications());
-            String cTerminalAsString = PeptideUtils.getCtermAsString(
+            String cTerminalAsString = PeptideUtils.getCtermAsString(true,
                     peptide.getSequence().length(),
                     peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters),
                     peptide.getIndexedVariableModifications());
