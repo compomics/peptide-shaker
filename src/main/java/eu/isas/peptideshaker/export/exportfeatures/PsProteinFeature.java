@@ -8,6 +8,7 @@ import java.util.Arrays;
  * This class lists the protein identification features.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public enum PsProteinFeature implements ExportFeature {
 
@@ -20,6 +21,7 @@ public enum PsProteinFeature implements ExportFeature {
     go_accession("GO Accession", "The accessions of the Gene Ontology terms associated to the accessions of the group.", false),
     go_description("GO Description", "The descriptions of the Gene Ontology terms associated to the accessions of the group.", false),
     mw("MW [kDa]", "Molecular Weight [kDa].", false),
+    proteinLength("Protein length", "The length of the protein.", false),
     possible_coverage("Possible Coverage [%]", "Possible sequence coverage in percent of the protein designed by the main accession according to the search settings.", false),
     coverage("Coverage [%]", "Sequence coverage by validated peptides in percent of the protein designed by the main accession.", false),
     confident_coverage("Confident Coverage [%]", "Sequence coverage by confident peptides in percent of the protein designed by the main accession.", false),

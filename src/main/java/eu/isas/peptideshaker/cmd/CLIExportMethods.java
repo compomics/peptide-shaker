@@ -47,7 +47,7 @@ public class CLIExportMethods {
      * @param sequenceProvider the sequence provider
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler to display progress
-     * 
+     *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
      */
@@ -238,20 +238,26 @@ public class CLIExportMethods {
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
      */
-    public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment,
-            ProjectDetails projectDetails, Identification identification, GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, int nSurroundingAA, SpectrumCountingParameters spectrumCountingPreferences, WaitingHandler waitingHandler)
+    public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, ProjectDetails projectDetails, Identification identification,
+            GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator, IdentificationParameters identificationParameters, SequenceProvider sequenceProvider,
+            ProteinDetailsProvider proteinDetailsProvider, int nSurroundingAA, SpectrumCountingParameters spectrumCountingPreferences, WaitingHandler waitingHandler)
             throws IOException {
 
         PSExportFactory exportFactory = PSExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
+
         String reportName = reportType.replaceAll(" ", "_");
-        File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultReportName(experiment, reportName));
+        reportName = PSExportFactory.getDefaultReportName(experiment, reportName);
+        if (reportCLIInputBean.getReportNamePrefix() != null) {
+            reportName = reportCLIInputBean.getReportNamePrefix() + reportName;
+        }
+
+        File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), reportName);
 
         //@TODO: allow format selection
         PSExportFactory.writeExport(exportScheme, reportFile, ExportFormat.text, reportCLIInputBean.isGzip(), experiment, projectDetails, identification, identificationFeaturesGenerator, geneMaps,
                 null, null, null, nSurroundingAA, identificationParameters, sequenceProvider, proteinDetailsProvider, spectrumCountingPreferences, waitingHandler);
-        
+
     }
 
     /**
@@ -266,14 +272,14 @@ public class CLIExportMethods {
      * while reading or writing to a file
      */
     public static void exportDocumentation(ReportCLIInputBean reportCLIInputBean, String reportType, WaitingHandler waitingHandler) throws IOException {
-        
+
         PSExportFactory exportFactory = PSExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
         File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultDocumentation(reportType));
 
         //@TODO: allow format selection
         PSExportFactory.writeDocumentation(exportScheme, ExportFormat.text, reportFile);
-    
+
     }
 
     /**
@@ -305,14 +311,14 @@ public class CLIExportMethods {
         projectDetails.setPrideOutputFolder(mzidCLIInputBean.getOutputFile().getAbsolutePath());
 
         IdentificationParameters identificationParameters = cpsParent.getIdentificationParameters();
-        FastaSummary fastaSummary = FastaSummary.getSummary(identificationParameters.getSearchParameters().getFastaFile(), 
+        FastaSummary fastaSummary = FastaSummary.getSummary(identificationParameters.getSearchParameters().getFastaFile(),
                 identificationParameters.getSearchParameters().getFastaParameters(), waitingHandler);
-        
+
         MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), cpsParent.getIdentification(), cpsParent.getProjectDetails(),
                 identificationParameters, cpsParent.getSequenceProvider(), cpsParent.getProteinDetailsProvider(), fastaSummary, cpsParent.getIdentificationFeaturesGenerator(),
                 mzidCLIInputBean.getOutputFile(), mzidCLIInputBean.getIncludeProteinSequences(), waitingHandler, mzidCLIInputBean.isGzip());
-        
+
         mzIdentMLExport.createMzIdentMLFile(mzidCLIInputBean.getMzIdentMLVersion());
-        
+
     }
 }

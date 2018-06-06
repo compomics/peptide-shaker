@@ -19,7 +19,6 @@ import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsProteinFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPsmFeature;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
-import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
 import java.io.IOException;
@@ -60,7 +59,7 @@ public class PsProteinSection {
      * The writer used to send the output to file.
      */
     private final ExportWriter writer;
-    
+
     /**
      * Constructor.
      *
@@ -72,9 +71,9 @@ public class PsProteinSection {
      * @param writer the writer which will write to the file
      */
     public PsProteinSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
-        
+
         ArrayList<ExportFeature> peptideFeatures = new ArrayList<>();
-        
+
         for (ExportFeature exportFeature : exportFeatures) {
 
             if (exportFeature instanceof PsProteinFeature) {
@@ -146,7 +145,7 @@ public class PsProteinSection {
         }
 
         if (keys == null) {
-            
+
             keys = identification.getProteinIdentification().stream()
                     .mapToLong(Long::longValue)
                     .toArray();
@@ -468,142 +467,147 @@ public class PsProteinSection {
                 return Double.toString(Util.roundDouble(value, 2));
 
             case coverage:
-                
+
                 value = 100 * identificationFeaturesGenerator.getValidatedSequenceCoverage(proteinKey);
                 return Double.toString(Util.roundDouble(value, 2));
-                
+
             case confident_coverage:
-                
+
                 HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                 value = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
                 return Double.toString(Util.roundDouble(value, 2));
-            
+
             case decoy:
-                
+
                 return proteinMatch.isDecoy() ? "1" : "0";
-                
+
             case hidden:
-                
+
                 return psParameter.getHidden() ? "1" : "0";
-                
+
             case mw:
-                
+
                 return Double.toString(
                         ProteinUtils.computeMolecularWeight(
                                 sequenceProvider.getSequence(
                                         proteinMatch.getLeadingAccession())));
-                
+
+            case proteinLength:
+
+                return Double.toString(
+                        sequenceProvider.getSequence(
+                                proteinMatch.getLeadingAccession()).length());
+
             case non_enzymatic:
-                
+
                 return Integer.toString(
-                        identificationFeaturesGenerator.getNonEnzymatic(proteinKey, identificationParameters.getSearchParameters().getDigestionParameters())
-                                .length);
-                
+                        identificationFeaturesGenerator.getNonEnzymatic(proteinKey, identificationParameters.getSearchParameters().getDigestionParameters()).length);
+
             case pi:
-                
+
                 return psParameter.getProteinInferenceClassAsString();
-                
+
             case peptides:
-                
+
                 return Integer.toString(
                         proteinMatch.getPeptideCount());
-            
+
             case psms:
-                
+
                 return Integer.toString(
                         identificationFeaturesGenerator.getNSpectra(proteinKey));
-                
+
             case validated_peptides:
-                
+
                 return Integer.toString(
                         identificationFeaturesGenerator.getNValidatedPeptides(proteinKey));
-                
+
             case unique_peptides:
-                
+
                 return Integer.toString(
                         identificationFeaturesGenerator.getNUniquePeptides(proteinKey));
-                
+
             case unique_validated_peptides:
-                
+
                 return Integer.toString(
                         identificationFeaturesGenerator.getNUniqueValidatedPeptides(proteinKey));
-                
+
             case validated_psms:
-                
+
                 return Integer.toString(
                         identificationFeaturesGenerator.getNValidatedSpectra(proteinKey));
-                
+
             case score:
-                
+
                 return Double.toString(
                         -10.0 * FastMath.log10(psParameter.getScore()));
-                
+
             case raw_score:
-                
+
                 return Double.toString(
                         psParameter.getScore());
-                
+
             case spectrum_counting:
-                
+
                 return Double.toString(
                         identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey));
-                
+
             case spectrum_counting_nsaf:
-                
+
                 return Double.toString(identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
                         SpectrumCountingMethod.NSAF));
-                
+
             case spectrum_counting_empai:
-                
+
                 return Double.toString(identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
                         SpectrumCountingMethod.EMPAI));
-                
+
             case spectrum_counting_empai_percent:
-                
-                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
-                                Units.percent, 
-                                SpectrumCountingMethod.EMPAI));
-            
+
+                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey,
+                        Units.percent,
+                        SpectrumCountingMethod.EMPAI));
+
             case spectrum_counting_nsaf_percent:
-                
-                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
-                                Units.percent, 
-                                SpectrumCountingMethod.NSAF));
-            
+
+                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey,
+                        Units.percent,
+                        SpectrumCountingMethod.NSAF));
+
             case spectrum_counting_empai_ppm:
 
-                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
-                                Units.ppm, 
-                                SpectrumCountingMethod.EMPAI));
+                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey,
+                        Units.ppm,
+                        SpectrumCountingMethod.EMPAI));
 
             case spectrum_counting_nsaf_ppm:
 
-                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
-                                Units.ppm, 
-                                SpectrumCountingMethod.NSAF));
+                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey,
+                        Units.ppm,
+                        SpectrumCountingMethod.NSAF));
 
             case spectrum_counting_empai_fmol:
 
-                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
-                                Units.fmol, 
-                                SpectrumCountingMethod.EMPAI));
+                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey,
+                        Units.fmol,
+                        SpectrumCountingMethod.EMPAI));
 
             case spectrum_counting_nsaf_fmol:
 
-                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey, 
-                                Units.fmol, 
-                                SpectrumCountingMethod.NSAF));
+                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey,
+                        Units.fmol,
+                        SpectrumCountingMethod.NSAF));
 
             case starred:
-                
+
                 return psParameter.getStarred() ? "1" : "0";
-                
+
             case validated:
-                
+
                 return psParameter.getMatchValidationLevel().toString();
-                
+
             default:
-                
+
                 return "Not implemented";
         }
     }
@@ -615,20 +619,20 @@ public class PsProteinSection {
      * writing the file
      */
     public void writeHeader() throws IOException {
-        
+
         if (indexes) {
-        
+
             writer.writeHeaderText("");
             writer.addSeparator();
-        
+
         }
-        
+
         boolean firstColumn = true;
-        
+
         for (ExportFeature exportFeature : proteinFeatures) {
-        
+
             if (firstColumn) {
-            
+
                 firstColumn = false;
 
             } else {

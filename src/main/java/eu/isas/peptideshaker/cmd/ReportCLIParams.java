@@ -7,11 +7,13 @@ import org.apache.commons.cli.Options;
  * This class provides the available reports as command line parameters.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public enum ReportCLIParams {
 
     CPS_FILE("in", "PeptideShaker project (.cpsx or .zip file)", true, true),
     EXPORT_FOLDER("out_reports", "Output folder for report files. (Existing files will be overwritten.)", true, true),
+    EXPORT_PREFIX("report_prefix", "Prefix added to the report file name.", false, true),
     REPORT_TYPE("reports", "Comma separated list of types of report to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false, true),
     DOCUMENTATION_TYPE("documentation", "Comma separated list of types of report documentation to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false, true),
     GZIP("gzip", "Indicates whether the report should be compressed (0: no, 1: yes, default is 0).", false, true);
@@ -29,7 +31,7 @@ public enum ReportCLIParams {
      */
     public final boolean mandatory;
     /**
-     * boolean indicating whether the parameter has arguments.
+     * Boolean indicating whether the parameter has arguments.
      */
     public final boolean hasArg;
 
@@ -84,7 +86,8 @@ public enum ReportCLIParams {
         output += "\n\nOptional output parameters:\n";
         output += getOutputOptionsAsString();
 
-        output += "\n\nOptional temporary folder:\n\n";
+        output += "\n\nOptional temporary folder and name prefix:\n\n";
+        output += "-" + String.format(formatter, EXPORT_PREFIX.id) + EXPORT_PREFIX.description + "\n";
         output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + PathSettingsCLIParams.ALL.description + "\n";
 
         return output;
@@ -103,7 +106,7 @@ public enum ReportCLIParams {
         output += "\nReport export:\n\n";
         output += "-" + String.format(formatter, REPORT_TYPE.id) + REPORT_TYPE.description + "\n";
 
-        output += "\nReport Documentation export:\n\n";
+        output += "\nReport documentation export:\n\n";
         output += "-" + String.format(formatter, DOCUMENTATION_TYPE.id) + DOCUMENTATION_TYPE.description + "\n";
 
         output += "\nCompression:\n\n";

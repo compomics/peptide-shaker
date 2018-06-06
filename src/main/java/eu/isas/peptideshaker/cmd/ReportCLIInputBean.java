@@ -11,6 +11,7 @@ import org.apache.commons.cli.CommandLine;
  * Options instance.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class ReportCLIInputBean {
 
@@ -26,6 +27,10 @@ public class ReportCLIInputBean {
      * Folder where to export the reports.
      */
     private File reportOutputFolder = null;
+    /**
+     * The prefix added to the report name. Can be null.
+     */
+    private String reportNamePrefix = null;
     /**
      * Boolean indicating whether the export should be gzipped.
      */
@@ -62,6 +67,9 @@ public class ReportCLIInputBean {
         }
         if (aLine.hasOption(ReportCLIParams.EXPORT_FOLDER.id)) {
             reportOutputFolder = new File(aLine.getOptionValue(ReportCLIParams.EXPORT_FOLDER.id));
+        }
+        if (aLine.hasOption(ReportCLIParams.EXPORT_PREFIX.id)) {
+            reportNamePrefix = aLine.getOptionValue(ReportCLIParams.EXPORT_PREFIX.id);
         }
         if (aLine.hasOption(ReportCLIParams.REPORT_TYPE.id)) {
             ArrayList<Integer> options = CommandLineUtils.getIntegerListFromString(aLine.getOptionValue(ReportCLIParams.REPORT_TYPE.id), ",");
@@ -119,6 +127,24 @@ public class ReportCLIInputBean {
      */
     public void setReportOutputFolder(File outputFolder) {
         this.reportOutputFolder = outputFolder;
+    }
+    
+    /**
+     * Returns the report name prefix.
+     *
+     * @return the report name prefix
+     */
+    public String getReportNamePrefix() {
+        return reportNamePrefix;
+    }
+
+    /**
+     * Set the report name prefix.
+     *
+     * @param reportNamePrefix the report output folder
+     */
+    public void setReportNamePrefix(String reportNamePrefix) {
+        this.reportNamePrefix = reportNamePrefix;
     }
 
     /**
