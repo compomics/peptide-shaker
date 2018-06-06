@@ -29,6 +29,7 @@ import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.parameters.UtilitiesUserParameters;
+import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.gui.parameters.ProjectParametersDialog;
@@ -36,6 +37,7 @@ import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
+import eu.isas.peptideshaker.validation.MatchesValidator;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
@@ -1319,7 +1321,7 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void settingsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsComboBoxActionPerformed
-        
+
         editSettingsButton.setEnabled(settingsComboBox.getSelectedIndex() != 0);
 
         if (settingsComboBox.getSelectedIndex() != 0) {
@@ -1351,12 +1353,12 @@ public class NewDialog extends javax.swing.JDialog {
 
                 }
             } catch (Exception e) {
-                
+
                 JOptionPane.showMessageDialog(null,
                         "Failed to import search parameters from: " + identificationParametersFile.getAbsolutePath() + ".", "Search Parameters",
                         JOptionPane.WARNING_MESSAGE);
                 e.printStackTrace();
-            
+
             }
         }
 
@@ -1466,18 +1468,18 @@ public class NewDialog extends javax.swing.JDialog {
         }
 
         if (identificationParameters != null && settingsComboBox.getSelectedIndex() != 0) {
-            
+
             identificationParametersLabel.setForeground(Color.BLACK);
             identificationParametersLabel.setToolTipText(null);
             settingsComboBox.setToolTipText(null);
-        
+
         } else {
-        
+
             identificationParametersLabel.setForeground(Color.RED);
             identificationParametersLabel.setToolTipText("Please set the identification parameters");
             settingsComboBox.setToolTipText("Please set the identification parameters");
             allValid = false;
-        
+
         }
 
         // enable/disable the Create! button
@@ -1625,15 +1627,37 @@ public class NewDialog extends javax.swing.JDialog {
 
         }
 
-        if (!identificationParametersFactory.getParametersList().contains(tempIdentificationParameters.getName())) {
-            
-            identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
-        
+        boolean matchesValidationAdded;
+
+        ValidationQcParameters validationQcParameters = tempIdentificationParameters.getIdValidationParameters().getValidationQCParameters();
+
+        if (validationQcParameters == null
+                || validationQcParameters.getPsmFilters() == null
+                || validationQcParameters.getPeptideFilters() == null
+                || validationQcParameters.getProteinFilters() == null
+                || validationQcParameters.getPsmFilters().isEmpty()
+                && validationQcParameters.getPeptideFilters().isEmpty()
+                && validationQcParameters.getProteinFilters().isEmpty()) {
+
+            MatchesValidator.setDefaultMatchesQCFilters(validationQcParameters);
+
+            matchesValidationAdded = true;
+
         } else {
-            
+
+            matchesValidationAdded = false;
+
+        }
+
+        if (!identificationParametersFactory.getParametersList().contains(tempIdentificationParameters.getName())) {
+
+            identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
+
+        } else {
+
             boolean parametersChanged = !identificationParametersFactory.getIdentificationParameters(tempIdentificationParameters.getName()).equals(tempIdentificationParameters);
 
-            if (parametersChanged) {
+            if (parametersChanged && !matchesValidationAdded) {
 
                 int value = JOptionPane.showOptionDialog(null,
                         "A settings file with the name \'" + tempIdentificationParameters.getName() + "\' already exists.\n"
@@ -1659,6 +1683,10 @@ public class NewDialog extends javax.swing.JDialog {
                     default:
                         break;
                 }
+            } else if (matchesValidationAdded) {
+
+                identificationParametersFactory.addIdentificationParameters(tempIdentificationParameters);
+
             }
         }
 
@@ -1844,6 +1872,21 @@ public class NewDialog extends javax.swing.JDialog {
     private void setIdentificationParameters(IdentificationParameters newIdentificationParameters) {
 
         try {
+
+            ValidationQcParameters validationQcParameters = newIdentificationParameters.getIdValidationParameters().getValidationQCParameters();
+
+            if (validationQcParameters == null
+                    || validationQcParameters.getPsmFilters() == null
+                    || validationQcParameters.getPeptideFilters() == null
+                    || validationQcParameters.getProteinFilters() == null
+                    || validationQcParameters.getPsmFilters().isEmpty()
+                    && validationQcParameters.getPeptideFilters().isEmpty()
+                    && validationQcParameters.getProteinFilters().isEmpty()) {
+
+                MatchesValidator.setDefaultMatchesQCFilters(validationQcParameters);
+
+                identificationParametersFactory.addIdentificationParameters(newIdentificationParameters);
+            }
 
             this.identificationParameters = newIdentificationParameters;
 

@@ -623,7 +623,7 @@ public class PeptideShaker {
      * @param sequenceProvider a protein sequence provider
      * @param sequenceMatchingPreferences the sequence matching preferences
      * @param projectType the project type
-     * @param fastaParameters the fasta parsing parameters
+     * @param fastaParameters the FASTA parsing parameters
      * @param waitingHandler the handler displaying feedback to the user
      */
     private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(

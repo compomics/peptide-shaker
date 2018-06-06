@@ -1288,7 +1288,7 @@ public class MatchesValidator {
      */
     public static void setDefaultMatchesQCFilters(ValidationQcParameters validationQCPreferences) {
 
-        ArrayList<Filter> psmFilters = new ArrayList<>(3);
+        ArrayList<Filter> psmFilters = new ArrayList<>(2);
         PsmFilter psmFilter = new PsmFilter("Fragment Ion Sequence Coverage");
         psmFilter.setDescription("Sequence coverage filter by fragment ions");
         psmFilter.setFilterItem(AssumptionFilterItem.sequenceCoverage.name, FilterItemComparator.higherOrEqual, 30);
@@ -1308,7 +1308,7 @@ public class MatchesValidator {
         peptideFilters.add(peptideFilter);
         validationQCPreferences.setPeptideFilters(peptideFilters);
 
-        ArrayList<Filter> proteinFilters = new ArrayList<>(1);
+        ArrayList<Filter> proteinFilters = new ArrayList<>(2);
         ProteinFilter proteinFilter = new ProteinFilter(">=2 confident peptides");
         proteinFilter.setDescription("Number of confident peptides filter");
         proteinFilter.setFilterItem(ProteinFilterItem.nConfidentPeptides.name, FilterItemComparator.higherOrEqual, 2);
