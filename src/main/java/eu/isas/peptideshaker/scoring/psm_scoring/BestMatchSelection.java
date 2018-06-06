@@ -441,7 +441,6 @@ public class BestMatchSelection {
                 // create a PeptideShaker match based on the best search engine match
                 Peptide sePeptide = bestPeptideAssumption.getPeptide();
                 Peptide psPeptide = new Peptide(sePeptide.getSequence());
-                psPeptide.getMass(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
                 ModificationMatch[] seModificationMatches = sePeptide.getVariableModifications();
 
@@ -455,6 +454,8 @@ public class BestMatchSelection {
                 }
 
                 psPeptide.setProteinMapping(sePeptide.getProteinMapping());
+                psPeptide.estimateTheoreticMass(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                
                 PeptideAssumption psAssumption = new PeptideAssumption(psPeptide, 1, Advocate.peptideShaker.getIndex(), bestPeptideAssumption.getIdentificationCharge(), retainedP);
 
                 spectrumMatch.setBestPeptideAssumption(psAssumption);

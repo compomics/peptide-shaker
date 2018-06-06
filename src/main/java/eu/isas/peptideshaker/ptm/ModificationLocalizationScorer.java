@@ -46,6 +46,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This class scores the PSM PTMs using the scores implemented in compomics
@@ -386,10 +387,8 @@ public class ModificationLocalizationScorer extends DbObject {
         String peptideSequence = peptide.getSequence();
         ModificationMatch[] originalMatches = peptide.getVariableModifications();
 
-        if (originalMatches == null) {
-
+        if (originalMatches.length == 0) {
             return;
-
         }
 
         SequenceMatchingParameters sequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
@@ -517,9 +516,7 @@ public class ModificationLocalizationScorer extends DbObject {
         }
 
         if (variableModifications.isEmpty()) {
-
             return;
-
         }
 
         // Map confident sites
@@ -574,7 +571,7 @@ public class ModificationLocalizationScorer extends DbObject {
                 }
             }
 
-            for (Integer refSite : psmScores.getConfidentSites()) {
+            for (int refSite : psmScores.getConfidentSites()) {
 
                 for (String modName : psmScores.getConfidentModificationsAt(refSite)) {
 
@@ -871,7 +868,7 @@ public class ModificationLocalizationScorer extends DbObject {
             }
 
             HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSites, nRepresentativesMap, inferredSites);
-
+            
             for (Double modMass : representativeToSecondaryMap.keySet()) {
 
                 HashMap<Integer, HashMap<Integer, HashSet<String>>> representativesAtMass = representativeToSecondaryMap.get(modMass);
@@ -1022,7 +1019,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
             for (TreeMap<Double, HashMap<Integer, HashSet<String>>> mapAtDScore : mapAtPscore.values()) {
 
-                for (Double modMass : mapAtDScore.keySet()) {
+                for (double modMass : mapAtDScore.keySet()) {
 
                     HashSet<Integer> modificationSites = possibleSites.get(modMass);
 
@@ -1074,7 +1071,7 @@ public class ModificationLocalizationScorer extends DbObject {
                     }
 
                     HashMap<Integer, HashSet<String>> siteMap = entry.getValue();
-                    TreeSet<Integer> sites = new TreeSet<>();
+                    HashSet<Integer> prioritizedSites = new HashSet<>(0);
 
                     if (modPreferentialSites != null) {
 
@@ -1082,9 +1079,9 @@ public class ModificationLocalizationScorer extends DbObject {
 
                             int preferentialSite = entry2.getKey();
 
-                            if (!sites.contains(preferentialSite)) {
+                            if (!prioritizedSites.contains(preferentialSite)) {
 
-                                sites.add(preferentialSite);
+                                prioritizedSites.add(preferentialSite);
 
                             }
 
@@ -1108,6 +1105,13 @@ public class ModificationLocalizationScorer extends DbObject {
                             }
                         }
                     }
+
+                    int[] sites = Stream.concat(prioritizedSites.stream()
+                            .sorted(),
+                            siteMap.keySet().stream()
+                                    .filter(site -> !prioritizedSites.contains(site)))
+                            .mapToInt(a -> a)
+                            .toArray();
 
                     for (int site : sites) {
 
@@ -1306,7 +1310,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                 }
 
-                System.out.println("nSelectMap: " + nSelected);
+                System.out.println("nSelectedMap: " + nSelected);
 
                 for (double modMasss : nSelectedMap.keySet()) {
 
@@ -1619,9 +1623,7 @@ public class ModificationLocalizationScorer extends DbObject {
                     waitingHandler.increaseSecondaryProgressCounter();
 
                     if (waitingHandler.isRunCanceled()) {
-
                         return;
-
                     }
                 });
 
@@ -2640,7 +2642,13 @@ public class ModificationLocalizationScorer extends DbObject {
 
             if (!nRepresentativesMap.isEmpty()) {
 
-                HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousScoreToSiteMap, nRepresentativesMap);
+                HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> representativeToSecondaryMap;
+
+                try {
+                    representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousScoreToSiteMap, nRepresentativesMap);
+                } catch (Exception e) {
+                    representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousScoreToSiteMap, nRepresentativesMap);
+                }
 
                 for (HashMap<Integer, HashMap<Integer, HashSet<String>>> massMap : representativeToSecondaryMap.values()) {
 
