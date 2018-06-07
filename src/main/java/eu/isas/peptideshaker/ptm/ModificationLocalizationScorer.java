@@ -935,7 +935,9 @@ public class ModificationLocalizationScorer extends DbObject {
 
         }
 
+        double mass = peptide.getMass();
         peptide.setVariableModifications(newModificationMatches.toArray(new ModificationMatch[newModificationMatches.size()]));
+        peptide.setMass(mass);
 
         peptideMatch.addUrParam(peptideScores);
 

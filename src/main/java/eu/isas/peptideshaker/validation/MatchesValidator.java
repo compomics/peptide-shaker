@@ -823,8 +823,6 @@ public class MatchesValidator {
         HashSet<String> foundModifications = new HashSet<>();
         HashMap<String, ArrayList<Long>> fractionPsmMatches = new HashMap<>();
 
-        PSParameter psParameter = new PSParameter();
-
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(waitingHandler);
         int nFractions = identification.getSpectrumIdentification().size();
         PeptideMatch peptideMatch;
@@ -845,8 +843,8 @@ public class MatchesValidator {
             for (long spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
 
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
-                probaScore = probaScore * psParameter.getProbability();
+                PSParameter psmParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
+                probaScore = probaScore * psmParameter.getProbability();
 
                 if (nFractions > 1) {
 
@@ -862,7 +860,7 @@ public class MatchesValidator {
 
                     }
 
-                    double tempScore = psParameter.getProbability();
+                    double tempScore = psmParameter.getProbability();
 
                     if (tempScore != 1.0 && fractionScore != 0.0) {
 
@@ -912,18 +910,20 @@ public class MatchesValidator {
 
             }
 
+            PSParameter peptideParameter = new PSParameter();
+
             // set the fraction scores
             for (String fractionName : fractionScores.keySet()) {
 
-                psParameter.setFractionScore(fractionName, fractionScores.get(fractionName));
+                peptideParameter.setFractionScore(fractionName, fractionScores.get(fractionName));
 
             }
 
             // Set the global score and grouping key
-            psParameter.setScore(probaScore);
+            peptideParameter.setScore(probaScore);
 
-            peptideMatch.addUrParam(psParameter);
-            peptideMap.put(psParameter.getScore(), peptideMatch.getIsDecoy());
+            peptideMatch.addUrParam(peptideParameter);
+            peptideMap.put(peptideParameter.getScore(), peptideMatch.getIsDecoy());
 
             waitingHandler.increaseSecondaryProgressCounter();
 
@@ -1103,19 +1103,19 @@ public class MatchesValidator {
 
             }
 
-            PSParameter psParameter = new PSParameter();
+            PSParameter proteinParameter = new PSParameter();
 
             // set the fraction scores
             for (String fractionName : fractionScores.keySet()) {
 
-                psParameter.setFractionScore(fractionName, fractionScores.get(fractionName));
+                proteinParameter.setFractionScore(fractionName, fractionScores.get(fractionName));
 
             }
 
             // Set the global score
-            psParameter.setScore(probaScore);
-            proteinMatch.addUrParam(psParameter);
-            proteinMap.put(psParameter.getScore(), proteinMatch.isDecoy());
+            proteinParameter.setScore(probaScore);
+            proteinMatch.addUrParam(proteinParameter);
+            proteinMap.put(proteinParameter.getScore(), proteinMatch.isDecoy());
 
         }
 

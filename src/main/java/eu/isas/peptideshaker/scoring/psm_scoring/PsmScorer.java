@@ -253,7 +253,7 @@ public class PsmScorer {
 
                 for (PeptideAssumption peptideAssumption : entry2.getValue()) {
 
-                    PSParameter psParameter = new PSParameter();
+                    PSParameter assumptionParameter = new PSParameter();
 
                     Peptide peptide = peptideAssumption.getPeptide();
                     boolean decoy = PeptideUtils.isDecoy(peptide, sequenceProvider);
@@ -277,12 +277,12 @@ public class PsmScorer {
 
                         }
 
-                        psParameter.setIntermediateScore(scoreIndex, score);
+                        assumptionParameter.setIntermediateScore(scoreIndex, score);
 
                         if (scoreIndex.equals(PsmScore.hyperScore.index)) {
 
                             hyperScores.add(-score);
-                            hyperScoreParameters.add(psParameter);
+                            hyperScoreParameters.add(assumptionParameter);
                             hyperScoreDecoys.add(decoy);
 
                         } else {
@@ -293,7 +293,7 @@ public class PsmScorer {
 
                     }
 
-                    peptideAssumption.addUrParam(psParameter);
+                    peptideAssumption.addUrParam(assumptionParameter);
 
                 }
             }

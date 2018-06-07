@@ -113,9 +113,9 @@ public class BestMatchSelection {
 
         PeptideAssumptionFilter idFilter = identificationParameters.getPeptideAssumptionFilter();
 
-        PSParameter psParameter = new PSParameter();
-        psParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
-        spectrumMatch.addUrParam(psParameter);
+        PSParameter psmParameter = new PSParameter();
+        psmParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
+        spectrumMatch.addUrParam(psmParameter);
 
         String spectrumKey = spectrumMatch.getSpectrumKey();
 
@@ -460,15 +460,13 @@ public class BestMatchSelection {
 
                 spectrumMatch.setBestPeptideAssumption(psAssumption);
 
-                psParameter = new PSParameter();
-                psParameter.setScore(retainedP);
+                psmParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
+                psmParameter.setScore(retainedP);
 
-                PSParameter matchParameter = (PSParameter) bestPeptideAssumption.getUrParam(psParameter);
-                psParameter.setProbability(matchParameter.getProbability());
-                psParameter.setAlgorithmDeltaPEP(matchParameter.getAlgorithmDeltaPEP());
-                psParameter.setDeltaPEP(matchParameter.getDeltaPEP());
-
-                spectrumMatch.addUrParam(psParameter);
+                PSParameter matchParameter = (PSParameter) bestPeptideAssumption.getUrParam(psmParameter);
+                psmParameter.setProbability(matchParameter.getProbability());
+                psmParameter.setAlgorithmDeltaPEP(matchParameter.getAlgorithmDeltaPEP());
+                psmParameter.setDeltaPEP(matchParameter.getDeltaPEP());
 
             }
         }
@@ -488,20 +486,21 @@ public class BestMatchSelection {
 
             if (spectrumMatch.getBestPeptideAssumption() == null) {
 
-                psParameter = new PSParameter();
+                psmParameter = new PSParameter();
 
                 if (!multiSE) {
 
-                    psParameter.setScore(bestEvalue);
+                    psmParameter.setScore(bestEvalue);
 
                 }
+                
+                psmParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
 
-                PSParameter matchParameter = (PSParameter) bestAssumption.getUrParam(psParameter);
+                PSParameter matchParameter = (PSParameter) bestAssumption.getUrParam(psmParameter);
 
-                psParameter.setProbability(matchParameter.getProbability());
-                psParameter.setAlgorithmDeltaPEP(matchParameter.getAlgorithmDeltaPEP());
-                psParameter.setDeltaPEP(matchParameter.getDeltaPEP());
-                spectrumMatch.addUrParam(psParameter);
+                psmParameter.setProbability(matchParameter.getProbability());
+                psmParameter.setAlgorithmDeltaPEP(matchParameter.getAlgorithmDeltaPEP());
+                psmParameter.setDeltaPEP(matchParameter.getDeltaPEP());
 
             }
         }
