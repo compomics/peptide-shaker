@@ -265,26 +265,29 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
 
                 case 7:
 
-                    double nConfidentPeptides = identificationFeaturesGenerator.getNConfidentPeptides(proteinKey);
-                    double nDoubtfulPeptides = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey) - nConfidentPeptides;
+                    int nPeptides = proteinMatch.getPeptideCount();
+                    int nConfidentPeptides = identificationFeaturesGenerator.getNConfidentPeptides(proteinKey);
+                    int nValidatedPeptides = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey);
+                    int nDoubtfulPeptides = nValidatedPeptides - nConfidentPeptides;
 
                     doubleValues = new ArrayList<>(3);
-                    doubleValues.add(nConfidentPeptides);
-                    doubleValues.add(nDoubtfulPeptides);
-                    doubleValues.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
+                    doubleValues.add((double) nConfidentPeptides);
+                    doubleValues.add((double) nDoubtfulPeptides);
+                    doubleValues.add((double) (nPeptides - nConfidentPeptides - nDoubtfulPeptides));
 
                     return new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
 
                 case 8:
 
-                    double nConfidentSpectra = identificationFeaturesGenerator.getNConfidentSpectra(proteinKey);
-                    double nDoubtfulSpectra = identificationFeaturesGenerator.getNValidatedSpectra(proteinKey) - nConfidentSpectra;
-                    int nSpectra = identificationFeaturesGenerator.getNSpectra(proteinKey);
+                    int nPsms = identificationFeaturesGenerator.getNSpectra(proteinKey);
+                    int nConfidentPsms = identificationFeaturesGenerator.getNConfidentSpectra(proteinKey);
+                    int nValidatedPsms = identificationFeaturesGenerator.getNValidatedSpectra(proteinKey);
+                    int nDoubtfulPsms = nValidatedPsms - nConfidentPsms;
 
                     doubleValues = new ArrayList<>(3);
-                    doubleValues.add(nConfidentSpectra);
-                    doubleValues.add(nDoubtfulSpectra);
-                    doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
+                    doubleValues.add((double) nConfidentPsms);
+                    doubleValues.add((double) nDoubtfulPsms);
+                    doubleValues.add((double) (nPsms - nConfidentPsms - nDoubtfulPsms));
                     return new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
 
                 case 9:

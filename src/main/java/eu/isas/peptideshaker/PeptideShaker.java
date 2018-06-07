@@ -37,6 +37,7 @@ import eu.isas.peptideshaker.scoring.psm_scoring.PsmScorer;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import com.compomics.util.experiment.identification.protein_inference.PeptideAndProteinBuilder;
 import com.compomics.util.experiment.quantification.spectrumcounting.ScalingFactorsEstimators;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.processing.ProteinProcessor;
@@ -618,7 +619,7 @@ public class PeptideShaker {
 
     /**
      * Attaches the spectrum posterior error probabilities to the spectrum
-     * matches.
+     * matches and creates peptides and proteins.
      *
      * @param sequenceProvider a protein sequence provider
      * @param sequenceMatchingPreferences the sequence matching preferences
@@ -633,45 +634,63 @@ public class PeptideShaker {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
-        PSParameter psParameter = new PSParameter();
+        PeptideAndProteinBuilder peptideAndProteinBuilder = new PeptideAndProteinBuilder(identification);
 
-        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
-
-        SpectrumMatch spectrumMatch;
-        while ((spectrumMatch = psmIterator.next()) != null) {
-
-            psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
-
-            if (spectrumMatch.getBestPeptideAssumption() == null) {
-                continue;
-            }
-
-            if (fastaParameters.isTargetDecoy()) {
-
-                psParameter.setProbability(matchesValidator.getPsmMap().getProbability(psParameter.getScore()));
-
-            } else {
-
-                psParameter.setProbability(1.0);
-
-            }
-
-            if (projectType == ProjectType.peptide || projectType == ProjectType.protein) {
-
-                identification.buildPeptidesAndProteins(spectrumMatch, sequenceMatchingPreferences, sequenceProvider, projectType == ProjectType.protein);
-
-            }
-
-            waitingHandler.increaseSecondaryProgressCounter();
-
-            if (waitingHandler.isRunCanceled()) {
-
-                return;
-
-            }
-        }
+        identification.getSpectrumIdentification().values().stream()
+                .flatMap(keys -> keys.parallelStream())
+                .map(key -> identification.getSpectrumMatch(key))
+                .forEach(spectrumMatch -> attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(
+                        spectrumMatch, peptideAndProteinBuilder, sequenceProvider, 
+                        sequenceMatchingPreferences, projectType, fastaParameters, waitingHandler));
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+    }
+
+    /**
+     * Attaches the spectrum posterior error probabilities to the spectrum match
+     * and creates peptides and proteins.
+     *
+     * @param spectrumMatch the spectrum match to process
+     * @param sequenceProvider a protein sequence provider
+     * @param peptideAndProteinBuilder a peptide and protein builder
+     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param projectType the project type
+     * @param fastaParameters the FASTA parsing parameters
+     * @param waitingHandler the handler displaying feedback to the user
+     */
+    private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(
+            SpectrumMatch spectrumMatch, PeptideAndProteinBuilder peptideAndProteinBuilder,
+            SequenceProvider sequenceProvider, SequenceMatchingParameters sequenceMatchingPreferences,
+            ProjectType projectType, FastaParameters fastaParameters, WaitingHandler waitingHandler) {
+
+        if (waitingHandler.isRunCanceled()) {
+            return;
+        }
+
+        PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
+
+        if (spectrumMatch.getBestPeptideAssumption() == null) {
+            return;
+        }
+
+        if (fastaParameters.isTargetDecoy()) {
+
+            psParameter.setProbability(matchesValidator.getPsmMap().getProbability(psParameter.getScore()));
+
+        } else {
+
+            psParameter.setProbability(1.0);
+
+        }
+
+        if (projectType == ProjectType.peptide || projectType == ProjectType.protein) {
+
+            peptideAndProteinBuilder.buildPeptidesAndProteins(spectrumMatch, sequenceMatchingPreferences, sequenceProvider, projectType == ProjectType.protein);
+
+        }
+
+        waitingHandler.increaseSecondaryProgressCounter();
+
     }
 
     /**
@@ -720,7 +739,7 @@ public class PeptideShaker {
 
     /**
      * Returns the protein details provider.
-     * 
+     *
      * @return the protein details provider
      */
     public ProteinDetailsProvider getProteinDetailsProvider() {
