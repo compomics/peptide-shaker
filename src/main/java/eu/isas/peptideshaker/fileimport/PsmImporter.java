@@ -6,7 +6,6 @@ import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.modifications.ModificationType;
 import com.compomics.util.experiment.biology.proteins.Peptide;
-import static com.compomics.util.experiment.biology.proteins.Peptide.getKey;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.gui.parameters.identification.IdentificationAlgorithmParameter;
@@ -47,14 +46,11 @@ import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.psm_scoring.BestMatchSelection;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import static eu.isas.peptideshaker.fileimport.FileImporter.MOD_MASS_TOLERANCE;
-import eu.isas.peptideshaker.protein_inference.PeptideChecker;
-import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
 import java.util.Arrays;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -1385,6 +1381,11 @@ public class PsmImporter {
 
                     int omssaIndex = Integer.parseInt(seModName);
                     OmssaParameters omssaParameters = (OmssaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.omssa.getIndex());
+                    
+                    if (!omssaParameters.hasModificationIndexes()) {
+                        throw new IllegalArgumentException("OMSSA modification indexes not set in the search parameters.");
+                    }
+                    
                     String omssaName = omssaParameters.getModificationName(omssaIndex);
 
                     if (omssaName != null) {
@@ -1392,21 +1393,42 @@ public class PsmImporter {
                         modification = modificationFactory.getModification(omssaName);
 
                         if (modification != null) {
-
                             return modification.getMass();
-
                         }
                     }
 
                 } catch (Exception e) {
                     // could not be parsed as OMSSA modification
                 }
+                
+                // Try Andromeda indexes
+                try {
+                    
+                    int andromedaIndex = Integer.parseInt(seModName);
+                    AndromedaParameters andromedaParameters = (AndromedaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.andromeda.getIndex());
+
+                    if (!andromedaParameters.hasModificationIndexes()) {
+                        throw new IllegalArgumentException("Andromeda modification indexes not set in the search parameters.");
+                    }
+
+                    String andromedaName = andromedaParameters.getModificationName(andromedaIndex);
+                    
+                    if (andromedaName != null) {
+
+                        modification = modificationFactory.getModification(andromedaName);
+
+                        if (modification != null) {
+                            return modification.getMass();
+                        }
+                    }
+                    
+                } catch (Exception e) {
+                    // could not be parsed as Andromeda modification
+                }
             }
 
         } else {
-
             return modification.getMass();
-
         }
 
         throw new IllegalArgumentException("Modification mass could not be parsed from modification name " + seModName + ".");
