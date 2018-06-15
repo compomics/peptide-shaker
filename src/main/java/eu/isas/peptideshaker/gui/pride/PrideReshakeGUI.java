@@ -1683,7 +1683,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         showProjectFilterRemovalOption(false);
         clearProjectFiltersLabel.setVisible(false);
         updateProjectTableSelection();
-        String[] tempFilterValues = new String[8];
+        String[] tempFilterValues = new String[10];
         setCurrentFilterValues(tempFilterValues, true);
     }//GEN-LAST:event_clearProjectFiltersLabelMouseClicked
 
