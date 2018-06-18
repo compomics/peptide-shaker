@@ -243,9 +243,9 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                 case 5:
 
                     String geneName = proteinDetailsProvider.getGeneName(proteinMatch.getLeadingAccession());
-                    String chromosomeName = geneMaps.getChromosome(geneName);
+                    String chromosomeName = geneMaps.getChromosome(geneName);                    
 
-                    return chromosomeName.length() == 0 ? new Chromosome(null) : new Chromosome(chromosomeName);
+                    return (chromosomeName == null || chromosomeName.length() == 0) ? new Chromosome(null) : new Chromosome(chromosomeName);
 
                 case 6:
 
