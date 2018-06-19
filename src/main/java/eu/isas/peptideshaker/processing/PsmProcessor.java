@@ -88,7 +88,7 @@ public class PsmProcessor {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
-
+        
         FastaParameters fastaParameters = identificationParameters.getSearchParameters().getFastaParameters();
         BestMatchSelection bestMatchSelection = new BestMatchSelection(identification, proteinCount, sequenceProvider, fastaParameters);
 
@@ -285,12 +285,8 @@ public class PsmProcessor {
 
         }
 
-        waitingHandler.increaseSecondaryProgressCounter();
-
         if (waitingHandler.isRunCanceled()) {
-
             return;
-
         }
 
         // Assumptions

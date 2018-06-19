@@ -206,6 +206,7 @@ public class FileImporter {
         for (File spectrumFile : spectrumFiles) {
 
             this.spectrumFiles.put(spectrumFile.getName(), spectrumFile);
+            importSpectra(spectrumFile.getName());
 
         }
 
@@ -455,7 +456,7 @@ public class FileImporter {
 
         }
 
-        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
         LinkedList<SpectrumMatch> idFileSpectrumMatches = null;
 
@@ -888,6 +889,7 @@ public class FileImporter {
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
             waitingHandler.resetSecondaryProgressCounter();
             spectrumFactory.addSpectra(spectrumFile, waitingHandler);
+            mgfUsed.add(spectrumFile.getName());
 
             // @TODO: check for duplicate spectrum titles and show the warning in the lower right corner of the main frame
             if (waitingHandler.isRunCanceled()) {

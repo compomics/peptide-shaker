@@ -97,9 +97,6 @@ public class BestMatchSelection {
     public void selectBestHit(SpectrumMatch spectrumMatch, InputMap inputMap, TargetDecoyMap psmTargetDecoyMap, WaitingHandler waitingHandler,
             IdentificationParameters identificationParameters) {
 
-        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
-
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
         boolean multiSE = inputMap.isMultipleAlgorithms();
 
