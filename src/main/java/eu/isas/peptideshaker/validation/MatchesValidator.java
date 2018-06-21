@@ -129,7 +129,7 @@ public class MatchesValidator {
             SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps, IdentificationParameters identificationParameters,
             ProjectType projectType, ProcessingParameters processingParameters) throws InterruptedException, TimeoutException {
 
-        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
+        ValidationQcParameters validationQCParameters = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
         waitingHandler.setWaitingText("Match Validation and Quality Control. Please Wait...");
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -145,9 +145,9 @@ public class MatchesValidator {
 
         }
 
-        AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
-        Double intensityLimit = annotationPreferences.getAnnotationIntensityLimit();
-        annotationPreferences.setIntensityLimit(0);
+        AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
+        Double intensityLimit = annotationParameters.getAnnotationIntensityLimit();
+        annotationParameters.setIntensityLimit(0);
 
         ExecutorService pool = Executors.newFixedThreadPool(processingParameters.getnThreads());
 
@@ -200,8 +200,8 @@ public class MatchesValidator {
             } else {
 
                 // There are not enough precursors, disable probabilistic precursor filter
-                if (validationQCPreferences.getPsmFilters() != null) {
-                    for (Filter filter : validationQCPreferences.getPsmFilters()) {
+                if (validationQCParameters.getPsmFilters() != null) {
+                    for (Filter filter : validationQCParameters.getPsmFilters()) {
 
                         PsmFilter psmFilter = (PsmFilter) filter;
 
@@ -271,7 +271,7 @@ public class MatchesValidator {
 
         }
 
-        annotationPreferences.setIntensityLimit(intensityLimit);
+        annotationParameters.setIntensityLimit(intensityLimit);
 
         if (projectType == ProjectType.peptide || projectType == ProjectType.protein) {
 
@@ -405,13 +405,13 @@ public class MatchesValidator {
             GeneMaps geneMaps, IdentificationParameters identificationParameters,
             TargetDecoyMap proteinMap, long proteinKey) {
 
-        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
+        ValidationQcParameters validationQCParameters = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
         TargetDecoyResults targetDecoyResults = proteinMap.getTargetDecoyResults();
         double fdrLimit = targetDecoyResults.getFdrLimit();
         double nTargetLimit = 100.0 / fdrLimit;
         double proteinThreshold = targetDecoyResults.getScoreLimit();
-        double margin = validationQCPreferences.getConfidenceMargin() * proteinMap.getResolution();
+        double margin = validationQCParameters.getConfidenceMargin() * proteinMap.getResolution();
         double proteinConfidentThreshold = targetDecoyResults.getConfidenceLimit() + margin;
 
         if (proteinConfidentThreshold > 100) {
@@ -458,7 +458,7 @@ public class MatchesValidator {
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(proteinKey)).getUrParam(psParameter);
         psParameter.resetQcResults();
-        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
+        ValidationQcParameters validationQCParameters = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
         if (!psParameter.getManualValidation()) {
 
@@ -468,8 +468,8 @@ public class MatchesValidator {
 
                     boolean filtersPassed = true;
 
-                    if (validationQCPreferences.getProteinFilters() != null) {
-                        for (Filter filter : validationQCPreferences.getProteinFilters()) {
+                    if (validationQCParameters.getProteinFilters() != null) {
+                        for (Filter filter : validationQCParameters.getProteinFilters()) {
 
                             ProteinFilter proteinFilter = (ProteinFilter) filter;
                             boolean validation = proteinFilter.isValidated(proteinKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider);
@@ -485,9 +485,9 @@ public class MatchesValidator {
 
                     boolean confidenceThresholdPassed = psParameter.getConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
-                    boolean enoughHits = !validationQCPreferences.isFirstDecoy() || targetDecoyMap.getnTargetOnly() > nTargetLimit;
+                    boolean enoughHits = !validationQCParameters.isFirstDecoy() || targetDecoyMap.getnTargetOnly() > nTargetLimit;
 
-                    boolean enoughSequences = !validationQCPreferences.isDbSize();
+                    boolean enoughSequences = !validationQCParameters.isDbSize();
 
                     if (filtersPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
 
@@ -533,7 +533,7 @@ public class MatchesValidator {
         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
         PSParameter psParameter = (PSParameter) ((PeptideMatch) peptideMatch).getUrParam(PSParameter.dummy);
         psParameter.resetQcResults();
-        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
+        ValidationQcParameters validationQCParameters = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
         if (identificationParameters.getSearchParameters().getFastaParameters().isTargetDecoy()) {
 
@@ -541,7 +541,7 @@ public class MatchesValidator {
             double fdrLimit = targetDecoyResults.getFdrLimit();
             double nTargetLimit = 100.0 / fdrLimit;
             double peptideThreshold = targetDecoyResults.getScoreLimit();
-            double margin = validationQCPreferences.getConfidenceMargin() * peptideMap.getResolution();
+            double margin = validationQCParameters.getConfidenceMargin() * peptideMap.getResolution();
             double confidenceThreshold = targetDecoyResults.getConfidenceLimit() + margin;
 
             if (confidenceThreshold > 100) {
@@ -556,8 +556,8 @@ public class MatchesValidator {
 
                 boolean filtersPassed = true;
 
-                if (validationQCPreferences.getPeptideFilters() != null) {
-                    for (Filter filter : validationQCPreferences.getPeptideFilters()) {
+                if (validationQCParameters.getPeptideFilters() != null) {
+                    for (Filter filter : validationQCParameters.getPeptideFilters()) {
 
                         PeptideFilter peptideFilter = (PeptideFilter) filter;
                         boolean validation = peptideFilter.isValidated(peptideKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider);
@@ -573,9 +573,9 @@ public class MatchesValidator {
 
                 boolean confidenceThresholdPassed = psParameter.getConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
-                boolean enoughHits = !validationQCPreferences.isFirstDecoy() || peptideMap.getnTargetOnly() > nTargetLimit;
+                boolean enoughHits = !validationQCParameters.isFirstDecoy() || peptideMap.getnTargetOnly() > nTargetLimit;
 
-                boolean enoughSequences = !validationQCPreferences.isDbSize();
+                boolean enoughSequences = !validationQCParameters.isDbSize();
 
                 if (filtersPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
 
@@ -622,7 +622,7 @@ public class MatchesValidator {
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
         PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
         psParameter.resetQcResults();
-        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
+        ValidationQcParameters validationQCParameters = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
         if (identificationParameters.getSearchParameters().getFastaParameters().isTargetDecoy()) {
 
@@ -637,7 +637,7 @@ public class MatchesValidator {
                 double fdrLimit = targetDecoyResults.getFdrLimit();
                 nTargetLimit = 100.0 / fdrLimit;
                 psmThreshold = targetDecoyResults.getScoreLimit();
-                double margin = validationQCPreferences.getConfidenceMargin() * psmMap.getResolution();
+                double margin = validationQCParameters.getConfidenceMargin() * psmMap.getResolution();
                 confidenceThreshold = targetDecoyResults.getConfidenceLimit() + margin;
 
                 if (confidenceThreshold > 100) {
@@ -654,9 +654,9 @@ public class MatchesValidator {
 
                 boolean filtersPassed = true;
 
-                if (applyQCFilters && validationQCPreferences.getPsmFilters() != null) {
+                if (applyQCFilters && validationQCParameters.getPsmFilters() != null) {
 
-                    for (Filter filter : validationQCPreferences.getPsmFilters()) {
+                    for (Filter filter : validationQCParameters.getPsmFilters()) {
 
                         PsmFilter psmFilter = (PsmFilter) filter;
                         boolean validated = psmFilter.isValidated(spectrumMatchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider);
@@ -672,9 +672,9 @@ public class MatchesValidator {
 
                 boolean confidenceThresholdPassed = psParameter.getConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
-                boolean enoughHits = !validationQCPreferences.isFirstDecoy() || psmMap.getnTargetOnly() > nTargetLimit;
+                boolean enoughHits = !validationQCParameters.isFirstDecoy() || psmMap.getnTargetOnly() > nTargetLimit;
 
-                boolean enoughSequences = !validationQCPreferences.isDbSize();
+                boolean enoughSequences = !validationQCParameters.isDbSize();
 
                 if (filtersPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
 
@@ -723,7 +723,7 @@ public class MatchesValidator {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
         PSParameter psParameter = (PSParameter) peptideAssumption.getUrParam(PSParameter.dummy);
-        ValidationQcParameters validationQCPreferences = identificationParameters.getIdValidationParameters().getValidationQCParameters();
+        ValidationQcParameters validationQCParameters = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
         if (identificationParameters.getSearchParameters().getFastaParameters().isTargetDecoy()) {
 
@@ -739,7 +739,7 @@ public class MatchesValidator {
                 double desiredThreshold = targetDecoyResults.getUserInput();
                 nTargetLimit = 100.0 / desiredThreshold;
                 seThreshold = targetDecoyResults.getScoreLimit();
-                double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
+                double margin = validationQCParameters.getConfidenceMargin() * targetDecoyMap.getResolution();
                 confidenceThreshold = targetDecoyResults.getConfidenceLimit() + margin;
 
                 if (confidenceThreshold > 100) {
@@ -758,7 +758,7 @@ public class MatchesValidator {
 
                 if (applyQCFilters) {
 
-                    for (Filter filter : validationQCPreferences.getPsmFilters()) {
+                    for (Filter filter : validationQCParameters.getPsmFilters()) {
 
                         PsmFilter psmFilter = (PsmFilter) filter;
                         AssumptionFilter assumptionFilter = psmFilter.getAssumptionFilter();
@@ -775,9 +775,9 @@ public class MatchesValidator {
 
                 boolean confidenceThresholdPassed = psParameter.getConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
-                boolean enoughHits = !validationQCPreferences.isFirstDecoy() || targetDecoyMap.getnTargetOnly() > nTargetLimit;
+                boolean enoughHits = !validationQCParameters.isFirstDecoy() || targetDecoyMap.getnTargetOnly() > nTargetLimit;
 
-                boolean enoughSequences = !validationQCPreferences.isDbSize();
+                boolean enoughSequences = !validationQCParameters.isDbSize();
 
                 if (filtersPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
 
@@ -1283,10 +1283,10 @@ public class MatchesValidator {
     /**
      * Sets the default matches quality control filters.
      *
-     * @param validationQCPreferences the default matches quality control
+     * @param validationQCParameters the default matches quality control
      * filters
      */
-    public static void setDefaultMatchesQCFilters(ValidationQcParameters validationQCPreferences) {
+    public static void setDefaultMatchesQCFilters(ValidationQcParameters validationQCParameters) {
 
         ArrayList<Filter> psmFilters = new ArrayList<>(2);
         PsmFilter psmFilter = new PsmFilter("Fragment Ion Sequence Coverage");
@@ -1299,14 +1299,14 @@ public class MatchesValidator {
         psmFilter.setFilterItem(AssumptionFilterItem.precrusorMzErrorStat.name, FilterItemComparator.higherOrEqual, 0.0001);
         psmFilter.getAssumptionFilter().setFilterItem(AssumptionFilterItem.precrusorMzErrorStat.name, FilterItemComparator.higherOrEqual, 0.0001);
         psmFilters.add(psmFilter);
-        validationQCPreferences.setPsmFilters(psmFilters);
+        validationQCParameters.setPsmFilters(psmFilters);
 
         ArrayList<Filter> peptideFilters = new ArrayList<>(1);
         PeptideFilter peptideFilter = new PeptideFilter("One confident PSM");
         peptideFilter.setDescription("Number of confident PSMs filter");
         peptideFilter.setFilterItem(PeptideFilterItem.nConfidentPSMs.name, FilterItemComparator.higherOrEqual, 1);
         peptideFilters.add(peptideFilter);
-        validationQCPreferences.setPeptideFilters(peptideFilters);
+        validationQCParameters.setPeptideFilters(peptideFilters);
 
         ArrayList<Filter> proteinFilters = new ArrayList<>(2);
         ProteinFilter proteinFilter = new ProteinFilter(">=2 confident peptides");
@@ -1317,7 +1317,7 @@ public class MatchesValidator {
         proteinFilter.setDescription("Number of confident spectra filter");
         proteinFilter.setFilterItem(ProteinFilterItem.nConfidentPSMs.name, FilterItemComparator.higherOrEqual, 2);
         proteinFilters.add(proteinFilter);
-        validationQCPreferences.setProteinFilters(proteinFilters);
+        validationQCParameters.setProteinFilters(proteinFilters);
 
     }
 
@@ -1846,7 +1846,6 @@ public class MatchesValidator {
          * @param geneMaps the gene maps
          * @param metrics the object used to store metrics on the project
          * @param identificationParameters the identification parameters
-         * @param spectrumCountingPreferences the spectrum counting parameters
          * @param waitingHandler a waiting handler to display progress and allow
          * canceling the process
          * @param exceptionHandler handler for exceptions
