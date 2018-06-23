@@ -64,7 +64,7 @@ public enum PeptideShakerCLIParams {
             aOptions.addOption(value.id, true, value.description);
         }
         
-        // Identification parameters
+        // identification parameters
         PeptideShakerIdentificationParametersCLIParams.createOptionsCLI(aOptions);
 
         // follow-up options
