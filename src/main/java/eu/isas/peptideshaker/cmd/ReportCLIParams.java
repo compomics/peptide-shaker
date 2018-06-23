@@ -61,7 +61,7 @@ public enum ReportCLIParams {
         }
 
         // Path setup
-        aOptions.addOption(PathSettingsCLIParams.ALL.id, true, PathSettingsCLIParams.ALL.description);
+        PathSettingsCLIParams.createOptionsCLI(aOptions);
 
         // note: remember to add new parameters to the getOptionsAsString below as well
     }
