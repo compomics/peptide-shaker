@@ -47,7 +47,7 @@ import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * The PeptideShaker export factory
+ * The PeptideShaker export factory.
  *
  * @author Marc Vaudel
  */

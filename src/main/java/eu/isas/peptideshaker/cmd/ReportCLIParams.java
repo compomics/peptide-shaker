@@ -28,7 +28,7 @@ public enum ReportCLIParams {
      */
     public final boolean mandatory;
     /**
-     * boolean indicating whether the parameter has arguments.
+     * Boolean indicating whether the parameter has arguments.
      */
     public final boolean hasArg;
 
