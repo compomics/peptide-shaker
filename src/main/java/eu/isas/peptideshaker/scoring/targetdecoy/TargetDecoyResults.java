@@ -61,11 +61,11 @@ public class TargetDecoyResults extends DbObject implements Serializable {
     /**
      * The user input which gave the displayed results.
      */
-    private Double userInput;
+    private double userInput = 1.0;
     /**
      * The type of input 0 &gt; confidence 1 &gt; FDR 2 &gt; FNR.
      */
-    private Integer inputType;
+    private int inputType = 1;
 
     /**
      * Constructor.
@@ -122,7 +122,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      *
      * @return the confidence limit
      */
-    public Double getConfidenceLimit() {
+    public double getConfidenceLimit() {
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return confidenceLimit;
     }
@@ -142,7 +142,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      *
      * @return the FDR limit
      */
-    public Double getFdrLimit() {
+    public double getFdrLimit() {
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
         return fdrLimit;
     }
@@ -304,11 +304,8 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      *
      * @return the type of input
      */
-    public Integer getInputType() {
+    public int getInputType() {
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        if (inputType == null) {
-            inputType = 1;
-        }
         return inputType;
     }
 
@@ -317,7 +314,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      *
      * @param inputType the input type
      */
-    public void setInputType(Integer inputType) {
+    public void setInputType(int inputType) {
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.inputType = inputType;
     }
@@ -327,11 +324,8 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      *
      * @return the user input
      */
-    public Double getUserInput() {
+    public double getUserInput() {
         ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
-        if (userInput == null) {
-            userInput = 1.0;
-        }
         return userInput;
     }
 
@@ -340,7 +334,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      *
      * @param userInput the user input
      */
-    public void setUserInput(Double userInput) {
+    public void setUserInput(double userInput) {
         ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
         this.userInput = userInput;
     }
