@@ -380,7 +380,7 @@ public class PeptideShaker {
         if (projectType == ProjectType.peptide || projectType == ProjectType.protein) {
 
             waitingHandler.appendReport("Generating peptide map.", true, true);
-            matchesValidator.fillPeptideMaps(identification, metrics, waitingHandler, identificationParameters);
+            matchesValidator.fillPeptideMaps(identification, metrics, waitingHandler, identificationParameters, sequenceProvider);
 
             if (waitingHandler.isRunCanceled()) {
 
@@ -429,6 +429,17 @@ public class PeptideShaker {
                 waitingHandler.appendReport("Resolving protein inference issues, inferring peptide and protein PI status.", true, true); // could be slow
                 proteinInference.inferPiStatus(identification, metrics, matchesValidator.getProteinMap(), identificationParameters, sequenceProvider, proteinDetailsProvider, waitingHandler);
                 waitingHandler.increasePrimaryProgressCounter();
+
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
+
+                identification.getObjectsDB().commit();
+                System.gc();
+
+                waitingHandler.appendReport("Computing protein probabilities.", true, true);
+
+                matchesValidator.getProteinMap().estimateProbabilities(waitingHandler);
 
                 if (waitingHandler.isRunCanceled()) {
                     return;
@@ -565,7 +576,7 @@ public class PeptideShaker {
         matchesValidator.setProteinMap(proteinMap);
         attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(sequenceProvider, identificationParameters.getSequenceMatchingParameters(),
                 projectType, identificationParameters.getSearchParameters().getFastaParameters(), waitingHandler);
-        matchesValidator.fillPeptideMaps(identification, metrics, waitingHandler, identificationParameters);
+        matchesValidator.fillPeptideMaps(identification, metrics, waitingHandler, identificationParameters, sequenceProvider);
         peptideMap.estimateProbabilities(waitingHandler);
         matchesValidator.attachPeptideProbabilities(identification, fastaParameters, waitingHandler);
         matchesValidator.fillProteinMap(identification, waitingHandler);
@@ -640,8 +651,8 @@ public class PeptideShaker {
                 .flatMap(keys -> keys.parallelStream())
                 .map(key -> identification.getSpectrumMatch(key))
                 .forEach(spectrumMatch -> attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(
-                        spectrumMatch, peptideAndProteinBuilder, sequenceProvider, 
-                        sequenceMatchingPreferences, projectType, fastaParameters, waitingHandler));
+                spectrumMatch, peptideAndProteinBuilder, sequenceProvider,
+                sequenceMatchingPreferences, projectType, fastaParameters, waitingHandler));
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
     }
@@ -675,7 +686,11 @@ public class PeptideShaker {
 
         if (fastaParameters.isTargetDecoy()) {
 
-            psParameter.setProbability(matchesValidator.getPsmMap().getProbability(psParameter.getScore()));
+            double probability = matchesValidator.getPsmMap().getProbability(psParameter.getScore());
+            psParameter.setProbability(probability);
+            if (probability > 0) {
+                int debug = 1;
+            }
 
         } else {
 

@@ -1803,6 +1803,8 @@ public class QCPanel extends javax.swing.JPanel {
 
         maxValue = Double.MIN_VALUE;
 
+        SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
+
         if (peptideValidatedPsmsJRadioButton.isSelected()) {
 
             progressDialog.setPrimaryProgressCounterIndeterminate(false);
@@ -1849,7 +1851,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 if (!peptideParameter.getHidden()) {
 
-                    if (!peptideMatch.getIsDecoy()) {
+                    if (!PeptideUtils.isDecoy(peptideMatch.getPeptide(), sequenceProvider)) {
                         if (peptideParameter.getMatchValidationLevel().isValidated()) {
                             if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                 validatedValues.add(value);
@@ -1914,7 +1916,7 @@ public class QCPanel extends javax.swing.JPanel {
                         }
                     }
 
-                    if (!peptideMatch.getIsDecoy()) {
+                    if (!PeptideUtils.isDecoy(peptideMatch.getPeptide(), sequenceProvider)) {
                         if (peptideParameter.getMatchValidationLevel().isValidated()) {
                             if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                 validatedValues.add(value);
@@ -1966,7 +1968,7 @@ public class QCPanel extends javax.swing.JPanel {
                         }
                     }
 
-                    if (!peptideMatch.getIsDecoy()) {
+                    if (!PeptideUtils.isDecoy(peptideMatch.getPeptide(), sequenceProvider)) {
                         if (peptideParameter.getMatchValidationLevel().isValidated()) {
                             if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                 validatedValues.add(length);

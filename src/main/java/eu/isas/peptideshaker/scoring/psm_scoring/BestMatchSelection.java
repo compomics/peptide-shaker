@@ -461,7 +461,6 @@ public class BestMatchSelection {
                 psmParameter.setScore(retainedP);
 
                 PSParameter matchParameter = (PSParameter) bestPeptideAssumption.getUrParam(psmParameter);
-                psmParameter.setProbability(matchParameter.getProbability());
                 psmParameter.setAlgorithmDeltaPEP(matchParameter.getAlgorithmDeltaPEP());
                 psmParameter.setDeltaPEP(matchParameter.getDeltaPEP());
 
@@ -495,7 +494,6 @@ public class BestMatchSelection {
 
                 PSParameter matchParameter = (PSParameter) bestAssumption.getUrParam(psmParameter);
 
-                psmParameter.setProbability(matchParameter.getProbability());
                 psmParameter.setAlgorithmDeltaPEP(matchParameter.getAlgorithmDeltaPEP());
                 psmParameter.setDeltaPEP(matchParameter.getDeltaPEP());
 

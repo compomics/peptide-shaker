@@ -197,7 +197,7 @@ public class TargetDecoySeries {
      */
     public void getFDRResults(TargetDecoyResults targetDecoyResults) {
 
-        Double threshold = targetDecoyResults.getFdrLimit();
+        double threshold = targetDecoyResults.getFdrLimit();
 
         if (targetDecoyResults.isClassicalEstimators()) {
             targetDecoyResults.setNoValidated(false);

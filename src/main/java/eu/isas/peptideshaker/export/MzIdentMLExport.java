@@ -776,7 +776,7 @@ public class MzIdentMLExport {
 
                     bw.write(getCurrentTabSpace());
                     bw.write("<PeptideEvidence isDecoy=\"");
-                    bw.write(Boolean.toString(peptideMatch.getIsDecoy()));
+                    bw.write(Boolean.toString(PeptideUtils.isDecoy(peptideMatch.getPeptide(), sequenceProvider)));
                     bw.write("\" pre=\"");
                     bw.write(aaBefore);
                     bw.write("\" post=\"");

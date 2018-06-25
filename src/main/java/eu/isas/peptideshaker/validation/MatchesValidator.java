@@ -44,6 +44,7 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import com.compomics.util.parameters.identification.advanced.IdMatchValidationParameters;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -129,7 +130,40 @@ public class MatchesValidator {
             SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps, IdentificationParameters identificationParameters,
             ProjectType projectType, ProcessingParameters processingParameters) throws InterruptedException, TimeoutException {
 
-        ValidationQcParameters validationQCParameters = identificationParameters.getIdValidationParameters().getValidationQCParameters();
+        IdMatchValidationParameters validationParameters = identificationParameters.getIdValidationParameters();
+
+        waitingHandler.setWaitingText("Finding FDR Thresholds. Please Wait...");
+
+        TargetDecoyMap currentMap = psmMap;
+        TargetDecoyResults currentResults = currentMap.getTargetDecoyResults();
+        currentResults.setInputType(1);
+        currentResults.setUserInput(validationParameters.getDefaultPsmFDR());
+        currentResults.setClassicalEstimators(true);
+        currentResults.setClassicalValidation(true);
+        currentResults.setFdrLimit(validationParameters.getDefaultPsmFDR());
+        currentMap.getTargetDecoySeries().getFDRResults(currentResults);
+
+        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+
+        currentMap = peptideMap;
+        currentResults = currentMap.getTargetDecoyResults();
+        currentResults.setInputType(1);
+        currentResults.setUserInput(validationParameters.getDefaultPeptideFDR());
+        currentResults.setClassicalEstimators(true);
+        currentResults.setClassicalValidation(true);
+        currentResults.setFdrLimit(validationParameters.getDefaultPeptideFDR());
+        currentMap.getTargetDecoySeries().getFDRResults(currentResults);
+
+        currentMap = proteinMap;
+        currentResults = currentMap.getTargetDecoyResults();
+        currentResults.setInputType(1);
+        currentResults.setUserInput(validationParameters.getDefaultProteinFDR());
+        currentResults.setClassicalEstimators(true);
+        currentResults.setClassicalValidation(true);
+        currentResults.setFdrLimit(validationParameters.getDefaultProteinFDR());
+        currentMap.getTargetDecoySeries().getFDRResults(currentResults);
+
+        ValidationQcParameters validationQCParameters = validationParameters.getValidationQCParameters();
 
         waitingHandler.setWaitingText("Match Validation and Quality Control. Please Wait...");
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -485,11 +519,7 @@ public class MatchesValidator {
 
                     boolean confidenceThresholdPassed = psParameter.getConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
-                    boolean enoughHits = !validationQCParameters.isFirstDecoy() || targetDecoyMap.getnTargetOnly() > nTargetLimit;
-
-                    boolean enoughSequences = !validationQCParameters.isDbSize();
-
-                    if (filtersPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
+                    if (filtersPassed && confidenceThresholdPassed) {
 
                         psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
 
@@ -573,11 +603,7 @@ public class MatchesValidator {
 
                 boolean confidenceThresholdPassed = psParameter.getConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
-                boolean enoughHits = !validationQCParameters.isFirstDecoy() || peptideMap.getnTargetOnly() > nTargetLimit;
-
-                boolean enoughSequences = !validationQCParameters.isDbSize();
-
-                if (filtersPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
+                if (filtersPassed && confidenceThresholdPassed) {
 
                     psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
 
@@ -672,11 +698,7 @@ public class MatchesValidator {
 
                 boolean confidenceThresholdPassed = psParameter.getConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
-                boolean enoughHits = !validationQCParameters.isFirstDecoy() || psmMap.getnTargetOnly() > nTargetLimit;
-
-                boolean enoughSequences = !validationQCParameters.isDbSize();
-
-                if (filtersPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
+                if (filtersPassed && confidenceThresholdPassed) {
 
                     psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
 
@@ -775,11 +797,7 @@ public class MatchesValidator {
 
                 boolean confidenceThresholdPassed = psParameter.getConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
-                boolean enoughHits = !validationQCParameters.isFirstDecoy() || targetDecoyMap.getnTargetOnly() > nTargetLimit;
-
-                boolean enoughSequences = !validationQCParameters.isDbSize();
-
-                if (filtersPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
+                if (filtersPassed && confidenceThresholdPassed) {
 
                     psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
 
@@ -811,9 +829,10 @@ public class MatchesValidator {
      * will be saved while iterating the matches
      * @param identificationParameters the identification parameters
      * @param waitingHandler the handler displaying feedback to the user
+     * @param sequenceProvider the sequence provider
      */
     public void fillPeptideMaps(Identification identification, Metrics metrics, WaitingHandler waitingHandler,
-            IdentificationParameters identificationParameters) {
+            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider) {
 
         waitingHandler.setWaitingText("Filling Peptide Maps. Please Wait...");
 
@@ -836,7 +855,7 @@ public class MatchesValidator {
                             .map(ModificationMatch::getModification)
                             .collect(Collectors.toSet()));
 
-            double probaScore = 1;
+            double probaScore = 1.0;
             HashMap<String, Double> fractionScores = new HashMap<>(nFractions);
 
             // get the global and fraction level peptide scores
@@ -844,7 +863,7 @@ public class MatchesValidator {
 
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 PSParameter psmParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
-                probaScore = probaScore * psmParameter.getProbability();
+                probaScore *= psmParameter.getProbability();
 
                 if (nFractions > 1) {
 
@@ -923,7 +942,7 @@ public class MatchesValidator {
             peptideParameter.setScore(probaScore);
 
             peptideMatch.addUrParam(peptideParameter);
-            peptideMap.put(peptideParameter.getScore(), peptideMatch.getIsDecoy());
+            peptideMap.put(peptideParameter.getScore(), PeptideUtils.isDecoy(peptideMatch.getPeptide(), sequenceProvider));
 
             waitingHandler.increaseSecondaryProgressCounter();
 
@@ -1048,7 +1067,7 @@ public class MatchesValidator {
             }
 
             HashMap<String, Double> fractionScores = new HashMap<>(nFractions);
-            double probaScore = 1;
+            double probaScore = 1.0;
 
             if (proteinMatch == null) {
 
@@ -1155,6 +1174,10 @@ public class MatchesValidator {
             PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
             if (fastaParameters.isTargetDecoy()) {
+                
+                if (psParameter.getScore() > 0) {
+                    int debug = 1;
+                }
 
                 double proteinProbability = proteinMap.getProbability(psParameter.getScore());
                 psParameter.setProbability(proteinProbability);
@@ -1283,8 +1306,7 @@ public class MatchesValidator {
     /**
      * Sets the default matches quality control filters.
      *
-     * @param validationQCParameters the default matches quality control
-     * filters
+     * @param validationQCParameters the default matches quality control filters
      */
     public static void setDefaultMatchesQCFilters(ValidationQcParameters validationQCParameters) {
 
