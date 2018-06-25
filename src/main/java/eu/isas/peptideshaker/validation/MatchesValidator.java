@@ -1148,7 +1148,7 @@ public class MatchesValidator {
      * @param identification the identification class containing the matches to
      * validate
      * @param sequenceProvider the sequence provider
-     * @param fastaParameters the fasta file parameters
+     * @param fastaParameters the FASTA file parameters
      * @param metrics if provided fraction information
      * @param waitingHandler the handler displaying feedback to the user
      * @param fractionParameters the fraction parameters
@@ -1174,10 +1174,6 @@ public class MatchesValidator {
             PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
             if (fastaParameters.isTargetDecoy()) {
-                
-                if (psParameter.getScore() > 0) {
-                    int debug = 1;
-                }
 
                 double proteinProbability = proteinMap.getProbability(psParameter.getScore());
                 psParameter.setProbability(proteinProbability);
