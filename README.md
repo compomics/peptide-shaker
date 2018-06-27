@@ -62,7 +62,7 @@ To start using PeptideShaker, unzip the downloaded file, and double-click the `P
 
   * [Minimum Requirements](#minimum-requirements)
   * [From the Command Line](#from-the-command-line)
-  * [Miniconda](#miniconda)
+  * [Bioiconda](#bioiconda)
   * [Docker](#docker)
   * [SearchGUI](#searchgui)
   * [User Defined Modifications](#user-defined-modifications)
@@ -90,7 +90,7 @@ The minimum screen resolution for PeptideShaker is 1280 x 800, but it is highly 
 
 ### From the Command Line
 
-The main purpose of PeptideShaker is to make it simpler to process and display the results of multiple search engines. We believe that a graphical user interface would be the best choice for most users, and therefore made PeptideShaker with a graphical user interface. However, PeptideShaker can also be used via the command line, for example for incorporation into different analysis pipelines.
+The main purpose of PeptideShaker is to make it simpler to process and display the results of multiple search engines. A graphical user interface is the best choice for smaller projects. PeptideShaker can also be used _via_ the command line, and be incorporated in different analysis pipelines.
 
 For details about the command line see: [PeptideShakerCLI](https://github.com/compomics/peptide-shaker/wiki/PeptideShakerCLI).
 
@@ -98,12 +98,18 @@ For details about the command line see: [PeptideShakerCLI](https://github.com/co
 
 ----
 
-### Miniconda ###
+### Bioconda ###
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square)](http://bioconda.github.io/recipes/peptide-shaker/README.html)
+[![install with bioconda](https://anaconda.org/bioconda/peptide-shaker/badges/latest_release_relative_date.svg)](http://bioconda.github.io/recipes/peptide-shaker/README.html)
+[![install with bioconda](https://anaconda.org/bioconda/peptide-shaker/badges/downloads.svg)](http://bioconda.github.io/recipes/peptide-shaker/README.html)
 
-PeptideShaker is available as a [Miniconda package](http://conda.pydata.org/miniconda.html) in the [bioconda](https://bioconda.github.io) channel. You can install PeptideShaker with:
+
+PeptideShaker is available as a [Miniconda package](http://conda.pydata.org/miniconda.html) in the [bioconda](https://bioconda.github.io) channel. 
+
+You can install PeptideShaker with:
 
 ```bash
-conda install peptide-shaker -c bioconda
+conda install -c bioconda peptide-shaker
 ```
 
 [Go to top of page](#peptideshaker)
