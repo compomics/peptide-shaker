@@ -104,7 +104,7 @@ For details about the command line see: [PeptideShakerCLI](https://github.com/co
 [![install with bioconda](https://anaconda.org/bioconda/peptide-shaker/badges/downloads.svg)](http://bioconda.github.io/recipes/peptide-shaker/README.html)
 
 
-PeptideShaker is available as a [Miniconda package](http://conda.pydata.org/miniconda.html) in the [bioconda](https://bioconda.github.io) channel. 
+PeptideShaker is available as a [Miniconda package](http://conda.pydata.org/miniconda.html) in the [bioconda](https://bioconda.github.io) channel [here](https://anaconda.org/bioconda/peptide-shaker). 
 
 You can install PeptideShaker with:
 
