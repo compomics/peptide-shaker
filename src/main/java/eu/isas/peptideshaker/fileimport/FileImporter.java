@@ -803,10 +803,6 @@ public class FileImporter {
                 importSpectra(fileName);
                 waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                 waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
-                mgfUsed.add(fileName);
-                projectDetails.addSpectrumFile(spectrumFile);
-                nSpectra += spectrumFactory.getNSpectra(fileName);
-                identification.addFraction(fileName);
 
             } else {
 
@@ -890,6 +886,9 @@ public class FileImporter {
             waitingHandler.resetSecondaryProgressCounter();
             spectrumFactory.addSpectra(spectrumFile, waitingHandler);
             mgfUsed.add(spectrumFile.getName());
+            nSpectra += spectrumFactory.getNSpectra(spectrumFile.getName());
+            projectDetails.addSpectrumFile(spectrumFile);
+            identification.addFraction(spectrumFile.getName());
 
             // @TODO: check for duplicate spectrum titles and show the warning in the lower right corner of the main frame
             if (waitingHandler.isRunCanceled()) {
