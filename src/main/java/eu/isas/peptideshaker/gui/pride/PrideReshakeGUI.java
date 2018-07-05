@@ -6,6 +6,7 @@ import com.compomics.util.experiment.biology.enzymes.Enzyme;
 import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.identification.identification_parameters.IdentificationParametersFactory;
+import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.io.identification.MzIdentMLIdfileSearchParametersConverter;
 import com.compomics.util.experiment.mass_spectrometry.proteowizard.MsFormat;
@@ -2697,6 +2698,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 try {
                     // set up the identification parameters
                     SearchParameters prideSearchParameters = new SearchParameters();
+                    prideSearchParameters.setFastaParameters(FastaParameters.inferParameters(new File(database), progressDialog));
 
                     // set the database
                     prideSearchParameters.setFastaFile(new File(database));

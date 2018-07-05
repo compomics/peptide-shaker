@@ -970,6 +970,10 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      */
     private void browseDatabaseSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseDatabaseSettingsButtonActionPerformed
 
+        if (prideReShakeGUI.getPeptideShakerGUI().getIdentificationParameters() == null) {
+            prideReShakeGUI.getPeptideShakerGUI().setDefaultParameters();
+        }
+        
         SearchParameters searchParameters = prideReShakeGUI.getPeptideShakerGUI().getIdentificationParameters().getSearchParameters();
         File fastaFile = searchParameters.getFastaFile();
 
