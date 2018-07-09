@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.gui.exportdialogs;
 
 import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.Util;
+import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.gui.export.report.ReportEditor;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
@@ -46,6 +47,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      * List of the available export schemes.
      */
     private ArrayList<String> exportSchemesNames;
+    /**
+     * The sequence factory.
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
     /**
      * Creates a new ExportPreferencesDialog.
@@ -784,8 +789,16 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     try {
+                        // get the default peptide mapper
+                        if (sequenceFactory.getDefaultPeptideMapper() == null) {
+                            progressDialog.setTitle("Loading Peptide to Protein Mapping. Please Wait...");
+                            sequenceFactory.getDefaultPeptideMapper(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences(), peptideShakerGUI.getIdentificationParameters().getSearchParameters(),
+                                    peptideShakerGUI.getIdentificationParameters().getPeptideVariantsPreferences(), progressDialog, peptideShakerGUI.getExceptionHandler());
+                        }
+
                         ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
                         progressDialog.setTitle("Exporting. Please Wait...");
+
                         PSExportFactory.writeExport(exportScheme, selectedFile, exportFormat, peptideShakerGUI.getExperiment().getReference(),
                                 peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),
                                 peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
