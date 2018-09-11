@@ -56,9 +56,9 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
      */
     public void estimateProbabilities(WaitingHandler waitingHandler) {
 
-        ObjectsDB.increaseRWCounter();
-        zooActivateWrite();
-        ObjectsDB.decreaseRWCounter();
+        
+        writeDBMode();
+        
 
         int max = getMapsSize();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -89,9 +89,9 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
      */
     public double getProbability(String file, int category, double score) {
 
-        ObjectsDB.increaseRWCounter();
-        zooActivateRead();
-        ObjectsDB.decreaseRWCounter();
+        
+        readDBMode();
+        
 
         HashSet<String> groupedFiles = fileSpecificGrouping.get(category);
 
@@ -148,9 +148,9 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
      */
     public void addPoint(String fileName, int category, double score, boolean decoy) {
 
-        ObjectsDB.increaseRWCounter();
-        zooActivateWrite();
-        ObjectsDB.decreaseRWCounter();
+        
+        writeDBMode();
+        
 
         HashMap<String, TargetDecoyMap> fileMapping = fileSpecificMaps.get(category);
 
@@ -191,9 +191,9 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
      */
     public TargetDecoyMap getTargetDecoyMap(int category, String spectrumFile) {
 
-        ObjectsDB.increaseRWCounter();
-        zooActivateRead();
-        ObjectsDB.decreaseRWCounter();
+        
+        readDBMode();
+        
 
         if (spectrumFile != null) {
 
@@ -226,9 +226,9 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
      */
     public boolean isFileGrouped(int category, String fileName) {
 
-        ObjectsDB.increaseRWCounter();
-        zooActivateRead();
-        ObjectsDB.decreaseRWCounter();
+        
+        readDBMode();
+        
 
         HashSet<String> groupedFiles = fileSpecificGrouping.get(category);
 
@@ -246,9 +246,9 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
      */
     public int getCorrectedCharge(int category) {
 
-        ObjectsDB.increaseRWCounter();
-        zooActivateRead();
-        ObjectsDB.decreaseRWCounter();
+        
+        readDBMode();
+        
 
         Integer correctedCharge = grouping.get(category);
 
@@ -269,9 +269,9 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
      */
     public Set<Integer> getPossibleCategories() {
 
-        ObjectsDB.increaseRWCounter();
-        zooActivateRead();
-        ObjectsDB.decreaseRWCounter();
+        
+        readDBMode();
+        
 
         return fileSpecificMaps.keySet();
 
@@ -284,9 +284,9 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
      */
     public Set<Integer> getCategoriesFromGroupedFiles() {
         
-        ObjectsDB.increaseRWCounter();
-        zooActivateRead();
-        ObjectsDB.decreaseRWCounter();
+        
+        readDBMode();
+        
         
         return groupedMaps.keySet();
     
@@ -299,9 +299,9 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
      */
     public int[] getGroupedCategories() {
         
-        ObjectsDB.increaseRWCounter();
-        zooActivateRead();
-        ObjectsDB.decreaseRWCounter();
+        
+        readDBMode();
+        
         
         return groupedMaps.keySet().stream()
                 .mapToInt(category -> getCorrectedCharge(category))
@@ -317,9 +317,9 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
      */
     public HashMap<Integer, ArrayList<Integer>> getChargeGroupingMap() {
         
-        ObjectsDB.increaseRWCounter();
-        zooActivateRead();
-        ObjectsDB.decreaseRWCounter();
+        
+        readDBMode();
+        
         
         HashMap<Integer, ArrayList<Integer>> result = new HashMap<>(4);
         
@@ -360,9 +360,9 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
      */
     public TreeSet<String> getFilesAtCategory(int category) {
         
-        ObjectsDB.increaseRWCounter();
-        zooActivateRead();
-        ObjectsDB.decreaseRWCounter();
+        
+        readDBMode();
+        
         
         HashMap<String, TargetDecoyMap> categoryMap = fileSpecificMaps.get(category);
             
@@ -377,9 +377,9 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
      */
     public int getMapsSize() {
         
-        ObjectsDB.increaseRWCounter();
-        zooActivateRead();
-        ObjectsDB.decreaseRWCounter();
+        
+        readDBMode();
+        
         
         return groupedMaps.values().stream()
                 .mapToInt(map -> map.getMapSize())
@@ -399,9 +399,9 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
      */
     public ArrayList<TargetDecoyMap> getTargetDecoyMaps() {
         
-        ObjectsDB.increaseRWCounter();
-        zooActivateRead();
-        ObjectsDB.decreaseRWCounter();
+        
+        readDBMode();
+        
         
         ArrayList<TargetDecoyMap> result = new ArrayList<>(0);
         

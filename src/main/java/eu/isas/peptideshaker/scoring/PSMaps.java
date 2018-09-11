@@ -65,7 +65,7 @@ public class PSMaps extends DbObject implements UrParameter {
      */
     public InputMap getInputMap() {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         return inputMap;
     
@@ -78,7 +78,7 @@ public class PSMaps extends DbObject implements UrParameter {
      */
     public TargetDecoyMap getPsmMap() {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         return psmMap;
     
@@ -91,7 +91,7 @@ public class PSMaps extends DbObject implements UrParameter {
      */
     public TargetDecoyMap getPeptideMap() {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         return peptideMap;
     
@@ -104,7 +104,7 @@ public class PSMaps extends DbObject implements UrParameter {
      */
     public TargetDecoyMap getProteinMap() {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         return proteinMap;
     

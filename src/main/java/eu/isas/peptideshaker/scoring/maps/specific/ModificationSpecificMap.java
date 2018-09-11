@@ -26,9 +26,9 @@ public class ModificationSpecificMap extends SpecificTargetDecoyMap {
     @Override
     public void clean(double minimalFDR) {
 
-        ObjectsDB.increaseRWCounter();
-        zooActivateWrite();
-        ObjectsDB.decreaseRWCounter();
+        
+        writeDBMode();
+        
 
         for (Map.Entry<Integer, HashMap<String, TargetDecoyMap>> entry1 : fileSpecificMaps.entrySet()) {
 
