@@ -138,15 +138,15 @@ public class PeptideShakerMethods {
      */
     public static String getSearchGUIText() {
 
-        return "The search was conducted using SearchGUI version [add version] [PMID  21337703].";
+        return "The search was conducted using SearchGUI version [add version] [PMID  29774740].";
 
     }
 
     /**
      * Returns the database usage details.
      *
-     * @param fastaParameters the fasta parameters
-     * @param fastaSummary the fasta summary
+     * @param fastaParameters the FASTA parameters
+     * @param fastaSummary the FASTA summary
      *
      * @return the database usage details
      */
