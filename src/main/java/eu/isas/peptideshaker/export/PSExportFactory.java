@@ -638,7 +638,7 @@ public class PSExportFactory implements ExportFactory {
         
         
         ///////////////////////////
-        // peptide report (including non-validated matches)
+        // Peptide report (including non-validated matches)
         ///////////////////////////
        
         ExportScheme peptideWithNonValidatedReport = new ExportScheme("Default Peptide Report with non-validated matches", false, exportFeatures, "\t", true, true, 0, false, false, false);
