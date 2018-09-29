@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.settings.UtilitiesPathPreferences;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
+import java.util.ArrayList;
 import org.apache.commons.cli.Options;
 
 /**
@@ -50,6 +51,28 @@ public enum PathSettingsCLIParams {
         for (UtilitiesPathPreferences.UtilitiesPathKey utilitiesPathKey : UtilitiesPathPreferences.UtilitiesPathKey.values()) {
             aOptions.addOption(utilitiesPathKey.getId(), true, utilitiesPathKey.getDescription());
         }
+    }
+    
+    /**
+     * Returns the list of supported command line options.
+     * 
+     * @return the list of supported command line options
+     */
+    public static ArrayList<String> getOptionIDs() {
+        
+        ArrayList<String> options = new ArrayList<String>();
+        
+        for (PathSettingsCLIParams pathSettingsCLIParam : values()) {
+            options.add("-" + pathSettingsCLIParam.id);
+        }
+        for (PeptideShakerPathPreferences.PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathPreferences.PeptideShakerPathKey.values()) {
+            options.add("-" + peptideShakerPathKey.getId());
+        }
+        for (UtilitiesPathPreferences.UtilitiesPathKey utilitiesPathKey : UtilitiesPathPreferences.UtilitiesPathKey.values()) {
+            options.add("-" + utilitiesPathKey.getId());
+        }
+        
+        return options;
     }
 
     /**

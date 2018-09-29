@@ -74,9 +74,6 @@ public enum PeptideShakerCLIParams {
 
         // report options
         ReportCLIParams.createOptionsCLI(aOptions);
-        
-        // path setup
-        PathSettingsCLIParams.createOptionsCLI(aOptions);
 
         // note: remember to add new parameters to the getOptionsAsString below as well
     }

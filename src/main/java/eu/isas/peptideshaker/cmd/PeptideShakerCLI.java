@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.settings.PathKey;
-import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.util.Util;
 import com.compomics.util.db.DerbyUtil;
 import com.compomics.util.experiment.MsExperiment;
@@ -109,13 +108,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     public Object call() throws Exception {
 
         try {
-            // get the path settings input
-            PathSettingsCLIInputBean pathSettingsCLIInputBean = cliInputBean.getPathSettingsCLIInputBean();
-
-            // redirect the error stream
-            if (pathSettingsCLIInputBean.getLogFolder() != null) {
-                redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
-            }
 
             // set up the waiting handler
             if (cliInputBean.isGUI()) {
@@ -135,10 +127,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     // do something here?
                 }
 
-                PeptideShakerGUI peptideShakerGUI = new PeptideShakerGUI(); // dummy object to get the version and tips
-                if (pathSettingsCLIInputBean.getLogFolder() == null) {
-                    peptideShakerGUI.setUpLogFile(false); // redirect the error stream to the PeptideShaker log file
-                }
                 waitingHandler = new WaitingDialog(new DummyFrame("PeptideShaker " + PeptideShaker.getVersion(), "/icons/peptide-shaker.gif"),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
@@ -161,33 +149,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 waitingHandler = new WaitingHandlerCLIImpl();
             }
 
-            if (pathSettingsCLIInputBean.hasInput()) {
-                PathSettingsCLI pathSettingsCLI = new PathSettingsCLI(pathSettingsCLIInputBean);
-                pathSettingsCLI.setPathSettings();
-            } else {
-                try {
-                    setPathConfiguration();
-                } catch (Exception e) {
-                    System.out.println("An error occurred when setting the path configurations. Default paths will be used.");
-                    e.printStackTrace();
-                }
-            }
-
             setDbFolder(PeptideShaker.getMatchesFolder());
-
-            try {
-                ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
-                if (!errorKeys.isEmpty()) {
-                    System.out.println("Failed to write in the following configuration folders. Please use a temporary folder, "
-                            + "the path configuration command line, or edit the configuration paths from the graphical interface.");
-                    for (PathKey pathKey : errorKeys) {
-                        System.out.println(pathKey.getId() + ": " + pathKey.getDescription());
-                    }
-                }
-            } catch (Exception e) {
-                System.out.println("Unable to load the path configurations. Default paths will be used.");
-                e.printStackTrace();
-            }
 
             // Load user preferences
             utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
@@ -874,16 +836,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     }
 
     /**
-     * Sets the path configuration.
-     */
-    private void setPathConfiguration() throws IOException {
-        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
-        if (pathConfigurationFile.exists()) {
-            PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
-        }
-    }
-
-    /**
      * Redirects the error stream to the PeptideShaker.log of a given folder.
      *
      * @param logFolder the folder where to save the log
@@ -915,11 +867,15 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     public static void main(String[] args) {
 
         try {
-            Options lOptions = new Options();
-            PeptideShakerCLIParams.createOptionsCLI(lOptions);
-            BasicParser parser = new BasicParser();
-            CommandLine line = parser.parse(lOptions, args);
+            // check if there are updates to the paths
+            String[] nonPathSettingArgsAsList = PathSettingsCLI.extractAndUpdatePathOptions(args);
 
+            // parse the rest of the cptions   
+            Options nonPathOptions = new Options();
+            PeptideShakerCLIParams.createOptionsCLI(nonPathOptions);
+            BasicParser parser = new BasicParser();
+            CommandLine line = parser.parse(nonPathOptions, nonPathSettingArgsAsList);
+            
             if (!PeptideShakerCLIInputBean.isValidStartup(line)) {
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
                 lPrintWriter.print(System.getProperty("line.separator") + "==============================" + System.getProperty("line.separator"));

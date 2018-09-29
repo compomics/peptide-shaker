@@ -30,7 +30,7 @@ public abstract class UserPreferencesParent {
                 userPreferences = (UserPreferences) SerializationUtils.readObject(file);
             }
         } catch (Exception e) {
-            System.err.println("An error occurred while loading " + PeptideShaker.getUserPreferencesFile() + " (see below). User preferences set back to default.");
+            System.err.println("An error occurred while loading " + PeptideShaker.getUserPreferencesFile() + ". User preferences set back to default.");
             e.printStackTrace();
             userPreferences = new UserPreferences();
         }

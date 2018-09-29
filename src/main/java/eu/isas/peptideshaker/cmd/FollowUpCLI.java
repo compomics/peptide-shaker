@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -9,14 +8,12 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
-import static eu.isas.peptideshaker.cmd.PeptideShakerCLI.redirectErrorStream;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -25,6 +22,7 @@ import org.apache.commons.cli.Options;
  * Command line interface to run follow-up analysis on cps files.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class FollowUpCLI extends CpsParent {
 
@@ -68,39 +66,7 @@ public class FollowUpCLI extends CpsParent {
      */
     public Object call() {
 
-        PathSettingsCLIInputBean pathSettingsCLIInputBean = followUpCLIInputBean.getPathSettingsCLIInputBean();
-
-        if (pathSettingsCLIInputBean.getLogFolder() != null) {
-            redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
-        }
-
-        if (pathSettingsCLIInputBean.hasInput()) {
-            PathSettingsCLI pathSettingsCLI = new PathSettingsCLI(pathSettingsCLIInputBean);
-            pathSettingsCLI.setPathSettings();
-        } else {
-            try {
-                setPathConfiguration();
-            } catch (Exception e) {
-                System.out.println("An error occurred when the setting path configurations. Default paths will be used.");
-                e.printStackTrace();
-            }
-        }
-
         setDbFolder(PeptideShaker.getMatchesFolder());
-
-        try {
-            ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
-            if (!errorKeys.isEmpty()) {
-                System.out.println("Unable to write in the following configuration folders. Please use a temporary folder, "
-                        + "the path configuration command line, or edit the configuration paths from the graphical interface.");
-                for (PathKey pathKey : errorKeys) {
-                    System.out.println(pathKey.getId() + ": " + pathKey.getDescription());
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Unable to load the path configurations. Default paths will be used.");
-            e.printStackTrace();
-        }
 
         // Load user preferences
         utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
@@ -384,10 +350,14 @@ public class FollowUpCLI extends CpsParent {
     public static void main(String[] args) {
 
         try {
-            Options lOptions = new Options();
-            FollowUpCLIParams.createOptionsCLI(lOptions);
+            // check if there are updates to the paths
+            String[] nonPathSettingArgsAsList = PathSettingsCLI.extractAndUpdatePathOptions(args);
+            
+            // parse the rest of the cptions   
+            Options nonPathOptions = new Options();
+            FollowUpCLIParams.createOptionsCLI(nonPathOptions);
             BasicParser parser = new BasicParser();
-            CommandLine line = parser.parse(lOptions, args);
+            CommandLine line = parser.parse(nonPathOptions, nonPathSettingArgsAsList);
 
             if (!isValidStartup(line)) {
                 PrintWriter lPrintWriter = new PrintWriter(System.out);

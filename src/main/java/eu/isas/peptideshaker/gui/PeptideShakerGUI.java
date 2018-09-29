@@ -514,7 +514,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public PeptideShakerGUI(File cpsFile, String zipURL, String zipUrlDownloadFolder, String pxAccession, boolean pxAccessionPrivate, boolean showWelcomeDialog) {
 
-        // set up the ErrorLog
+        // set up the error log
         setUpLogFile(true);
 
         // set path configuration

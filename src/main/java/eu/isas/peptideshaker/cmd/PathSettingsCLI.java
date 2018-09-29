@@ -1,22 +1,27 @@
 package eu.isas.peptideshaker.cmd;
 
+import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
 import static eu.isas.peptideshaker.cmd.PeptideShakerCLI.redirectErrorStream;
+import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 /**
  * Allows the user to set the path settings in command line.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class PathSettingsCLI {
 
@@ -59,55 +64,90 @@ public class PathSettingsCLI {
         if (waitingHandler == null) {
             waitingHandler = new WaitingHandlerCLIImpl();
         }
-
-        if (pathSettingsCLIInputBean.getLogFolder() != null) {
-            redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
+        
+        // set the PeptideShaker log file
+        if (pathSettingsCLIInputBean.getLogFolder() == null) {
+            PeptideShakerGUI peptideShakerGUI = new PeptideShakerGUI(); // dummy object
+            peptideShakerGUI.setUpLogFile(false); // redirect the error stream to the PeptideShaker log file
         }
 
-        String path = pathSettingsCLIInputBean.getTempFolder();
-        if (!path.equals("")) {
+        if (pathSettingsCLIInputBean.hasInput()) {
+
+            if (pathSettingsCLIInputBean.getLogFolder() != null) {
+                redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
+            }
+
+            String path = pathSettingsCLIInputBean.getTempFolder();
+            if (!path.equals("")) {
+                try {
+                    PeptideShakerPathPreferences.setAllPathsIn(path);
+                } catch (Exception e) {
+                    System.out.println("An error occurred when setting the temporary folder path.");
+                    e.printStackTrace();
+                    waitingHandler.setRunCanceled();
+                }
+            }
+
+            HashMap<String, String> pathInput = pathSettingsCLIInputBean.getPaths();
+            for (String id : pathInput.keySet()) {
+                try {
+                    PeptideShakerPathPreferences.PeptideShakerPathKey peptideShakerPathKey = PeptideShakerPathPreferences.PeptideShakerPathKey.getKeyFromId(id);
+                    if (peptideShakerPathKey == null) {
+                        UtilitiesPathPreferences.UtilitiesPathKey utilitiesPathKey = UtilitiesPathPreferences.UtilitiesPathKey.getKeyFromId(id);
+                        if (utilitiesPathKey == null) {
+                            System.out.println("Path id " + id + " not recognized.");
+                        } else {
+                            UtilitiesPathPreferences.setPathPreference(utilitiesPathKey, pathInput.get(id));
+                        }
+                    } else {
+                        PeptideShakerPathPreferences.setPathPreference(peptideShakerPathKey, pathInput.get(id));
+                    }
+                } catch (Exception e) {
+                    System.out.println("An error occurred when setting the path " + id + ".");
+                    e.printStackTrace();
+                    waitingHandler.setRunCanceled();
+                }
+            }
+
+            // Write path file preference
+            File destinationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
             try {
-                PeptideShakerPathPreferences.setAllPathsIn(path);
+                PeptideShakerPathPreferences.writeConfigurationToFile(destinationFile);
             } catch (Exception e) {
-                System.out.println("An error occurred when setting the temporary folder path.");
+                System.out.println("An error occurred when saving the path preference to " + destinationFile.getAbsolutePath() + ".");
                 e.printStackTrace();
                 waitingHandler.setRunCanceled();
             }
-        }
 
-        HashMap<String, String> pathInput = pathSettingsCLIInputBean.getPaths();
-        for (String id : pathInput.keySet()) {
+            if (!waitingHandler.isRunCanceled()) {
+                System.out.println("Path configuration completed.");
+            }
+
+        } else {
             try {
-                PeptideShakerPathPreferences.PeptideShakerPathKey peptideShakerPathKey = PeptideShakerPathPreferences.PeptideShakerPathKey.getKeyFromId(id);
-                if (peptideShakerPathKey == null) {
-                    UtilitiesPathPreferences.UtilitiesPathKey utilitiesPathKey = UtilitiesPathPreferences.UtilitiesPathKey.getKeyFromId(id);
-                    if (utilitiesPathKey == null) {
-                        System.out.println("Path id " + id + " not recognized.");
-                    } else {
-                        UtilitiesPathPreferences.setPathPreference(utilitiesPathKey, pathInput.get(id));
-                    }
-                } else {
-                    PeptideShakerPathPreferences.setPathPreference(peptideShakerPathKey, pathInput.get(id));
+                File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
+                if (pathConfigurationFile.exists()) {
+                    PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
                 }
             } catch (Exception e) {
-                System.out.println("An error occurred when setting the path " + id + ".");
+                System.out.println("An error occurred when setting the path configurations. Default paths will be used.");
                 e.printStackTrace();
-                waitingHandler.setRunCanceled();
             }
         }
 
-        // Write path file preference
-        File destinationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
+        // test the temp paths
         try {
-            PeptideShakerPathPreferences.writeConfigurationToFile(destinationFile);
+            ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
+            if (!errorKeys.isEmpty()) {
+                System.out.println("Failed to write in the following configuration folders. Please use a temporary folder, "
+                        + "the path configuration command line, or edit the configuration paths from the graphical interface.");
+                for (PathKey pathKey : errorKeys) {
+                    System.out.println(pathKey.getId() + ": " + pathKey.getDescription());
+                }
+            }
         } catch (Exception e) {
-            System.out.println("An error occurred when saving the path preference to " + destinationFile.getAbsolutePath() + ".");
+            System.out.println("Unable to load the path configurations. Default paths will be used.");
             e.printStackTrace();
-            waitingHandler.setRunCanceled();
-        }
-
-        if (!waitingHandler.isRunCanceled()) {
-            System.out.println("Path configuration completed.");
         }
     }
 
@@ -178,5 +218,61 @@ public class PathSettingsCLI {
         return "PathSettingsCLI{"
                 + ", cliInputBean=" + pathSettingsCLIInputBean
                 + '}';
+    }
+
+    /**
+     * If the arguments contains changes to the paths these arguments will be
+     * extracted and the paths updated, before the remaining non-path options
+     * are returned for further processing.
+     *
+     * @param args the command line arguments
+     * @return a list of all non-path related arguments
+     * @throws ParseException if a ParseException occurs
+     */
+    public static String[] extractAndUpdatePathOptions(String[] args) throws ParseException {
+
+        ArrayList<String> allPathOptions = PathSettingsCLIParams.getOptionIDs();
+
+        ArrayList<String> pathSettingArgs = new ArrayList<String>();
+        ArrayList<String> nonPathSettingArgs = new ArrayList<String>();
+
+        for (int i = 0; i < args.length; i++) {
+
+            String currentArg = args[i];
+
+            boolean pathOption = allPathOptions.contains(currentArg);
+
+            if (pathOption) {
+                pathSettingArgs.add(currentArg);
+            } else {
+                nonPathSettingArgs.add(currentArg);
+            }
+
+            // check if the argument has a parameter
+            if (i + 1 < args.length) {
+                String nextArg = args[i + 1];
+                if (!nextArg.startsWith("-")) {
+                    if (pathOption) {
+                        pathSettingArgs.add(args[++i]);
+                    } else {
+                        nonPathSettingArgs.add(args[++i]);
+                    }
+                }
+            }
+        }
+
+        String[] pathSettingArgsAsList = pathSettingArgs.toArray(new String[pathSettingArgs.size()]);
+        String[] nonPathSettingArgsAsList = nonPathSettingArgs.toArray(new String[nonPathSettingArgs.size()]);
+
+        // update the paths if needed
+        Options pathOptions = new Options();
+        PathSettingsCLIParams.createOptionsCLI(pathOptions);
+        BasicParser parser = new BasicParser();
+        CommandLine line = parser.parse(pathOptions, pathSettingArgsAsList);
+        PathSettingsCLIInputBean pathSettingsCLIInputBean = new PathSettingsCLIInputBean(line);
+        PathSettingsCLI pathSettingsCLI = new PathSettingsCLI(pathSettingsCLIInputBean);
+        pathSettingsCLI.setPathSettings();
+
+        return nonPathSettingArgsAsList;
     }
 }

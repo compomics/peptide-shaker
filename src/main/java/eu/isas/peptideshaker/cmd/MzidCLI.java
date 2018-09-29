@@ -1,7 +1,5 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.software.settings.PathKey;
-import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
@@ -9,14 +7,11 @@ import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
-import static eu.isas.peptideshaker.cmd.PeptideShakerCLI.redirectErrorStream;
-import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -25,6 +20,7 @@ import org.apache.commons.cli.Options;
  * Command line interface to export mzid files from cps files.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class MzidCLI extends CpsParent {
 
@@ -68,39 +64,7 @@ public class MzidCLI extends CpsParent {
      */
     public Object call() {
 
-        PathSettingsCLIInputBean pathSettingsCLIInputBean = mzidCLIInputBean.getPathSettingsCLIInputBean();
-
-        if (pathSettingsCLIInputBean.getLogFolder() != null) {
-            redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
-        }
-
-        if (pathSettingsCLIInputBean.hasInput()) {
-            PathSettingsCLI pathSettingsCLI = new PathSettingsCLI(pathSettingsCLIInputBean);
-            pathSettingsCLI.setPathSettings();
-        } else {
-            try {
-                setPathConfiguration();
-            } catch (Exception e) {
-                System.out.println("An error occurred when setting the path configurations. Default paths will be used.");
-                e.printStackTrace();
-            }
-        }
-
         setDbFolder(PeptideShaker.getMatchesFolder());
-
-        try {
-            ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
-            if (!errorKeys.isEmpty()) {
-                System.out.println("Unable to write in the following configuration folders. Please use a temporary folder, "
-                        + "the path configuration command line, or edit the configuration paths from the graphical interface.");
-                for (PathKey pathKey : errorKeys) {
-                    System.out.println(pathKey.getId() + ": " + pathKey.getDescription());
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Unable to load the path configurations. Default paths will be used.");
-            e.printStackTrace();
-        }
 
         // Load user preferences
         utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
@@ -239,16 +203,6 @@ public class MzidCLI extends CpsParent {
     }
 
     /**
-     * Sets the path configuration.
-     */
-    private void setPathConfiguration() throws IOException {
-        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
-        if (pathConfigurationFile.exists()) {
-            PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
-        }
-    }
-
-    /**
      * PeptideShaker mzid CLI header message when printing the usage.
      */
     private static String getHeader() {
@@ -316,10 +270,14 @@ public class MzidCLI extends CpsParent {
     public static void main(String[] args) {
 
         try {
-            Options lOptions = new Options();
-            MzidCLIParams.createOptionsCLI(lOptions);
+            // check if there are updates to the paths
+            String[] nonPathSettingArgsAsList = PathSettingsCLI.extractAndUpdatePathOptions(args);
+            
+            // parse the rest of the cptions   
+            Options nonPathOptions = new Options();
+            MzidCLIParams.createOptionsCLI(nonPathOptions);
             BasicParser parser = new BasicParser();
-            CommandLine line = parser.parse(lOptions, args);
+            CommandLine line = parser.parse(nonPathOptions, nonPathSettingArgsAsList);
 
             if (!isValidStartup(line)) {
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
