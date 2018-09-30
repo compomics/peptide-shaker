@@ -66,6 +66,10 @@ public class PeptideShakerCLIInputBean {
      */
     private ReportCLIInputBean reportCLIInputBean;
     /**
+     * The mzid export options.
+     */
+    private MzidCLIInputBean mzidCLIInputBean; 
+    /**
      * The path settings.
      */
     private PathSettingsCLIInputBean pathSettingsCLIInputBean;
@@ -124,6 +128,7 @@ public class PeptideShakerCLIInputBean {
 
         followUpCLIInputBean = new FollowUpCLIInputBean(aLine);
         reportCLIInputBean = new ReportCLIInputBean(aLine);
+        mzidCLIInputBean = new MzidCLIInputBean(aLine);
         pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
         identificationParametersInputBean = new IdentificationParametersInputBean(aLine);
     }
@@ -333,6 +338,15 @@ public class PeptideShakerCLIInputBean {
      */
     public ReportCLIInputBean getReportCLIInputBean() {
         return reportCLIInputBean;
+    }
+    
+    /**
+     * Returns the mzid export options required.
+     *
+     * @return the mzid export options required
+     */
+    public MzidCLIInputBean getMzidCLIInputBean() {
+        return mzidCLIInputBean;
     }
 
     /**

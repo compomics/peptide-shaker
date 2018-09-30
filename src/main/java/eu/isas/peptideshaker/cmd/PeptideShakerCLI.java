@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.software.settings.PathKey;
 import com.compomics.util.Util;
 import com.compomics.util.db.DerbyUtil;
 import com.compomics.util.experiment.MsExperiment;
@@ -28,12 +27,10 @@ import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.IdentificationParameters;
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.preferences.ValidationQCPreferences;
 import eu.isas.peptideshaker.export.ProjectExport;
-import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -300,7 +297,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
             // array to be filled with all exported reports
             ArrayList<File> reportFiles = new ArrayList<File>();
-            
+
             if (reportCLIInputBean.exportNeeded()) {
                 waitingHandler.appendReport("Starting report export.", true, true);
 
@@ -332,6 +329,30 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 }
             }
 
+            // export as mzid
+            MzidCLIInputBean mzidCLIInputBean = cliInputBean.getMzidCLIInputBean();
+            File mzidFile = mzidCLIInputBean.getOutputFile();
+            if (mzidFile != null) {
+                waitingHandler.appendReportEndLine();
+                waitingHandler.appendReport("Exporting project as mzIdentML.", true, true);
+
+                // export mzid file
+                // make sure that all annotations are included
+                double currentIntensityLimit = this.getIdentificationParameters().getAnnotationPreferences().getAnnotationIntensityLimit();
+                this.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(0.0);
+
+                try {
+                    CLIExportMethods.exportMzId(mzidCLIInputBean, this, waitingHandler);
+                } catch (Exception e) {
+                    waitingHandler.appendReport("An error occurred while generating the mzid file.", true, true);
+                    e.printStackTrace();
+                    waitingHandler.setRunCanceled();
+                } finally {
+                    // reset the annotation level
+                    this.getIdentificationParameters().getAnnotationPreferences().setIntensityLimit(currentIntensityLimit);
+                }
+            }
+
             // export as zip
             File zipFile = cliInputBean.getZipExport();
             if (zipFile != null) {
@@ -353,9 +374,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
                     spectrumFiles.add(spectrumFile);
                 }
-                
+
                 try {
-                    ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, reportFiles, cpsFile, waitingHandler);
+                    ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, reportFiles, mzidFile, cpsFile, waitingHandler);
                     final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
                     double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
                     waitingHandler.appendReport("Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + " MB)", true, true);
@@ -692,7 +713,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         if (utilitiesUserPreferences.isAutoUpdate()) {
             Util.sendGAUpdate("UA-36198780-1", "startrun-cl", "peptide-shaker-" + PeptideShaker.getVersion());
         }
-        
+
         // create a shaker which will perform the analysis
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
 
@@ -875,7 +896,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             PeptideShakerCLIParams.createOptionsCLI(nonPathOptions);
             BasicParser parser = new BasicParser();
             CommandLine line = parser.parse(nonPathOptions, nonPathSettingArgsAsList);
-            
+
             if (!PeptideShakerCLIInputBean.isValidStartup(line)) {
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
                 lPrintWriter.print(System.getProperty("line.separator") + "==============================" + System.getProperty("line.separator"));

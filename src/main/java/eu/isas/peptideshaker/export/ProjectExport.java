@@ -27,9 +27,6 @@ public class ProjectExport {
      */
     public final static String defaultReportsFolder = "reports";
 
-    
-    
-    
     /**
      * Exports the project as zip file.
      *
@@ -44,16 +41,17 @@ public class ProjectExport {
      * reading/writing the file
      */
     public static void exportProjectAsZip(File zipFile, File fastaFile, ArrayList<File> spectrumFiles, File cpsFile, WaitingHandler waitingHandler) throws IOException {
-        ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, null,  cpsFile, waitingHandler);
+        ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, null, null, cpsFile, waitingHandler);
     }
-    
-     /**
+
+    /**
      * Exports the project as zip file adding reports to it.
      *
      * @param zipFile the destination file
      * @param fastaFile the FASTA file
      * @param spectrumFiles the spectrum files
      * @param reportFiles the report files
+     * @param mzidFile the mzid file
      * @param cpsFile the cps file
      * @param waitingHandler a waiting handler to display progress to the user
      * and cancel the process (can be null)
@@ -61,7 +59,7 @@ public class ProjectExport {
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing the file
      */
-    public static void exportProjectAsZip(File zipFile, File fastaFile, ArrayList<File> spectrumFiles, ArrayList<File> reportFiles,  File cpsFile, WaitingHandler waitingHandler) throws IOException {
+    public static void exportProjectAsZip(File zipFile, File fastaFile, ArrayList<File> spectrumFiles, ArrayList<File> reportFiles, File mzidFile, File cpsFile, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Getting FASTA File. Please Wait...");
@@ -74,7 +72,7 @@ public class ProjectExport {
         if (indexFile.exists()) {
             dataFiles.add(indexFile.getAbsolutePath());
         }
-        
+
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Getting Spectrum Files. Please Wait...");
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -121,12 +119,15 @@ public class ProjectExport {
                     for (String dataFilePath : dataFiles) {
                         totalUncompressedSize += new File(dataFilePath).length();
                     }
-                    if (reportFiles != null){
+                    if (reportFiles != null) {
                         for (File reportFile : reportFiles) {
                             totalUncompressedSize += reportFile.length();
                         }
                     }
-                    
+                    if (mzidFile != null) {
+                        totalUncompressedSize += mzidFile.length();
+                    }
+
                     // add the data files
                     if (waitingHandler != null) {
                         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -134,8 +135,9 @@ public class ProjectExport {
                         waitingHandler.setMaxSecondaryProgressCounter(100);
                     }
 
-                    // add the cps file
+                    // move the cps file
                     ZipUtils.addFileToZip(cpsFile, out, waitingHandler, totalUncompressedSize);
+                    cpsFile.delete();
 
                     // create the data folder in the zip file
                     ZipUtils.addFolderToZip(defaultDataFolder, out);
@@ -153,12 +155,12 @@ public class ProjectExport {
                         File dataFile = new File(dataFilePath);
                         ZipUtils.addFileToZip(defaultDataFolder, dataFile, out, waitingHandler, totalUncompressedSize);
                     }
-                    
-                    if (reportFiles != null && reportFiles.size()> 0){
-                        // create the data folder in the zip file
+
+                    if (reportFiles != null && reportFiles.size() > 0) {
+                        // create the reports folder in the zip file
                         ZipUtils.addFolderToZip(defaultReportsFolder, out);
 
-                        // add the files to the data folder
+                        // move the files to the reports folder
                         for (File reportFile : reportFiles) {
 
                             if (waitingHandler != null) {
@@ -168,9 +170,23 @@ public class ProjectExport {
                                 waitingHandler.increaseSecondaryProgressCounter();
                             }
                             ZipUtils.addFileToZip(defaultReportsFolder, reportFile, out, waitingHandler, totalUncompressedSize);
+                            reportFile.delete();
                         }
                     }
-                    
+
+                    if (mzidFile != null) {
+                        if (waitingHandler != null) {
+                            if (waitingHandler.isRunCanceled()) {
+                                return;
+                            }
+                            waitingHandler.increaseSecondaryProgressCounter();
+                        }
+                        
+                        // move the mzid file to the zip folder
+                        ZipUtils.addFileToZip(mzidFile, out, waitingHandler, totalUncompressedSize);
+                        mzidFile.delete();
+                    }
+
                     if (waitingHandler != null) {
                         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                     }

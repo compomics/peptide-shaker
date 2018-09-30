@@ -74,6 +74,9 @@ public enum PeptideShakerCLIParams {
 
         // report options
         ReportCLIParams.createOptionsCLI(aOptions);
+        
+        // mzid export options
+        MzidCLIParams.createOptionsCLI(aOptions);
 
         // note: remember to add new parameters to the getOptionsAsString below as well
     }
@@ -112,9 +115,10 @@ public enum PeptideShakerCLIParams {
         output += "\n\nOptional Temporary Folder:\n\n";
         output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + " " + PathSettingsCLIParams.ALL.description + "\n";
 
-        output += "\n\n\nFor identification parameters options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.IdentificationParametersCLI\n\n";
-        output += "\n\n\nFor follow up export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.FollowUpCLI\n\n";
+        output += "\n\nFor identification parameters options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.IdentificationParametersCLI\n";
+        output += "\nFor follow up export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.FollowUpCLI\n";
         output += "\nFor report export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.ReportCLI\n";
+        output += "\nFor mzid export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.MzidCLI\n";
         output += "\nFor path setting options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.PathSettingsCLI\n";
 
         return output;
