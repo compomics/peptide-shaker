@@ -81,8 +81,8 @@ public class CpsExporter {
                 PeptideShakerParameters peptideShakerParameters = new PeptideShakerParameters(identificationParameters, spectrumCountingParameters,
                         projectDetails, filterParameters, displayParameters, metrics, sequenceProvider, proteinDetailsProvider, geneMaps, projectType, identificationFeaturesCache);
 
-                BlobObject blobObject = new BlobObject(peptideShakerParameters);
-                identification.addObject(PeptideShakerParameters.key, blobObject);
+                //BlobObject blobObject = new BlobObject(peptideShakerParameters);
+                identification.addObject(PeptideShakerParameters.key, peptideShakerParameters);
 
             }
 
@@ -104,10 +104,13 @@ public class CpsExporter {
             }
 
             if (waitingHandler == null || !waitingHandler.isRunCanceled()) {
-
+                System.out.println("closing");
                 identification.getObjectsDB().close(false);
+                System.out.println("copying");
                 Util.copyFile(identification.getObjectsDB().getDbFile(), destinationFile);
-                identification.getObjectsDB().establishConnection(false);
+                System.out.println("opening");
+                identification.getObjectsDB().establishConnection(true);
+                System.out.println("done");
 
             }
 

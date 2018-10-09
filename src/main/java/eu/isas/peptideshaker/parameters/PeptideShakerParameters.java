@@ -125,7 +125,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      */
     public IdentificationParameters getIdentificationParameters() {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         return identificationParameters;
     
@@ -138,7 +138,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      */
     public SpectrumCountingParameters getSpectrumCountingPreferences() {
     
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         return spectrumCountingPreferences;
     
@@ -151,7 +151,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      */
     public ProjectDetails getProjectDetails() {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         return projectDetails;
         
@@ -164,7 +164,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      */
     public FilterParameters getFilterParameters() {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         return filterParameters;
     
@@ -177,7 +177,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      */
     public DisplayParameters getDisplayParameters() {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         return displayParameters;
     
@@ -190,7 +190,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      */
     public Metrics getMetrics() {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         return metrics;
     
@@ -203,7 +203,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      */
     public SequenceProvider getSequenceProvider() {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         return sequenceProvider;
     
@@ -216,7 +216,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      */
     public ProteinDetailsProvider getProteinDetailsProvider() {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         return proteinDetailsProvider;
         
@@ -229,7 +229,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      */
     public GeneMaps getGeneMaps() {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         return geneMaps;
     
@@ -243,7 +243,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      */
     public IdentificationFeaturesCache getIdentificationFeaturesCache() {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         return identificationFeaturesCache;
     
@@ -261,7 +261,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      */
     public ProjectType getProjectType() {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         return projectType;
     }

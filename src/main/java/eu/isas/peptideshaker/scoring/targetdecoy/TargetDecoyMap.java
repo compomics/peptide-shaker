@@ -80,7 +80,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public  double getProbability(double score) {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         TargetDecoyPoint point = hitMap.get(score);
         
@@ -125,7 +125,7 @@ public class TargetDecoyMap extends DbObject {
      * @return the number of target hits found at the given score
      */
     public int getNTarget(double score) {
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         return hitMap.get(score).nTarget;
     }
 
@@ -147,7 +147,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public void put(double score, boolean isDecoy) {
         
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+        writeDBMode();
         
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
         
@@ -178,7 +178,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public synchronized TargetDecoyPoint createTargetDecoyPoint(double score) {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
         
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
         
@@ -202,7 +202,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public void remove(double score, boolean isDecoy) {
 
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+        writeDBMode();
 
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
 
@@ -222,7 +222,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public synchronized void cleanUp() {
 
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+        writeDBMode();
 
         boolean removed = false;
 
@@ -256,7 +256,7 @@ public class TargetDecoyMap extends DbObject {
      */
     private void estimateNs() {
 
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
 
         if (scores == null) {
 
@@ -335,7 +335,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public void estimateProbabilities(WaitingHandler waitingHandler) {
         
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
 
         if (scores == null) {
 
@@ -445,7 +445,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public int getnMax() {
 
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
 
         if (nmax == null) {
 
@@ -464,7 +464,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public double getMinFdr() {
 
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
 
         return minFDR;
 
@@ -497,7 +497,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public Integer getnTargetOnly() {
 
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
 
         return nTargetOnly;
 
@@ -508,7 +508,7 @@ public class TargetDecoyMap extends DbObject {
      */
     private void estimateScores() {
 
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
 
         scores = new ArrayList<>(hitMap.keySet());
         Collections.sort(scores);
@@ -522,7 +522,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public ArrayList<Double> getScores() {
 
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
 
         if (scores == null) {
 
@@ -541,7 +541,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public void addAll(TargetDecoyMap anOtherMap) {
 
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+        writeDBMode();
 
         for (double score : anOtherMap.getScores()) {
 
@@ -573,7 +573,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public boolean suspiciousInput(double initialFDR) {
 
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
 
         if (nmax == null) {
 
@@ -598,7 +598,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public TargetDecoyResults getTargetDecoyResults() {
 
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
 
         return targetDecoyResults;
 
@@ -611,7 +611,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public TargetDecoySeries getTargetDecoySeries() {
 
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
 
         return new TargetDecoySeries(hitMap);
 
@@ -624,7 +624,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public int getWindowSize() {
 
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
 
         if (windowSize == null) {
 
@@ -643,7 +643,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public void setWindowSize(int windowSize) {
 
-        ObjectsDB.increaseRWCounter(); zooActivateWrite(); ObjectsDB.decreaseRWCounter();
+        writeDBMode();
 
         this.windowSize = windowSize;
 
@@ -656,7 +656,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public int getMapSize() {
 
-        ObjectsDB.increaseRWCounter(); zooActivateRead(); ObjectsDB.decreaseRWCounter();
+        readDBMode();
 
         return hitMap.size();
 

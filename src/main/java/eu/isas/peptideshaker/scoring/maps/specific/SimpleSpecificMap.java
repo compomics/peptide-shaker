@@ -18,9 +18,9 @@ public class SimpleSpecificMap extends SpecificTargetDecoyMap {
     @Override
     public void clean(double minimalFDR) {
 
-        ObjectsDB.increaseRWCounter();
-        zooActivateWrite();
-        ObjectsDB.decreaseRWCounter();
+        
+        writeDBMode();
+        
 
         TreeMap<Integer, HashMap<String, TargetDecoyMap>> sortedMap = new TreeMap<>(fileSpecificMaps);
 
