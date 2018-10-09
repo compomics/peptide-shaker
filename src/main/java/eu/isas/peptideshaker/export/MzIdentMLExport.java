@@ -2335,7 +2335,7 @@ public class MzIdentMLExport {
                 }
             }
 
-            for (Entry<Integer, Double> entry : scores.entrySet()) {
+            for (Entry<Integer, Double> entry : scores.entrySet()) { // @TODO: what about IdentiPy and Morpheus?
 
                 int advocate = entry.getKey();
                 double eValue = entry.getValue();
@@ -2565,6 +2565,7 @@ public class MzIdentMLExport {
 
                 } else {
                     // no cv term available for the given advocate...
+                    // @TODO: should add for IdentiPy (pepxml only?) and Morpheus (mxid or pepxml?)
                 }
             }
 
