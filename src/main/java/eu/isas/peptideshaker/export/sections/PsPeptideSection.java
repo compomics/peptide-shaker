@@ -21,7 +21,7 @@ import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.peptide_shaker.PSModificationScores;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import com.compomics.util.experiment.identification.peptide_shaker.ModificationScoring;
-import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;

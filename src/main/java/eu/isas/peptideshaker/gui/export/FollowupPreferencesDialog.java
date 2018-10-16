@@ -27,7 +27,7 @@ import eu.isas.peptideshaker.followup.ProgenesisExport;
 import eu.isas.peptideshaker.followup.RecalibrationExporter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
-import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import java.awt.Toolkit;
 import java.io.BufferedWriter;
 import java.io.File;

@@ -14,7 +14,7 @@ import com.compomics.util.parameters.identification.search.DigestionParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.gui.filtering.FilterParameters;
-import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;

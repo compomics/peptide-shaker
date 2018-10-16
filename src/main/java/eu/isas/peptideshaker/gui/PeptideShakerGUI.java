@@ -110,7 +110,7 @@ import eu.isas.peptideshaker.preferences.PeptideShakerPathParameters;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathParameters.PeptideShakerPathKey;
 import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
 import eu.isas.peptideshaker.utils.CpsParent;
-import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
 import eu.isas.peptideshaker.utils.PsZipUtils;

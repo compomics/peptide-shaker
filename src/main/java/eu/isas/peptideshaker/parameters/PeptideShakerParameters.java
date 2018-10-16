@@ -12,7 +12,7 @@ import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.gui.filtering.FilterParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
-import com.compomics.util.experiment.identification.IdentificationFeaturesCache;
+import com.compomics.util.experiment.identification.features.IdentificationFeaturesCache;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import java.io.Serializable;

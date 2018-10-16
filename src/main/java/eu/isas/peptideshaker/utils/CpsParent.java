@@ -1,8 +1,8 @@
 package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
-import com.compomics.util.experiment.identification.IdentificationFeaturesCache;
-import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.identification.features.IdentificationFeaturesCache;
+import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import com.compomics.util.db.object.objects.BlobObject;
 import com.compomics.util.Util;
 import com.compomics.util.db.object.ObjectsDB;

@@ -48,7 +48,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.experiment.identification.peptide_shaker.ModificationScoring;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
-import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

@@ -23,7 +23,7 @@ import com.compomics.util.gui.filtering.FilterParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import eu.isas.peptideshaker.utils.CpsParent;
-import com.compomics.util.experiment.identification.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
