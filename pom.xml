@@ -335,7 +335,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>4.12.8</version>
+            <version>4.12.9</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -501,7 +501,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.3.3</version>
+            <version>4.3.6</version>
         </dependency>
 
         <dependency>
