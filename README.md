@@ -109,7 +109,7 @@ PeptideShaker is available as a [Miniconda package](http://conda.pydata.org/mini
 You can install PeptideShaker with:
 
 ```bash
-conda install -c bioconda peptide-shaker
+conda install -c conda-forge -c bioconda peptide-shaker
 ```
 
 [Go to top of page](#peptideshaker)
