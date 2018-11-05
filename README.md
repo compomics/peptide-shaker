@@ -62,7 +62,7 @@ To start using PeptideShaker, unzip the downloaded file, and double-click the `P
 
   * [Minimum Requirements](#minimum-requirements)
   * [From the Command Line](#from-the-command-line)
-  * [Bioiconda](#bioiconda)
+  * [Bioconda](#bioconda)
   * [Docker](#docker)
   * [SearchGUI](#searchgui)
   * [User Defined Modifications](#user-defined-modifications)
@@ -109,7 +109,7 @@ PeptideShaker is available as a [Miniconda package](http://conda.pydata.org/mini
 You can install PeptideShaker with:
 
 ```bash
-conda install -c bioconda peptide-shaker
+conda install -c conda-forge -c bioconda peptide-shaker
 ```
 
 [Go to top of page](#peptideshaker)
