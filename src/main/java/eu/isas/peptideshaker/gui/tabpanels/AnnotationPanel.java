@@ -850,7 +850,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void loadUniProtJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadUniProtJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.uniprot.org/uniprot/" + accessionNumberJTextField.getText());
+        BareBonesBrowserLaunch.openURL("https://www.uniprot.org/uniprot/" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadUniProtJButtonActionPerformed
 
@@ -956,7 +956,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private void webUniProtLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webUniProtLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://www.uniprot.org");
+        BareBonesBrowserLaunch.openURL("https://www.uniprot.org");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_webUniProtLabelMouseClicked
 

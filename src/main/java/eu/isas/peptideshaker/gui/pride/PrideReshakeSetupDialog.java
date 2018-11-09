@@ -1430,7 +1430,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 combinedSearch = option == JOptionPane.YES_OPTION;
             }
 
-            String link = "http://www.uniprot.org/uniprot/?query=";
+            String link = "https://www.uniprot.org/uniprot/?query=";
 
             for (int i = 0; i < allSpecies.length; i++) {
 
@@ -1449,7 +1449,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                     }
                     link += "organism%3A%22" + species + "%22";
                 } else {
-                    link = "http://www.uniprot.org/uniprot/?query=organism%3A%22" + species + "%22&sort=score";
+                    link = "https://www.uniprot.org/uniprot/?query=organism%3A%22" + species + "%22&sort=score";
                     this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
                     BareBonesBrowserLaunch.openURL(link);
                     this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
