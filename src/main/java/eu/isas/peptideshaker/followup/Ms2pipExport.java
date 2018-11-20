@@ -53,6 +53,14 @@ import java.util.zip.ZipOutputStream;
 public class Ms2pipExport {
 
     /**
+     * Empty default constructor
+     */
+    public Ms2pipExport() {
+        exceptionHandler = null;
+        waitingHandler = null;
+    }
+
+    /**
      * A handler for the exceptions.
      */
     private final ExceptionHandler exceptionHandler;

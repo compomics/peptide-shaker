@@ -16,6 +16,12 @@ import java.util.stream.Collectors;
 public class ModificationDialog extends javax.swing.JDialog {
 
     /**
+     * Empty default constructor
+     */
+    public ModificationDialog() {
+    }
+
+    /**
      * The known modifications.
      */
     private ArrayList<String> modifications;

@@ -112,4 +112,11 @@ public enum PsIdentificationAlgorithmMatchesFeature implements ExportFeature {
     public boolean isAdvanced() {
         return advanced;
     }
+
+    /**
+     * Empty default constructor
+     */
+    private PsIdentificationAlgorithmMatchesFeature() {
+        advanced = false;
+    }
 }

@@ -45,6 +45,14 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
     private final int waitingTime = 1000;
 
     /**
+     * Empty default constructor
+     */
+    public ProjectsFilterDialog() {
+        projectsTable = null;
+        prideReShakeGUI = null;
+    }
+
+    /**
      * Creates a new ProjectsFilterDialog.
      *
      * @param prideReShakeGUI the PrideReshakeGUI parent frame

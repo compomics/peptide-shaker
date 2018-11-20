@@ -12,6 +12,12 @@ import java.io.File;
 public abstract class UserPreferencesParent {
 
     /**
+     * Empty default constructor
+     */
+    public UserPreferencesParent() {
+    }
+
+    /**
      * The user preferences.
      */
     protected UserParameters userPreferences;

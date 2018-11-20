@@ -101,6 +101,12 @@ import uk.ac.ebi.pride.jaxb.xml.PrideXmlReader;
 public class PrideReshakeGUI extends javax.swing.JFrame {
 
     /**
+     * Empty default constructor
+     */
+    public PrideReshakeGUI() {
+    }
+
+    /**
      * The PeptideShakerGUI parent.
      */
     private PeptideShakerGUI peptideShakerGUI;

@@ -24,6 +24,16 @@ import java.util.HashSet;
 public class PsValidationSection {
 
     /**
+     * Empty default constructor
+     */
+    public PsValidationSection() {
+        validationFeatures = null;
+        indexes = false;
+        header = false;
+        writer = null;
+    }
+
+    /**
      * The features to export.
      */
     private final ArrayList<PsValidationFeature> validationFeatures;

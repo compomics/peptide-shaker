@@ -34,6 +34,14 @@ import java.util.TreeMap;
 public class TagMapper {
 
     /**
+     * Empty default constructor
+     */
+    public TagMapper() {
+        identificationParameters = null;
+        exceptionHandler = null;
+    }
+
+    /**
      * The identification parameters.
      */
     private final IdentificationParameters identificationParameters;

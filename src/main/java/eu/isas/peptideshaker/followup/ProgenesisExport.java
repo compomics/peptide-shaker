@@ -37,6 +37,12 @@ import java.util.stream.Collectors;
 public class ProgenesisExport {
 
     /**
+     * Empty default constructor
+     */
+    public ProgenesisExport() {
+    }
+
+    /**
      * The separator (tab by default).
      */
     public static final char SEPARATOR = '\t';

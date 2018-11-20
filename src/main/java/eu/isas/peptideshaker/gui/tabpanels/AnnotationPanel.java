@@ -17,6 +17,13 @@ import javax.swing.JOptionPane;
 public class AnnotationPanel extends javax.swing.JPanel {
 
     /**
+     * Empty default constructor
+     */
+    public AnnotationPanel() {
+        peptideShakerGUI = null;
+    }
+
+    /**
      * The current protein accession number.
      */
     private String currentAccessionNumber = "";

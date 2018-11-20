@@ -18,6 +18,12 @@ import javax.swing.SwingConstants;
 public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
 
     /**
+     * Empty default constructor
+     */
+    public SpectrumCountingSettingsDialog() {
+    }
+
+    /**
      * Boolean indicating whether the user canceled the editing.
      */
     private boolean canceled = false;

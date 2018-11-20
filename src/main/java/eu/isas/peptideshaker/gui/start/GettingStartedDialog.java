@@ -17,6 +17,14 @@ import javax.swing.ImageIcon;
 public class GettingStartedDialog extends javax.swing.JDialog {
 
     /**
+     * Empty default constructor
+     */
+    public GettingStartedDialog() {
+        peptideShakerGUI = null;
+        welcomeDialog = null;
+    }
+
+    /**
      * A reference to PeptideShakerGUI.
      */
     private final PeptideShakerGUI peptideShakerGUI;

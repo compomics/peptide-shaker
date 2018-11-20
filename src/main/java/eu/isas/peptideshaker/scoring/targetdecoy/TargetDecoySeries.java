@@ -13,6 +13,25 @@ import java.util.HashMap;
 public class TargetDecoySeries {
 
     /**
+     * Empty default constructor
+     */
+    public TargetDecoySeries() {
+        scores = null;
+        scoresLog = null;
+        confidence = null;
+        confidenceLog = null;
+        pep = null;
+        classicalFDR = null;
+        probaFDR = null;
+        probaFNR = null;
+        probaBenefit = null;
+        n = null;
+        classicalFP = null;
+        probaFP = null;
+        decoy = null;
+    }
+
+    /**
      * The probabilistic score series.
      */
     private final double[] scores;

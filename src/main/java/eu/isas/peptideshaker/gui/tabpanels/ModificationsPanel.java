@@ -78,6 +78,13 @@ import org.jfree.chart.plot.PlotOrientation;
 public class ModificationsPanel extends javax.swing.JPanel {
 
     /**
+     * Empty default constructor
+     */
+    public ModificationsPanel() {
+        peptideShakerGUI = null;
+    }
+
+    /**
      * The progress dialog.
      */
     private ProgressDialogX progressDialog;

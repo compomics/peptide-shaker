@@ -176,6 +176,12 @@ public class MzIdentMLExport {
     private boolean includeProteinSequences = false;
 
     /**
+     * Empty default constructor
+     */
+    public MzIdentMLExport() {
+    }
+
+    /**
      * Constructor.
      *
      * @param peptideShakerVersion the PeptideShaker version

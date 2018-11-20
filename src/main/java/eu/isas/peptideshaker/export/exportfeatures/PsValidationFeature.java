@@ -89,4 +89,11 @@ public enum PsValidationFeature implements ExportFeature {
     public boolean isAdvanced() {
         return advanced;
     }
+
+    /**
+     * Empty default constructor
+     */
+    private PsValidationFeature() {
+        advanced = false;
+    }
 }

@@ -46,6 +46,12 @@ import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
     /**
+     * Empty default constructor
+     */
+    public PtmSiteInferenceDialog() {
+    }
+
+    /**
      * The main GUI.
      */
     private PeptideShakerGUI peptideShakerGUI;

@@ -120,6 +120,21 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
     private final LastSelectedFolder lastSelectedFolder;
 
     /**
+     * Empty default constructor
+     */
+    public ProteinInferenceGraphPanel() {
+        nodes = null;
+        edges = null;
+        nodeProperties = null;
+        nodeToolTips = null;
+        parentDialog = null;
+        parentPanel = null;
+        normalIcon = null;
+        waitingIcon = null;
+        lastSelectedFolder = null;
+    }
+
+    /**
      * Creates a new ProteinInferenceGraphPanel.
      *
      * @param parentDialog the parent dialog

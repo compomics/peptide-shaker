@@ -27,6 +27,13 @@ import javax.swing.table.DefaultTableModel;
 public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
     /**
+     * Empty default constructor
+     */
+    public FeaturesPreferencesDialog() {
+        peptideShakerGUI = null;
+    }
+
+    /**
      * PeptideShaker main GUI.
      */
     private final PeptideShakerGUI peptideShakerGUI;

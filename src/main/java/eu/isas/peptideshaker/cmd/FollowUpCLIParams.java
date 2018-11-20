@@ -153,4 +153,10 @@ public enum FollowUpCLIParams {
         
         return output;
     }
+
+    /**
+     * Empty default constructor
+     */
+    private FollowUpCLIParams() {
+    }
 }

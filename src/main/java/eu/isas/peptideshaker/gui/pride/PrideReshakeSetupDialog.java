@@ -46,6 +46,14 @@ import org.jfree.chart.plot.PlotOrientation;
 public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
     /**
+     * Empty default constructor
+     */
+    public PrideReshakeSetupDialog() {
+        prideReShakeGUI = null;
+        lastSelectedFolder = null;
+    }
+
+    /**
      * The PrideReshakeGUI parent.
      */
     private final PrideReshakeGUI prideReShakeGUI;

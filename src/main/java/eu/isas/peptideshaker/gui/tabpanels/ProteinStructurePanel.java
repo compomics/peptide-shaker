@@ -79,6 +79,13 @@ import org.jmol.api.JmolViewer;
 public class ProteinStructurePanel extends javax.swing.JPanel {
 
     /**
+     * Empty default constructor
+     */
+    public ProteinStructurePanel() {
+        peptideShakerGUI = null;
+    }
+
+    /**
      * Peptide keys that can be mapped to the current PDB file.
      */
     private ArrayList<Long> peptidePdbArray;

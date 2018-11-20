@@ -10,6 +10,13 @@ import eu.isas.peptideshaker.gui.export.MzIdentMLExportDialog;
 public class SaveDialog extends javax.swing.JDialog {
 
     /**
+     * Empty default constructor
+     */
+    public SaveDialog() {
+        peptideShakerGUI = null;
+    }
+
+    /**
      * The PeptideShaker parent frame.
      */
     private final PeptideShakerGUI peptideShakerGUI;

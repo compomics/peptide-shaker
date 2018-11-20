@@ -55,6 +55,15 @@ import java.util.stream.Stream;
 public class PsIdentificationAlgorithmMatchesSection {
 
     /**
+     * Empty default constructor
+     */
+    public PsIdentificationAlgorithmMatchesSection() {
+        indexes = false;
+        header = false;
+        writer = null;
+    }
+
+    /**
      * The features to export.
      */
     private final ArrayList<PsIdentificationAlgorithmMatchesFeature> matchExportFeatures = new ArrayList<>();

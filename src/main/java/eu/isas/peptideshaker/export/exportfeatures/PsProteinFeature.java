@@ -119,4 +119,11 @@ public enum PsProteinFeature implements ExportFeature {
     public boolean isAdvanced() {
         return advanced;
     }
+
+    /**
+     * Empty default constructor
+     */
+    private PsProteinFeature() {
+        advanced = false;
+    }
 }

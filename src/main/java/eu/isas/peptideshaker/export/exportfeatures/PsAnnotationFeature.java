@@ -74,4 +74,13 @@ public enum PsAnnotationFeature implements ExportFeature {
     public boolean isAdvanced() {
         return advanced;
     }
+
+    /**
+     * Empty default constructor
+     */
+    private PsAnnotationFeature() {
+        title = "";
+        description = "";
+        advanced = false;
+    }
 }

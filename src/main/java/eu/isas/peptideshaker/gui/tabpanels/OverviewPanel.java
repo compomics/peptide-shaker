@@ -87,6 +87,13 @@ import org.jfree.data.Range;
 public class OverviewPanel extends javax.swing.JPanel implements ProteinSequencePanelParent {
 
     /**
+     * Empty default constructor
+     */
+    public OverviewPanel() {
+        peptideShakerGUI = null;
+    }
+
+    /**
      * Indexes for the three main data tables.
      */
     private enum TableIndex {

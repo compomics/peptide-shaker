@@ -77,6 +77,13 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     }
 
     /**
+     * Empty default constructor
+     */
+    public MatchValidationDialog() {
+        identificationParameters = null;
+    }
+
+    /**
      * Constructor for a protein match validation dialog.
      *
      * @param parent the parent frame

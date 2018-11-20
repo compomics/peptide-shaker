@@ -44,6 +44,19 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
     private final String psProjectName;
 
     /**
+     * Empty default constructor
+     */
+    public PrideSearchParametersDialog() {
+        prideReShakeGUI = null;
+        prideSearchParametersFile = null;
+        mgfFiles = null;
+        rawFiles = null;
+        species = "";
+        speciesType = "";
+        psProjectName = "";
+    }
+
+    /**
      * Creates a new PrideSearchParametersDialog.
      *
      * @param prideReShakeGUI a reference to the main frame

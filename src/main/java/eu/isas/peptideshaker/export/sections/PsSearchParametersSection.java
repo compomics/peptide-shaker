@@ -21,6 +21,16 @@ import java.util.Collections;
 public class PsSearchParametersSection {
 
     /**
+     * Empty default constructor
+     */
+    public PsSearchParametersSection() {
+        searchFeatures = null;
+        indexes = false;
+        header = false;
+        writer = null;
+    }
+
+    /**
      * The features to export.
      */
     private final ArrayList<PsSearchFeature> searchFeatures;

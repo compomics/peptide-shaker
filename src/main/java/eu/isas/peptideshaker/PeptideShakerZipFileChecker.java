@@ -17,6 +17,12 @@ import javax.swing.UIManager.LookAndFeelInfo;
 public class PeptideShakerZipFileChecker {
 
     /**
+     * Empty default constructor
+     */
+    public PeptideShakerZipFileChecker() {
+    }
+
+    /**
      * Checks if the jar file is started from within an unzipped zip file. If
      * yes, a warning dialog is displayed telling the user to unzip first. If
      * not within a zip file the jar file is started as normal.

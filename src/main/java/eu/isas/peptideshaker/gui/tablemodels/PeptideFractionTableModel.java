@@ -17,6 +17,14 @@ import javax.swing.table.DefaultTableModel;
 public class PeptideFractionTableModel extends DefaultTableModel {
 
     /**
+     * Empty default constructor
+     */
+    public PeptideFractionTableModel() {
+        identification = null;
+        displayFeaturesGenerator = null;
+    }
+
+    /**
      * The identification of this project.
      */
     private final Identification identification;

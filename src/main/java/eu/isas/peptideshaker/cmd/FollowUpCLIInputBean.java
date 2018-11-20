@@ -18,6 +18,13 @@ import org.apache.commons.cli.CommandLine;
 public class FollowUpCLIInputBean {
 
     /**
+     * Empty default constructor
+     */
+    public FollowUpCLIInputBean() {
+        pathSettingsCLIInputBean = null;
+    }
+
+    /**
      * The cpsx file to work on.
      */
     private File cpsFile = null;

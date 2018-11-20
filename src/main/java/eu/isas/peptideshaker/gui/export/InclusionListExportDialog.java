@@ -22,6 +22,14 @@ import javax.swing.filechooser.FileFilter;
 public class InclusionListExportDialog extends javax.swing.JDialog {
 
     /**
+     * Empty default constructor
+     */
+    public InclusionListExportDialog() {
+        followupPreferencesDialog = null;
+        exportFormat = null;
+    }
+
+    /**
      * References to the follow up export dialog.
      */
     private final FollowupPreferencesDialog followupPreferencesDialog;

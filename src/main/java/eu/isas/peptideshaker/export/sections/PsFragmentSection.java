@@ -37,6 +37,16 @@ import java.util.stream.Collectors;
 public class PsFragmentSection {
 
     /**
+     * Empty default constructor
+     */
+    public PsFragmentSection() {
+        fragmentFeatures = null;
+        indexes = false;
+        header = false;
+        writer = null;
+    }
+
+    /**
      * The spectrum factory.
      */
     private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
