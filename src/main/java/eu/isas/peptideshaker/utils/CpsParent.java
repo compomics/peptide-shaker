@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.utils;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesCache;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
-import com.compomics.util.db.object.objects.BlobObject;
 import com.compomics.util.Util;
 import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.experiment.ProjectParameters;
@@ -388,7 +387,7 @@ public class CpsParent extends UserPreferencesParent {
     }
     
     /**
-     * Loads the fasta file.
+     * Loads the FASTA file.
      * 
      * @param waitingHandler a waiting handler displaying progress to the user.
      * Can be null
