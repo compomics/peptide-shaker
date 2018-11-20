@@ -19,6 +19,16 @@ import java.util.Collections;
 public class PsAnnotationSection {
 
     /**
+     * Empty default constructor
+     */
+    public PsAnnotationSection() {
+        annotationFeatures = null;
+        indexes = false;
+        header = false;
+        writer = null;
+    }
+
+    /**
      * The features to export.
      */
     private final ArrayList<PsAnnotationFeature> annotationFeatures;

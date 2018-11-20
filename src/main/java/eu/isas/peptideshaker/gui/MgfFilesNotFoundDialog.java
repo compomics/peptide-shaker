@@ -20,6 +20,15 @@ import javax.swing.table.DefaultTableModel;
 public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
 
     /**
+     * Empty default constructor
+     */
+    public MgfFilesNotFoundDialog() {
+        missingFiles = null;
+        idFiles = null;
+        waitingDialog = null;
+    }
+
+    /**
      * Map of the missing mgf files indexed by ID file.
      */
     private final HashMap<File, String> missingFiles;

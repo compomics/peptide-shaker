@@ -46,6 +46,16 @@ import uk.ac.ebi.jmzidml.model.mzidml.params.PeptideUserParam;
 public class BestMatchSelection {
 
     /**
+     * Empty default constructor
+     */
+    public BestMatchSelection() {
+        proteinCount = null;
+        identification = null;
+        sequenceProvider = null;
+        fastaParameters = null;
+    }
+
+    /**
      * The spectrum factory.
      */
     private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();

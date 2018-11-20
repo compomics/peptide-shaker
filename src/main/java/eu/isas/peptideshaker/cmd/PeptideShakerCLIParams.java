@@ -118,4 +118,10 @@ public enum PeptideShakerCLIParams {
 
         return output;
     }
+
+    /**
+     * Empty default constructor
+     */
+    private PeptideShakerCLIParams() {
+    }
 }

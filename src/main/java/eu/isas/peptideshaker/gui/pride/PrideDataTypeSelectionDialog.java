@@ -10,6 +10,12 @@ import javax.swing.JFrame;
 public class PrideDataTypeSelectionDialog extends javax.swing.JDialog {
 
     /**
+     * Empty default constructor
+     */
+    public PrideDataTypeSelectionDialog() {
+    }
+
+    /**
      * Set if public or private data is to be loaded.
      */
     private boolean loadPublicData = true;

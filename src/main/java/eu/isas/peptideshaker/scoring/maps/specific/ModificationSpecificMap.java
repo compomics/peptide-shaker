@@ -15,6 +15,12 @@ import java.util.Map;
 public class ModificationSpecificMap extends SpecificTargetDecoyMap {
 
     /**
+     * Empty default constructor
+     */
+    public ModificationSpecificMap() {
+    }
+
+    /**
      * The name of the garbage category.
      */
     public final static String GARBAGE = "OTHER";

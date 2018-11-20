@@ -15,6 +15,12 @@ import org.apache.commons.cli.Options;
 public class IdentificationParametersCLI extends AbstractIdentificationParametersCli {
 
     /**
+     * Empty default constructor
+     */
+    public IdentificationParametersCLI() {
+    }
+
+    /**
      * Construct a new SearchParametersCLI runnable from a list of arguments.
      * When initialization is successful, calling "run" will write the created
      * parameters file.

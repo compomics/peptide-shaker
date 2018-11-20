@@ -15,6 +15,12 @@ import java.awt.Toolkit;
 public class ProjectParametersDialog extends javax.swing.JDialog {
 
     /**
+     * Empty default constructor
+     */
+    public ProjectParametersDialog() {
+    }
+
+    /**
      * The parent frame.
      */
     private java.awt.Frame parentFrame;

@@ -31,6 +31,12 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 public class InclusionListExport {
 
     /**
+     * Empty default constructor
+     */
+    public InclusionListExport() {
+    }
+
+    /**
      * Writes an inclusion list based on the validated PSMs of the validated
      * peptides of the validated proteins.
      *

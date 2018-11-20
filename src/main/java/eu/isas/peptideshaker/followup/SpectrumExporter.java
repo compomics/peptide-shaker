@@ -25,6 +25,13 @@ import java.util.ArrayList;
 public class SpectrumExporter {
 
     /**
+     * Empty default constructor
+     */
+    public SpectrumExporter() {
+        identification = null;
+    }
+
+    /**
      * The identification.
      */
     private final Identification identification;

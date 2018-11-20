@@ -38,6 +38,13 @@ import uk.ac.ebi.pride.tools.ValidationErrorHandler;
 public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
     /**
+     * Empty default constructor
+     */
+    public MzIdentMLExportDialog() {
+        peptideShakerGUI = null;
+    }
+
+    /**
      * A simple progress dialog.
      */
     private static ProgressDialogX progressDialog;

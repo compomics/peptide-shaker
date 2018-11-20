@@ -18,6 +18,12 @@ import java.util.zip.ZipOutputStream;
 public class ProjectExport {
 
     /**
+     * Empty default constructor
+     */
+    public ProjectExport() {
+    }
+
+    /**
      * The name of the folder where to save the mgf and FASTA file.
      */
     public final static String defaultDataFolder = "data";

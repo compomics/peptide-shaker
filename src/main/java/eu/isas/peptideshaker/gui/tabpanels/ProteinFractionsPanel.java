@@ -60,6 +60,13 @@ import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
 public class ProteinFractionsPanel extends javax.swing.JPanel implements ProteinSequencePanelParent {
 
     /**
+     * Empty default constructor
+     */
+    public ProteinFractionsPanel() {
+        peptideShakerGUI = null;
+    }
+
+    /**
      * A reference to the main PeptideShakerGUI.
      */
     private final PeptideShakerGUI peptideShakerGUI;

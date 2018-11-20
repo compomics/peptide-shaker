@@ -34,6 +34,12 @@ import java.util.stream.Collectors;
 public class RunMzDeviation {
 
     /**
+     * Empty default constructor
+     */
+    public RunMzDeviation() {
+    }
+
+    /**
      * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();

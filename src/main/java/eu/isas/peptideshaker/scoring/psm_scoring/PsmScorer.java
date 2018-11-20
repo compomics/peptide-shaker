@@ -47,6 +47,14 @@ import org.apache.commons.math.util.FastMath;
 public class PsmScorer {
 
     /**
+     * Empty default constructor
+     */
+    public PsmScorer() {
+        sequenceProvider = null;
+        fastaParameters = null;
+    }
+
+    /**
      * The spectrum factory.
      */
     private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();

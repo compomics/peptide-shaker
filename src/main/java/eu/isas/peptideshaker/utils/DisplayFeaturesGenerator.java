@@ -45,6 +45,16 @@ import java.util.stream.Collectors;
 public class DisplayFeaturesGenerator {
 
     /**
+     * Empty default constructor
+     */
+    public DisplayFeaturesGenerator() {
+        displayParameters = null;
+        identificationParameters = null;
+        sequenceProvider = null;
+        proteinDetailsProvider = null;
+    }
+
+    /**
      * The display parameters.
      */
     private final DisplayParameters displayParameters;

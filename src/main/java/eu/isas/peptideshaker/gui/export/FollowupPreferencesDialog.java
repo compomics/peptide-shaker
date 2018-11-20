@@ -49,6 +49,13 @@ import javax.swing.*;
 public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
     /**
+     * Empty default constructor
+     */
+    public FollowupPreferencesDialog() {
+        peptideShakerGUI = null;
+    }
+
+    /**
      * The main GUI.
      */
     private final PeptideShakerGUI peptideShakerGUI;

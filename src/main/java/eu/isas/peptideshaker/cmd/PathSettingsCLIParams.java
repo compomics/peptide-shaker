@@ -78,4 +78,10 @@ public enum PathSettingsCLIParams {
 
         return output;
     }
+
+    /**
+     * Empty default constructor
+     */
+    private PathSettingsCLIParams() {
+    }
 }

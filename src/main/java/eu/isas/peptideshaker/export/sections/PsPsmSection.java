@@ -43,6 +43,15 @@ import java.util.stream.Collectors;
 public class PsPsmSection {
 
     /**
+     * Empty default constructor
+     */
+    public PsPsmSection() {
+        indexes = false;
+        header = false;
+        writer = null;
+    }
+
+    /**
      * The features to export.
      */
     private final ArrayList<PsPsmFeature> psmFeatures = new ArrayList<>();

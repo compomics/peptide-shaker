@@ -31,6 +31,12 @@ import java.util.stream.Collectors;
 public class PeptideShakerMethods {
 
     /**
+     * Empty default constructor
+     */
+    public PeptideShakerMethods() {
+    }
+
+    /**
      * Returns the search engines usage details.
      *
      * @param projectDetails the PeptideShaker project details

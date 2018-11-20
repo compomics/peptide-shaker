@@ -8,6 +8,15 @@ package eu.isas.peptideshaker.gui.protein_sequence;
 public class ResidueAnnotation {
 
     /**
+     * Empty default constructor
+     */
+    public ResidueAnnotation() {
+        annotation = "";
+        identifier = 0;
+        clickable = false;
+    }
+
+    /**
      * The residue annotation as a string.
      */
     public final String annotation;

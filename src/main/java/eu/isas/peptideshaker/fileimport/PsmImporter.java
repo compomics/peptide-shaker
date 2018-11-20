@@ -185,6 +185,21 @@ public class PsmImporter {
     private final FastaMapper fastaMapper;
 
     /**
+     * Empty default constructor
+     */
+    public PsmImporter() {
+        fileReader = null;
+        idFile = null;
+        singleProteinList = null;
+        proteinCount = null;
+        identification = null;
+        inputMap = null;
+        identificationParameters = null;
+        sequenceProvider = null;
+        fastaMapper = null;
+    }
+
+    /**
      * Constructor.
      *
      * @param identificationParameters the identification parameters

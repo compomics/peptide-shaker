@@ -97,6 +97,13 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
     /**
+     * Empty default constructor
+     */
+    public SpectrumIdentificationPanel() {
+        peptideShakerGUI = null;
+    }
+
+    /**
      * Turns of the gradient painting for the bar charts.
      */
     static {

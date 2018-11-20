@@ -15,6 +15,12 @@ import java.util.TreeMap;
  */
 public class SimpleSpecificMap extends SpecificTargetDecoyMap {
 
+    /**
+     * Empty default constructor
+     */
+    public SimpleSpecificMap() {
+    }
+
     @Override
     public void clean(double minimalFDR) {
 

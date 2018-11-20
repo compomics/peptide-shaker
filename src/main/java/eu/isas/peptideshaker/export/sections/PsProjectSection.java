@@ -19,6 +19,16 @@ import java.util.HashMap;
 public class PsProjectSection {
 
     /**
+     * Empty default constructor
+     */
+    public PsProjectSection() {
+        projectFeatures = null;
+        indexes = false;
+        header = false;
+        writer = null;
+    }
+
+    /**
      * The features to export.
      */
     private final ArrayList<PsProjectFeature> projectFeatures;

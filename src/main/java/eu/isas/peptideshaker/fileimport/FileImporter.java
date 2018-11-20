@@ -161,6 +161,19 @@ public class FileImporter {
     private GeneMaps geneMaps;
 
     /**
+     * Empty default constructor
+     */
+    public FileImporter() {
+        waitingHandler = null;
+        exceptionHandler = null;
+        metrics = null;
+        identificationParameters = null;
+        processingParameters = null;
+        projectDetails = null;
+        tagMapper = null;
+    }
+
+    /**
      * Constructor for the importer.
      *
      * @param identification the identification where to store the matches

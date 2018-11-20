@@ -17,6 +17,16 @@ import java.util.Collections;
 public class PsInputFilterSection {
 
     /**
+     * Empty default constructor
+     */
+    public PsInputFilterSection() {
+        exportFeatures = null;
+        indexes = false;
+        header = false;
+        writer = null;
+    }
+
+    /**
      * The features to export.
      */
     private final ArrayList<PsInputFilterFeature> exportFeatures;

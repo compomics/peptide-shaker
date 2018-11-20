@@ -56,6 +56,14 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public class QCPanel extends javax.swing.JPanel {
 
     /**
+     * Empty default constructor
+     */
+    public QCPanel() {
+        peptideShakerGUI = null;
+        histogramColors = null;
+    }
+
+    /**
      * The main PeptideShaker GUI.
      */
     private final PeptideShakerGUI peptideShakerGUI;

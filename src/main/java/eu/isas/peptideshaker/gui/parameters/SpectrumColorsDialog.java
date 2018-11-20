@@ -25,6 +25,15 @@ import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
  */
 public class SpectrumColorsDialog extends javax.swing.JDialog {
 
+    /**
+     * Empty default constructor
+     */
+    public SpectrumColorsDialog() {
+        iontypes = null;
+        neutralLosses = null;
+        peptideShakerGUI = null;
+    }
+
     // @TODO: this class should be generalized and moved to utilities
     /**
      * The list of ion types.

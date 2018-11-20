@@ -27,6 +27,13 @@ import no.uib.jsparklines.data.XYDataPoint;
 public class FractionDetailsDialog extends javax.swing.JDialog {
 
     /**
+     * Empty default constructor
+     */
+    public FractionDetailsDialog() {
+        peptideShakerGUI = null;
+    }
+
+    /**
      * The PeptideShakerGUI parent.
      */
     private final PeptideShakerGUI peptideShakerGUI;

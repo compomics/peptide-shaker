@@ -27,6 +27,15 @@ import java.util.concurrent.TimeoutException;
 public class ProteinProcessor {
 
     /**
+     * Empty default constructor
+     */
+    public ProteinProcessor() {
+        identification = null;
+        identificationParameters = null;
+        identificationFeaturesGenerator = null;
+    }
+
+    /**
      * the identification object.
      */
     private final Identification identification;

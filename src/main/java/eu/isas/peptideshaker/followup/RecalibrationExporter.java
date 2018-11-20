@@ -22,6 +22,12 @@ import java.io.IOException;
 public class RecalibrationExporter {
 
     /**
+     * Empty default constructor
+     */
+    public RecalibrationExporter() {
+    }
+
+    /**
      * Boolean indicating whether the exporter shall be used in debug mode.
      * <br><br>
      * The debug mode exports the ion distributions and the titles of the
