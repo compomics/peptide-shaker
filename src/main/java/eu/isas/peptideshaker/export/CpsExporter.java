@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.export;
 
-import com.compomics.util.db.object.objects.BlobObject;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Advocate;
@@ -81,7 +80,6 @@ public class CpsExporter {
                 PeptideShakerParameters peptideShakerParameters = new PeptideShakerParameters(identificationParameters, spectrumCountingParameters,
                         projectDetails, filterParameters, displayParameters, metrics, sequenceProvider, proteinDetailsProvider, geneMaps, projectType, identificationFeaturesCache);
 
-                //BlobObject blobObject = new BlobObject(peptideShakerParameters);
                 identification.addObject(PeptideShakerParameters.key, peptideShakerParameters);
 
             }

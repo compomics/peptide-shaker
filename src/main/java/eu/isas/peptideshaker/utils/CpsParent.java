@@ -216,6 +216,7 @@ public class CpsParent extends UserPreferencesParent {
         filterParameters = psParameters.getFilterParameters();
         displayParameters = psParameters.getDisplayParameters();
         sequenceProvider = psParameters.getSequenceProvider();
+        proteinDetailsProvider = psParameters.getProteinDetailsProvider();
         projectType = psParameters.getProjectType();
 
         // Set up caches
