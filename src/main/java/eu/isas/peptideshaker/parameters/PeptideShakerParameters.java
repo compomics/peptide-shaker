@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.parameters;
 
-import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.db.object.DbObject;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
@@ -15,59 +14,55 @@ import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCo
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesCache;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
-import java.io.Serializable;
 
 /**
  * This class stores parameters for a PeptideShaker project.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
-public class PeptideShakerParameters extends DbObject implements UrParameter, Serializable {
+public class PeptideShakerParameters extends DbObject implements UrParameter {
 
-    /**
-     * Serial version UID for post-serialization compatibility.
-     */
-    static final long serialVersionUID = -3531908843597367812L;
     /**
      * The identification parameters.
      */
-    private final IdentificationParameters identificationParameters;
+    private IdentificationParameters identificationParameters ;
     /**
      * The spectrum counting preferences.
      */
-    private final SpectrumCountingParameters spectrumCountingPreferences;
+    private SpectrumCountingParameters spectrumCountingPreferences;
     /**
      * The GUI filter preferences.
      */
-    private final FilterParameters filterParameters;
+    private FilterParameters filterParameters;
     /**
      * The display preferences.
      */
-    private final DisplayParameters displayParameters;
+    private DisplayParameters displayParameters;
     /**
      * The project details.
      */
-    private final ProjectDetails projectDetails;
+    private ProjectDetails projectDetails;
     /**
      * The metrics saved when loading the files.
      */
-    private final Metrics metrics;
+    private Metrics metrics;
     /**
      * The sequence provider.
      */
-    private final SequenceProvider sequenceProvider;
+    private SequenceProvider sequenceProvider;
     /**
      * The protein details provider.
      */
-    private final ProteinDetailsProvider proteinDetailsProvider;
+    private ProteinDetailsProvider proteinDetailsProvider;
     /**
      * The gene maps.
      */
-    protected final GeneMaps geneMaps;
+    protected GeneMaps geneMaps;
     /**
      * The identification features generator with features in cache.
      */
-    private final IdentificationFeaturesCache identificationFeaturesCache;
+    private IdentificationFeaturesCache identificationFeaturesCache;
     /**
      * The type of project.
      */
@@ -77,6 +72,13 @@ public class PeptideShakerParameters extends DbObject implements UrParameter, Se
      */
     public static final long key = ExperimentObject.asLong("PeptideShaker_parameters");
 
+    /**
+     * Empty default constructor.
+     */
+    public PeptideShakerParameters () {
+        
+    }
+    
     /**
      * Constructor for a PeptideShaker Settings class.
      *
