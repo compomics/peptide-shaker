@@ -4396,7 +4396,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 //                            }
 //                        }
                         // @TODO: are peptide terminal mods excluded??  
-                        Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName);
+                        Color ptmColor = new Color(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName));
                         if (ptmColor == null) {
                             ptmColor = Color.lightGray;
                         }
@@ -4531,7 +4531,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 //                            }
 //                        }
                         // @TODO: are peptide terminal mods excluded??  
-                        Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName);
+                        Color ptmColor = new Color(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName));
                         if (ptmColor == null) {
                             ptmColor = Color.lightGray;
                         }

@@ -3136,7 +3136,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                     if (modName != null && displayParameters.isDisplayedPTM(modName)) {
 
-                        Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName);
+                        Color ptmColor = new Color(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName));
 
                         jmolPanel.getViewer().evalString(
                                 "select resno =" + (aaIndex - chains[selectedChainIndex - 1].getDifference())
@@ -3156,7 +3156,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                     if (modName != null && displayParameters.isDisplayedPTM(modName)) {
 
-                        Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName);
+                        Color ptmColor = new Color(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName));
 
                         jmolPanel.getViewer().evalString(
                                 "select resno =" + (aaIndex - chains[selectedChainIndex - 1].getDifference())

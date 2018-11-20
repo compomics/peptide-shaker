@@ -2311,7 +2311,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                         // update the profiles with the new colors
                         if (!((String) ptmJTable.getValueAt(row, ptmJTable.getColumn("PTM").getModelIndex())).equalsIgnoreCase("no modification")) {
                             peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().setColor(
-                                    (String) ptmJTable.getValueAt(row, ptmJTable.getColumn("  ").getModelIndex()), newColor);
+                                    (String) ptmJTable.getValueAt(row, ptmJTable.getColumn("  ").getModelIndex()), newColor.getRGB());
                             peptideShakerGUI.updateModificationColorCoding();
                         }
                     }
@@ -4135,7 +4135,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
             for (String modName : scores.getScoredModifications()) {
 
-                Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName);
+                Color ptmColor = new Color(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName));
                 com.compomics.util.gui.protein.ModificationProfile tempProfile = new com.compomics.util.gui.protein.ModificationProfile(modName, new double[peptide.getSequence().length()][2], ptmColor);
                 ModificationScoring locationScoring = scores.getModificationScoring(modName);
 

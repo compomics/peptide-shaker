@@ -1560,8 +1560,8 @@ public class NewDialog extends javax.swing.JDialog {
                 missing.add(name);
                 Modification mod = modificationFactory.getModification(name);
                 mod.getMass();
-            } else if (modificationProfile.getColor(name) == null) {
-                modificationProfile.setColor(name, Color.lightGray);
+            } else if (!modificationProfile.contains(name)) {
+                modificationProfile.setColor(name, Color.lightGray.getRGB());
             }
         }
         if (!missing.isEmpty()) {
