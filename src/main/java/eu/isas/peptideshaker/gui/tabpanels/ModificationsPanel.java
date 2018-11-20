@@ -3354,7 +3354,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
                     for (String modification : modificationProfile.getAllNotFixedModifications()) {
                         if (!modification.equalsIgnoreCase(NO_MODIFICATION)) {
-                            ((DefaultTableModel) ptmJTable.getModel()).addRow(new Object[]{modificationProfile.getColor(modification), modification});
+                            ((DefaultTableModel) ptmJTable.getModel()).addRow(new Object[]{new Color(modificationProfile.getColor(modification)), modification});
                         }
                     }
 
