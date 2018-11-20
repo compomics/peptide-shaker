@@ -159,7 +159,7 @@ public class CpsParent extends UserPreferencesParent {
             
             for (File file : destinationFolder.listFiles()) {
                 
-                if (file.getName().toLowerCase().endsWith(".psDB")) {
+                if (file.getName().toLowerCase().endsWith(".psdb")) {
                     
                     cpsFile = file;
                     loadCpsFile(dbFolder, waitingHandler);
@@ -190,7 +190,7 @@ public class CpsParent extends UserPreferencesParent {
         }
 
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
-        String dbName = "tempDB-" + df.format(new Date()) + ".psDB";
+        String dbName = "tempDB-" + df.format(new Date()) + ".psdb";
         
         File destinationFile = new File(dbFolder.getAbsolutePath(), dbName);
         

@@ -188,7 +188,7 @@ public class PeptideShaker {
         waitingHandler.appendReportEndLine();
 
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
-        String dbName = projectParameters.getProjectUniqueName() + df.format(projectParameters.getCreationTime()) + ".psDB";
+        String dbName = projectParameters.getProjectUniqueName() + df.format(projectParameters.getCreationTime()) + ".psdb";
 
         objectsDB = new ObjectsDB(PeptideShaker.getMatchesFolder().getAbsolutePath(), dbName);
         identification = new Identification(objectsDB);

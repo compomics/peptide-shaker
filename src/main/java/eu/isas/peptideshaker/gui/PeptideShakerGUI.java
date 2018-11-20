@@ -7184,7 +7184,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * file
      */
     public void saveProjectAs(boolean closeWhenDone, boolean aExportToZipWhenDone) {
-        File selectedFile = getUserSelectedFile(cpsParent.getProjectParameters().getProjectUniqueName() + ".psDB", ".psDB", "Peptide Shaker Database format (*.psDB)", "Save As...", false);
+        File selectedFile = getUserSelectedFile(cpsParent.getProjectParameters().getProjectUniqueName() + ".psdb", ".psdb", "Peptide Shaker Database format (*.psdb)", "Save As...", false);
         cpsParent.setCpsFile(selectedFile);
         if (selectedFile != null) {
             saveProject(closeWhenDone, aExportToZipWhenDone);
