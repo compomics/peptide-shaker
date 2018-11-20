@@ -197,9 +197,8 @@ public class CpsParent extends UserPreferencesParent {
         Util.copyFile(cpsFile, destinationFile);
         System.out.println(cpsFile.getAbsolutePath());
         
-        ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), destinationFile.getName(), false);
-        BlobObject blobObject = (BlobObject) objectsDB.retrieveObject(PeptideShakerParameters.key);
-        PeptideShakerParameters psParameters = (PeptideShakerParameters) blobObject.unBlob();        
+        ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), destinationFile.getName(), false);     
+        PeptideShakerParameters psParameters = (PeptideShakerParameters) objectsDB.retrieveObject(PeptideShakerParameters.key);       
         
         projectParameters = (ProjectParameters) objectsDB.retrieveObject(ProjectParameters.key);
         identification = new Identification(objectsDB);
