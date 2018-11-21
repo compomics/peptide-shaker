@@ -80,11 +80,4 @@ public enum PsFragmentFeature implements ExportFeature {
     public boolean isAdvanced() {
         return advanced;
     }
-
-    /**
-     * Empty default constructor
-     */
-    private PsFragmentFeature() {
-        advanced = false;
-    }
 }

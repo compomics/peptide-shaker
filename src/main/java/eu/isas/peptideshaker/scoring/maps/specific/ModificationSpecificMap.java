@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.scoring.maps.specific;
 
-import com.compomics.util.db.object.ObjectsDB;
 import eu.isas.peptideshaker.scoring.maps.SpecificTargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.util.HashMap;
@@ -13,12 +12,6 @@ import java.util.Map;
  * @author Marc Vaudel
  */
 public class ModificationSpecificMap extends SpecificTargetDecoyMap {
-
-    /**
-     * Empty default constructor
-     */
-    public ModificationSpecificMap() {
-    }
 
     /**
      * The name of the garbage category.

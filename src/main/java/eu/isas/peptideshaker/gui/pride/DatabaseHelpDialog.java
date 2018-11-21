@@ -25,13 +25,6 @@ import javax.swing.filechooser.FileFilter;
 public class DatabaseHelpDialog extends javax.swing.JDialog {
 
     /**
-     * Empty default constructor
-     */
-    public DatabaseHelpDialog() {
-        searchParameters = null;
-    }
-
-    /**
      * The current species, can be null.
      */
     private String species;

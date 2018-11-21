@@ -22,16 +22,6 @@ import no.uib.jsparklines.renderers.JSparklinesArrayListBarChartTableCellRendere
 public class ProteinGoTableModel extends DefaultTableModel {
 
     /**
-     * Empty default constructor
-     */
-    public ProteinGoTableModel() {
-        identification = null;
-        proteinDetailsProvider = null;
-        identificationFeaturesGenerator = null;
-        displayFeaturesGenerator = null;
-    }
-
-    /**
      * The identification of this project.
      */
     private final Identification identification;

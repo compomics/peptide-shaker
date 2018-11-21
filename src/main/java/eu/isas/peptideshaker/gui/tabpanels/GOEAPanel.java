@@ -82,13 +82,6 @@ import static com.compomics.util.experiment.personalization.ExperimentObject.NO_
 public class GOEAPanel extends javax.swing.JPanel {
 
     /**
-     * Empty default constructor
-     */
-    public GOEAPanel() {
-        peptideShakerGUI = null;
-    }
-
-    /**
      * The protein table column header tooltips.
      */
     private ArrayList<String> proteinTableToolTips;

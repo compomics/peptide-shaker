@@ -11,12 +11,6 @@ import java.awt.event.KeyEvent;
 public class PridePrivateDataDialog extends javax.swing.JDialog {
 
     /**
-     * Empty default constructor
-     */
-    public PridePrivateDataDialog() {
-    }
-
-    /**
      * The project accession.
      */
     private String projectAccession = null;

@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,7 +9,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -25,13 +23,6 @@ import no.uib.jsparklines.data.XYDataPoint;
  * @author Harald Barsnes
  */
 public class FractionDetailsDialog extends javax.swing.JDialog {
-
-    /**
-     * Empty default constructor
-     */
-    public FractionDetailsDialog() {
-        peptideShakerGUI = null;
-    }
 
     /**
      * The PeptideShakerGUI parent.

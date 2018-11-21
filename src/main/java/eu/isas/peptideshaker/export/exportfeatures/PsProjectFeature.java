@@ -76,11 +76,4 @@ public enum PsProjectFeature implements ExportFeature, Serializable {
     public boolean isAdvanced() {
         return advanced;
     }
-
-    /**
-     * Empty default constructor
-     */
-    private PsProjectFeature() {
-        advanced = false;
-    }
 }

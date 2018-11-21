@@ -10,12 +10,6 @@ import com.compomics.util.Util;
  * @author Marc Vaudel
  */
 public class PsZipUtils {
-
-    /**
-     * Empty default constructor
-     */
-    public PsZipUtils() {
-    }
     
     /**
      * The folder to use when unzipping files.

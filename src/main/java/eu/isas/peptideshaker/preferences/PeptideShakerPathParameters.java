@@ -22,12 +22,6 @@ import java.util.ArrayList;
 public class PeptideShakerPathParameters {
 
     /**
-     * Empty default constructor
-     */
-    public PeptideShakerPathParameters() {
-    }
-
-    /**
      * Enum of the paths which can be set in PeptideShaker.
      */
     public enum PeptideShakerPathKey implements PathKey {

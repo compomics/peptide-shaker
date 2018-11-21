@@ -57,14 +57,6 @@ import org.jfree.ui.RectangleEdge;
 public class ValidationPanel extends javax.swing.JPanel {
 
     /**
-     * Empty default constructor
-     */
-    public ValidationPanel() {
-        peptideShakerGUI = null;
-        scoreAxis = null;
-    }
-
-    /**
      * It true the tab has been initiated, i.e., the data has been displayed at
      * least once. False means that the tab has to be loaded from scratch.
      */

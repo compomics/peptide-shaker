@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.gui.pride;
 import com.compomics.software.dialogs.ProteoWizardSetupDialog;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.mass_spectrometry.proteowizard.MsFormat;
 import com.compomics.util.gui.JOptionEditorPane;
@@ -11,7 +10,6 @@ import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.file.LastSelectedFolder;
 import com.compomics.util.parameters.UtilitiesUserParameters;
-import com.compomics.util.experiment.io.biology.protein.Header;
 import com.compomics.util.experiment.io.biology.protein.ProteinDatabase;
 import com.compomics.util.gui.parameters.identification.search.SequenceDbDetailsDialog;
 import com.compomics.util.parameters.identification.search.SearchParameters;
@@ -44,14 +42,6 @@ import org.jfree.chart.plot.PlotOrientation;
  * @author Harald Barsnes
  */
 public class PrideReshakeSetupDialog extends javax.swing.JDialog {
-
-    /**
-     * Empty default constructor
-     */
-    public PrideReshakeSetupDialog() {
-        prideReShakeGUI = null;
-        lastSelectedFolder = null;
-    }
 
     /**
      * The PrideReshakeGUI parent.

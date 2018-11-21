@@ -31,13 +31,6 @@ import javax.swing.SwingUtilities;
 public class MethodsSectionDialog extends javax.swing.JDialog {
 
     /**
-     * Empty default constructor
-     */
-    public MethodsSectionDialog() {
-        peptideShakerGUI = null;
-    }
-
-    /**
      * The main PeptideShaker frame.
      */
     private final PeptideShakerGUI peptideShakerGUI;

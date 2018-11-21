@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.gui.parameters;
 
 import com.compomics.util.experiment.biology.ions.Ion;
 import com.compomics.util.experiment.biology.ions.IonFactory;
-import com.compomics.util.experiment.biology.ions.NeutralLoss;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.spectrum.IonLabelColorTableModel;
@@ -11,7 +10,6 @@ import com.compomics.util.parameters.UtilitiesUserParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Color;
 import java.awt.Toolkit;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import javax.swing.JColorChooser;
@@ -24,15 +22,6 @@ import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
  * @author Harald Barsnes
  */
 public class SpectrumColorsDialog extends javax.swing.JDialog {
-
-    /**
-     * Empty default constructor
-     */
-    public SpectrumColorsDialog() {
-        iontypes = null;
-        neutralLosses = null;
-        peptideShakerGUI = null;
-    }
 
     // @TODO: this class should be generalized and moved to utilities
     /**

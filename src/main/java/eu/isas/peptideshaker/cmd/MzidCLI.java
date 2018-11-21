@@ -28,12 +28,6 @@ import org.apache.commons.cli.Options;
 public class MzidCLI extends CpsParent {
 
     /**
-     * Empty default constructor
-     */
-    public MzidCLI() {
-    }
-
-    /**
      * The mzid creation options.
      */
     private MzidCLIInputBean mzidCLIInputBean = null;

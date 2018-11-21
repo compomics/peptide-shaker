@@ -39,13 +39,6 @@ import javax.xml.stream.XMLStreamException;
 public class WelcomeDialog extends javax.swing.JDialog {
 
     /**
-     * Empty default constructor
-     */
-    public WelcomeDialog() {
-        peptideShakerGUI = null;
-    }
-
-    /**
      * The PeptideShaker parent frame.
      */
     private final PeptideShakerGUI peptideShakerGUI;

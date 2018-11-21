@@ -13,13 +13,6 @@ import org.jfree.data.category.CategoryDataset;
 public class ProteinAnnotations implements CategoryToolTipGenerator {
 
     /**
-     * Empty default constructor
-     */
-    public ProteinAnnotations() {
-        proteinAnnotations = null;
-    }
-
-    /**
      * The hashmap of protein annotations.
      */
     private final HashMap<Integer, ArrayList<ResidueAnnotation>> proteinAnnotations;

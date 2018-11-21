@@ -15,7 +15,6 @@ import com.compomics.util.experiment.identification.amino_acid_tags.TagComponent
 import com.compomics.util.experiment.identification.amino_acid_tags.MassGap;
 import com.compomics.util.experiment.identification.protein_inference.FastaMapper;
 import com.compomics.util.parameters.identification.IdentificationParameters;
-import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.waiting.WaitingHandler;
@@ -32,14 +31,6 @@ import java.util.TreeMap;
  * @author Marc Vaudel
  */
 public class TagMapper {
-
-    /**
-     * Empty default constructor
-     */
-    public TagMapper() {
-        identificationParameters = null;
-        exceptionHandler = null;
-    }
 
     /**
      * The identification parameters.
@@ -68,7 +59,7 @@ public class TagMapper {
      *
      * @param spectrumMatches the spectrum matches containing the peptides to
      * map
-     * @param fastaMapper the fasta mapper to use
+     * @param fastaMapper the FASTA mapper to use
      * @param waitingHandler a waiting handler
      */
     public void mapTags(LinkedList<SpectrumMatch> spectrumMatches, FastaMapper fastaMapper, WaitingHandler waitingHandler) {

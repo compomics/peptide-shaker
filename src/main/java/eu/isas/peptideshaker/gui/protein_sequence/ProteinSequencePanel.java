@@ -25,13 +25,6 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public class ProteinSequencePanel {
 
     /**
-     * Empty default constructor
-     */
-    public ProteinSequencePanel() {
-        backgroundColor = null;
-    }
-
-    /**
      * The protein sequence panel parent.
      */
     private ProteinSequencePanelParent proteinSequencePanelParent;

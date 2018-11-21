@@ -40,15 +40,6 @@ import org.apache.commons.math.util.FastMath;
 public class PsProteinSection {
 
     /**
-     * Empty default constructor
-     */
-    public PsProteinSection() {
-        indexes = false;
-        header = false;
-        writer = null;
-    }
-
-    /**
      * The protein features to export.
      */
     private final ArrayList<PsProteinFeature> proteinFeatures = new ArrayList<>();

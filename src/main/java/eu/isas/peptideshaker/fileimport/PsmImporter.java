@@ -180,24 +180,9 @@ public class PsmImporter {
      */
     private final SequenceProvider sequenceProvider;
     /**
-     * The fasta mapper used to map peptides to proteins.
+     * The FASTA mapper used to map peptides to proteins.
      */
     private final FastaMapper fastaMapper;
-
-    /**
-     * Empty default constructor
-     */
-    public PsmImporter() {
-        fileReader = null;
-        idFile = null;
-        singleProteinList = null;
-        proteinCount = null;
-        identification = null;
-        inputMap = null;
-        identificationParameters = null;
-        sequenceProvider = null;
-        fastaMapper = null;
-    }
 
     /**
      * Constructor.
@@ -212,7 +197,7 @@ public class PsmImporter {
      * @param proteinCount the protein count of this project
      * @param singleProteinList list of one hit wonders for this project
      * @param sequenceProvider the protein sequence provider
-     * @param fastaMapper the fasta mapper used to map peptides to proteins
+     * @param fastaMapper the FASTA mapper used to map peptides to proteins
      */
     public PsmImporter(IdentificationParameters identificationParameters, IdfileReader fileReader, File idFile,
             Identification identification, InputMap inputMap, HashMap<String, Integer> proteinCount, HashSet<String> singleProteinList,

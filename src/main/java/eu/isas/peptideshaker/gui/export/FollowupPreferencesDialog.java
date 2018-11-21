@@ -33,9 +33,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import javax.swing.*;
 
@@ -47,13 +44,6 @@ import javax.swing.*;
  * @author Harald Barsnes
  */
 public class FollowupPreferencesDialog extends javax.swing.JDialog {
-
-    /**
-     * Empty default constructor
-     */
-    public FollowupPreferencesDialog() {
-        peptideShakerGUI = null;
-    }
 
     /**
      * The main GUI.

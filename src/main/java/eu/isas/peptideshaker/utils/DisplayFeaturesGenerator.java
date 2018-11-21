@@ -14,7 +14,6 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
 import com.compomics.util.experiment.identification.amino_acid_tags.TagComponent;
-import com.compomics.util.experiment.identification.amino_acid_tags.MassGap;
 import com.compomics.util.experiment.identification.utils.ModificationUtils;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.identification.utils.ProteinUtils;
@@ -29,7 +28,6 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
 import com.compomics.util.experiment.identification.peptide_shaker.PSModificationScores;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,16 +41,6 @@ import java.util.stream.Collectors;
  * @author Harald Barsnes
  */
 public class DisplayFeaturesGenerator {
-
-    /**
-     * Empty default constructor
-     */
-    public DisplayFeaturesGenerator() {
-        displayParameters = null;
-        identificationParameters = null;
-        sequenceProvider = null;
-        proteinDetailsProvider = null;
-    }
 
     /**
      * The display parameters.

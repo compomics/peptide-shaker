@@ -13,12 +13,6 @@ import javax.swing.JDialog;
 public class PrideFreeTextSearchDialog extends javax.swing.JDialog {
 
     /**
-     * Empty default constructor
-     */
-    public PrideFreeTextSearchDialog() {
-    }
-
-    /**
      * Creates a new PrideFreeTextSearchDialog.
      *
      * @param parent the parent dialog

@@ -1,20 +1,16 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.Util;
-import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.export.exportfeatures.PsValidationFeature;
 import eu.isas.peptideshaker.scoring.PSMaps;
-import eu.isas.peptideshaker.scoring.maps.SpecificTargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * This class outputs the validation related export features.
@@ -22,16 +18,6 @@ import java.util.HashSet;
  * @author Marc Vaudel
  */
 public class PsValidationSection {
-
-    /**
-     * Empty default constructor
-     */
-    public PsValidationSection() {
-        validationFeatures = null;
-        indexes = false;
-        header = false;
-        writer = null;
-    }
 
     /**
      * The features to export.

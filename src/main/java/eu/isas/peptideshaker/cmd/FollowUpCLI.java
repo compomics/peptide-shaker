@@ -28,12 +28,6 @@ import org.apache.commons.cli.Options;
 public class FollowUpCLI extends CpsParent {
 
     /**
-     * Empty default constructor
-     */
-    public FollowUpCLI() {
-    }
-
-    /**
      * The follow up options.
      */
     private FollowUpCLIInputBean followUpCLIInputBean = null;

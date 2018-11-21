@@ -12,12 +12,6 @@ import javax.swing.JTextField;
 public class DisplayPreferencesDialog extends javax.swing.JDialog {
 
     /**
-     * Empty default constructor
-     */
-    public DisplayPreferencesDialog() {
-    }
-
-    /**
      * Boolean indicating whether the user canceled the editing.
      */
     private boolean canceled = false;

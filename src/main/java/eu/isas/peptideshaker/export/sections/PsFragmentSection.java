@@ -26,8 +26,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This class outputs the PSM related export features.
@@ -35,16 +33,6 @@ import java.util.stream.Collectors;
  * @author Marc Vaudel
  */
 public class PsFragmentSection {
-
-    /**
-     * Empty default constructor
-     */
-    public PsFragmentSection() {
-        fragmentFeatures = null;
-        indexes = false;
-        header = false;
-        writer = null;
-    }
 
     /**
      * The spectrum factory.

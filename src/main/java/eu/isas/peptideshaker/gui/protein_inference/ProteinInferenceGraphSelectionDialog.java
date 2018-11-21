@@ -11,12 +11,6 @@ import javax.swing.JDialog;
 public class ProteinInferenceGraphSelectionDialog extends javax.swing.JDialog {
 
     /**
-     * Empty default constructor
-     */
-    public ProteinInferenceGraphSelectionDialog() {
-    }
-
-    /**
      * Creates a new ProteinInferenceGraphSelectionJDialog.
      * 
      * @param parent the parent dialog

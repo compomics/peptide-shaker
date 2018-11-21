@@ -13,13 +13,6 @@ import java.awt.Toolkit;
 public class ProjectDetailsDialog extends javax.swing.JDialog {
 
     /**
-     * Empty default constructor
-     */
-    public ProjectDetailsDialog() {
-        peptideShakerGUI = null;
-    }
-
-    /**
      * The PeptideShakerGUI.
      */
     private final PeptideShakerGUI peptideShakerGUI;

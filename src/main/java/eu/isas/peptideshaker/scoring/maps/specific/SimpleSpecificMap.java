@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.scoring.maps.specific;
 
-import com.compomics.util.db.object.ObjectsDB;
 import eu.isas.peptideshaker.scoring.maps.SpecificTargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.util.HashMap;
@@ -14,12 +13,6 @@ import java.util.TreeMap;
  * @author Marc Vaudel
  */
 public class SimpleSpecificMap extends SpecificTargetDecoyMap {
-
-    /**
-     * Empty default constructor
-     */
-    public SimpleSpecificMap() {
-    }
 
     @Override
     public void clean(double minimalFDR) {

@@ -14,12 +14,6 @@ import org.apache.commons.cli.CommandLine;
 public class PathSettingsCLIInputBean {
 
     /**
-     * Empty default constructor
-     */
-    public PathSettingsCLIInputBean() {
-    }
-
-    /**
      * The path set to the temp folder.
      */
     private String tempFolder = "";

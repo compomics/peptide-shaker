@@ -13,13 +13,6 @@ import javax.swing.JPanel;
 public class ImageIconPanel extends JPanel {
 
     /**
-     * Empty default constructor
-     */
-    public ImageIconPanel() {
-        imageIcon = null;
-    }
-
-    /**
      * The image icon to display.
      */
     private final ImageIcon imageIcon;

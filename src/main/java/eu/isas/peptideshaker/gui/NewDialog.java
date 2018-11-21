@@ -56,12 +56,6 @@ import java.util.Vector;
 public class NewDialog extends javax.swing.JDialog {
 
     /**
-     * Empty default constructor
-     */
-    public NewDialog() {
-    }
-
-    /**
      * The modification factory.
      */
     private ModificationFactory modificationFactory = ModificationFactory.getInstance();

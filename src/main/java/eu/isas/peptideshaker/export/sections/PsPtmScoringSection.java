@@ -17,16 +17,6 @@ import java.util.Collections;
 public class PsPtmScoringSection {
 
     /**
-     * Empty default constructor
-     */
-    public PsPtmScoringSection() {
-        ptmScoringFeatures = null;
-        indexes = false;
-        header = false;
-        writer = null;
-    }
-
-    /**
      * The features to export.
      */
     private final ArrayList<PsPtmScoringFeature> ptmScoringFeatures;

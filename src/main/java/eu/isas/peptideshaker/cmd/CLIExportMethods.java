@@ -40,12 +40,6 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 public class CLIExportMethods {
 
     /**
-     * Empty default constructor
-     */
-    public CLIExportMethods() {
-    }
-
-    /**
      * Recalibrates spectra as specified in the follow-up input bean.
      *
      * @param followUpCLIInputBean the follow up input bean

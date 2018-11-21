@@ -73,11 +73,4 @@ public enum PsInputFilterFeature implements ExportFeature {
     public boolean isAdvanced() {
         return advanced;
     }
-
-    /**
-     * Empty default constructor
-     */
-    private PsInputFilterFeature() {
-        advanced = false;
-    }
 }

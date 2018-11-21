@@ -21,13 +21,6 @@ import java.util.TreeMap;
 public class PeptideChecker {
 
     /**
-     * Empty default constructor
-     */
-    public PeptideChecker() {
-    }
-
-    
-    /**
      * Corrects the protein mapping based on the confident or inferred variable modifications when located at the protein termini or targetting amino acid patterns.
      * 
      * @param peptide the peptide to check

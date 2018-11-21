@@ -51,12 +51,6 @@ import org.jfree.chart.plot.PlotOrientation;
 public class ProteinInferenceDialog extends javax.swing.JDialog {
 
     /**
-     * Empty default constructor
-     */
-    public ProteinInferenceDialog() {
-    }
-
-    /**
      * The inspected protein match.
      */
     private ProteinMatch inspectedMatch;

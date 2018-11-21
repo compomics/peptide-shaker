@@ -83,11 +83,4 @@ public enum PsSearchFeature implements ExportFeature {
     public boolean isAdvanced() {
         return advanced;
     }
-
-    /**
-     * Empty default constructor
-     */
-    private PsSearchFeature() {
-        advanced = false;
-    }
 }

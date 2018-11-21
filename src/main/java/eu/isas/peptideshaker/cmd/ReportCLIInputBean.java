@@ -16,13 +16,6 @@ import org.apache.commons.cli.CommandLine;
 public class ReportCLIInputBean {
 
     /**
-     * Empty default constructor
-     */
-    public ReportCLIInputBean() {
-        pathSettingsCLIInputBean = null;
-    }
-
-    /**
      * The cps file to work on.
      */
     private File cpsFile = null;

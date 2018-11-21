@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.followup;
 
 import com.compomics.util.experiment.biology.enzymes.Enzyme;
-import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -19,9 +18,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class exports identifications in an inclusion list.
@@ -29,12 +26,6 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  * @author Marc Vaudel
  */
 public class InclusionListExport {
-
-    /**
-     * Empty default constructor
-     */
-    public InclusionListExport() {
-    }
 
     /**
      * Writes an inclusion list based on the validated PSMs of the validated

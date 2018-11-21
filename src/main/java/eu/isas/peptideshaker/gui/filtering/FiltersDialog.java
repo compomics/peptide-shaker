@@ -27,13 +27,6 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 public class FiltersDialog extends javax.swing.JDialog {
 
     /**
-     * Empty default constructor
-     */
-    public FiltersDialog() {
-        peptideShakerGUI = null;
-    }
-
-    /**
      * The main GUI.
      */
     private final PeptideShakerGUI peptideShakerGUI;

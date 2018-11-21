@@ -71,11 +71,4 @@ public enum PsPtmScoringFeature implements ExportFeature {
     public boolean isAdvanced() {
         return advanced;
     }
-
-    /**
-     * Empty default constructor
-     */
-    private PsPtmScoringFeature() {
-        advanced = false;
-    }
 }

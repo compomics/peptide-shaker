@@ -70,11 +70,4 @@ public enum PsSpectrumCountingFeature implements ExportFeature {
     public boolean isAdvanced() {
         return advanced;
     }
-
-    /**
-     * Empty default constructor
-     */
-    private PsSpectrumCountingFeature() {
-        advanced = false;
-    }
 }

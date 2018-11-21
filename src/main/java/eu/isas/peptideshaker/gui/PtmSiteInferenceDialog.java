@@ -5,7 +5,6 @@ import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
-import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
@@ -14,7 +13,6 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
-import eu.isas.peptideshaker.scoring.PSMaps;
 import com.compomics.util.experiment.identification.peptide_shaker.PSModificationScores;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
@@ -25,11 +23,7 @@ import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.TreeMap;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
@@ -44,12 +38,6 @@ import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
  * @author Harald Barsnes
  */
 public class PtmSiteInferenceDialog extends javax.swing.JDialog {
-
-    /**
-     * Empty default constructor
-     */
-    public PtmSiteInferenceDialog() {
-    }
 
     /**
      * The main GUI.

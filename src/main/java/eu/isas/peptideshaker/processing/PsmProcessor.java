@@ -56,17 +56,6 @@ public class PsmProcessor {
     private final ModificationLocalizationScorer modificationLocalizationScorer;
 
     /**
-     * Empty default constructor
-     */
-    public PsmProcessor() {
-        identification = null;
-        sequenceProvider = null;
-        proteinCount = null;
-        matchesValidator = null;
-        modificationLocalizationScorer = null;
-    }
-
-    /**
      * Constructor.
      * 
      * @param identification the identification 

@@ -46,12 +46,6 @@ import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
     /**
-     * Empty default constructor
-     */
-    public ProteinInferencePeptideLevelDialog() {
-    }
-
-    /**
      * The PeptideShakerGUI parent.
      */
     private PeptideShakerGUI peptideShakerGUI;

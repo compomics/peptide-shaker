@@ -68,12 +68,6 @@ import java.util.stream.Collectors;
 public class MatchesValidator {
 
     /**
-     * Empty default constructor
-     */
-    public MatchesValidator() {
-    }
-
-    /**
      * The PSM target decoy map.
      */
     private TargetDecoyMap psmMap;

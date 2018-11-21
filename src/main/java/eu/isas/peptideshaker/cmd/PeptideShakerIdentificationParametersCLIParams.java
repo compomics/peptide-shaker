@@ -14,12 +14,6 @@ import org.apache.commons.cli.Options;
 public class PeptideShakerIdentificationParametersCLIParams {
 
     /**
-     * Empty default constructor
-     */
-    public PeptideShakerIdentificationParametersCLIParams() {
-    }
-
-    /**
      * Creates the options for the command line interface based on the possible
      * values.
      *

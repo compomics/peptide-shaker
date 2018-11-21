@@ -21,13 +21,6 @@ import org.apache.commons.cli.Options;
 public class PathSettingsCLI {
 
     /**
-     * Empty default constructor
-     */
-    public PathSettingsCLI() {
-        pathSettingsCLIInputBean = null;
-    }
-
-    /**
      * The input bean containing the user parameters.
      */
     private final PathSettingsCLIInputBean pathSettingsCLIInputBean;

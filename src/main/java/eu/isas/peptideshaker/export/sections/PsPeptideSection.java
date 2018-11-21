@@ -39,15 +39,6 @@ import java.util.stream.Collectors;
 public class PsPeptideSection {
 
     /**
-     * Empty default constructor
-     */
-    public PsPeptideSection() {
-        indexes = false;
-        header = false;
-        writer = null;
-    }
-
-    /**
      * The peptide features to export.
      */
     private final ArrayList<PsPeptideFeature> peptideFeatures = new ArrayList<>();

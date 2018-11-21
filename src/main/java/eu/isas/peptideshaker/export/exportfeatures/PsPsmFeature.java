@@ -89,11 +89,4 @@ public enum PsPsmFeature implements ExportFeature {
     public boolean isAdvanced() {
         return advanced;
     }
-
-    /**
-     * Empty default constructor
-     */
-    private PsPsmFeature() {
-        advanced = false;
-    }
 }

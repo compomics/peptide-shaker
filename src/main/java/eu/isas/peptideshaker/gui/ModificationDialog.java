@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.gui;
 import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 /**
@@ -14,12 +13,6 @@ import java.util.stream.Collectors;
  * @author Harald Barsnes
  */
 public class ModificationDialog extends javax.swing.JDialog {
-
-    /**
-     * Empty default constructor
-     */
-    public ModificationDialog() {
-    }
 
     /**
      * The known modifications.

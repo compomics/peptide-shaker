@@ -31,13 +31,6 @@ import org.apache.commons.cli.Options;
 public class ReportCLI extends CpsParent {
 
     /**
-     * Empty default constructor
-     */
-    public ReportCLI() {
-        reportCLIInputBean = null;
-    }
-
-    /**
      * The report command line options.
      */
     private final ReportCLIInputBean reportCLIInputBean;

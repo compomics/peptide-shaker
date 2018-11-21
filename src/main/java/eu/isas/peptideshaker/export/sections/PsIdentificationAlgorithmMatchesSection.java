@@ -31,7 +31,6 @@ import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
-import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,7 +43,6 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * This report section contains the results of the identification algorithms.
@@ -53,15 +51,6 @@ import java.util.stream.Stream;
  * @author Harald Barsnes
  */
 public class PsIdentificationAlgorithmMatchesSection {
-
-    /**
-     * Empty default constructor
-     */
-    public PsIdentificationAlgorithmMatchesSection() {
-        indexes = false;
-        header = false;
-        writer = null;
-    }
 
     /**
      * The features to export.

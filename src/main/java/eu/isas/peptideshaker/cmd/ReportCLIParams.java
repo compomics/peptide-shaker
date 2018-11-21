@@ -114,14 +114,4 @@ public enum ReportCLIParams {
 
         return output;
     }
-
-    /**
-     * Empty default constructor
-     */
-    private ReportCLIParams() {
-        id = "";
-        description = "";
-        mandatory = false;
-        hasArg = false;
-    }
 }

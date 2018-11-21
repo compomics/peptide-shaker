@@ -14,13 +14,6 @@ import org.apache.commons.cli.CommandLine;
 public class MzidCLIInputBean {
 
     /**
-     * Empty default constructor
-     */
-    public MzidCLIInputBean() {
-        pathSettingsCLIInputBean = null;
-    }
-
-    /**
      * The PeptideShaker cpsx file.
      */
     private File cpsFile;

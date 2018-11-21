@@ -18,16 +18,6 @@ import java.util.Collections;
 public class PsSpectrumCountingSection {
 
     /**
-     * Empty default constructor
-     */
-    public PsSpectrumCountingSection() {
-        spectrumCountingFeatures = null;
-        indexes = false;
-        header = false;
-        writer = null;
-    }
-
-    /**
      * The features to export.
      */
     private final ArrayList<PsSpectrumCountingFeature> spectrumCountingFeatures;

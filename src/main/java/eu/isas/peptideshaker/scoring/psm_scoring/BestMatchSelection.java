@@ -28,7 +28,6 @@ import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,7 +35,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import uk.ac.ebi.jmzidml.model.mzidml.params.PeptideUserParam;
 
 /**
  * This class contains the method for PSM best hit selection.
@@ -44,16 +42,6 @@ import uk.ac.ebi.jmzidml.model.mzidml.params.PeptideUserParam;
  * @author Marc Vaudel
  */
 public class BestMatchSelection {
-
-    /**
-     * Empty default constructor
-     */
-    public BestMatchSelection() {
-        proteinCount = null;
-        identification = null;
-        sequenceProvider = null;
-        fastaParameters = null;
-    }
 
     /**
      * The spectrum factory.

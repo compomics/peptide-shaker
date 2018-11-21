@@ -13,12 +13,6 @@ import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 public class PtmSelectionDialog extends javax.swing.JDialog {
 
     /**
-     * Empty default constructor
-     */
-    public PtmSelectionDialog() {
-    }
-
-    /**
      * The modification profile used for the search.
      */
     private ArrayList<String> searchedModifications = null;

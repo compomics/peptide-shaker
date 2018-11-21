@@ -17,12 +17,6 @@ import java.io.IOException;
 public class FastaExport {
 
     /**
-     * Empty default constructor
-     */
-    public FastaExport() {
-    }
-
-    /**
      * Exports the proteins of interest in a text file of the given format. Non
      * validated protein mode iterates all proteins in the original FASTA file
      * (size in the sequence factory). Validated protein mode iterates only

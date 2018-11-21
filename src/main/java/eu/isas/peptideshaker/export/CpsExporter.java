@@ -27,12 +27,6 @@ import java.io.*;
 public class CpsExporter {
 
     /**
-     * Empty default constructor
-     */
-    public CpsExporter() {
-    }
-
-    /**
      * Saves the given data in a cps file.
      *
      * @param destinationFile the destination cps file

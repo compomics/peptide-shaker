@@ -106,14 +106,4 @@ public enum MzidCLIParams {
 
         return output;
     }
-
-    /**
-     * Empty default constructor
-     */
-    private MzidCLIParams() {
-        id = "";
-        description = "";
-        mandatory = false;
-        hasArgument = false;
-    }
 }

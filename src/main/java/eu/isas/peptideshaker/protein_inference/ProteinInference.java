@@ -32,12 +32,6 @@ import java.util.stream.Collectors;
  */
 public class ProteinInference {
 
-    /**
-     * Empty default constructor
-     */
-    public ProteinInference() {
-    }
-
     public enum GroupSimplificationOption {
 
         /**

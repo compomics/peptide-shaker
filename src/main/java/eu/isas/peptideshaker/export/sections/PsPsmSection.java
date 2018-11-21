@@ -15,7 +15,6 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.parameters.identification.IdentificationParameters;
-import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
@@ -41,15 +40,6 @@ import java.util.stream.Collectors;
  * @author Marc Vaudel
  */
 public class PsPsmSection {
-
-    /**
-     * Empty default constructor
-     */
-    public PsPsmSection() {
-        indexes = false;
-        header = false;
-        writer = null;
-    }
 
     /**
      * The features to export.

@@ -60,7 +60,6 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -174,12 +173,6 @@ public class MzIdentMLExport {
      * If true, the protein sequences are included in the mzid file.
      */
     private boolean includeProteinSequences = false;
-
-    /**
-     * Empty default constructor
-     */
-    public MzIdentMLExport() {
-    }
 
     /**
      * Constructor.

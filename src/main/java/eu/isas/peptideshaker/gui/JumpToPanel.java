@@ -29,14 +29,6 @@ import java.util.HashMap;
 public class JumpToPanel extends javax.swing.JPanel {
 
     /**
-     * Empty default constructor
-     */
-    public JumpToPanel() {
-        peptideShakerGUI = null;
-        welcomeText = null;
-    }
-
-    /**
      * Enum of the types of data to jump to.
      */
     public enum JumpType {

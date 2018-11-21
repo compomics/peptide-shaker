@@ -10,12 +10,6 @@ import javax.swing.JDialog;
 public class ProteinInferenceGraphLegendDialog extends javax.swing.JDialog {
 
     /**
-     * Empty default constructor
-     */
-    public ProteinInferenceGraphLegendDialog() {
-    }
-
-    /**
      * Creates a new ProteinInferenceGraphLegendDialog.
      * 
      * @param parent the dialog parent

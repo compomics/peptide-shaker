@@ -23,8 +23,6 @@ import com.compomics.util.parameters.identification.search.ModificationParameter
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This class computes the mz deviations for a a given run (i.e. file).
@@ -32,13 +30,7 @@ import java.util.stream.Collectors;
  * @author Marc Vaudel
  */
 public class RunMzDeviation {
-
-    /**
-     * Empty default constructor
-     */
-    public RunMzDeviation() {
-    }
-
+    
     /**
      * The spectrum factory.
      */

@@ -83,23 +83,6 @@ public class StarHider {
     private final ExceptionHandler exceptionHandler;
 
     /**
-     * Empty default constructor
-     */
-    public StarHider() {
-        identification = null;
-        filterPreferences = null;
-        sequenceProvider = null;
-        proteinDetailsProvider = null;
-        geneMaps = null;
-        identificationFeaturesGenerator = null;
-        identificationParameters = null;
-        metrics = null;
-        progressDialog = null;
-        nThreads = 0;
-        exceptionHandler = null;
-    }
-
-    /**
      * Constructor.
      *
      * @param identification the identification
