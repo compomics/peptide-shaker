@@ -102,13 +102,9 @@ public class CpsExporter {
             }
 
             if (waitingHandler == null || !waitingHandler.isRunCanceled()) {
-                System.out.println("closing");
-                identification.getObjectsDB().close(false);
-                System.out.println("copying");
+                identification.getObjectsDB().lock();
                 Util.copyFile(identification.getObjectsDB().getDbFile(), destinationFile);
-                System.out.println("opening");
-                identification.getObjectsDB().establishConnection(true);
-                System.out.println("done");
+                identification.getObjectsDB().unlock();
 
             }
 
