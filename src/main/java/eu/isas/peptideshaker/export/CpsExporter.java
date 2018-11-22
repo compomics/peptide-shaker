@@ -102,7 +102,7 @@ public class CpsExporter {
             }
 
             if (waitingHandler == null || !waitingHandler.isRunCanceled()) {
-                identification.getObjectsDB().lock();
+                identification.getObjectsDB().lock(waitingHandler);
                 Util.copyFile(identification.getObjectsDB().getDbFile(), destinationFile);
                 identification.getObjectsDB().unlock();
 
