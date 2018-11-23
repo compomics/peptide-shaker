@@ -91,7 +91,6 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Specific
 import com.compomics.util.experiment.identification.spectrum_annotation.SpectrumAnnotator;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
-import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.gui.parameters.identification.IdentificationParametersEditionDialog;
 import com.compomics.util.gui.parameters.identification.IdentificationParametersOverviewDialog;
 import com.compomics.util.gui.parameters.tools.ProcessingParametersDialog;
@@ -145,6 +144,7 @@ import com.compomics.util.parameters.identification.advanced.SequenceMatchingPar
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.processing.ProteinProcessor;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -6246,8 +6246,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     progressDialog.setMaxPrimaryProgressCounter(getIdentification().getSpectrumIdentification().size() + 1);
                     progressDialog.increasePrimaryProgressCounter();
 
-                    ProjectDetails projectParameters = cpsParent.getProjectDetails();
-                    ArrayList<String> fileNames = getIdentification().getFractions();
+                    ProjectDetails projectParameters = cpsParent.getProjectDetails();     
+                    Set<String> fileNames = getProjectDetails().getSpectrumFileNames();
                     ArrayList<File> mgfFiles = fileNames.stream()
                             .map(projectParameters::getSpectrumFile)
                             .collect(Collectors.toCollection(ArrayList::new));
