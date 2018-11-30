@@ -1729,7 +1729,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     int selectedPdbIndex = (Integer) pdbMatchesJTable.getValueAt(pdbMatchesJTable.getSelectedRow(), 0);
                     PdbParameter lParam = uniProtPdb.getPdbs().get(selectedPdbIndex - 1);
 
-                    String link = "https://www.rcsb.org/pdb/files/" + lParam.getPdbaccession() + ".pdb";
+                    String link = "http://www.rcsb.org/pdb/files/" + lParam.getPdbaccession() + ".pdb";
 
                     jmolPanel.getViewer().openFile(link);
                     if (ribbonModel) {
@@ -3127,45 +3127,44 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     break;
                 }
 
-                int peptideEnd = peptideStart + peptideSequence.length();
+                int peptideEnd = peptideStart + peptideSequence.length() - 1;
 
-                for (int j = 1; j < peptideEnd && !progressDialog.isRunCanceled(); j++) {
+                for (int j = peptideStart; j < peptideEnd && !progressDialog.isRunCanceled(); j++) {
 
-                    int aaIndex = j + peptideStart;
-                    String modName = null; //variableModifications[j]; @TODO: re-add when the ptms have returned
+                    String modName = variableModifications[j - peptideStart];
 
                     if (modName != null && displayParameters.isDisplayedPTM(modName)) {
 
                         Color ptmColor = new Color(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName));
 
                         jmolPanel.getViewer().evalString(
-                                "select resno =" + (aaIndex - chains[selectedChainIndex - 1].getDifference())
+                                "select resno =" + (j - chains[selectedChainIndex - 1].getDifference())
                                 + " and chain = " + currentChain + "; color ["
                                 + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "]");
 
                         if (showModificationLabels) {
                             jmolPanel.getViewer().evalString(
-                                    "select resno =" + (aaIndex - chains[selectedChainIndex - 1].getDifference())
+                                    "select resno =" + (j - chains[selectedChainIndex - 1].getDifference())
                                     + " and chain = " + currentChain + " and *.ca; color ["
                                     + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "];"
                                     + "label " + modName);
                         }
                     }
 
-                    modName = null; //fixedModifications[j]; @TODO: re-add when the ptms have returned
+                    modName = fixedModifications[j - peptideStart];
 
                     if (modName != null && displayParameters.isDisplayedPTM(modName)) {
 
                         Color ptmColor = new Color(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName));
 
                         jmolPanel.getViewer().evalString(
-                                "select resno =" + (aaIndex - chains[selectedChainIndex - 1].getDifference())
+                                "select resno =" + (j - chains[selectedChainIndex - 1].getDifference())
                                 + " and chain = " + currentChain + "; color ["
                                 + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "]");
 
                         if (showModificationLabels) {
                             jmolPanel.getViewer().evalString(
-                                    "select resno =" + (aaIndex - chains[selectedChainIndex - 1].getDifference())
+                                    "select resno =" + (j - chains[selectedChainIndex - 1].getDifference())
                                     + " and chain = " + currentChain + " and *.ca; color ["
                                     + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "];"
                                     + "label " + modName);
