@@ -83,6 +83,7 @@ public class ProjectExport {
             waitingHandler.setMaxSecondaryProgressCounter(spectrumFiles.size());
         }
 
+        int indexesPositions = dataFiles.size();
         for (File spectrumFile : spectrumFiles) {
 
             if (waitingHandler != null) {
@@ -93,14 +94,16 @@ public class ProjectExport {
             }
 
             if (spectrumFile.exists()) {
-                // The index must be placed before the mgf itself in order to access to it faster
                 indexFile = new File(spectrumFile.getParentFile(), SpectrumFactory.getIndexName(spectrumFile.getName()));
                 if (indexFile.exists()) {
-                    dataFiles.add(indexFile.getAbsolutePath());
+                    // indexes are added right after the fasta and fasta index files
+                    dataFiles.add(indexesPositions++, indexFile.getAbsolutePath());                    
                 }
+                // We add the big spectrum files at the end to make index access faster
                 dataFiles.add(spectrumFile.getAbsolutePath());
             }
         }
+           
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Zipping Project. Please Wait...");
