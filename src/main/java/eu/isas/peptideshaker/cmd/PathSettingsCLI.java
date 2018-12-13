@@ -5,7 +5,6 @@ import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
-import static eu.isas.peptideshaker.cmd.PeptideShakerCLI.redirectErrorStream;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import java.io.File;
 import java.io.PrintWriter;
@@ -66,9 +65,9 @@ public class PathSettingsCLI {
 
         // set the PeptideShaker log file
         if (pathSettingsCLIInputBean.getLogFolder() != null) {
-            redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
+            PeptideShakerCLI.redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
         } else {
-            redirectErrorStream(new File(PeptideShaker.getJarFilePath() + File.separator + "resources"));
+            PeptideShakerCLI.redirectErrorStream(new File(PeptideShaker.getJarFilePath() + File.separator + "resources"));
         }
 
         if (pathSettingsCLIInputBean.hasInput()) {
