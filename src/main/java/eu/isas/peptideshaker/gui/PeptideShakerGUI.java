@@ -6216,10 +6216,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                     if (!fileFound && !locateFastaFileManually()) {
 
-                        File fastaFile = getIdentificationParameters().getSearchParameters().getFastaFile();
+                        String fastaFilePath = getIdentificationParameters().getSearchParameters().getFastaFile();
 
                         JOptionPane.showMessageDialog(peptideShakerGUI,
-                                "An error occurred while reading:\n" + fastaFile.getAbsolutePath() + "."
+                                "An error occurred while reading:\n" + fastaFilePath + "."
                                 + "\n\nFile not found.",
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
 
@@ -6471,9 +6471,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private boolean locateFastaFileManually() throws FileNotFoundException, ClassNotFoundException, IOException {
 
-        File fastaFile = getIdentificationParameters().getSearchParameters().getFastaFile();
+        String fastaFilePath = getIdentificationParameters().getSearchParameters().getFastaFile();
         JOptionPane.showMessageDialog(this,
-                "FASTA file " + fastaFile.getAbsolutePath() + " was not found."
+                "FASTA file " + fastaFilePath + " was not found."
                 + "\n\nPlease locate it manually.",
                 "File Input Error", JOptionPane.WARNING_MESSAGE);
 
@@ -6499,12 +6499,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         int returnVal = fileChooser.showDialog(this, "Open");
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
+            
             File selectedFastaFile = fileChooser.getSelectedFile();
 
             if (selectedFastaFile.exists()) {
 
                 tempLastSelectedFolder.setLastSelectedFolder(selectedFastaFile.getAbsolutePath());
-                getIdentificationParameters().getSearchParameters().setFastaFile(selectedFastaFile);
+                getIdentificationParameters().getSearchParameters().setFastaFile(selectedFastaFile.getAbsolutePath());
                 dataSaved = false;
                 cpsParent.loadFastaFile(progressDialog);
                 return true;
@@ -7457,7 +7458,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     public void run() {
 
                         File cpsFile = cpsParent.getCpsFile();
-                        File fastaFile = PeptideShakerGUI.this.getIdentificationParameters().getSearchParameters().getFastaFile();
+                        String fastaFilePath = PeptideShakerGUI.this.getIdentificationParameters().getSearchParameters().getFastaFile();
                         ArrayList<File> spectrumFiles = new ArrayList<>();
                         for (String spectrumFileName : getIdentification().getFractions()) {
                             File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
@@ -7465,12 +7466,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         }
 
                         try {
-                            ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, cpsFile, progressDialog);
+                            
+                            ProjectExport.exportProjectAsZip(zipFile, fastaFilePath, spectrumFiles, cpsFile, progressDialog);
+                        
                         } catch (FileNotFoundException e) {
+                        
                             e.printStackTrace();
                             progressDialog.setRunFinished();
                             JOptionPane.showMessageDialog(PeptideShakerGUI.this, "Could not zip files.", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
                             return;
+                        
                         } catch (IOException e) {
                             e.printStackTrace();
                             progressDialog.setRunFinished();

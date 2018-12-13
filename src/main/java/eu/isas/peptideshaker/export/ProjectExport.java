@@ -30,7 +30,7 @@ public class ProjectExport {
      * Exports the project as zip file.
      *
      * @param zipFile the destination file
-     * @param fastaFile the FASTA file
+     * @param fastaFile path to the FASTA file
      * @param spectrumFiles the spectrum files
      * @param cpsFile the cps file
      * @param waitingHandler a waiting handler to display progress to the user
@@ -39,7 +39,7 @@ public class ProjectExport {
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing the file
      */
-    public static void exportProjectAsZip(File zipFile, File fastaFile, ArrayList<File> spectrumFiles, File cpsFile, WaitingHandler waitingHandler) throws IOException {
+    public static void exportProjectAsZip(File zipFile, String fastaFile, ArrayList<File> spectrumFiles, File cpsFile, WaitingHandler waitingHandler) throws IOException {
         ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, null, cpsFile, waitingHandler);
     }
 
@@ -47,7 +47,7 @@ public class ProjectExport {
      * Exports the project as zip file adding reports to it.
      *
      * @param zipFile the destination file
-     * @param fastaFile the FASTA file
+     * @param fastaFile path to the FASTA file
      * @param spectrumFiles the spectrum files
      * @param reportFiles the report files
      * @param cpsFile the cps file
@@ -57,14 +57,14 @@ public class ProjectExport {
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing the file
      */
-    public static void exportProjectAsZip(File zipFile, File fastaFile, ArrayList<File> spectrumFiles, ArrayList<File> reportFiles, File cpsFile, WaitingHandler waitingHandler) throws IOException {
+    public static void exportProjectAsZip(File zipFile, String fastaFile, ArrayList<File> spectrumFiles, ArrayList<File> reportFiles, File cpsFile, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Getting FASTA File. Please Wait...");
         }
 
         ArrayList<String> dataFiles = new ArrayList<>();
-        dataFiles.add(fastaFile.getAbsolutePath());
+        dataFiles.add(fastaFile);
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Getting Spectrum Files. Please Wait...");

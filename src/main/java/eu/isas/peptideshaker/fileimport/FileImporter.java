@@ -927,13 +927,14 @@ public class FileImporter {
     public void importSequences(SequenceMatchingParameters sequenceMatchingPreferences, SearchParameters searchParameters, PeptideVariantsParameters peptideVariantsPreferences, WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler) throws IOException {
 
-        File fastaFile = searchParameters.getFastaFile();
+        String fastaFilePath = searchParameters.getFastaFile();
+        File fastaFile = new File(fastaFilePath);
         FastaParameters fastaParameters = searchParameters.getFastaParameters();
 
         waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".", true, true);
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
-        fastaSummary = FastaSummary.getSummary(fastaFile, fastaParameters, waitingHandler);
+        fastaSummary = FastaSummary.getSummary(fastaFilePath, fastaParameters, waitingHandler);
 
         FMIndex fmIndex = new FMIndex(fastaFile, fastaParameters, waitingHandler, true, searchParameters.getModificationParameters(), peptideVariantsPreferences);
 

@@ -2581,7 +2581,7 @@ public class MzIdentMLExport {
         }
 
         // add the database
-        File fastaFile = identificationParameters.getSearchParameters().getFastaFile();
+        File fastaFile = new File(identificationParameters.getSearchParameters().getFastaFile());
         bw.write(getCurrentTabSpace());
         bw.write("<SearchDatabase numDatabaseSequences=\"");
         bw.write(fastaSummary.nSequences);

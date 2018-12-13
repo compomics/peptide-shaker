@@ -16,7 +16,6 @@ import com.compomics.cli.identification_parameters.IdentificationParametersInput
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.exceptions.exception_handlers.CommandLineExceptionHandler;
 import com.compomics.util.experiment.ProjectParameters;
-import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
@@ -380,7 +379,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     spectrumFiles.add(spectrumFile);
                 }
 
-                File fastaFile = identificationParameters.getSearchParameters().getFastaFile();
+                String fastaFile = identificationParameters.getSearchParameters().getFastaFile();
                 try {
                     ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, reportFiles, cpsFile, waitingHandler);
                     final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
@@ -653,7 +652,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         // try to locate the fasta file
-        File fastaFile = searchParameters.getFastaFile();
+        File fastaFile = new File(searchParameters.getFastaFile());
         if (!fastaFile.exists()) {
             boolean found = false;
             // look in the database folder
@@ -662,7 +661,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 File newFile = new File(tempDbFolder, fastaFile.getName());
                 if (newFile.exists()) {
                     fastaFile = newFile;
-                    searchParameters.setFastaFile(fastaFile);
+                    searchParameters.setFastaFile(fastaFile.getAbsolutePath());
                     found = true;
                 }
             } catch (Exception e) {
@@ -674,7 +673,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     File newFile = new File(dataFolder, fastaFile.getName());
                     if (newFile.exists()) {
                         fastaFile = newFile;
-                        searchParameters.setFastaFile(fastaFile);
+                        searchParameters.setFastaFile(fastaFile.getAbsolutePath());
                         found = true;
                         break;
                     }

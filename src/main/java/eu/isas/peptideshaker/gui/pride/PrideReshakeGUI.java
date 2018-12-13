@@ -2698,10 +2698,10 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 try {
                     // set up the identification parameters
                     SearchParameters prideSearchParameters = new SearchParameters();
-                    prideSearchParameters.setFastaParameters(FastaParameters.inferParameters(new File(database), progressDialog));
+                    prideSearchParameters.setFastaParameters(FastaParameters.inferParameters(database, progressDialog));
 
                     // set the database
-                    prideSearchParameters.setFastaFile(new File(database));
+                    prideSearchParameters.setFastaFile(database);
 
                     // set digestion preferences to default
                     prideSearchParameters.setDigestionParameters(DigestionParameters.getDefaultParameters());

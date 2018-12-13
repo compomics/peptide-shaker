@@ -781,9 +781,9 @@ public class NewDialog extends javax.swing.JDialog {
 
                 if (!sequenceDbDetailsDialog.isCanceled()) {
 
-                    File fastaFile = sequenceDbDetailsDialog.getSelectedFastaFile();
+                    String fastaFile = sequenceDbDetailsDialog.getSelectedFastaFile();
                     FastaParameters fastaParameters = sequenceDbDetailsDialog.getFastaParameters();
-                    fastaFileTxt.setText(fastaFile.getName());
+                    fastaFileTxt.setText(Util.getFileName(fastaFile));
                     searchParameters.setFastaFile(fastaFile);
                     searchParameters.setFastaParameters(fastaParameters);
                     checkFastaFile();
@@ -1451,7 +1451,7 @@ public class NewDialog extends javax.swing.JDialog {
                 && identificationParameters != null
                 && identificationParameters.getSearchParameters() != null
                 && identificationParameters.getSearchParameters().getFastaFile() != null
-                && identificationParameters.getSearchParameters().getFastaFile().exists()) {
+                && new File(identificationParameters.getSearchParameters().getFastaFile()).exists()) {
             databaseLabel.setForeground(Color.BLACK);
             databaseLabel.setToolTipText(null);
             fastaFileTxt.setToolTipText(null);
@@ -1576,13 +1576,19 @@ public class NewDialog extends javax.swing.JDialog {
             }
         }
 
-        File fastaFile = searchParameters.getFastaFile();
+        String fastaFilePath = searchParameters.getFastaFile();
 
-        if (fastaFile != null) {
+        if (fastaFilePath != null) {
+
+            File fastaFile = new File(fastaFilePath);
             boolean found = false;
+
             if (fastaFile.exists()) {
+
                 found = true;
+
             } else {
+
                 // look in the database folder
                 try {
                     UtilitiesUserParameters utilitiesUserPreferences = UtilitiesUserParameters.loadUserParameters();
@@ -1590,7 +1596,7 @@ public class NewDialog extends javax.swing.JDialog {
                     File newFile = new File(dbFolder, fastaFile.getName());
                     if (newFile.exists()) {
                         fastaFile = newFile;
-                        searchParameters.setFastaFile(fastaFile);
+                        searchParameters.setFastaFile(fastaFilePath);
                         found = true;
                     }
                 } catch (Exception e) {
@@ -1602,7 +1608,7 @@ public class NewDialog extends javax.swing.JDialog {
                         File newFile = new File(dataFolder, fastaFile.getName());
                         if (newFile.exists()) {
                             fastaFile = newFile;
-                            searchParameters.setFastaFile(fastaFile);
+                            searchParameters.setFastaFile(fastaFilePath);
                             found = true;
                             break;
                         }
@@ -1613,7 +1619,7 @@ public class NewDialog extends javax.swing.JDialog {
                         File newFile = new File(parentFolder, fastaFile.getName());
                         if (newFile.exists()) {
                             fastaFile = newFile;
-                            searchParameters.setFastaFile(fastaFile);
+                            searchParameters.setFastaFile(fastaFilePath);
                             found = true;
                         } else {
                             JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName()
@@ -1816,12 +1822,12 @@ public class NewDialog extends javax.swing.JDialog {
     public void checkFastaFile() {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        File fastaFile = searchParameters.getFastaFile();
+        String fastaFilePath = searchParameters.getFastaFile();
         FastaParameters fastaParameters = searchParameters.getFastaParameters();
 
         try {
 
-            FastaSummary fastaSummary = FastaSummary.getSummary(fastaFile, fastaParameters, progressDialog);
+            FastaSummary fastaSummary = FastaSummary.getSummary(fastaFilePath, fastaParameters, progressDialog);
 
             Integer nUniprot = fastaSummary.databaseType.get(ProteinDatabase.UniProt);
             int total = fastaSummary.databaseType.values().stream()
@@ -1900,10 +1906,14 @@ public class NewDialog extends javax.swing.JDialog {
             settingsComboBox.setModel(new javax.swing.DefaultComboBoxModel(parameterList));
             settingsComboBox.setSelectedItem(identificationParameters.getName());
 
-            File fastaFile = identificationParameters.getSearchParameters().getFastaFile();
-            if (fastaFile != null) {
-                fastaFileTxt.setText(fastaFile.getName());
+            String fastaFilePath = identificationParameters.getSearchParameters().getFastaFile();
+            
+            if (fastaFilePath != null) {
+            
+                fastaFileTxt.setText(Util.getFileName(fastaFilePath));
+            
             }
+            
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
                     "Failed to import identification parameters from: " + newIdentificationParameters.getName() + ".", "Identification Parameters",

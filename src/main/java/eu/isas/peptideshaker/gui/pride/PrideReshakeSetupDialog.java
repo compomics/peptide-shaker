@@ -971,31 +971,31 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         if (prideReShakeGUI.getPeptideShakerGUI().getIdentificationParameters() == null) {
             prideReShakeGUI.getPeptideShakerGUI().setDefaultParameters();
         }
-        
-        SearchParameters searchParameters = prideReShakeGUI.getPeptideShakerGUI().getIdentificationParameters().getSearchParameters();
-        File fastaFile = searchParameters.getFastaFile();
 
-        SequenceDbDetailsDialog sequenceDbDetailsDialog = new SequenceDbDetailsDialog(prideReShakeGUI, fastaFile, searchParameters.getFastaParameters(),
+        SearchParameters searchParameters = prideReShakeGUI.getPeptideShakerGUI().getIdentificationParameters().getSearchParameters();
+        String fastaFilePath = searchParameters.getFastaFile();
+
+        SequenceDbDetailsDialog sequenceDbDetailsDialog = new SequenceDbDetailsDialog(prideReShakeGUI, fastaFilePath, searchParameters.getFastaParameters(),
                 prideReShakeGUI.getPeptideShakerGUI().getLastSelectedFolder(), true,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
         boolean success = sequenceDbDetailsDialog.selectDB(true);
         if (success) {
-            
+
             sequenceDbDetailsDialog.setVisible(true);
-            
-            fastaFile = sequenceDbDetailsDialog.getSelectedFastaFile();
-            searchParameters.setFastaFile(fastaFile);
+
+            fastaFilePath = sequenceDbDetailsDialog.getSelectedFastaFile();
+            searchParameters.setFastaFile(fastaFilePath);
             searchParameters.setFastaParameters(sequenceDbDetailsDialog.getFastaParameters());
- 
+
         }
 
         lastSelectedFolder.setLastSelectedFolder(sequenceDbDetailsDialog.getLastSelectedFolder());
 
-        if (fastaFile != null) {
+        if (fastaFilePath != null) {
 
-            databaseSettingsTxt.setText(fastaFile.getAbsolutePath());
+            databaseSettingsTxt.setText(fastaFilePath);
             checkFastaFile();
 
         }
@@ -1588,34 +1588,34 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      * target decoy.
      */
     public void checkFastaFile() {
-        
+
         try {
-            
-        SearchParameters searchParameters = prideReShakeGUI.getPeptideShakerGUI().getIdentificationParameters().getSearchParameters();
-        FastaSummary fastaSummary = FastaSummary.getSummary(searchParameters.getFastaFile(), searchParameters.getFastaParameters(), progressDialog);
-        
-        if (!fastaSummary.databaseType.containsKey(ProteinDatabase.UniProt)) {
-            
-            showDataBaseHelpDialog();
- 
-        }
-        if (!searchParameters.getFastaParameters().isTargetDecoy()) {
-            
-            JOptionPane.showMessageDialog(this, "PeptideShaker validation requires the use of a taget-decoy database.\n"
-                    + "Some features will be limited if using other types of databases.\n\n"
-                    + "Note that using Automatic Decoy Search in Mascot is not supported.\n\n"
-                    + "See the PeptideShaker home page for details.",
-                    "No Decoys Found",
-                    JOptionPane.INFORMATION_MESSAGE);
-        
-        }
-        
+
+            SearchParameters searchParameters = prideReShakeGUI.getPeptideShakerGUI().getIdentificationParameters().getSearchParameters();
+            FastaSummary fastaSummary = FastaSummary.getSummary(searchParameters.getFastaFile(), searchParameters.getFastaParameters(), progressDialog);
+
+            if (!fastaSummary.databaseType.containsKey(ProteinDatabase.UniProt)) {
+
+                showDataBaseHelpDialog();
+
+            }
+            if (!searchParameters.getFastaParameters().isTargetDecoy()) {
+
+                JOptionPane.showMessageDialog(this, "PeptideShaker validation requires the use of a taget-decoy database.\n"
+                        + "Some features will be limited if using other types of databases.\n\n"
+                        + "Note that using Automatic Decoy Search in Mascot is not supported.\n\n"
+                        + "See the PeptideShaker home page for details.",
+                        "No Decoys Found",
+                        JOptionPane.INFORMATION_MESSAGE);
+
+            }
+
         } catch (IOException exception) {
-            
+
             JOptionPane.showMessageDialog(this, "An error occurred while parsing the fasta file.",
                     "Fasta File Error",
                     JOptionPane.INFORMATION_MESSAGE);
-            
+
         }
     }
 

@@ -37,9 +37,9 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      */
     private final SearchParameters searchParameters;
     /**
-     * The selected fasta file.
+     * The path to the selected fasta file.
      */
-    private File selectedFastaFile = null;
+    private String selectedFastaFile = null;
     /**
      * The last selected folder.
      */
@@ -60,15 +60,15 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      */
     public DatabaseHelpDialog(PeptideShakerGUI peptideShakerGUI, SearchParameters searchParameters, LastSelectedFolder lastSelectedFolder, boolean modal, String species) {
         super(peptideShakerGUI, modal);
-        
+
         initComponents();
-        
+
         this.species = species;
         this.searchParameters = searchParameters;
         this.lastSelectedFolder = lastSelectedFolder;
 
         this.utilitiesUserParameters = UtilitiesUserParameters.loadUserParameters();
-        
+
         boolean speciesOrTaxonomySet = false;
 
         if (species != null && species.length() > 0) {
@@ -85,7 +85,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
 
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
-        
+
     }
 
     /**
@@ -345,10 +345,15 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
 
         }
 
-        if (selectedFastaFile != null && selectedFastaFile.exists()) {
+        if (selectedFastaFile != null) {
 
-            startLocation = selectedFastaFile.getParentFile();
+            File fastaFile = new File(selectedFastaFile);
 
+            if (fastaFile.exists()) {
+
+                startLocation = fastaFile.getParentFile();
+
+            }
         }
 
         JFileChooser fc = new JFileChooser(startLocation);
@@ -369,30 +374,30 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
         int result = fc.showOpenDialog(this);
 
         if (result == JFileChooser.APPROVE_OPTION) {
-            
-            selectedFastaFile = fc.getSelectedFile();
 
-            if (selectedFastaFile.getName().contains(" ")) {
+            File selectedFile = fc.getSelectedFile();
+            selectedFastaFile = selectedFile.getAbsolutePath();
+
+            if (selectedFile.getName().contains(" ")) {
                 renameFastaFileName();
             } else {
-                databaseSettingsTxt.setText(selectedFastaFile.getAbsolutePath());
-                databaseSettingsTxt.setText(selectedFastaFile.getAbsolutePath());
+                databaseSettingsTxt.setText(selectedFastaFile);
             }
 
-            lastSelectedFolder.setLastSelectedFolder(SequenceDbDetailsDialog.lastFolderKey, selectedFastaFile.getAbsolutePath());
+            lastSelectedFolder.setLastSelectedFolder(SequenceDbDetailsDialog.lastFolderKey, selectedFastaFile);
             targetDecoySettingsButton.setEnabled(true);
 
             // check if the database contains decoys
-            if (!selectedFastaFile.getAbsolutePath().endsWith(utilitiesUserParameters.getTargetDecoyFileNameSuffix() + ".fasta")) {
+            if (!selectedFastaFile.endsWith(utilitiesUserParameters.getTargetDecoyFileNameSuffix() + ".fasta")) {
 
                 int value = JOptionPane.showConfirmDialog(this,
                         "The selected FASTA file does not seem to contain decoy sequences.\n"
                         + "Decoys are required by PeptideShaker. Add decoys?", "Add Decoy Sequences?", JOptionPane.YES_NO_OPTION);
 
                 if (value == JOptionPane.YES_OPTION) {
-                
+
                     targetDecoySettingsButtonActionPerformed(null);
-                
+
                 }
             }
 
@@ -472,16 +477,16 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        
+
         if (selectedFastaFile != null) {
-            
+
             searchParameters.setFastaFile(selectedFastaFile);
-            
+
         }
-        
+
         UtilitiesUserParameters.saveUserParameters(utilitiesUserParameters);
         dispose();
-        
+
     }//GEN-LAST:event_okButtonActionPerformed
 
     /**
@@ -526,41 +531,44 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
     public void renameFastaFileName() {
 
         // @TODO: this method should be merged with the identical method in SearchGUI...
-        String tempName = selectedFastaFile.getName();
+        File fastaFile = new File(selectedFastaFile);
+        
+        String tempName = fastaFile.getName();
         tempName = tempName.replaceAll(" ", "_");
 
-        File renamedFile = new File(selectedFastaFile.getParentFile().getAbsolutePath() + File.separator + tempName);
+        File renamedFile = new File(fastaFile.getParentFile().getAbsolutePath() + File.separator + tempName);
 
         boolean success = false;
 
         try {
-            
+
             success = renamedFile.createNewFile();
 
             if (success) {
-                
-                Util.copyFile(selectedFastaFile, renamedFile, true);
-                
+
+                Util.copyFile(fastaFile, renamedFile, true);
+
             }
-            
+
         } catch (IOException e) {
-            
+
             e.printStackTrace();
-        
+
         }
 
         if (success) {
-            
+
             JOptionPane.showMessageDialog(this, "Your FASTA file name contained white space and has been renamed to:\n"
-                    + selectedFastaFile.getParentFile().getAbsolutePath() + File.separator + tempName, "Renamed File", JOptionPane.WARNING_MESSAGE);
-            databaseSettingsTxt.setText(selectedFastaFile.getParentFile().getAbsolutePath() + File.separator + tempName);
+                    + fastaFile.getParentFile().getAbsolutePath() + File.separator + tempName, "Renamed File", JOptionPane.WARNING_MESSAGE);
+            selectedFastaFile = renamedFile.getAbsolutePath();
+            databaseSettingsTxt.setText(selectedFastaFile);
             targetDecoySettingsButton.setEnabled(true);
-        
+
         } else {
-        
+
             JOptionPane.showMessageDialog(this, "Your FASTA file name contains white space and has to been renamed.",
                     "Please Rename File", JOptionPane.WARNING_MESSAGE);
-        
+
         }
     }
 
@@ -572,18 +580,15 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      */
     private void generateTargetDecoyDatabase() {
 
-        String fastaInput = selectedFastaFile.getAbsolutePath();
 
         // set up the new fasta file name
-        String newFasta = fastaInput;
+        String newFasta = selectedFastaFile;
 
         // remove the ending .fasta (if there)
-        if (fastaInput.lastIndexOf(".") != -1) {
-            newFasta = fastaInput.substring(0, fastaInput.lastIndexOf("."));
-        }
+        Util.removeExtension(newFasta);
 
         // add the target decoy tag
-        newFasta += utilitiesUserParameters.getTargetDecoyFileNameSuffix() + ".fasta";
+        newFasta = String.join("", newFasta, utilitiesUserParameters.getTargetDecoyFileNameSuffix(), ".fasta");
 
         try {
 
@@ -592,13 +597,13 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
             progressDialog.setTitle("Appending Decoy Sequences. Please Wait...");
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
-            DecoyConverter.appendDecoySequences(selectedFastaFile, newFile, progressDialog);
+            DecoyConverter.appendDecoySequences(new File(selectedFastaFile), newFile, progressDialog);
 
             progressDialog.setTitle("Getting Database Details. Please Wait...");
 
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
-            selectedFastaFile = newFile;
+            selectedFastaFile = newFasta;
 
         } catch (OutOfMemoryError error) {
 
@@ -614,14 +619,14 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
         } catch (FileNotFoundException e) {
 
             JOptionPane.showMessageDialog(this,
-                    new String[]{"FASTA Import Error.", "File " + fastaInput + " not found."},
+                    new String[]{"FASTA Import Error.", "File " + selectedFastaFile + " not found."},
                     "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
             e.printStackTrace();
 
         } catch (Exception e) {
 
             JOptionPane.showMessageDialog(this,
-                    new String[]{"FASTA Import Error.", "File " + fastaInput + " could not be imported."},
+                    new String[]{"FASTA Import Error.", "File " + selectedFastaFile + " could not be imported."},
                     "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
             e.printStackTrace();
 
@@ -649,7 +654,8 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
             databaseSettingsLbl.setToolTipText("Please select a valid '.fasta' or '.fas' database file");
             valid = false;
         } else {
-            if (!selectedFastaFile.exists()) {
+            File fastaFile = new File(selectedFastaFile);
+            if (!fastaFile.exists()) {
                 if (showMessage && valid) {
                     JOptionPane.showMessageDialog(this, "The database file could not be found.", "Search Database Not Found", JOptionPane.WARNING_MESSAGE);
                 }

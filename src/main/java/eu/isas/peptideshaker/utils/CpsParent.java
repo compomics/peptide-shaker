@@ -28,6 +28,7 @@ import eu.isas.peptideshaker.preferences.UserParameters;
 import eu.isas.peptideshaker.preferences.UserPreferencesParent;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import java.io.File;
 import java.io.IOException;
@@ -198,6 +199,22 @@ public class CpsParent extends UserPreferencesParent {
         
         ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), destinationFile.getName(), false);     
         PeptideShakerParameters psParameters = (PeptideShakerParameters) objectsDB.retrieveObject(PeptideShakerParameters.key);       
+        
+        try {
+        
+        File dummyFile = new File(PeptideShaker.getJarFilePath());
+        objectsDB.insertObject(123456l, dummyFile);
+        
+        Object out = objectsDB.retrieveObject(123456l);
+        File fileOut = (File) out;
+        
+        System.out.println("Original path: " + dummyFile.getAbsolutePath());
+        System.out.println("Retrieved path: " + fileOut.getAbsolutePath());
+        
+        } catch (Exception e) {
+            
+            
+        }
         
         projectParameters = (ProjectParameters) objectsDB.retrieveObject(ProjectParameters.key);
         identification = new Identification(objectsDB);
@@ -857,7 +874,7 @@ public class CpsParent extends UserPreferencesParent {
             }
 
             report.append("<br><b>FASTA File (identification):</b><br>");
-            report.append(identificationParameters.getSearchParameters().getFastaFile().getAbsolutePath()).append("<br>");
+            report.append(identificationParameters.getSearchParameters().getFastaFile()).append("<br>");
 
             report.append("<br><b>FASTA File (protein inference):</b><br>");
             // @TODO

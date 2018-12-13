@@ -33,9 +33,9 @@ public class ProjectDetails implements Serializable {
      */
     private HashMap<String, HashMap<String, ArrayList<String>>> identificationAlgorithms = new HashMap<>();
     /**
-     * Map of the spectrum files indexed by name.
+     * Map of the spectrum files paths indexed by name.
      */
-    private HashMap<String, File> spectrumFiles = new HashMap<>();
+    private HashMap<String, String> spectrumFiles = new HashMap<>();
     /**
      * When the project was created.
      */
@@ -172,8 +172,9 @@ public class ProjectDetails implements Serializable {
      */
     public void addSpectrumFile(File spectrumFile) {
         
-        String fileName = Util.getFileName(spectrumFile.getAbsolutePath());
-        spectrumFiles.put(fileName, spectrumFile);
+        String path = spectrumFile.getAbsolutePath();
+        String fileName = Util.getFileName(path);
+        spectrumFiles.put(fileName, path);
     }
     
     /**
@@ -196,7 +197,7 @@ public class ProjectDetails implements Serializable {
      */
     public File getSpectrumFile(String fileName) {
         
-        return spectrumFiles.get(fileName);
+        return new File(spectrumFiles.get(fileName));
         
     }
 
