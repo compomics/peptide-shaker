@@ -200,22 +200,6 @@ public class CpsParent extends UserPreferencesParent {
         ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), destinationFile.getName(), false);     
         PeptideShakerParameters psParameters = (PeptideShakerParameters) objectsDB.retrieveObject(PeptideShakerParameters.key);       
         
-        try {
-        
-        File dummyFile = new File(PeptideShaker.getJarFilePath());
-        objectsDB.insertObject(123456l, dummyFile);
-        
-        Object out = objectsDB.retrieveObject(123456l);
-        File fileOut = (File) out;
-        
-        System.out.println("Original path: " + dummyFile.getAbsolutePath());
-        System.out.println("Retrieved path: " + fileOut.getAbsolutePath());
-        
-        } catch (Exception e) {
-            
-            
-        }
-        
         projectParameters = (ProjectParameters) objectsDB.retrieveObject(ProjectParameters.key);
         identification = new Identification(objectsDB);
         
