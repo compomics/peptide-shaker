@@ -91,6 +91,8 @@ public class PsmProcessor {
         
         FastaParameters fastaParameters = identificationParameters.getSearchParameters().getFastaParameters();
         BestMatchSelection bestMatchSelection = new BestMatchSelection(identification, proteinCount, sequenceProvider, fastaParameters);
+        
+        identification.fillSpectrumIdentification();
 
         identification.getSpectrumIdentification().values().stream()
                 .flatMap(HashSet::parallelStream)
