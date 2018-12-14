@@ -4,6 +4,7 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.IdentificationKeys;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.waiting.WaitingHandler;
@@ -83,6 +84,8 @@ public class CpsExporter {
                 identification.addObject(PeptideShakerParameters.key, peptideShakerParameters);
 
             }
+            
+            identification.addObject(IdentificationKeys.key, identification.getIdentificationKeys());
 
             PSMaps psMaps = new PSMaps();
             long psMapsIdentKey = psMaps.getParameterKey();

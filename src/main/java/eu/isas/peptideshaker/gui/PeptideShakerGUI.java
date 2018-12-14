@@ -6253,7 +6253,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                             .collect(Collectors.toCollection(ArrayList::new));
                     int cpt = 0, total = fileNames.size();
 
-                    for (String spectrumFileName : fileNames) {
+                    for (String spectrumFileName : getIdentification().getFractions()) {
 
                         progressDialog.setTitle("Loading Spectrum Files (" + ++cpt + " of " + total + "). Please Wait...");
                         progressDialog.increasePrimaryProgressCounter();

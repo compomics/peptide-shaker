@@ -8,6 +8,7 @@ import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.IdentificationKeys;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
@@ -28,7 +29,6 @@ import eu.isas.peptideshaker.preferences.UserParameters;
 import eu.isas.peptideshaker.preferences.UserPreferencesParent;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import java.io.File;
 import java.io.IOException;
@@ -198,26 +198,14 @@ public class CpsParent extends UserPreferencesParent {
         System.out.println(cpsFile.getAbsolutePath());
         
         ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), destinationFile.getName(), false);     
-        PeptideShakerParameters psParameters = (PeptideShakerParameters) objectsDB.retrieveObject(PeptideShakerParameters.key);       
-        
-        try {
-        
-        File dummyFile = new File(PeptideShaker.getJarFilePath());
-        objectsDB.insertObject(123456l, dummyFile);
-        
-        Object out = objectsDB.retrieveObject(123456l);
-        File fileOut = (File) out;
-        
-        System.out.println("Original path: " + dummyFile.getAbsolutePath());
-        System.out.println("Retrieved path: " + fileOut.getAbsolutePath());
-        
-        } catch (Exception e) {
-            
-            
-        }
+        PeptideShakerParameters psParameters = (PeptideShakerParameters) objectsDB.retrieveObject(PeptideShakerParameters.key); 
         
         projectParameters = (ProjectParameters) objectsDB.retrieveObject(ProjectParameters.key);
         identification = new Identification(objectsDB);
+        
+        // Load identification attributes
+        IdentificationKeys identificationKeys = (IdentificationKeys) objectsDB.retrieveObject(IdentificationKeys.key);
+        identification.setIdentificationKeys(identificationKeys);
         
         PSMaps psMaps = new PSMaps();
         psMaps = (PSMaps) objectsDB.retrieveObject(psMaps.getParameterKey());
