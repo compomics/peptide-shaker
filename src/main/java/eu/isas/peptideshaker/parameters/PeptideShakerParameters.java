@@ -83,16 +83,16 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      * Constructor for a PeptideShaker Settings class.
      *
      * @param identificationParameters the parameters used for identification
-     * @param spectrumCountingPreferences The spectrum counting preferences
-     * @param projectDetails The project details
-     * @param filterPreferences The filter preferences
-     * @param displayPreferences The display preferences
-     * @param metrics The metrics saved when loading the files
+     * @param spectrumCountingPreferences the spectrum counting preferences
+     * @param projectDetails the project details
+     * @param filterPreferences the filter preferences
+     * @param displayPreferences the display preferences
+     * @param metrics the metrics saved when loading the files
      * @param sequenceProvider the sequence provider
      * @param proteinDetailsProvider the protein details provider
-     * @param geneMaps The gene maps
+     * @param geneMaps the gene maps
      * @param projectType the project type
-     * @param identificationFeaturesCache The identification features cache
+     * @param identificationFeaturesCache the identification features cache
      */
     public PeptideShakerParameters(IdentificationParameters identificationParameters,
             SpectrumCountingParameters spectrumCountingPreferences,
