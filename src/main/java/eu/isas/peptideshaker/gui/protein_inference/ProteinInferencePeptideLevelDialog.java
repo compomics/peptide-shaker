@@ -297,11 +297,14 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                         }
                     } else {
 
-                        identification.getProteinMap().get(tempProteinAccession).stream()
-                                .flatMap(key -> Arrays.stream(identification.getProteinMatch(key).getPeptideMatchesKeys()).boxed())
-                                .distinct()
-                                .forEach(tempPeptideKey -> addPeptide(tempPeptideKey, nodeToolTips, nodes, nodeProperties, selectedNodes, edges, edgeProperties));
+                        if (identification.getProteinMap().containsKey(tempProteinAccession)) {
 
+                            identification.getProteinMap().get(tempProteinAccession).stream()
+                                    .flatMap(key -> Arrays.stream(identification.getProteinMatch(key).getPeptideMatchesKeys()).boxed())
+                                    .distinct()
+                                    .forEach(tempPeptideKey -> addPeptide(tempPeptideKey, nodeToolTips, nodes, nodeProperties, selectedNodes, edges, edgeProperties));
+
+                        }
                     }
                 }
 

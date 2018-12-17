@@ -73,7 +73,7 @@ public class ProteinProcessor {
     public void processProteins(ModificationLocalizationScorer modificationLocalizationScorer, Metrics metrics,
             WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, ProcessingParameters processingParameters) throws InterruptedException, TimeoutException {
 
-        waitingHandler.setWaitingText("Scoring Protein modification localization. Please Wait...");
+        waitingHandler.setWaitingText("Scoring Protein Modification Localization. Please Wait...");
 
         int max = identification.getProteinIdentification().size();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
