@@ -195,7 +195,6 @@ public class CpsParent extends UserPreferencesParent {
         File destinationFile = new File(dbFolder.getAbsolutePath(), dbName);
         
         Util.copyFile(cpsFile, destinationFile);
-        System.out.println(cpsFile.getAbsolutePath());
         
         ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), destinationFile.getName(), false);     
         PeptideShakerParameters psParameters = (PeptideShakerParameters) objectsDB.retrieveObject(PeptideShakerParameters.key); 
@@ -203,7 +202,7 @@ public class CpsParent extends UserPreferencesParent {
         projectParameters = (ProjectParameters) objectsDB.retrieveObject(ProjectParameters.key);
         identification = new Identification(objectsDB);
         
-        // Load identification attributes
+        // load identification attributes
         IdentificationKeys identificationKeys = (IdentificationKeys) objectsDB.retrieveObject(IdentificationKeys.key);
         identification.setIdentificationKeys(identificationKeys);
         
@@ -211,7 +210,7 @@ public class CpsParent extends UserPreferencesParent {
         psMaps = (PSMaps) objectsDB.retrieveObject(psMaps.getParameterKey());
         identification.addUrParam(psMaps);
         
-        // Get PeptideShaker settings
+        // get PeptideShaker settings
         identificationParameters = psParameters.getIdentificationParameters();
         spectrumCountingParameters = psParameters.getSpectrumCountingPreferences();
         projectDetails = psParameters.getProjectDetails();
@@ -223,7 +222,7 @@ public class CpsParent extends UserPreferencesParent {
         proteinDetailsProvider = psParameters.getProteinDetailsProvider();
         projectType = psParameters.getProjectType();
 
-        // Set up caches
+        // set up caches
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, sequenceProvider, metrics, spectrumCountingParameters);
         IdentificationFeaturesCache identificationFeaturesCache = psParameters.getIdentificationFeaturesCache();
         

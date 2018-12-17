@@ -6977,13 +6977,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     try {
 
                         progressDialog.setWaitingText("Saving Results. Please Wait...");
+                        
+                        // saving the mod factory
+                        modificationFactory.saveFactory();
+                        
+                        // saving the project
                         cpsParent.saveProject(progressDialog, closeWhenDone);
-
-                        try {
-                            modificationFactory.saveFactory();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
 
                         if (!progressDialog.isRunCanceled()) {
                             progressDialog.setRunFinished();
