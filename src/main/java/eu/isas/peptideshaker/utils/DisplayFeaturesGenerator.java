@@ -79,7 +79,7 @@ public class DisplayFeaturesGenerator {
         this.proteinDetailsProvider = proteinDetailsProvider;
 
     }
-
+    
     /**
      * Transforms the protein accession number into an HTML link to the
      * corresponding database. Note that this is a complete HTML with HTML and a
@@ -90,6 +90,20 @@ public class DisplayFeaturesGenerator {
      * @return the transformed accession number
      */
     public String getDatabaseLink(String proteinAccession) {
+        return getDatabaseLink(proteinAccession, true);
+    }
+
+    /**
+     * Transforms the protein accession number into an HTML link to the
+     * corresponding database.
+     *
+     * @param proteinAccession the protein to get the database link for
+     * @param includeHtmlTags if true, the starting and ending HTML tags are
+     * included
+     *
+     * @return the transformed accession number
+     */
+    public String getDatabaseLink(String proteinAccession, boolean includeHtmlTags) {
 
         // No link for decoy proteins
         if (ProteinUtils.isDecoy(proteinAccession, sequenceProvider)) {
@@ -101,53 +115,61 @@ public class DisplayFeaturesGenerator {
         // Get link according to the database type
         ProteinDatabase proteinDatabase = proteinDetailsProvider.getProteinDatabase(proteinAccession);
 
+        String result;
+
         switch (proteinDatabase) {
 
             case IPI:
             case UniProt:
-                return String.join("",
-                        "<html><a href=\"",
+                result = String.join("",
+                        "<a href=\"",
                         getUniProtAccessionLink(proteinAccession),
                         "\"><font color=\"",
                         notSelectedRowHtmlTagFontColor,
                         "\">",
                         proteinAccession,
-                        "</font></a></html>");
-
+                        "</font></a>");
+                break;
             case NextProt:
-                return String.join("",
-                        "<html><a href=\"",
+                result = String.join("",
+                        "<a href=\"",
                         getNextProtAccessionLink(proteinAccession),
                         "\"><font color=\"",
                         notSelectedRowHtmlTagFontColor,
                         "\">",
                         proteinAccession,
-                        "</font></a></html>");
-
+                        "</font></a>");
+                break;
             case NCBI:
-                return String.join("",
-                        "<html><a href=\"",
+                result = String.join("",
+                        "<a href=\"",
                         getNcbiAccessionLink(proteinAccession),
                         "\"><font color=\"",
                         notSelectedRowHtmlTagFontColor,
                         "\">",
                         proteinAccession,
-                        "</font></a></html>");
-
+                        "</font></a>");
+                break;
             case UniRef:
                 // remove the 'UniRefXYZ_' part to get the default UniProt accession
                 String uniProtProteinAccession = proteinAccession.substring(proteinAccession.indexOf("_") + 1);
-                return String.join("",
-                        "<html><a href=\"" + getUniProtAccessionLink(uniProtProteinAccession),
+                result = String.join("",
+                        "<a href=\"" + getUniProtAccessionLink(uniProtProteinAccession),
                         "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">",
                         proteinAccession,
-                        "</font></a></html>");
-
+                        "</font></a>");
+                break;
             default:
                 // not supported
-                return proteinAccession;
+                result = proteinAccession;
 
         }
+
+        if (includeHtmlTags) {
+            result = "<html>" + result + "</html>";
+        }
+
+        return result;
     }
 
     /**
@@ -162,12 +184,15 @@ public class DisplayFeaturesGenerator {
      */
     public String getDatabaseLinks(String[] proteinAccessions) {
 
-        return proteinAccessions.length == 0 ? ""
+        String result = proteinAccessions.length == 0 ? ""
                 : Arrays.stream(proteinAccessions)
                         .sorted()
-                        .map(accession -> getDatabaseLink(accession))
-                        .collect(Collectors.joining(", ", "<html>", "</html>"));
+                        .map(accession -> getDatabaseLink(accession, false))
+                        .collect(Collectors.joining(", "));
 
+        result = "<html>" + result + "</html>";
+
+        return result;
     }
 
     /**
@@ -435,7 +460,7 @@ public class DisplayFeaturesGenerator {
                 StringBuilder tempTooltip = new StringBuilder(); // @TODO: should be a way of doing this without needing this second string builder..?
                 ModificationUtils.appendTaggedResidue(tempTooltip, aminoAcid, confidentMod, ambiguousMod, null, fixedMod, modificationParameters, true, true);
                 String currentResidueAnnotation = tempTooltip.toString();
-                
+
                 if (!alreadyAnnotated.contains(currentResidueAnnotation)) {
 
                     tooltip.append(currentResidueAnnotation).append(": ");
@@ -447,7 +472,7 @@ public class DisplayFeaturesGenerator {
                     } else if (ambiguousMod != null) {
                         tooltip.append(ambiguousMod).append(" (not confident))<br>");
                     }
-                    
+
                     alreadyAnnotated.add(tempTooltip.toString());
                 }
 

@@ -1185,7 +1185,7 @@ public class PsmImporter {
     }
 
     /**
-     * Maps the peptide sequence to the fasta file.
+     * Maps the peptide sequence to the FASTA file.
      *
      * @param peptide the peptide to map
      */
