@@ -886,6 +886,11 @@ public class ProjectDetails extends DbObject {
     public Boolean getIncludeProteinSequences() {
         
         readDBMode();
+        
+        if (includeProteinSequences == null) {
+            includeProteinSequences = false;
+        }
+        
         return includeProteinSequences;
         
     }

@@ -421,9 +421,7 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="includeSequencesCheckBox" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="gzipCheckBox" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="73" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="106" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -437,10 +435,7 @@
                           <Component id="browseOutputFolderJButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="includeSequencesCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="gzipCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="includeSequencesCheckBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -478,11 +473,6 @@
                 <Property name="text" type="java.lang.String" value="Include Protein Sequences"/>
                 <Property name="toolTipText" type="java.lang.String" value="Select to include the protein sequences in the mzIdentML file"/>
                 <Property name="iconTextGap" type="int" value="10"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="gzipCheckBox">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="gzip"/>
               </Properties>
             </Component>
           </SubComponents>

@@ -200,14 +200,14 @@ public class MzIdentMLExport {
     public MzIdentMLExport(String peptideShakerVersion, Identification identification,
             ProjectDetails projectDetails, IdentificationParameters identificationParameters,
             SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider,
-            FastaSummary fastaSummary, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
-            File outputFile, boolean includeProteinSequences, 
+            FastaSummary fastaSummary, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            File outputFile, boolean includeProteinSequences,
             WaitingHandler waitingHandler, boolean gzip) throws IOException {
 
         if (outputFile.getParent() == null) {
-            
+
             throw new FileNotFoundException("The file " + outputFile + " does not have a valid parent folder. Please make sure that the parent folder exists.");
-        
+
         }
 
         this.peptideShakerVersion = peptideShakerVersion;
@@ -476,7 +476,7 @@ public class MzIdentMLExport {
         bw.write(projectDetails.getContactFirstName());
         bw.write("\" lastName=\"");
         bw.write(projectDetails.getContactLastName());
-        bw.write("\"id=\"PROVIDER\">");
+        bw.write("\" id=\"PROVIDER\">");
         bw.newLine();
         tabCounter++;
 
@@ -564,7 +564,7 @@ public class MzIdentMLExport {
 //        }
 //
         // iterate all the protein sequences
-        for (String accession : sequenceProvider.getAccessions()) {
+        for (String accession : sequenceProvider.getAccessions()) { // @TODO: include only protein sequences with at least one PeptideEvidence element referring to it (note: this is a SHOULD rule in the mzid specifications)
 
             bw.write(getCurrentTabSpace());
             bw.write("<DBSequence id=\"");
@@ -635,42 +635,42 @@ public class MzIdentMLExport {
             bw.write(peptideSequence);
             bw.write("</PeptideSequence>");
             bw.newLine();
-            
+
             String[] fixedModifications = peptide.getFixedModifications(identificationParameters.getSearchParameters().getModificationParameters(), sequenceProvider, identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters());
 
-            for (int site = 0 ; site < fixedModifications.length ; site++) {
-                
+            for (int site = 0; site < fixedModifications.length; site++) {
+
                 String modName = fixedModifications[site];
-                
+
                 if (modName != null) {
-                    
-                Modification modification = modificationFactory.getModification(modName);
-                
-                int aa = Math.min(Math.max(site, 1), peptideSequence.length());
 
-                bw.write(getCurrentTabSpace());
-                bw.write("<Modification monoisotopicMassDelta=\"");
-                bw.write(Double.toString(modification.getRoundedMass()));
-                bw.write("\" residues=\"");
-                bw.write(peptideSequence.charAt(aa - 1));
-                bw.write("\" location=\"");
-                bw.write(site);
-                bw.write("\" >");
-                bw.newLine();
+                    Modification modification = modificationFactory.getModification(modName);
 
-                CvTerm ptmCvTerm = modification.getCvTerm();
+                    int aa = Math.min(Math.max(site, 1), peptideSequence.length());
 
-                if (ptmCvTerm != null) {
+                    bw.write(getCurrentTabSpace());
+                    bw.write("<Modification monoisotopicMassDelta=\"");
+                    bw.write(Double.toString(modification.getRoundedMass()));
+                    bw.write("\" residues=\"");
+                    bw.write(peptideSequence.charAt(aa - 1));
+                    bw.write("\" location=\"");
+                    bw.write(Integer.toString(site));
+                    bw.write("\" >");
+                    bw.newLine();
 
-                    tabCounter++;
-                    writeCvTerm(ptmCvTerm, false);
-                    tabCounter--;
+                    CvTerm ptmCvTerm = modification.getCvTerm();
 
-                }
+                    if (ptmCvTerm != null) {
 
-                bw.write(getCurrentTabSpace());
-                bw.write("</Modification>");
-                bw.newLine();
+                        tabCounter++;
+                        writeCvTerm(ptmCvTerm, false);
+                        tabCounter--;
+
+                    }
+
+                    bw.write(getCurrentTabSpace());
+                    bw.write("</Modification>");
+                    bw.newLine();
 
                 }
             }
@@ -688,7 +688,7 @@ public class MzIdentMLExport {
                 bw.write("\" residues=\"");
                 bw.write(peptideSequence.charAt(aa - 1));
                 bw.write("\" location=\"");
-                bw.write(site);
+                bw.write(Integer.toString(site));
                 bw.write("\" >");
                 bw.newLine();
 
@@ -722,7 +722,6 @@ public class MzIdentMLExport {
             }
         }
 
-        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
         int peptideEvidenceCounter = 0;
         int nAa = 1;
 
@@ -781,9 +780,9 @@ public class MzIdentMLExport {
                     bw.write("\" post=\"");
                     bw.write(aaAfter);
                     bw.write("\" start=\"");
-                    bw.write(peptideStart);
+                    bw.write(Integer.toString(peptideStart + 1));
                     bw.write("\" end=\"");
-                    bw.write(peptideEnd);
+                    bw.write(Integer.toString(peptideEnd + 1));
                     bw.write("\" peptide_ref=\"");
                     bw.write(Long.toString(peptideKey));
                     bw.write("\" dBSequence_ref=\"");
@@ -1205,13 +1204,14 @@ public class MzIdentMLExport {
             bw.write(Boolean.toString(enzymes.size() > 1));
             bw.write("\">");
             bw.newLine();
+            tabCounter++;
 
             for (Enzyme enzyme : enzymes) {
 
                 String enzymeName = enzyme.getName();
                 bw.write(getCurrentTabSpace());
                 bw.write("<Enzyme missedCleavages=\"");
-                bw.write(digestionPreferences.getnMissedCleavages(enzymeName));
+                bw.write(Integer.toString(digestionPreferences.getnMissedCleavages(enzymeName)));
                 bw.write("\" semiSpecific=\"");
                 bw.write(Boolean.toString(digestionPreferences.getSpecificity(enzymeName) == DigestionParameters.Specificity.semiSpecific));
                 bw.write("\" ");
@@ -1350,6 +1350,7 @@ public class MzIdentMLExport {
         bw.write("\" name=\"search tolerance minus value\" />");
 
         tabCounter--;
+        bw.newLine();
         bw.write(getCurrentTabSpace());
         bw.write("</ParentTolerance>");
         bw.newLine();
@@ -1678,7 +1679,7 @@ public class MzIdentMLExport {
                 bw.write("<ProteinDetectionHypothesis id=\"");
                 bw.write(proteinGroupId);
                 bw.write('_');
-                bw.write((j + 1));
+                bw.write(Integer.toString(j + 1));
                 bw.write("\" dBSequence_ref=\"");
                 bw.write(accession);
                 bw.write("\" passThreshold=\"");
@@ -1809,26 +1810,26 @@ public class MzIdentMLExport {
 
         SpectrumMatch spectrumMatch = (SpectrumMatch) identification.retrieveObject(spectrumMatchKey);
 
-        String spectrumKey = spectrumMatch.getSpectrumKey();
-        String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
-        String spectrumFileName = Spectrum.getSpectrumFile(spectrumKey);
-        String spectrumIdentificationResultItemKey = "SIR_" + spectrumMatchIndex;
-
-        bw.write(getCurrentTabSpace());
-        bw.write("<SpectrumIdentificationResult spectraData_ref=\"");
-        bw.write(spectrumFileName);
-        bw.write("\" spectrumID=\"index=");
-        bw.write(spectrumFactory.getSpectrumIndex(spectrumTitle, spectrumFileName));
-        bw.write("\" id=\"");
-        bw.write(spectrumIdentificationResultItemKey);
-        bw.write("\">");
-        bw.newLine();
-        tabCounter++;
-
         // @TODO: iterate all assumptions and not just the best one?
         PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
 
         if (bestPeptideAssumption != null) {
+
+            String spectrumKey = spectrumMatch.getSpectrumKey();
+            String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
+            String spectrumFileName = Spectrum.getSpectrumFile(spectrumKey);
+            String spectrumIdentificationResultItemKey = "SIR_" + spectrumMatchIndex;
+
+            bw.write(getCurrentTabSpace());
+            bw.write("<SpectrumIdentificationResult spectraData_ref=\"");
+            bw.write(spectrumFileName);
+            bw.write("\" spectrumID=\"index=");
+            bw.write(spectrumFactory.getSpectrumIndex(spectrumTitle, spectrumFileName).toString());
+            bw.write("\" id=\"");
+            bw.write(spectrumIdentificationResultItemKey);
+            bw.write("\">");
+            bw.newLine();
+            tabCounter++;
 
             PSParameter psmParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
 
@@ -1843,7 +1844,7 @@ public class MzIdentMLExport {
             bw.write("<SpectrumIdentificationItem passThreshold=\"");
             bw.write(Boolean.toString(psmParameter.getMatchValidationLevel().isValidated()));
             bw.write("\" rank=\"");
-            bw.write(rank);
+            bw.write(Integer.toString(rank));
             bw.write("\" peptide_ref=\"");
             bw.write(Long.toString(peptideMatchKey));
             bw.write("\" calculatedMassToCharge=\"");
@@ -1851,7 +1852,7 @@ public class MzIdentMLExport {
             bw.write("\" experimentalMassToCharge=\"");
             bw.write(Double.toString(spectrumFactory.getPrecursorMz(spectrumKey)));
             bw.write("\" chargeState=\"");
-            bw.write(bestPeptideAssumption.getIdentificationCharge());
+            bw.write(Integer.toString(bestPeptideAssumption.getIdentificationCharge()));
             bw.write("\" id=\"");
             bw.write(spectrumIdentificationItemKey);
             bw.write("\">");
@@ -2013,7 +2014,7 @@ public class MzIdentMLExport {
 
                                 bw.write(getCurrentTabSpace());
                                 bw.write("<IonType charge=\"");
-                                bw.write(fragmentCharge);
+                                bw.write(Integer.toString(fragmentCharge));
                                 bw.write("\" index=\"");
                                 bw.write(indexes.toString().trim());
                                 bw.write("\">");
@@ -2511,7 +2512,7 @@ public class MzIdentMLExport {
             bw.write("<SourceFile location=\"");
             bw.write(idFile.toURI().toString());
             bw.write("\" id=\"SourceFile_");
-            bw.write(sourceFileCounter++);
+            bw.write(Integer.toString(sourceFileCounter++));
             bw.write("\">");
             bw.newLine();
             tabCounter++;
@@ -2584,7 +2585,7 @@ public class MzIdentMLExport {
         File fastaFile = new File(identificationParameters.getSearchParameters().getFastaFile());
         bw.write(getCurrentTabSpace());
         bw.write("<SearchDatabase numDatabaseSequences=\"");
-        bw.write(fastaSummary.nSequences);
+        bw.write(Integer.toString(fastaSummary.nSequences));
         bw.write("\" location=\"");
         bw.write(fastaFile.toURI().toString());
         bw.write("\" id=\"" + "SearchDB_1\">");
@@ -2691,17 +2692,21 @@ public class MzIdentMLExport {
         switch (mzIdentMLVersion) {
 
             case v1_1:
-                bw.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\" xmlns:xsi=\"https://www.w3.org/2001/XMLSchema-instance\" "
-                        + "xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd\" "
-                        + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\" version=\"1.1.0\" "
+                bw.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\""
+                        + " xmlns:xsi=\"https://www.w3.org/2001/XMLSchema-instance\""
+                        //+ " xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd\""
+                        + " xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\""
+                        + " version=\"1.1.0\" "
                         + "creationDate=\"" + df.format(new Date()) + "\">");
                 bw.newLine();
                 break;
 
             case v1_2:
-                bw.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\" xmlns:xsi=\"https://www.w3.org/2001/XMLSchema-instance\" "
-                        + "xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.2 http://www.psidev.info/files/mzIdentML1.2.0.xsd\" "
-                        + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.2\" version=\"1.2.0\" "
+                bw.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\""
+                        + " xmlns:xsi=\"https://www.w3.org/2001/XMLSchema-instance\" "
+                        //+ " xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.2 http://www.psidev.info/files/mzIdentML1.2.0.xsd\""
+                        + " xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.2\""
+                        + " version=\"1.2.0\" "
                         + "creationDate=\"" + df.format(new Date()) + "\">");
                 bw.newLine();
                 break;

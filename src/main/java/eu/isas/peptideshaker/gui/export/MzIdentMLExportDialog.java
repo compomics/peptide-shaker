@@ -48,7 +48,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
      * If true, the created mzid file will be validated against the mzid 1.1
      * schema.
      */
-    private final boolean validateMzIdentML = false; // just takes too long if switched on...
+    private final boolean validateMzIdentML = false; // just takes too long if switched on... (note: only works if the mzid file is not zipped)
     /**
      * The version of mzIdentML to use.
      */
@@ -92,8 +92,8 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
      */
     private void insertProjectData() {
 
-                    ProjectDetails projectDetails = peptideShakerGUI.getProjectDetails();
-                    
+        ProjectDetails projectDetails = peptideShakerGUI.getProjectDetails();
+
         // use the saved mzIdentML annotation, if any
         contactFirstNameJTextField.setText(projectDetails.getContactFirstName());
         contactLastNameJTextField.setText(projectDetails.getContactLastName());
@@ -149,7 +149,6 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         outputFolderJTextField = new javax.swing.JTextField();
         browseOutputFolderJButton = new javax.swing.JButton();
         includeSequencesCheckBox = new javax.swing.JCheckBox();
-        gzipCheckBox = new javax.swing.JCheckBox();
         helpLabel = new javax.swing.JLabel();
         openDialogHelpJButton = new javax.swing.JButton();
         convertJButton = new javax.swing.JButton();
@@ -379,8 +378,6 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         includeSequencesCheckBox.setToolTipText("Select to include the protein sequences in the mzIdentML file");
         includeSequencesCheckBox.setIconTextGap(10);
 
-        gzipCheckBox.setText("gzip");
-
         javax.swing.GroupLayout outputPanelLayout = new javax.swing.GroupLayout(outputPanel);
         outputPanel.setLayout(outputPanelLayout);
         outputPanelLayout.setHorizontalGroup(
@@ -396,9 +393,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, outputPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(includeSequencesCheckBox)
-                .addGap(18, 18, 18)
-                .addComponent(gzipCheckBox)
-                .addGap(73, 73, 73))
+                .addGap(106, 106, 106))
         );
         outputPanelLayout.setVerticalGroup(
             outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -409,9 +404,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                     .addComponent(outputFolderJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(browseOutputFolderJButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(includeSequencesCheckBox)
-                    .addComponent(gzipCheckBox))
+                .addComponent(includeSequencesCheckBox)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -564,7 +557,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         for (int i = 0; i < mzIdentMLVersions.length; i++) {
             MzIdentMLVersion tempVersion = mzIdentMLVersions[i];
             StringBuilder stringBuilder = new StringBuilder(23);
-            stringBuilder.append("mzIdentML ").append(tempVersion.name).append(" (*.mzid)");
+            stringBuilder.append("mzIdentML ").append(tempVersion.name).append(" (*.mzid.gzip)");
             versionsDescriptions[i] = stringBuilder.toString();
         }
 
@@ -580,15 +573,15 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 throw new UnsupportedOperationException("mzIdentML version " + mzIdentMLVersion.name + " not supported.");
         }
 
-        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".mzid", ".mzid"},
+        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".mzid.gzip", ".mzid.gzip"},
                 versionsDescriptions, "Select Export File",
                 folder, peptideShakerGUI.getProjectParameters().getProjectUniqueName(), false, true, false, defaultFilterIndex);
 
         if (selectedFileAndFilter != null) {
             String path = selectedFileAndFilter.getFile().getAbsolutePath();
 
-            if (!path.endsWith(".mzid")) {
-                path += ".mzid";
+            if (!path.endsWith(".mzid.gzip")) {
+                path += ".mzid.gzip";
             }
 
             int index = -1;
@@ -663,11 +656,11 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         new Thread("ConvertThread") {
             @Override
             public void run() {
-                
-                    IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                    SearchParameters searchParameters = identificationParameters.getSearchParameters();
-                    AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
-                    ProjectDetails projectDetails = peptideShakerGUI.getProjectDetails();
+
+                IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+                SearchParameters searchParameters = identificationParameters.getSearchParameters();
+                AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
+                ProjectDetails projectDetails = peptideShakerGUI.getProjectDetails();
 
                 // save the inserted mzid details with the project
                 projectDetails.setContactFirstName(contactFirstNameJTextField.getText().trim());
@@ -703,7 +696,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                     FastaSummary fastaSummary = FastaSummary.getSummary(searchParameters.getFastaFile(), searchParameters.getFastaParameters(), progressDialog);
                     MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), projectDetails,
                             identificationParameters, peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(), fastaSummary, peptideShakerGUI.getIdentificationFeaturesGenerator(),
-                            finalOutputFile, includeSequencesCheckBox.isSelected(), progressDialog, gzipCheckBox.isSelected());
+                            finalOutputFile, includeSequencesCheckBox.isSelected(), progressDialog, true);
                     mzIdentMLExport.createMzIdentMLFile(mzIdentMLVersion);
 
                     // validate the mzidentml file
@@ -811,7 +804,6 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
     private javax.swing.JTextField contactUrlJTextField;
     private javax.swing.JLabel contactUrlLabel;
     private javax.swing.JButton convertJButton;
-    private javax.swing.JCheckBox gzipCheckBox;
     private javax.swing.JLabel helpLabel;
     private javax.swing.JCheckBox includeSequencesCheckBox;
     private javax.swing.JButton openDialogHelpJButton;
