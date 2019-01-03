@@ -4,7 +4,6 @@ import com.compomics.util.Util;
 import com.compomics.util.db.object.DbObject;
 import com.compomics.util.experiment.identification.Advocate;
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import com.compomics.util.pride.prideobjects.*;
@@ -88,7 +87,7 @@ public class ProjectDetails extends DbObject {
     /**
      * If true, the protein sequences are included in the mzid file.
      */
-    private Boolean includeProteinSequences;
+    private boolean includeProteinSequences;
     /**
      * The PeptideShaker version used to create the project.
      */
