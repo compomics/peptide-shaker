@@ -87,7 +87,7 @@ public class ProjectDetails extends DbObject {
     /**
      * If true, the protein sequences are included in the mzid file.
      */
-    private boolean includeProteinSequences;
+    private Boolean includeProteinSequences;
     /**
      * The PeptideShaker version used to create the project.
      */

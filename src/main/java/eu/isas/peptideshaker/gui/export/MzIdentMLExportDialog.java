@@ -104,8 +104,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         organizationNameJTextField.setText(projectDetails.getOrganizationName());
         organizationEmailJTextField.setText(projectDetails.getOrganizationEmail());
         organizationAddressJTextField.setText(projectDetails.getOrganizationAddress());
-        organizationUrlJTextField.setText(projectDetails.getOrganizationUrl());
-        
+        organizationUrlJTextField.setText(projectDetails.getOrganizationUrl());        
 
         includeSequencesCheckBox.setSelected(projectDetails.getIncludeProteinSequences());
 
