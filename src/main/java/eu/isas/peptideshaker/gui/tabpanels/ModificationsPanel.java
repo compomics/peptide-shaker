@@ -120,7 +120,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
     /**
      * Map of all peptide keys indexed by their modification status.
      */
-    private final HashMap<String, ArrayList<Long>> peptideMap = new HashMap<>();
+    private final HashMap<String, HashSet<Long>> peptideMap = new HashMap<>();
     /**
      * The modification name for no modification.
      */
@@ -3233,7 +3233,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
      */
     private void createPeptideMap(ProgressDialogX progressDialogX) {
 
-        ArrayList<Long> notModifiedPeptides = new ArrayList<>();
+        HashSet<Long> notModifiedPeptides = new HashSet<>();
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(progressDialogX);
         PeptideMatch peptideMatch;
 
@@ -3242,36 +3242,30 @@ public class ModificationsPanel extends javax.swing.JPanel {
             long peptideKey = peptideMatch.getKey();
             Peptide peptide = peptideMatch.getPeptide();
 
-            boolean modified = false;
-            ArrayList<String> accountedModifications = new ArrayList<>();
+            if (!PeptideUtils.isDecoy(peptide, peptideShakerGUI.getSequenceProvider())) {
 
-            for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
+                if (peptide.getVariableModifications().length == 0) {
 
-                String modName = modificationMatch.getModification();
+                    notModifiedPeptides.add(peptideKey);
 
-                if (!accountedModifications.contains(modName)) {
+                } else {
 
-                    ArrayList<Long> peptideKeysForModifications = peptideMap.get(modName);
+                    for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
 
-                    if (peptideKeysForModifications == null) {
+                        String modName = modificationMatch.getModification();
+                        HashSet<Long> peptideKeysForModifications = peptideMap.get(modName);
 
-                        peptideKeysForModifications = new ArrayList<>();
-                        peptideMap.put(modName, peptideKeysForModifications);
+                        if (peptideKeysForModifications == null) {
+
+                            peptideKeysForModifications = new HashSet<>();
+                            peptideMap.put(modName, peptideKeysForModifications);
+
+                        }
+
+                        peptideKeysForModifications.add(peptideKey);
 
                     }
-
-                    peptideKeysForModifications.add(peptideKey);
-
-                    modified = true;
-                    accountedModifications.add(modName);
-
                 }
-            }
-
-            if (!modified) {
-
-                notModifiedPeptides.add(peptideKey);
-
             }
             if (progressDialogX != null) {
 
@@ -3597,13 +3591,16 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
             TreeMap<Double, TreeSet<Long>> scoreToPeptideMap = new TreeMap<>();
 
-            if (peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex())) != null) {
+            String modKey = (String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex());
+            HashSet<Long> modKeys = peptideMap.get(modKey);
+
+            if (modKeys != null) {
 
                 progressDialog.setPrimaryProgressCounterIndeterminate(false);
                 progressDialog.setValue(0);
-                progressDialog.setMaxPrimaryProgressCounter(peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex())).size()); // @TOOD: null point if no peptides with the given ptm is found!
+                progressDialog.setMaxPrimaryProgressCounter(modKeys.size());
 
-                for (long peptideKey : peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()))) {
+                for (long peptideKey : modKeys) {
 
                     progressDialog.increasePrimaryProgressCounter();
 
@@ -3613,25 +3610,22 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
                     PeptideMatch peptideMatch = (PeptideMatch) identification.retrieveObject(peptideKey);
 
-                    if (PeptideUtils.isDecoy(peptideMatch.getPeptide(), peptideShakerGUI.getSequenceProvider())) {
+                    PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
+                    double p = psParameter.getProbability();
 
-                        PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
-                        double p = psParameter.getProbability();
+                    if (!psParameter.getHidden()) {
 
-                        if (!psParameter.getHidden()) {
+                        TreeSet<Long> peptideKeys = scoreToPeptideMap.get(p);
 
-                            TreeSet<Long> peptideKeys = scoreToPeptideMap.get(p);
+                        if (peptideKeys == null) {
 
-                            if (peptideKeys == null) {
-
-                                peptideKeys = new TreeSet<>();
-                                scoreToPeptideMap.put(p, peptideKeys);
-
-                            }
-
-                            peptideKeys.add(peptideKey);
+                            peptideKeys = new TreeSet<>();
+                            scoreToPeptideMap.put(p, peptideKeys);
 
                         }
+
+                        peptideKeys.add(peptideKey);
+
                     }
                 }
 

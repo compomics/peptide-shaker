@@ -387,6 +387,10 @@ public class ModificationLocalizationScorer extends DbObject {
         String peptideSequence = peptide.getSequence();
         ModificationMatch[] originalMatches = peptide.getVariableModifications();
 
+        if (peptideSequence.equals("QKYQEVLQNFR")) {
+            int debug = 1;
+        }
+
         if (originalMatches.length == 0) {
             return;
         }
@@ -516,6 +520,24 @@ public class ModificationLocalizationScorer extends DbObject {
         }
 
         if (variableModifications.isEmpty()) {
+
+            if (cTermModConfident != null || nTermModConfident != null) {
+
+                if (cTermModConfident != null) {
+
+                    peptideScores.addConfidentModificationSite(cTermModConfident.getName(), peptideSequence.length() + 1);
+
+                }
+                if (nTermModConfident != null) {
+
+                    peptideScores.addConfidentModificationSite(nTermModConfident.getName(), 0);
+
+                }
+
+                peptideMatch.addUrParam(peptideScores);
+
+            }
+
             return;
         }
 
@@ -868,7 +890,7 @@ public class ModificationLocalizationScorer extends DbObject {
             }
 
             HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSites, nRepresentativesMap, inferredSites);
-            
+
             for (Double modMass : representativeToSecondaryMap.keySet()) {
 
                 HashMap<Integer, HashMap<Integer, HashSet<String>>> representativesAtMass = representativeToSecondaryMap.get(modMass);
@@ -985,9 +1007,7 @@ public class ModificationLocalizationScorer extends DbObject {
      */
     private HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> getRepresentativeToSecondaryMap(TreeMap<Double, TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>>> ambiguousScoreToSiteMap, HashMap<Double, Integer> nRepresentativesMap, HashMap<Double, HashMap<Integer, HashSet<String>>> preferentialSites) {
 
-        
         readDBMode();
-        
 
         int nMasses = nRepresentativesMap.size();
         HashMap<Double, Integer> nToSelectMap = new HashMap<>(nMasses);
@@ -2239,7 +2259,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                     }
 
-                    int site = psPeptide.getSequence().length();
+                    int site = modificationMatch.getSite();
                     ArrayList<String> modNames = modificationSites.get(site);
 
                     if (modNames == null) {
