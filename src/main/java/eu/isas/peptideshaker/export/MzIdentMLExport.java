@@ -473,14 +473,14 @@ public class MzIdentMLExport {
 
         bw.write(getCurrentTabSpace());
         bw.write("<Person firstName=\"");
-        bw.write(projectDetails.getContactFirstName());
+        bw.write(StringEscapeUtils.escapeHtml4(projectDetails.getContactFirstName()));
         bw.write("\" lastName=\"");
-        bw.write(projectDetails.getContactLastName());
+        bw.write(StringEscapeUtils.escapeHtml4(projectDetails.getContactLastName()));
         bw.write("\" id=\"PROVIDER\">");
         bw.newLine();
         tabCounter++;
 
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", projectDetails.getContactAddress()));
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", StringEscapeUtils.escapeHtml4(projectDetails.getContactAddress())));
 
         if (projectDetails.getContactUrl() != null && !projectDetails.getContactUrl().isEmpty()) {
 
@@ -501,13 +501,13 @@ public class MzIdentMLExport {
 
         bw.write(getCurrentTabSpace());
         bw.write("<Organization name=\"");
-        bw.write(projectDetails.getOrganizationName());
+        bw.write(StringEscapeUtils.escapeHtml4(projectDetails.getOrganizationName()));
         bw.write("\" id=\"ORG_DOC_OWNER\">");
         bw.newLine();
         tabCounter++;
 
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000586", "contact name", projectDetails.getOrganizationName()));
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", projectDetails.getOrganizationAddress()));
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1000586", "contact name", StringEscapeUtils.escapeHtml4(projectDetails.getOrganizationName())));
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", StringEscapeUtils.escapeHtml4(projectDetails.getOrganizationAddress())));
 
         if (projectDetails.getOrganizationUrl() != null && !projectDetails.getOrganizationUrl().isEmpty()) {
 
