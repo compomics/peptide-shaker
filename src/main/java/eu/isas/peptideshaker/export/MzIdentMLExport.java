@@ -478,12 +478,12 @@ public class MzIdentMLExport {
         tabCounter++;
 
         br.write(getCurrentTabSpace() + "<Person "
-                + "firstName=\"" + projectDetails.getContactFirstName() + "\" "
-                + "lastName=\"" + projectDetails.getContactLastName() + "\" "
+                + "firstName=\"" + StringEscapeUtils.escapeHtml4(projectDetails.getContactFirstName()) + "\" "
+                + "lastName=\"" + StringEscapeUtils.escapeHtml4(projectDetails.getContactLastName()) + "\" "
                 + "id=\"PROVIDER\">"
                 + lineBreak);
         tabCounter++;
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", projectDetails.getContactAddress()));
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", StringEscapeUtils.escapeHtml4(projectDetails.getContactAddress())));
         if (projectDetails.getContactUrl() != null && !projectDetails.getContactUrl().isEmpty()) {
             writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact URL", projectDetails.getContactUrl()));
         }
@@ -492,10 +492,10 @@ public class MzIdentMLExport {
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Person>" + lineBreak);
 
-        br.write(getCurrentTabSpace() + "<Organization name=\"" + projectDetails.getOrganizationName() + "\" id=\"ORG_DOC_OWNER\">" + lineBreak);
+        br.write(getCurrentTabSpace() + "<Organization name=\"" + StringEscapeUtils.escapeHtml4(projectDetails.getOrganizationName()) + "\" id=\"ORG_DOC_OWNER\">" + lineBreak);
         tabCounter++;
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000586", "contact name", projectDetails.getOrganizationName()));
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", projectDetails.getOrganizationAddress()));
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1000586", "contact name", StringEscapeUtils.escapeHtml4(projectDetails.getOrganizationName())));
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", StringEscapeUtils.escapeHtml4(projectDetails.getOrganizationAddress())));
         if (projectDetails.getOrganizationUrl() != null && !projectDetails.getOrganizationUrl().isEmpty()) {
             writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact URL", projectDetails.getOrganizationUrl()));
         }
