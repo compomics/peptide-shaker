@@ -387,10 +387,6 @@ public class ModificationLocalizationScorer extends DbObject {
         String peptideSequence = peptide.getSequence();
         ModificationMatch[] originalMatches = peptide.getVariableModifications();
 
-        if (peptideSequence.equals("QKYQEVLQNFR")) {
-            int debug = 1;
-        }
-
         if (originalMatches.length == 0) {
             return;
         }
@@ -629,18 +625,16 @@ public class ModificationLocalizationScorer extends DbObject {
 
                         if (nSitesOccupied < occurrence
                                 && (modification.getModificationType() == ModificationType.modaa && !modificationConfidentSites.contains(site)
-                                || site == 1 && nTermModConfident == null && modification.getModificationType().isNTerm()
-                                || site == peptideSequence.length() && cTermModConfident == null && modification.getModificationType().isCTerm())) {
+                                || site == 0 && nTermModConfident == null && modification.getModificationType().isNTerm()
+                                || site == peptideSequence.length() + 1 && cTermModConfident == null && modification.getModificationType().isCTerm())) {
 
                             if (modification.getModificationType().isCTerm()) {
 
                                 cTermModConfident = modification;
-                                site = site + 1;
 
                             } else if (modification.getModificationType().isNTerm()) {
 
                                 nTermModConfident = modification;
-                                site = 0;
 
                             } else {
 
@@ -769,18 +763,8 @@ public class ModificationLocalizationScorer extends DbObject {
                                 if (nSitesOccupied < occurrence
                                         && (modification.getModificationType() == ModificationType.modaa && modificationConfidentSites == null
                                         || modification.getModificationType() == ModificationType.modaa && !modificationConfidentSites.contains(site)
-                                        || site == 1 && nTermModConfident == null && modification.getModificationType().isNTerm()
-                                        || site == peptideSequence.length() && cTermModConfident == null && modification.getModificationType().isNTerm())) {
-
-                                    if (modification.getModificationType().isCTerm()) {
-
-                                        site = site + 1;
-
-                                    } else if (modification.getModificationType().isNTerm()) {
-
-                                        site = 0;
-
-                                    }
+                                        || site == 0 && nTermModConfident == null && modification.getModificationType().isNTerm()
+                                        || site == peptideSequence.length() + 1 && cTermModConfident == null && modification.getModificationType().isNTerm())) {
 
                                     double probabilisticScore = 0.0;
                                     double dScore = 0.0;
@@ -954,6 +938,17 @@ public class ModificationLocalizationScorer extends DbObject {
         for (ArrayList<ModificationMatch> modificationMatches : newMatches.values()) {
 
             newModificationMatches.addAll(modificationMatches);
+
+        }
+
+        if (cTermModConfident != null) {
+
+            peptideScores.addConfidentModificationSite(cTermModConfident.getName(), peptideSequence.length() + 1);
+
+        }
+        if (nTermModConfident != null) {
+
+            peptideScores.addConfidentModificationSite(nTermModConfident.getName(), 0);
 
         }
 
