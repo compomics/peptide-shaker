@@ -600,10 +600,6 @@ public class DisplayFeaturesGenerator {
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
 
         String peptideSequence = peptide.getSequence();
-        
-        if (peptideSequence.equals("MNAGSDPVVIVSAAR")) {
-            int debug = 1;
-        }
 
         String[] fixedModifications = getDisplayedModifications(
                 peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters), displayParameters.getDisplayedModifications());

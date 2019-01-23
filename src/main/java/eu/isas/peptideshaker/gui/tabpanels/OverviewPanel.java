@@ -5658,7 +5658,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             if (tempProteinMatch != null) {
 
-                peptideShakerGUI.setSelectedItems(tempProteinMatch.getKey(), peptideKey, psmKey);
+                proteinKey = tempProteinMatch.getKey();
+                peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
 
             }
         }
