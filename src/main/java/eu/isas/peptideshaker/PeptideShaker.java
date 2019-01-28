@@ -688,9 +688,6 @@ public class PeptideShaker {
 
             double probability = matchesValidator.getPsmMap().getProbability(psParameter.getScore());
             psParameter.setProbability(probability);
-            if (probability > 0) {
-                int debug = 1;
-            }
 
         } else {
 
