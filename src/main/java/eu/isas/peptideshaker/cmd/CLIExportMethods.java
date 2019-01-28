@@ -24,6 +24,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import eu.isas.peptideshaker.utils.CpsParent;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
+import eu.isas.peptideshaker.followup.ProteoformExport;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -176,6 +177,21 @@ public class CLIExportMethods {
         File destinationFile = destinationFileTemp;
         ProgenesisExport.writeProgenesisExport(destinationFile, sequenceProvider, proteinDetailsProvider, identification, ProgenesisExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getProgenesisExportTypeIndex()), waitingHandler, followUpCLIInputBean.getProgenesisTargetedPTMs(), sequenceMatchingPreferences);
 
+    }
+    
+    /**
+     * Exports proteoforms.
+     * 
+     * @param followUpCLIInputBean the follow up input bean
+     * @param identification the identification
+     * @param waitingHandler a waiting handler to display progress
+     */
+    public static void exportProteoforms(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler) {
+        
+        File destinationFile = followUpCLIInputBean.getProteoformsFile();
+        
+        ProteoformExport.writeProteoforms(destinationFile, identification, waitingHandler);
+        
     }
 
     /**

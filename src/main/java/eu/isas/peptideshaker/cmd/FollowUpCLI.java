@@ -37,14 +37,6 @@ public class FollowUpCLI extends CpsParent {
      */
     private WaitingHandler waitingHandler;
     /**
-     * The PTM factory.
-     */
-    private ModificationFactory ptmFactory;
-    /**
-     * The enzyme factory.
-     */
-    private EnzymeFactory enzymeFactory;
-    /**
      * The utilities user preferences.
      */
     private UtilitiesUserParameters utilitiesUserPreferences;
@@ -106,8 +98,8 @@ public class FollowUpCLI extends CpsParent {
 
         // Instantiate factories
         PeptideShaker.instantiateFacories(utilitiesUserPreferences);
-        ptmFactory = ModificationFactory.getInstance();
-        enzymeFactory = EnzymeFactory.getInstance();
+        ModificationFactory.getInstance();
+        EnzymeFactory.getInstance();
 
         // Load resources files
         loadSpecies();
@@ -167,19 +159,19 @@ public class FollowUpCLI extends CpsParent {
             }
             return 1;
         }
-        
+
         // If not available on the computer, parse summary information about the fasta file
         try {
-            
+
             loadFastaFile(waitingHandler);
-            
+
         } catch (IOException e) {
-            
+
             e.printStackTrace();
             waitingHandler.appendReport("An error occurred while parsing the fasta file.", true, true);
             waitingHandler.setRunCanceled();
             return 1;
-            
+
         }
 
         // Load project specific PTMs
@@ -252,6 +244,17 @@ public class FollowUpCLI extends CpsParent {
         if (followUpCLIInputBean.inclusionListNeeded()) {
             try {
                 CLIExportMethods.exportInclusionList(followUpCLIInputBean, identification, identificationFeaturesGenerator, identificationParameters.getSearchParameters(), waitingHandler, filterParameters);
+            } catch (Exception e) {
+                waitingHandler.appendReport("An error occurred while generating the inclusion list.", true, true);
+                e.printStackTrace();
+                waitingHandler.setRunCanceled();
+            }
+        }
+
+        // proteoforms export
+        if (followUpCLIInputBean.proteoformsNeeded()) {
+            try {
+                CLIExportMethods.exportProteoforms(followUpCLIInputBean, identification, waitingHandler);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while generating the inclusion list.", true, true);
                 e.printStackTrace();

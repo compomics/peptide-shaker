@@ -92,6 +92,10 @@ public class FollowUpCLIInputBean {
      */
     private HashSet<String> progenesisTargetedPTMs = new HashSet<>();
     /**
+     * The file where to export the proteoforms file.
+     */
+    private File proteoformsFile = null;
+    /**
      * The path settings.
      */
     private final PathSettingsCLIInputBean pathSettingsCLIInputBean;
@@ -162,6 +166,9 @@ public class FollowUpCLIInputBean {
         }
         if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id)) {
             inclusionRtWindow = new Double(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id));
+        }
+        if (aLine.hasOption(FollowUpCLIParams.PROTEOFORMS_FILE.id)) {
+            proteoformsFile = new File(aLine.getOptionValue(FollowUpCLIParams.PROTEOFORMS_FILE.id));
         }
         pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
     }
@@ -285,6 +292,15 @@ public class FollowUpCLIInputBean {
     }
 
     /**
+     * Returns the proteoforms file. Null if not set.
+     *
+     * @return the proteoforms file
+     */
+    public File getProteoformsFile() {
+        return proteoformsFile;
+    }
+
+    /**
      * Returns the type of export needed for the Progenesis export. 0 by
      * default. See the FollowUpCLIParams for detailed description.
      *
@@ -372,7 +388,8 @@ public class FollowUpCLIInputBean {
                 || accessionExportNeeded()
                 || fastaExportNeeded()
                 || progenesisExportNeeded()
-                || inclusionListNeeded();
+                || inclusionListNeeded()
+                || proteoformsNeeded();
     }
 
     /**
@@ -427,6 +444,15 @@ public class FollowUpCLIInputBean {
      */
     public boolean inclusionListNeeded() {
         return inclusionFile != null;
+    }
+
+    /**
+     * Indicates whether a list of proteoforms is needed.
+     *
+     * @return whether a list of proteoforms is needed
+     */
+    public boolean proteoformsNeeded() {
+        return proteoformsFile != null;
     }
 
     /**

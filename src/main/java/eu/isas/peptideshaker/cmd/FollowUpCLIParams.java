@@ -30,7 +30,8 @@ public enum FollowUpCLIParams {
     INCLUSION_LIST_FORMAT("inclusion_list_format", "Format for the inclusion list. " + InclusionListExport.ExportFormat.getCommandLineOptions(), false),
     INCLUSION_LIST_PROTEIN_FILTERS("inclusion_list_protein_filters", "Protein inference filters to be used for the inclusion list export (comma separated). " + InclusionListExport.getProteinFiltersCommandLineOptions(), false),
     INCLUSION_LIST_PEPTIDE_FILTERS("inclusion_list_peptide_filters", "Peptide filters to be used for the inclusion list export (comma separated). " + InclusionListExport.PeptideFilterType.getCommandLineOptions(), false),
-    INCLUSION_LIST_RT_WINDOW("inclusion_list_rt_window", "Retention time window for the inclusion list export (in seconds).", false);
+    INCLUSION_LIST_RT_WINDOW("inclusion_list_rt_window", "Retention time window for the inclusion list export (in seconds).", false),
+    PROTEOFORMS_FILE("proteoforms_file", "Output file for the proteoforms. (Existing file will be overwritten.)", false);
 
     /**
      * Short Id for the CLI parameter.
@@ -84,6 +85,7 @@ public enum FollowUpCLIParams {
         aOptions.addOption(INCLUSION_LIST_PEPTIDE_FILTERS.id, true, INCLUSION_LIST_PEPTIDE_FILTERS.description);
         aOptions.addOption(INCLUSION_LIST_PROTEIN_FILTERS.id, true, INCLUSION_LIST_PROTEIN_FILTERS.description);
         aOptions.addOption(INCLUSION_LIST_RT_WINDOW.id, true, INCLUSION_LIST_RT_WINDOW.description);
+        aOptions.addOption(PROTEOFORMS_FILE.id, true, PROTEOFORMS_FILE.description);
         
         // Path setup
         PathSettingsCLIParams.createOptionsCLI(aOptions);
@@ -150,6 +152,9 @@ public enum FollowUpCLIParams {
         output += "-" + String.format(formatter, INCLUSION_LIST_PEPTIDE_FILTERS.id) + " " + INCLUSION_LIST_PEPTIDE_FILTERS.description + "\n";
         output += "-" + String.format(formatter, INCLUSION_LIST_PROTEIN_FILTERS.id) + " " + INCLUSION_LIST_PROTEIN_FILTERS.description + "\n";
         output += "-" + String.format(formatter, INCLUSION_LIST_RT_WINDOW.id) + " " + INCLUSION_LIST_RT_WINDOW.description + "\n";
+        
+        output += "\nProteoforms Export:\n\n";
+        output += "-" + String.format(formatter, PROTEOFORMS_FILE.id) + " " + PROTEOFORMS_FILE.description + "\n";
         
         return output;
     }
