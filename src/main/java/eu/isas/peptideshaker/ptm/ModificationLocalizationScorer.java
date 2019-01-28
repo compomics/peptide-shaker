@@ -1592,7 +1592,7 @@ public class ModificationLocalizationScorer extends DbObject {
     public void scorePsmPtms(Identification identification, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters,
             Metrics metrics, ProcessingParameters processingParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
 
-        waitingHandler.setWaitingText("Scoring PSM modification localization. Please Wait...");
+        waitingHandler.setWaitingText("Scoring PSM Modification Localization. Please Wait...");
 
         identification.getSpectrumIdentification().values().parallelStream()
                 .flatMap(HashSet::parallelStream)
@@ -1625,7 +1625,7 @@ public class ModificationLocalizationScorer extends DbObject {
      */
     public void scorePeptidePtms(Identification identification, WaitingHandler waitingHandler, IdentificationParameters identificationParameters) {
 
-        waitingHandler.setWaitingText("Scoring Peptide modification localization. Please Wait...");
+        waitingHandler.setWaitingText("Scoring Peptide Modification Localization. Please Wait...");
 
         int max = identification.getPeptideIdentification().size();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
