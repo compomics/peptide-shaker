@@ -35,6 +35,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.gui.parameters.ProjectParametersDialog;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
+import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
 import eu.isas.peptideshaker.validation.MatchesValidator;
@@ -692,9 +693,36 @@ public class NewDialog extends javax.swing.JDialog {
                 new Thread(new Runnable() {
                     public void run() {
                         try {
+
                             ExceptionHandler exceptionHandler = new WaitingDialogExceptionHandler((WaitingDialog) waitingDialog, "https://github.com/compomics/peptide-shaker/issues");
-                            peptideShaker.importFiles(waitingDialog, idFiles, spectrumFiles, identificationParameters, projectDetails, processingParameters, exceptionHandler);
-                            peptideShaker.createProject(identificationParameters, processingParameters, spectrumCountingPreferences, projectDetails, projectType, waitingDialog, exceptionHandler);
+                            
+                            int outcome = peptideShaker.importFiles(
+                                    waitingDialog, 
+                                    idFiles, 
+                                    spectrumFiles, 
+                                    identificationParameters, 
+                                    projectDetails, 
+                                    processingParameters, 
+                                    exceptionHandler
+                            );
+
+                            if (outcome == 0) {
+
+                                peptideShaker.createProject(
+                                        identificationParameters, 
+                                        processingParameters, 
+                                        spectrumCountingPreferences, 
+                                        projectDetails, 
+                                        projectType, 
+                                        waitingDialog, 
+                                        exceptionHandler
+                                );
+
+                            } else {
+                                
+                                waitingDialog.setRunCanceled();
+                                
+                            }
                         } catch (Exception e) {
                             System.out.println("Failed to import data or create the project!");
                             e.printStackTrace();
@@ -1907,13 +1935,13 @@ public class NewDialog extends javax.swing.JDialog {
             settingsComboBox.setSelectedItem(identificationParameters.getName());
 
             String fastaFilePath = identificationParameters.getSearchParameters().getFastaFile();
-            
+
             if (fastaFilePath != null) {
-            
+
                 fastaFileTxt.setText(Util.getFileName(fastaFilePath));
-            
+
             }
-            
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
                     "Failed to import identification parameters from: " + newIdentificationParameters.getName() + ".", "Identification Parameters",

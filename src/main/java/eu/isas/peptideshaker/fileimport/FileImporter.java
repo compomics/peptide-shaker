@@ -257,16 +257,6 @@ public class FileImporter {
 
                     if (waitingHandler.isRunCanceled()) {
 
-                        try {
-
-                            identification.close();
-
-                        } catch (Exception e) {
-
-                            e.printStackTrace();
-
-                        }
-
                         return 1;
                     }
                 }
@@ -285,7 +275,7 @@ public class FileImporter {
                                 .collect(Collectors.joining(", "));
 
                         waitingHandler.appendReport("MGF files missing: " + missingFiles, true, true);
-                        identification.close();
+                        
                         return 1;
 
                     }
@@ -311,7 +301,6 @@ public class FileImporter {
 
                     if (waitingHandler.isRunCanceled()) {
 
-                        identification.close();
                         return 1;
 
                     }
@@ -324,7 +313,6 @@ public class FileImporter {
 
                     waitingHandler.appendReport("No identifications retained.", true, true);
                     waitingHandler.setRunCanceled();
-                    identification.close();
 
                     return 1;
 
@@ -362,19 +350,6 @@ public class FileImporter {
 
             error.printStackTrace();
 
-            if (identification != null) {
-
-                try {
-
-                    identification.close();
-
-                } catch (Exception e) {
-
-                    e.printStackTrace();
-
-                }
-            }
-
             return 1;
 
         } catch (Exception e) {
@@ -403,19 +378,6 @@ public class FileImporter {
 
             e.printStackTrace();
             System.err.println("Free memory: " + Runtime.getRuntime().freeMemory());
-
-            if (identification != null) {
-
-                try {
-
-                    identification.close();
-
-                } catch (Exception ex) {
-
-                    ex.printStackTrace();
-
-                }
-            }
 
             return 1;
         }

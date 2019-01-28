@@ -175,11 +175,18 @@ public class PeptideShaker {
      * @param projectDetails the project details
      * @param processingPreferences the initial processing preferences
      * @param exceptionHandler the exception handler
+     * 
+     * @return 0 if the import went fine, 1 otherwise
      */
-    public void importFiles(WaitingHandler waitingHandler, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
-            IdentificationParameters identificationParameters, ProjectDetails projectDetails,
+    public int importFiles(
+            WaitingHandler waitingHandler, 
+            ArrayList<File> idFiles, 
+            ArrayList<File> spectrumFiles,
+            IdentificationParameters identificationParameters, 
+            ProjectDetails projectDetails,
             ProcessingParameters processingPreferences,
-            ExceptionHandler exceptionHandler) {
+            ExceptionHandler exceptionHandler
+    ) {
 
         projectCreationDuration = new Duration();
         projectCreationDuration.start();
@@ -195,14 +202,23 @@ public class PeptideShaker {
         identification.addObject(ProjectParameters.key, projectParameters);
 
         fileImporter = new FileImporter(identification, identificationParameters, processingPreferences, metrics, projectDetails, waitingHandler, exceptionHandler);
-        fileImporter.importFiles(idFiles, spectrumFiles);
+        int outcome = fileImporter.importFiles(idFiles, spectrumFiles);
 
-        geneMaps = fileImporter.getGeneMaps();
-        sequenceProvider = fileImporter.getSequenceProvider();
-        proteinDetailsProvider = fileImporter.getProteinDetailsProvider();
-        inputMap = fileImporter.getInputMap();
-        proteinCount = fileImporter.getProteinCount();
+        if (outcome == 0) {
 
+            geneMaps = fileImporter.getGeneMaps();
+            sequenceProvider = fileImporter.getSequenceProvider();
+            proteinDetailsProvider = fileImporter.getProteinDetailsProvider();
+            inputMap = fileImporter.getInputMap();
+            proteinCount = fileImporter.getProteinCount();
+
+            return 0;
+            
+        } else {
+            
+            return 1;
+            
+        }
     }
 
     /**

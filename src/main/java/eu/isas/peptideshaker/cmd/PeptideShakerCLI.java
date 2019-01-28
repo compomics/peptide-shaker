@@ -152,11 +152,11 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                         }
                     }
                 }, "ProgressDialog").start();
-                
+
             } else {
-                
+
                 waitingHandler = new WaitingHandlerCLIImpl();
-            
+
             }
 
             // Set up exception handler
@@ -499,10 +499,13 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     /**
      * Creates the PeptideShaker project based on the identification files
      * provided in the command line input
-     * 
-     * @throws java.io.IOException exception thrown if an error occurs while reading or writing a file
-     * @throws java.lang.InterruptedException exception thrown if a thread is interrupted
-     * @throws java.util.concurrent.TimeoutException exception thrown if a process times out
+     *
+     * @throws java.io.IOException exception thrown if an error occurs while
+     * reading or writing a file
+     * @throws java.lang.InterruptedException exception thrown if a thread is
+     * interrupted
+     * @throws java.util.concurrent.TimeoutException exception thrown if a
+     * process times out
      */
     public void createProject() throws IOException, InterruptedException, TimeoutException {
 
@@ -680,22 +683,22 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 }
                 if (!found) {
                     waitingHandler.appendReport("FASTA file \'" + fastaFile.getName() + "\' not found.", true, true);
-            waitingHandler.setRunCanceled();
+                    waitingHandler.setRunCanceled();
                 }
             }
         }
-        
+
         // If not available on the computer, parse summary information about the fasta file
         try {
-            
+
             loadFastaFile(waitingHandler);
-            
+
         } catch (IOException e) {
-            
+
             e.printStackTrace();
             waitingHandler.appendReport("An error occurred while parsing the fasta file.", true, true);
             waitingHandler.setRunCanceled();
-            
+
         }
 
         // set the processing settings
@@ -707,7 +710,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         // set the spectrum counting prefrences
         spectrumCountingParameters = new SpectrumCountingParameters();
-        
+
         // Set the project type
         // @TODO: make it a user setting
         projectType = ProjectType.protein;
@@ -721,9 +724,29 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         PeptideShaker peptideShaker = new PeptideShaker(projectParameters);
 
         // import the files
-        peptideShaker.importFiles(waitingHandler, identificationFiles, spectrumFiles,
-                identificationParameters, projectDetails, processingParameters, exceptionHandler);
-        peptideShaker.createProject(identificationParameters, processingParameters, spectrumCountingParameters, projectDetails, projectType, waitingHandler, exceptionHandler);
+        int outcome = peptideShaker.importFiles(
+                waitingHandler,
+                identificationFiles,
+                spectrumFiles,
+                identificationParameters,
+                projectDetails,
+                processingParameters,
+                exceptionHandler
+        );
+
+        if (outcome == 0) {
+
+            peptideShaker.createProject(
+                    identificationParameters,
+                    processingParameters,
+                    spectrumCountingParameters,
+                    projectDetails,
+                    projectType,
+                    waitingHandler,
+                    exceptionHandler
+            );
+
+        }
 
         if (!waitingHandler.isRunCanceled()) {
 
