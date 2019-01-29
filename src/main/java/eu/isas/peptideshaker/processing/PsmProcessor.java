@@ -158,7 +158,7 @@ public class PsmProcessor {
      * assumptions.
      *
      * @param inputMap map of the input scores
-     * @param fastaParameters the fasta parsing parameters
+     * @param fastaParameters the FASTA parsing parameters
      * @param sequenceMatchingPreferences the sequence matching preferences
      * @param waitingHandler the handler displaying feedback to the user
      */

@@ -87,8 +87,8 @@ public class BestMatchSelection {
      * Selects the best hit.
      *
      * @param spectrumMatch the spectrum match
-     * @param inputMap The input map
-     * @param psmTargetDecoyMap the psm target decoy map
+     * @param inputMap the input map
+     * @param psmTargetDecoyMap the PSM target decoy map
      * @param waitingHandler the handler displaying feedback to the user
      * @param identificationParameters the identification parameters
      */

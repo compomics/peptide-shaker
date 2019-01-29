@@ -3398,7 +3398,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
             if (tempProteinMatch != null) {
 
-                peptideShakerGUI.setSelectedItems(tempProteinMatch.getKey(), peptideKey, psmKey);
+                proteinKey = tempProteinMatch.getKey();
+                peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
 
             }
 
