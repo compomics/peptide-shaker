@@ -299,14 +299,16 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             // array to be filled with all exported reports
             ArrayList<File> reportFiles = new ArrayList<File>();
 
-            if (reportCLIInputBean.exportNeeded()) {
+            if (reportCLIInputBean.exportNeeded() || reportCLIInputBean.documentationExportNeeded()) {
 
                 // see if output folder is set, and if not set to the same folder as the cps file
                 boolean reportOutputFolderSet = reportCLIInputBean.getReportOutputFolder() != null;
 
                 if (!reportOutputFolderSet) {
                     if (cliInputBean.getOutput() == null) {
-                        waitingHandler.appendReport("Output folder not set. Please use -out_reports (or the more general -out option).", true, true);
+                        waitingHandler.appendReport("Report output folder not set. Please use -out_reports (or the more general -out option). Processing canceled.", true, true); // @TODO: ideally this test should be done before starting the processing of the data!
+                        System.err.println("Report output folder not set. Please use -out_reports (or the more general -out option). Processing canceled.");
+                        waitingHandler.setRunCanceled();
                     } else {
                         reportCLIInputBean.setReportOutputFolder(cliInputBean.getOutput().getParentFile());
                         reportOutputFolderSet = true;
