@@ -296,46 +296,53 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             // report export if needed
             ReportCLIInputBean reportCLIInputBean = cliInputBean.getReportCLIInputBean();
 
-            // see if output folder is set, and if not set to the same folder as the cps file
-            if (reportCLIInputBean.getReportOutputFolder() == null) {
-                if (cliInputBean.getOutput() == null) {
-                    waitingHandler.appendReport("Output folder not set. Please use -out_reports (or the more general -out option).", true, true);
-                } else {
-                    reportCLIInputBean.setReportOutputFolder(cliInputBean.getOutput().getParentFile());
-                }
-            }
-
             // array to be filled with all exported reports
             ArrayList<File> reportFiles = new ArrayList<File>();
 
             if (reportCLIInputBean.exportNeeded()) {
-                waitingHandler.appendReport("Starting report export.", true, true);
 
-                // Export report(s)
-                if (reportCLIInputBean.exportNeeded()) {
-                    int nSurroundingAAs = 2; //@TODO: this shall not be hard coded //peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides()
-                    for (String reportType : reportCLIInputBean.getReportTypes()) {
-                        try {
-                            reportFiles.add(CLIExportMethods.exportReport(reportCLIInputBean, reportType, experiment.getReference(),
-                                    sample.getReference(), replicateNumber, projectDetails, identification, geneMaps, identificationFeaturesGenerator,
-                                    identificationParameters, nSurroundingAAs, spectrumCountingPreferences, waitingHandler));
-                        } catch (Exception e) {
-                            waitingHandler.appendReport("An error occurred while exporting the " + reportType + ". " + getLogFileMessage(), true, true);
-                            e.printStackTrace();
-                            waitingHandler.setRunCanceled();
-                        }
+                // see if output folder is set, and if not set to the same folder as the cps file
+                boolean reportOutputFolderSet = reportCLIInputBean.getReportOutputFolder() != null;
+
+                if (!reportOutputFolderSet) {
+                    if (cliInputBean.getOutput() == null) {
+                        waitingHandler.appendReport("Output folder not set. Please use -out_reports (or the more general -out option).", true, true);
+                    } else {
+                        reportCLIInputBean.setReportOutputFolder(cliInputBean.getOutput().getParentFile());
+                        reportOutputFolderSet = true;
                     }
                 }
 
-                // export documentation
-                if (reportCLIInputBean.documentationExportNeeded()) {
-                    for (String reportType : reportCLIInputBean.getReportTypes()) {
-                        try {
-                            CLIExportMethods.exportDocumentation(reportCLIInputBean, reportType, waitingHandler);
-                        } catch (Exception e) {
-                            waitingHandler.appendReport("An error occurred while exporting the documentation for " + reportType + ". " + getLogFileMessage(), true, true);
-                            e.printStackTrace();
-                            waitingHandler.setRunCanceled();
+                if (reportOutputFolderSet) {
+
+                    waitingHandler.appendReport("Starting report export.", true, true);
+
+                    // Export report(s)
+                    if (reportCLIInputBean.exportNeeded()) {
+                        int nSurroundingAAs = 2; //@TODO: this shall not be hard coded //peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides()
+                        for (String reportType : reportCLIInputBean.getReportTypes()) {
+                            try {
+                                reportFiles.add(CLIExportMethods.exportReport(reportCLIInputBean, reportType, experiment.getReference(),
+                                        sample.getReference(), replicateNumber, projectDetails, identification, geneMaps, identificationFeaturesGenerator,
+                                        identificationParameters, nSurroundingAAs, spectrumCountingPreferences, waitingHandler));
+                            } catch (Exception e) {
+                                waitingHandler.appendReport("An error occurred while exporting the " + reportType + ". " + getLogFileMessage(), true, true);
+                                e.printStackTrace();
+                                waitingHandler.setRunCanceled();
+                            }
+                        }
+                    }
+
+                    // export documentation
+                    if (reportCLIInputBean.documentationExportNeeded()) {
+                        for (String reportType : reportCLIInputBean.getReportTypes()) {
+                            try {
+                                CLIExportMethods.exportDocumentation(reportCLIInputBean, reportType, waitingHandler);
+                            } catch (Exception e) {
+                                waitingHandler.appendReport("An error occurred while exporting the documentation for " + reportType + ". " + getLogFileMessage(), true, true);
+                                e.printStackTrace();
+                                waitingHandler.setRunCanceled();
+                            }
                         }
                     }
                 }
