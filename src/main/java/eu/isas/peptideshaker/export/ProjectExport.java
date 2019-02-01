@@ -64,10 +64,9 @@ public class ProjectExport {
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Getting FASTA File. Please Wait...");
         }
-        
+
         // Note: The order files are added to the zip matters: zip files can be read sequencially
         // and bigger and unused files should therefore be added after smaller and less used files.
-        
         ArrayList<String> dataFiles = new ArrayList<String>();
         dataFiles.add(fastaFile.getAbsolutePath());
 
@@ -98,7 +97,7 @@ public class ProjectExport {
                 indexFile = new File(spectrumFile.getParentFile(), SpectrumFactory.getIndexName(spectrumFile.getName()));
                 if (indexFile.exists()) {
                     // the indexes are added after the FASTA and FASTA index files
-                    dataFiles.add(indexesPositions++, indexFile.getAbsolutePath());                    
+                    dataFiles.add(indexesPositions++, indexFile.getAbsolutePath());
                 }
                 // add the spectrum files at the end to make index access faster
                 dataFiles.add(spectrumFile.getAbsolutePath());
@@ -122,7 +121,9 @@ public class ProjectExport {
                 try {
                     // get the total uncompressed size
                     long totalUncompressedSize = 0;
-                    totalUncompressedSize += cpsFile.length();
+                    if (cpsFile != null) {
+                        totalUncompressedSize += cpsFile.length();
+                    }
                     for (String dataFilePath : dataFiles) {
                         totalUncompressedSize += new File(dataFilePath).length();
                     }
@@ -141,7 +142,7 @@ public class ProjectExport {
                         waitingHandler.setSecondaryProgressCounter(0);
                         waitingHandler.setMaxSecondaryProgressCounter(100);
                     }
-                    
+
                     // add the reports
                     if (reportFiles != null && reportFiles.size() > 0) {
                         // create the reports folder in the zip file
@@ -160,7 +161,7 @@ public class ProjectExport {
                             reportFile.delete();
                         }
                     }
-                    
+
                     // add the data
                     // create the data folder in the zip file
                     ZipUtils.addFolderToZip(defaultDataFolder, out);
@@ -187,15 +188,17 @@ public class ProjectExport {
                             }
                             waitingHandler.increaseSecondaryProgressCounter();
                         }
-                        
+
                         // move the mzid file to the zip folder
                         ZipUtils.addFileToZip(mzidFile, out, waitingHandler, totalUncompressedSize);
                         mzidFile.delete();
                     }
-                    
+
                     // move the cps file to the zip
-                    ZipUtils.addFileToZip(cpsFile, out, waitingHandler, totalUncompressedSize);
-                    cpsFile.delete();
+                    if (cpsFile != null) {
+                        ZipUtils.addFileToZip(cpsFile, out, waitingHandler, totalUncompressedSize);
+                        cpsFile.delete();
+                    }
 
                     if (waitingHandler != null) {
                         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
