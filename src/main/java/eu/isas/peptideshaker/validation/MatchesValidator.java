@@ -51,6 +51,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -1504,27 +1505,13 @@ public class MatchesValidator {
                             if (inputMap != null && storeContributions) {
 
                                 Peptide bestPeptide = peptideAssumption.getPeptide();
-                                HashSet<Integer> agreementAdvocates = new HashSet<>();
+                                int[] agreementAdvocates = assumptions.entrySet().stream()
+                                        .filter(entry -> !entry.getValue().isEmpty() && hasBestAssumption(entry.getValue(), bestPeptide))
+                                        .mapToInt(entry -> entry.getKey())
+                                        .distinct()
+                                        .toArray();
 
-                                for (int advocateId : assumptions.keySet()) {
-
-                                    TreeMap<Double, ArrayList<PeptideAssumption>> advocateAssumptions = assumptions.get(advocateId);
-                                    ArrayList<PeptideAssumption> firstHits = advocateAssumptions.firstEntry().getValue();
-
-                                    for (PeptideAssumption firstHit : firstHits) {
-
-                                        Peptide advocatePeptide = firstHit.getPeptide();
-
-                                        if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, identificationParameters.getSequenceMatchingParameters())) {
-
-                                            agreementAdvocates.add(advocateId);
-                                            break;
-
-                                        }
-                                    }
-                                }
-
-                                boolean unique = agreementAdvocates.size() == 1;
+                                boolean unique = agreementAdvocates.length == 1;
 
                                 for (int advocateId : agreementAdvocates) {
 
@@ -1532,7 +1519,7 @@ public class MatchesValidator {
 
                                 }
 
-                                inputMap.addPeptideShakerHit(spectrumFileName, agreementAdvocates.isEmpty());
+                                inputMap.addPeptideShakerHit(spectrumFileName, agreementAdvocates.length == 0);
 
                             }
                         }
@@ -1545,6 +1532,32 @@ public class MatchesValidator {
                 exceptionHandler.catchException(e);
                 waitingHandler.setRunCanceled();
             }
+        }
+
+        /**
+         * Returns a boolean indicating whether the top scoring advocate
+         * assumptions contain the best peptide not accounting for modification
+         * localization.
+         *
+         * @param advocateAssumptions the peptide assumptions
+         * @param bestPeptide the best peptide
+         *
+         * @return a boolean indicating whether the top scoring advocate
+         * assumptions contain the best peptide not accounting for modification
+         * localization
+         */
+        private boolean hasBestAssumption(
+                TreeMap<Double, ArrayList<PeptideAssumption>> advocateAssumptions,
+                Peptide bestPeptide
+        ) {
+
+            ArrayList<PeptideAssumption> firstHits = advocateAssumptions.firstEntry().getValue();
+
+            return firstHits.stream()
+                    .anyMatch(assumption -> bestPeptide.isSameSequenceAndModificationStatus(
+                            assumption.getPeptide(),
+                            identificationParameters.getSequenceMatchingParameters()));
+
         }
 
         /**

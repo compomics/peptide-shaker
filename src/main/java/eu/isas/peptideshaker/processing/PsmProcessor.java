@@ -106,7 +106,12 @@ public class PsmProcessor {
         identification.getSpectrumIdentification().values().stream()
                 .flatMap(HashSet::parallelStream)
                 .map(key -> identification.getSpectrumMatch(key))
-                .forEach(spectrumMatch -> processPsm(spectrumMatch, inputMap, bestMatchSelection, identificationParameters, waitingHandler));
+                .forEach(spectrumMatch -> processPsm(
+                        spectrumMatch, 
+                        inputMap, 
+                        bestMatchSelection, 
+                        identificationParameters, 
+                        waitingHandler));
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
@@ -194,13 +199,13 @@ public class PsmProcessor {
 
             int searchEngine = entry.getKey();
             TreeMap<Double, ArrayList<PeptideAssumption>> seMapping = entry.getValue();
-            double previousP = 0;
-            ArrayList<PSParameter> previousAssumptionsParameters = new ArrayList<>();
+            double previousP = 0.0;
+            ArrayList<PSParameter> previousAssumptionsParameters = new ArrayList<>(2);
             PeptideAssumption previousAssumption = null;
 
             for (Map.Entry<Double, ArrayList<PeptideAssumption>> entry2 : seMapping.entrySet()) {
 
-                int eValue = entry.getKey();
+                double eValue = entry2.getKey();
                 ArrayList<PeptideAssumption> peptideAssumptions = entry2.getValue();
 
                 for (PeptideAssumption assumption : peptideAssumptions) {
