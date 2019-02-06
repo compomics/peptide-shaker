@@ -65,7 +65,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
         this.displayFeaturesGenerator = null;
         this.peptideKeys = new long[0];
         this.proteinAccession = null;
-        this.showScores = true;
+        this.showScores = false;
         this.exceptionHandler = null;
 
     }
@@ -112,6 +112,16 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
         this.proteinAccession = proteinAccession;
         this.showScores = showScores;
 
+    }
+    
+    /**
+     * Sets whether the scores should be displayed.
+     *
+     * @param showScores a boolean indicating whether the scores should be
+     * displayed
+     */
+    public void showScores(boolean showScores) {
+        this.showScores = showScores;
     }
 
     /**

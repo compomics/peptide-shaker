@@ -64,7 +64,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
         this.displayFeaturesGenerator = null;
         this.identificationParameters = null;
         this.psmKeys = new long[0];
-        this.showScores = true;
+        this.showScores = false;
         this.exceptionHandler = null;
         this.inputMap = null;
 
@@ -110,6 +110,16 @@ public class PsmTableModel extends SelfUpdatingTableModel {
         this.psmKeys = psmKeys;
         this.showScores = displayScores;
 
+    }
+    
+    /**
+     * Sets whether the scores should be displayed.
+     *
+     * @param showScores a boolean indicating whether the scores should be
+     * displayed
+     */
+    public void showScores(boolean showScores) {
+        this.showScores = showScores;
     }
 
     /**

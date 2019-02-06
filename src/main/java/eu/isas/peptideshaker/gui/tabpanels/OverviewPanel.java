@@ -311,7 +311,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         peptideTableToolTips.add("Peptide Sequence");
         peptideTableToolTips.add("Peptide Start Index");
         peptideTableToolTips.add("Number of Spectra (Confident / Doubtful / Not Validated)");
-        peptideTableToolTips.add("Peptide Confidence");
+
+        if (peptideShakerGUI.getDisplayParameters().showScores()) {
+            peptideTableToolTips.add("Peptide Score");
+        } else {
+            peptideTableToolTips.add("Peptide Confidence");
+        }
+
         peptideTableToolTips.add("Validated");
 
         psmTableToolTips = new ArrayList<>();
@@ -321,7 +327,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         psmTableToolTips.add("Peptide Sequence");
         psmTableToolTips.add("Precursor Charge");
         psmTableToolTips.add("m/z Error");
-        psmTableToolTips.add("Peptide Spectrum Match Confidence");
+
+        if (peptideShakerGUI.getDisplayParameters().showScores()) {
+            psmTableToolTips.add("Peptide Spectrum Match Score");
+        } else {
+            psmTableToolTips.add("Peptide Spectrum Match Confidence");
+        }
+
         psmTableToolTips.add("Validated");
     }
 
@@ -364,9 +376,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         peptideTable.getColumn(" ").setMinWidth(50);
         peptideTable.getColumn("Start").setMinWidth(50);
 
-        String scoreColumnName = peptideTable.getColumnName(6);
-        peptideTable.getColumn(scoreColumnName).setMaxWidth(90);
-        peptideTable.getColumn(scoreColumnName).setMinWidth(90);
+        peptideTable.getColumnModel().getColumn(6).setMaxWidth(90);
+        peptideTable.getColumnModel().getColumn(6).setMinWidth(90);
 
         // the validated column
         peptideTable.getColumn("").setMaxWidth(30);
@@ -414,8 +425,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
                 "Starred", null, null));
 
-        peptideTable.getColumn(scoreColumnName).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn(scoreColumnName).getCellRenderer()).showNumberAndChart(
+        peptideTable.getColumnModel().getColumn(6).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumnModel().getColumn(6).getCellRenderer()).showNumberAndChart(
                 true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
 
         peptideTable.getModel().addTableModelListener(new TableModelListener() {
@@ -438,9 +449,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         psmTable.getColumn(" ").setMaxWidth(50);
         psmTable.getColumn(" ").setMinWidth(50);
 
-        String scoreColumnName = psmTable.getColumnName(6);
-        psmTable.getColumn(scoreColumnName).setMaxWidth(90);
-        psmTable.getColumn(scoreColumnName).setMinWidth(90);
+        psmTable.getColumnModel().getColumn(6).setMaxWidth(90);
+        psmTable.getColumnModel().getColumn(6).setMinWidth(90);
 
         // the validated column
         psmTable.getColumn("").setMaxWidth(30);
@@ -485,8 +495,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
                 "Starred", null, null));
 
-        psmTable.getColumn(scoreColumnName).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn(scoreColumnName).getCellRenderer()).showNumberAndChart(
+        psmTable.getColumnModel().getColumn(6).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumnModel().getColumn(6).getCellRenderer()).showNumberAndChart(
                 true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
 
         if (peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()) {
@@ -3755,20 +3765,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
 
-        String scoreColumnName = proteinTable.getColumnName(11);
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn(scoreColumnName).getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumnModel().getColumn(11).getCellRenderer()).showNumbers(!showSparkLines);
 
         ((JSparklinesMultiIntervalChartTableCellRenderer) peptideTable.getColumn("Start").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesArrayListBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
-
-        scoreColumnName = peptideTable.getColumnName(6);
-        ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn(scoreColumnName).getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumnModel().getColumn(6).getCellRenderer()).showNumbers(!showSparkLines);
 
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("m/z Error").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
-
-        scoreColumnName = psmTable.getColumnName(6);
-        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn(scoreColumnName).getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumnModel().getColumn(6).getCellRenderer()).showNumbers(!showSparkLines);
 
         proteinTable.revalidate();
         proteinTable.repaint();
@@ -5318,7 +5323,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         ((ProteinTableModel) proteinTable.getModel()).showScores(peptideShakerGUI.getDisplayParameters().showScores());
         ((DefaultTableModel) proteinTable.getModel()).fireTableStructureChanged();
+        ((PeptideTableModel) peptideTable.getModel()).showScores(peptideShakerGUI.getDisplayParameters().showScores());
         ((DefaultTableModel) peptideTable.getModel()).fireTableStructureChanged();
+        ((PsmTableModel) psmTable.getModel()).showScores(peptideShakerGUI.getDisplayParameters().showScores());
         ((DefaultTableModel) psmTable.getModel()).fireTableStructureChanged();
         setTableProperties();
 
