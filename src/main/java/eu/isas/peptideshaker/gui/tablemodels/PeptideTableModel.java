@@ -267,7 +267,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                 .map(peptideMatch -> identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideMatch.getKey()))
                 .anyMatch(dummy -> waitingHandler.isRunCanceled());
 
-        return canceled ? 0 : rows.get(rows.size() - 1);
+        return canceled ? rows.get(0) : rows.get(rows.size() - 1);
 
     }
 }

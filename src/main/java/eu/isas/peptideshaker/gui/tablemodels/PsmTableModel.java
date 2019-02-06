@@ -279,7 +279,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                 .map(i -> identification.getSpectrumMatch(psmKeys[i]))
                 .anyMatch(dummy -> waitingHandler.isRunCanceled());
 
-        return canceled ? 0 : rows.size();
-
+        return canceled ? rows.get(0) : rows.get(rows.size() - 1);
+        
     }
 }
