@@ -207,14 +207,14 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                 return viewIndex + 1;
             }
 
-            if (isScrolling) {
-                return null;
-            }
-
-            if (!isSelfUpdating()) {
-                dataMissingAtRow(row);
-                return DisplayParameters.LOADING_MESSAGE;
-            }
+//            if (isScrolling) {
+//                return null;
+//            }
+//
+//            if (!isSelfUpdating()) {
+//                dataMissingAtRow(row);
+//                return DisplayParameters.LOADING_MESSAGE;
+//            }
 
             long proteinKey = proteinKeys[viewIndex];
 
