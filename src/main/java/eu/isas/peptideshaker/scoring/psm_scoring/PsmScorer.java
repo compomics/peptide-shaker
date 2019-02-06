@@ -93,8 +93,15 @@ public class PsmScorer {
      * @throws java.util.concurrent.TimeoutException exception thrown if the
      * process times out
      */
-    public void estimateIntermediateScores(Identification identification, InputMap inputMap, ProcessingParameters processingPreferences,
-            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) throws InterruptedException, TimeoutException {
+    public void estimateIntermediateScores(
+            Identification identification,
+            InputMap inputMap,
+            ProcessingParameters processingPreferences,
+            IdentificationParameters identificationParameters,
+            SequenceProvider sequenceProvider,
+            WaitingHandler waitingHandler,
+            ExceptionHandler exceptionHandler
+    ) throws InterruptedException, TimeoutException {
 
         // Remove the intensity filter during scoring
         AnnotationParameters annotationSettings = identificationParameters.getAnnotationParameters();
@@ -151,21 +158,9 @@ public class PsmScorer {
 
             HashMap<Double, Integer> aHistogram = HistogramUtils.mergeHistograms(aHistograms);
             HashMap<Double, Integer> bHistogram = HistogramUtils.mergeHistograms(bHistograms);
-            Double defaultA = null;
 
-            if (!aHistogram.isEmpty()) {
-
-                defaultA = HistogramUtils.getMedianValue(aHistogram);
-
-            }
-
-            Double defaultB = null;
-
-            if (!bHistogram.isEmpty()) {
-
-                defaultB = HistogramUtils.getMedianValue(bHistogram);
-
-            }
+            double defaultA = aHistogram.isEmpty() ? Double.NaN : HistogramUtils.getMedianValue(aHistogram);
+            double defaultB = bHistogram.isEmpty() ? Double.NaN : HistogramUtils.getMedianValue(bHistogram);
 
             long[] spectrumKeys = missingValuesMap.keySet().stream().mapToLong(Long::longValue).toArray();
             psmIterator = identification.getSpectrumMatchesIterator(spectrumKeys, null);
@@ -173,7 +168,15 @@ public class PsmScorer {
 
             for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
 
-                MissingEValueEstimatorRunnable runnable = new MissingEValueEstimatorRunnable(missingValuesMap, defaultA, defaultB, psmIterator, identification, inputMap, identificationParameters, waitingHandler, exceptionHandler);
+                MissingEValueEstimatorRunnable runnable = new MissingEValueEstimatorRunnable(
+                        missingValuesMap,
+                        defaultA,
+                        defaultB,
+                        psmIterator,
+                        inputMap,
+                        identificationParameters,
+                        waitingHandler,
+                        exceptionHandler);
                 pool.submit(runnable);
 
             }
@@ -215,8 +218,15 @@ public class PsmScorer {
      *
      * @return a list of advocates where no e-values could be found
      */
-    public ArrayList<Integer> estimateIntermediateScores(Identification identification, SpectrumMatch spectrumMatch, InputMap inputMap,
-            IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator, HyperScore hyperScore, WaitingHandler waitingHandler) {
+    public ArrayList<Integer> estimateIntermediateScores(
+            Identification identification,
+            SpectrumMatch spectrumMatch,
+            InputMap inputMap,
+            IdentificationParameters identificationParameters,
+            PeptideSpectrumAnnotator peptideSpectrumAnnotator,
+            HyperScore hyperScore,
+            WaitingHandler waitingHandler
+    ) {
 
         AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
 
@@ -227,7 +237,7 @@ public class PsmScorer {
 
         HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> assumptions = spectrumMatch.getPeptideAssumptionsMap();
 
-        ArrayList<Integer> missingEvalue = new ArrayList<>();
+        ArrayList<Integer> missingEvalue = new ArrayList<>(0);
 
         for (Entry<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> entry1 : assumptions.entrySet()) {
 
@@ -335,7 +345,12 @@ public class PsmScorer {
      * @param processingPreferences the processing preferences
      * @param waitingHandler the handler displaying feedback to the user
      */
-    public void estimateIntermediateScoreProbabilities(Identification identification, InputMap inputMap, ProcessingParameters processingPreferences, WaitingHandler waitingHandler) {
+    public void estimateIntermediateScoreProbabilities(
+            Identification identification,
+            InputMap inputMap,
+            ProcessingParameters processingPreferences,
+            WaitingHandler waitingHandler
+    ) {
 
         int totalProgress = 0;
 
@@ -394,12 +409,16 @@ public class PsmScorer {
      * @param identificationParameters the identification parameters
      * @param waitingHandler the handler displaying feedback to the user
      */
-    public void scorePsms(Identification identification, InputMap inputMap, ProcessingParameters processingPreferences,
-            IdentificationParameters identificationParameters, WaitingHandler waitingHandler) {
+    public void scorePsms(
+            Identification identification,
+            InputMap inputMap,
+            ProcessingParameters processingPreferences,
+            IdentificationParameters identificationParameters,
+            WaitingHandler waitingHandler
+    ) {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
-        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
         PsmScoringParameters psmScoringPreferences = identificationParameters.getPsmScoringParameters();
 
         PSParameter psParameter = new PSParameter();
@@ -538,8 +557,14 @@ public class PsmScorer {
          * canceling the process
          * @param exceptionHandler handler for exceptions
          */
-        public PsmScorerRunnable(SpectrumMatchesIterator psmIterator, Identification identification, InputMap inputMap,
-                IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
+        public PsmScorerRunnable(
+                SpectrumMatchesIterator psmIterator,
+                Identification identification,
+                InputMap inputMap,
+                IdentificationParameters identificationParameters,
+                WaitingHandler waitingHandler,
+                ExceptionHandler exceptionHandler
+        ) {
 
             this.psmIterator = psmIterator;
             this.identification = identification;
@@ -622,10 +647,6 @@ public class PsmScorer {
          */
         private final SpectrumMatchesIterator psmIterator;
         /**
-         * The identification.
-         */
-        private final Identification identification;
-        /**
          * The input map
          */
         private final InputMap inputMap;
@@ -648,11 +669,11 @@ public class PsmScorer {
         /**
          * Default values for the a coefficient.
          */
-        private final Double defaultA;
+        private final double defaultA;
         /**
          * Default values for the b coefficient.
          */
-        private final Double defaultB;
+        private final double defaultB;
 
         /**
          * Constructor.
@@ -668,14 +689,21 @@ public class PsmScorer {
          * canceling the process
          * @param exceptionHandler handler for exceptions
          */
-        public MissingEValueEstimatorRunnable(HashMap<Long, ArrayList<Integer>> missingEValuesMap, Double defaultA, Double defaultB, SpectrumMatchesIterator psmIterator, Identification identification, InputMap inputMap,
-                IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
+        public MissingEValueEstimatorRunnable(
+                HashMap<Long, ArrayList<Integer>> missingEValuesMap,
+                double defaultA,
+                double defaultB,
+                SpectrumMatchesIterator psmIterator,
+                InputMap inputMap,
+                IdentificationParameters identificationParameters,
+                WaitingHandler waitingHandler,
+                ExceptionHandler exceptionHandler
+        ) {
 
             this.missingEValues = missingEValuesMap;
             this.defaultA = defaultA;
             this.defaultB = defaultB;
             this.psmIterator = psmIterator;
-            this.identification = identification;
             this.inputMap = inputMap;
             this.identificationParameters = identificationParameters;
             this.waitingHandler = waitingHandler;
@@ -720,7 +748,7 @@ public class PsmScorer {
                                     PSParameter psParameter = (PSParameter) peptideAssumption.getUrParam(PSParameter.dummy);
                                     double hyperScore = -psParameter.getIntermediateScore(PsmScore.hyperScore.index);
 
-                                    if (defaultA != null && defaultB != null) {
+                                    if (!Double.isNaN(defaultA) && !Double.isNaN(defaultB)) {
 
                                         double eValue;
 

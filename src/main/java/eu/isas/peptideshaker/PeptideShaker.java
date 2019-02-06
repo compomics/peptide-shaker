@@ -10,7 +10,6 @@ import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
@@ -237,9 +236,15 @@ public class PeptideShaker {
      * @throws java.util.concurrent.TimeoutException exception thrown if a
      * process times out
      */
-    public void createProject(IdentificationParameters identificationParameters, ProcessingParameters processingParameters,
-            SpectrumCountingParameters spectrumCountingParameters, ProjectDetails projectDetails, ProjectType projectType,
-            WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) throws InterruptedException, TimeoutException {
+    public void createProject(
+            IdentificationParameters identificationParameters, 
+            ProcessingParameters processingParameters,
+            SpectrumCountingParameters spectrumCountingParameters, 
+            ProjectDetails projectDetails, 
+            ProjectType projectType,
+            WaitingHandler waitingHandler, 
+            ExceptionHandler exceptionHandler
+    ) throws InterruptedException, TimeoutException {
 
         identification.getObjectsDB().commit();
 
@@ -580,8 +585,13 @@ public class PeptideShaker {
      * @param sequenceProvider a protein sequence provider
      * @param projectType the project type
      */
-    public void spectrumMapChanged(Identification identification, WaitingHandler waitingHandler, ProcessingParameters processingPreferences,
-            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProjectType projectType) {
+    public void spectrumMapChanged(
+            Identification identification, 
+            WaitingHandler waitingHandler, 
+            ProcessingParameters processingPreferences,
+            IdentificationParameters identificationParameters, 
+            SequenceProvider sequenceProvider, 
+            ProjectType projectType) {
 
         FastaParameters fastaParameters = identificationParameters.getSearchParameters().getFastaParameters();
         FractionParameters fractionParameters = identificationParameters.getFractionParameters();
@@ -610,8 +620,12 @@ public class PeptideShaker {
      * @param identificationParameters the identification parameters
      * @param sequenceProvider a protein sequence provider
      */
-    public void peptideMapChanged(Identification identification, WaitingHandler waitingHandler,
-            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider) {
+    public void peptideMapChanged(
+            Identification identification, 
+            WaitingHandler waitingHandler,
+            IdentificationParameters identificationParameters, 
+            SequenceProvider sequenceProvider
+    ) {
 
         FastaParameters fastaParameters = identificationParameters.getSearchParameters().getFastaParameters();
         FractionParameters fractionParameters = identificationParameters.getFractionParameters();
@@ -634,8 +648,12 @@ public class PeptideShaker {
      * @param identificationParameters the identification parameters
      * @param sequenceProvider a protein sequence provider
      */
-    public void proteinMapChanged(Identification identification, WaitingHandler waitingHandler,
-            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider) {
+    public void proteinMapChanged(
+            Identification identification, 
+            WaitingHandler waitingHandler,
+            IdentificationParameters identificationParameters, 
+            SequenceProvider sequenceProvider
+    ) {
 
         FastaParameters fastaParameters = identificationParameters.getSearchParameters().getFastaParameters();
         FractionParameters fractionParameters = identificationParameters.getFractionParameters();
@@ -655,8 +673,12 @@ public class PeptideShaker {
      * @param waitingHandler the handler displaying feedback to the user
      */
     private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(
-            SequenceProvider sequenceProvider, SequenceMatchingParameters sequenceMatchingPreferences,
-            ProjectType projectType, FastaParameters fastaParameters, WaitingHandler waitingHandler) {
+            SequenceProvider sequenceProvider, 
+            SequenceMatchingParameters sequenceMatchingPreferences,
+            ProjectType projectType, 
+            FastaParameters fastaParameters, 
+            WaitingHandler waitingHandler
+    ) {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
@@ -686,9 +708,14 @@ public class PeptideShaker {
      * @param waitingHandler the handler displaying feedback to the user
      */
     private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(
-            SpectrumMatch spectrumMatch, PeptideAndProteinBuilder peptideAndProteinBuilder,
-            SequenceProvider sequenceProvider, SequenceMatchingParameters sequenceMatchingPreferences,
-            ProjectType projectType, FastaParameters fastaParameters, WaitingHandler waitingHandler) {
+            SpectrumMatch spectrumMatch, 
+            PeptideAndProteinBuilder peptideAndProteinBuilder,
+            SequenceProvider sequenceProvider, 
+            SequenceMatchingParameters sequenceMatchingPreferences,
+            ProjectType projectType, 
+            FastaParameters fastaParameters, 
+            WaitingHandler waitingHandler
+    ) {
 
         if (waitingHandler.isRunCanceled()) {
             return;

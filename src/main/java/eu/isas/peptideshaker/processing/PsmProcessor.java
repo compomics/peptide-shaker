@@ -64,8 +64,13 @@ public class PsmProcessor {
      * @param matchesValidator the matches validator
      * @param modificationLocalizationScorer the modification localization scorer
      */
-    public PsmProcessor(Identification identification, SequenceProvider sequenceProvider, HashMap<String, Integer> proteinCount,
-            MatchesValidator matchesValidator, ModificationLocalizationScorer modificationLocalizationScorer) {
+    public PsmProcessor(
+            Identification identification, 
+            SequenceProvider sequenceProvider, 
+            HashMap<String, Integer> proteinCount,
+            MatchesValidator matchesValidator, 
+            ModificationLocalizationScorer modificationLocalizationScorer
+    ) {
         
         this.identification = identification;
         this.sequenceProvider = sequenceProvider;
@@ -84,7 +89,11 @@ public class PsmProcessor {
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler
      */
-    public void processPsms(InputMap inputMap, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) {
+    public void processPsms(
+            InputMap inputMap, 
+            IdentificationParameters identificationParameters, 
+            WaitingHandler waitingHandler
+    ) {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
@@ -114,9 +123,13 @@ public class PsmProcessor {
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler
      */
-    private void processPsm(SpectrumMatch spectrumMatch, InputMap inputMap,
-            BestMatchSelection bestMatchSelection, IdentificationParameters identificationParameters,
-            WaitingHandler waitingHandler) {
+    private void processPsm(
+            SpectrumMatch spectrumMatch, 
+            InputMap inputMap,
+            BestMatchSelection bestMatchSelection, 
+            IdentificationParameters identificationParameters,
+            WaitingHandler waitingHandler
+    ) {
 
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -144,8 +157,11 @@ public class PsmProcessor {
             if (identificationParameters.getProteinInferenceParameters().isModificationRefinement()) {
 
                 spectrumMatch.getAllPeptideAssumptions().forEach(
-                        peptideAssumption -> PeptideChecker.checkPeptide(peptideAssumption.getPeptide(), sequenceProvider, modificationSequenceMatchingParameters));
-
+                        peptideAssumption -> PeptideChecker.checkPeptide(
+                                peptideAssumption.getPeptide(), 
+                                sequenceProvider, 
+                                modificationSequenceMatchingParameters
+                        ));
             }
         }
 
@@ -162,7 +178,13 @@ public class PsmProcessor {
      * @param sequenceMatchingPreferences the sequence matching preferences
      * @param waitingHandler the handler displaying feedback to the user
      */
-    private void attachAssumptionsProbabilities(SpectrumMatch spectrumMatch, InputMap inputMap, FastaParameters fastaParameters, SequenceMatchingParameters sequenceMatchingPreferences, WaitingHandler waitingHandler) {
+    private void attachAssumptionsProbabilities(
+            SpectrumMatch spectrumMatch, 
+            InputMap inputMap, 
+            FastaParameters fastaParameters, 
+            SequenceMatchingParameters sequenceMatchingPreferences, 
+            WaitingHandler waitingHandler
+    ) {
 
         // Peptides
         HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> peptideAssumptionsMap = spectrumMatch.getPeptideAssumptionsMap();
@@ -258,14 +280,14 @@ public class PsmProcessor {
         }
 
         // Compute the delta pep score accross all search engines
-        Double previousPEP = null;
+        double previousPEP = Double.NaN;
         ArrayList<PSParameter> previousParameters = new ArrayList<>();
 
         for (Map.Entry<Double, ArrayList<PSParameter>> entry : pepToParameterMap.entrySet()) {
 
             double pep = entry.getKey();
 
-            if (previousPEP != null) {
+            if (!Double.isNaN(previousPEP)) {
 
                 for (PSParameter previousParameter : previousParameters) {
 
