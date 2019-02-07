@@ -4725,7 +4725,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     // create the sequence fragment ion view
                     secondarySpectrumPlotsJPanel.removeAll();
                     SequenceFragmentationPanel sequenceFragmentationPanel = new SequenceFragmentationPanel(
-                            peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(spectrumMatch, false, false, false),
+                            peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(spectrumMatch, false, false, true),
                             annotations, true, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), forwardIon, rewindIon);
                     sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
                     sequenceFragmentationPanel.setOpaque(true);
