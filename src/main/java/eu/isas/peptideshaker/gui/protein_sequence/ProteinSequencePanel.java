@@ -217,7 +217,7 @@ public class ProteinSequencePanel {
         int previousColorIndex = aaColorIndex[0];
         double previousHeight = aaHeight[0];
 
-        for (int i = 1; i < aaHeight.length; i++) {
+        for (int i = 0; i < aaHeight.length; i++) {
 
             int newColorIndex = aaColorIndex[i];
             double newHeight = aaHeight[i];

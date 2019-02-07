@@ -777,7 +777,7 @@ public class DisplayFeaturesGenerator {
         double lastP = coverage[0];
         int lastIndex = 0;
 
-        for (int i = 1; i < coverage.length; i++) {
+        for (int i = 0; i < coverage.length; i++) {
 
             double p = coverage[i];
 
@@ -859,13 +859,13 @@ public class DisplayFeaturesGenerator {
 
                 for (int startIndex : startIndexes) {
 
-                    int endIndex = startIndex + peptideSequence.length();
+                    int endIndex = startIndex + peptideSequence.length() - 1;
                     String peptideTempStart = Integer.toString(startIndex);
                     String peptideTempEnd = Integer.toString(endIndex);
 
                     ResidueAnnotation newAnnotation = new ResidueAnnotation(String.join(" - ", peptideTempStart, modifiedSequence, peptideTempEnd), peptideMatchKey, true);
 
-                    for (int j = startIndex - 1; j < endIndex - 1; j++) {
+                    for (int j = startIndex - 1; j < endIndex; j++) {
 
                         annotations = residueAnnotation.get(j);
 

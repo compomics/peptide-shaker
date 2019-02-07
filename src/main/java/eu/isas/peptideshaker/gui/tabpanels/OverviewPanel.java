@@ -4327,7 +4327,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // we need to add a first empty filler as the coverage table starts at 0
                 ArrayList<Double> data = new ArrayList<>();
-                data.add(new Double(1));
+                data.add(new Double(0));
                 JSparklinesDataSeries sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                 sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
 
@@ -4352,32 +4352,42 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         Peptide peptide = peptideMatch.getPeptide();
                         int[] indexesOnProtein = peptide.getProteinMapping().get(proteinAccession);
 
-                        for (ModificationMatch modMatch : peptideMatch.getPeptide().getVariableModifications()) {
+                        String[] fixedModifications = peptide.getFixedModifications(
+                                peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(),
+                                peptideShakerGUI.getSequenceProvider(),
+                                peptideShakerGUI.getIdentificationParameters().getModificationLocalizationParameters().getSequenceMatchingParameters());
 
-                            String modName = modMatch.getModification();
+                        for (int site = 0; site < fixedModifications.length; site++) {
 
-                            if (displayParameters.isDisplayedPTM(modName)) {
+                            String modName = fixedModifications[site];
+
+                            if (modName != null && displayParameters.isDisplayedPTM(modName)) {
 
                                 for (int index : indexesOnProtein) {
-
-                                    fixedPtms.put(modMatch.getSite() + index, modName);
-
+                                    if (site == 0) {
+                                        fixedPtms.put(site + index, modName);
+                                    } else if (site == peptide.getSequence().length() + 1) {
+                                        fixedPtms.put(site + index - 2, modName);
+                                    } else {
+                                        fixedPtms.put(site + index - 1, modName);
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
-                for (int aa = 1; aa < sequence.length(); aa++) {
+                for (int aa = 0; aa < sequence.length(); aa++) {
 
-                    String modName = fixedPtms.get(aa + 1);
-                    for (String variablePTM : psPtmScores.getModificationsAtRepresentativeSite(aa + 1)) {
+                    String modName = fixedPtms.get(aa);
+
+                    for (String variablePTM : psPtmScores.getModificationsAtRepresentativeSite(aa)) {
                         if (displayParameters.isDisplayedPTM(variablePTM)) {
                             modName = variablePTM;
                             break;
                         }
                     }
-                    for (String variablePTM : psPtmScores.getConfidentModificationsAt(aa + 1)) {
+                    for (String variablePTM : psPtmScores.getConfidentModificationsAt(aa)) {
                         if (displayParameters.isDisplayedPTM(variablePTM)) {
                             modName = variablePTM;
                             break;
@@ -4400,14 +4410,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 //                                psPtmScores.getMainModificationsAt(aa).get(i);
 //                            }
 //                        }
-                        // @TODO: are peptide terminal mods excluded??  
+
                         Color ptmColor = new Color(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName));
                         if (ptmColor == null) {
                             ptmColor = Color.lightGray;
                         }
 
                         ArrayList<ResidueAnnotation> annotations = new ArrayList<>(1);
-                        annotations.add(new ResidueAnnotation(modName + " (" + aa + ")", 0l, false));
+                        annotations.add(new ResidueAnnotation(modName + " (" + (aa + 1) + ")", 0l, false)); // @TODO: note that terminal ptms are annotated one residue too early or too late...
                         proteinTooltips.put(sparkLineDataSeriesPtm.size(), annotations);
 
                         data = new ArrayList<>(1);
