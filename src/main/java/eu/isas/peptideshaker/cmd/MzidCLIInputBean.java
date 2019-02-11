@@ -60,7 +60,7 @@ public class MzidCLIInputBean {
     /**
      * The file where the mzIdentML export should be output.
      */
-    private File outputFile;
+    private File outputFile = null;
     /**
      * If true, the protein sequences are included in the mzid file.
      */

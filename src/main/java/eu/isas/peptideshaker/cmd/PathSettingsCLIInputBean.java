@@ -81,7 +81,7 @@ public class PathSettingsCLIInputBean {
      * configuration input.
      */
     public boolean hasInput() {
-        return !tempFolder.equals("") || !paths.isEmpty();
+        return !tempFolder.equals("") || !paths.isEmpty() || logFolder != null;
     }
 
     /**

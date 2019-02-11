@@ -250,11 +250,12 @@ public class CLIExportMethods {
      * peptide sequences
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param waitingHandler waiting handler displaying feedback to the user
+     * @return File file containing the exported report
      *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
      */
-    public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, ProjectDetails projectDetails, Identification identification,
+    public static File exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, ProjectDetails projectDetails, Identification identification,
             GeneMaps geneMaps, IdentificationFeaturesGenerator identificationFeaturesGenerator, IdentificationParameters identificationParameters, SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider, int nSurroundingAA, SpectrumCountingParameters spectrumCountingPreferences, WaitingHandler waitingHandler)
             throws IOException {
@@ -273,7 +274,8 @@ public class CLIExportMethods {
         //@TODO: allow format selection
         PSExportFactory.writeExport(exportScheme, reportFile, ExportFormat.text, reportCLIInputBean.isGzip(), experiment, projectDetails, identification, identificationFeaturesGenerator, geneMaps,
                 null, null, null, nSurroundingAA, identificationParameters, sequenceProvider, proteinDetailsProvider, spectrumCountingPreferences, waitingHandler);
-
+        
+        return reportFile;
     }
 
     /**

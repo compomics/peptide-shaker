@@ -30,7 +30,7 @@ import java.util.HashMap;
  * @author Marc Vaudel
  */
 public class RunMzDeviation {
-    
+
     /**
      * The spectrum factory.
      */
@@ -315,14 +315,14 @@ public class RunMzDeviation {
                     double error = bestPeptideAssumption.getDeltaMass(precursorMz, false, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection());
                     precursorRawMap.get(precursorRT).get(precursorMz).add(error);
 
-                    Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumKey);
-                ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
-                SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                    Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumKey, false);
+                    ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                    SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
                     SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(currentSpectrum.getSpectrumKey(), bestPeptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                     IonMatch[] ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
                             currentSpectrum, bestPeptideAssumption.getPeptide(),
                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-                    
+
                     spectrumFragmentMap = new HashMap<>();
 
                     for (IonMatch ionMatch : ionMatches) {

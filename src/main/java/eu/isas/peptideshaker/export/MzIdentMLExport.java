@@ -1889,7 +1889,7 @@ public class MzIdentMLExport {
 
                 // add the fragment ion annotation
                 AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
-                Spectrum spectrum = spectrumFactory.getSpectrum(spectrumFileName, spectrumTitle);
+                Spectrum spectrum = spectrumFactory.getSpectrum(spectrumFileName, spectrumTitle, false);
                 ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                 SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
                 SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, bestPeptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);

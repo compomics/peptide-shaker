@@ -66,6 +66,10 @@ public class PeptideShakerCLIInputBean {
      */
     private ReportCLIInputBean reportCLIInputBean;
     /**
+     * The mzid export options.
+     */
+    private MzidCLIInputBean mzidCLIInputBean;
+    /**
      * The path settings.
      */
     private PathSettingsCLIInputBean pathSettingsCLIInputBean;
@@ -98,7 +102,9 @@ public class PeptideShakerCLIInputBean {
         String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id);
         idFiles = getIdentificationFiles(filesTxt);
 
-        output = new File(aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id));
+        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id)) {
+            output = new File(aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id));
+        }
 
         if (aLine.hasOption(PeptideShakerCLIParams.GUI.id)) {
             String guiOption = aLine.getOptionValue(PeptideShakerCLIParams.GUI.id);
@@ -119,6 +125,7 @@ public class PeptideShakerCLIInputBean {
 
         followUpCLIInputBean = new FollowUpCLIInputBean(aLine);
         reportCLIInputBean = new ReportCLIInputBean(aLine);
+        mzidCLIInputBean = new MzidCLIInputBean(aLine);
         pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
         identificationParametersInputBean = new IdentificationParametersInputBean(aLine);
     }
@@ -158,7 +165,7 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns the cps output file.
+     * Returns the cps output file. Null if not set.
      *
      * @return the cps output file
      */
@@ -331,6 +338,15 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
+     * Returns the mzid export options required.
+     *
+     * @return the mzid export options required
+     */
+    public MzidCLIInputBean getMzidCLIInputBean() {
+        return mzidCLIInputBean;
+    }
+
+    /**
      * Returns the path settings provided by the user.
      *
      * @return the path settings provided by the user
@@ -408,19 +424,21 @@ public class PeptideShakerCLIInputBean {
             }
         }
 
-        if (!aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id)).equals("")) {
-            System.out.println("\nOutput file not specified.\n");
-            return false;
-        } else {
-            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id);
-            File testFile = new File(filesTxt.trim());
-            File parentFolder = testFile.getParentFile();
-            if (parentFolder == null) {
-                System.out.println("\nDestination folder not found. Please provide the complete path to the PeptideShaker output file.\n");
+        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id)) {
+            if (((String) aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id)).equals("")) {
+                System.out.println("\nOutput file cannot be empty.\n");
                 return false;
-            } else if (!parentFolder.exists() && !parentFolder.mkdirs()) {
-                System.out.println("\nDestination folder \'" + parentFolder.getPath() + "\' not found and cannot be created. Make sure that PeptideShaker has the right to write in the destination folder.\n");
-                return false;
+            } else {
+                String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id);
+                File testFile = new File(filesTxt.trim());
+                File parentFolder = testFile.getParentFile();
+                if (parentFolder == null) {
+                    System.out.println("\nDestination folder not found. Please provide the complete path to the PeptideShaker output file.\n");
+                    return false;
+                } else if (!parentFolder.exists() && !parentFolder.mkdirs()) {
+                    System.out.println("\nDestination folder \'" + parentFolder.getPath() + "\' not found and cannot be created. Make sure that PeptideShaker has the right to write in the destination folder.\n");
+                    return false;
+                }
             }
         }
 

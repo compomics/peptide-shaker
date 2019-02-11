@@ -7,6 +7,7 @@ import org.apache.commons.cli.Options;
  * Enum class specifying the Command Line Parameters for mzid export.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public enum MzidCLIParams {
 
@@ -69,9 +70,6 @@ public enum MzidCLIParams {
         for (MzidCLIParams mzidCLIParams : values()) {
             aOptions.addOption(mzidCLIParams.id, mzidCLIParams.hasArgument, mzidCLIParams.description);
         }
-
-        // Path setup
-        PathSettingsCLIParams.createOptionsCLI(aOptions);
     }
 
     /**

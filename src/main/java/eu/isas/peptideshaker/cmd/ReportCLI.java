@@ -70,39 +70,7 @@ public class ReportCLI extends CpsParent {
      */
     public Object call() {
 
-        PathSettingsCLIInputBean pathSettingsCLIInputBean = reportCLIInputBean.getPathSettingsCLIInputBean();
-
-        if (pathSettingsCLIInputBean.getLogFolder() != null) {
-            redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
-        }
-
-        if (pathSettingsCLIInputBean.hasInput()) {
-            PathSettingsCLI pathSettingsCLI = new PathSettingsCLI(pathSettingsCLIInputBean);
-            pathSettingsCLI.setPathSettings();
-        } else {
-            try {
-                setPathConfiguration();
-            } catch (Exception e) {
-                System.out.println("An error occurred when setting path configurations. Default paths will be used.");
-                e.printStackTrace();
-            }
-        }
-
         setDbFolder(PeptideShaker.getMatchesFolder());
-
-        try {
-            ArrayList<PathKey> errorKeys = PeptideShakerPathParameters.getErrorKeys();
-            if (!errorKeys.isEmpty()) {
-                System.out.println("Unable to write in the following configuration folders. Please use a temporary folder, "
-                        + "the path configuration command line, or edit the configuration paths from the graphical interface.");
-                for (PathKey pathKey : errorKeys) {
-                    System.out.println(pathKey.getId() + ": " + pathKey.getDescription());
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Unable to load the path configurations. Default paths will be used.");
-            e.printStackTrace();
-        }
 
         // Load user preferences
         utilitiesUserPreferences = UtilitiesUserParameters.loadUserParameters();
@@ -169,19 +137,19 @@ public class ReportCLI extends CpsParent {
             }
             return 1;
         }
-        
+
         // If not available on the computer, parse summary information about the fasta file
         try {
-            
+
             loadFastaFile(waitingHandler);
-            
+
         } catch (IOException e) {
-            
+
             e.printStackTrace();
             waitingHandler.appendReport("An error occurred while parsing the fasta file.", true, true);
             waitingHandler.setRunCanceled();
             return 1;
-            
+
         }
 
         // Load project specific PTMs
@@ -233,16 +201,6 @@ public class ReportCLI extends CpsParent {
             System.exit(1); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
             // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
             return 1;
-        }
-    }
-
-    /**
-     * Sets the path configuration.
-     */
-    private void setPathConfiguration() throws IOException {
-        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathParameters.configurationFileName);
-        if (pathConfigurationFile.exists()) {
-            PeptideShakerPathParameters.loadPathParametersFromFile(pathConfigurationFile);
         }
     }
 
@@ -310,10 +268,14 @@ public class ReportCLI extends CpsParent {
     public static void main(String[] args) {
 
         try {
-            Options lOptions = new Options();
-            ReportCLIParams.createOptionsCLI(lOptions);
+            // check if there are updates to the paths
+            String[] nonPathSettingArgsAsList = PathSettingsCLI.extractAndUpdatePathOptions(args);
+
+            // parse the rest of the cptions   
+            Options nonPathOptions = new Options();
+            ReportCLIParams.createOptionsCLI(nonPathOptions);
             BasicParser parser = new BasicParser();
-            CommandLine line = parser.parse(lOptions, args);
+            CommandLine line = parser.parse(nonPathOptions, nonPathSettingArgsAsList);
 
             if (!isValidStartup(line)) {
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
@@ -354,15 +316,19 @@ public class ReportCLI extends CpsParent {
     /**
      * Close the PeptideShaker instance by clearing up factories and cache.
      *
-     * @throws IOException thrown if an exception occurred while closing the connection to a file
-     * @throws SQLException thrown if an exception occurred while closing the connection to a database
-     * @throws java.lang.InterruptedException if a thread was interrupted when closing the database
-     * @throws java.lang.ClassNotFoundException if a class was not found when emptying the cache
+     * @throws IOException thrown if an exception occurred while closing the
+     * connection to a file
+     * @throws SQLException thrown if an exception occurred while closing the
+     * connection to a database
+     * @throws java.lang.InterruptedException if a thread was interrupted when
+     * closing the database
+     * @throws java.lang.ClassNotFoundException if a class was not found when
+     * emptying the cache
      */
     public void closePeptideShaker() throws IOException, SQLException, InterruptedException, ClassNotFoundException {
 
         SpectrumFactory.getInstance().closeFiles();
-        
+
         identification.close();
 
         File matchFolder = PeptideShaker.getMatchesFolder();

@@ -37,12 +37,5 @@
                 <exec.executable>${profiler.java}</exec.executable>
             </properties>
         </action>
-        <action>
-            <actionName>CUSTOM-clean package</actionName>
-            <displayName>clean package</displayName>
-            <goals>
-                <goal>clean</goal>
-                <goal>package</goal>
-            </goals>
-        </action>
+        
     </actions>

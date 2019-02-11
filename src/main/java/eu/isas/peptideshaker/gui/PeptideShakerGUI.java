@@ -523,7 +523,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public PeptideShakerGUI(File cpsFile, String zipURL, String zipUrlDownloadFolder, String pxAccession, boolean pxAccessionPrivate, boolean showWelcomeDialog) {
 
-        // set up the ErrorLog
+        // set up the error log
         setUpLogFile(true);
 
         // set path configuration
@@ -7457,7 +7457,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     public void run() {
 
                         File cpsFile = cpsParent.getCpsFile();
-                        String fastaFilePath = PeptideShakerGUI.this.getIdentificationParameters().getSearchParameters().getFastaFile();
+                        File fastaFile = new File(PeptideShakerGUI.this.getIdentificationParameters().getSearchParameters().getFastaFile());
                         ArrayList<File> spectrumFiles = new ArrayList<>();
                         for (String spectrumFileName : getIdentification().getFractions()) {
                             File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
@@ -7466,7 +7466,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                         try {
                             
-                            ProjectExport.exportProjectAsZip(zipFile, fastaFilePath, spectrumFiles, cpsFile, progressDialog);
+                            ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, null, null, cpsFile, progressDialog);
                         
                         } catch (FileNotFoundException e) {
                         

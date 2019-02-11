@@ -188,10 +188,10 @@ public class Ms2pipExport {
 
         File destinationFile = new File(destinationFolder, cpsFileName + "_" + fileName + ".zip");
 
-        try (FileOutputStream fos = new FileOutputStream(destinationFile); 
-                BufferedOutputStream bos = new BufferedOutputStream(fos); 
+        try (FileOutputStream fos = new FileOutputStream(destinationFile);
+                BufferedOutputStream bos = new BufferedOutputStream(fos);
                 ZipOutputStream out = new ZipOutputStream(bos)) {
-            
+
             File documentationFile = getDocumentationFile(destinationFolder);
             ZipUtils.addFileToZip(documentationFile, out);
             documentationFile.delete();
@@ -215,19 +215,19 @@ public class Ms2pipExport {
     private void writeDocumentation(File destinationFolder) throws IOException {
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(getDocumentationFile(destinationFolder)))) {
-            
+
             StringBuilder stringBuilder = new StringBuilder();
-            
+
             int index = 0;
-            
+
             for (String category : featuresMap.getSortedFeaturesList()) {
-                
+
                 for (Ms2pipFeature ms2pipFeature : featuresMap.getFeatures(category)) {
-                    
+
                     stringBuilder.append(index++).append(documentationSeparator).append(category).append(documentationSeparator).append(ms2pipFeature.getDescription()).append(END_LINE);
                     bw.write(stringBuilder.toString());
                     stringBuilder = new StringBuilder(stringBuilder.length());
-                    
+
                 }
             }
         }
@@ -391,12 +391,12 @@ public class Ms2pipExport {
 
                         if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
 
-                ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
-                SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-                AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
+                            ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                            SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                            AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
                             SpecificAnnotationParameters specificAnnotationSettings = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
-                            Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
+                            Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey, false);
 
                             Peptide peptide = peptideAssumption.getPeptide();
                             int charge = peptideAssumption.getIdentificationCharge();

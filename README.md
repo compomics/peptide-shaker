@@ -16,7 +16,7 @@
 
 |   |   |   |
 | :------------------------- | :---------------: | :--: |
-| [![download](https://github.com/compomics/peptide-shaker/wiki/images/download_button.png)](http://genesis.ugent.be/maven2/eu/isas/peptideshaker/PeptideShaker/1.16.15/PeptideShaker-1.16.15.zip) | *v1.16.15  - All platforms* | [ReleaseNotes](https://github.com/compomics/peptide-shaker/wiki/ReleaseNotes) |
+| [![download](https://github.com/compomics/peptide-shaker/wiki/images/download_button.png)](http://genesis.ugent.be/maven2/eu/isas/peptideshaker/PeptideShaker/1.16.38/PeptideShaker-1.16.38.zip) | *v1.16.38 - All platforms* | [ReleaseNotes](https://github.com/compomics/peptide-shaker/wiki/ReleaseNotes) |
 
 ---
 
@@ -31,7 +31,7 @@
 
 ## Introduction ##
 
-PeptideShaker is a search engine independent platform for interpretation of proteomics identification results from multiple search engines, currently supporting  [X!Tandem](http://www.thegpm.org/tandem), [MS-GF+](http://www.ncbi.nlm.nih.gov/pubmed/?term=25358478), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [OMSSA](http://www.ncbi.nlm.nih.gov/pubmed/15473683), [MyriMatch](http://www.ncbi.nlm.nih.gov/pubmed/?term=17269722), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net), [Mascot](http://www.matrixscience.com), [Andromeda](http://www.coxdocs.org/doku.php?id=maxquant:andromeda:start) and [mzIdentML](http://www.psidev.info/mzidentml). By combining the results from multiple search engines, while re-calculating PTM localization scores and redoing the protein inference, PeptideShaker attempts to give you the best possible understanding of your proteomics data!
+PeptideShaker is a search engine independent platform for interpretation of proteomics identification results from multiple search engines, currently supporting  [X!Tandem](http://www.thegpm.org/tandem), [MS-GF+](https://github.com/MSGFPlus/msgfplus), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [OMSSA](http://www.ncbi.nlm.nih.gov/pubmed/15473683), [MyriMatch](http://www.ncbi.nlm.nih.gov/pubmed/?term=17269722), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net), [Mascot](http://www.matrixscience.com), [Andromeda](http://www.coxdocs.org/doku.php?id=maxquant:andromeda:start) and [mzIdentML](http://www.psidev.info/mzidentml). By combining the results from multiple search engines, while re-calculating PTM localization scores and redoing the protein inference, PeptideShaker attempts to give you the best possible understanding of your proteomics data!
 
 PeptideShaker currently supports nine different analysis tasks:
 
@@ -62,7 +62,7 @@ To start using PeptideShaker, unzip the downloaded file, and double-click the `P
 
   * [Minimum Requirements](#minimum-requirements)
   * [From the Command Line](#from-the-command-line)
-  * [Miniconda](#miniconda)
+  * [Bioconda](#bioconda)
   * [Docker](#docker)
   * [SearchGUI](#searchgui)
   * [User Defined Modifications](#user-defined-modifications)
@@ -90,7 +90,7 @@ The minimum screen resolution for PeptideShaker is 1280 x 800, but it is highly 
 
 ### From the Command Line
 
-The main purpose of PeptideShaker is to make it simpler to process and display the results of multiple search engines. We believe that a graphical user interface would be the best choice for most users, and therefore made PeptideShaker with a graphical user interface. However, PeptideShaker can also be used via the command line, for example for incorporation into different analysis pipelines.
+The main purpose of PeptideShaker is to make it simpler to process and display the results of multiple search engines. A graphical user interface is the best choice for smaller projects. PeptideShaker can also be used _via_ the command line, and be incorporated in different analysis pipelines.
 
 For details about the command line see: [PeptideShakerCLI](https://github.com/compomics/peptide-shaker/wiki/PeptideShakerCLI).
 
@@ -98,12 +98,18 @@ For details about the command line see: [PeptideShakerCLI](https://github.com/co
 
 ----
 
-### Miniconda ###
+### Bioconda ###
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square)](http://bioconda.github.io/recipes/peptide-shaker/README.html)
+[![install with bioconda](https://anaconda.org/bioconda/peptide-shaker/badges/latest_release_relative_date.svg)](http://bioconda.github.io/recipes/peptide-shaker/README.html)
+[![install with bioconda](https://anaconda.org/bioconda/peptide-shaker/badges/downloads.svg)](http://bioconda.github.io/recipes/peptide-shaker/README.html)
 
-PeptideShaker is available as a [Miniconda package](http://conda.pydata.org/miniconda.html) in the [bioconda](https://bioconda.github.io) channel. You can install PeptideShaker with:
+
+PeptideShaker is available as a [Miniconda package](http://conda.pydata.org/miniconda.html) in the [bioconda](https://bioconda.github.io) channel [here](https://anaconda.org/bioconda/peptide-shaker). 
+
+You can install PeptideShaker with:
 
 ```bash
-conda install peptide-shaker -c bioconda
+conda install -c conda-forge -c bioconda peptide-shaker
 ```
 
 [Go to top of page](#peptideshaker)

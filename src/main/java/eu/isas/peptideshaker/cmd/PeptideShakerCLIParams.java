@@ -19,7 +19,7 @@ public enum PeptideShakerCLIParams {
     REFERENCE("reference", "The reference of the project.", true),
     SPECTRUM_FILES("spectrum_files", "Spectrum files (mgf format), comma separated list or an entire folder.", false),
     IDENTIFICATION_FILES("identification_files", "Identification files (.t.xml, .mzid, .cvs, .omx, .dat, .txt, .pep.xml, .zip), comma separated list or an entire folder.", true),
-    PEPTIDESHAKER_OUTPUT("out", "PeptideShaker output file. Note: if file exists it will be overwritten.", true),
+    PEPTIDESHAKER_OUTPUT("out", "PeptideShaker output file. Note: if file exists it will be overwritten.", false),
     GUI("gui", "Use a dialog to display the progress (1: true, 0: false, default is '0').", false),
     ZIP("zip", "Exports the entire project as a zip file in the file specified.", false),
     THREADS("threads", "The number of threads to use. Defaults to the number of available CPUs.", false);
@@ -73,8 +73,8 @@ public enum PeptideShakerCLIParams {
         // report options
         ReportCLIParams.createOptionsCLI(aOptions);
         
-        // path setup
-        PathSettingsCLIParams.createOptionsCLI(aOptions);
+        // mzid export options
+        MzidCLIParams.createOptionsCLI(aOptions);
 
         // note: remember to add new parameters to the getOptionsAsString below as well
     }
@@ -92,11 +92,13 @@ public enum PeptideShakerCLIParams {
         output += "Mandatory Parameters:\n\n";
         output += "-" + String.format(formatter, REFERENCE.id) + " " + REFERENCE.description + "\n";
         output += "-" + String.format(formatter, IDENTIFICATION_FILES.id) + " " + IDENTIFICATION_FILES.description + "\n";
-        output += "-" + String.format(formatter, PEPTIDESHAKER_OUTPUT.id) + " " + PEPTIDESHAKER_OUTPUT.description + "\n";
-
-        output += "\n\nOptional Input Parameter:\n\n";
+        
+        output += "\n\nOptional Input Parametera:\n\n";
         output += "-" + String.format(formatter, SPECTRUM_FILES.id) + " " + SPECTRUM_FILES.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.id) + " " + IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.description + "\n";
+        
+        output += "\n\nOptional Output Parameter:\n\n";
+        output += "-" + String.format(formatter, PEPTIDESHAKER_OUTPUT.id) + " " + PEPTIDESHAKER_OUTPUT.description + "\n";
         
         output += "\n\nOptional Processing Parameters:\n\n";
         output += "-" + String.format(formatter, GUI.id) + " " + GUI.description + "\n";
@@ -111,9 +113,10 @@ public enum PeptideShakerCLIParams {
         output += "\n\nOptional Temporary Folder:\n\n";
         output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + " " + PathSettingsCLIParams.ALL.description + "\n";
 
-        output += "\n\n\nFor identification parameters options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.IdentificationParametersCLI\n\n";
-        output += "\n\n\nFor follow up export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.FollowUpCLI\n\n";
+        output += "\n\nFor identification parameters options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.IdentificationParametersCLI\n\n";
+        output += "\nFor follow up export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.FollowUpCLI\n\n";
         output += "\nFor report export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.ReportCLI\n";
+        output += "\nFor mzid export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.MzidCLI\n";
         output += "\nFor path setting options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.PathSettingsCLI\n";
 
         return output;

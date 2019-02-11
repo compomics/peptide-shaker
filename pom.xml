@@ -44,6 +44,15 @@
             </roles>
         </developer>
         <developer>
+            <name>Carlos Horro</name>
+            <id>carlos</id>
+            <email>carlos.horro AT uib.no</email>
+            <organization>University of Bergen, Norway</organization>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+        <developer>
             <name>Dominik Kopczynski</name>
             <id>dominik</id>
             <email>dominik.kopczynski AT isas.de</email>
@@ -512,7 +521,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.3.3</version>
+            <version>4.3.6</version>
         </dependency>
 
         <dependency>

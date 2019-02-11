@@ -180,7 +180,7 @@ public class ReportCLIInputBean {
      * @return true if a report export is required
      */
     public boolean reportExportNeeded() {
-        return reportOutputFolder != null && !reportTypes.isEmpty();
+        return !reportTypes.isEmpty();
     }
 
     /**
@@ -189,7 +189,7 @@ public class ReportCLIInputBean {
      * @return true if documentation export is require
      */
     public boolean documentationExportNeeded() {
-        return reportOutputFolder != null && !documentationTypes.isEmpty();
+        return !documentationTypes.isEmpty();
     }
     
     /**
