@@ -766,12 +766,18 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             // metrics saved while processing the data
             metrics = peptideShaker.getMetrics();
 
-            // Gene maps
+            // fene maps
             geneMaps = peptideShaker.getGeneMaps();
 
             // the identification feature generator
             identificationFeaturesGenerator = peptideShaker.getIdentificationFeaturesGenerator();
 
+            // the sequence provider
+            sequenceProvider = peptideShaker.getSequenceProvider();
+            
+            // the protein details provider
+            proteinDetailsProvider = peptideShaker.getProteinDetailsProvider();
+            
             if (waitingHandler instanceof WaitingDialog) {
                 projectDetails.setReport(((WaitingDialog) waitingHandler).getReport(null));
                 ((WaitingDialog) waitingHandler).setRunNotFinished();
