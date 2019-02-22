@@ -19,9 +19,9 @@ import java.util.Set;
 public class ProjectDetails extends DbObject {
 
     /**
-     * List of the identification files loaded.
+     * List of the identification file paths loaded.
      */
-    private final ArrayList<File> identificationFiles = new ArrayList<>();
+    private final ArrayList<String> identificationFiles = new ArrayList<>();
     /**
      * Map of the identification algorithms names and versions used to generate
      * the identification files. identification file name &gt; Advocate Ids &gt;
@@ -37,7 +37,7 @@ public class ProjectDetails extends DbObject {
      */
     private Date creationDate;
     /**
-     * The report created during the loading of the tool
+     * The report created during the loading of the tool.
      */
     private String report;
     /**
@@ -144,20 +144,21 @@ public class ProjectDetails extends DbObject {
      *
      * @return all identification files loaded
      */
-    public ArrayList<File> getIdentificationFiles() {
+    public ArrayList<String> getIdentificationFiles() {
         readDBMode();
         return identificationFiles;
         
     }
 
     /**
-     * Adds an identification file to the list of loaded identification files
+     * Adds an identification file to the list of loaded identification files.
      *
      * @param identificationFile the identification file loaded
      */
     public void addIdentificationFiles(File identificationFile) {
         writeDBMode();
-        identificationFiles.add(identificationFile);
+        String path = identificationFile.getAbsolutePath();
+        identificationFiles.add(path);
         
     }
 
@@ -167,7 +168,7 @@ public class ProjectDetails extends DbObject {
      * @param spectrumFile the spectrum file to add
      */
     public void addSpectrumFile(File spectrumFile) {
-        
+        writeDBMode();
         String path = spectrumFile.getAbsolutePath();
         String fileName = Util.getFileName(path);
         spectrumFiles.put(fileName, path);

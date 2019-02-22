@@ -794,7 +794,9 @@ public class CpsParent extends UserPreferencesParent {
 
             report.append("<b>Identification Files</b>:<br>");
             
-            for (File idFile : projectDetails.getIdentificationFiles()) {
+            for (String idFilePath : projectDetails.getIdentificationFiles()) {
+                
+                File idFile = new File(idFilePath);
                 
                 report.append(idFile.getAbsolutePath()).append(" - ");
                 HashMap<String, ArrayList<String>> versions = projectDetails.getIdentificationAlgorithmsForFile(idFile.getName());

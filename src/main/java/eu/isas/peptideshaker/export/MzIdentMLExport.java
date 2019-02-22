@@ -2502,8 +2502,10 @@ public class MzIdentMLExport {
         int sourceFileCounter = 1;
 
         // add the search result files
-        for (File idFile : projectDetails.getIdentificationFiles()) {
+        for (String idFilePath : projectDetails.getIdentificationFiles()) {
 
+            File idFile = new File(idFilePath);
+            
             // @TODO: add MS:1000568 - MD5?
 //            FileInputStream fis = new FileInputStream(new File("foo"));
 //            String md5 = DigestUtils.md5Hex(fis);

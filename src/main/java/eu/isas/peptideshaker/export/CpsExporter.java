@@ -51,21 +51,21 @@ public class CpsExporter {
      * @throws IOException thrown whenever an error occurred while reading or
      * writing a file
      */
-    public static void saveAs(File destinationFile, 
-            WaitingHandler waitingHandler, 
-            Identification identification, 
-            IdentificationParameters identificationParameters, 
+    public static void saveAs(File destinationFile,
+            WaitingHandler waitingHandler,
+            Identification identification,
+            IdentificationParameters identificationParameters,
             SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider,
-            SpectrumCountingParameters spectrumCountingParameters, 
-            ProjectDetails projectDetails, 
+            SpectrumCountingParameters spectrumCountingParameters,
+            ProjectDetails projectDetails,
             FilterParameters filterParameters,
-            Metrics metrics, 
+            Metrics metrics,
             GeneMaps geneMaps,
             ProjectType projectType,
-            IdentificationFeaturesCache identificationFeaturesCache, 
+            IdentificationFeaturesCache identificationFeaturesCache,
             boolean emptyCache,
-            DisplayParameters displayParameters, 
+            DisplayParameters displayParameters,
             File dbFolder) throws IOException {
 
         identificationFeaturesCache.setReadOnly(true);
@@ -84,8 +84,11 @@ public class CpsExporter {
                 identification.addObject(PeptideShakerParameters.key, peptideShakerParameters);
 
             }
-            
-            identification.addObject(IdentificationKeys.key, identification.getIdentificationKeys());
+
+            // add the identification keys
+            if (!identification.contains(IdentificationKeys.key)) {
+                identification.addObject(IdentificationKeys.key, identification.getIdentificationKeys());
+            }
 
             PSMaps psMaps = new PSMaps();
             long psMapsIdentKey = psMaps.getParameterKey();
@@ -105,7 +108,7 @@ public class CpsExporter {
             }
 
             if (waitingHandler == null || !waitingHandler.isRunCanceled()) {
-                
+
                 identification.getObjectsDB().lock(waitingHandler);
                 Util.copyFile(identification.getObjectsDB().getDbFile(), destinationFile);
                 identification.getObjectsDB().unlock();
