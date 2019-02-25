@@ -33,14 +33,16 @@ public class ProjectExport {
      * @param fastaFile path to the FASTA file
      * @param spectrumFiles the spectrum files
      * @param cpsFile the cps file
+     * @param moveFilesIntoZip if true, the files will be moved into the zip
+     * file, i.e. not just copied
      * @param waitingHandler a waiting handler to display progress to the user
      * and cancel the process (can be null)
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing the file
      */
-    public static void exportProjectAsZip(File zipFile, File fastaFile, ArrayList<File> spectrumFiles, File cpsFile, WaitingHandler waitingHandler) throws IOException {
-        ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, null, null, cpsFile, waitingHandler);
+    public static void exportProjectAsZip(File zipFile, File fastaFile, ArrayList<File> spectrumFiles, File cpsFile, boolean moveFilesIntoZip, WaitingHandler waitingHandler) throws IOException {
+        ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, null, null, cpsFile, moveFilesIntoZip, waitingHandler);
     }
 
     /**
@@ -52,13 +54,15 @@ public class ProjectExport {
      * @param reportFiles the report files
      * @param mzidFile the mzid file
      * @param cpsFile the cps file
+     * @param moveFilesIntoZip if true, the files will be moved into the zip
+     * file, i.e. not just copied
      * @param waitingHandler a waiting handler to display progress to the user
      * and cancel the process (can be null)
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing the file
      */
-    public static void exportProjectAsZip(File zipFile, File fastaFile, ArrayList<File> spectrumFiles, ArrayList<File> reportFiles, File mzidFile, File cpsFile, WaitingHandler waitingHandler) throws IOException {
+    public static void exportProjectAsZip(File zipFile, File fastaFile, ArrayList<File> spectrumFiles, ArrayList<File> reportFiles, File mzidFile, File cpsFile, boolean moveFilesIntoZip, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Getting FASTA File. Please Wait...");
@@ -66,7 +70,6 @@ public class ProjectExport {
 
         // Note: The order files are added to the zip matters: zip files can be read sequencially
         // and bigger and unused files should therefore be added after smaller and less used files.
-
         ArrayList<String> dataFiles = new ArrayList<String>();
         dataFiles.add(fastaFile.getAbsolutePath());
 
@@ -153,7 +156,9 @@ public class ProjectExport {
                                 waitingHandler.increaseSecondaryProgressCounter();
                             }
                             ZipUtils.addFileToZip(defaultReportsFolder, reportFile, out, waitingHandler, totalUncompressedSize);
-                            reportFile.delete();
+                            if (moveFilesIntoZip) {
+                                reportFile.delete();
+                            }
                         }
                     }
 
@@ -186,13 +191,17 @@ public class ProjectExport {
 
                         // move the mzid file to the zip folder
                         ZipUtils.addFileToZip(mzidFile, out, waitingHandler, totalUncompressedSize);
-                        mzidFile.delete();
+                        if (moveFilesIntoZip) {
+                            mzidFile.delete();
+                        }
                     }
 
                     // move the cps file to the zip
                     if (cpsFile != null) {
                         ZipUtils.addFileToZip(cpsFile, out, waitingHandler, totalUncompressedSize);
-                        cpsFile.delete();
+                        if (moveFilesIntoZip) {
+                            cpsFile.delete();
+                        }
                     }
 
                     if (waitingHandler != null) {

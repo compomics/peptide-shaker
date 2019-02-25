@@ -386,7 +386,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
                 File fastaFile = new File(identificationParameters.getSearchParameters().getFastaFile());
                 try {
-                    ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, reportFiles, mzidFile, cpsFile, waitingHandler);
+                    ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, reportFiles, mzidFile, cpsFile, true, waitingHandler);
                     final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
                     double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
                     waitingHandler.appendReport("Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + " MB)", true, true);
