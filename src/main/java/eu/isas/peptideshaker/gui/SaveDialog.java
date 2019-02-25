@@ -41,9 +41,7 @@ public class SaveDialog extends javax.swing.JDialog {
         saveJButton = new javax.swing.JButton();
         exportJButton = new javax.swing.JButton();
         exportPrideJButton = new javax.swing.JButton();
-        saveAsJButton = new javax.swing.JButton();
         saveLabel = new javax.swing.JLabel();
-        saveAsLabel = new javax.swing.JLabel();
         exportZipLabel = new javax.swing.JLabel();
         exportPrideLabel = new javax.swing.JLabel();
 
@@ -53,7 +51,7 @@ public class SaveDialog extends javax.swing.JDialog {
         backgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         saveJButton.setFont(saveJButton.getFont().deriveFont(saveJButton.getFont().getStyle() | java.awt.Font.BOLD, saveJButton.getFont().getSize()+3));
-        saveJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save.png"))); // NOI18N
+        saveJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save_as.png"))); // NOI18N
         saveJButton.setText("Save Project");
         saveJButton.setToolTipText("Save the PeptideShaker project locally.");
         saveJButton.setFocusPainted(false);
@@ -91,24 +89,8 @@ public class SaveDialog extends javax.swing.JDialog {
             }
         });
 
-        saveAsJButton.setFont(saveAsJButton.getFont().deriveFont(saveAsJButton.getFont().getStyle() | java.awt.Font.BOLD, saveAsJButton.getFont().getSize()+3));
-        saveAsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save_as.png"))); // NOI18N
-        saveAsJButton.setText("Save Project As...");
-        saveAsJButton.setToolTipText("<html>\nSave the PeptideShaker project<br>\nlocally under a different name.\n</html>");
-        saveAsJButton.setFocusPainted(false);
-        saveAsJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        saveAsJButton.setIconTextGap(27);
-        saveAsJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveAsJButtonActionPerformed(evt);
-            }
-        });
-
         saveLabel.setFont(saveLabel.getFont().deriveFont((saveLabel.getFont().getStyle() | java.awt.Font.ITALIC) | java.awt.Font.BOLD, saveLabel.getFont().getSize()+1));
         saveLabel.setText("Save the project locally");
-
-        saveAsLabel.setFont(saveAsLabel.getFont().deriveFont((saveAsLabel.getFont().getStyle() | java.awt.Font.ITALIC) | java.awt.Font.BOLD, saveAsLabel.getFont().getSize()+1));
-        saveAsLabel.setText("Save the project under a new name");
 
         exportZipLabel.setFont(exportZipLabel.getFont().deriveFont((exportZipLabel.getFont().getStyle() | java.awt.Font.ITALIC) | java.awt.Font.BOLD, exportZipLabel.getFont().getSize()+1));
         exportZipLabel.setText("Export the project as a zip file");
@@ -123,17 +105,15 @@ public class SaveDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addGap(45, 45, 45)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(saveAsJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
                     .addComponent(saveJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(exportJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(exportPrideJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(exportPrideJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE))
                 .addGap(45, 45, 45)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(saveLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(saveAsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(exportZipLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(exportPrideLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
         backgroundPanelLayout.setVerticalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -142,10 +122,6 @@ public class SaveDialog extends javax.swing.JDialog {
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(saveJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(saveLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(saveAsJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(saveAsLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -174,17 +150,6 @@ public class SaveDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Saves the project.
-     *
-     * @param evt
-     */
-    private void saveJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveJButtonActionPerformed
-        this.setVisible(false);
-        peptideShakerGUI.saveProject(false, false);
-        this.dispose();
-    }//GEN-LAST:event_saveJButtonActionPerformed
-
-    /**
      * Export the dataset as a zip file.
      *
      * @param evt
@@ -205,15 +170,15 @@ public class SaveDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_exportPrideJButtonActionPerformed
 
     /**
-     * Save the project.
-     * 
-     * @param evt 
+     * Saves the project.
+     *
+     * @param evt
      */
-    private void saveAsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsJButtonActionPerformed
+    private void saveJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveJButtonActionPerformed
         this.setVisible(false);
         peptideShakerGUI.saveProjectAs(false, false);
         this.dispose();
-    }//GEN-LAST:event_saveAsJButtonActionPerformed
+    }//GEN-LAST:event_saveJButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
@@ -221,8 +186,6 @@ public class SaveDialog extends javax.swing.JDialog {
     private javax.swing.JButton exportPrideJButton;
     private javax.swing.JLabel exportPrideLabel;
     private javax.swing.JLabel exportZipLabel;
-    private javax.swing.JButton saveAsJButton;
-    private javax.swing.JLabel saveAsLabel;
     private javax.swing.JButton saveJButton;
     private javax.swing.JLabel saveLabel;
     // End of variables declaration//GEN-END:variables

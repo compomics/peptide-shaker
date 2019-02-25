@@ -47,19 +47,17 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="saveAsJButton" pref="323" max="32767" attributes="0"/>
                       <Component id="saveJButton" alignment="0" max="32767" attributes="0"/>
                       <Component id="exportJButton" alignment="0" max="32767" attributes="0"/>
-                      <Component id="exportPrideJButton" alignment="0" max="32767" attributes="0"/>
+                      <Component id="exportPrideJButton" alignment="0" pref="323" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="saveLabel" alignment="0" min="-2" pref="166" max="-2" attributes="0"/>
-                      <Component id="saveAsLabel" min="-2" pref="235" max="-2" attributes="0"/>
                       <Component id="exportZipLabel" alignment="0" min="-2" pref="203" max="-2" attributes="0"/>
                       <Component id="exportPrideLabel" alignment="0" min="-2" pref="220" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="30" max="32767" attributes="0"/>
+                  <EmptySpace pref="45" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -70,11 +68,6 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="saveJButton" linkSize="5" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
                       <Component id="saveLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="saveAsJButton" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
-                      <Component id="saveAsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -100,7 +93,7 @@
               </FontInfo>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/save.png"/>
+              <Image iconType="3" name="/icons/save_as.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Save Project"/>
             <Property name="toolTipText" type="java.lang.String" value="Save the PeptideShaker project locally."/>
@@ -152,26 +145,6 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportPrideJButtonActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="saveAsJButton">
-          <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
-              <FontInfo relative="true">
-                <Font bold="true" component="saveAsJButton" property="font" relativeSize="true" size="3"/>
-              </FontInfo>
-            </Property>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/save_as.png"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Save Project As..."/>
-            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Save the PeptideShaker project&lt;br&gt;&#xa;locally under a different name.&#xa;&lt;/html&gt;"/>
-            <Property name="focusPainted" type="boolean" value="false"/>
-            <Property name="horizontalAlignment" type="int" value="2"/>
-            <Property name="iconTextGap" type="int" value="27"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAsJButtonActionPerformed"/>
-          </Events>
-        </Component>
         <Component class="javax.swing.JLabel" name="saveLabel">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
@@ -180,16 +153,6 @@
               </FontInfo>
             </Property>
             <Property name="text" type="java.lang.String" value="Save the project locally"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="saveAsLabel">
-          <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
-              <FontInfo relative="true">
-                <Font bold="true" component="saveAsLabel" italic="true" property="font" relativeSize="true" size="1"/>
-              </FontInfo>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Save the project under a new name"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="exportZipLabel">

@@ -396,7 +396,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             TITLED_BORDER_HORIZONTAL_PADDING_HTML = "&nbsp;&nbsp;&nbsp;";
 
         }
-        
+
         // load gene mappings
         ProteinGeneDetailsProvider geneFactory = new ProteinGeneDetailsProvider();
         try {
@@ -907,7 +907,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         projectSettingsMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         saveMenuItem = new javax.swing.JMenuItem();
-        saveAsMenuItem = new javax.swing.JMenuItem();
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
         exitJMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
@@ -1580,15 +1579,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             }
         });
         fileJMenu.add(saveMenuItem);
-
-        saveAsMenuItem.setText("Save As...");
-        saveAsMenuItem.setEnabled(false);
-        saveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveAsMenuItemActionPerformed(evt);
-            }
-        });
-        fileJMenu.add(saveAsMenuItem);
         fileJMenu.add(jSeparator9);
 
         exitJMenuItem.setMnemonic('x');
@@ -2061,15 +2051,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private void exitJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitJMenuItemActionPerformed
         close();
     }//GEN-LAST:event_exitJMenuItemActionPerformed
-
-    /**
-     * Open the Save & Export dialog.
-     *
-     * @param evt
-     */
-    private void saveAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsMenuItemActionPerformed
-        new SaveDialog(this, true);
-    }//GEN-LAST:event_saveAsMenuItemActionPerformed
 
     /**
      * Opens the Help dialog.
@@ -2946,16 +2927,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
-
-        if (cpsParent.getCpsFile() != null && cpsParent.getCpsFile().exists()) {
-
-            saveProject(false, false);
-
-        } else {
-
-            saveProjectAs(false, false);
-
-        }
+        new SaveDialog(this, true);
     }//GEN-LAST:event_saveMenuItemActionPerformed
 
     /**
@@ -3735,7 +3707,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             // enable the menu items depending on a project being open
             jumpToPanel.setEnabled(true);
             saveMenuItem.setEnabled(true);
-            saveAsMenuItem.setEnabled(true);
             identificationFeaturesMenuItem.setEnabled(true);
             followUpAnalysisMenuItem.setEnabled(true);
             projectPropertiesMenuItem.setEnabled(true);
@@ -3914,7 +3885,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JMenu resetAnnotationMenu;
     private javax.swing.JMenuItem reshakeMenuItem;
     private javax.swing.JCheckBoxMenuItem rewindIonsDeNovoCheckBoxMenuItem;
-    private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JCheckBoxMenuItem scoresJCheckBoxMenuItem;
     private javax.swing.JMenuItem searchGuiPreferencesJMenuItem;
@@ -4110,7 +4080,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * Updates the annotations in the selected tab.
      */
     public void updateSpectrumAnnotations() {
-        
+
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
         IdentificationParameters identificationParameters = getIdentificationParameters();
         AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
@@ -4184,13 +4154,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
     /**
      * Sets the sequence provider.
-     * 
+     *
      * @param sequenceProvider the sequence provider
      */
     public void setSequenceProvider(SequenceProvider sequenceProvider) {
-        
+
         cpsParent.setSequenceProvider(sequenceProvider);
-    
+
     }
 
     /**
@@ -4206,13 +4176,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
     /**
      * Sets the protein details provider.
-     * 
+     *
      * @param proteinDetailsProvider the protein details provider
      */
     public void setProteinDetailsProvider(ProteinDetailsProvider proteinDetailsProvider) {
-        
+
         cpsParent.setProteinDetailsProvider(proteinDetailsProvider);
-    
+
     }
 
     /**
@@ -5200,15 +5170,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             if (value == JOptionPane.YES_OPTION) {
 
-                if (cpsParent.getCpsFile() != null && cpsParent.getCpsFile().exists()) {
-
-                    saveProject(true, false);
-
-                } else {
-
-                    saveProjectAs(true, false);
-
-                }
+                saveProjectAs(true, false);
 
             } else if (value == JOptionPane.NO_OPTION) {
 
@@ -5498,7 +5460,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         } else {
 
             int lossCounter = 0;
-            
+
             for (String neutralLossName : lossesNames) {
 
                 NeutralLoss neutralLoss = NeutralLoss.getNeutralLoss(neutralLossName);
@@ -6246,7 +6208,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     progressDialog.setMaxPrimaryProgressCounter(getIdentification().getSpectrumIdentification().size() + 1);
                     progressDialog.increasePrimaryProgressCounter();
 
-                    ProjectDetails projectParameters = cpsParent.getProjectDetails();     
+                    ProjectDetails projectParameters = cpsParent.getProjectDetails();
                     Set<String> fileNames = getProjectDetails().getSpectrumFileNames();
                     ArrayList<File> mgfFiles = fileNames.stream()
                             .map(projectParameters::getSpectrumFile)
@@ -6499,7 +6461,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         int returnVal = fileChooser.showDialog(this, "Open");
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            
+
             File selectedFastaFile = fileChooser.getSelectedFile();
 
             if (selectedFastaFile.exists()) {
@@ -6939,8 +6901,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 // cancel the saving
             }
 
-        } else if (cpsParent.getCpsFile() == null) {
-            saveProjectAs(false, false);
         } else {
 
             final boolean closeWhenDone = aCloseWhenDone;
@@ -6977,10 +6937,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     try {
 
                         progressDialog.setWaitingText("Saving Results. Please Wait...");
-                        
+
                         // saving the mod factory
                         modificationFactory.saveFactory();
-                        
+
                         // saving the project
                         cpsParent.saveProject(progressDialog, closeWhenDone);
 
@@ -7057,10 +7017,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public StarHider getStarHider() {
 
         progressDialog = new ProgressDialogX(this,
-                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                        true);
-        
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
+
         if (starHider == null) {
             starHider = new StarHider(getIdentification(), getFilterParameters(), getSequenceProvider(), getProteinDetailsProvider(),
                     getGeneMaps(), getIdentificationFeaturesGenerator(), getIdentificationParameters(), getMetrics(), progressDialog,
@@ -7184,7 +7144,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * file
      */
     public void saveProjectAs(boolean closeWhenDone, boolean aExportToZipWhenDone) {
-        File selectedFile = getUserSelectedFile(cpsParent.getProjectParameters().getProjectUniqueName() + ".psdb", ".psdb", "Peptide Shaker Database format (*.psdb)", "Save As...", false);
+
+        File selectedFile;
+
+        if (cpsParent.getCpsFile() != null) {
+            lastSelectedFolder.setLastSelectedFolder(cpsParent.getCpsFile().getParentFile().getAbsolutePath());
+            selectedFile = getUserSelectedFile(cpsParent.getCpsFile().getName(), ".psdb", "Peptide Shaker Database format (*.psdb)", "Save As...", false);
+        } else {
+            selectedFile = getUserSelectedFile(cpsParent.getProjectParameters().getProjectUniqueName() + ".psdb", ".psdb", "Peptide Shaker Database format (*.psdb)", "Save As...", false);
+        }
+
         cpsParent.setCpsFile(selectedFile);
         if (selectedFile != null) {
             saveProject(closeWhenDone, aExportToZipWhenDone);
@@ -7416,11 +7385,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             if (option == JOptionPane.OK_OPTION) {
                 // save the data first
-                if (cpsParent.getCpsFile() != null && cpsParent.getCpsFile().exists()) {
-                    saveProject(false, true);
-                } else {
-                    saveProjectAs(false, true);
-                }
+                saveProjectAs(false, true);
             }
 
         } else if (cpsParent.getCpsFile() != null) {
@@ -7465,16 +7430,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         }
 
                         try {
-                            
+
                             ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, null, null, cpsFile, false, progressDialog);
-                        
+
                         } catch (FileNotFoundException e) {
-                        
+
                             e.printStackTrace();
                             progressDialog.setRunFinished();
                             JOptionPane.showMessageDialog(PeptideShakerGUI.this, "Could not zip files.", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
                             return;
-                        
+
                         } catch (IOException e) {
                             e.printStackTrace();
                             progressDialog.setRunFinished();
