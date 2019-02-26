@@ -77,7 +77,7 @@
                   <Component id="skylinePanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="tppPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="42" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -332,19 +332,29 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="exportAllIdentifiedProteinAccessionsLabel" alignment="0" min="-2" pref="160" max="-2" attributes="0"/>
-                          <Component id="exportAllIdentifiedProteinsAsFastaLabel" alignment="0" min="-2" pref="160" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="proteinExportCmb2" max="32767" attributes="0"/>
-                          <Component id="proteinExportCmb1" max="32767" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="exportAllIdentifiedProteinAccessionsLabel" alignment="0" min="-2" pref="160" max="-2" attributes="0"/>
+                                  <Component id="exportAllIdentifiedProteinsAsFastaLabel" alignment="0" min="-2" pref="160" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="proteinExportCmb2" max="32767" attributes="0"/>
+                                  <Component id="proteinExportCmb1" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="proteoformsLabel" min="-2" pref="160" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="proteoformsExportCmb" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
                       <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="exportProteformsAsTxtButton" max="32767" attributes="0"/>
                           <Component id="exportIdentifiedProteinAccessionNumbersAsCsvButton" alignment="0" max="32767" attributes="0"/>
                           <Component id="exportIdentifiedProteinsAsFastaButton" alignment="0" pref="180" max="32767" attributes="0"/>
                       </Group>
@@ -366,6 +376,12 @@
                           <Component id="exportAllIdentifiedProteinsAsFastaLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportIdentifiedProteinsAsFastaButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="proteinExportCmb2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="proteoformsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportProteformsAsTxtButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="proteoformsExportCmb" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -412,6 +428,29 @@
                   <Connection code="new DefaultComboBoxModel(FastaExport.ExportType.getPossibilities())" type="code"/>
                 </Property>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="proteoformsLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Proteoforms"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="proteoformsExportCmb">
+              <Properties>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="1">
+                    <StringItem index="0" value="(no filters yet supported)"/>
+                  </StringArray>
+                </Property>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="exportProteformsAsTxtButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Export as TXT"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportProteformsAsTxtButtonActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

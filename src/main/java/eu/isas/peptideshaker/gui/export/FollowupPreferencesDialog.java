@@ -28,6 +28,7 @@ import eu.isas.peptideshaker.followup.RecalibrationExporter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
+import eu.isas.peptideshaker.followup.ProteoformExport;
 import java.awt.Toolkit;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -73,6 +74,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         graphDatabaseFormat.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         skylineExportCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         tppExportCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        proteoformsExportCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         this.setLocationRelativeTo(peptideShakerGUI);
 
@@ -111,6 +113,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         exportIdentifiedProteinAccessionNumbersAsCsvButton = new javax.swing.JButton();
         proteinExportCmb1 = new javax.swing.JComboBox();
         proteinExportCmb2 = new javax.swing.JComboBox();
+        proteoformsLabel = new javax.swing.JLabel();
+        proteoformsExportCmb = new javax.swing.JComboBox();
+        exportProteformsAsTxtButton = new javax.swing.JButton();
         graphDatabasesPanel = new javax.swing.JPanel();
         graphDatabasesLabel = new javax.swing.JLabel();
         graphDatabaseFormat = new javax.swing.JComboBox();
@@ -305,6 +310,18 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         proteinExportCmb2.setModel(new DefaultComboBoxModel(FastaExport.ExportType.getPossibilities()));
 
+        proteoformsLabel.setText("Proteoforms");
+
+        proteoformsExportCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "(no filters yet supported)" }));
+        proteoformsExportCmb.setEnabled(false);
+
+        exportProteformsAsTxtButton.setText("Export as TXT");
+        exportProteformsAsTxtButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportProteformsAsTxtButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout proteinsPanelLayout = new javax.swing.GroupLayout(proteinsPanel);
         proteinsPanel.setLayout(proteinsPanelLayout);
         proteinsPanelLayout.setHorizontalGroup(
@@ -312,14 +329,21 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(proteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(exportAllIdentifiedProteinAccessionsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportAllIdentifiedProteinsAsFastaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(proteinExportCmb2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(proteinExportCmb1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(proteinsPanelLayout.createSequentialGroup()
+                        .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(exportAllIdentifiedProteinAccessionsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(exportAllIdentifiedProteinsAsFastaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(proteinExportCmb2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(proteinExportCmb1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(proteinsPanelLayout.createSequentialGroup()
+                        .addComponent(proteoformsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(proteoformsExportCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(exportProteformsAsTxtButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(exportIdentifiedProteinAccessionNumbersAsCsvButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(exportIdentifiedProteinsAsFastaButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
                 .addContainerGap())
@@ -337,6 +361,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(exportAllIdentifiedProteinsAsFastaLabel)
                     .addComponent(exportIdentifiedProteinsAsFastaButton)
                     .addComponent(proteinExportCmb2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(proteoformsLabel)
+                    .addComponent(exportProteformsAsTxtButton)
+                    .addComponent(proteoformsExportCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -491,7 +520,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(skylinePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tppPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -508,85 +537,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * Export the given spectra as an mgf file.
-     *
-     * @param evt
-     */
-    private void exportMgfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMgfButtonActionPerformed
+    private void tppExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tppExportButtonActionPerformed
 
-        final File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", getLastSelectedFolder(), "Output Folder", "Select", false);
+        JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "PepXML does not allow the storage of all PeptideShaker results and should thus be used carefully." + System.getProperty("line.separator")
+                + "For third party tools we recommend using mzIdentML, the standard format of proteomics identification results.", "Warning", JOptionPane.WARNING_MESSAGE);
 
-        if (selectedFolder != null) {
-
-            setLastSelectedFolder(selectedFolder.getAbsolutePath());
-
-            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
-            progressDialog.setPrimaryProgressCounterIndeterminate(true);
-            progressDialog.setTitle("Exporting Spectra. Please Wait...");
-
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        progressDialog.setVisible(true);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore
-                    }
-                }
-            }, "ProgressDialog").start();
-
-            new Thread("SaveThread") {
-                @Override
-                public void run() {
-
-                    try {
-                        SpectrumExporter spectrumExporter = new SpectrumExporter(peptideShakerGUI.getIdentification());
-                        spectrumExporter.exportSpectra(selectedFolder, progressDialog, SpectrumExporter.ExportType.getTypeFromIndex(spectrumValidationCmb.getSelectedIndex()), peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
-
-                        boolean processCancelled = progressDialog.isRunCanceled();
-                        progressDialog.setRunFinished();
-
-                        if (!processCancelled) {
-                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Spectra saved to " + selectedFolder.getAbsolutePath() + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
-                        }
-                    } catch (Exception e) {
-                        progressDialog.setRunFinished();
-                        e.printStackTrace();
-                        JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "An error occurred when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }.start();
-        }
-    }//GEN-LAST:event_exportMgfButtonActionPerformed
-
-    /**
-     * Export the inclusion list to file.
-     *
-     * @param evt
-     */
-    private void inclusionListButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inclusionListButtonActionPerformed
-        new InclusionListExportDialog(this, InclusionListExport.ExportFormat.getTypeFromIndex(inclusionListFormat.getSelectedIndex()), true);
-    }//GEN-LAST:event_inclusionListButtonActionPerformed
-
-    /**
-     * Export the Spectrum IDs as a Phenyx tab separated text file for input to
-     * Progenesis. Only works if the mgf files came from Progenesis in the first
-     * place.
-     *
-     * @param evt
-     */
-    private void exportProgenesisButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProgenesisButtonActionPerformed
-
-        final File finalOutputFile;
-
-        if (psmSelectionComboBox.getSelectedIndex() == 4) {
-            finalOutputFile = peptideShakerGUI.getUserSelectedFile("progenesis_psm_export.xls", ".xls", "Excel Workbook (*.xls)", "Select Destination File", false);
-        } else {
-            finalOutputFile = peptideShakerGUI.getUserSelectedFile("progenesis_psm_export.txt", ".txt", "Tab Separated Text File (*.txt)", "Select Destination File", false);
-        }
+        final File finalOutputFile = peptideShakerGUI.getUserSelectedFile("tpp_psm_export.pep.xml", ".pep.xml", "PepXML (*.pep.xml)", "Select Destination File", false);;
 
         if (finalOutputFile != null) {
 
@@ -596,17 +552,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     true);
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Exporting PSMs. Please Wait...");
-
-            final int userChoice = psmSelectionComboBox.getSelectedIndex();
-            HashSet<String> modifications = new HashSet<>(0);
-            if (userChoice == 3) {
-                ModificationChooser modificationChooser = new ModificationChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getAllNotFixedModifications(), true);
-                if (modificationChooser.isCanceled()) {
-                    return;
-                }
-                modifications = modificationChooser.getSelectedItems();
-            }
-            final HashSet<String> modificationSelection = modifications;
 
             new Thread(new Runnable() {
                 public void run() {
@@ -622,11 +567,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
-
-                        ProgenesisExport.writeProgenesisExport(finalOutputFile, peptideShakerGUI.getSequenceProvider(),
-                                peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getIdentification(),
-                                ProgenesisExport.ExportType.getTypeFromIndex(userChoice), progressDialog, modificationSelection,
-                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
+                        PepXmlExport pepXmlExport = new PepXmlExport();
+                        pepXmlExport.writePepXmlFile(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationParameters(), finalOutputFile, PeptideShaker.getVersion(), progressDialog, peptideShakerGUI.getExceptionHandler());
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
@@ -642,68 +584,16 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 }
             }.start();
         }
-    }//GEN-LAST:event_exportProgenesisButtonActionPerformed
+    }//GEN-LAST:event_tppExportButtonActionPerformed
 
     /**
-     * Export all the identified proteins to a FASTA file.
+     * Exports the identifications to Skyline.
      *
      * @param evt
      */
-    private void exportIdentifiedProteinsAsFastaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportIdentifiedProteinsAsFastaButtonActionPerformed
-        exportFasta(false);
-    }//GEN-LAST:event_exportIdentifiedProteinsAsFastaButtonActionPerformed
-
-    /**
-     * Export all the identified protein accession numbers to a tab separated
-     * text file.
-     *
-     * @param evt
-     */
-    private void exportIdentifiedProteinAccessionNumbersAsCsvButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportIdentifiedProteinAccessionNumbersAsCsvButtonActionPerformed
-        exportFasta(true);
-    }//GEN-LAST:event_exportIdentifiedProteinAccessionNumbersAsCsvButtonActionPerformed
-
-    /**
-     * Recalibrate the spectra.
-     *
-     * @param evt
-     */
-    private void recalibrateMgfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recalibrateMgfButtonActionPerformed
-        recalibrateSpectra();
-    }//GEN-LAST:event_recalibrateMgfButtonActionPerformed
-
-    /**
-     * Change the cursor to a hand cursor.
-     *
-     * @param evt
-     */
-    private void exportToProgenesisLinkLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisLinkLabelMouseEntered
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_exportToProgenesisLinkLabelMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    private void exportToProgenesisLinkLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisLinkLabelMouseExited
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_exportToProgenesisLinkLabelMouseExited
-
-    /**
-     * Open the Progenesis home page.
-     *
-     * @param evt
-     */
-    private void exportToProgenesisLinkLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisLinkLabelMouseClicked
-        JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
-                "<a href=\"http://www.nonlinear.com/products/progenesis/lc-ms/overview/\">Progenesis</a> does not yet have a specific PeptideShaker import. In order to get the<br>"
-                + "identifications back into Progenesis one therefore has to rely on the Phenyx import<br>"
-                + "format, i.e., select 'Phenyx' when importing the results back into Progenesis.<br><br>"
-                + "Note that converting to the 'Phenyx' format simplifies the identification results.<br><br>"
-                + "If you would like to see a proper PeptideShaker import please contact <a href=\"http://www.nonlinear.com/products/progenesis/lc-ms/overview/\">Progenesis</a>."),
-                "Progenesis Help", JOptionPane.WARNING_MESSAGE);
-    }//GEN-LAST:event_exportToProgenesisLinkLabelMouseClicked
+    private void skylineExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skylineExportButtonActionPerformed
+        skylineExport();
+    }//GEN-LAST:event_skylineExportButtonActionPerformed
 
     /**
      * Export the data as a graph database.
@@ -766,23 +656,23 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             edgeWriter.write("BEGIN\n");
                         }
 
-//                        // write the protein nodes
-//                        progressDialog.setTitle("Getting Protein Details. Please Wait...");
-//                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
-//                        peptideShakerGUI.getIdentification().loadProteinMatches(progressDialog);
-//
+                        //                        // write the protein nodes
+                        //                        progressDialog.setTitle("Getting Protein Details. Please Wait...");
+                        //                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
+                        //                        peptideShakerGUI.getIdentification().loadProteinMatches(progressDialog);
+                        //
                         // @TODO: the below code couldn't be used as it deals with protein groups and not individual proteins
-//                        progressDialog.setTitle("Writing Protein Details. Please Wait...");
-//                        progressDialog.resetPrimaryProgressCounter();
-//                        progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getProteinIdentification().size());
-//
-//                        for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
-//                            PSParameter probabilities = new PSParameter();
-//                            probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, probabilities);
-//                            ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-//                            nodeWriter.write(proteinKey + "\t" + proteinMatch.getMainMatch() + "\tprotein" + "\t" + probabilities.isValidated() + "\t" + proteinMatch.isDecoy() + "\n"); // @TODO: add more information?
-//                            progressDialog.increasePrimaryProgressCounter();
-//                        }
+                        //                        progressDialog.setTitle("Writing Protein Details. Please Wait...");
+                        //                        progressDialog.resetPrimaryProgressCounter();
+                        //                        progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getProteinIdentification().size());
+                        //
+                        //                        for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+                        //                            PSParameter probabilities = new PSParameter();
+                        //                            probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, probabilities);
+                        //                            ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                        //                            nodeWriter.write(proteinKey + "\t" + proteinMatch.getMainMatch() + "\tprotein" + "\t" + probabilities.isValidated() + "\t" + proteinMatch.isDecoy() + "\n"); // @TODO: add more information?
+                        //                            progressDialog.increasePrimaryProgressCounter();
+                        //                        }
                         // write the peptide nodes
                         progressDialog.setTitle("Writing Peptide Details. Please Wait...");
                         progressDialog.resetPrimaryProgressCounter();
@@ -796,15 +686,15 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             long peptideKey = peptideMatch.getKey();
                             PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
-                                IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
-                SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-                                String modifiedSequence = peptideMatch.getPeptide().getTaggedModifiedSequence(modificationParameters, peptideShakerGUI.getSequenceProvider(), modificationSequenceMatchingParameters, false, false, true, peptideShakerGUI.getDisplayParameters().getDisplayedModifications());
+                            IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+                            ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                            SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                            String modifiedSequence = peptideMatch.getPeptide().getTaggedModifiedSequence(modificationParameters, peptideShakerGUI.getSequenceProvider(), modificationSequenceMatchingParameters, false, false, true, peptideShakerGUI.getDisplayParameters().getDisplayedModifications());
 
                             // write the peptide node
                             if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
-                                String node = String.join("", 
-                                        "create n={id:'", 
+                                String node = String.join("",
+                                        "create n={id:'",
                                         Long.toString(peptideKey),
                                         "', name:'",
                                         modifiedSequence,
@@ -814,11 +704,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
                             } else {
 
-                                nodeWriter.write(String.join("\t", 
-                                        Long.toString(peptideKey), 
+                                nodeWriter.write(String.join("\t",
+                                        Long.toString(peptideKey),
                                         modifiedSequence,
-                                        "peptide", 
-                                        psParameter.getMatchValidationLevel().getName(), 
+                                        "peptide",
+                                        psParameter.getMatchValidationLevel().getName(),
                                         Boolean.toString(PeptideUtils.isDecoy(peptideMatch.getPeptide(), peptideShakerGUI.getSequenceProvider()))));
                                 nodeWriter.newLine();
 
@@ -917,20 +807,67 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_graphDatabasetButtonActionPerformed
 
     /**
-     * Exports the identifications to Skyline.
+     * Export all the identified protein accession numbers to a tab separated
+     * text file.
      *
      * @param evt
      */
-    private void skylineExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skylineExportButtonActionPerformed
-        skylineExport();
-    }//GEN-LAST:event_skylineExportButtonActionPerformed
+    private void exportIdentifiedProteinAccessionNumbersAsCsvButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportIdentifiedProteinAccessionNumbersAsCsvButtonActionPerformed
+        exportFasta(true);
+    }//GEN-LAST:event_exportIdentifiedProteinAccessionNumbersAsCsvButtonActionPerformed
 
-    private void tppExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tppExportButtonActionPerformed
+    /**
+     * Export all the identified proteins to a FASTA file.
+     *
+     * @param evt
+     */
+    private void exportIdentifiedProteinsAsFastaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportIdentifiedProteinsAsFastaButtonActionPerformed
+        exportFasta(false);
+    }//GEN-LAST:event_exportIdentifiedProteinsAsFastaButtonActionPerformed
 
-        JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "PepXML does not allow the storage of all PeptideShaker results and should thus be used carefully." + System.getProperty("line.separator")
-                + "For third party tools we recommend using mzIdentML, the standard format of proteomics identification results.", "Warning", JOptionPane.WARNING_MESSAGE);
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void exportToProgenesisLinkLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisLinkLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportToProgenesisLinkLabelMouseExited
 
-        final File finalOutputFile = peptideShakerGUI.getUserSelectedFile("tpp_psm_export.pep.xml", ".pep.xml", "PepXML (*.pep.xml)", "Select Destination File", false);;
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void exportToProgenesisLinkLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisLinkLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_exportToProgenesisLinkLabelMouseEntered
+
+    /**
+     * Open the Progenesis home page.
+     *
+     * @param evt
+     */
+    private void exportToProgenesisLinkLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisLinkLabelMouseClicked
+        JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
+                "<a href=\"http://www.nonlinear.com/products/progenesis/lc-ms/overview/\">Progenesis</a> does not yet have a specific PeptideShaker import. In order to get the<br>"
+                + "identifications back into Progenesis one therefore has to rely on the Phenyx import<br>"
+                + "format, i.e., select 'Phenyx' when importing the results back into Progenesis.<br><br>"
+                + "Note that converting to the 'Phenyx' format simplifies the identification results.<br><br>"
+                + "If you would like to see a proper PeptideShaker import please contact <a href=\"http://www.nonlinear.com/products/progenesis/lc-ms/overview/\">Progenesis</a>."),
+                "Progenesis Help", JOptionPane.WARNING_MESSAGE);
+    }//GEN-LAST:event_exportToProgenesisLinkLabelMouseClicked
+
+    /**
+     * Export the Spectrum IDs as a Phenyx tab separated text file for input to
+     * Progenesis. Only works if the mgf files came from Progenesis in the first
+     * place.
+     *
+     * @param evt
+     */
+    private void exportProgenesisButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProgenesisButtonActionPerformed
+
+        final File finalOutputFile = peptideShakerGUI.getUserSelectedFile("progenesis_psm_export.txt", ".txt", "Tab Separated Text File (*.txt)", "Select Destination File", false);
 
         if (finalOutputFile != null) {
 
@@ -940,6 +877,17 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     true);
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Exporting PSMs. Please Wait...");
+
+            final int userChoice = psmSelectionComboBox.getSelectedIndex();
+            HashSet<String> modifications = new HashSet<>(0);
+            if (userChoice == 3) {
+                ModificationChooser modificationChooser = new ModificationChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getAllNotFixedModifications(), true);
+                if (modificationChooser.isCanceled()) {
+                    return;
+                }
+                modifications = modificationChooser.getSelectedItems();
+            }
+            final HashSet<String> modificationSelection = modifications;
 
             new Thread(new Runnable() {
                 public void run() {
@@ -955,8 +903,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
-                        PepXmlExport pepXmlExport = new PepXmlExport();
-                        pepXmlExport.writePepXmlFile(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationParameters(), finalOutputFile, PeptideShaker.getVersion(), progressDialog, peptideShakerGUI.getExceptionHandler());
+
+                        ProgenesisExport.writeProgenesisExport(finalOutputFile, peptideShakerGUI.getSequenceProvider(),
+                                peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getIdentification(),
+                                ProgenesisExport.ExportType.getTypeFromIndex(userChoice), progressDialog, modificationSelection,
+                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
@@ -972,7 +923,130 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 }
             }.start();
         }
-    }//GEN-LAST:event_tppExportButtonActionPerformed
+    }//GEN-LAST:event_exportProgenesisButtonActionPerformed
+
+    /**
+     * Export the inclusion list to file.
+     *
+     * @param evt
+     */
+    private void inclusionListButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inclusionListButtonActionPerformed
+        new InclusionListExportDialog(this, InclusionListExport.ExportFormat.getTypeFromIndex(inclusionListFormat.getSelectedIndex()), true);
+    }//GEN-LAST:event_inclusionListButtonActionPerformed
+
+    /**
+     * Recalibrate the spectra.
+     *
+     * @param evt
+     */
+    private void recalibrateMgfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recalibrateMgfButtonActionPerformed
+        recalibrateSpectra();
+    }//GEN-LAST:event_recalibrateMgfButtonActionPerformed
+
+    /**
+     * Export the given spectra as an mgf file.
+     *
+     * @param evt
+     */
+    private void exportMgfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMgfButtonActionPerformed
+
+        final File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", getLastSelectedFolder(), "Output Folder", "Select", false);
+
+        if (selectedFolder != null) {
+
+            setLastSelectedFolder(selectedFolder.getAbsolutePath());
+
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
+            progressDialog.setTitle("Exporting Spectra. Please Wait...");
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("SaveThread") {
+                @Override
+                public void run() {
+
+                    try {
+                        SpectrumExporter spectrumExporter = new SpectrumExporter(peptideShakerGUI.getIdentification());
+                        spectrumExporter.exportSpectra(selectedFolder, progressDialog, SpectrumExporter.ExportType.getTypeFromIndex(spectrumValidationCmb.getSelectedIndex()), peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
+
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
+
+                        if (!processCancelled) {
+                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Spectra saved to " + selectedFolder.getAbsolutePath() + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (Exception e) {
+                        progressDialog.setRunFinished();
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "An error occurred when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }.start();
+        }
+    }//GEN-LAST:event_exportMgfButtonActionPerformed
+
+    /**
+     * Export the proteoforms in the format compatible with PathwayMatcher.
+     *
+     * @param evt
+     */
+    private void exportProteformsAsTxtButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProteformsAsTxtButtonActionPerformed
+        
+        final File finalOutputFile = peptideShakerGUI.getUserSelectedFile("proteoforms.txt", ".txt", "Tab Separated Text File (*.txt)", "Select Destination File", false);
+
+        if (finalOutputFile != null) {
+
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
+            progressDialog.setTitle("Exporting Proteoforms. Please Wait...");
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ProteoformsThread") {
+                @Override
+                public void run() {
+                    try {
+
+                        ProteoformExport.writeProteoforms(finalOutputFile, peptideShakerGUI.getIdentification(), progressDialog);
+
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
+
+                        if (!processCancelled) {
+                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Results exported to \'"
+                                    + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (Exception e) {
+                        progressDialog.setRunFinished();
+                        peptideShakerGUI.catchException(e);
+                    }
+                }
+            }.start();
+        }
+    }//GEN-LAST:event_exportProteformsAsTxtButtonActionPerformed
 
     /**
      * Creates an mzIdentML file for Skyline.
@@ -1024,8 +1098,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
                         SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
 
-                        FastaExport.ExportType exportType = finalAccessionsOnly ? 
-                                FastaExport.ExportType.getTypeFromIndex(proteinExportCmb1.getSelectedIndex())
+                        FastaExport.ExportType exportType = finalAccessionsOnly
+                                ? FastaExport.ExportType.getTypeFromIndex(proteinExportCmb1.getSelectedIndex())
                                 : FastaExport.ExportType.getTypeFromIndex(proteinExportCmb2.getSelectedIndex());
 
                         IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
@@ -1048,17 +1122,17 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         progressDialog.setRunFinished();
 
                         if (!processCancelled) {
-                            
+
                             JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Identified proteins exported to "
                                     + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
-                        
+
                         }
                     } catch (Exception e) {
-                        
+
                         progressDialog.setRunFinished();
                         e.printStackTrace();
                         JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "An error occurred when exporting the data.", "Export Failed", JOptionPane.ERROR_MESSAGE);
-                    
+
                     }
                 }
             }.start();
@@ -1119,7 +1193,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
                     try {
                         RecalibrationExporter.writeRecalibratedSpectra(precursors, fragments, selectedFolder,
-                                peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceProvider(), 
+                                peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceProvider(),
                                 peptideShakerGUI.getIdentificationParameters(), progressDialog);
 
                         boolean processCancelled = progressDialog.isRunCanceled();
@@ -1178,6 +1252,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JButton exportIdentifiedProteinsAsFastaButton;
     private javax.swing.JButton exportMgfButton;
     private javax.swing.JButton exportProgenesisButton;
+    private javax.swing.JButton exportProteformsAsTxtButton;
     private javax.swing.JLabel exportSpectraLabel;
     private javax.swing.JLabel exportToProgenesisLinkLabel;
     private javax.swing.JComboBox graphDatabaseFormat;
@@ -1192,6 +1267,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox proteinExportCmb1;
     private javax.swing.JComboBox proteinExportCmb2;
     private javax.swing.JPanel proteinsPanel;
+    private javax.swing.JComboBox proteoformsExportCmb;
+    private javax.swing.JLabel proteoformsLabel;
     private javax.swing.JComboBox psmSelectionComboBox;
     private javax.swing.JButton recalibrateMgfButton;
     private javax.swing.JLabel recalibrateSpectraLabel;

@@ -40,7 +40,7 @@ public class ProteoformExport {
 
         if (waitingHandler != null) {
 
-            waitingHandler.setWaitingText("Exporting Proteofoems. Please Wait...");
+            waitingHandler.setWaitingText("Exporting Proteoforms. Please Wait...");
             // reset the progress bar
             waitingHandler.resetSecondaryProgressCounter();
             waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size());
@@ -50,76 +50,96 @@ public class ProteoformExport {
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
         ProteinMatch proteinMatch;
 
-        try (SimpleFileWriter simpleFileWriter = new SimpleFileWriter(destinationFile, true)) {
+        try (SimpleFileWriter simpleFileWriter = new SimpleFileWriter(destinationFile, false)) {
 
             while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
-                for (String accession : proteinMatch.getAccessions()) {
+                if (!proteinMatch.isDecoy()) {
 
-                    boolean unmodified = false;
-                    TreeSet<String> modifications = new TreeSet<>();
+                    for (String accession : proteinMatch.getAccessions()) {
 
-                    for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
+                        boolean unmodified = false;
+                        TreeSet<String> modifications = new TreeSet<>();
 
-                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                        Peptide peptide = peptideMatch.getPeptide();
+                        for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
 
-                        ModificationMatch[] modificationMatches = peptide.getVariableModifications();
+                            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                            Peptide peptide = peptideMatch.getPeptide();
 
-                        if (modificationMatches.length > 0) {
+                            ModificationMatch[] modificationMatches = peptide.getVariableModifications();
 
-                            int[] peptideStarts = peptide.getProteinMapping().get(accession);
+                            if (modificationMatches.length > 0) {
 
-                            for (int peptideStart : peptideStarts) {
+                                int[] peptideStarts = peptide.getProteinMapping().get(accession);
 
-                                TreeMap<Integer, String> modMap = new TreeMap<>();
+                                for (int peptideStart : peptideStarts) {
 
-                                for (ModificationMatch modificationMatch : modificationMatches) {
-                                    String modName = modificationMatch.getModification();
+                                    TreeMap<Integer, String> modMap = new TreeMap<>();
 
-                                    Modification modification = modificationFactory.getModification(modName);
-                                    String modAccession = modification.getCvTerm().getAccession();
+                                    for (ModificationMatch modificationMatch : modificationMatches) {
+                                        String modName = modificationMatch.getModification();
 
-                                    int site = modificationMatch.getSite();
-                                    if (site == 0) {
-                                        site = 1;
-                                    } else if (site == peptide.getSequence().length() + 1) {
-                                        site = peptide.getSequence().length();
+                                        Modification modification = modificationFactory.getModification(modName);
+
+                                        // try to map to PSI-MOD
+                                        String modAccession = modificationFactory.getPsiModAccession(modName);
+
+                                        // remove everything but the accession number, i.e. "MOD:00040" ends up as "00040"
+                                        if (modAccession != null) {
+                                            modAccession = modAccession.substring(modAccession.indexOf(':') + 1);
+                                        }
+
+                                        // not mapping to PSI-MOD, use the Unimod accession number instead
+                                        if (modAccession == null) {
+                                            modAccession = modification.getCvTerm().getAccession();
+                                        }
+
+                                        // not mapping to PSI-MOD or Unimod, use the modification name...
+                                        if (modAccession == null) {
+                                            modAccession = modName;
+                                        }
+
+                                        int site = modificationMatch.getSite();
+                                        if (site == 0) {
+                                            site = 1;
+                                        } else if (site == peptide.getSequence().length() + 1) {
+                                            site = peptide.getSequence().length();
+                                        }
+                                        int siteOnProtein = peptideStart + site;
+
+                                        modMap.put(siteOnProtein, modAccession);
+
                                     }
-                                    int siteOnProtein = peptideStart + site;
 
-                                    modMap.put(siteOnProtein, modAccession);
+                                    String proteoformMods = modMap.entrySet()
+                                            .stream()
+                                            .map(entry -> String.join(
+                                            ":",
+                                            entry.getValue(),
+                                            Integer.toString(entry.getKey())))
+                                            .collect(Collectors.joining(","));
+                                    modifications.add(proteoformMods);
 
                                 }
 
-                                String proteoformMods = modMap.entrySet()
-                                        .stream()
-                                        .map(entry -> String.join(
-                                        ":",
-                                        entry.getValue(),
-                                        Integer.toString(entry.getKey())))
-                                        .collect(Collectors.joining(","));
-                                modifications.add(proteoformMods);
+                            } else {
+
+                                unmodified = true;
 
                             }
+                        }
 
-                        } else {
+                        if (unmodified) {
 
-                            unmodified = true;
+                            simpleFileWriter.writeLine(accession + ";");
 
                         }
-                    }
 
-                    if (unmodified) {
+                        for (String modification : modifications) {
 
-                        simpleFileWriter.writeLine(accession + ";");
+                            simpleFileWriter.writeLine(String.join(";", accession, modification));
 
-                    }
-
-                    for (String modification : modifications) {
-
-                        simpleFileWriter.writeLine(String.join(";", accession, modification));
-
+                        }
                     }
                 }
 
