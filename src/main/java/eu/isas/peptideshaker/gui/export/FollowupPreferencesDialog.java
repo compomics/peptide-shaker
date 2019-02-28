@@ -551,7 +551,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
-            progressDialog.setTitle("Exporting PSMs. Please Wait...");
+            progressDialog.setTitle("Exporting PepXML. Please Wait...");
 
             new Thread(new Runnable() {
                 public void run() {
@@ -563,7 +563,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 }
             }, "ProgressDialog").start();
 
-            new Thread("ProgenesisPsmThread") {
+            new Thread("PepXmlThread") {
                 @Override
                 public void run() {
                     try {

@@ -188,7 +188,7 @@ public class PepXmlExport {
 
             StringBuilder runStart = new StringBuilder();
             runStart.append("<msms_run_summary");
-            File spectrumFile = spectrumFactory.getSpectrumFileFromIdName(spectrumFileName);
+            File spectrumFile = spectrumFactory.getMgfFileFromName(spectrumFileName);
             
             if (spectrumFile != null) {
             
