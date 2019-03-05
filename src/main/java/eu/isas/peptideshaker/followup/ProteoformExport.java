@@ -131,7 +131,7 @@ public class ProteoformExport {
 
                         if (unmodified) {
 
-                            simpleFileWriter.writeLine(accession + ";");
+                            simpleFileWriter.writeLine(accession);
 
                         }
 
