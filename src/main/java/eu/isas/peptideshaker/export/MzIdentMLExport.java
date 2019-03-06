@@ -658,13 +658,26 @@ public class MzIdentMLExport {
                     bw.write("\" >");
                     bw.newLine();
 
-                    CvTerm ptmCvTerm = modification.getCvTerm();
+                    CvTerm ptmCvTerm = modification.getUnimodCvTerm();
 
                     if (ptmCvTerm != null) {
 
                         tabCounter++;
                         writeCvTerm(ptmCvTerm, false);
                         tabCounter--;
+
+                    } else {
+
+                        // try PSI-MOD instead
+                        ptmCvTerm = modification.getPsiModCvTerm();
+
+                        if (ptmCvTerm != null) {
+
+                            tabCounter++;
+                            writeCvTerm(ptmCvTerm, false);
+                            tabCounter--;
+
+                        }
 
                     }
 
@@ -692,9 +705,18 @@ public class MzIdentMLExport {
                 bw.write("\" >");
                 bw.newLine();
 
-                CvTerm ptmCvTerm = modification.getCvTerm();
+                CvTerm ptmCvTerm = modification.getUnimodCvTerm();
 
                 if (ptmCvTerm != null) {
+
+                    tabCounter++;
+                    writeCvTerm(ptmCvTerm, false);
+                    tabCounter--;
+
+                } else {
+
+                    // try PSI-MOD instead
+                    ptmCvTerm = modification.getPsiModCvTerm();
 
                     tabCounter++;
                     writeCvTerm(ptmCvTerm, false);
@@ -1085,7 +1107,7 @@ public class MzIdentMLExport {
             }
 
             // add the modification cv term
-            CvTerm ptmCvTerm = modification.getCvTerm();
+            CvTerm ptmCvTerm = modification.getUnimodCvTerm();
 
             if (ptmCvTerm != null) {
 
@@ -1093,8 +1115,17 @@ public class MzIdentMLExport {
 
             } else {
 
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1001460", "unknown modification", null));
+                // try PSI-MOD instead
+                ptmCvTerm = modification.getPsiModCvTerm();
 
+                if (ptmCvTerm != null) {
+
+                    writeCvTerm(ptmCvTerm);
+
+                } else {
+
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001460", "unknown modification", null));
+                }
             }
 
             // add modification type/index
@@ -2505,7 +2536,7 @@ public class MzIdentMLExport {
         for (String idFilePath : projectDetails.getIdentificationFiles()) {
 
             File idFile = new File(idFilePath);
-            
+
             // @TODO: add MS:1000568 - MD5?
 //            FileInputStream fis = new FileInputStream(new File("foo"));
 //            String md5 = DigestUtils.md5Hex(fis);

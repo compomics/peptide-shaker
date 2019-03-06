@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
  * Export for PathwayMatcher.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class ProteoformExport {
 
@@ -37,7 +38,7 @@ public class ProteoformExport {
     ) {
 
         ModificationFactory modificationFactory = ModificationFactory.getInstance();
-
+        
         if (waitingHandler != null) {
 
             waitingHandler.setWaitingText("Exporting Proteoforms. Please Wait...");
@@ -81,21 +82,17 @@ public class ProteoformExport {
 
                                         Modification modification = modificationFactory.getModification(modName);
 
-                                        // try to map to PSI-MOD
-                                        String modAccession = modificationFactory.getPsiModAccession(modName);
+                                        String modAccession;
 
-                                        // remove everything but the accession number, i.e. "MOD:00040" ends up as "00040"
-                                        if (modAccession != null) {
-                                            modAccession = modAccession.substring(modAccession.indexOf(':') + 1);
-                                        }
-
-                                        // not mapping to PSI-MOD, use the Unimod accession number instead
-                                        if (modAccession == null) {
-                                            modAccession = modification.getCvTerm().getAccession();
-                                        }
-
-                                        // not mapping to PSI-MOD or Unimod, use the modification name...
-                                        if (modAccession == null) {
+                                        // try to map to PSI-MOD or Unimod
+                                        if (modification.getPsiModCvTerm() != null) {
+                                            modAccession = modification.getPsiModCvTerm().getAccession();
+                                            modAccession = modAccession.substring(modAccession.indexOf(':') + 1); // remove everything but the accession number, i.e. "MOD:00040" ends up as "00040"
+                                        } else if (modification.getUnimodCvTerm() != null) {
+                                            // not mapping to PSI-MOD, use the Unimod accession number instead
+                                            modAccession = modification.getUnimodCvTerm().getAccession();
+                                        } else {
+                                            // not mapping to PSI-MOD nor Unimod, use the utilties modification name...
                                             modAccession = modName;
                                         }
 
