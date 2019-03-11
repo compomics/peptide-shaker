@@ -364,6 +364,7 @@ public class PeptideShaker {
             default:
                 reportTxt = "Saving probabilities, building peptides and proteins.";
         }
+        
 
         waitingHandler.appendReport(reportTxt, true, true);
         waitingHandler.setWaitingText(reportTxt + " Please Wait...");
@@ -371,6 +372,7 @@ public class PeptideShaker {
         attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(sequenceProvider, identificationParameters.getSequenceMatchingParameters(), projectType, fastaParameters, waitingHandler);
         waitingHandler.increasePrimaryProgressCounter();
 
+        
         if (waitingHandler.isRunCanceled()) {
             return;
         }
@@ -433,6 +435,7 @@ public class PeptideShaker {
 
             identification.getObjectsDB().commit();
             System.gc();
+        
 
             if (projectType == ProjectType.protein) {
 
@@ -465,6 +468,7 @@ public class PeptideShaker {
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
+        
 
                 identification.getObjectsDB().commit();
                 System.gc();
@@ -571,7 +575,6 @@ public class PeptideShaker {
         waitingHandler.appendReportEndLine();
         identification.addUrParam(new PSMaps(inputMap, matchesValidator.getPsmMap(), matchesValidator.getPeptideMap(), matchesValidator.getProteinMap()));
         waitingHandler.setRunFinished();
-
     }
 
     /**
@@ -686,7 +689,7 @@ public class PeptideShaker {
         PeptideAndProteinBuilder peptideAndProteinBuilder = new PeptideAndProteinBuilder(identification);
 
         identification.getSpectrumIdentification().values().stream()
-                .flatMap(keys -> keys.parallelStream())
+                .flatMap(keys -> keys.stream())
                 .map(key -> identification.getSpectrumMatch(key))
                 .forEach(spectrumMatch -> attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(
                 spectrumMatch, peptideAndProteinBuilder, sequenceProvider,

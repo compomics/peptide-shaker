@@ -225,7 +225,7 @@ public class PsmImporter {
      */
     public void importPsms(LinkedList<SpectrumMatch> idFileSpectrumMatches, int nThreads, WaitingHandler waitingHandler) {
 
-        idFileSpectrumMatches.parallelStream()
+        idFileSpectrumMatches.stream()
                 .forEach(spectrumMatch -> importPsm(spectrumMatch, new PeptideSpectrumAnnotator(), waitingHandler));
 
     }

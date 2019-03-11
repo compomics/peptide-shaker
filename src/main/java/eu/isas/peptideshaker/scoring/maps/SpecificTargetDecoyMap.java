@@ -65,12 +65,12 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
         waitingHandler.resetSecondaryProgressCounter();
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
-        fileSpecificMaps.entrySet().parallelStream()
-                .forEach(entry1 -> entry1.getValue().entrySet().parallelStream()
+        fileSpecificMaps.entrySet().stream()
+                .forEach(entry1 -> entry1.getValue().entrySet().stream()
                 .filter(entry2 -> !fileSpecificGrouping.containsKey(entry1.getKey()) || fileSpecificGrouping.get(entry1.getKey()).contains(entry2.getKey()))
                 .forEach(entry2 -> entry2.getValue().estimateProbabilities(waitingHandler)));
 
-        groupedMaps.entrySet().parallelStream()
+        groupedMaps.entrySet().stream()
                 .filter(entry -> !grouping.containsKey(entry.getKey()))
                 .forEach(entry -> entry.getValue().estimateProbabilities(waitingHandler));
 
