@@ -33,6 +33,10 @@ public class ProjectDetails extends DbObject {
      */
     private HashMap<String, String> spectrumFiles = new HashMap<>();
     /**
+     * The path to the FASTA file.
+     */
+    private String fastaFilePath;
+    /**
      * When the project was created.
      */
     private Date creationDate;
@@ -147,7 +151,7 @@ public class ProjectDetails extends DbObject {
     public ArrayList<String> getIdentificationFiles() {
         readDBMode();
         return identificationFiles;
-        
+
     }
 
     /**
@@ -159,7 +163,7 @@ public class ProjectDetails extends DbObject {
         writeDBMode();
         String path = identificationFile.getAbsolutePath();
         identificationFiles.add(path);
-        
+
     }
 
     /**
@@ -173,31 +177,55 @@ public class ProjectDetails extends DbObject {
         String fileName = Util.getFileName(path);
         spectrumFiles.put(fileName, path);
     }
-    
+
     /**
      * Returns the name of the input spectrum files as a set.
-     * 
+     *
      * @return the spectrum file names
      */
     public Set<String> getSpectrumFileNames() {
-        
+
         readDBMode();
         return spectrumFiles.keySet();
-        
+
     }
 
     /**
      * Returns the file corresponding to the given name.
      *
      * @param fileName the name of the desired file
-     * 
+     *
      * @return the corresponding file, null if not found.
      */
     public File getSpectrumFile(String fileName) {
-        
+
         readDBMode();
         return new File(spectrumFiles.get(fileName));
-        
+
+    }
+
+    /**
+     * Set the path to the FASTA file.
+     *
+     * @param fastaFile the FASTA file
+     */
+    public void setFastaFile(File fastaFile) {
+
+        writeDBMode();
+        fastaFilePath = fastaFile.getAbsolutePath();
+
+    }
+
+    /**
+     * Returns the path to the FASTA file.
+     *
+     * @return the path to the FASTA file
+     */
+    public String getFastaFile() {
+
+        readDBMode();
+        return fastaFilePath;
+
     }
 
     /**
@@ -206,10 +234,10 @@ public class ProjectDetails extends DbObject {
      * @return the creation date of the project
      */
     public Date getCreationDate() {
-        
+
         readDBMode();
         return creationDate;
-        
+
     }
 
     /**
@@ -220,7 +248,7 @@ public class ProjectDetails extends DbObject {
     public void setCreationDate(Date creationDate) {
         writeDBMode();
         this.creationDate = creationDate;
-        
+
     }
 
     /**
@@ -229,10 +257,10 @@ public class ProjectDetails extends DbObject {
      * @return the PeptideShaker version used to create the project
      */
     public String getPeptideShakerVersion() {
-        
+
         readDBMode();
         return peptideShakerVersion;
-        
+
     }
 
     /**
@@ -244,7 +272,7 @@ public class ProjectDetails extends DbObject {
     public void setPeptideShakerVersion(String peptideShakerVersion) {
         writeDBMode();
         this.peptideShakerVersion = peptideShakerVersion;
-        
+
     }
 
     /**
@@ -256,7 +284,7 @@ public class ProjectDetails extends DbObject {
 
         readDBMode();
         return report == null ? "(report not saved)" : report;
-        
+
     }
 
     /**
@@ -267,7 +295,7 @@ public class ProjectDetails extends DbObject {
     public void setReport(String report) {
         writeDBMode();
         this.report = report;
-        
+
     }
 
     /**
@@ -276,10 +304,10 @@ public class ProjectDetails extends DbObject {
      * @return the prideExperimenttitle
      */
     public String getPrideExperimentTitle() {
-        
+
         readDBMode();
         return prideExperimentTitle;
-        
+
     }
 
     /**
@@ -290,7 +318,7 @@ public class ProjectDetails extends DbObject {
     public void setPrideExperimentTitle(String prideExperimentTitle) {
         writeDBMode();
         this.prideExperimentTitle = prideExperimentTitle;
-        
+
     }
 
     /**
@@ -299,10 +327,10 @@ public class ProjectDetails extends DbObject {
      * @return the prideExperimentLabel
      */
     public String getPrideExperimentLabel() {
-        
+
         readDBMode();
         return prideExperimentLabel;
-        
+
     }
 
     /**
@@ -313,7 +341,7 @@ public class ProjectDetails extends DbObject {
     public void setPrideExperimentLabel(String prideExperimentLabel) {
         writeDBMode();
         this.prideExperimentLabel = prideExperimentLabel;
-        
+
     }
 
     /**
@@ -322,10 +350,10 @@ public class ProjectDetails extends DbObject {
      * @return the prideExperimentProjectTitle
      */
     public String getPrideExperimentProjectTitle() {
-        
+
         readDBMode();
         return prideExperimentProjectTitle;
-        
+
     }
 
     /**
@@ -336,7 +364,7 @@ public class ProjectDetails extends DbObject {
     public void setPrideExperimentProjectTitle(String prideExperimentProjectTitle) {
         writeDBMode();
         this.prideExperimentProjectTitle = prideExperimentProjectTitle;
-        
+
     }
 
     /**
@@ -345,10 +373,10 @@ public class ProjectDetails extends DbObject {
      * @return the prideExperimentDescription
      */
     public String getPrideExperimentDescription() {
-        
+
         readDBMode();
         return prideExperimentDescription;
-        
+
     }
 
     /**
@@ -359,7 +387,7 @@ public class ProjectDetails extends DbObject {
     public void setPrideExperimentDescription(String prideExperimentDescription) {
         writeDBMode();
         this.prideExperimentDescription = prideExperimentDescription;
-        
+
     }
 
     /**
@@ -368,10 +396,10 @@ public class ProjectDetails extends DbObject {
      * @return the prideReferenceGroup
      */
     public ReferenceGroup getPrideReferenceGroup() {
-        
+
         readDBMode();
         return prideReferenceGroup;
-        
+
     }
 
     /**
@@ -382,7 +410,7 @@ public class ProjectDetails extends DbObject {
     public void setPrideReferenceGroup(ReferenceGroup prideReferenceGroup) {
         writeDBMode();
         this.prideReferenceGroup = prideReferenceGroup;
-        
+
     }
 
     /**
@@ -391,10 +419,10 @@ public class ProjectDetails extends DbObject {
      * @return the prideContactGroup
      */
     public ContactGroup getPrideContactGroup() {
-        
+
         readDBMode();
         return prideContactGroup;
-        
+
     }
 
     /**
@@ -405,7 +433,7 @@ public class ProjectDetails extends DbObject {
     public void setPrideContactGroup(ContactGroup prideContactGroup) {
         writeDBMode();
         this.prideContactGroup = prideContactGroup;
-        
+
     }
 
     /**
@@ -414,10 +442,10 @@ public class ProjectDetails extends DbObject {
      * @return the prideSample
      */
     public Sample getPrideSample() {
-        
+
         readDBMode();
         return prideSample;
-        
+
     }
 
     /**
@@ -428,7 +456,7 @@ public class ProjectDetails extends DbObject {
     public void setPrideSample(Sample prideSample) {
         writeDBMode();
         this.prideSample = prideSample;
-        
+
     }
 
     /**
@@ -437,10 +465,10 @@ public class ProjectDetails extends DbObject {
      * @return the prideProtocol
      */
     public Protocol getPrideProtocol() {
-        
+
         readDBMode();
         return prideProtocol;
-        
+
     }
 
     /**
@@ -451,7 +479,7 @@ public class ProjectDetails extends DbObject {
     public void setPrideProtocol(Protocol prideProtocol) {
         writeDBMode();
         this.prideProtocol = prideProtocol;
-        
+
     }
 
     /**
@@ -460,10 +488,10 @@ public class ProjectDetails extends DbObject {
      * @return the prideInstrument
      */
     public Instrument getPrideInstrument() {
-        
+
         readDBMode();
         return prideInstrument;
-        
+
     }
 
     /**
@@ -474,7 +502,7 @@ public class ProjectDetails extends DbObject {
     public void setPrideInstrument(Instrument prideInstrument) {
         writeDBMode();
         this.prideInstrument = prideInstrument;
-        
+
     }
 
     /**
@@ -483,10 +511,10 @@ public class ProjectDetails extends DbObject {
      * @return the prideOutputFolder
      */
     public String getPrideOutputFolder() {
-        
+
         readDBMode();
         return prideOutputFolder;
-        
+
     }
 
     /**
@@ -497,7 +525,7 @@ public class ProjectDetails extends DbObject {
     public void setPrideOutputFolder(String prideOutputFolder) {
         writeDBMode();
         this.prideOutputFolder = prideOutputFolder;
-        
+
     }
 
     /**
@@ -506,10 +534,10 @@ public class ProjectDetails extends DbObject {
      * @return the mzIdentML output file
      */
     public String getMzIdentMLOutputFile() {
-        
+
         readDBMode();
         return mzIdentMLOutputFile;
-        
+
     }
 
     /**
@@ -520,7 +548,7 @@ public class ProjectDetails extends DbObject {
     public void setMzIdentOutputFile(String mzIdentMLOutputFile) {
         writeDBMode();
         this.mzIdentMLOutputFile = mzIdentMLOutputFile;
-        
+
     }
 
     /**
@@ -529,10 +557,10 @@ public class ProjectDetails extends DbObject {
      * @return true if the identification algorithms are stored
      */
     public boolean hasIdentificationAlgorithms() {
-        
+
         readDBMode();
         return identificationAlgorithms != null;
-        
+
     }
 
     /**
@@ -543,34 +571,34 @@ public class ProjectDetails extends DbObject {
      * of the Advocate class
      */
     public ArrayList<Integer> getIdentificationAlgorithms() {
-        
+
         readDBMode();
         ArrayList<Integer> result = new ArrayList<>();
-        
+
         for (HashMap<String, ArrayList<String>> advocateVersions : identificationAlgorithms.values()) {
-            
+
             for (String advocateName : advocateVersions.keySet()) {
-                
+
                 Advocate advocate = Advocate.getAdvocate(advocateName);
-                
+
                 if (advocate == null) {
-                    
+
                     throw new IllegalArgumentException("Identification algorithm " + advocateName + " not recognized.");
-                    
+
                 }
-                
+
                 int advocateId = advocate.getIndex();
-                
+
                 if (!result.contains(advocateId)) {
-                    
+
                     result.add(advocateId);
-                    
+
                 }
             }
         }
-        
+
         return result;
-        
+
     }
 
     /**
@@ -580,42 +608,42 @@ public class ProjectDetails extends DbObject {
      * @return the different identification algorithm versions used
      */
     public HashMap<String, ArrayList<String>> getAlgorithmNameToVersionsMap() {
-        
+
         readDBMode();
         HashMap<String, ArrayList<String>> algorithmNameToVersionMap = new HashMap<>();
-        
+
         for (HashMap<String, ArrayList<String>> fileMapping : identificationAlgorithms.values()) {
-            
+
             for (String softwareName : fileMapping.keySet()) {
-                
+
                 ArrayList<String> newVersions = fileMapping.get(softwareName);
-                
+
                 if (newVersions != null && !newVersions.isEmpty()) {
-                    
+
                     ArrayList<String> currentVersions = algorithmNameToVersionMap.get(softwareName);
-                    
+
                     if (currentVersions == null) {
-                        
+
                         currentVersions = new ArrayList<>(newVersions);
                         algorithmNameToVersionMap.put(softwareName, currentVersions);
-                        
+
                     } else {
-                        
+
                         for (String version : newVersions) {
-                            
+
                             if (!currentVersions.contains(version)) {
-                                
+
                                 currentVersions.add(version);
-                                
+
                             }
                         }
                     }
                 }
             }
         }
-        
+
         return algorithmNameToVersionMap;
-        
+
     }
 
     /**
@@ -627,10 +655,10 @@ public class ProjectDetails extends DbObject {
      * @return the identification algorithms used
      */
     public HashMap<String, ArrayList<String>> getIdentificationAlgorithmsForFile(String idFileName) {
-        
+
         readDBMode();
         return identificationAlgorithms == null ? null : identificationAlgorithms.get(idFileName);
-        
+
     }
 
     /**
@@ -643,7 +671,7 @@ public class ProjectDetails extends DbObject {
     public void setIdentificationAlgorithmsForFile(String idFileName, HashMap<String, ArrayList<String>> fileIdentificationAlgorithms) {
         writeDBMode();
         identificationAlgorithms.put(idFileName, fileIdentificationAlgorithms);
-        
+
     }
 
     /**
@@ -652,10 +680,10 @@ public class ProjectDetails extends DbObject {
      * @return the contactFirstName
      */
     public String getContactFirstName() {
-        
+
         readDBMode();
         return contactFirstName;
-        
+
     }
 
     /**
@@ -666,7 +694,7 @@ public class ProjectDetails extends DbObject {
     public void setContactFirstName(String contactFirstName) {
         writeDBMode();
         this.contactFirstName = contactFirstName;
-        
+
     }
 
     /**
@@ -675,10 +703,10 @@ public class ProjectDetails extends DbObject {
      * @return the contactLastName
      */
     public String getContactLastName() {
-        
+
         readDBMode();
         return contactLastName;
-        
+
     }
 
     /**
@@ -689,7 +717,7 @@ public class ProjectDetails extends DbObject {
     public void setContactLastName(String contactLastName) {
         writeDBMode();
         this.contactLastName = contactLastName;
-        
+
     }
 
     /**
@@ -698,10 +726,10 @@ public class ProjectDetails extends DbObject {
      * @return the contactEmailName
      */
     public String getContactEmail() {
-        
+
         readDBMode();
         return contactEmail;
-        
+
     }
 
     /**
@@ -712,7 +740,7 @@ public class ProjectDetails extends DbObject {
     public void setContactEmail(String contactEmail) {
         writeDBMode();
         this.contactEmail = contactEmail;
-        
+
     }
 
     /**
@@ -721,10 +749,10 @@ public class ProjectDetails extends DbObject {
      * @return the contactUrl
      */
     public String getContactUrl() {
-        
+
         readDBMode();
         return contactUrl;
-        
+
     }
 
     /**
@@ -735,7 +763,7 @@ public class ProjectDetails extends DbObject {
     public void setContactUrl(String contactUrl) {
         writeDBMode();
         this.contactUrl = contactUrl;
-        
+
     }
 
     /**
@@ -744,10 +772,10 @@ public class ProjectDetails extends DbObject {
      * @return the contactAddress
      */
     public String getContactAddress() {
-        
+
         readDBMode();
         return contactAddress;
-        
+
     }
 
     /**
@@ -758,7 +786,7 @@ public class ProjectDetails extends DbObject {
     public void setContactAddress(String contactAddress) {
         writeDBMode();
         this.contactAddress = contactAddress;
-        
+
     }
 
     /**
@@ -767,10 +795,10 @@ public class ProjectDetails extends DbObject {
      * @return the organizationName
      */
     public String getOrganizationName() {
-        
+
         readDBMode();
         return organizationName;
-        
+
     }
 
     /**
@@ -781,7 +809,7 @@ public class ProjectDetails extends DbObject {
     public void setOrganizationName(String organizationName) {
         writeDBMode();
         this.organizationName = organizationName;
-        
+
     }
 
     /**
@@ -790,10 +818,10 @@ public class ProjectDetails extends DbObject {
      * @return the organizationEmail
      */
     public String getOrganizationEmail() {
-        
+
         readDBMode();
         return organizationEmail;
-        
+
     }
 
     /**
@@ -804,7 +832,7 @@ public class ProjectDetails extends DbObject {
     public void setOrganizationEmail(String organizationEmail) {
         writeDBMode();
         this.organizationEmail = organizationEmail;
-        
+
     }
 
     /**
@@ -813,10 +841,10 @@ public class ProjectDetails extends DbObject {
      * @return the organizationUrl
      */
     public String getOrganizationUrl() {
-        
+
         readDBMode();
         return organizationUrl;
-        
+
     }
 
     /**
@@ -827,7 +855,7 @@ public class ProjectDetails extends DbObject {
     public void setOrganizationUrl(String organizationUrl) {
         writeDBMode();
         this.organizationUrl = organizationUrl;
-        
+
     }
 
     /**
@@ -836,10 +864,10 @@ public class ProjectDetails extends DbObject {
      * @return the organizationAddress
      */
     public String getOrganizationAddress() {
-        
+
         readDBMode();
         return organizationAddress;
-        
+
     }
 
     /**
@@ -850,7 +878,7 @@ public class ProjectDetails extends DbObject {
     public void setOrganizationAddress(String organizationAddress) {
         writeDBMode();
         this.organizationAddress = organizationAddress;
-        
+
     }
 
     /**
@@ -859,10 +887,10 @@ public class ProjectDetails extends DbObject {
      * @return the user advocates used in this project
      */
     public HashMap<Integer, Advocate> getUserAdvocateMapping() {
-        
+
         readDBMode();
         return userAdvocateMapping;
-        
+
     }
 
     /**
@@ -873,7 +901,7 @@ public class ProjectDetails extends DbObject {
     public void setUserAdvocateMapping(HashMap<Integer, Advocate> userAdvocateMapping) {
         writeDBMode();
         this.userAdvocateMapping = userAdvocateMapping;
-        
+
     }
 
     /**
@@ -884,15 +912,15 @@ public class ProjectDetails extends DbObject {
      * export
      */
     public Boolean getIncludeProteinSequences() {
-        
+
         readDBMode();
-        
+
         if (includeProteinSequences == null) {
             includeProteinSequences = false;
         }
-        
+
         return includeProteinSequences;
-        
+
     }
 
     /**
@@ -903,6 +931,6 @@ public class ProjectDetails extends DbObject {
     public void setIncludeProteinSequences(Boolean includeProteinSequences) {
         writeDBMode();
         this.includeProteinSequences = includeProteinSequences;
-        
+
     }
 }

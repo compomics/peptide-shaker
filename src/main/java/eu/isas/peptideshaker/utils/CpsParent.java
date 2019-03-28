@@ -124,9 +124,9 @@ public class CpsParent extends UserPreferencesParent {
      * @param dbFolder the folder where the database is stored.
      */
     public CpsParent(File dbFolder) {
-        
+
         this.dbFolder = dbFolder;
-        
+
     }
 
     /**
@@ -154,17 +154,17 @@ public class CpsParent extends UserPreferencesParent {
         waitingHandler.setWaitingText("Unzipping " + zipFile.getName() + ". Please Wait...");
         ZipUtils.unzip(zipFile, destinationFolder, waitingHandler);
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-        
+
         if (!waitingHandler.isRunCanceled()) {
-            
+
             for (File file : destinationFolder.listFiles()) {
-                
+
                 if (file.getName().toLowerCase().endsWith(".psdb")) {
-                    
+
                     cpsFile = file;
                     loadCpsFile(dbFolder, waitingHandler);
                     return;
-                    
+
                 }
             }
         }
@@ -191,25 +191,25 @@ public class CpsParent extends UserPreferencesParent {
 
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
         String dbName = "tempDB-" + df.format(new Date()) + ".psdb";
-        
+
         File destinationFile = new File(dbFolder.getAbsolutePath(), dbName);
-        
+
         Util.copyFile(cpsFile, destinationFile);
-        
-        ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), destinationFile.getName(), false);     
-        PeptideShakerParameters psParameters = (PeptideShakerParameters) objectsDB.retrieveObject(PeptideShakerParameters.key); 
-        
+
+        ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), destinationFile.getName(), false);
+        PeptideShakerParameters psParameters = (PeptideShakerParameters) objectsDB.retrieveObject(PeptideShakerParameters.key);
+
         projectParameters = (ProjectParameters) objectsDB.retrieveObject(ProjectParameters.key);
         identification = new Identification(objectsDB);
-        
+
         // load identification attributes
         IdentificationKeys identificationKeys = (IdentificationKeys) objectsDB.retrieveObject(IdentificationKeys.key);
         identification.setIdentificationKeys(identificationKeys);
-        
+
         PSMaps psMaps = new PSMaps();
         psMaps = (PSMaps) objectsDB.retrieveObject(psMaps.getParameterKey());
         identification.addUrParam(psMaps);
-        
+
         // get PeptideShaker settings
         identificationParameters = psParameters.getIdentificationParameters();
         spectrumCountingParameters = psParameters.getSpectrumCountingPreferences();
@@ -225,7 +225,7 @@ public class CpsParent extends UserPreferencesParent {
         // set up caches
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, sequenceProvider, metrics, spectrumCountingParameters);
         IdentificationFeaturesCache identificationFeaturesCache = psParameters.getIdentificationFeaturesCache();
-        
+
         if (identificationFeaturesCache != null) {
 
             identificationFeaturesGenerator.setIdentificationFeaturesCache(psParameters.getIdentificationFeaturesCache());
@@ -243,7 +243,7 @@ public class CpsParent extends UserPreferencesParent {
         loadUserParameters();
         userPreferences.addRecentProject(cpsFile);
         saveUserParameters();
-        
+
     }
 
     /**
@@ -257,7 +257,7 @@ public class CpsParent extends UserPreferencesParent {
      * whenever an error occurred while writing the file
      */
     public void saveProject(WaitingHandler waitingHandler, boolean emptyCache) throws IOException {
-        
+
         CpsExporter.saveAs(cpsFile, waitingHandler, identification, identificationParameters, sequenceProvider, proteinDetailsProvider,
                 spectrumCountingParameters, projectDetails, filterParameters, metrics, geneMaps, projectType,
                 identificationFeaturesGenerator.getIdentificationFeaturesCache(), emptyCache, displayParameters, dbFolder);
@@ -265,7 +265,7 @@ public class CpsParent extends UserPreferencesParent {
         loadUserParameters();
         userPreferences.addRecentProject(cpsFile);
         saveUserParameters();
-        
+
     }
 
     /**
@@ -280,9 +280,9 @@ public class CpsParent extends UserPreferencesParent {
      * whenever an error occurred loading the spectrum files
      */
     public boolean loadSpectrumFiles(WaitingHandler waitingHandler) throws IOException {
-        
+
         return loadSpectrumFiles(null, waitingHandler);
-        
+
     }
 
     /**
@@ -303,11 +303,11 @@ public class CpsParent extends UserPreferencesParent {
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
         for (String spectrumFileName : projectDetails.getSpectrumFileNames()) {
-            
+
             File providedSpectrumLocation = projectDetails.getSpectrumFile(spectrumFileName);
             File projectFolder = cpsFile.getParentFile();
             File dataFolder = new File(projectFolder, "data");
-            
+
             // try to locate the spectrum file
             if (providedSpectrumLocation == null || !providedSpectrumLocation.exists()) {
 
@@ -369,17 +369,17 @@ public class CpsParent extends UserPreferencesParent {
             File fileInDataFolder = new File(dataFolder, spectrumFileName);
 
             if (fileInProjectFolder.exists()) {
-                
+
                 projectDetails.addSpectrumFile(fileInProjectFolder);
-                
+
             } else if (fileInDataFolder.exists()) {
-                
+
                 projectDetails.addSpectrumFile(fileInDataFolder);
-                
+
             } else {
-                
+
                 return false;
-                
+
             }
         }
 
@@ -389,31 +389,32 @@ public class CpsParent extends UserPreferencesParent {
 
         return true;
     }
-    
+
     /**
      * Loads the FASTA file.
-     * 
+     *
      * @param waitingHandler a waiting handler displaying progress to the user.
      * Can be null
-     * 
-     * @throws IOException exception thrown if an error occurred while reading or writing the file
+     * @return the FASTA summary
+     *
+     * @throws IOException exception thrown if an error occurred while reading
+     * or writing the file
      */
-    public void loadFastaFile(WaitingHandler waitingHandler) throws IOException {
-        
-        SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        FastaSummary.getSummary(searchParameters.getFastaFile(), searchParameters.getFastaParameters(), waitingHandler);
-        
+    public FastaSummary loadFastaFile(WaitingHandler waitingHandler) throws IOException {
+
+        return FastaSummary.getSummary(getProjectDetails().getFastaFile(), identificationParameters.getFastaParameters(), waitingHandler);
+
     }
-    
+
     /**
      * Returns the identification object.
      *
      * @return the identification object
      */
     public Identification getIdentification() {
-        
+
         return identification;
-        
+
     }
 
     /**
@@ -422,9 +423,9 @@ public class CpsParent extends UserPreferencesParent {
      * @return the identification features generator object
      */
     public IdentificationFeaturesGenerator getIdentificationFeaturesGenerator() {
-        
+
         return identificationFeaturesGenerator;
-        
+
     }
 
     /**
@@ -433,9 +434,9 @@ public class CpsParent extends UserPreferencesParent {
      * @return the spectrum counting preferences
      */
     public SpectrumCountingParameters getSpectrumCountingParameters() {
-        
+
         return spectrumCountingParameters;
-        
+
     }
 
     /**
@@ -444,9 +445,9 @@ public class CpsParent extends UserPreferencesParent {
      * @return the project details
      */
     public ProjectDetails getProjectDetails() {
-        
+
         return projectDetails;
-        
+
     }
 
     /**
@@ -455,20 +456,20 @@ public class CpsParent extends UserPreferencesParent {
      * @return the metrics object
      */
     public Metrics getMetrics() {
-        
+
         return metrics;
-        
+
     }
-    
+
     /**
      * Returns the gene maps.
      *
      * @return the gene maps
      */
     public GeneMaps getGeneMaps() {
-        
+
         return geneMaps;
-        
+
     }
 
     /**
@@ -477,9 +478,9 @@ public class CpsParent extends UserPreferencesParent {
      * @return the filter preferences
      */
     public FilterParameters getFilterParameters() {
-        
+
         return filterParameters;
-        
+
     }
 
     /**
@@ -488,9 +489,9 @@ public class CpsParent extends UserPreferencesParent {
      * @return the display preferences
      */
     public DisplayParameters getDisplayParameters() {
-        
+
         return displayParameters;
-        
+
     }
 
     /**
@@ -499,9 +500,9 @@ public class CpsParent extends UserPreferencesParent {
      * @return the cps file
      */
     public File getCpsFile() {
-        
+
         return cpsFile;
-        
+
     }
 
     /**
@@ -511,9 +512,9 @@ public class CpsParent extends UserPreferencesParent {
      * generator
      */
     public void setIdentificationFeaturesGenerator(IdentificationFeaturesGenerator identificationFeaturesGenerator) {
-        
+
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-        
+
     }
 
     /**
@@ -522,13 +523,13 @@ public class CpsParent extends UserPreferencesParent {
      * @param spectrumCountingPreferences the spectrum counting preferences
      */
     public void setSpectrumCountingParameters(SpectrumCountingParameters spectrumCountingPreferences) {
-        
+
         this.spectrumCountingParameters = spectrumCountingPreferences;
-        
+
         if (identificationFeaturesGenerator != null) {
-            
+
             identificationFeaturesGenerator.setSpectrumCountingPreferences(spectrumCountingPreferences);
-            
+
         }
     }
 
@@ -538,9 +539,9 @@ public class CpsParent extends UserPreferencesParent {
      * @param projectDetails the project details
      */
     public void setProjectDetails(ProjectDetails projectDetails) {
-        
+
         this.projectDetails = projectDetails;
-        
+
     }
 
     /**
@@ -549,9 +550,9 @@ public class CpsParent extends UserPreferencesParent {
      * @param metrics the metrics
      */
     public void setMetrics(Metrics metrics) {
-        
+
         this.metrics = metrics;
-        
+
     }
 
     /**
@@ -560,31 +561,31 @@ public class CpsParent extends UserPreferencesParent {
      * @param geneMaps the gene maps
      */
     public void setGeneMaps(GeneMaps geneMaps) {
-        
+
         this.geneMaps = geneMaps;
-        
+
     }
-    
+
     /**
      * Returns the project parameters.
-     * 
+     *
      * @return the project parameters
      */
-    public ProjectParameters getProjectParameters(){
-        
+    public ProjectParameters getProjectParameters() {
+
         return projectParameters;
-        
+
     }
-    
+
     /**
      * Sets the project parameters.
-     * 
+     *
      * @param projectParameters the project parameters
      */
-    public void setProject(ProjectParameters projectParameters){
-        
+    public void setProject(ProjectParameters projectParameters) {
+
         this.projectParameters = projectParameters;
-        
+
     }
 
     /**
@@ -593,9 +594,9 @@ public class CpsParent extends UserPreferencesParent {
      * @param filterPreferences the filter preferences
      */
     public void setFilterParameters(FilterParameters filterPreferences) {
-        
+
         this.filterParameters = filterPreferences;
-        
+
     }
 
     /**
@@ -604,9 +605,9 @@ public class CpsParent extends UserPreferencesParent {
      * @param displayPreferences the display preferences
      */
     public void setDisplayParameters(DisplayParameters displayPreferences) {
-        
+
         this.displayParameters = displayPreferences;
-        
+
     }
 
     /**
@@ -615,9 +616,9 @@ public class CpsParent extends UserPreferencesParent {
      * @param cpsFile the cps file
      */
     public void setCpsFile(File cpsFile) {
-        
+
         this.cpsFile = cpsFile;
-        
+
     }
 
     /**
@@ -626,9 +627,9 @@ public class CpsParent extends UserPreferencesParent {
      * @return the user preferences
      */
     public UserParameters getUserParameters() {
-        
+
         return userPreferences;
-        
+
     }
 
     /**
@@ -637,31 +638,31 @@ public class CpsParent extends UserPreferencesParent {
      * @param identification the identification object
      */
     public void setIdentification(Identification identification) {
-        
+
         this.identification = identification;
-        
+
     }
 
     /**
      * Sets the default preferences.
      */
     public void setDefaultParameters() {
-        
+
         SearchParameters searchParameters = new SearchParameters();
         identificationParameters = new IdentificationParameters(searchParameters);
         spectrumCountingParameters = new SpectrumCountingParameters();
         spectrumCountingParameters.setSelectedMethod(SpectrumCountingMethod.NSAF);
         spectrumCountingParameters.setMatchValidationLevel(MatchValidationLevel.doubtful.getIndex());
-        
+
     }
 
     /**
      * Resets the feature generator.
      */
     public void resetIdentificationFeaturesGenerator() {
-        
+
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, sequenceProvider, metrics, spectrumCountingParameters);
-        
+
     }
 
     /**
@@ -670,9 +671,9 @@ public class CpsParent extends UserPreferencesParent {
      * @return the identification parameters
      */
     public IdentificationParameters getIdentificationParameters() {
-        
+
         return identificationParameters;
-        
+
     }
 
     /**
@@ -681,9 +682,9 @@ public class CpsParent extends UserPreferencesParent {
      * @param identificationParameters the new identification parameters
      */
     public void setIdentificationParameters(IdentificationParameters identificationParameters) {
-        
+
         this.identificationParameters = identificationParameters;
-        
+
     }
 
     /**
@@ -692,9 +693,9 @@ public class CpsParent extends UserPreferencesParent {
      * @return the folder where the database is stored
      */
     public File getDbFolder() {
-        
+
         return dbFolder;
-        
+
     }
 
     /**
@@ -703,66 +704,66 @@ public class CpsParent extends UserPreferencesParent {
      * @param dbFolder the folder where the database is stored
      */
     public void setDbFolder(File dbFolder) {
-        
+
         this.dbFolder = dbFolder;
     }
 
     /**
      * Returns the sequence provider.
-     * 
+     *
      * @return the sequence provider
      */
     public SequenceProvider getSequenceProvider() {
-        
+
         return sequenceProvider;
-        
+
     }
 
     /**
      * Sets the sequence provider.
-     * 
+     *
      * @param sequenceProvider the sequence provider
      */
     public void setSequenceProvider(SequenceProvider sequenceProvider) {
-        
+
         this.sequenceProvider = sequenceProvider;
-    
+
     }
 
     /**
      * Returns the protein details provider.
-     * 
+     *
      * @return the protein details provider
      */
     public ProteinDetailsProvider getProteinDetailsProvider() {
-        
+
         return proteinDetailsProvider;
-        
+
     }
 
     /**
      * Sets the protein details provider.
-     * 
+     *
      * @param proteinDetailsProvider the protein details provider
      */
     public void setProteinDetailsProvider(ProteinDetailsProvider proteinDetailsProvider) {
-        
+
         this.proteinDetailsProvider = proteinDetailsProvider;
-    
+
     }
 
     /**
      * Returns the project type.
-     * 
+     *
      * @return the project type
      */
     public ProjectType getProjectType() {
         return projectType;
     }
-    
+
     /**
      * Sets the project type.
-     * 
+     *
      * @param projectType the project type
      */
     public void setProjectType(ProjectType projectType) {
@@ -774,7 +775,7 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param waitingHandlerReport the progress report, if null the report from
      * the project details will be used
-     * 
+     *
      * @return an extended HTML project report
      */
     public String getExtendedProjectReport(String waitingHandlerReport) {
@@ -787,67 +788,67 @@ public class CpsParent extends UserPreferencesParent {
             report.append("<b>Experiment</b>: ").append(projectParameters.getProjectUniqueName()).append("<br>");
 
             if (projectDetails.getCreationDate() != null) {
-                
+
                 report.append("<b>Creation Date:</b> ").append(projectDetails.getCreationDate()).append("<br><br>");
-                
+
             }
 
             report.append("<b>Identification Files</b>:<br>");
-            
+
             for (String idFilePath : projectDetails.getIdentificationFiles()) {
-                
+
                 File idFile = new File(idFilePath);
-                
+
                 report.append(idFile.getAbsolutePath()).append(" - ");
                 HashMap<String, ArrayList<String>> versions = projectDetails.getIdentificationAlgorithmsForFile(idFile.getName());
                 ArrayList<String> software = new ArrayList<>(versions.keySet());
                 Collections.sort(software);
                 boolean first = true;
-                
+
                 for (String softwareName : software) {
-                    
+
                     if (first) {
-                        
+
                         first = false;
-                        
+
                     } else {
-                        
+
                         report.append(", ");
-                        
+
                     }
-                    
+
                     report.append(softwareName);
                     ArrayList<String> algorithmVersions = versions.get(softwareName);
-                    
+
                     if (algorithmVersions != null && !algorithmVersions.isEmpty()) {
-                        
+
                         report.append(" - (");
                         boolean firstVersion = true;
-                        
+
                         for (String version : algorithmVersions) {
-                            
+
                             if (firstVersion) {
-                                
+
                                 firstVersion = false;
-                                
+
                             } else {
-                                
+
                                 report.append(", ");
-                                
+
                             }
                             if (version != null) {
-                                
+
                                 report.append(version);
-                                
+
                             } else {
-                                
+
                                 report.append("unknown version");
-                                
+
                             }
                         }
-                        
+
                         report.append(")");
-                        
+
                     }
                 }
 
@@ -855,41 +856,41 @@ public class CpsParent extends UserPreferencesParent {
             }
 
             report.append("<br><b>Spectrum Files:</b><br>");
-            
+
             for (String mgfFileNames : projectDetails.getSpectrumFileNames()) {
-                
+
                 report.append(projectDetails.getSpectrumFile(mgfFileNames).getAbsolutePath()).append("<br>");
-                
+
             }
 
             report.append("<br><b>FASTA File (identification):</b><br>");
-            report.append(identificationParameters.getSearchParameters().getFastaFile()).append("<br>");
+            report.append(projectDetails.getFastaFile()).append("<br>");
 
             report.append("<br><b>FASTA File (protein inference):</b><br>");
             // @TODO
 
             report.append("<br><br><b>Report:</b><br>");
-            
+
             if (waitingHandlerReport == null) {
-                
+
                 waitingHandlerReport = projectDetails.getReport();
-                
+
             }
 
             if (waitingHandlerReport.lastIndexOf("<br>") == -1) {
-                
+
                 report.append("<pre>").append(waitingHandlerReport).append("</pre>");
-                
+
             } else {
-                
+
                 report.append(waitingHandlerReport);
-                
+
             }
 
             report.append("</html>");
-            
+
         } else {
-            
+
             report.append("<html><br>");
 
             report.append("<b>Report:</b><br>");
@@ -902,10 +903,10 @@ public class CpsParent extends UserPreferencesParent {
             }
 
             report.append("</html>");
-        
+
         }
 
         return report.toString();
-    
+
     }
 }

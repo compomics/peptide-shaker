@@ -2698,10 +2698,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 try {
                     // set up the identification parameters
                     SearchParameters prideSearchParameters = new SearchParameters();
-                    prideSearchParameters.setFastaParameters(FastaParameters.inferParameters(database, progressDialog));
-
-                    // set the database
-                    prideSearchParameters.setFastaFile(database);
 
                     // set digestion preferences to default
                     prideSearchParameters.setDigestionParameters(DigestionParameters.getDefaultParameters());
@@ -3000,7 +2996,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                         // display the detected search parameters to the user
                         new PrideSearchParametersDialog(PrideReshakeGUI.this,
-                                new File(outputFolder, getIdentificationSettingsFileName(prideSearchParameters) + ".par"), prideSearchParametersReport, mgfFiles, rawFiles, selectedSpecies, selectedSpeciesType, projectName, true);
+                                new File(outputFolder, getIdentificationSettingsFileName(prideSearchParameters) + ".par"), prideSearchParametersReport, mgfFiles, rawFiles, new File(database), selectedSpecies, selectedSpeciesType, projectName, true);
                     }
 
                 } catch (Exception e) {

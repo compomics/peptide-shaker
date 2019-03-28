@@ -130,9 +130,6 @@
               </Constraints>
             </Component>
             <Container class="javax.swing.JScrollPane" name="groupSelectionScrollPaneScrollPane">
-              <Properties>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
               <AuxValues>
                 <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
               </AuxValues>
@@ -666,7 +663,6 @@
                 </Property>
                 <Property name="dividerSize" type="int" value="0"/>
                 <Property name="resizeWeight" type="double" value="0.5"/>
-                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
@@ -796,7 +792,6 @@
                     </Property>
                     <Property name="dividerSize" type="int" value="0"/>
                     <Property name="resizeWeight" type="double" value="0.5"/>
-                    <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">

@@ -408,7 +408,7 @@ public class PSExportFactory implements ExportFactory {
                 case PsSearchFeature.type:
                     
                         PsSearchParametersSection psSearchParametersSection = new PsSearchParametersSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                        psSearchParametersSection.writeSection(identificationParameters.getSearchParameters(), waitingHandler);
+                        psSearchParametersSection.writeSection(identificationParameters.getSearchParameters(), projectDetails, waitingHandler);
                         break;
                         
                 case PsSpectrumCountingFeature.type:

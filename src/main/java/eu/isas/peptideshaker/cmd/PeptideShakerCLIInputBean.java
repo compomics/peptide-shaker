@@ -34,6 +34,10 @@ public class PeptideShakerCLIInputBean {
      */
     private ArrayList<File> spectrumFiles = new ArrayList<>();
     /**
+     * The FASTA file.
+     */
+    private File fastaFile = null;
+    /**
      * The identification files.
      */
     private ArrayList<File> idFiles = null;
@@ -97,6 +101,10 @@ public class PeptideShakerCLIInputBean {
         if (aLine.hasOption(PeptideShakerCLIParams.SPECTRUM_FILES.id)) {
             String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SPECTRUM_FILES.id);
             spectrumFiles = getSpectrumFiles(filesTxt);
+        }
+        
+        if (aLine.hasOption(PeptideShakerCLIParams.FASTA_FILE.id)) {
+            fastaFile = new File(aLine.getOptionValue(PeptideShakerCLIParams.FASTA_FILE.id));
         }
 
         String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id);
@@ -270,6 +278,24 @@ public class PeptideShakerCLIInputBean {
      */
     public void setSpectrumFiles(ArrayList<File> spectrumFiles) {
         this.spectrumFiles = spectrumFiles;
+    }
+    
+    /**
+     * Returns the FASTA file.
+     *
+     * @return the FASTA file
+     */
+    public File getFastaFile() {
+        return fastaFile;
+    }
+
+    /**
+     * Sets the FASTA file.
+     *
+     * @param fastaFile the FASTA file
+     */
+    public void setFastaFile(File fastaFile) {
+        this.fastaFile = fastaFile;
     }
 
     /**

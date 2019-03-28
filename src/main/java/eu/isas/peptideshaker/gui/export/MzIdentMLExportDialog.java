@@ -693,7 +693,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 annotationParameters.setIntensityLimit(0.0);
 
                 try {
-                    FastaSummary fastaSummary = FastaSummary.getSummary(searchParameters.getFastaFile(), searchParameters.getFastaParameters(), progressDialog);
+                    FastaSummary fastaSummary = FastaSummary.getSummary(projectDetails.getFastaFile(), identificationParameters.getFastaParameters(), progressDialog);
                     MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), projectDetails,
                             identificationParameters, peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(), fastaSummary, peptideShakerGUI.getIdentificationFeaturesGenerator(),
                             finalOutputFile, includeSequencesCheckBox.isSelected(), progressDialog, true);

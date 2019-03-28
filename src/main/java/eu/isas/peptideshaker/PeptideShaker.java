@@ -37,6 +37,7 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import com.compomics.util.experiment.identification.protein_inference.PeptideAndProteinBuilder;
+import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.quantification.spectrumcounting.ScalingFactorsEstimators;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.processing.ProteinProcessor;
@@ -221,7 +222,7 @@ public class PeptideShaker {
     }
 
     /**
-     * Creates a PeptideShaker project
+     * Creates a PeptideShaker project.
      *
      * @param waitingHandler the handler displaying feedback to the user
      * @param exceptionHandler handler for exceptions
@@ -235,6 +236,7 @@ public class PeptideShaker {
      * interrupted
      * @throws java.util.concurrent.TimeoutException exception thrown if a
      * process times out
+     * @throws java.io.IOException if an exception occurs when parsing files
      */
     public void createProject(
             IdentificationParameters identificationParameters, 
@@ -244,7 +246,7 @@ public class PeptideShaker {
             ProjectType projectType,
             WaitingHandler waitingHandler, 
             ExceptionHandler exceptionHandler
-    ) throws InterruptedException, TimeoutException {
+    ) throws InterruptedException, TimeoutException, IOException {
 
         identification.getObjectsDB().commit();
 
@@ -256,7 +258,12 @@ public class PeptideShaker {
         }
 
         PsmScoringParameters psmScoringPreferences = identificationParameters.getPsmScoringParameters();
-        FastaParameters fastaParameters = identificationParameters.getSearchParameters().getFastaParameters();
+        FastaParameters fastaParameters = identificationParameters.getFastaParameters();
+        FastaSummary fastaSummary = FastaSummary.getSummary(projectDetails.getFastaFile(), fastaParameters, waitingHandler);
+        
+        // set the background species
+        identificationParameters.getGeneParameters().setBackgroundSpeciesFromFastaSummary(fastaSummary);
+        
         ArrayList<Integer> usedAlgorithms = projectDetails.getIdentificationAlgorithms();
 
         if (psmScoringPreferences.isScoringNeeded(usedAlgorithms)) {
@@ -593,7 +600,7 @@ public class PeptideShaker {
             SequenceProvider sequenceProvider, 
             ProjectType projectType) {
 
-        FastaParameters fastaParameters = identificationParameters.getSearchParameters().getFastaParameters();
+        FastaParameters fastaParameters = identificationParameters.getFastaParameters();
         FractionParameters fractionParameters = identificationParameters.getFractionParameters();
 
         TargetDecoyMap peptideMap = new TargetDecoyMap();
@@ -601,7 +608,7 @@ public class PeptideShaker {
         matchesValidator.setPeptideMap(peptideMap);
         matchesValidator.setProteinMap(proteinMap);
         attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(sequenceProvider, identificationParameters.getSequenceMatchingParameters(),
-                projectType, identificationParameters.getSearchParameters().getFastaParameters(), waitingHandler);
+                projectType, fastaParameters, waitingHandler);
         matchesValidator.fillPeptideMaps(identification, metrics, waitingHandler, identificationParameters, sequenceProvider);
         peptideMap.estimateProbabilities(waitingHandler);
         matchesValidator.attachPeptideProbabilities(identification, fastaParameters, waitingHandler);
@@ -627,7 +634,7 @@ public class PeptideShaker {
             SequenceProvider sequenceProvider
     ) {
 
-        FastaParameters fastaParameters = identificationParameters.getSearchParameters().getFastaParameters();
+        FastaParameters fastaParameters = identificationParameters.getFastaParameters();
         FractionParameters fractionParameters = identificationParameters.getFractionParameters();
 
         TargetDecoyMap proteinMap = new TargetDecoyMap();
@@ -655,7 +662,7 @@ public class PeptideShaker {
             SequenceProvider sequenceProvider
     ) {
 
-        FastaParameters fastaParameters = identificationParameters.getSearchParameters().getFastaParameters();
+        FastaParameters fastaParameters = identificationParameters.getFastaParameters();
         FractionParameters fractionParameters = identificationParameters.getFractionParameters();
 
         matchesValidator.attachProteinProbabilities(identification, sequenceProvider, fastaParameters, metrics, waitingHandler, fractionParameters);

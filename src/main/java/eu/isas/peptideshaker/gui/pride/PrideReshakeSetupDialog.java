@@ -3,16 +3,13 @@ package eu.isas.peptideshaker.gui.pride;
 import com.compomics.software.dialogs.ProteoWizardSetupDialog;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.mass_spectrometry.proteowizard.MsFormat;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.file.LastSelectedFolder;
 import com.compomics.util.parameters.UtilitiesUserParameters;
-import com.compomics.util.experiment.io.biology.protein.ProteinDatabase;
-import com.compomics.util.gui.parameters.identification.search.SequenceDbDetailsDialog;
-import com.compomics.util.parameters.identification.search.SearchParameters;
+import static com.compomics.util.gui.parameters.identification.search.SequenceDbDetailsDialog.lastFolderKey;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -21,12 +18,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
@@ -968,35 +967,52 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      */
     private void browseDatabaseSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseDatabaseSettingsButtonActionPerformed
 
-        if (prideReShakeGUI.getPeptideShakerGUI().getIdentificationParameters() == null) {
-            prideReShakeGUI.getPeptideShakerGUI().setDefaultParameters();
-        }
+        File startLocation = null;
 
-        SearchParameters searchParameters = prideReShakeGUI.getPeptideShakerGUI().getIdentificationParameters().getSearchParameters();
-        String fastaFilePath = searchParameters.getFastaFile();
+        if (prideReShakeGUI.getPeptideShakerGUI().getUtilitiesUserParameters().getDbFolder() != null && prideReShakeGUI.getPeptideShakerGUI().getUtilitiesUserParameters().getDbFolder().exists()) {
 
-        SequenceDbDetailsDialog sequenceDbDetailsDialog = new SequenceDbDetailsDialog(prideReShakeGUI, fastaFilePath, searchParameters.getFastaParameters(),
-                prideReShakeGUI.getPeptideShakerGUI().getLastSelectedFolder(), true,
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
-        boolean success = sequenceDbDetailsDialog.selectDB(true);
-        if (success) {
-
-            sequenceDbDetailsDialog.setVisible(true);
-
-            fastaFilePath = sequenceDbDetailsDialog.getSelectedFastaFile();
-            searchParameters.setFastaFile(fastaFilePath);
-            searchParameters.setFastaParameters(sequenceDbDetailsDialog.getFastaParameters());
+            startLocation = prideReShakeGUI.getPeptideShakerGUI().getUtilitiesUserParameters().getDbFolder();
 
         }
 
-        lastSelectedFolder.setLastSelectedFolder(sequenceDbDetailsDialog.getLastSelectedFolder());
+        if (startLocation == null) {
 
-        if (fastaFilePath != null) {
+            startLocation = new File(lastSelectedFolder.getLastSelectedFolder());
 
-            databaseSettingsTxt.setText(fastaFilePath);
-            checkFastaFile();
+        }
+
+        JFileChooser fc = new JFileChooser(startLocation);
+
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File myFile) {
+
+                return myFile.getName().toLowerCase().endsWith("fasta")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "FASTA (.fasta)";
+            }
+
+        };
+
+        fc.setFileFilter(filter);
+        int result = fc.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+
+            File file = fc.getSelectedFile();
+            File folder = file.getParentFile();
+            prideReShakeGUI.getPeptideShakerGUI().getUtilitiesUserParameters().setDbFolder(folder);
+            lastSelectedFolder.setLastSelectedFolder(lastFolderKey, folder.getAbsolutePath());
+
+            if (file.getName().contains(" ")) {
+
+                JOptionPane.showMessageDialog(this, "Your FASTA file name contains white space and ougth to be renamed.", "File Name Warning", JOptionPane.WARNING_MESSAGE);
+            }
 
         }
 
@@ -1583,41 +1599,41 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         return valid;
     }
 
-    /**
-     * Checks whether the FASTA file loaded contains mainly UniProt concatenated
-     * target decoy.
-     */
-    public void checkFastaFile() {
-
-        try {
-
-            SearchParameters searchParameters = prideReShakeGUI.getPeptideShakerGUI().getIdentificationParameters().getSearchParameters();
-            FastaSummary fastaSummary = FastaSummary.getSummary(searchParameters.getFastaFile(), searchParameters.getFastaParameters(), progressDialog);
-
-            if (!fastaSummary.databaseType.containsKey(ProteinDatabase.UniProt)) {
-
-                showDataBaseHelpDialog();
-
-            }
-            if (!searchParameters.getFastaParameters().isTargetDecoy()) {
-
-                JOptionPane.showMessageDialog(this, "PeptideShaker validation requires the use of a taget-decoy database.\n"
-                        + "Some features will be limited if using other types of databases.\n\n"
-                        + "Note that using Automatic Decoy Search in Mascot is not supported.\n\n"
-                        + "See the PeptideShaker home page for details.",
-                        "No Decoys Found",
-                        JOptionPane.INFORMATION_MESSAGE);
-
-            }
-
-        } catch (IOException exception) {
-
-            JOptionPane.showMessageDialog(this, "An error occurred while parsing the fasta file.",
-                    "Fasta File Error",
-                    JOptionPane.INFORMATION_MESSAGE);
-
-        }
-    }
+//    /**
+//     * Checks whether the FASTA file loaded contains mainly UniProt concatenated
+//     * target decoy.
+//     */
+//    public void checkFastaFile() {
+//
+//        try {
+//
+//            SearchParameters searchParameters = prideReShakeGUI.getPeptideShakerGUI().getIdentificationParameters().getSearchParameters();
+//            FastaSummary fastaSummary = FastaSummary.getSummary(searchParameters.getFastaFile(), searchParameters.getFastaParameters(), progressDialog);
+//
+//            if (!fastaSummary.databaseType.containsKey(ProteinDatabase.UniProt)) {
+//
+//                showDataBaseHelpDialog();
+//
+//            }
+//            if (!searchParameters.getFastaParameters().isTargetDecoy()) {
+//
+//                JOptionPane.showMessageDialog(this, "PeptideShaker validation requires the use of a taget-decoy database.\n"
+//                        + "Some features will be limited if using other types of databases.\n\n"
+//                        + "Note that using Automatic Decoy Search in Mascot is not supported.\n\n"
+//                        + "See the PeptideShaker home page for details.",
+//                        "No Decoys Found",
+//                        JOptionPane.INFORMATION_MESSAGE);
+//
+//            }
+//
+//        } catch (IOException exception) {
+//
+//            JOptionPane.showMessageDialog(this, "An error occurred while parsing the fasta file.",
+//                    "Fasta File Error",
+//                    JOptionPane.INFORMATION_MESSAGE);
+//
+//        }
+//    }
 
     /**
      * Show a simple dialog saying that UniProt databases is recommended and

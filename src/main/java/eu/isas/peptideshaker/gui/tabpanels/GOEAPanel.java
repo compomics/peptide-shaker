@@ -17,7 +17,6 @@ import com.compomics.util.gui.XYPlottingDialog.PlottingDialogPlotType;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
-import com.compomics.util.gui.parameters.identification.advanced.GeneParametersDialog;
 import com.compomics.util.io.json.JsonMarshaller;
 import com.compomics.util.parameters.identification.advanced.GeneParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
@@ -27,6 +26,7 @@ import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.gui.tabpanels.GOEAPanel.QuickGoTerm.DummyResults;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
+import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
@@ -73,6 +73,7 @@ import org.jfree.chart.renderer.category.BarRenderer3D;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.Layer;
 import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
+import com.compomics.util.gui.parameters.identification.advanced.BackgroundSpeciesDialog;
 
 /**
  * The PeptideShaker GO Enrichment Analysis tab.
@@ -247,7 +248,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         // use a gray color for no decoy searches
         Color nonValidatedColor = peptideShakerGUI.getSparklineColorNonValidated();
-        if (!peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFastaParameters().isTargetDecoy()) {
+        if (!peptideShakerGUI.getIdentificationParameters().getFastaParameters().isTargetDecoy()) {
             nonValidatedColor = peptideShakerGUI.getUtilitiesUserParameters().getSparklineColorNotFound();
         }
         ArrayList<Color> sparklineColors = new ArrayList<>();
@@ -353,14 +354,17 @@ public class GOEAPanel extends javax.swing.JPanel {
                             IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
                             GeneParameters genePreferences = identificationParameters.getGeneParameters();
                             if (genePreferences != null) {
-                                taxon = genePreferences.getSelectedBackgroundSpecies();
+                                taxon = genePreferences.getBackgroundSpecies();
                             }
                             if (taxon == null) {
-                                GeneParametersDialog genePreferencesDialog = new GeneParametersDialog(peptideShakerGUI, genePreferences, identificationParameters.getSearchParameters(), false);
-                                if (!genePreferencesDialog.isCanceled()) {
-                                    genePreferences = genePreferencesDialog.getGeneParameters();
+                                
+                                FastaSummary fastaSummary = FastaSummary.getSummary(peptideShakerGUI.getProjectDetails().getFastaFile(), identificationParameters.getFastaParameters(), progressDialog);
+                                
+                                BackgroundSpeciesDialog backgroundSpeciesDialog = new BackgroundSpeciesDialog(peptideShakerGUI, genePreferences, fastaSummary);
+                                if (!backgroundSpeciesDialog.isCanceled()) {
+                                    genePreferences = backgroundSpeciesDialog.getGeneParameters();
                                     identificationParameters.setGeneParameters(genePreferences);
-                                    taxon = genePreferences.getSelectedBackgroundSpecies();
+                                    taxon = genePreferences.getBackgroundSpecies();
                                 }
                             }
                             if (taxon != null) {

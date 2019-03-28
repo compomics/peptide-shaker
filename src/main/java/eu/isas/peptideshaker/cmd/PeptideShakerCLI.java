@@ -13,6 +13,7 @@ import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.cli.identification_parameters.IdentificationParametersInputBean;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ProjectParameters;
+import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
@@ -384,7 +385,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     spectrumFiles.add(spectrumFile);
                 }
 
-                File fastaFile = new File(identificationParameters.getSearchParameters().getFastaFile());
+                File fastaFile = new File(projectDetails.getFastaFile());
                 try {
                     ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, reportFiles, mzidFile, cpsFile, true, waitingHandler);
                     final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
@@ -531,6 +532,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         ArrayList<File> identificationFilesInput = cliInputBean.getIdFiles();
         ArrayList<File> dataFolders = new ArrayList<>();
         ArrayList<File> spectrumFiles = cliInputBean.getSpectrumFiles();
+        File fastaFile = cliInputBean.getFastaFile();
 
         // export data from zip files, try to find the search parameter and mgf files
         ArrayList<File> identificationFiles = new ArrayList<>();
@@ -615,6 +617,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                             waitingHandler.appendReport("An error occurred while parsing the parameters file " + unzippedFile.getName() + ". " + getLogFileMessage(), true, true);
                             e.printStackTrace();
                         }
+                    } else if (nameLowerCase.endsWith(".fasta")) {
+                        fastaFile = unzippedFile;
                     }
                 }
             } else {
@@ -665,8 +669,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         // try to locate the fasta file
-        File fastaFile = new File(searchParameters.getFastaFile());
-        if (!fastaFile.exists()) {
+        if (fastaFile == null) {
+            waitingHandler.appendReport("FASTA file not set (or not in zip file)!", true, true);
+            waitingHandler.setRunCanceled();
+        } else if (!fastaFile.exists()) {
             boolean found = false;
             // look in the database folder
             try {
@@ -674,7 +680,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 File newFile = new File(tempDbFolder, fastaFile.getName());
                 if (newFile.exists()) {
                     fastaFile = newFile;
-                    searchParameters.setFastaFile(fastaFile.getAbsolutePath());
+                    projectDetails.setFastaFile(fastaFile);
                     found = true;
                 }
             } catch (Exception e) {
@@ -686,7 +692,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     File newFile = new File(dataFolder, fastaFile.getName());
                     if (newFile.exists()) {
                         fastaFile = newFile;
-                        searchParameters.setFastaFile(fastaFile.getAbsolutePath());
+                        projectDetails.setFastaFile(fastaFile);
                         found = true;
                         break;
                     }
@@ -696,12 +702,18 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     waitingHandler.setRunCanceled();
                 }
             }
+        } else {
+            projectDetails.setFastaFile(fastaFile);
         }
 
-        // If not available on the computer, parse summary information about the fasta file
+        // get the summary information for the FASTA file
         try {
 
-            loadFastaFile(waitingHandler);
+            // get the FASTA summary
+            FastaSummary fastaSummary = loadFastaFile(waitingHandler);
+            
+            // set the background species
+            identificationParameters.getGeneParameters().setBackgroundSpeciesFromFastaSummary(fastaSummary);
 
         } catch (IOException e) {
 

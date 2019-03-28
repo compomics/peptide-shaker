@@ -94,7 +94,6 @@ import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.gui.parameters.identification.IdentificationParametersEditionDialog;
 import com.compomics.util.gui.parameters.identification.IdentificationParametersOverviewDialog;
 import com.compomics.util.gui.parameters.tools.ProcessingParametersDialog;
-import com.compomics.util.gui.parameters.identification.advanced.GeneParametersDialog;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import com.compomics.util.gui.parameters.identification.advanced.ValidationQCParametersDialog;
 import com.compomics.util.parameters.tools.ProcessingParameters;
@@ -111,7 +110,9 @@ import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
 import eu.isas.peptideshaker.utils.CpsParent;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
+import com.compomics.util.gui.parameters.identification.advanced.BackgroundSpeciesDialog;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.StarHider;
 import eu.isas.peptideshaker.validation.MatchesValidator;
@@ -1623,8 +1624,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         });
         editMenu.add(validationQcMenuItem);
 
-        speciesJMenuItem.setMnemonic('P');
-        speciesJMenuItem.setText("Species Settings");
+        speciesJMenuItem.setMnemonic('B');
+        speciesJMenuItem.setText("Background Species");
         speciesJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 speciesJMenuItemActionPerformed(evt);
@@ -3276,24 +3277,38 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void speciesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speciesJMenuItemActionPerformed
 
-        IdentificationParameters identificationParameters = getIdentificationParameters();
-        GeneParameters geneParameters = identificationParameters.getGeneParameters();
-        GeneParametersDialog geneParametersDialog = new GeneParametersDialog(this, geneParameters, identificationParameters.getSearchParameters(), false);
+        try {
 
-        if (!geneParametersDialog.isCanceled()) {
+            IdentificationParameters identificationParameters = getIdentificationParameters();
+            GeneParameters geneParameters = identificationParameters.getGeneParameters();
 
-            geneParameters = geneParametersDialog.getGeneParameters();
-            identificationParameters.setGeneParameters(geneParameters);
+            FastaSummary fastaSummary = FastaSummary.getSummary(getProjectDetails().getFastaFile(), identificationParameters.getFastaParameters(), null);
 
-            if (allTabsJTabbedPane.getSelectedIndex() == GO_ANALYSIS_TAB_INDEX) {
+            BackgroundSpeciesDialog backgroundSpeciesDialog = new BackgroundSpeciesDialog(this, geneParameters, fastaSummary);
 
-                goPanel.updateMappings();
+            if (!backgroundSpeciesDialog.isCanceled()) {
 
-            } else {
+                geneParameters = backgroundSpeciesDialog.getGeneParameters();
+                identificationParameters.setGeneParameters(geneParameters);
 
-                updateNeeded.put(GO_ANALYSIS_TAB_INDEX, true);
+                if (allTabsJTabbedPane.getSelectedIndex() == GO_ANALYSIS_TAB_INDEX) {
 
+                    goPanel.updateMappings();
+
+                } else {
+
+                    updateNeeded.put(GO_ANALYSIS_TAB_INDEX, true);
+
+                }
             }
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(null,
+                    new String[]{"FASTA Import Error.", "File " + getProjectDetails().getFastaFile() + " could not be imported."},
+                    "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+
         }
     }//GEN-LAST:event_speciesJMenuItemActionPerformed
 
@@ -3740,7 +3755,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             fractionDetailsJMenuItem.setEnabled(fractions);
 
             // Disable the validation tab if no decoy was used
-            boolean targetDecoy = getIdentificationParameters().getSearchParameters().getFastaParameters().isTargetDecoy();
+            boolean targetDecoy = getIdentificationParameters().getFastaParameters().isTargetDecoy();
             allTabsJTabbedPane.setEnabledAt(VALIDATION_TAB_INDEX, targetDecoy);
             validatedProteinsOnlyJCheckBoxMenuItem.setEnabled(targetDecoy);
 
@@ -6178,7 +6193,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                     if (!fileFound && !locateFastaFileManually()) {
 
-                        String fastaFilePath = getIdentificationParameters().getSearchParameters().getFastaFile();
+                        String fastaFilePath = getProjectDetails().getFastaFile();
 
                         JOptionPane.showMessageDialog(peptideShakerGUI,
                                 "An error occurred while reading:\n" + fastaFilePath + "."
@@ -6426,14 +6441,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-     * Allows the user to locate the FASTA file manually and loads it in the
-     * factory
+     * Allows the user to locate the FASTA file manually and load it in the
+     * factory.
      *
      * @return a boolean indicating whether the loading was successful
      */
     private boolean locateFastaFileManually() throws FileNotFoundException, ClassNotFoundException, IOException {
 
-        String fastaFilePath = getIdentificationParameters().getSearchParameters().getFastaFile();
+        String fastaFilePath = getProjectDetails().getFastaFile();
         JOptionPane.showMessageDialog(this,
                 "FASTA file " + fastaFilePath + " was not found."
                 + "\n\nPlease locate it manually.",
@@ -6467,7 +6482,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             if (selectedFastaFile.exists()) {
 
                 tempLastSelectedFolder.setLastSelectedFolder(selectedFastaFile.getAbsolutePath());
-                getIdentificationParameters().getSearchParameters().setFastaFile(selectedFastaFile.getAbsolutePath());
+                getProjectDetails().setFastaFile(selectedFastaFile);
                 dataSaved = false;
                 cpsParent.loadFastaFile(progressDialog);
                 return true;
@@ -7422,7 +7437,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     public void run() {
 
                         File cpsFile = cpsParent.getCpsFile();
-                        File fastaFile = new File(PeptideShakerGUI.this.getIdentificationParameters().getSearchParameters().getFastaFile());
+                        File fastaFile = new File(getProjectDetails().getFastaFile());
                         ArrayList<File> spectrumFiles = new ArrayList<>();
                         for (String spectrumFileName : getIdentification().getFractions()) {
                             File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);

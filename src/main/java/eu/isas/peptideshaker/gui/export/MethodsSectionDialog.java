@@ -96,12 +96,12 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
 
         if (proteinDbCkeck.isSelected()) {
                 
-            FastaParameters fastaParameters = searchParameters.getFastaParameters();
+            FastaParameters fastaParameters = identificationParameters.getFastaParameters();
             FastaSummary fastaSummary;
             
             try {
                 
-            fastaSummary = FastaSummary.getSummary(searchParameters.getFastaFile(), fastaParameters, progressDialog);
+            fastaSummary = FastaSummary.getSummary(peptideShakerGUI.getProjectDetails().getFastaFile(), fastaParameters, progressDialog);
             
             } catch (IOException e) {
                 

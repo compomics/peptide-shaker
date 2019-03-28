@@ -23,19 +23,17 @@ import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.gui.parameters.identification.IdentificationParametersEditionDialog;
-import com.compomics.util.gui.parameters.identification.search.SequenceDbDetailsDialog;
+import static com.compomics.util.gui.parameters.identification.search.SequenceDbDetailsDialog.lastFolderKey;
 import com.compomics.util.gui.parameters.tools.ProcessingParametersDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.parameters.tools.ProcessingParameters;
-import com.compomics.util.parameters.UtilitiesUserParameters;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.gui.parameters.ProjectParametersDialog;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
-import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
 import eu.isas.peptideshaker.validation.MatchesValidator;
@@ -80,6 +78,10 @@ public class NewDialog extends javax.swing.JDialog {
      * The list of spectrum files.
      */
     private ArrayList<File> spectrumFiles = new ArrayList<>();
+    /**
+     * The FASTA files.
+     */
+    private File fastaFile;
     /**
      * The peptide shaker class which will take care of the pre-processing.
      */
@@ -625,13 +627,14 @@ public class NewDialog extends javax.swing.JDialog {
 
             this.setVisible(false);
             peptideShakerGUI.setVisible(true);
-
+            
             peptideShakerGUI.setIdentificationParameters(identificationParameters);
             peptideShakerGUI.setProcessingParameters(processingParameters);
             peptideShakerGUI.setDisplayParameters(displayPreferences);
             projectDetails = new ProjectDetails();
             projectDetails.setCreationDate(new Date());
             projectDetails.setPeptideShakerVersion(new eu.isas.peptideshaker.utils.Properties().getVersion());
+            projectDetails.setFastaFile(fastaFile);
             peptideShakerGUI.setProjectDetails(projectDetails);
             peptideShakerGUI.setCurentNotes(new ArrayList<>());
             peptideShakerGUI.updateNotesNotificationCounter();
@@ -695,33 +698,33 @@ public class NewDialog extends javax.swing.JDialog {
                         try {
 
                             ExceptionHandler exceptionHandler = new WaitingDialogExceptionHandler((WaitingDialog) waitingDialog, "https://github.com/compomics/peptide-shaker/issues");
-                            
+
                             int outcome = peptideShaker.importFiles(
-                                    waitingDialog, 
-                                    idFiles, 
-                                    spectrumFiles, 
-                                    identificationParameters, 
-                                    projectDetails, 
-                                    processingParameters, 
+                                    waitingDialog,
+                                    idFiles,
+                                    spectrumFiles,
+                                    identificationParameters,
+                                    projectDetails,
+                                    processingParameters,
                                     exceptionHandler
                             );
 
                             if (outcome == 0) {
 
                                 peptideShaker.createProject(
-                                        identificationParameters, 
-                                        processingParameters, 
-                                        spectrumCountingPreferences, 
-                                        projectDetails, 
-                                        projectType, 
-                                        waitingDialog, 
+                                        identificationParameters,
+                                        processingParameters,
+                                        spectrumCountingPreferences,
+                                        projectDetails,
+                                        projectType,
+                                        waitingDialog,
                                         exceptionHandler
                                 );
 
                             } else {
-                                
+
                                 waitingDialog.setRunCanceled();
-                                
+
                             }
                         } catch (Exception e) {
                             System.out.println("Failed to import data or create the project!");
@@ -787,40 +790,59 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private void browseDbButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseDbButtonActionPerformed
 
-        if (identificationParameters == null) {
+        File startLocation = fastaFile;
 
-            editSettingsButtonActionPerformed(null);
+        if (startLocation == null && peptideShakerGUI.getUtilitiesUserParameters().getDbFolder() != null && peptideShakerGUI.getUtilitiesUserParameters().getDbFolder().exists()) {
 
-        } else {
+            startLocation = peptideShakerGUI.getUtilitiesUserParameters().getDbFolder();
 
-            SearchParameters searchParameters = identificationParameters.getSearchParameters();
+        }
 
-            SequenceDbDetailsDialog sequenceDbDetailsDialog = new SequenceDbDetailsDialog(peptideShakerGUI,
-                    searchParameters.getFastaFile(), searchParameters.getFastaParameters(),
-                    peptideShakerGUI.getLastSelectedFolder(), true,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+        if (startLocation == null) {
 
-            boolean success = sequenceDbDetailsDialog.selectDB(true);
+            startLocation = new File(peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder());
 
-            if (success) {
+        }
 
-                sequenceDbDetailsDialog.setVisible(true);
+        JFileChooser fc = new JFileChooser(startLocation);
 
-                if (!sequenceDbDetailsDialog.isCanceled()) {
+        FileFilter filter = new FileFilter() {
 
-                    String fastaFile = sequenceDbDetailsDialog.getSelectedFastaFile();
-                    FastaParameters fastaParameters = sequenceDbDetailsDialog.getFastaParameters();
-                    fastaFileTxt.setText(Util.getFileName(fastaFile));
-                    searchParameters.setFastaFile(fastaFile);
-                    searchParameters.setFastaParameters(fastaParameters);
-                    checkFastaFile();
+            @Override
+            public boolean accept(File myFile) {
 
-                }
+                return myFile.getName().toLowerCase().endsWith("fasta")
+                        || myFile.isDirectory();
             }
 
-            validateInput();
+            @Override
+            public String getDescription() {
+                return "FASTA (.fasta)";
+            }
+
+        };
+
+        fc.setFileFilter(filter);
+        int result = fc.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+
+            File fastaFile = fc.getSelectedFile();
+            File folder = fastaFile.getParentFile();
+            peptideShakerGUI.getUtilitiesUserParameters().setDbFolder(folder);
+            peptideShakerGUI.getLastSelectedFolder().setLastSelectedFolder(lastFolderKey, folder.getAbsolutePath());
+
+            fastaFileTxt.setText(fastaFile.getAbsolutePath());
+
+            if (fastaFile.getName().contains(" ")) {
+
+                JOptionPane.showMessageDialog(this, "Your FASTA file name contains white space and ougth to be renamed.", "File Name Warning", JOptionPane.WARNING_MESSAGE);
+            }
+
         }
+
+        validateInput();
+
 }//GEN-LAST:event_browseDbButtonActionPerformed
 
     /**
@@ -1478,8 +1500,8 @@ public class NewDialog extends javax.swing.JDialog {
         if (fastaFileTxt.getText() != null && fastaFileTxt.getText().length() > 0
                 && identificationParameters != null
                 && identificationParameters.getSearchParameters() != null
-                && identificationParameters.getSearchParameters().getFastaFile() != null
-                && new File(identificationParameters.getSearchParameters().getFastaFile()).exists()) {
+                && fastaFile != null
+                && fastaFile.exists()) {
             databaseLabel.setForeground(Color.BLACK);
             databaseLabel.setToolTipText(null);
             fastaFileTxt.setToolTipText(null);
@@ -1544,7 +1566,7 @@ public class NewDialog extends javax.swing.JDialog {
             return false;
         }
 
-        if (searchParameters.getFastaFile() == null) {
+        if (fastaFile == null) {
             JOptionPane.showMessageDialog(null, "Please verify the input for FASTA file.",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             databaseLabel.setForeground(Color.RED);
@@ -1602,63 +1624,6 @@ public class NewDialog extends javax.swing.JDialog {
                         + ".\nPlease import it by editing the search parameters.";
                 JOptionPane.showMessageDialog(this, output, "Modification Not Found", JOptionPane.WARNING_MESSAGE);
             }
-        }
-
-        String fastaFilePath = searchParameters.getFastaFile();
-
-        if (fastaFilePath != null) {
-
-            File fastaFile = new File(fastaFilePath);
-            boolean found = false;
-
-            if (fastaFile.exists()) {
-
-                found = true;
-
-            } else {
-
-                // look in the database folder
-                try {
-                    UtilitiesUserParameters utilitiesUserPreferences = UtilitiesUserParameters.loadUserParameters();
-                    File dbFolder = utilitiesUserPreferences.getDbFolder();
-                    File newFile = new File(dbFolder, fastaFile.getName());
-                    if (newFile.exists()) {
-                        fastaFile = newFile;
-                        searchParameters.setFastaFile(fastaFilePath);
-                        found = true;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (!found) {
-                    // look in the data folders
-                    for (File dataFolder : dataFolders) {
-                        File newFile = new File(dataFolder, fastaFile.getName());
-                        if (newFile.exists()) {
-                            fastaFile = newFile;
-                            searchParameters.setFastaFile(fastaFilePath);
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        // try to find it in the same folder as the SearchGUI.properties file
-                        File parentFolder = file.getParentFile();
-                        File newFile = new File(parentFolder, fastaFile.getName());
-                        if (newFile.exists()) {
-                            fastaFile = newFile;
-                            searchParameters.setFastaFile(fastaFilePath);
-                            found = true;
-                        } else {
-                            JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName()
-                                    + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
-                        }
-                    }
-                }
-            }
-
-            fastaFileTxt.setText(fastaFile.getName());
-
         }
 
         boolean matchesValidationAdded;
@@ -1849,13 +1814,11 @@ public class NewDialog extends javax.swing.JDialog {
      */
     public void checkFastaFile() {
 
-        SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        String fastaFilePath = searchParameters.getFastaFile();
-        FastaParameters fastaParameters = searchParameters.getFastaParameters();
+        FastaParameters fastaParameters = identificationParameters.getFastaParameters();
 
         try {
 
-            FastaSummary fastaSummary = FastaSummary.getSummary(fastaFilePath, fastaParameters, progressDialog);
+            FastaSummary fastaSummary = FastaSummary.getSummary(fastaFile.getAbsolutePath(), fastaParameters, progressDialog);
 
             Integer nUniprot = fastaSummary.databaseType.get(ProteinDatabase.UniProt);
             int total = fastaSummary.databaseType.values().stream()
@@ -1933,14 +1896,6 @@ public class NewDialog extends javax.swing.JDialog {
 
             settingsComboBox.setModel(new javax.swing.DefaultComboBoxModel(parameterList));
             settingsComboBox.setSelectedItem(identificationParameters.getName());
-
-            String fastaFilePath = identificationParameters.getSearchParameters().getFastaFile();
-
-            if (fastaFilePath != null) {
-
-                fastaFileTxt.setText(Util.getFileName(fastaFilePath));
-
-            }
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
@@ -2119,6 +2074,11 @@ public class NewDialog extends javax.swing.JDialog {
                 }
             }
 
+            // see if the FASTA file was found
+            if (fastaFile != null) {
+                fastaFileTxt.setText(fastaFile.getName());
+            }
+
             progressDialog.setRunFinished();
             validateInput();
         } else {
@@ -2159,6 +2119,16 @@ public class NewDialog extends javax.swing.JDialog {
                 File dataFolder = new File(destinationFolder, PeptideShaker.DATA_DIRECTORY);
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
+
+                    // try to locate the FASTA file
+                    File[] tempFiles = dataFolder.listFiles();
+                    for (File tempFile : tempFiles) {
+                        String lowerCaseName = tempFile.getName().toLowerCase();
+                        if (lowerCaseName.endsWith(".fasta")) {
+                            fastaFile = tempFile;
+                            break;
+                        }
+                    }
                 }
                 dataFolder = new File(destinationFolder, "mgf");
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
@@ -2167,6 +2137,16 @@ public class NewDialog extends javax.swing.JDialog {
                 dataFolder = new File(destinationFolder, "fasta");
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
+                    
+                    // try to locate the FASTA file
+                    File[] tempFiles = dataFolder.listFiles();
+                    for (File tempFile : tempFiles) {
+                        String lowerCaseName = tempFile.getName().toLowerCase();
+                        if (lowerCaseName.endsWith(".fasta")) {
+                            fastaFile = tempFile;
+                            break;
+                        }
+                    }
                 }
                 for (File zippedFile : destinationFolder.listFiles()) {
                     loadIdFile(zippedFile, parameterFiles, inputFiles);

@@ -619,8 +619,8 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="speciesJMenuItem">
               <Properties>
-                <Property name="mnemonic" type="int" value="80"/>
-                <Property name="text" type="java.lang.String" value="Species Settings"/>
+                <Property name="mnemonic" type="int" value="66"/>
+                <Property name="text" type="java.lang.String" value="Background Species"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="speciesJMenuItemActionPerformed"/>

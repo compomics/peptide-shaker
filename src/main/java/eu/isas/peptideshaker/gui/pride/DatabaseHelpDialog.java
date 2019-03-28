@@ -2,8 +2,8 @@ package eu.isas.peptideshaker.gui.pride;
 
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.converters.DecoyConverter;
-import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.gui.parameters.identification.search.SequenceDbDetailsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.file.LastSelectedFolder;
@@ -33,11 +33,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      */
     private static ProgressDialogX progressDialog;
     /**
-     * The search parameters.
-     */
-    private final SearchParameters searchParameters;
-    /**
-     * The path to the selected fasta file.
+     * The path to the selected FASTA file.
      */
     private String selectedFastaFile = null;
     /**
@@ -48,23 +44,27 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      * The utilities user parameters.
      */
     private UtilitiesUserParameters utilitiesUserParameters;
+    /**
+     * The FASTA parameters.
+     */
+    private FastaParameters fastaParameters;
 
     /**
      * Creates a new DatabaseHelpDialog.
      *
      * @param peptideShakerGUI the PeptideShakerGUI parent
-     * @param searchParameters the search parameters
+     * @param fastaParameters the FASTA parameters
      * @param lastSelectedFolder the last selected folder
      * @param modal if the dialog is to be modal or not
      * @param species the current species
      */
-    public DatabaseHelpDialog(PeptideShakerGUI peptideShakerGUI, SearchParameters searchParameters, LastSelectedFolder lastSelectedFolder, boolean modal, String species) {
+    public DatabaseHelpDialog(PeptideShakerGUI peptideShakerGUI, FastaParameters fastaParameters, LastSelectedFolder lastSelectedFolder, boolean modal, String species) {
         super(peptideShakerGUI, modal);
 
         initComponents();
 
         this.species = species;
-        this.searchParameters = searchParameters;
+        this.fastaParameters = fastaParameters;
         this.lastSelectedFolder = lastSelectedFolder;
 
         this.utilitiesUserParameters = UtilitiesUserParameters.loadUserParameters();
@@ -174,9 +174,9 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
                     .addComponent(speciesLabel)
                     .addComponent(speciesJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(speciesAndTaxonomyJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(taxonomyLabel)
-                    .addComponent(taxonomyJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(speciesAndTaxonomyJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(taxonomyJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(taxonomyLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(downloadUniProtJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -388,7 +388,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
             targetDecoySettingsButton.setEnabled(true);
 
             // check if the database contains decoys
-            if (!selectedFastaFile.endsWith(utilitiesUserParameters.getTargetDecoyFileNameSuffix() + ".fasta")) {
+            if (!selectedFastaFile.endsWith(fastaParameters.getTargetDecoyFileNameSuffix() + ".fasta")) {
 
                 int value = JOptionPane.showConfirmDialog(this,
                         "The selected FASTA file does not seem to contain decoy sequences.\n"
@@ -480,7 +480,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
 
         if (selectedFastaFile != null) {
 
-            searchParameters.setFastaFile(selectedFastaFile);
+            //searchParameters.setFastaFile(selectedFastaFile);
 
         }
 
@@ -588,7 +588,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
         Util.removeExtension(newFasta);
 
         // add the target decoy tag
-        newFasta = String.join("", newFasta, utilitiesUserParameters.getTargetDecoyFileNameSuffix(), ".fasta");
+        newFasta = String.join("", newFasta, fastaParameters.getTargetDecoyFileNameSuffix(), ".fasta");
 
         try {
 
@@ -597,7 +597,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
             progressDialog.setTitle("Appending Decoy Sequences. Please Wait...");
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
-            DecoyConverter.appendDecoySequences(new File(selectedFastaFile), newFile, progressDialog);
+            DecoyConverter.appendDecoySequences(new File(selectedFastaFile), newFile, fastaParameters, progressDialog);
 
             progressDialog.setTitle("Getting Database Details. Please Wait...");
 

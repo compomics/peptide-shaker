@@ -57,7 +57,6 @@ public class PeptideShakerIdentificationParametersCLIParams {
         String formatter = "%-35s";
 
         output += "\n\nSpectrum Matching:\n\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.DB.id) + " " + IdentificationParametersCLIParams.DB.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.PREC_TOL.id) + " " + IdentificationParametersCLIParams.PREC_TOL.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.PREC_PPM.id) + " " + IdentificationParametersCLIParams.PREC_PPM.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.FRAG_TOL.id) + " " + IdentificationParametersCLIParams.FRAG_TOL.description + "\n";

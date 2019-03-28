@@ -9,6 +9,7 @@ import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.parameters.identification.search.DigestionParameters;
 import eu.isas.peptideshaker.export.exportfeatures.PsSearchFeature;
+import eu.isas.peptideshaker.preferences.ProjectDetails;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,11 +65,12 @@ public class PsSearchParametersSection {
      * Writes the desired section.
      *
      * @param searchParameters the search parameters of this project
+     * @param projectDetails the project details
      * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file
      */
-    public void writeSection(SearchParameters searchParameters, WaitingHandler waitingHandler) throws IOException {
+    public void writeSection(SearchParameters searchParameters, ProjectDetails projectDetails, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -96,7 +98,7 @@ public class PsSearchParametersSection {
             writer.addSeparator();
             switch (exportFeature) {
                 case database:
-                    String fastaFileName = Util.getFileName(searchParameters.getFastaFile());
+                    String fastaFileName = Util.getFileName(projectDetails.getFastaFile());
                     writer.write(fastaFileName);
                     break;
                 case cleavage:

@@ -1392,7 +1392,7 @@ public class MzIdentMLExport {
         bw.newLine();
         tabCounter++;
 
-        boolean targetDecoy = identificationParameters.getSearchParameters().getFastaParameters().isTargetDecoy();
+        boolean targetDecoy = identificationParameters.getFastaParameters().isTargetDecoy();
 
         if (!targetDecoy) {
 
@@ -2615,7 +2615,7 @@ public class MzIdentMLExport {
         }
 
         // add the database
-        File fastaFile = new File(identificationParameters.getSearchParameters().getFastaFile());
+        File fastaFile = new File(projectDetails.getFastaFile());
         bw.write(getCurrentTabSpace());
         bw.write("<SearchDatabase numDatabaseSequences=\"");
         bw.write(Integer.toString(fastaSummary.nSequences));

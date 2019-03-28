@@ -497,7 +497,7 @@ public class MatchesValidator {
 
         if (!psParameter.getManualValidation()) {
 
-            if (identificationParameters.getSearchParameters().getFastaParameters().isTargetDecoy()) {
+            if (identificationParameters.getFastaParameters().isTargetDecoy()) {
 
                 if (!noValidated && psParameter.getScore() <= scoreThreshold) {
 
@@ -566,7 +566,7 @@ public class MatchesValidator {
         psParameter.resetQcResults();
         ValidationQcParameters validationQCParameters = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
-        if (identificationParameters.getSearchParameters().getFastaParameters().isTargetDecoy()) {
+        if (identificationParameters.getFastaParameters().isTargetDecoy()) {
 
             TargetDecoyResults targetDecoyResults = peptideMap.getTargetDecoyResults();
             double fdrLimit = targetDecoyResults.getFdrLimit();
@@ -651,7 +651,7 @@ public class MatchesValidator {
         psParameter.resetQcResults();
         ValidationQcParameters validationQCParameters = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
-        if (identificationParameters.getSearchParameters().getFastaParameters().isTargetDecoy()) {
+        if (identificationParameters.getFastaParameters().isTargetDecoy()) {
 
             double psmThreshold = 0;
             double confidenceThreshold = 100;
@@ -748,7 +748,7 @@ public class MatchesValidator {
         PSParameter psParameter = (PSParameter) peptideAssumption.getUrParam(PSParameter.dummy);
         ValidationQcParameters validationQCParameters = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
-        if (identificationParameters.getSearchParameters().getFastaParameters().isTargetDecoy()) {
+        if (identificationParameters.getFastaParameters().isTargetDecoy()) {
 
             TargetDecoyMap targetDecoyMap = inputMap.getTargetDecoyMap(peptideAssumption.getAdvocate());
             double seThreshold = 0;

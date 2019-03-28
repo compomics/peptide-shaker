@@ -10,7 +10,6 @@ import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
-import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
@@ -52,11 +51,11 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     /**
      * The color to use when writing in green.
      */
-    private static final Color green = new Color(0, 125, 0);
+    private static final Color GREEN = new Color(0, 125, 0);
     /**
      * The color to use when writing in orange.
      */
-    private static final Color orange = new Color(220, 110, 0);
+    private static final Color ORANGE = new Color(220, 110, 0);
     /**
      * the identification parameters used,
      */
@@ -65,6 +64,10 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * The filter table column header tooltips.
      */
     private ArrayList<String> validationTableToolTips;
+    /**
+     * The path to the FASTA file.
+     */
+    private String fastaFile;
 
     /**
      * Type of match selected.
@@ -84,16 +87,18 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @param targetDecoyMap the target decoy map
      * @param matchKey the protein match key
      * @param identificationParameters the identification parameters used
+     * @param fastaFile the FASTA file
      * @param matchType the match type
      */
     public MatchValidationDialog(java.awt.Frame parent, Identification identification,
-            TargetDecoyMap targetDecoyMap, long matchKey, IdentificationParameters identificationParameters, MatchType matchType) {
+            TargetDecoyMap targetDecoyMap, long matchKey, IdentificationParameters identificationParameters, String fastaFile, MatchType matchType) {
 
         super(parent, true);
         initComponents();
         setUpGui();
 
         this.identificationParameters = identificationParameters;
+        this.fastaFile = fastaFile;
 
         type = matchType;
 
@@ -159,8 +164,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         validationLevelJComboBox.setSelectedItem(psParameter.getMatchValidationLevel().getName());
 
         // Database info
-        SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        FastaParameters fastaParameters = searchParameters.getFastaParameters();
+        FastaParameters fastaParameters = identificationParameters.getFastaParameters();
         boolean targetDecoy = fastaParameters.isTargetDecoy();
 
         if (!targetDecoy) {
@@ -170,13 +174,13 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
         } else {
 
-            targetDecoyLbl.setForeground(green);
+            targetDecoyLbl.setForeground(GREEN);
 
         }
 
         try {
 
-            FastaSummary fastaSummary = FastaSummary.getSummary(searchParameters.getFastaFile(), fastaParameters, null);
+            FastaSummary fastaSummary = FastaSummary.getSummary(fastaFile, fastaParameters, null);
             int nTarget = fastaSummary.nTarget;
             nTargetLbl.setText(nTarget + " target sequences");
 
@@ -186,11 +190,11 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
             } else if (nTarget > 1000000) {
 
-                nTargetLbl.setForeground(orange);
+                nTargetLbl.setForeground(ORANGE);
 
             } else {
 
-                nTargetLbl.setForeground(green);
+                nTargetLbl.setForeground(GREEN);
 
             }
 
@@ -214,7 +218,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             if (nTargetOnly < nTargetLimit) {
                 matchesBeforeFirstDecoyLbl.setForeground(Color.red);
             } else {
-                matchesBeforeFirstDecoyLbl.setForeground(green);
+                matchesBeforeFirstDecoyLbl.setForeground(GREEN);
             }
             recommendedNumberOfTargetHitsLbl.setText("Recommended: " + Util.roundDouble(nTargetLimit, 0) + " matches before the first decoy hit");
 
@@ -225,9 +229,9 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             if (resolution > 10 * minResolution) {
                 confidenceResolutionLbl.setForeground(Color.red);
             } else if (resolution > minResolution) {
-                confidenceResolutionLbl.setForeground(orange);
+                confidenceResolutionLbl.setForeground(ORANGE);
             } else {
-                confidenceResolutionLbl.setForeground(green);
+                confidenceResolutionLbl.setForeground(GREEN);
             }
             recommendedResolutionLbl.setText("Recommended: resolution < " + Util.roundDouble(minResolution, 2) + "%");
         } else {
@@ -246,11 +250,11 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
             switch (matchValidationLevel) {
                 case confident:
-                    validationStatusLbl.setForeground(green);
+                    validationStatusLbl.setForeground(GREEN);
                     break;
                     
                 case doubtful:
-                    validationStatusLbl.setForeground(orange);
+                    validationStatusLbl.setForeground(ORANGE);
                     break;
 
                 case not_validated:
@@ -286,9 +290,9 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             if (confidence < validationThreshold) {
                 confidenceLbl.setForeground(Color.red);
             } else if (confidence < confidenceThreshold) {
-                confidenceLbl.setForeground(orange);
+                confidenceLbl.setForeground(ORANGE);
             } else {
-                confidenceLbl.setForeground(green);
+                confidenceLbl.setForeground(GREEN);
             }
         } else {
             validationStatusLbl.setText("Validation Status: " + psParameter.getMatchValidationLevel().getName());
@@ -499,7 +503,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         targetDecoyLbl.setText("Concatenated Target/Decoy");
 
         bitRecommendationLabel4.setFont(bitRecommendationLabel4.getFont().deriveFont((bitRecommendationLabel4.getFont().getStyle() | java.awt.Font.ITALIC)));
-        bitRecommendationLabel4.setText("Recommended: between 1,000 and 100,000");
+        bitRecommendationLabel4.setText("Recommended: between 10 000 and 100 000");
 
         nTargetLbl.setText("xx,xxx target sequences");
 

@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.software.settings.UtilitiesPathParameters;
 import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
@@ -8,7 +7,6 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.parameters.UtilitiesUserParameters;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.preferences.PeptideShakerPathParameters;
 import eu.isas.peptideshaker.utils.CpsParent;
 import java.io.File;
 import java.io.IOException;
@@ -126,7 +124,7 @@ public class FollowUpCLI extends CpsParent {
             return 1;
         }
 
-        // If not available on the computer, parse summary information about the fasta file
+        // if not available on the computer, parse summary information about the FASTA file
         try {
 
             loadFastaFile(waitingHandler);
@@ -134,13 +132,13 @@ public class FollowUpCLI extends CpsParent {
         } catch (IOException e) {
 
             e.printStackTrace();
-            waitingHandler.appendReport("An error occurred while parsing the fasta file.", true, true);
+            waitingHandler.appendReport("An error occurred while parsing the FASTA file.", true, true);
             waitingHandler.setRunCanceled();
             return 1;
 
         }
 
-        // Load project specific PTMs
+        // load project specific PTMs
         String error = PeptideShaker.loadModifications(getIdentificationParameters().getSearchParameters());
         if (error != null) {
             System.out.println(error);
@@ -245,16 +243,6 @@ public class FollowUpCLI extends CpsParent {
             System.exit(1); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
             // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
             return 1;
-        }
-    }
-
-    /**
-     * Sets the path configuration.
-     */
-    private void setPathConfiguration() throws IOException {
-        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathParameters.configurationFileName);
-        if (pathConfigurationFile.exists()) {
-            PeptideShakerPathParameters.loadPathParametersFromFile(pathConfigurationFile);
         }
     }
 

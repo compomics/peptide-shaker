@@ -409,7 +409,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         // use a gray color for no decoy searches
         Color nonValidatedColor = peptideShakerGUI.getSparklineColorNonValidated();
-        if (!peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFastaParameters().isTargetDecoy()) {
+        if (!peptideShakerGUI.getIdentificationParameters().getFastaParameters().isTargetDecoy()) {
             nonValidatedColor = peptideShakerGUI.getUtilitiesUserParameters().getSparklineColorNotFound();
         }
         ArrayList<Color> sparklineColors = new ArrayList<>();
@@ -2049,7 +2049,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 pSMaps = (PSMaps) identification.getUrParam(pSMaps);
                 MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI,
                         identification, pSMaps.getPsmMap(), psmKey,
-                        peptideShakerGUI.getIdentificationParameters(), MatchType.PSM);
+                        peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getProjectDetails().getFastaFile(), MatchType.PSM);
                 if (matchValidationDialog.isValidationChanged()) {
                     updatePsmPanelTitle();
                     peptidesPanel.repaint();
@@ -2149,7 +2149,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     pSMaps = (PSMaps) identification.getUrParam(pSMaps);
                     MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, identification,
                             pSMaps.getProteinMap(), proteinKey,
-                            peptideShakerGUI.getIdentificationParameters(), MatchType.PROTEIN);
+                            peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getProjectDetails().getFastaFile(), MatchType.PROTEIN);
                     if (matchValidationDialog.isValidationChanged()) {
                         updateProteinPanelTitle();
                     }
@@ -2221,7 +2221,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 pSMaps = (PSMaps) identification.getUrParam(pSMaps);
                 MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, identification,
                         pSMaps.getPeptideMap(), peptideKey,
-                        peptideShakerGUI.getIdentificationParameters(), MatchType.PEPTIDE);
+                        peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getProjectDetails().getFastaFile(), MatchType.PEPTIDE);
                 if (matchValidationDialog.isValidationChanged()) {
                     updateProteinPanelTitle();
                     updatePeptidePanelTitle();

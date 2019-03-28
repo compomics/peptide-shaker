@@ -1,7 +1,5 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.software.settings.PathKey;
-import com.compomics.software.settings.UtilitiesPathParameters;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
@@ -11,14 +9,11 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.parameters.UtilitiesUserParameters;
 import eu.isas.peptideshaker.PeptideShaker;
-import static eu.isas.peptideshaker.cmd.PeptideShakerCLI.redirectErrorStream;
-import eu.isas.peptideshaker.preferences.PeptideShakerPathParameters;
 import eu.isas.peptideshaker.utils.CpsParent;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;

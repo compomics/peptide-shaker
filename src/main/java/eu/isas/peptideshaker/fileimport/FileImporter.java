@@ -99,7 +99,7 @@ public class FileImporter {
      */
     private final ProcessingParameters processingParameters;
     /**
-     * The project details
+     * The project details.
      */
     private final ProjectDetails projectDetails;
     /**
@@ -213,7 +213,9 @@ public class FileImporter {
         try {
 
             importSequences(identificationParameters.getSequenceMatchingParameters(),
-                    identificationParameters.getSearchParameters(), identificationParameters.getPeptideVariantsParameters(),
+                    identificationParameters.getSearchParameters(), 
+                    identificationParameters.getFastaParameters(),
+                    identificationParameters.getPeptideVariantsParameters(),
                     waitingHandler, exceptionHandler);
 
             if (waitingHandler.isRunCanceled()) {
@@ -877,6 +879,7 @@ public class FileImporter {
      *
      * @param sequenceMatchingPreferences the sequence matching preferences
      * @param searchParameters the search parameters
+     * @param fastaParameters the FASTA parameters
      * @param peptideVariantsPreferences the peptide variants preferences set by
      * the user
      * @param waitingHandler the handler displaying feedback to the user and
@@ -884,14 +887,13 @@ public class FileImporter {
      * @param exceptionHandler handler for exceptions
      *
      * @throws java.io.IOException exception thrown if an error occurred while
-     * reading the fasta file
+     * reading the FASTA file
      */
-    public void importSequences(SequenceMatchingParameters sequenceMatchingPreferences, SearchParameters searchParameters, PeptideVariantsParameters peptideVariantsPreferences, WaitingHandler waitingHandler,
+    public void importSequences(SequenceMatchingParameters sequenceMatchingPreferences, SearchParameters searchParameters, FastaParameters fastaParameters, PeptideVariantsParameters peptideVariantsPreferences, WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler) throws IOException {
 
-        String fastaFilePath = searchParameters.getFastaFile();
+        String fastaFilePath = projectDetails.getFastaFile();
         File fastaFile = new File(fastaFilePath);
-        FastaParameters fastaParameters = searchParameters.getFastaParameters();
 
         waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".", true, true);
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
