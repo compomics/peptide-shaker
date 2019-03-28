@@ -515,8 +515,11 @@ public class ProteinInference {
         int maxPeptides = 0;
         int maxSpectra = 0;
         int nProteinsSorted = 0;
+        
+        int max = 2 * identification.getProteinIdentification().size();
+        waitingHandler.setMaxSecondaryProgressCounter(max);
 
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler); // @TODO: progress goes waaaay beyond 100%...
         ProteinMatch proteinMatch;
 
         while ((proteinMatch = proteinMatchesIterator.next()) != null) {

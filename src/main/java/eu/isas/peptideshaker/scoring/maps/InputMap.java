@@ -174,7 +174,7 @@ public class InputMap implements Serializable {
         int max = getNEntries();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.resetSecondaryProgressCounter();
-        waitingHandler.setMaxSecondaryProgressCounter(max);
+        waitingHandler.setMaxSecondaryProgressCounter(max*2); // @TODO: progress goes to 200%...
 
         for (TargetDecoyMap hitmap : inputMap.values()) {
             waitingHandler.increaseSecondaryProgressCounter();
