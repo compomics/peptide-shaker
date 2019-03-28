@@ -64,7 +64,7 @@ public class TagMapper {
      */
     public void mapTags(LinkedList<SpectrumMatch> spectrumMatches, FastaMapper fastaMapper, WaitingHandler waitingHandler) {
 
-        spectrumMatches.parallelStream().forEach((spectrumMatch) -> {
+        spectrumMatches.stream().forEach((spectrumMatch) -> {
 
             try {
 

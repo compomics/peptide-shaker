@@ -108,7 +108,7 @@ public class ProteinInference {
         HashSet<Long> toDelete = new HashSet<>();
         HashMap<Long, Long> processedKeys = new HashMap<>();
 
-        proteinGroupKeys.parallelStream()
+        proteinGroupKeys.stream()
                 .map(key -> identification.getProteinMatch(key))
                 .filter(proteinMatch -> proteinMatch.getNProteins() > 1)
                 .forEach(proteinSharedGroup -> {

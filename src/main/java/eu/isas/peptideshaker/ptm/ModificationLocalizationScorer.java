@@ -1594,8 +1594,8 @@ public class ModificationLocalizationScorer extends DbObject {
 
         waitingHandler.setWaitingText("Scoring PSM Modification Localization. Please Wait...");
 
-        identification.getSpectrumIdentification().values().parallelStream()
-                .flatMap(HashSet::parallelStream)
+        identification.getSpectrumIdentification().values().stream()
+                .flatMap(HashSet::stream)
                 .map(key -> identification.getSpectrumMatch(key))
                 .filter(spectrumMatch -> spectrumMatch.getBestPeptideAssumption() != null)
                 .forEach(spectrumMatch -> {
@@ -1631,7 +1631,7 @@ public class ModificationLocalizationScorer extends DbObject {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
-        identification.getPeptideIdentification().parallelStream()
+        identification.getPeptideIdentification().stream()
                 .map(key -> identification.getPeptideMatch(key))
                 .forEach(peptideMatch -> {
 

@@ -104,7 +104,7 @@ public class PsmProcessor {
         identification.fillSpectrumIdentification();
 
         identification.getSpectrumIdentification().values().stream()
-                .flatMap(HashSet::parallelStream)
+                .flatMap(HashSet::stream)
                 .map(key -> identification.getSpectrumMatch(key))
                 .forEach(spectrumMatch -> processPsm(
                         spectrumMatch, 
