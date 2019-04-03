@@ -827,7 +827,7 @@ public class NewDialog extends javax.swing.JDialog {
 
         if (result == JFileChooser.APPROVE_OPTION) {
 
-            File fastaFile = fc.getSelectedFile();
+            fastaFile = fc.getSelectedFile();
             File folder = fastaFile.getParentFile();
             peptideShakerGUI.getUtilitiesUserParameters().setDbFolder(folder);
             peptideShakerGUI.getLastSelectedFolder().setLastSelectedFolder(lastFolderKey, folder.getAbsolutePath());
@@ -1453,7 +1453,6 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * Validates the input parameters.
      *
-     * @return true if the input is valid, false otherwise.
      */
     private void validateInput() {
 
@@ -1496,7 +1495,7 @@ public class NewDialog extends javax.swing.JDialog {
             spectrumFilesTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             allValid = false;
         }
-
+        
         if (fastaFileTxt.getText() != null && fastaFileTxt.getText().length() > 0
                 && identificationParameters != null
                 && identificationParameters.getSearchParameters() != null
