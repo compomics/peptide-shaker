@@ -1497,8 +1497,6 @@ public class NewDialog extends javax.swing.JDialog {
         }
         
         if (fastaFileTxt.getText() != null && fastaFileTxt.getText().length() > 0
-                && identificationParameters != null
-                && identificationParameters.getSearchParameters() != null
                 && fastaFile != null
                 && fastaFile.exists()) {
             databaseLabel.setForeground(Color.BLACK);
