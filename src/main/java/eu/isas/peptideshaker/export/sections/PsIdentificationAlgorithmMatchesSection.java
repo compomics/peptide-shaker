@@ -339,11 +339,16 @@ public class PsIdentificationAlgorithmMatchesSection {
             String[] fixedModifications = peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
             return IntStream.range(0, fixedModifications.length)
-                    .mapToObj(i -> fixedModifications[i])
-                    .filter(modName -> modName != null)
-                    .collect(Collectors.groupingBy(Function.identity(),
+                    .mapToObj(i -> 
+                        new Object() {
+                            Integer position = i;
+                            String modification = fixedModifications[i];
+                        }
+                    )
+                    .filter(obj -> obj.modification != null) 
+                    .collect(Collectors.groupingBy(  obj -> obj.modification,  
                             TreeMap::new,
-                            Collectors.mapping(i -> new Integer(i),
+                            Collectors.mapping(obj -> obj.position,      
                                     Collectors.toCollection(TreeSet::new))));
 
         }
