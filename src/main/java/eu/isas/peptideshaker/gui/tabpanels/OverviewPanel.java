@@ -5854,10 +5854,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         peptideKeys = new long[0];
         psmKeys = new long[0];
 
-        DefaultTableModel psmTableModel = (DefaultTableModel) psmTable.getModel();
-        psmTableModel.getDataVector().removeAllElements();
-        DefaultTableModel peptideTableModel = (DefaultTableModel) peptideTable.getModel();
-        peptideTableModel.getDataVector().removeAllElements();
+        PsmTableModel psmTableModel = (PsmTableModel) psmTable.getModel();
+        psmTableModel.reset();
+        PeptideTableModel peptideTableModel = (PeptideTableModel) peptideTable.getModel();
+        peptideTableModel.reset();
         ProteinTableModel proteinTableModel = (ProteinTableModel) proteinTable.getModel();
         proteinTableModel.reset();
 

@@ -2045,7 +2045,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }//GEN-LAST:event_newJMenuItemActionPerformed
 
     /**
-     * Closes the PeptideShaker
+     * Closes PeptideShaker
      *
      * @param evt
      */
@@ -4547,13 +4547,29 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param updateGuiComponents true if the GUI components are to be updated
      */
     public void clearData(boolean clearDatabaseFolder, boolean updateGuiComponents) {
-
+        
         // reset the preferences
         selectedProteinKey = NO_KEY;
         selectedPeptideKey = NO_KEY;
         selectedPsmKey = NO_KEY;
 
         cpsParent.setProjectDetails(null);
+        
+        resetIdentificationFeaturesGenerator();
+
+        if (updateGuiComponents) {
+
+            // set up the tabs/panels
+            scoresJCheckBoxMenuItem.setSelected(false);
+            setUpPanels(true);
+
+            // repaint the panels
+            repaintPanels();
+
+            // select the overview tab
+            allTabsJTabbedPane.setSelectedIndex(OVER_VIEW_TAB_INDEX);
+
+        }
 
         try {
 
@@ -4576,22 +4592,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         if (clearDatabaseFolder) {
 
             clearDatabaseFolder();
-
-        }
-
-        resetIdentificationFeaturesGenerator();
-
-        if (updateGuiComponents) {
-
-// set up the tabs/panels
-            scoresJCheckBoxMenuItem.setSelected(false);
-            setUpPanels(true);
-
-            // repaint the panels
-            repaintPanels();
-
-            // select the overview tab
-            allTabsJTabbedPane.setSelectedIndex(OVER_VIEW_TAB_INDEX);
 
         }
 
