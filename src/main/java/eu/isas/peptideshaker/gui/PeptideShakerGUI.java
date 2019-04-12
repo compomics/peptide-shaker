@@ -2593,9 +2593,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         String lastSelectedFolderPath = lastSelectedFolder.getLastSelectedFolder();
 
-        String cpsFileFilterDescription = "PeptideShaker (.cpsx)";
+        String cpsFileFilterDescription = "PeptideShaker (.psdb)";
         String zipFileFilterDescription = "Zipped PeptideShaker (.zip)";
-        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".cpsx", ".zip"},
+        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".psdb", ".zip"},
                 new String[]{cpsFileFilterDescription, zipFileFilterDescription}, "Open PeptideShaker Project", lastSelectedFolderPath, null, true, false, false, 0);
 
         if (selectedFileAndFilter != null) {
@@ -2607,7 +2607,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                 importPeptideShakerZipFile(selectedFile);
 
-            } else if (selectedFile.getName().endsWith(".cpsx")) {
+            } else if (selectedFile.getName().endsWith(".psdb")) {
 
                 exceptionHandler.setIgnoreExceptions(true);
                 clearData(true, true);
@@ -2620,7 +2620,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             } else {
 
-                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cpsx).", "Unsupported File.", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.psdb).", "Unsupported File.", JOptionPane.WARNING_MESSAGE);
 
             }
         }
@@ -6064,7 +6064,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                         for (File file : destinationFolder.listFiles()) {
 
-                            if (file.getName().toLowerCase().endsWith(".cpsx")) {
+                            if (file.getName().toLowerCase().endsWith(".psdb")) {
 
                                 exceptionHandler.setIgnoreExceptions(true);
                                 clearData(true, true);
