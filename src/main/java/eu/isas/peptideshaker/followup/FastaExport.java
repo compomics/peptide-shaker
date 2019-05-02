@@ -4,10 +4,10 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
-import java.io.BufferedWriter;
+import com.compomics.util.io.flat.SimpleFileWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashSet;
 
 /**
  * Export proteins in the FASTA format.
@@ -33,29 +33,34 @@ public class FastaExport {
      *
      * @throws IOException thrown if an error occurs while writing the file.
      */
-    public static void export(File destinationFile, SequenceProvider sequenceProvider,
-            Identification identification, ExportType exportType, WaitingHandler waitingHandler, boolean accessionOnly) throws IOException {
+    public static void export(
+            File destinationFile,
+            SequenceProvider sequenceProvider,
+            Identification identification,
+            ExportType exportType,
+            WaitingHandler waitingHandler,
+            boolean accessionOnly
+    ) throws IOException {
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(destinationFile))) {
+        try (SimpleFileWriter writer = new SimpleFileWriter(destinationFile, false)) {
 
-            for (String accession : sequenceProvider.getAccessions()) {
+            if (accessionOnly) {
 
-                if (include(accession, exportType, identification)) {
+                sequenceProvider.getAccessions().stream()
+                        .filter(accession -> include(accession, exportType, identification))
+                        .forEach(accession -> {
+                            writer.writeLine(accession);
+                        });
 
-                    if (accessionOnly) {
+            } else {
 
-                        bw.write(accession);
-                        bw.newLine();
+                sequenceProvider.getAccessions().stream()
+                        .filter(accession -> include(accession, exportType, identification))
+                        .forEach(accession -> {
+                            writer.writeLine(sequenceProvider.getHeader(accession));
+                            writer.writeLine(sequenceProvider.getSequence(accession));
+                        });
 
-                    } else {
-
-                        bw.write(sequenceProvider.getHeader(accession));
-                        bw.newLine();
-                        bw.write(sequenceProvider.getSequence(accession));
-                        bw.newLine();
-
-                    }
-                }
             }
         }
     }
@@ -71,22 +76,34 @@ public class FastaExport {
      * @return a boolean indicating whether the given accession should be
      * included in the export
      */
-    private static boolean include(String accession, ExportType exportType, Identification identification) {
+    private static boolean include(
+            String accession, 
+            ExportType exportType, 
+            Identification identification
+    ) {
+
+        HashSet<Long> proteinGroups = identification.getProteinMap().get(accession);
+
+        if (proteinGroups == null) {
+
+            return false;
+
+        }
 
         switch (exportType) {
 
             case non_validated:
-                return identification.getProteinMap().get(accession).stream()
+                return proteinGroups.stream()
                         .map(key -> (PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy))
                         .allMatch(psParameter -> !psParameter.getMatchValidationLevel().isValidated());
 
             case validated_all_accessions:
-                return identification.getProteinMap().get(accession).stream()
+                return proteinGroups.stream()
                         .map(key -> (PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy))
                         .anyMatch(psParameter -> psParameter.getMatchValidationLevel().isValidated());
 
             case validated_main_accession:
-                return identification.getProteinMap().get(accession).stream()
+                return proteinGroups.stream()
                         .map(key -> identification.getProteinMatch(key))
                         .filter(proteinMatch -> proteinMatch.getLeadingAccession().equals(accession))
                         .map(proteinMatch -> (PSParameter) proteinMatch.getUrParam(PSParameter.dummy))
