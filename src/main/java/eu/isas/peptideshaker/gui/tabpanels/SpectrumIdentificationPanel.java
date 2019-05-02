@@ -2949,7 +2949,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             if (currentSpectrum != null && currentSpectrum.getNPeaks() > 0) {
 
                 Precursor precursor = currentSpectrum.getPrecursor();
-                String chargeAsString;
+                String chargeAsString = "";
 
                 if (spectrumMatch != null) {
 
@@ -2960,10 +2960,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     } else if (spectrumMatch.getBestTagAssumption() != null) {
 
                         chargeAsString = Charge.toString(spectrumMatch.getBestTagAssumption().getIdentificationCharge());
-
-                    } else {
-
-                        throw new IllegalArgumentException("Best hit not found for spectrum " + spectrumKey + ".");
 
                     }
                 } else {
@@ -3682,7 +3678,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     DisplayFeaturesGenerator displayFeaturesGenerator = peptideShakerGUI.getDisplayFeaturesGenerator();
                     String proteins = "";
-                    String sequence;
+                    String sequence = "";
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         String[] proteinAccessions = spectrumMatch.getBestPeptideAssumption().getPeptide().getProteinMapping().keySet().stream().toArray(String[]::new);
                         proteins = displayFeaturesGenerator.getDatabaseLinks(proteinAccessions);
@@ -3696,8 +3692,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         sequence = spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(modificationParameters,
                                 true, true, true, false, modificationSequenceMatchingParameters, displayParameters.getDisplayedModifications());
                         peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getTagModificationTooltipAsHtml(spectrumMatch.getBestTagAssumption().getTag());
-                    } else {
-                        throw new IllegalArgumentException("No best hit found for spectrum " + spectrumMatch.getKey());
                     }
 
                     switch (columnIndex) {
@@ -3712,9 +3706,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         case 4:
                             return psParameter.getScore();
                         case 5:
-                            return psParameter.getConfidence();
+                            return spectrumMatch.getBestPeptideAssumption() != null || spectrumMatch.getBestTagAssumption() != null ? psParameter.getConfidence() : "";
                         case 6:
-                            return psParameter.getMatchValidationLevel().getIndex();
+                            return spectrumMatch.getBestPeptideAssumption() != null ? psParameter.getMatchValidationLevel().getIndex() : MatchValidationLevel.none.getIndex();
                         default:
                             return "";
                     }
@@ -3733,7 +3727,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     return getValueAt(i, columnIndex).getClass();
                 }
             }
-            return (new Double(0.0)).getClass();
+            return (new String()).getClass();
         }
 
         @Override
@@ -3837,7 +3831,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         return psParameter.getConfidence();
                     case 7:
                         psParameter = (PSParameter) spectrumIdentificationAssumption.getUrParam(PSParameter.dummy);
-                        return psParameter.getMatchValidationLevel().getIndex();
+                        return psParameter == null || psParameter.getMatchValidationLevel() == null ? MatchValidationLevel.none.getIndex() : psParameter.getMatchValidationLevel().getIndex();
                     default:
                         return "";
                 }
@@ -3854,7 +3848,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     return getValueAt(i, columnIndex).getClass();
                 }
             }
-            return (new Double(0.0)).getClass();
+            return (new String()).getClass();
         }
 
         @Override

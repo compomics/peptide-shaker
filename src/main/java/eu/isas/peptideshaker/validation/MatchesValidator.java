@@ -1555,8 +1555,8 @@ public class MatchesValidator {
 
             return firstHits.stream()
                     .anyMatch(assumption -> bestPeptide.isSameSequenceAndModificationStatus(
-                            assumption.getPeptide(),
-                            identificationParameters.getSequenceMatchingParameters()));
+                    assumption.getPeptide(),
+                    identificationParameters.getSequenceMatchingParameters()));
 
         }
 

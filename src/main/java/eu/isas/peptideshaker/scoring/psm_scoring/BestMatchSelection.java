@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.scoring.psm_scoring;
 
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
-import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
@@ -53,10 +52,6 @@ public class BestMatchSelection {
      */
     private final HashMap<String, Integer> proteinCount;
     /**
-     * The identification object.
-     */
-    private final Identification identification;
-    /**
      * The sequence provider
      */
     private final SequenceProvider sequenceProvider;
@@ -68,15 +63,15 @@ public class BestMatchSelection {
     /**
      * Constructor.
      *
-     * @param identification the identification object where to get the matches
-     * from
      * @param proteinCount a map of proteins found multiple times
      * @param sequenceProvider the sequence provider
      * @param fastaParameters the FASTA parameters
      */
-    public BestMatchSelection(Identification identification, HashMap<String, Integer> proteinCount, SequenceProvider sequenceProvider, FastaParameters fastaParameters) {
+    public BestMatchSelection(
+            HashMap<String, Integer> proteinCount,
+            SequenceProvider sequenceProvider,
+            FastaParameters fastaParameters) {
 
-        this.identification = identification;
         this.proteinCount = proteinCount;
         this.sequenceProvider = sequenceProvider;
         this.fastaParameters = fastaParameters;
@@ -92,8 +87,13 @@ public class BestMatchSelection {
      * @param waitingHandler the handler displaying feedback to the user
      * @param identificationParameters the identification parameters
      */
-    public void selectBestHit(SpectrumMatch spectrumMatch, InputMap inputMap, TargetDecoyMap psmTargetDecoyMap, WaitingHandler waitingHandler,
-            IdentificationParameters identificationParameters) {
+    public void selectBestHit(
+            SpectrumMatch spectrumMatch,
+            InputMap inputMap,
+            TargetDecoyMap psmTargetDecoyMap,
+            WaitingHandler waitingHandler,
+            IdentificationParameters identificationParameters
+    ) {
 
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
         boolean multiSE = inputMap.isMultipleAlgorithms();
@@ -106,8 +106,6 @@ public class BestMatchSelection {
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
-        PeptideAssumptionFilter idFilter = identificationParameters.getPeptideAssumptionFilter();
-
         PSParameter psmParameter = new PSParameter();
         psmParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
         spectrumMatch.addUrParam(psmParameter);
@@ -115,7 +113,7 @@ public class BestMatchSelection {
         String spectrumKey = spectrumMatch.getSpectrumKey();
 
         // map of the peptide first hits for this spectrum: score -> max protein count -> max search engine votes -> amino acids annotated -> min mass deviation -> peptide sequence
-        TreeMap<Double, TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, TreeMap<Double, TreeMap<Long, PeptideAssumption>>>>>> peptideAssumptions = new TreeMap<>();
+        TreeMap<Double, TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, TreeMap<Double, TreeMap<Long, PeptideAssumption>>>>>> validAssumptions = new TreeMap<>();
 
         HashSet<Long> ids = new HashSet<>();
 
@@ -141,10 +139,10 @@ public class BestMatchSelection {
 
                         if (peptide1.getProteinMapping() != null
                                 && !peptide1.getProteinMapping().isEmpty()
-                                && (peptideAssumptionFilter.validatePeptide(peptide1, sequenceMatchingPreferences, searchParameters.getDigestionParameters())
-                                || !peptideAssumptionFilter.validateModifications(peptide1, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getModificationParameters())
-                                || !peptideAssumptionFilter.validatePrecursor(peptideAssumption1, spectrumKey, spectrumFactory, searchParameters)
-                                || !peptideAssumptionFilter.validateProteins(peptide1, sequenceMatchingPreferences, sequenceProvider))) {
+                                && peptideAssumptionFilter.validatePeptide(peptide1, sequenceMatchingPreferences, searchParameters.getDigestionParameters())
+                                && peptideAssumptionFilter.validateModifications(peptide1, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getModificationParameters())
+                                && peptideAssumptionFilter.validatePrecursor(peptideAssumption1, spectrumKey, spectrumFactory, searchParameters)
+                                && peptideAssumptionFilter.validateProteins(peptide1, sequenceMatchingPreferences, sequenceProvider)) {
 
                             PSParameter psParameter1 = (PSParameter) peptideAssumption1.getUrParam(PSParameter.dummy);
 
@@ -187,15 +185,15 @@ public class BestMatchSelection {
                                     }
                                 }
                             }
-                            
+
                             psmTargetDecoyMap.put(p, PeptideUtils.isDecoy(peptide1, sequenceProvider));
 
-                            TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, TreeMap<Double, TreeMap<Long, PeptideAssumption>>>>> pMap = peptideAssumptions.get(p);
+                            TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, TreeMap<Double, TreeMap<Long, PeptideAssumption>>>>> pMap = validAssumptions.get(p);
 
                             if (pMap == null) {
 
                                 pMap = new TreeMap<>();
-                                peptideAssumptions.put(p, pMap);
+                                validAssumptions.put(p, pMap);
 
                             }
 
@@ -238,10 +236,23 @@ public class BestMatchSelection {
 
                                     PeptideAssumption peptideAssumption = assumptionMap.firstEntry().getValue();
                                     Peptide peptide = peptideAssumption.getPeptide();
-                                    SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption,
-                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-                                    Map<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, spectrum, peptide,
-                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, true);
+                                    SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(
+                                            spectrum.getSpectrumKey(),
+                                            peptideAssumption,
+                                            modificationParameters,
+                                            sequenceProvider,
+                                            modificationSequenceMatchingParameters
+                                    );
+                                    Map<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(
+                                            annotationPreferences,
+                                            specificAnnotationPreferences,
+                                            spectrum,
+                                            peptide,
+                                            modificationParameters,
+                                            sequenceProvider,
+                                            modificationSequenceMatchingParameters,
+                                            true
+                                    );
                                     int nIons = coveredAminoAcids.size();
                                     nSeMap.put(nIons, coverageMap);
                                     nSeMap.remove(-1);
@@ -249,10 +260,23 @@ public class BestMatchSelection {
                                 }
 
                                 Peptide peptide = peptideAssumption1.getPeptide();
-                                SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption1,
-                                        modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-                                Map<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, spectrum, peptide,
-                                        modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, true);
+                                SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(
+                                        spectrum.getSpectrumKey(),
+                                        peptideAssumption1,
+                                        modificationParameters,
+                                        sequenceProvider,
+                                        modificationSequenceMatchingParameters
+                                );
+                                Map<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(
+                                        annotationPreferences,
+                                        specificAnnotationPreferences,
+                                        spectrum,
+                                        peptide,
+                                        modificationParameters,
+                                        sequenceProvider,
+                                        modificationSequenceMatchingParameters,
+                                        true
+                                );
                                 int nIons = coveredAminoAcids.size();
 
                                 coverageMap = nSeMap.get(nIons);
@@ -278,13 +302,24 @@ public class BestMatchSelection {
                                         }
 
                                         PeptideAssumption peptideAssumption = assumptionMap.firstEntry().getValue();
-                                        double massError = Math.abs(peptideAssumption.getDeltaMass(spectrum.getPrecursor().getMz(), searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
+                                        double massError = Math.abs(
+                                                peptideAssumption.getDeltaMass(
+                                                        spectrum.getPrecursor().getMz(),
+                                                        searchParameters.isPrecursorAccuracyTypePpm(),
+                                                        searchParameters.getMinIsotopicCorrection(),
+                                                        searchParameters.getMaxIsotopicCorrection()
+                                                ));
                                         coverageMap.put(massError, assumptionMap);
                                         coverageMap.remove(-1.0);
 
                                     }
 
-                                    double massError = Math.abs(peptideAssumption1.getDeltaMass(spectrum.getPrecursor().getMz(), searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
+                                    double massError = Math.abs(peptideAssumption1.getDeltaMass(
+                                            spectrum.getPrecursor().getMz(),
+                                            searchParameters.isPrecursorAccuracyTypePpm(),
+                                            searchParameters.getMinIsotopicCorrection(),
+                                            searchParameters.getMaxIsotopicCorrection()
+                                    ));
                                     assumptionMap = coverageMap.get(massError);
 
                                     if (assumptionMap == null) {
@@ -294,7 +329,10 @@ public class BestMatchSelection {
 
                                     }
 
-                                    assumptionMap.put(peptideAssumption1.getPeptide().getKey(), peptideAssumption1);
+                                    assumptionMap.put(
+                                            peptideAssumption1.getPeptide().getKey(),
+                                            peptideAssumption1
+                                    );
 
                                 }
                             }
@@ -307,51 +345,39 @@ public class BestMatchSelection {
             }
         }
 
-        if (!peptideAssumptions.isEmpty()) {
+        if (!validAssumptions.isEmpty()) {
 
             PeptideAssumption bestPeptideAssumption = null;
             double retainedP = 0;
 
             selectionMainLoop:
 
-            for (Entry<Double, TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, TreeMap<Double, TreeMap<Long, PeptideAssumption>>>>>> peptideAssumptionsEntry : peptideAssumptions.entrySet()) {
+            for (Entry<Double, TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, TreeMap<Double, TreeMap<Long, PeptideAssumption>>>>>> peptideAssumptionsEntry : validAssumptions.entrySet()) {
 
                 retainedP = peptideAssumptionsEntry.getKey();
                 TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, TreeMap<Double, TreeMap<Long, PeptideAssumption>>>>> pMap = peptideAssumptionsEntry.getValue();
 
-                for (Entry<Integer, TreeMap<Integer, TreeMap<Integer, TreeMap<Double, TreeMap<Long, PeptideAssumption>>>>> pEntry : pMap.descendingMap().entrySet()) {
+                for (TreeMap<Integer, TreeMap<Integer, TreeMap<Double, TreeMap<Long, PeptideAssumption>>>> proteinMaxMap : pMap.descendingMap().values()) {
 
-                    TreeMap<Integer, TreeMap<Integer, TreeMap<Double, TreeMap<Long, PeptideAssumption>>>> proteinMaxMap = pEntry.getValue();
+                    for (TreeMap<Integer, TreeMap<Double, TreeMap<Long, PeptideAssumption>>> nSeMap : proteinMaxMap.descendingMap().values()) {
 
-                    for (Entry<Integer, TreeMap<Integer, TreeMap<Double, TreeMap<Long, PeptideAssumption>>>> proteinMaxEntry : proteinMaxMap.descendingMap().entrySet()) {
+                        for (TreeMap<Double, TreeMap<Long, PeptideAssumption>> coverageMap : nSeMap.descendingMap().values()) {
 
-                        TreeMap<Integer, TreeMap<Double, TreeMap<Long, PeptideAssumption>>> nSeMap = proteinMaxEntry.getValue();
-
-                        for (Entry<Integer, TreeMap<Double, TreeMap<Long, PeptideAssumption>>> nSeEntry : nSeMap.descendingMap().entrySet()) {
-
-                            TreeMap<Double, TreeMap<Long, PeptideAssumption>> coverageMap = nSeEntry.getValue();
-
-                            for (Entry<Double, TreeMap<Long, PeptideAssumption>> coverageEntry : coverageMap.entrySet()) {
-
-                                TreeMap<Long, PeptideAssumption> assumptionsMap = coverageEntry.getValue();
+                            for (TreeMap<Long, PeptideAssumption> assumptionsMap : coverageMap.values()) {
 
                                 for (Entry<Long, PeptideAssumption> assumptionsEntry : assumptionsMap.entrySet()) {
 
-                                    PeptideAssumption peptideAssumption = assumptionsEntry.getValue();
+                                    bestPeptideAssumption = assumptionsEntry.getValue();
 
-                                    if (idFilter.validateProteins(peptideAssumption.getPeptide(), sequenceMatchingPreferences, sequenceProvider)) {
+                                    break selectionMainLoop;
 
-                                        bestPeptideAssumption = peptideAssumption;
-                                        break selectionMainLoop;
-
-                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-            
+
             if (bestPeptideAssumption != null) {
 
                 if (multiSE) {
@@ -440,17 +466,17 @@ public class BestMatchSelection {
                 ModificationMatch[] seModificationMatches = sePeptide.getVariableModifications();
 
                 if (seModificationMatches.length > 0) {
-                    
+
                     psPeptide.setVariableModifications(
                             Arrays.stream(seModificationMatches)
-                            .map(modMatch -> new ModificationMatch(modMatch.getModification(), modMatch.getSite()))
-                            .toArray(ModificationMatch[]::new)
+                                    .map(modMatch -> new ModificationMatch(modMatch.getModification(), modMatch.getSite()))
+                                    .toArray(ModificationMatch[]::new)
                     );
                 }
 
                 psPeptide.setProteinMapping(sePeptide.getProteinMapping());
                 psPeptide.estimateTheoreticMass(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-                
+
                 PeptideAssumption psAssumption = new PeptideAssumption(psPeptide, 1, Advocate.peptideShaker.getIndex(), bestPeptideAssumption.getIdentificationCharge(), retainedP);
 
                 spectrumMatch.setBestPeptideAssumption(psAssumption);
@@ -467,9 +493,12 @@ public class BestMatchSelection {
 
         // map of the tag first hits: score -> assumptions
         TreeMap<Double, ArrayList<TagAssumption>> tagAssumptions = spectrumMatch.getAllTagAssumptions()
-                .collect(Collectors.groupingBy(TagAssumption::getScore,
-                        TreeMap::new,
-                        Collectors.toCollection(ArrayList::new)));
+                .collect(
+                        Collectors.groupingBy(
+                                TagAssumption::getScore,
+                                TreeMap::new,
+                                Collectors.toCollection(ArrayList::new)
+                        ));
 
         if (!tagAssumptions.isEmpty()) {
 
@@ -487,7 +516,7 @@ public class BestMatchSelection {
                     psmParameter.setScore(bestEvalue);
 
                 }
-                
+
                 psmParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
 
                 PSParameter matchParameter = (PSParameter) bestAssumption.getUrParam(psmParameter);
@@ -516,8 +545,14 @@ public class BestMatchSelection {
      *
      * @return a first hit from the list of equally scoring peptide matches
      */
-    public static PeptideAssumption getBestHit(String spectrumKey, ArrayList<PeptideAssumption> firstHits, HashMap<String, Integer> proteinCount,
-            SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator spectrumAnnotator) {
+    public static PeptideAssumption getBestHit(
+            String spectrumKey,
+            ArrayList<PeptideAssumption> firstHits,
+            HashMap<String, Integer> proteinCount,
+            SequenceProvider sequenceProvider,
+            IdentificationParameters identificationParameters,
+            PeptideSpectrumAnnotator spectrumAnnotator
+    ) {
 
         if (firstHits.size() == 1) {
             return firstHits.get(0);
@@ -575,10 +610,23 @@ public class BestMatchSelection {
         for (PeptideAssumption peptideAssumption : firstHits) {
 
             Peptide peptide = peptideAssumption.getPeptide();
-            SpecificAnnotationParameters specificAnnotationPreferences = annotationParameters.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption,
-                    modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-            Map<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationParameters, specificAnnotationPreferences, spectrum, peptide,
-                    modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, true);
+            SpecificAnnotationParameters specificAnnotationPreferences = annotationParameters.getSpecificAnnotationParameters(
+                    spectrum.getSpectrumKey(),
+                    peptideAssumption,
+                    modificationParameters,
+                    sequenceProvider,
+                    modificationSequenceMatchingParameters
+            );
+            Map<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(
+                    annotationParameters,
+                    specificAnnotationPreferences,
+                    spectrum,
+                    peptide,
+                    modificationParameters,
+                    sequenceProvider,
+                    modificationSequenceMatchingParameters,
+                    true
+            );
             int nAas = coveredAminoAcids.size();
 
             if (nAas > maxCoveredAminoAcids) {
@@ -617,7 +665,13 @@ public class BestMatchSelection {
 
         for (PeptideAssumption peptideAssumption : firstHits) {
 
-            double massError = Math.abs(peptideAssumption.getDeltaMass(spectrum.getPrecursor().getMz(), searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
+            double massError = Math.abs(
+                    peptideAssumption.getDeltaMass(
+                            spectrum.getPrecursor().getMz(),
+                            searchParameters.isPrecursorAccuracyTypePpm(),
+                            searchParameters.getMinIsotopicCorrection(),
+                            searchParameters.getMaxIsotopicCorrection()
+                    ));
 
             if (massError < minMassError) {
 

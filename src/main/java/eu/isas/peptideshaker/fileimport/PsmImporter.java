@@ -199,9 +199,17 @@ public class PsmImporter {
      * @param sequenceProvider the protein sequence provider
      * @param fastaMapper the FASTA mapper used to map peptides to proteins
      */
-    public PsmImporter(IdentificationParameters identificationParameters, IdfileReader fileReader, File idFile,
-            Identification identification, InputMap inputMap, HashMap<String, Integer> proteinCount, HashSet<String> singleProteinList,
-            SequenceProvider sequenceProvider, FastaMapper fastaMapper) {
+    public PsmImporter(
+            IdentificationParameters identificationParameters,
+            IdfileReader fileReader,
+            File idFile,
+            Identification identification,
+            InputMap inputMap,
+            HashMap<String, Integer> proteinCount,
+            HashSet<String> singleProteinList,
+            SequenceProvider sequenceProvider,
+            FastaMapper fastaMapper
+    ) {
 
         this.identificationParameters = identificationParameters;
         this.fileReader = fileReader;
@@ -223,7 +231,11 @@ public class PsmImporter {
      * @param waitingHandler waiting handler to display progress and allow
      * canceling the import
      */
-    public void importPsms(LinkedList<SpectrumMatch> idFileSpectrumMatches, int nThreads, WaitingHandler waitingHandler) {
+    public void importPsms(
+            LinkedList<SpectrumMatch> idFileSpectrumMatches,
+            int nThreads,
+            WaitingHandler waitingHandler
+    ) {
 
         idFileSpectrumMatches.stream()
                 .forEach(spectrumMatch -> importPsm(spectrumMatch, new PeptideSpectrumAnnotator(), waitingHandler));
@@ -239,25 +251,32 @@ public class PsmImporter {
      * @param waitingHandler waiting handler to display progress and allow
      * canceling the import
      */
-    private void importPsm(SpectrumMatch algorithmMatch, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler) {
+    private void importPsm(
+            SpectrumMatch algorithmMatch,
+            PeptideSpectrumAnnotator peptideSpectrumAnnotator,
+            WaitingHandler waitingHandler
+    ) {
 
         nPSMs++;
 
         importAssumptions(algorithmMatch, peptideSpectrumAnnotator, waitingHandler);
 
-        long spectrumMatchKey = algorithmMatch.getKey();
+        if (algorithmMatch.hasPeptideAssumption() || algorithmMatch.hasTagAssumption()) {
 
-        SpectrumMatch dbMatch = identification.getSpectrumMatch(spectrumMatchKey);
+            long spectrumMatchKey = algorithmMatch.getKey();
 
-        if (dbMatch != null) {
+            SpectrumMatch dbMatch = identification.getSpectrumMatch(spectrumMatchKey);
 
-            mergePeptideAssumptions(algorithmMatch.getPeptideAssumptionsMap(), dbMatch.getPeptideAssumptionsMap());
-            mergeTagAssumptions(algorithmMatch.getTagAssumptionsMap(), dbMatch.getTagAssumptionsMap());
+            if (dbMatch != null) {
 
-        } else {
+                mergePeptideAssumptions(algorithmMatch.getPeptideAssumptionsMap(), dbMatch.getPeptideAssumptionsMap());
+                mergeTagAssumptions(algorithmMatch.getTagAssumptionsMap(), dbMatch.getTagAssumptionsMap());
 
-            identification.addObject(algorithmMatch.getKey(), algorithmMatch);
+            } else {
 
+                identification.addObject(algorithmMatch.getKey(), algorithmMatch);
+
+            }
         }
 
         if (waitingHandler.isRunCanceled()) {
@@ -272,7 +291,10 @@ public class PsmImporter {
      * @param matchAssumptions the match assumptions
      * @param combinedAssumptions the combined assumptions
      */
-    private void mergeTagAssumptions(HashMap<Integer, TreeMap<Double, ArrayList<TagAssumption>>> matchAssumptions, HashMap<Integer, TreeMap<Double, ArrayList<TagAssumption>>> combinedAssumptions) {
+    private void mergeTagAssumptions(
+            HashMap<Integer, TreeMap<Double, ArrayList<TagAssumption>>> matchAssumptions,
+            HashMap<Integer, TreeMap<Double, ArrayList<TagAssumption>>> combinedAssumptions
+    ) {
 
         for (Entry<Integer, TreeMap<Double, ArrayList<TagAssumption>>> entry : matchAssumptions.entrySet()) {
 
@@ -311,7 +333,10 @@ public class PsmImporter {
      * @param matchAssumptions the match assumptions
      * @param combinedAssumptions the combined assumptions
      */
-    private void mergePeptideAssumptions(HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> matchAssumptions, HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> combinedAssumptions) {
+    private void mergePeptideAssumptions(
+            HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> matchAssumptions, 
+            HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> combinedAssumptions
+    ) {
 
         for (Entry<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> entry : matchAssumptions.entrySet()) {
 
@@ -357,7 +382,11 @@ public class PsmImporter {
      * @param waitingHandler waiting handler to display progress and allow
      * canceling the import
      */
-    private void importAssumptions(SpectrumMatch spectrumMatch, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler) {
+    private void importAssumptions(
+            SpectrumMatch spectrumMatch, 
+            PeptideSpectrumAnnotator peptideSpectrumAnnotator, 
+            WaitingHandler waitingHandler
+    ) {
 
         PeptideAssumptionFilter peptideAssumptionFilter = identificationParameters.getPeptideAssumptionFilter();
         SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
@@ -683,8 +712,7 @@ public class PsmImporter {
 
                     checkPeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHit);
 
-                }
-                if (firstPeptideHit == null) {
+                } else {
 
                     // Check if a peptide with no protein can be a good candidate
                     if (firstPeptideHitNoProtein != null) {
@@ -728,10 +756,15 @@ public class PsmImporter {
      * match
      * @param searchParameters the search parameters
      */
-    private void modificationLocalization(Peptide peptide, HashMap<Integer, ArrayList<String>> expectedNames, HashMap<ModificationMatch, ArrayList<String>> modNames, SearchParameters searchParameters) {
-        
+    private void modificationLocalization(
+            Peptide peptide, 
+            HashMap<Integer, ArrayList<String>> expectedNames, 
+            HashMap<ModificationMatch, ArrayList<String>> modNames, 
+            SearchParameters searchParameters
+    ) {
+
         ModificationParameters modificationParameters = searchParameters.getModificationParameters();
-        
+
         int peptideLength = peptide.getSequence().length();
 
         // If a terminal modification cannot be elsewhere lock the terminus
@@ -1244,17 +1277,33 @@ public class PsmImporter {
      * @param spectrumKey the key of the spectrum match
      * @param peptideAssumption the peptide assumption
      */
-    private synchronized void checkPeptidesMassErrorsAndCharges(String spectrumKey, PeptideAssumption peptideAssumption) {
+    private synchronized void checkPeptidesMassErrorsAndCharges(
+            String spectrumKey, 
+            PeptideAssumption peptideAssumption
+    ) {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
         double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
 
-        maxTagErrorPpm = Math.max(maxTagErrorPpm,
-                Math.abs(peptideAssumption.getDeltaMass(precursorMz, true, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection())));
+        maxTagErrorPpm = Math.max(
+                maxTagErrorPpm,
+                Math.abs(
+                        peptideAssumption.getDeltaMass(
+                                precursorMz, 
+                                true, 
+                                searchParameters.getMinIsotopicCorrection(), 
+                                searchParameters.getMaxIsotopicCorrection()
+                        )));
 
-        maxTagErrorDa = Math.max(maxTagErrorDa,
-                Math.abs(peptideAssumption.getDeltaMass(precursorMz, false, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection())));
+        maxTagErrorDa = Math.max(
+                maxTagErrorDa,
+                Math.abs(peptideAssumption.getDeltaMass(
+                        precursorMz, 
+                        false, 
+                        searchParameters.getMinIsotopicCorrection(), 
+                        searchParameters.getMaxIsotopicCorrection()
+                )));
 
         charges.add(peptideAssumption.getIdentificationCharge());
 
@@ -1288,7 +1337,10 @@ public class PsmImporter {
      * @param spectrumKey the key of the spectrum match
      * @param tagAssumption the tag assumption
      */
-    private synchronized void checkTagMassErrorsAndCharge(String spectrumKey, TagAssumption tagAssumption) {
+    private synchronized void checkTagMassErrorsAndCharge(
+            String spectrumKey, 
+            TagAssumption tagAssumption
+    ) {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
@@ -1361,7 +1413,10 @@ public class PsmImporter {
      *
      * @return the mass of the modification
      */
-    private double getRefMass(String seModName, SearchParameters searchParameters) {
+    private double getRefMass(
+            String seModName, 
+            SearchParameters searchParameters
+    ) {
 
         // Try utilities modifications
         Modification modification = modificationFactory.getModification(seModName);
@@ -1381,11 +1436,11 @@ public class PsmImporter {
 
                     int omssaIndex = Integer.parseInt(seModName);
                     OmssaParameters omssaParameters = (OmssaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.omssa.getIndex());
-                    
+
                     if (!omssaParameters.hasModificationIndexes()) {
                         throw new IllegalArgumentException("OMSSA modification indexes not set in the search parameters.");
                     }
-                    
+
                     String omssaName = omssaParameters.getModificationName(omssaIndex);
 
                     if (omssaName != null) {
@@ -1400,10 +1455,10 @@ public class PsmImporter {
                 } catch (Exception e) {
                     // could not be parsed as OMSSA modification
                 }
-                
+
                 // Try Andromeda indexes
                 try {
-                    
+
                     int andromedaIndex = Integer.parseInt(seModName);
                     AndromedaParameters andromedaParameters = (AndromedaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.andromeda.getIndex());
 
@@ -1412,7 +1467,7 @@ public class PsmImporter {
                     }
 
                     String andromedaName = andromedaParameters.getModificationName(andromedaIndex);
-                    
+
                     if (andromedaName != null) {
 
                         modification = modificationFactory.getModification(andromedaName);
@@ -1421,7 +1476,7 @@ public class PsmImporter {
                             return modification.getMass();
                         }
                     }
-                    
+
                 } catch (Exception e) {
                     // could not be parsed as Andromeda modification
                 }

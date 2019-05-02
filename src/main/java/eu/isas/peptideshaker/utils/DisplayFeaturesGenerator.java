@@ -594,7 +594,13 @@ public class DisplayFeaturesGenerator {
      *
      * @return the tagged peptide sequence
      */
-    public String getTaggedPeptideSequence(Peptide peptide, PSModificationScores modificationScores, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
+    public String getTaggedPeptideSequence(
+            Peptide peptide, 
+            PSModificationScores modificationScores, 
+            boolean useHtmlColorCoding, 
+            boolean includeHtmlStartEndTags, 
+            boolean useShortName
+    ) {
 
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
@@ -624,7 +630,11 @@ public class DisplayFeaturesGenerator {
      * @return a map of filtered modifications based on the user display
      * preferences
      */
-    public static String[] getFilteredConfidentModificationsSites(PSModificationScores modificationScores, HashSet<String> displayedModifications, int peptideLength) {
+    public static String[] getFilteredConfidentModificationsSites(
+            PSModificationScores modificationScores, 
+            HashSet<String> displayedModifications, 
+            int peptideLength
+    ) {
 
         String[] result = new String[peptideLength + 2];
 
@@ -652,7 +662,11 @@ public class DisplayFeaturesGenerator {
      * @return a map of filtered modifications based on the user display
      * preferences
      */
-    public static String[] getFilteredAmbiguousModificationsRepresentativeSites(PSModificationScores modificationScores, HashSet<String> displayedModifications, int peptideLength) {
+    public static String[] getFilteredAmbiguousModificationsRepresentativeSites(
+            PSModificationScores modificationScores, 
+            HashSet<String> displayedModifications, 
+            int peptideLength
+    ) {
 
         String[] result = new String[peptideLength + 2];
 
@@ -682,10 +696,14 @@ public class DisplayFeaturesGenerator {
      * @return a map of filtered modifications based on the user display
      * preferences
      */
-    public static String[] getFilteredAmbiguousModificationsSecondarySites(PSModificationScores modificationScores, HashSet<String> displayedModifications, int peptideLength) {
+    public static String[] getFilteredAmbiguousModificationsSecondarySites(
+            PSModificationScores modificationScores, 
+            HashSet<String> displayedModifications, 
+            int peptideLength
+    ) {
 
         String[] result = new String[peptideLength + 2];
-
+        
         for (int representativeSite : modificationScores.getRepresentativeSites()) {
 
             HashMap<Integer, HashSet<String>> modificationsAtSite = modificationScores.getAmbiguousModificationsAtRepresentativeSite(representativeSite);
@@ -764,9 +782,16 @@ public class DisplayFeaturesGenerator {
      *
      * @return the residue annotation for a given protein
      */
-    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(long proteinMatchKey, SequenceMatchingParameters sequenceMatchingPreferences,
-            IdentificationFeaturesGenerator identificationFeaturesGenerator, Metrics metrics, Identification identification,
-            boolean allPeptides, SearchParameters searchParameters, boolean enzymatic) {
+    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(
+            long proteinMatchKey, 
+            SequenceMatchingParameters sequenceMatchingPreferences,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator, 
+            Metrics metrics, 
+            Identification identification,
+            boolean allPeptides, 
+            SearchParameters searchParameters, 
+            boolean enzymatic
+    ) {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
         String sequence = sequenceProvider.getSequence(proteinMatch.getLeadingAccession());
