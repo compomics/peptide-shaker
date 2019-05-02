@@ -57,8 +57,9 @@ public class FastaExport {
                 sequenceProvider.getAccessions().stream()
                         .filter(accession -> include(accession, exportType, identification))
                         .forEach(accession -> {
+                            writer.write(">", false);
                             writer.writeLine(sequenceProvider.getHeader(accession));
-                            writer.writeLine(sequenceProvider.getSequence(accession));
+                            writer.write(sequenceProvider.getSequence(accession), true, true);
                         });
 
             }
