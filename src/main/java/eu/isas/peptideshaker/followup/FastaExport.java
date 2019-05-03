@@ -4,6 +4,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
+import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.io.flat.SimpleFileWriter;
 import java.io.File;
 import java.io.IOException;
@@ -30,8 +31,6 @@ public class FastaExport {
      * the process
      * @param accessionOnly if true only the accession of the protein will be
      * exported, if false the entire information in FASTA format
-     *
-     * @throws IOException thrown if an error occurs while writing the file.
      */
     public static void export(
             File destinationFile,
@@ -40,14 +39,16 @@ public class FastaExport {
             ExportType exportType,
             WaitingHandler waitingHandler,
             boolean accessionOnly
-    ) throws IOException {
+    ) {
 
         try (SimpleFileWriter writer = new SimpleFileWriter(destinationFile, false)) {
 
             if (accessionOnly) {
 
                 sequenceProvider.getAccessions().stream()
-                        .filter(accession -> include(accession, exportType, identification))
+                        .filter(
+                                accession -> !ProteinUtils.isDecoy(accession, sequenceProvider) && include(accession, exportType, identification)
+                        )
                         .forEach(accession -> {
                             writer.writeLine(accession);
                         });
@@ -55,13 +56,12 @@ public class FastaExport {
             } else {
 
                 sequenceProvider.getAccessions().stream()
-                        .filter(accession -> include(accession, exportType, identification))
-                        .forEach(accession -> {
-                            writer.write(">", false);
-                            writer.writeLine(sequenceProvider.getHeader(accession));
-                            writer.write(sequenceProvider.getSequence(accession), true, true);
-                        });
-
+                        .filter(
+                                accession -> !ProteinUtils.isDecoy(accession, sequenceProvider) && include(accession, exportType, identification)
+                        )
+                        .forEach(
+                                accession -> writer.writeLine(String.join("", ">", sequenceProvider.getHeader(accession)))
+                        );
             }
         }
     }
@@ -78,8 +78,8 @@ public class FastaExport {
      * included in the export
      */
     private static boolean include(
-            String accession, 
-            ExportType exportType, 
+            String accession,
+            ExportType exportType,
             Identification identification
     ) {
 
@@ -95,8 +95,12 @@ public class FastaExport {
 
             case non_validated:
                 return proteinGroups.stream()
-                        .map(key -> (PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy))
-                        .allMatch(psParameter -> !psParameter.getMatchValidationLevel().isValidated());
+                        .map(
+                                key -> (PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy
+                        ))
+                        .allMatch(
+                                psParameter -> !psParameter.getMatchValidationLevel().isValidated()
+                        );
 
             case validated_all_accessions:
                 return proteinGroups.stream()
