@@ -7,7 +7,6 @@ import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.io.flat.SimpleFileWriter;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 
 /**
@@ -51,6 +50,7 @@ public class FastaExport {
                         )
                         .forEach(accession -> {
                             writer.writeLine(accession);
+                            waitingHandler.increaseSecondaryProgressCounter();
                         });
 
             } else {
@@ -62,6 +62,7 @@ public class FastaExport {
                         .forEach(accession -> {
                             writer.writeLine(String.join("", ">", sequenceProvider.getHeader(accession)));
                             writer.write(sequenceProvider.getSequence(accession), true, true);
+                            waitingHandler.increaseSecondaryProgressCounter();
                         });
             }
         }

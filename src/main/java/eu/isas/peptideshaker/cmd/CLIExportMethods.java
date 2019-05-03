@@ -101,7 +101,7 @@ public class CLIExportMethods {
      *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
-     * @param sequenceProvider the fasta sequence provider
+     * @param sequenceProvider the FASTA sequence provider
      * @param waitingHandler a waiting handler to display progress
      * @param filteringPreferences the filtering preferences
      *
@@ -129,7 +129,7 @@ public class CLIExportMethods {
      *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
-     * @param sequenceProvider the fasta sequence provider
+     * @param sequenceProvider the FASTA sequence provider
      * @param waitingHandler a waiting handler to display progress
      * @param filteringPreferences the filtering preferences
      *
