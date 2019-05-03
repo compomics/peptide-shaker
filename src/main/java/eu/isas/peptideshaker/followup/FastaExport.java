@@ -59,9 +59,10 @@ public class FastaExport {
                         .filter(
                                 accession -> !ProteinUtils.isDecoy(accession, sequenceProvider) && include(accession, exportType, identification)
                         )
-                        .forEach(
-                                accession -> writer.writeLine(String.join("", ">", sequenceProvider.getHeader(accession)))
-                        );
+                        .forEach(accession -> {
+                            writer.writeLine(String.join("", ">", sequenceProvider.getHeader(accession)));
+                            writer.write(sequenceProvider.getSequence(accession), true, true);
+                        });
             }
         }
     }
@@ -97,7 +98,7 @@ public class FastaExport {
                 return proteinGroups.stream()
                         .map(
                                 key -> (PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy
-                        ))
+                                ))
                         .allMatch(
                                 psParameter -> !psParameter.getMatchValidationLevel().isValidated()
                         );
