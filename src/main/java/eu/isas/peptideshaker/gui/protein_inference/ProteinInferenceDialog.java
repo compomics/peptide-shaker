@@ -405,7 +405,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
         proteinMatchTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
         proteinMatchTable.getColumn("Enz").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
+                new ImageIcon(this.getClass().getResource("/icons/selected_green-new.png")),
                 null,
                 "Enzymatic", "Not Enzymatic"));
 

@@ -420,7 +420,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         filesTable.getColumn("Download").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
 
         filesTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
+                new ImageIcon(this.getClass().getResource("/icons/accept-new.png")),
                 null,
                 "Reshakeable", null));
 
@@ -866,7 +866,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
         dataTypeSeparatorLabel.setText("/");
 
-        clearProjectFiltersLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Error_3.png"))); // NOI18N
+        clearProjectFiltersLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/error-new.png"))); // NOI18N
         clearProjectFiltersLabel.setText("<html><a href=\"dummy\">Clear Project Filters</a></html>  ");
         clearProjectFiltersLabel.setToolTipText("Clear all project filters");
         clearProjectFiltersLabel.addMouseListener(new java.awt.event.MouseAdapter() {

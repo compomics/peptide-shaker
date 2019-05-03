@@ -185,7 +185,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                 JSparklinesTableCellRenderer.PlotType.barChart,
                 PlotOrientation.HORIZONTAL, 0.0, 100.0));
         goMappingsTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
+                new ImageIcon(this.getClass().getResource("/icons/selected_green-new.png")),
                 null,
                 "Selected", null));
 

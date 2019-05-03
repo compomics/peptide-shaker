@@ -386,7 +386,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
         otherProteinJTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
         otherProteinJTable.getColumn("Enz").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
+                new ImageIcon(this.getClass().getResource("/icons/selected_green-new.png")),
                 null,
                 "Enzymatic", "Not Enzymatic"));
 
@@ -402,7 +402,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
         retainedProteinJTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
         retainedProteinJTable.getColumn("Enz").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
+                new ImageIcon(this.getClass().getResource("/icons/selected_green-new.png")),
                 null,
                 "Enzymatic", "Not Enzymatic"));
 

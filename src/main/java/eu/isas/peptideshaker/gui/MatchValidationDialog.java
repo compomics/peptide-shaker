@@ -309,8 +309,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         qualityFiltersTable.getColumn("").setMaxWidth(50);
         qualityFiltersTable.getColumn(" ").setMaxWidth(50);
         qualityFiltersTable.getColumn(" ").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
-                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
+                new ImageIcon(this.getClass().getResource("/icons/accept-new.png")),
+                new ImageIcon(this.getClass().getResource("/icons/error-new.png")),
                 "Yes", "No"));
 
         int valid = 0;
