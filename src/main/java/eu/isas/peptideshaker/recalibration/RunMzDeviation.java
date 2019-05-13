@@ -281,16 +281,17 @@ public class RunMzDeviation {
             waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(spectrumFileName).size());
         }
 
-        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler, "spectrumFile == '" + spectrumFileName + "'");
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
         SpectrumMatch spectrumMatch;
 
         while ((spectrumMatch = psmIterator.next()) != null) {
-
             if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                 break;
             }
-
+            
             String spectrumKey = spectrumMatch.getSpectrumKey();
+            if (!Spectrum.getSpectrumFile(spectrumKey).equals(spectrumFileName)) continue;
+
 
             psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
 

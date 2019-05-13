@@ -460,12 +460,13 @@ public class PepXmlExport {
      */
     private void writeSpectrumQueries(SimpleXmlWriter sw, Identification identification, IdentificationParameters identificationParameters, String spectrumFile, WaitingHandler waitingHandler) throws IOException {
 
-        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler, "spectrumFile == '" + spectrumFile + "'");
+        SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
         SpectrumMatch spectrumMatch;
 
         while ((spectrumMatch = psmIterator.next()) != null) {
-
             String spectrumKey = spectrumMatch.getSpectrumKey();
+            if (!Spectrum.getSpectrumFile(spectrumKey).equals(spectrumFile)) continue;
+            
             String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
             StringBuilder spectrumQueryStart = new StringBuilder();
             spectrumQueryStart.append("<spectrum_query unique_search_id=\"").append(StringEscapeUtils.escapeHtml4(spectrumTitle)).append("\">");
