@@ -71,7 +71,7 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private ArrayList<File> modificationFiles = new ArrayList<>();
     /**
-     * A file where the input will be stored.
+     * A file where the input FASTA and mgf files are stored.
      */
     public final static String SEARCHGUI_INPUT = "searchGUI_input.txt";
     /**
@@ -627,7 +627,7 @@ public class NewDialog extends javax.swing.JDialog {
 
             this.setVisible(false);
             peptideShakerGUI.setVisible(true);
-            
+
             peptideShakerGUI.setIdentificationParameters(identificationParameters);
             peptideShakerGUI.setProcessingParameters(processingParameters);
             peptideShakerGUI.setDisplayParameters(displayPreferences);
@@ -832,7 +832,7 @@ public class NewDialog extends javax.swing.JDialog {
             peptideShakerGUI.getUtilitiesUserParameters().setDbFolder(folder);
             peptideShakerGUI.getLastSelectedFolder().setLastSelectedFolder(lastFolderKey, folder.getAbsolutePath());
 
-            fastaFileTxt.setText(fastaFile.getAbsolutePath());
+            fastaFileTxt.setText(fastaFile.getName());
 
             if (fastaFile.getName().contains(" ")) {
 
@@ -1495,7 +1495,7 @@ public class NewDialog extends javax.swing.JDialog {
             spectrumFilesTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             allValid = false;
         }
-        
+
         if (fastaFileTxt.getText() != null && fastaFileTxt.getText().length() > 0
                 && fastaFile != null
                 && fastaFile.exists()) {
@@ -1751,7 +1751,7 @@ public class NewDialog extends javax.swing.JDialog {
      * @param inputFiles the SearchGUI input files
      * @param dataFolders the data folders where to look in
      */
-    private void loadMgfs(ArrayList<File> inputFiles, ArrayList<File> dataFolders) {
+    private void loadFastaAndMgfFiles(ArrayList<File> inputFiles, ArrayList<File> dataFolders) {
 
         progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Loading Spectrum Files. Please Wait...");
@@ -1760,35 +1760,54 @@ public class NewDialog extends javax.swing.JDialog {
         ArrayList<String> names = new ArrayList<>();
         String missing = "";
         int nMissing = 0;
+        boolean fastaFileFound = false;
+        String tempFastaFile = null;
         for (File file : spectrumFiles) {
             names.add(file.getName());
         }
 
         for (String path : neededMgfs) {
-            File newFile = new File(path);
-            String name = newFile.getName();
-            if (!names.contains(newFile.getName())) {
-                if (newFile.exists()) {
-                    spectrumFiles.add(newFile);
-                } else {
-                    boolean found = false;
-                    for (File folder : dataFolders) {
-                        for (File file : folder.listFiles()) {
-                            if (file.getName().equals(name)) {
-                                spectrumFiles.add(file);
-                                found = true;
+            if (path.toLowerCase().endsWith(".mgf")) {
+                File newFile = new File(path);
+                String name = newFile.getName();
+                if (!names.contains(newFile.getName())) {
+                    if (newFile.exists()) {
+                        spectrumFiles.add(newFile);
+                    } else {
+                        boolean found = false;
+                        for (File folder : dataFolders) {
+                            for (File file : folder.listFiles()) {
+                                if (file.getName().equals(name)) {
+                                    spectrumFiles.add(file);
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (found) {
                                 break;
                             }
                         }
-                        if (found) {
-                            break;
+                        if (!found) {
+                            nMissing++;
+                            missing += newFile.getName() + "\n";
                         }
                     }
-                    if (!found) {
-                        nMissing++;
-                        missing += newFile.getName() + "\n";
-                    }
                 }
+            } else if (path.toLowerCase().endsWith(".fasta") || path.toLowerCase().endsWith(".fas")) {
+                tempFastaFile = path;
+                File newFile = new File(tempFastaFile);
+                if (newFile.exists()) {
+                    fastaFile = newFile;
+                    fastaFileTxt.setText(fastaFile.getName());
+                    fastaFileFound = true;
+                }
+            }
+        }
+
+        if (fastaFile == null && !fastaFileFound) {
+            if (tempFastaFile != null) {
+            JOptionPane.showMessageDialog(this, "FASTA file not found:\n" + tempFastaFile
+                    + "\nPlease locate it manually.", "FASTA File Not Found", JOptionPane.WARNING_MESSAGE);
             }
         }
 
@@ -2047,7 +2066,8 @@ public class NewDialog extends javax.swing.JDialog {
                 }
             }
 
-            loadMgfs(inputFiles, dataFolders);
+            // load the fasta and mgf files from searchGUI_input.txt 
+            loadFastaAndMgfFiles(inputFiles, dataFolders);
 
             idFilesTxt.setText(idFiles.size() + " file(s) selected");
 
@@ -2134,7 +2154,7 @@ public class NewDialog extends javax.swing.JDialog {
                 dataFolder = new File(destinationFolder, "fasta");
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
-                    
+
                     // try to locate the FASTA file
                     File[] tempFiles = dataFolder.listFiles();
                     for (File tempFile : tempFiles) {
