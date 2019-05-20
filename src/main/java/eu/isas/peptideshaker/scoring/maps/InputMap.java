@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * This class contains basic information about the hits as imported from the
@@ -86,23 +88,15 @@ public class InputMap implements Serializable {
     }
 
     /**
-     * Returns a sorted arraylist containing the indexes of the algorithms
-     * scored in this input map.
+     * Returns the indexes of the algorithms scored in this input map.
      *
      * @return a set containing the indexes of the algorithms scored in this
      * input map
      */
-    public ArrayList<Integer> getInputAlgorithmsSorted() {
-        Object[] keys = inputMap.keySet().toArray();
-        Arrays.sort(keys);
+    public TreeSet<Integer> getInputAlgorithmsSorted() {
 
-        ArrayList<Integer> sortedKeys = new ArrayList<>();
+        return new TreeSet<>(inputMap.keySet());
 
-        for (Object key : keys) {
-            sortedKeys.add((Integer) key); // @TODO: is there a quicker way of doing this..?
-        }
-
-        return sortedKeys;
     }
 
     /**
@@ -113,7 +107,9 @@ public class InputMap implements Serializable {
      *
      * @return the algorithm having an intermediate score for this file
      */
-    public Set<Integer> getIntermediateScoreInputAlgorithms(String fileName) {
+    public Set<Integer> getIntermediateScoreInputAlgorithms(
+            String fileName
+    ) {
         return intermediateScores.get(fileName).keySet();
     }
 
@@ -124,7 +120,9 @@ public class InputMap implements Serializable {
      *
      * @return the target decoy map of interest
      */
-    public TargetDecoyMap getTargetDecoyMap(int algorithm) {
+    public TargetDecoyMap getTargetDecoyMap(
+            int algorithm
+    ) {
         return inputMap.get(algorithm);
     }
 
@@ -137,12 +135,15 @@ public class InputMap implements Serializable {
      *
      * @return the target decoy map of interest
      */
-    public TargetDecoyMap getTargetDecoyMap(int algorithm, String fileName) {
+    public TargetDecoyMap getTargetDecoyMap(
+            int algorithm,
+            String fileName
+    ) {
+
         HashMap<String, TargetDecoyMap> algorithmInput = inputSpecificMap.get(algorithm);
-        if (algorithmInput == null) {
-            return null;
-        }
-        return algorithmInput.get(fileName);
+
+        return algorithmInput == null ? null : algorithmInput.get(fileName);
+
     }
 
     /**
@@ -152,15 +153,19 @@ public class InputMap implements Serializable {
      * @return the first target/decoy map of the input map
      */
     public TargetDecoyMap getMap() {
+
         if (inputMap == null || inputMap.isEmpty()) {
             throw new IllegalArgumentException("No algorithm input found.");
         }
+
         if (isMultipleAlgorithms()) {
             throw new IllegalArgumentException("Multiple search engine results found.");
         }
+
         for (TargetDecoyMap firstMap : inputMap.values()) {
             return firstMap;
         }
+
         return null;
     }
 
@@ -169,24 +174,33 @@ public class InputMap implements Serializable {
      *
      * @param waitingHandler the handler displaying feedback to the user
      */
-    public void estimateProbabilities(WaitingHandler waitingHandler) {
+    public void estimateProbabilities(
+            WaitingHandler waitingHandler
+    ) {
 
-        int max = getNEntries();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.resetSecondaryProgressCounter();
-        waitingHandler.setMaxSecondaryProgressCounter(max*2); // @TODO: progress goes to 200%...
+        waitingHandler.setMaxSecondaryProgressCounter(getNEntries() + getNEntriesSpecific());
 
         for (TargetDecoyMap hitmap : inputMap.values()) {
-            waitingHandler.increaseSecondaryProgressCounter();
+
             hitmap.estimateProbabilities(waitingHandler);
+
+            waitingHandler.increaseSecondaryProgressCounter();
+
             if (waitingHandler.isRunCanceled()) {
                 return;
             }
         }
+
         for (HashMap<String, TargetDecoyMap> algorithmMaps : inputSpecificMap.values()) {
+
             for (TargetDecoyMap targetDecoyMap : algorithmMaps.values()) {
-                waitingHandler.increaseSecondaryProgressCounter();
+
                 targetDecoyMap.estimateProbabilities(waitingHandler);
+
+                waitingHandler.increaseSecondaryProgressCounter();
+
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
@@ -194,6 +208,7 @@ public class InputMap implements Serializable {
         }
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+
     }
 
     /**
@@ -202,31 +217,16 @@ public class InputMap implements Serializable {
      *
      * @param searchEngine The search engine
      * @param eValue The e-value
+     *
      * @return the posterior error probability corresponding
      */
-    public double getProbability(int searchEngine, double eValue) {
-        return inputMap.get(searchEngine).getProbability(eValue);
-    }
+    public double getProbability(
+            int searchEngine,
+            double eValue
+    ) {
 
-    /**
-     * Returns a list of search engines indexed by utilities index presenting a
-     * suspicious input.
-     *
-     * @param minimalFDR the minimal FDR requested for a group
-     *
-     * @return a list of search engines presenting a suspicious input
-     */
-    public ArrayList<Integer> suspiciousInput(Double minimalFDR) {
-        ArrayList<Integer> result = new ArrayList<>();
-        if (inputMap.size() == 1) {
-            return result;
-        }
-        for (int key : inputMap.keySet()) {
-            if (inputMap.get(key).suspiciousInput(minimalFDR)) {
-                result.add(key);
-            }
-        }
-        return result;
+        return inputMap.get(searchEngine).getProbability(eValue);
+
     }
 
     /**
@@ -244,83 +244,150 @@ public class InputMap implements Serializable {
      * @param eValue The search engine e-value
      * @param isDecoy boolean indicating whether the hit was decoy
      */
-    public void addEntry(Integer searchEngine, String spectrumFileName, Double eValue, boolean isDecoy) {
+    public void addEntry(
+            int searchEngine,
+            String spectrumFileName,
+            double eValue,
+            boolean isDecoy
+    ) {
+
         TargetDecoyMap targetDecoyMap = inputMap.get(searchEngine);
+
         if (targetDecoyMap == null) {
+
             targetDecoyMap = createTargetDecoyInputMap(searchEngine);
         }
+
         targetDecoyMap.put(eValue, isDecoy);
+
         HashMap<String, TargetDecoyMap> algorithmMap = inputSpecificMap.get(searchEngine);
+
         if (algorithmMap == null) {
+
             algorithmMap = createIntermediateInputSpecificMap(searchEngine);
+
         }
+
         targetDecoyMap = algorithmMap.get(spectrumFileName);
+
         if (targetDecoyMap == null) {
+
             targetDecoyMap = createTargetDecoySpecificMap(spectrumFileName, algorithmMap);
+
         }
+
         targetDecoyMap.put(eValue, isDecoy);
+
     }
 
     /**
-     * Creates the target decoy input map for the given search engine unless already done by another thread.
-     * 
+     * Creates the target decoy input map for the given search engine unless
+     * already done by another thread.
+     *
      * @param searchEngine the index of the search engine
-     * 
+     *
      * @return the corresponding map
      */
-    private synchronized TargetDecoyMap createTargetDecoyInputMap(Integer searchEngine) {
+    private synchronized TargetDecoyMap createTargetDecoyInputMap(
+            int searchEngine
+    ) {
+
         TargetDecoyMap targetDecoyMap = inputMap.get(searchEngine);
+
         if (targetDecoyMap == null) {
+
             targetDecoyMap = new TargetDecoyMap();
             inputMap.put(searchEngine, targetDecoyMap);
+
         }
+
         return targetDecoyMap;
+
     }
 
     /**
-     * Creates the intermediate input specific map for the given search engine unless already done by another thread.
-     * 
+     * Creates the intermediate input specific map for the given search engine
+     * unless already done by another thread.
+     *
      * @param searchEngine the index of the search engine
-     * 
+     *
      * @return the corresponding map
      */
-    private synchronized HashMap<String, TargetDecoyMap> createIntermediateInputSpecificMap(Integer searchEngine) {
+    private synchronized HashMap<String, TargetDecoyMap> createIntermediateInputSpecificMap(
+            int searchEngine
+    ) {
+
         HashMap<String, TargetDecoyMap> algorithmMap = inputSpecificMap.get(searchEngine);
+
         if (algorithmMap == null) {
+
             algorithmMap = new HashMap<>(2);
             inputSpecificMap.put(searchEngine, algorithmMap);
+
         }
+
         return algorithmMap;
+
     }
 
     /**
-     * Creates the target-decoy input specific map for the given search engine unless already done by another thread.
-     * 
+     * Creates the target-decoy input specific map for the given search engine
+     * unless already done by another thread.
+     *
      * @param spectrumFileName the name of the spectrum file
      * @param algorithmMap the algorithm map
-     * 
+     *
      * @return the corresponding map
      */
-    private synchronized TargetDecoyMap createTargetDecoySpecificMap(String spectrumFileName, HashMap<String, TargetDecoyMap> algorithmMap) {
+    private synchronized TargetDecoyMap createTargetDecoySpecificMap(
+            String spectrumFileName,
+            HashMap<String, TargetDecoyMap> algorithmMap
+    ) {
+
         TargetDecoyMap targetDecoyMap = algorithmMap.get(spectrumFileName);
+
         if (targetDecoyMap == null) {
+
             targetDecoyMap = new TargetDecoyMap();
             algorithmMap.put(spectrumFileName, targetDecoyMap);
+
         }
+
         return targetDecoyMap;
+
     }
 
     /**
-     * Returns the number of entries.
+     * Returns the number of entries in the input map.
      *
      * @return the number of entries
      */
     public int getNEntries() {
-        int result = 0;
-        for (TargetDecoyMap targetDecoyMap : inputMap.values()) {
-            result += targetDecoyMap.getMapSize();
-        }
-        return result;
+
+        return inputMap.values().stream()
+                .mapToInt(
+                        map -> map.getMapSize()
+                )
+                .sum();
+
+    }
+
+    /**
+     * Returns the number of entries in the specific input map.
+     *
+     * @return the number of entries
+     */
+    public int getNEntriesSpecific() {
+
+        return inputSpecificMap.values().stream()
+                .flatMap(
+                        map -> map.values().stream()
+                )
+                .mapToInt(
+                        map -> map.getMapSize()
+                )
+                .sum();
+
     }
 
     /**
@@ -328,19 +395,33 @@ public class InputMap implements Serializable {
      *
      * @param fileName the file of interest
      */
-    public void resetAdvocateContributions(String fileName) {
+    public void resetAdvocateContributions(
+            String fileName
+    ) {
+
         if (advocateContribution == null) {
+
             advocateContribution = new HashMap<>();
+
         } else {
+
             for (HashMap<String, Integer> advocateMapping : advocateContribution.values()) {
+
                 advocateMapping.put(fileName, 0);
+
             }
         }
+
         if (advocateUniqueContribution == null) {
+
             advocateUniqueContribution = new HashMap<>();
+
         } else {
+
             for (HashMap<String, Integer> advocateMapping : advocateUniqueContribution.values()) {
+
                 advocateMapping.put(fileName, 0);
+
             }
         }
     }
@@ -349,25 +430,45 @@ public class InputMap implements Serializable {
      * Resets the advocate contribution mappings.
      */
     public void resetAdvocateContributions() {
+
         if (advocateContribution == null) {
+
             advocateContribution = new HashMap<>();
+
         } else {
+
             advocateContribution.clear();
+
         }
+
         if (advocateUniqueContribution == null) {
+
             advocateUniqueContribution = new HashMap<>();
+
         } else {
+
             advocateUniqueContribution.clear();
+
         }
+
         if (fileIdRate == null) {
+
             fileIdRate = new HashMap<>();
+
         } else {
+
             fileIdRate.clear();
+
         }
+
         if (peptideShakerUniqueContribution == null) {
+
             peptideShakerUniqueContribution = new HashMap<>();
+
         } else {
+
             peptideShakerUniqueContribution.clear();
+
         }
     }
 
@@ -379,29 +480,54 @@ public class InputMap implements Serializable {
      * @param unique boolean indicating whether the advocate was the only
      * advocate for the considered assumption
      */
-    public synchronized void addAdvocateContribution(Integer advocateId, String fileName, boolean unique) {
+    public synchronized void addAdvocateContribution(
+            int advocateId,
+            String fileName,
+            boolean unique
+    ) {
+
         HashMap<String, Integer> advocateContributions = advocateContribution.get(advocateId);
+
         if (advocateContributions == null) {
+
             advocateContributions = new HashMap<>();
             advocateContribution.put(advocateId, advocateContributions);
+
         }
+
         Integer contribution = advocateContributions.get(fileName);
+
         if (contribution == null) {
+
             advocateContributions.put(fileName, 1);
+
         } else {
+
             advocateContributions.put(fileName, contribution + 1);
+
         }
+
         if (unique) {
+
             HashMap<String, Integer> advocateUniqueContributions = advocateUniqueContribution.get(advocateId);
+
             if (advocateUniqueContributions == null) {
+
                 advocateUniqueContributions = new HashMap<>();
                 advocateUniqueContribution.put(advocateId, advocateUniqueContributions);
+
             }
+
             Integer uniqueContribution = advocateUniqueContributions.get(fileName);
+
             if (uniqueContribution == null) {
+
                 advocateUniqueContributions.put(fileName, 1);
+
             } else {
+
                 advocateUniqueContributions.put(fileName, uniqueContribution + 1);
+
             }
         }
     }
@@ -413,20 +539,35 @@ public class InputMap implements Serializable {
      * @param unique boolean indicating whether the advocate was the only
      * advocate for the considered assumption
      */
-    public synchronized void addPeptideShakerHit(String fileName, boolean unique) {
+    public synchronized void addPeptideShakerHit(
+            String fileName,
+            boolean unique
+    ) {
 
         Integer contribution = fileIdRate.get(fileName);
+
         if (contribution == null) {
+
             fileIdRate.put(fileName, 1);
+
         } else {
+
             fileIdRate.put(fileName, contribution + 1);
+
         }
+
         if (unique) {
+
             contribution = peptideShakerUniqueContribution.get(fileName);
+
             if (contribution == null) {
+
                 peptideShakerUniqueContribution.put(fileName, 1);
+
             } else {
+
                 peptideShakerUniqueContribution.put(fileName, contribution + 1);
+
             }
         }
     }
@@ -440,15 +581,26 @@ public class InputMap implements Serializable {
      *
      * @return the number of validated hits supported by this advocate
      */
-    public int getAdvocateContribution(Integer advocateId, String fileName) {
+    public int getAdvocateContribution(
+            int advocateId,
+            String fileName
+    ) {
+
         HashMap<String, Integer> advocateContributions = advocateContribution.get(advocateId);
+
         if (advocateContributions != null) {
+
             Integer contribution = advocateContributions.get(fileName);
+
             if (contribution != null) {
+
                 return contribution;
+
             }
         }
+
         return 0;
+
     }
 
     /**
@@ -458,15 +610,20 @@ public class InputMap implements Serializable {
      *
      * @return the number of validated hits supported by this advocate
      */
-    public int getPeptideShakerHits(String fileName) {
-        if (fileIdRate == null) { // Backward compatibility fix
-            return getAdvocateContribution(Advocate.peptideShaker.getIndex(), fileName);
-        }
+    public int getPeptideShakerHits(
+            String fileName
+    ) {
+
         Integer contribution = fileIdRate.get(fileName);
+
         if (contribution != null) {
+
             return contribution;
+
         }
+
         return 0;
+
     }
 
     /**
@@ -477,16 +634,28 @@ public class InputMap implements Serializable {
      *
      * @return the number of validated hits supported by this advocate
      */
-    public int getAdvocateContribution(Integer advocateId) {
+    public int getAdvocateContribution(
+            int advocateId
+    ) {
+
         HashMap<String, Integer> advocateContributions = advocateContribution.get(advocateId);
+
         if (advocateContributions != null) {
+
             int contribution = 0;
+
             for (int tempContribution : advocateContributions.values()) {
+
                 contribution += tempContribution;
+
             }
+
             return contribution;
+
         }
+
         return 0;
+
     }
 
     /**
@@ -497,14 +666,16 @@ public class InputMap implements Serializable {
      */
     public int getPeptideShakerHits() {
 
-        if (fileIdRate == null) { // Backward compatibility fix
-            return getAdvocateContribution(Advocate.peptideShaker.getIndex());
-        }
         int contribution = 0;
+
         for (int tempContribution : fileIdRate.values()) {
+
             contribution += tempContribution;
+
         }
+
         return contribution;
+
     }
 
     /**
@@ -516,15 +687,26 @@ public class InputMap implements Serializable {
      *
      * @return the number of validated hits uniquely supported by this advocate
      */
-    public int getAdvocateUniqueContribution(Integer advocateId, String fileName) {
+    public int getAdvocateUniqueContribution(
+            int advocateId,
+            String fileName
+    ) {
+
         HashMap<String, Integer> advocateContributions = advocateUniqueContribution.get(advocateId);
+
         if (advocateContributions != null) {
+
             Integer contribution = advocateContributions.get(fileName);
+
             if (contribution != null) {
+
                 return contribution;
+
             }
         }
+
         return 0;
+
     }
 
     /**
@@ -535,15 +717,20 @@ public class InputMap implements Serializable {
      *
      * @return the number of validated hits uniquely supported by PeptideShaker
      */
-    public int getPeptideShakerUniqueContribution(String fileName) {
-        if (peptideShakerUniqueContribution == null) { // Backward compatibility fix
-            return getAdvocateUniqueContribution(Advocate.peptideShaker.getIndex(), fileName);
-        }
+    public int getPeptideShakerUniqueContribution(
+            String fileName
+    ) {
+
         Integer contribution = peptideShakerUniqueContribution.get(fileName);
+
         if (contribution != null) {
+
             return contribution;
+
         }
+
         return 0;
+
     }
 
     /**
@@ -554,16 +741,17 @@ public class InputMap implements Serializable {
      *
      * @return the number of validated hits uniquely supported by this advocate
      */
-    public int getAdvocateUniqueContribution(Integer advocateId) {
+    public int getAdvocateUniqueContribution(
+            int advocateId
+    ) {
+
         HashMap<String, Integer> advocateContributions = advocateUniqueContribution.get(advocateId);
-        if (advocateContributions != null) {
-            int contribution = 0;
-            for (int tempContribution : advocateContributions.values()) {
-                contribution += tempContribution;
-            }
-            return contribution;
-        }
-        return 0;
+
+        return advocateContributions == null ? 0
+                : advocateContributions.values().stream()
+                        .mapToInt(a -> a)
+                        .sum();
+
     }
 
     /**
@@ -573,14 +761,11 @@ public class InputMap implements Serializable {
      * @return the number of validated hits uniquely supported by this advocate
      */
     public int getPeptideShakerUniqueContribution() {
-        if (peptideShakerUniqueContribution == null) { // Backward compatibility fix
-            return getAdvocateUniqueContribution(Advocate.peptideShaker.getIndex());
-        }
-        int contribution = 0;
-        for (int tempContribution : peptideShakerUniqueContribution.values()) {
-            contribution += tempContribution;
-        }
-        return contribution;
+        
+        return peptideShakerUniqueContribution.values().stream()
+                .mapToInt(a -> a)
+                .sum();
+        
     }
 
     /**
@@ -589,11 +774,11 @@ public class InputMap implements Serializable {
      * @return all target decoy maps contained in this mapping
      */
     public ArrayList<TargetDecoyMap> getTargetDecoyMaps() {
-        ArrayList<TargetDecoyMap> result = new ArrayList<>(inputMap.values());
-        for (HashMap<String, TargetDecoyMap> advocateMapping : inputSpecificMap.values()) {
-            result.addAll(advocateMapping.values());
-        }
-        return result;
+        
+        return inputSpecificMap.values().stream()
+                .flatMap(advocateMapping -> advocateMapping.values().stream())
+                .collect(Collectors.toCollection(ArrayList::new));
+        
     }
 
     /**
@@ -603,7 +788,9 @@ public class InputMap implements Serializable {
      * present in this map
      */
     public boolean hasAdvocateContribution() {
+        
         return advocateContribution != null;
+    
     }
 
     /**
@@ -617,34 +804,41 @@ public class InputMap implements Serializable {
      * protein
      * @param psmScoringPreferences the psm scoring preferences
      */
-    public void setIntermediateScore(String fileName, int advocateIndex, int scoreIndex, double score, boolean decoy, PsmScoringParameters psmScoringPreferences) {
-        
+    public void setIntermediateScore(
+            String fileName, 
+            int advocateIndex, 
+            int scoreIndex, 
+            double score, 
+            boolean decoy, 
+            PsmScoringParameters psmScoringPreferences
+    ) {
+
         HashMap<Integer, HashMap<Integer, TargetDecoyMap>> advocateMap = intermediateScores.get(fileName);
-        
+
         if (advocateMap == null) {
-        
+
             advocateMap = createIntermediateScoreMap(fileName);
-        
+
         }
-        
+
         HashMap<Integer, TargetDecoyMap> scoreMap = advocateMap.get(advocateIndex);
-        
+
         if (scoreMap == null) {
-        
+
             scoreMap = createIntermediateScoreMap(advocateIndex, advocateMap);
-        
+
         }
-        
+
         TargetDecoyMap targetDecoyMap = scoreMap.get(scoreIndex);
-        
+
         if (targetDecoyMap == null) {
-        
+
             targetDecoyMap = createTargetDecoyMap(scoreIndex, scoreMap, psmScoringPreferences);
-        
+
         }
-        
+
         targetDecoyMap.put(score, decoy);
-    
+
     }
 
     /**
@@ -655,13 +849,21 @@ public class InputMap implements Serializable {
      *
      * @return the intermediate score map
      */
-    private synchronized HashMap<Integer, HashMap<Integer, TargetDecoyMap>> createIntermediateScoreMap(String fileName) {
+    private synchronized HashMap<Integer, HashMap<Integer, TargetDecoyMap>> createIntermediateScoreMap(
+            String fileName
+    ) {
+    
         HashMap<Integer, HashMap<Integer, TargetDecoyMap>> advocateMap = intermediateScores.get(fileName);
+        
         if (advocateMap == null) {
+        
             advocateMap = new HashMap<>();
             intermediateScores.put(fileName, advocateMap);
+        
         }
+        
         return advocateMap;
+    
     }
 
     /**
@@ -673,13 +875,22 @@ public class InputMap implements Serializable {
      *
      * @return the intermediate score map
      */
-    private synchronized HashMap<Integer, TargetDecoyMap> createIntermediateScoreMap(Integer advocateIndex, HashMap<Integer, HashMap<Integer, TargetDecoyMap>> advocateMap) {
+    private synchronized HashMap<Integer, TargetDecoyMap> createIntermediateScoreMap(
+            int advocateIndex, 
+            HashMap<Integer, HashMap<Integer, TargetDecoyMap>> advocateMap
+    ) {
+        
         HashMap<Integer, TargetDecoyMap> scoreMap = advocateMap.get(advocateIndex);
+        
         if (scoreMap == null) {
+        
             scoreMap = new HashMap<>();
             advocateMap.put(advocateIndex, scoreMap);
+        
         }
+        
         return scoreMap;
+    
     }
 
     /**
@@ -692,13 +903,23 @@ public class InputMap implements Serializable {
      *
      * @return the target-decoy map
      */
-    private synchronized TargetDecoyMap createTargetDecoyMap(Integer scoreIndex, HashMap<Integer, TargetDecoyMap> scoreMap, PsmScoringParameters psmScoringPreferences) {
+    private synchronized TargetDecoyMap createTargetDecoyMap(
+            int scoreIndex, 
+            HashMap<Integer, TargetDecoyMap> scoreMap, 
+            PsmScoringParameters psmScoringPreferences
+    ) {
+    
         TargetDecoyMap targetDecoyMap = scoreMap.get(scoreIndex);
+        
         if (targetDecoyMap == null) {
+        
             targetDecoyMap = new TargetDecoyMap(psmScoringPreferences.getDecoysInFirstBin());
             scoreMap.put(scoreIndex, targetDecoyMap);
+        
         }
+        
         return targetDecoyMap;
+    
     }
 
     /**
@@ -712,16 +933,28 @@ public class InputMap implements Serializable {
      * @return the target decoy map associated to the given spectrum file,
      * advocate and score type
      */
-    public TargetDecoyMap getIntermediateScoreMap(String fileName, int advocateIndex, int scoreIndex) {
+    public TargetDecoyMap getIntermediateScoreMap(
+            String fileName, 
+            int advocateIndex, 
+            int scoreIndex
+    ) {
+    
         HashMap<Integer, HashMap<Integer, TargetDecoyMap>> advocateMap = intermediateScores.get(fileName);
+        
         if (advocateMap != null) {
+        
             HashMap<Integer, TargetDecoyMap> scoreMap = advocateMap.get(advocateIndex);
+            
             if (scoreMap != null) {
+            
                 TargetDecoyMap targetDecoyMap = scoreMap.get(scoreIndex);
                 return targetDecoyMap;
+            
             }
         }
+        
         return null;
+    
     }
 
 }
