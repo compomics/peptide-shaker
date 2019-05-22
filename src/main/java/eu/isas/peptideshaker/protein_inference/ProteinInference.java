@@ -504,7 +504,7 @@ public class ProteinInference {
     public void inferPiStatus(Identification identification, Metrics metrics, TargetDecoyMap proteinMap,
             IdentificationParameters identificationParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, WaitingHandler waitingHandler) {
 
-        waitingHandler.setWaitingText("Inferring PI status, sorting proteins. Please Wait...");
+        waitingHandler.setWaitingText("Inferring PI Status and Sorting Proteins. Please Wait...");
 
         // As we go through all protein ids, keep the sorted list of proteins and maxima in the instance of the Metrics class to pass them to the GUI afterwards
         // proteins are sorted according to the protein score, then number of peptides (inverted), then number of spectra (inverted).

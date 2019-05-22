@@ -282,8 +282,10 @@ public class PsmScorer {
 
                             ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                             SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-                            SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), peptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-                            score = psmScoresEstimator.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge(), spectrum, identificationParameters, specificAnnotationPreferences, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, peptideSpectrumAnnotator, scoreIndex);
+                            SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), 
+                                    peptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, peptideSpectrumAnnotator);
+                            score = psmScoresEstimator.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge(), spectrum, identificationParameters, 
+                                    specificAnnotationPreferences, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, peptideSpectrumAnnotator, scoreIndex);
 
                         }
 
@@ -518,7 +520,7 @@ public class PsmScorer {
          */
         private final Identification identification;
         /**
-         * The input map
+         * The input map.
          */
         private final InputMap inputMap;
         /**

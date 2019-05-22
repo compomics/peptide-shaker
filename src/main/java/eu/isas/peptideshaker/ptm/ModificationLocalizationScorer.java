@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.ptm;
 
-import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.db.object.DbObject;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.modifications.Modification;
@@ -242,7 +241,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
             Spectrum spectrum = spectrumFactory.getSpectrum(spectrumMatch.getSpectrumKey());
             SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), bestPeptideAssumption,
-                    modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                    modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, peptideSpectrumAnnotator);
 
             for (double modMass : modificationsMap.keySet()) {
 

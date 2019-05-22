@@ -116,12 +116,12 @@ public class PsFragmentSection {
         AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-        SpecificAnnotationParameters specificAnnotationParameters = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, spectrumIdentificationAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
         
         if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
             
             PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdentificationAssumption;
             PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
+            SpecificAnnotationParameters specificAnnotationParameters = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, spectrumIdentificationAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, spectrumAnnotator);
             annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationParameters,
                     spectrum, peptideAssumption.getPeptide(), modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
             
@@ -129,6 +129,7 @@ public class PsFragmentSection {
             
             TagAssumption tagAssumption = (TagAssumption) spectrumIdentificationAssumption;
             TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
+            SpecificAnnotationParameters specificAnnotationParameters = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, spectrumIdentificationAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, spectrumAnnotator);
             annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, modificationParameters, modificationSequenceMatchingParameters, 
                     specificAnnotationParameters, spectrum, tagAssumption.getTag());
             

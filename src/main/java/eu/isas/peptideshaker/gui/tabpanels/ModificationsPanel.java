@@ -4025,7 +4025,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
             allModifications.addAll(ModificationUtils.getAllModifications(peptide, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters));
             PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
             SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption,
-                    modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                    modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, spectrumAnnotator);
             IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide,
                     modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
@@ -4069,7 +4069,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                     identificationChargeSecondPsm = secondSpectrumMatch.getBestPeptideAssumption().getIdentificationCharge();
                     allModifications.addAll(ModificationUtils.getAllModifications(peptide, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters));
                     specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption,
-                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, spectrumAnnotator);
                     annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide,
                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 

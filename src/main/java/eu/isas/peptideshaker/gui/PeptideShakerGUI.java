@@ -5572,7 +5572,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         AnnotationParameters annotationParameters = getIdentificationParameters().getAnnotationParameters();
 
         SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
-                spectrumKey, spectrumIdentificationAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                spectrumKey, spectrumIdentificationAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, new PeptideSpectrumAnnotator());
 
         if (!defaultAnnotationCheckBoxMenuItem.isSelected()) {
 
@@ -6616,7 +6616,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                     Peptide peptide = peptideAssumption.getPeptide();
                                     SpecificAnnotationParameters exportAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption,
-                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, peptideSpectrumAnnotator);
                                     annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters, exportAnnotationParameters, spectrum, peptide,
                                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                                     identifier = peptide.getTaggedModifiedSequence(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters,
@@ -6625,7 +6625,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                     TagAssumption tagAssumption = (TagAssumption) assumption;
                                     Tag tag = tagAssumption.getTag();
                                     SpecificAnnotationParameters exportAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, tagAssumption,
-                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, tagSpectrumAnnotator);
                                     annotations = tagSpectrumAnnotator.getSpectrumAnnotation(annotationParameters, modificationParameters, modificationSequenceMatchingParameters,
                                             exportAnnotationParameters, spectrum, tag);
                                     identifier = tag.getTaggedModifiedSequence(modificationParameters, false, false, true, true,

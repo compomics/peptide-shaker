@@ -394,7 +394,7 @@ public class Ms2pipExport {
                             ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                             SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
                             AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
-                            SpecificAnnotationParameters specificAnnotationSettings = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                            SpecificAnnotationParameters specificAnnotationSettings = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, spectrumAnnotator);
 
                             Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey, false);
 

@@ -319,7 +319,8 @@ public class RunMzDeviation {
                     Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumKey, false);
                     ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                     SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-                    SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(currentSpectrum.getSpectrumKey(), bestPeptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                    SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(currentSpectrum.getSpectrumKey(), 
+                            bestPeptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, spectrumAnnotator);
                     IonMatch[] ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
                             currentSpectrum, bestPeptideAssumption.getPeptide(),
                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);

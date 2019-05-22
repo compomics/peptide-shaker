@@ -79,7 +79,7 @@ public class DisplayFeaturesGenerator {
         this.proteinDetailsProvider = proteinDetailsProvider;
 
     }
-    
+
     /**
      * Transforms the protein accession number into an HTML link to the
      * corresponding database. Note that this is a complete HTML with HTML and a
@@ -466,11 +466,13 @@ public class DisplayFeaturesGenerator {
                     tooltip.append(currentResidueAnnotation).append(": ");
 
                     if (fixedMod != null) {
-                        tooltip.append(fixedMod).append(" (fixed))<br>");
-                    } else if (confidentMod != null) {
-                        tooltip.append(confidentMod).append(" (confident))<br>");
-                    } else if (ambiguousMod != null) {
-                        tooltip.append(ambiguousMod).append(" (not confident))<br>");
+                        tooltip.append(fixedMod).append(" (fixed)<br>");
+                    } 
+                    if (confidentMod != null) {
+                        tooltip.append(confidentMod).append(" (confident)<br>");
+                    } 
+                    if (ambiguousMod != null) {
+                        tooltip.append(ambiguousMod).append(" (not confident)<br>");
                     }
 
                     alreadyAnnotated.add(tempTooltip.toString());
@@ -487,7 +489,7 @@ public class DisplayFeaturesGenerator {
 
     /**
      * Returns a string with the HTML tooltip for the tag indicating the
-     * modification details.
+     * modification details. Null if no modifications.
      *
      * @param tag the tag
      *
@@ -501,8 +503,11 @@ public class DisplayFeaturesGenerator {
         // @TODO: merge with getTagModificationTooltipAsHtml in DeNovoGUI and move to utilities
         StringBuilder tooltip = new StringBuilder();
         tooltip.append("<html>");
+        ArrayList<String> alreadyAnnotated = new ArrayList<>();
 
         ArrayList<TagComponent> tagComponents = tag.getContent();
+
+        boolean modified = false;
 
         for (int i = 0; i < tagComponents.size(); i++) {
 
@@ -523,15 +528,41 @@ public class DisplayFeaturesGenerator {
                     String fixedMod = fixedMods[aa];
                     String confidentMod = variableMods[aa];
 
-                    ModificationUtils.appendTaggedResidue(tooltip, aminoAcid, confidentMod, null, null, fixedMod, modificationParameters, true, true);
+                    if (fixedMod != null || confidentMod != null) {
+                        modified = true;
+                        StringBuilder tempTooltip = new StringBuilder(); // @TODO: should be a way of doing this without needing this second string builder..?
+                        ModificationUtils.appendTaggedResidue(tooltip, aminoAcid, confidentMod, null, null, fixedMod, modificationParameters, true, true);
 
+                        String currentResidueAnnotation = tempTooltip.toString();
+
+                        if (!alreadyAnnotated.contains(currentResidueAnnotation)) {
+
+                            tooltip.append(currentResidueAnnotation).append(": ");
+
+                            if (fixedMod != null) {
+                                tooltip.append(fixedMod).append(" (fixed)<br>");
+                            }
+                            if (confidentMod != null) {
+                                tooltip.append(confidentMod).append(" (confident)<br>");
+                            } 
+//                            else if (ambiguousMod != null) {
+//                                tooltip.append(ambiguousMod).append(" (not confident))<br>");
+//                            }
+
+                            alreadyAnnotated.add(tempTooltip.toString());
+                        }
+                    }
                 }
             }
         }
 
         tooltip.append("</html>");
 
-        return tooltip.length() == 13 ? null : tooltip.toString();
+        if (!modified) {
+            return null;
+        }
+
+        return tooltip.toString();
 
     }
 
@@ -595,10 +626,10 @@ public class DisplayFeaturesGenerator {
      * @return the tagged peptide sequence
      */
     public String getTaggedPeptideSequence(
-            Peptide peptide, 
-            PSModificationScores modificationScores, 
-            boolean useHtmlColorCoding, 
-            boolean includeHtmlStartEndTags, 
+            Peptide peptide,
+            PSModificationScores modificationScores,
+            boolean useHtmlColorCoding,
+            boolean includeHtmlStartEndTags,
             boolean useShortName
     ) {
 
@@ -631,8 +662,8 @@ public class DisplayFeaturesGenerator {
      * preferences
      */
     public static String[] getFilteredConfidentModificationsSites(
-            PSModificationScores modificationScores, 
-            HashSet<String> displayedModifications, 
+            PSModificationScores modificationScores,
+            HashSet<String> displayedModifications,
             int peptideLength
     ) {
 
@@ -663,8 +694,8 @@ public class DisplayFeaturesGenerator {
      * preferences
      */
     public static String[] getFilteredAmbiguousModificationsRepresentativeSites(
-            PSModificationScores modificationScores, 
-            HashSet<String> displayedModifications, 
+            PSModificationScores modificationScores,
+            HashSet<String> displayedModifications,
             int peptideLength
     ) {
 
@@ -697,13 +728,13 @@ public class DisplayFeaturesGenerator {
      * preferences
      */
     public static String[] getFilteredAmbiguousModificationsSecondarySites(
-            PSModificationScores modificationScores, 
-            HashSet<String> displayedModifications, 
+            PSModificationScores modificationScores,
+            HashSet<String> displayedModifications,
             int peptideLength
     ) {
 
         String[] result = new String[peptideLength + 2];
-        
+
         for (int representativeSite : modificationScores.getRepresentativeSites()) {
 
             HashMap<Integer, HashSet<String>> modificationsAtSite = modificationScores.getAmbiguousModificationsAtRepresentativeSite(representativeSite);
@@ -783,13 +814,13 @@ public class DisplayFeaturesGenerator {
      * @return the residue annotation for a given protein
      */
     public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(
-            long proteinMatchKey, 
+            long proteinMatchKey,
             SequenceMatchingParameters sequenceMatchingPreferences,
-            IdentificationFeaturesGenerator identificationFeaturesGenerator, 
-            Metrics metrics, 
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            Metrics metrics,
             Identification identification,
-            boolean allPeptides, 
-            SearchParameters searchParameters, 
+            boolean allPeptides,
+            SearchParameters searchParameters,
             boolean enzymatic
     ) {
 

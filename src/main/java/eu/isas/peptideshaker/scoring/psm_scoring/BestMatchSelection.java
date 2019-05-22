@@ -241,7 +241,8 @@ public class BestMatchSelection {
                                             peptideAssumption,
                                             modificationParameters,
                                             sequenceProvider,
-                                            modificationSequenceMatchingParameters
+                                            modificationSequenceMatchingParameters,
+                                            spectrumAnnotator
                                     );
                                     Map<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(
                                             annotationPreferences,
@@ -265,7 +266,8 @@ public class BestMatchSelection {
                                         peptideAssumption1,
                                         modificationParameters,
                                         sequenceProvider,
-                                        modificationSequenceMatchingParameters
+                                        modificationSequenceMatchingParameters,
+                                        spectrumAnnotator
                                 );
                                 Map<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(
                                         annotationPreferences,
@@ -615,7 +617,8 @@ public class BestMatchSelection {
                     peptideAssumption,
                     modificationParameters,
                     sequenceProvider,
-                    modificationSequenceMatchingParameters
+                    modificationSequenceMatchingParameters,
+                    spectrumAnnotator
             );
             Map<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(
                     annotationParameters,

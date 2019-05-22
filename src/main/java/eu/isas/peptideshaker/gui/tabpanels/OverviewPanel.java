@@ -3990,7 +3990,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     Peptide peptide = peptideAssumption.getPeptide();
 
                     specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption,
-                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, spectrumAnnotator);
                     peptides.add(peptide);
                     IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide,
                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
@@ -4678,7 +4678,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
                     SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption,
-                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, spectrumAnnotator);
                     IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, currentPeptide,
                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                     spectrumPanel.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), annotationParameters.getTiesResolution() == SpectrumAnnotator.TiesResolution.mostIntense); //@TODO: the selection of the peak to annotate should be done outside the spectrum panel
@@ -5133,7 +5133,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
                 Peptide peptide = peptideAssumption.getPeptide();
                 SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption,
-                        modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                        modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, spectrumAnnotator);
                 IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide,
                         modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
                 allAnnotations.add(annotations);

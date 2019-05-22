@@ -1923,7 +1923,7 @@ public class MzIdentMLExport {
                 Spectrum spectrum = spectrumFactory.getSpectrum(spectrumFileName, spectrumTitle, false);
                 ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                 SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-                SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, bestPeptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, bestPeptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, peptideSpectrumAnnotator);
                 IonMatch[] matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, bestPeptideAssumption.getPeptide(), modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
                 // organize the fragment ions by ion type

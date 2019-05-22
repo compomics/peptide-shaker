@@ -3037,7 +3037,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                                     PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
                                     specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, currentAssumption,
-                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, peptideSpectrumAnnotator);
                                     IonMatch[] annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide,
                                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
@@ -3081,10 +3081,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 } else if (currentAssumption instanceof TagAssumption) {
 
                                     TagAssumption tagAssumption = (TagAssumption) currentAssumption;
+                                    TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
 
                                     specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, currentAssumption,
-                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-                                    TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
+                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, spectrumAnnotator);
+                                    
                                     IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, modificationParameters, modificationSequenceMatchingParameters,
                                             specificAnnotationParameters, currentSpectrum, tagAssumption.getTag());
 
@@ -3818,7 +3819,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         } else if (spectrumIdentificationAssumption instanceof TagAssumption) {
                             TagAssumption tagAssumption = (TagAssumption) spectrumIdentificationAssumption;
                             return tagAssumption.getTag().getTaggedModifiedSequence(modificationParameters,
-                                    true, true, true, true, modificationSequenceMatchingParameters, displayParameters.getDisplayedModifications());
+                                    true, true, true, false, modificationSequenceMatchingParameters, displayParameters.getDisplayedModifications());
                         } else {
                             throw new UnsupportedOperationException("Sequence display not implemented for assumption " + spectrumIdentificationAssumption.getClass() + ".");
                         }
