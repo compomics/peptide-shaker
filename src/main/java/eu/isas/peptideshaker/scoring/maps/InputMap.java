@@ -224,8 +224,10 @@ public class InputMap implements Serializable {
             int searchEngine,
             double eValue
     ) {
-
-        return inputMap.get(searchEngine).getProbability(eValue);
+        
+        TargetDecoyMap targetDecoyMap = inputMap.get(searchEngine);
+        
+        return targetDecoyMap == null ? 1.0 : targetDecoyMap.getProbability(eValue);
 
     }
 
