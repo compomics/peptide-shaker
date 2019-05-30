@@ -3036,8 +3036,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     Peptide peptide = currentPeptideAssumption.getPeptide();
 
                                     PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
-                                    specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, currentAssumption,
-                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, peptideSpectrumAnnotator);
+                                    specificAnnotationParameters = peptideShakerGUI.getSpecificAnnotationParameters(spectrumKey, currentPeptideAssumption);
                                     IonMatch[] annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide,
                                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
@@ -3083,8 +3082,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     TagAssumption tagAssumption = (TagAssumption) currentAssumption;
                                     TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
 
-                                    specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, currentAssumption,
-                                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, spectrumAnnotator);
+                                    specificAnnotationParameters = peptideShakerGUI.getSpecificAnnotationParameters(spectrumKey, tagAssumption);
                                     
                                     IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, modificationParameters, modificationSequenceMatchingParameters,
                                             specificAnnotationParameters, currentSpectrum, tagAssumption.getTag());

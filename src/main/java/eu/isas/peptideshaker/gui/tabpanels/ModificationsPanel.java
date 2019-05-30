@@ -4024,8 +4024,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
             identificationChargeFirstPsm = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge();
             allModifications.addAll(ModificationUtils.getAllModifications(peptide, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters));
             PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
-            SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption,
-                    modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, spectrumAnnotator);
+            SpecificAnnotationParameters specificAnnotationParameters = peptideShakerGUI.getSpecificAnnotationParameters(spectrumKey, peptideAssumption);
             IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide,
                     modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
@@ -4068,8 +4067,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                     peptide = peptideAssumption.getPeptide();
                     identificationChargeSecondPsm = secondSpectrumMatch.getBestPeptideAssumption().getIdentificationCharge();
                     allModifications.addAll(ModificationUtils.getAllModifications(peptide, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters));
-                    specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(spectrumKey, peptideAssumption,
-                            modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, spectrumAnnotator);
+                    specificAnnotationParameters = peptideShakerGUI.getSpecificAnnotationParameters(spectrumKey, peptideAssumption);
                     annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, specificAnnotationParameters, currentSpectrum, peptide,
                             modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
 
