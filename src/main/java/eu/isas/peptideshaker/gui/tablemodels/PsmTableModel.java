@@ -11,7 +11,6 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
-import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
@@ -28,15 +27,15 @@ public class PsmTableModel extends SelfUpdatingTableModel {
     /**
      * The identification of this project.
      */
-    private final Identification identification;
+    private Identification identification;
     /**
      * The display features generator.
      */
-    private final DisplayFeaturesGenerator displayFeaturesGenerator;
+    private DisplayFeaturesGenerator displayFeaturesGenerator;
     /**
      * The ID input map.
      */
-    private final InputMap inputMap;
+    private InputMap inputMap;
     /**
      * The exception handler catches exceptions.
      */
@@ -44,7 +43,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
     /**
      * The identification parameters.
      */
-    private final IdentificationParameters identificationParameters;
+    private IdentificationParameters identificationParameters;
     /**
      * A list of ordered PSM keys.
      */
@@ -101,14 +100,21 @@ public class PsmTableModel extends SelfUpdatingTableModel {
      * Update the data in the table model without having to reset the whole
      * table model. This keeps the sorting order of the table.
      *
+     * @param identification the identification object containing the matches
+     * @param displayFeaturesGenerator the display features generator
+     * @param identificationParameters the identification parameters
      * @param psmKeys the PSM keys
-     * @param displayScores boolean indicating whether the scores should be
-     * displayed instead of the confidence
      */
-    public void updateDataModel(long[] psmKeys, boolean displayScores) {
+    public void updateDataModel(Identification identification, DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters, long[] psmKeys) {
 
+        this.identification = identification;
+        this.displayFeaturesGenerator = displayFeaturesGenerator;
+        this.identificationParameters = identificationParameters;
         this.psmKeys = psmKeys;
-        this.showScores = displayScores;
+        
+        PSMaps pSMaps = new PSMaps();
+        pSMaps = (PSMaps) identification.getUrParam(pSMaps);
+        this.inputMap = pSMaps.getInputMap();
 
     }
     

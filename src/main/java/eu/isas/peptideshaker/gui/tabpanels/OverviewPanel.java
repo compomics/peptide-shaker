@@ -4829,7 +4829,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             // update the table model
             if (psmTable.getModel() instanceof PsmTableModel && ((PsmTableModel) psmTable.getModel()).isInstantiated()) {
-                ((PsmTableModel) psmTable.getModel()).updateDataModel(psmKeys, peptideShakerGUI.getDisplayParameters().showScores());
+                ((PsmTableModel) psmTable.getModel()).updateDataModel(identification, peptideShakerGUI.getDisplayFeaturesGenerator(),
+                        peptideShakerGUI.getIdentificationParameters(), psmKeys);
                 ((PsmTableModel) psmTable.getModel()).setSelfUpdating(true);
                 ((PsmTableModel) psmTable.getModel()).resetSorting(new ProgressDialogX(peptideShakerGUI,
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -4918,7 +4919,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             // update the table model
             if (peptideTable.getModel() instanceof PeptideTableModel && ((PeptideTableModel) peptideTable.getModel()).isInstantiated()) {
-                ((PeptideTableModel) peptideTable.getModel()).updateDataModel(accession, peptideKeys, peptideShakerGUI.getDisplayParameters().showScores());
+                ((PeptideTableModel) peptideTable.getModel()).updateDataModel(identification, identificationFeaturesGenerator,
+                        peptideShakerGUI.getDisplayFeaturesGenerator(), accession, peptideKeys);
                 ((PeptideTableModel) peptideTable.getModel()).setSelfUpdating(true);
                 ((PeptideTableModel) peptideTable.getModel()).resetSorting(new ProgressDialogX(peptideShakerGUI,
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -5005,7 +5007,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     // update the table model
                     if (proteinTable.getModel() instanceof ProteinTableModel && ((ProteinTableModel) proteinTable.getModel()).isInstantiated()) {
-                        ((ProteinTableModel) proteinTable.getModel()).updateDataModel(proteinKeys);
+                        ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
+                                peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getSequenceProvider(),
+                                peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), proteinKeys);
                     } else {
                         ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
                                 peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getSequenceProvider(),

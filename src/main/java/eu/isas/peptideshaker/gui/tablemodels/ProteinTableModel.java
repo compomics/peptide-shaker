@@ -46,28 +46,28 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     /**
      * The identification of this project.
      */
-    private final Identification identification;
+    private Identification identification;
     /**
      * The identification features generator provides identification information
      * on the matches.
      */
-    private final IdentificationFeaturesGenerator identificationFeaturesGenerator;
+    private IdentificationFeaturesGenerator identificationFeaturesGenerator;
     /**
      * The protein details provider.
      */
-    private final ProteinDetailsProvider proteinDetailsProvider;
+    private ProteinDetailsProvider proteinDetailsProvider;
     /**
      * The protein sequences provider.
      */
-    private final SequenceProvider sequenceProvider;
+    private SequenceProvider sequenceProvider;
     /**
      * The display features generator provides display features.
      */
-    private final DisplayFeaturesGenerator displayFeaturesGenerator;
+    private DisplayFeaturesGenerator displayFeaturesGenerator;
     /**
      * The gene maps.
      */
-    private final GeneMaps geneMaps;
+    private GeneMaps geneMaps;
     /**
      * The exception handler catches exceptions.
      */
@@ -126,9 +126,25 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * Update the data in the table model without having to reset the whole
      * table model. This keeps the sorting order of the table.
      *
+     * @param identification the identification containing the protein
+     * information
+     * @param identificationFeaturesGenerator the identification features
+     * generator generating the features of the identification
+     * @param proteinDetailsProvider the protein details provider
+     * @param sequenceProvider the protein sequences provider
+     * @param geneMaps the gene maps
+     * @param displayFeaturesGenerator the display features generator generating
+     * the display elements
      * @param proteinKeys the keys of the protein matches to display
      */
-    public void updateDataModel(long[] proteinKeys) {
+    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ProteinDetailsProvider proteinDetailsProvider, SequenceProvider sequenceProvider, GeneMaps geneMaps,
+            DisplayFeaturesGenerator displayFeaturesGenerator, long[] proteinKeys) {
+        this.identification = identification;
+        this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+        this.proteinDetailsProvider = proteinDetailsProvider;
+        this.sequenceProvider = sequenceProvider;
+        this.geneMaps = geneMaps;
+        this.displayFeaturesGenerator = displayFeaturesGenerator;
         this.proteinKeys = proteinKeys;
     }
 
@@ -242,7 +258,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                 case 5:
 
                     String geneName = proteinDetailsProvider.getGeneName(proteinMatch.getLeadingAccession());
-                    String chromosomeName = geneMaps.getChromosome(geneName);                    
+                    String chromosomeName = geneMaps.getChromosome(geneName);
 
                     return (chromosomeName == null || chromosomeName.length() == 0) ? new Chromosome(null) : new Chromosome(chromosomeName);
 

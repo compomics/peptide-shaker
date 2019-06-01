@@ -6,7 +6,6 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
-import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import java.util.ArrayList;
@@ -27,15 +26,15 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     /**
      * The identification.
      */
-    private final Identification identification;
+    private Identification identification;
     /**
      * The identification features generator.
      */
-    private final IdentificationFeaturesGenerator identificationFeaturesGenerator;
+    private IdentificationFeaturesGenerator identificationFeaturesGenerator;
     /**
      * The display features generator.
      */
-    private final DisplayFeaturesGenerator displayFeaturesGenerator;
+    private DisplayFeaturesGenerator displayFeaturesGenerator;
     /**
      * The exception handler catches exceptions.
      */
@@ -83,8 +82,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      * displayed instead of the confidence
      * @param exceptionHandler handler for the exceptions
      */
-    public PeptideTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            DisplayFeaturesGenerator displayFeaturesGenerator,
+    public PeptideTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, DisplayFeaturesGenerator displayFeaturesGenerator,
             String proteinAccession, long[] peptideKeys, boolean displayScores, ExceptionHandler exceptionHandler) {
 
         this.identification = identification;
@@ -101,16 +99,21 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      * Update the data in the table model without having to reset the whole
      * table model. This keeps the sorting order of the table.
      *
+     * @param identification the identification object containing the matches
+     * @param identificationFeaturesGenerator the identification features
+     * generator
+     * @param displayFeaturesGenerator the display features generator
      * @param proteinAccession the protein accession
      * @param peptideKeys the peptide keys
-     * @param showScores boolean indicating whether the scores should be
-     * displayed instead of the confidence
      */
-    public void updateDataModel(String proteinAccession, long[] peptideKeys, boolean showScores) {
+    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, DisplayFeaturesGenerator displayFeaturesGenerator,
+            String proteinAccession, long[] peptideKeys) {
 
+        this.identification = identification;
+        this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+        this.displayFeaturesGenerator = displayFeaturesGenerator;
         this.peptideKeys = peptideKeys;
         this.proteinAccession = proteinAccession;
-        this.showScores = showScores;
 
     }
     

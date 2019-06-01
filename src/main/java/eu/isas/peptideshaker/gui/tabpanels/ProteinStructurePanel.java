@@ -2714,7 +2714,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                     // update the table model
                     if (proteinTable.getModel() instanceof ProteinTableModel && ((ProteinTableModel) proteinTable.getModel()).isInstantiated()) {
-                        ((ProteinTableModel) proteinTable.getModel()).updateDataModel(proteinKeys);
+                        ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
+                                peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getSequenceProvider(),
+                                peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), proteinKeys);
                     } else {
                         ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
                                 peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getSequenceProvider(),
