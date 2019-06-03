@@ -113,6 +113,12 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "\n\nFraction Analysis:\n\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.PROTEIN_FRACTION_MW_CONFIDENCE.id) + " " + IdentificationParametersCLIParams.PROTEIN_FRACTION_MW_CONFIDENCE.description + "\n";
 
+        output += "\n\nDatabase Processing:\n\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.FASTA_TARGET_DECOY.id) + " " + IdentificationParametersCLIParams.FASTA_TARGET_DECOY.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.FASTA_DECOY_TAG.id) + " " + IdentificationParametersCLIParams.FASTA_DECOY_TAG.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.FASTA_DECOY_SUFFIX.id) + " " + IdentificationParametersCLIParams.FASTA_DECOY_SUFFIX.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.FASTA_DECOY_FILE_TAG.id) + " " + IdentificationParametersCLIParams.FASTA_DECOY_FILE_TAG.description + "\n";
+        
 //        output += "\n\nQuality Control:\n\n";
 //        output += "-" + String.format(formatter, IdentificationParametersCLIParams.ANNOTATION_LEVEL.id) + IdentificationParametersCLIParams.ANNOTATION_LEVEL.description + "\n";
         output += "\n\nHelp:\n\n";
