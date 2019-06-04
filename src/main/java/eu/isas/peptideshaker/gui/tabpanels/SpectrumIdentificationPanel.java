@@ -1741,22 +1741,29 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 accuracySlider.setValue(accuracySlider.getValue() - 1);
             } else { // Up
                 int oldValue = accuracySlider.getValue();
-                int newValue = accuracySlider.getValue() + 1;
+                int newValue = oldValue + 1;
                 accuracySlider.setValue(newValue);
 
                 while (oldValue == accuracySlider.getValue()) {
                     accuracySlider.setValue(newValue++);
+                    if (accuracySlider.getValue() == accuracySlider.getMaximum()) {
+                        break;
+                    }
                 }
             }
         } else if (evt.getWheelRotation() > 0) { // Down
             intensitySlider.setValue(intensitySlider.getValue() - 1);
         } else { // Up
             int oldValue = intensitySlider.getValue();
-            int newValue = intensitySlider.getValue() + 1;
+            int newValue = oldValue + 1;
+
             intensitySlider.setValue(newValue);
 
             while (oldValue == intensitySlider.getValue()) {
                 intensitySlider.setValue(newValue++);
+                if (intensitySlider.getValue() == intensitySlider.getMaximum()) {
+                    break;
+                }
             }
         }
 

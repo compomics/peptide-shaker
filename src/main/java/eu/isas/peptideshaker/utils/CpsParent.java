@@ -188,6 +188,13 @@ public class CpsParent extends UserPreferencesParent {
             identification.close();
 
         }
+        
+        // create the matches folder if it does not exist
+        if (!dbFolder.exists()) {
+            if (!dbFolder.mkdirs()) {
+                throw new IOException("Impossible to create folder " + dbFolder.getAbsolutePath() + ".");
+            }
+        }
 
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
         String dbName = "tempDB-" + df.format(new Date()) + ".psdb";
