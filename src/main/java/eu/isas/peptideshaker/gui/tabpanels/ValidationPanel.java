@@ -201,7 +201,6 @@ public class ValidationPanel extends javax.swing.JPanel {
         costBenefitPlot.setRangeAxisLocation(0, AxisLocation.TOP_OR_LEFT);
         costBenefitPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
 
-        fdrCombo1.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         thresholdTypeCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         formComponentResized(null);
@@ -282,12 +281,10 @@ public class ValidationPanel extends javax.swing.JPanel {
         pepBinSizeLabel = new javax.swing.JLabel();
         windowTxt = new javax.swing.JTextField();
         applyButton = new javax.swing.JButton();
-        fdrCombo1 = new javax.swing.JComboBox();
         thresholdTypeCmb = new javax.swing.JComboBox();
         thresholdLabel = new javax.swing.JLabel();
         thresholdHelpJButton = new javax.swing.JButton();
         thresholdTypeLabel = new javax.swing.JLabel();
-        fdrMetricLabel = new javax.swing.JLabel();
         estimatorHelpJButton = new javax.swing.JButton();
         thresholdResetJButton = new javax.swing.JButton();
 
@@ -327,11 +324,9 @@ public class ValidationPanel extends javax.swing.JPanel {
                 groupSelectionHelpJButtonActionPerformed(evt);
             }
         });
+        groupSelectionLayeredPane.setLayer(groupSelectionHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         groupSelectionLayeredPane.add(groupSelectionHelpJButton);
         groupSelectionHelpJButton.setBounds(170, 130, 27, 25);
-        groupSelectionLayeredPane.setLayer(groupSelectionHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
-
-        groupSelectionScrollPaneScrollPane.setOpaque(false);
 
         groupSelectionTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -728,7 +723,6 @@ public class ValidationPanel extends javax.swing.JPanel {
         leftPlotSplitPane.setDividerLocation(leftPlotSplitPane.getWidth() / 3);
         leftPlotSplitPane.setDividerSize(0);
         leftPlotSplitPane.setResizeWeight(0.5);
-        leftPlotSplitPane.setOpaque(false);
 
         confidencePanel.setOpaque(false);
 
@@ -756,9 +750,9 @@ public class ValidationPanel extends javax.swing.JPanel {
                 confidencePlotHelpJButtonActionPerformed(evt);
             }
         });
+        confidencePlotLayeredPane.setLayer(confidencePlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         confidencePlotLayeredPane.add(confidencePlotHelpJButton);
         confidencePlotHelpJButton.setBounds(480, 0, 10, 25);
-        confidencePlotLayeredPane.setLayer(confidencePlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         confidencePlotExportJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         confidencePlotExportJButton.setToolTipText("Export");
@@ -781,9 +775,9 @@ public class ValidationPanel extends javax.swing.JPanel {
                 confidencePlotExportJButtonActionPerformed(evt);
             }
         });
+        confidencePlotLayeredPane.setLayer(confidencePlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         confidencePlotLayeredPane.add(confidencePlotExportJButton);
         confidencePlotExportJButton.setBounds(460, 0, 10, 25);
-        confidencePlotLayeredPane.setLayer(confidencePlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout confidencePanelLayout = new javax.swing.GroupLayout(confidencePanel);
         confidencePanel.setLayout(confidencePanelLayout);
@@ -808,7 +802,6 @@ public class ValidationPanel extends javax.swing.JPanel {
         rightPlotSplitPane.setDividerLocation(rightPlotSplitPane.getWidth() / 2);
         rightPlotSplitPane.setDividerSize(0);
         rightPlotSplitPane.setResizeWeight(0.5);
-        rightPlotSplitPane.setOpaque(false);
 
         fdrFnrPanel.setOpaque(false);
 
@@ -836,9 +829,9 @@ public class ValidationPanel extends javax.swing.JPanel {
                 fdrFnrPlotHelpJButtonActionPerformed(evt);
             }
         });
+        fdrPlotLayeredPane.setLayer(fdrFnrPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         fdrPlotLayeredPane.add(fdrFnrPlotHelpJButton);
         fdrFnrPlotHelpJButton.setBounds(300, 10, 10, 25);
-        fdrPlotLayeredPane.setLayer(fdrFnrPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         fdrFnrPlotExportJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         fdrFnrPlotExportJButton.setToolTipText("Export");
@@ -861,9 +854,9 @@ public class ValidationPanel extends javax.swing.JPanel {
                 fdrFnrPlotExportJButtonActionPerformed(evt);
             }
         });
+        fdrPlotLayeredPane.setLayer(fdrFnrPlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         fdrPlotLayeredPane.add(fdrFnrPlotExportJButton);
         fdrFnrPlotExportJButton.setBounds(290, 10, 10, 25);
-        fdrPlotLayeredPane.setLayer(fdrFnrPlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout fdrFnrPanelLayout = new javax.swing.GroupLayout(fdrFnrPanel);
         fdrFnrPanel.setLayout(fdrFnrPanelLayout);
@@ -910,9 +903,9 @@ public class ValidationPanel extends javax.swing.JPanel {
                 costBenefitPlotHelpJButtonActionPerformed(evt);
             }
         });
+        costBenefitPlotLayeredPane.setLayer(costBenefitPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         costBenefitPlotLayeredPane.add(costBenefitPlotHelpJButton);
         costBenefitPlotHelpJButton.setBounds(300, 10, 10, 25);
-        costBenefitPlotLayeredPane.setLayer(costBenefitPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         costBenefitPlotExportJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         costBenefitPlotExportJButton.setToolTipText("Export");
@@ -935,9 +928,9 @@ public class ValidationPanel extends javax.swing.JPanel {
                 costBenefitPlotExportJButtonActionPerformed(evt);
             }
         });
+        costBenefitPlotLayeredPane.setLayer(costBenefitPlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         costBenefitPlotLayeredPane.add(costBenefitPlotExportJButton);
         costBenefitPlotExportJButton.setBounds(290, 10, 10, 25);
-        costBenefitPlotLayeredPane.setLayer(costBenefitPlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout costBenefitPanelLayout = new javax.swing.GroupLayout(costBenefitPanel);
         costBenefitPanel.setLayout(costBenefitPanelLayout);
@@ -1048,14 +1041,6 @@ public class ValidationPanel extends javax.swing.JPanel {
             }
         });
 
-        fdrCombo1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Decoy", "PEP" }));
-        fdrCombo1.setToolTipText("Estimator type");
-        fdrCombo1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fdrCombo1ActionPerformed(evt);
-            }
-        });
-
         thresholdTypeCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Confidence", "FDR", "FNR" }));
         thresholdTypeCmb.setToolTipText("Threshold type");
         thresholdTypeCmb.addActionListener(new java.awt.event.ActionListener() {
@@ -1088,8 +1073,6 @@ public class ValidationPanel extends javax.swing.JPanel {
         });
 
         thresholdTypeLabel.setText("Type");
-
-        fdrMetricLabel.setText("FDR Metric");
 
         estimatorHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         estimatorHelpJButton.setToolTipText("Help");
@@ -1161,22 +1144,17 @@ public class ValidationPanel extends javax.swing.JPanel {
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(thresholdHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(parametersJPanelLayout.createSequentialGroup()
-                                    .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(pepBinSizeLabel)
-                                        .addComponent(fdrMetricLabel))
+                                    .addComponent(pepBinSizeLabel)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(parametersJPanelLayout.createSequentialGroup()
-                                            .addComponent(windowTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(applyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(estimatorHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addComponent(fdrCombo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                                    .addComponent(windowTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(applyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(estimatorHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        parametersJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {applyButton, fdrCombo1, thresholdInput, thresholdTypeCmb, validateButton, windowTxt});
+        parametersJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {applyButton, thresholdInput, thresholdTypeCmb, validateButton, windowTxt});
 
         parametersJPanelLayout.setVerticalGroup(
             parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1196,23 +1174,18 @@ public class ValidationPanel extends javax.swing.JPanel {
                         .addComponent(thresholdLabel))
                     .addComponent(validateButton)
                     .addComponent(thresholdHelpJButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addComponent(advancedSettingsLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(fdrMetricLabel)
-                    .addComponent(fdrCombo1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(parametersJPanelLayout.createSequentialGroup()
                         .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(applyButton)
                             .addComponent(windowTxt)
                             .addComponent(pepBinSizeLabel))
-                        .addGap(13, 13, 13))
-                    .addGroup(parametersJPanelLayout.createSequentialGroup()
-                        .addComponent(estimatorHelpJButton)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(2, 2, 2))
+                    .addComponent(estimatorHelpJButton))
+                .addGap(43, 43, 43))
         );
 
         parametersJPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {thresholdInput, validateButton});
@@ -2183,32 +2156,6 @@ public class ValidationPanel extends javax.swing.JPanel {
         resetAllThresholds();
     }//GEN-LAST:event_thresholdResetJButtonActionPerformed
 
-    /**
-     * Updates the plots.
-     *
-     * @param evt
-     */
-    private void fdrCombo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrCombo1ActionPerformed
-
-        if (currentTargetDecoyMap != null) {
-            TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
-
-            if (fdrCombo1.getSelectedIndex() == 0) {
-                currentResults.setClassicalEstimators(true);
-            } else {
-                currentResults.setClassicalEstimators(false);
-            }
-
-            applyButton.setEnabled(true);
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-            int thresholdType = thresholdTypeCmb.getSelectedIndex();
-            double lastThreshold = new Double(thresholdInput.getText());
-            updateResults(thresholdType, lastThreshold);
-            updateDisplayedComponents();
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        }
-    }//GEN-LAST:event_fdrCombo1ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel advancedSettingsLabel;
     private javax.swing.JButton applyButton;
@@ -2228,13 +2175,11 @@ public class ValidationPanel extends javax.swing.JPanel {
     private javax.swing.JLabel datasetPropertiesLabel;
     private javax.swing.JButton estimatorHelpJButton;
     private javax.swing.JButton falsePositivesHelpJButton;
-    private javax.swing.JComboBox fdrCombo1;
     private javax.swing.JPanel fdrFnrPanel;
     private javax.swing.JButton fdrFnrPlotExportJButton;
     private javax.swing.JButton fdrFnrPlotHelpJButton;
     private javax.swing.JButton fdrHelpJButton;
     private javax.swing.JLabel fdrLabel;
-    private javax.swing.JLabel fdrMetricLabel;
     private javax.swing.JLayeredPane fdrPlotLayeredPane;
     private javax.swing.JTextField fdrTxt;
     private javax.swing.JButton fnrHelpJButton;
@@ -2489,12 +2434,6 @@ public class ValidationPanel extends javax.swing.JPanel {
             windowTxt.setText(currentTargetDecoyMap.getWindowSize() + "");
             thresholdTypeCmb.setSelectedIndex(lastThresholdTypes.get(selectedGroup));
             thresholdInput.setText(lastThresholds.get(selectedGroup) + "");
-
-            if (currentResults.isClassicalEstimators()) {
-                fdrCombo1.setSelectedIndex(0);
-            } else {
-                fdrCombo1.setSelectedIndex(1);
-            }
 
             updateCharts();
         }
@@ -2802,8 +2741,9 @@ public class ValidationPanel extends javax.swing.JPanel {
      * Updates the cost benefit chart.
      */
     private void updateCostBenefitChart() {
+        
         DefaultXYDataset benefitData = new DefaultXYDataset();
-        double[][] benefitSeries = {targetDecoySeries.getProbaFDR(), targetDecoySeries.getProbaBenefit()};
+        double[][] benefitSeries = {targetDecoySeries.getFDR(), targetDecoySeries.getBenefit()};
         benefitData.addSeries("Possible Coverage", benefitSeries);
         costBenefitPlot.setDataset(1, benefitData);
         costBenefitPlot.mapDatasetToRangeAxis(1, 0);

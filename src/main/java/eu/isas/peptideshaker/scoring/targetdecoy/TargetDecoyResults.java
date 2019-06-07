@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
-import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.db.object.DbObject;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import java.io.Serializable;
@@ -17,15 +16,6 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * Serial version UID for post-serialization compatibility.
      */
     static final long serialVersionUID = -8387463582045627644L;
-    /**
-     * Boolean indicating whether a classical validation was used or an a
-     * posteriori probabilistic validation.
-     */
-    private boolean classicalValidation;
-    /**
-     * Boolean indicating whether classical or probabilistic estimators are used.
-     */
-    private boolean classicalEstimators;
     /**
      * The confidence limit.
      */
@@ -71,50 +61,6 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * Constructor.
      */
     public TargetDecoyResults() {
-    }
-
-    /**
-     * Returns a boolean indicating whether classical or probabilistic
-     * estimators were used.
-     *
-     * @return a boolean indicating whether classical or probabilistic
-     * estimators were used
-     */
-    public boolean isClassicalEstimators() {
-        readDBMode();
-        return classicalEstimators;
-    }
-
-    /**
-     * sets whether classical or probabilistic estimators should be used.
-     *
-     * @param classicalEstimators a boolean indicating whether classical or
-     * probabilistic estimators should be used
-     */
-    public void setClassicalEstimators(boolean classicalEstimators) {
-        writeDBMode();
-        this.classicalEstimators = classicalEstimators;
-    }
-
-    /**
-     * Returns a boolean indicating whether a classical validation was used.
-     *
-     * @return a boolean indicating whether a classical validation was used
-     */
-    public boolean isClassicalValidation() {
-        readDBMode();
-        return classicalValidation;
-    }
-
-    /**
-     * Sets a boolean indicating whether a classical validation was used.
-     *
-     * @param classicalValidation a boolean indicating whether a classical
-     * validation was used
-     */
-    public void setClassicalValidation(boolean classicalValidation) {
-        writeDBMode();
-        this.classicalValidation = classicalValidation;
     }
 
     /**

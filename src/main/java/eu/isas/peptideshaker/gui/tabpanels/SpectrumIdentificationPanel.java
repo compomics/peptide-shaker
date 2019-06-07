@@ -626,7 +626,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        fileNamesCmb.setBorder(null);
         fileNamesCmb.setMinimumSize(new java.awt.Dimension(200, 20));
         fileNamesCmb.setPreferredSize(new java.awt.Dimension(400, 20));
         fileNamesCmb.addActionListener(new java.awt.event.ActionListener() {
@@ -707,7 +706,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumSelectionPsmSplitPane.setDividerSize(0);
         spectrumSelectionPsmSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         spectrumSelectionPsmSplitPane.setResizeWeight(0.5);
-        spectrumSelectionPsmSplitPane.setOpaque(false);
 
         spectrumSelectionJPanel.setOpaque(false);
 
@@ -723,8 +721,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 spectrumSelectionPanelMouseReleased(evt);
             }
         });
-
-        spectrumTableJScrollPane.setOpaque(false);
 
         spectrumTable.setModel(new SpectrumTableModel());
         spectrumTable.setOpaque(false);
@@ -876,14 +872,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         psmAndSpectrumSplitPane.setDividerLocation(675);
         psmAndSpectrumSplitPane.setDividerSize(0);
         psmAndSpectrumSplitPane.setResizeWeight(0.5);
-        psmAndSpectrumSplitPane.setOpaque(false);
 
         psmsJPanel.setOpaque(false);
 
         psmsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide Spectrum Matches"));
         psmsPanel.setOpaque(false);
-
-        peptideShakerJScrollPane.setOpaque(false);
 
         peptideShakerJTable.setModel(new PeptideShakerPsmTableModel());
         peptideShakerJTable.setFocusable(false);
@@ -909,7 +902,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumIdResultsLabel.setText("Spectrum Identification Results");
 
         idResultsTableJScrollPane.setMinimumSize(new java.awt.Dimension(23, 87));
-        idResultsTableJScrollPane.setOpaque(false);
 
         searchResultsTable.setModel(new IdAlgorithmsPsmTableModel());
         searchResultsTable.setOpaque(false);
@@ -941,7 +933,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         vallidatedPsmsCheckBox.setText("Validated");
         vallidatedPsmsCheckBox.setToolTipText("Show validated PSMs only");
         vallidatedPsmsCheckBox.setIconTextGap(6);
-        vallidatedPsmsCheckBox.setOpaque(false);
         vallidatedPsmsCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 vallidatedPsmsCheckBoxActionPerformed(evt);
@@ -1098,7 +1089,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         slidersSplitPane.setBorder(null);
         slidersSplitPane.setDividerLocation(558);
         slidersSplitPane.setDividerSize(0);
-        slidersSplitPane.setOpaque(false);
 
         slidersPanel.setOpaque(false);
 
@@ -1106,7 +1096,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         accuracySlider.setPaintTicks(true);
         accuracySlider.setToolTipText("Annotation Accuracy");
         accuracySlider.setValue(100);
-        accuracySlider.setOpaque(false);
         accuracySlider.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 accuracySliderMouseWheelMoved(evt);
@@ -1122,7 +1111,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         intensitySlider.setPaintTicks(true);
         intensitySlider.setToolTipText("Annotation Intensity Level");
         intensitySlider.setValue(75);
-        intensitySlider.setOpaque(false);
         intensitySlider.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 intensitySliderMouseWheelMoved(evt);
@@ -3090,7 +3078,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
 
                                     specificAnnotationParameters = peptideShakerGUI.getSpecificAnnotationParameters(spectrumKey, tagAssumption);
-                                    
+
                                     IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(annotationParameters, modificationParameters, modificationSequenceMatchingParameters,
                                             specificAnnotationParameters, currentSpectrum, tagAssumption.getTag());
 

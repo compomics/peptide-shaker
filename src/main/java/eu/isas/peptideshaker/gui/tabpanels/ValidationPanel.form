@@ -1083,21 +1083,13 @@
                                       <Component id="thresholdHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="pepBinSizeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="fdrMetricLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      </Group>
+                                      <Component id="pepBinSizeLabel" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="32767" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <Component id="windowTxt" linkSize="20" min="-2" pref="90" max="-2" attributes="1"/>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="applyButton" linkSize="20" min="-2" pref="110" max="-2" attributes="1"/>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="estimatorHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                                          </Group>
-                                          <Component id="fdrCombo1" linkSize="20" alignment="0" min="-2" max="-2" attributes="3"/>
-                                      </Group>
+                                      <Component id="windowTxt" linkSize="20" min="-2" pref="90" max="-2" attributes="1"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="applyButton" linkSize="20" min="-2" pref="110" max="-2" attributes="1"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="estimatorHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -1129,28 +1121,21 @@
                       <Component id="validateButton" linkSize="22" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="thresholdHelpJButton" min="-2" max="-2" attributes="1"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="16" max="32767" attributes="0"/>
                   <Component id="advancedSettingsLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="fdrMetricLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="fdrCombo1" alignment="3" max="32767" attributes="1"/>
-                  </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="applyButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="windowTxt" alignment="3" max="32767" attributes="1"/>
                               <Component id="pepBinSizeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" attributes="0">
-                          <Component id="estimatorHelpJButton" min="-2" max="-2" attributes="1"/>
-                          <EmptySpace max="32767" attributes="0"/>
-                      </Group>
+                      <Component id="estimatorHelpJButton" alignment="0" min="-2" max="-2" attributes="1"/>
                   </Group>
+                  <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -1234,20 +1219,6 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="applyButtonActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JComboBox" name="fdrCombo1">
-          <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="2">
-                <StringItem index="0" value="Decoy"/>
-                <StringItem index="1" value="PEP"/>
-              </StringArray>
-            </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Estimator type"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fdrCombo1ActionPerformed"/>
-          </Events>
-        </Component>
         <Component class="javax.swing.JComboBox" name="thresholdTypeCmb">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
@@ -1293,11 +1264,6 @@
         <Component class="javax.swing.JLabel" name="thresholdTypeLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Type"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="fdrMetricLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="FDR Metric"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="estimatorHelpJButton">

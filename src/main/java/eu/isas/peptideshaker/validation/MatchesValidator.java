@@ -51,7 +51,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -92,7 +91,11 @@ public class MatchesValidator {
      * @param peptideMap the peptide target decoy map
      * @param proteinMap the protein target decoy map
      */
-    public MatchesValidator(TargetDecoyMap psmMap, TargetDecoyMap peptideMap, TargetDecoyMap proteinMap) {
+    public MatchesValidator(
+            TargetDecoyMap psmMap,
+            TargetDecoyMap peptideMap,
+            TargetDecoyMap proteinMap
+    ) {
 
         this.psmMap = psmMap;
         this.peptideMap = peptideMap;
@@ -126,43 +129,55 @@ public class MatchesValidator {
      * @throws java.util.concurrent.TimeoutException exception thrown if the
      * operation times out
      */
-    public void validateIdentifications(Identification identification, Metrics metrics, InputMap inputMap,
-            WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps, IdentificationParameters identificationParameters,
-            ProjectType projectType, ProcessingParameters processingParameters) throws InterruptedException, TimeoutException {
+    public void validateIdentifications(
+            Identification identification,
+            Metrics metrics,
+            InputMap inputMap,
+            WaitingHandler waitingHandler,
+            ExceptionHandler exceptionHandler,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SequenceProvider sequenceProvider,
+            ProteinDetailsProvider proteinDetailsProvider,
+            GeneMaps geneMaps,
+            IdentificationParameters identificationParameters,
+            ProjectType projectType,
+            ProcessingParameters processingParameters
+    ) throws InterruptedException, TimeoutException {
 
         IdMatchValidationParameters validationParameters = identificationParameters.getIdValidationParameters();
 
         waitingHandler.setWaitingText("Finding FDR Thresholds. Please Wait...");
 
-        TargetDecoyMap currentMap = psmMap;
-        TargetDecoyResults currentResults = currentMap.getTargetDecoyResults();
+        for (int algorithm : inputMap.getInputAlgorithms()) {
+
+            TargetDecoyMap targetDecoyMap = inputMap.getTargetDecoyMap(algorithm);
+            TargetDecoyResults currentResults = targetDecoyMap.getTargetDecoyResults();
+            currentResults.setInputType(1);
+            currentResults.setUserInput(validationParameters.getDefaultPsmFDR());
+            currentResults.setFdrLimit(validationParameters.getDefaultPsmFDR());
+            targetDecoyMap.getTargetDecoySeries().getFDRResults(currentResults);
+
+        }
+
+        TargetDecoyResults currentResults = psmMap.getTargetDecoyResults();
         currentResults.setInputType(1);
         currentResults.setUserInput(validationParameters.getDefaultPsmFDR());
-        currentResults.setClassicalEstimators(true);
-        currentResults.setClassicalValidation(true);
         currentResults.setFdrLimit(validationParameters.getDefaultPsmFDR());
-        currentMap.getTargetDecoySeries().getFDRResults(currentResults);
+        psmMap.getTargetDecoySeries().getFDRResults(currentResults);
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
-        currentMap = peptideMap;
-        currentResults = currentMap.getTargetDecoyResults();
+        currentResults = peptideMap.getTargetDecoyResults();
         currentResults.setInputType(1);
         currentResults.setUserInput(validationParameters.getDefaultPeptideFDR());
-        currentResults.setClassicalEstimators(true);
-        currentResults.setClassicalValidation(true);
         currentResults.setFdrLimit(validationParameters.getDefaultPeptideFDR());
-        currentMap.getTargetDecoySeries().getFDRResults(currentResults);
+        peptideMap.getTargetDecoySeries().getFDRResults(currentResults);
 
-        currentMap = proteinMap;
-        currentResults = currentMap.getTargetDecoyResults();
+        currentResults = proteinMap.getTargetDecoyResults();
         currentResults.setInputType(1);
         currentResults.setUserInput(validationParameters.getDefaultProteinFDR());
-        currentResults.setClassicalEstimators(true);
-        currentResults.setClassicalValidation(true);
         currentResults.setFdrLimit(validationParameters.getDefaultProteinFDR());
-        currentMap.getTargetDecoySeries().getFDRResults(currentResults);
+        proteinMap.getTargetDecoySeries().getFDRResults(currentResults);
 
         ValidationQcParameters validationQCParameters = validationParameters.getValidationQCParameters();
 
@@ -181,7 +196,7 @@ public class MatchesValidator {
         }
 
         AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
-        Double intensityLimit = annotationParameters.getAnnotationIntensityLimit();
+        double intensityLimit = annotationParameters.getAnnotationIntensityLimit();
         annotationParameters.setIntensityLimit(0);
 
         ExecutorService pool = Executors.newFixedThreadPool(processingParameters.getnThreads());
@@ -434,11 +449,16 @@ public class MatchesValidator {
      * @param proteinKey the key of the protein match of interest
      * @param identificationParameters the identification parameters
      */
-    public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+    public static void updateProteinMatchValidationLevel(
+            Identification identification,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider,
-            GeneMaps geneMaps, IdentificationParameters identificationParameters,
-            TargetDecoyMap proteinMap, long proteinKey) {
+            GeneMaps geneMaps,
+            IdentificationParameters identificationParameters,
+            TargetDecoyMap proteinMap,
+            long proteinKey
+    ) {
 
         ValidationQcParameters validationQCParameters = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
@@ -484,11 +504,20 @@ public class MatchesValidator {
      * @param proteinKey the key of the protein match of interest
      * @param identificationParameters the identification parameters
      */
-    public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps,
-            IdentificationParameters identificationParameters, TargetDecoyMap targetDecoyMap,
-            double scoreThreshold, double nTargetLimit,
-            double confidenceThreshold, boolean noValidated, long proteinKey) {
+    public static void updateProteinMatchValidationLevel(
+            Identification identification,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SequenceProvider sequenceProvider,
+            ProteinDetailsProvider proteinDetailsProvider,
+            GeneMaps geneMaps,
+            IdentificationParameters identificationParameters,
+            TargetDecoyMap targetDecoyMap,
+            double scoreThreshold,
+            double nTargetLimit,
+            double confidenceThreshold,
+            boolean noValidated,
+            long proteinKey
+    ) {
 
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(proteinKey)).getUrParam(psParameter);
@@ -556,10 +585,16 @@ public class MatchesValidator {
      * @param identificationParameters the identification parameters
      * @param peptideKey the key of the peptide match of interest
      */
-    public static void updatePeptideMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+    public static void updatePeptideMatchValidationLevel(
+            Identification identification,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SequenceProvider sequenceProvider,
-            ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps,
-            IdentificationParameters identificationParameters, TargetDecoyMap peptideMap, long peptideKey) {
+            ProteinDetailsProvider proteinDetailsProvider,
+            GeneMaps geneMaps,
+            IdentificationParameters identificationParameters,
+            TargetDecoyMap peptideMap,
+            long peptideKey
+    ) {
 
         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
         PSParameter psParameter = (PSParameter) ((PeptideMatch) peptideMatch).getUrParam(PSParameter.dummy);
@@ -569,8 +604,6 @@ public class MatchesValidator {
         if (identificationParameters.getFastaParameters().isTargetDecoy()) {
 
             TargetDecoyResults targetDecoyResults = peptideMap.getTargetDecoyResults();
-            double fdrLimit = targetDecoyResults.getFdrLimit();
-            double nTargetLimit = 100.0 / fdrLimit;
             double peptideThreshold = targetDecoyResults.getScoreLimit();
             double margin = validationQCParameters.getConfidenceMargin() * peptideMap.getResolution();
             double confidenceThreshold = targetDecoyResults.getConfidenceLimit() + margin;
@@ -640,11 +673,17 @@ public class MatchesValidator {
      * @param spectrumMatchKey the key of the spectrum match of interest
      * @param applyQCFilters if true quality control filters will be used
      */
-    public static void updateSpectrumMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+    public static void updateSpectrumMatchValidationLevel(
+            Identification identification,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SequenceProvider sequenceProvider,
-            ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps,
+            ProteinDetailsProvider proteinDetailsProvider,
+            GeneMaps geneMaps,
             IdentificationParameters identificationParameters,
-            TargetDecoyMap psmMap, long spectrumMatchKey, boolean applyQCFilters) {
+            TargetDecoyMap psmMap,
+            long spectrumMatchKey,
+            boolean applyQCFilters
+    ) {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
         PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
@@ -656,13 +695,10 @@ public class MatchesValidator {
             double psmThreshold = 0;
             double confidenceThreshold = 100;
             boolean noValidated = true;
-            double nTargetLimit = 100;
 
             if (psmMap != null) {
 
                 TargetDecoyResults targetDecoyResults = psmMap.getTargetDecoyResults();
-                double fdrLimit = targetDecoyResults.getFdrLimit();
-                nTargetLimit = 100.0 / fdrLimit;
                 psmThreshold = targetDecoyResults.getScoreLimit();
                 double margin = validationQCParameters.getConfidenceMargin() * psmMap.getResolution();
                 confidenceThreshold = targetDecoyResults.getConfidenceLimit() + margin;
@@ -686,7 +722,15 @@ public class MatchesValidator {
                     for (Filter filter : validationQCParameters.getPsmFilters()) {
 
                         PsmFilter psmFilter = (PsmFilter) filter;
-                        boolean validated = psmFilter.isValidated(spectrumMatchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider);
+                        boolean validated = psmFilter.isValidated(
+                                spectrumMatchKey,
+                                identification,
+                                geneMaps,
+                                identificationFeaturesGenerator,
+                                identificationParameters,
+                                sequenceProvider,
+                                proteinDetailsProvider
+                        );
                         psParameter.setQcResult(psmFilter.getName(), validated);
 
                         if (!validated) {
@@ -740,9 +784,17 @@ public class MatchesValidator {
      * @param applyQCFilters boolean indicating whether QC filters should be
      * applied
      */
-    public static void updatePeptideAssumptionValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, IdentificationParameters identificationParameters,
-            InputMap inputMap, long spectrumMatchKey, PeptideAssumption peptideAssumption, boolean applyQCFilters) {
+    public static void updatePeptideAssumptionValidationLevel(
+            Identification identification,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SequenceProvider sequenceProvider,
+            ProteinDetailsProvider proteinDetailsProvider,
+            IdentificationParameters identificationParameters,
+            InputMap inputMap,
+            long spectrumMatchKey,
+            PeptideAssumption peptideAssumption,
+            boolean applyQCFilters
+    ) {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
         PSParameter psParameter = (PSParameter) peptideAssumption.getUrParam(PSParameter.dummy);
@@ -754,13 +806,10 @@ public class MatchesValidator {
             double seThreshold = 0;
             double confidenceThreshold = 100;
             boolean noValidated = true;
-            double nTargetLimit = 100;
 
             if (targetDecoyMap != null) {
 
                 TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                double desiredThreshold = targetDecoyResults.getUserInput();
-                nTargetLimit = 100.0 / desiredThreshold;
                 seThreshold = targetDecoyResults.getScoreLimit();
                 double margin = validationQCParameters.getConfidenceMargin() * targetDecoyMap.getResolution();
                 confidenceThreshold = targetDecoyResults.getConfidenceLimit() + margin;
@@ -785,7 +834,15 @@ public class MatchesValidator {
 
                         PsmFilter psmFilter = (PsmFilter) filter;
                         AssumptionFilter assumptionFilter = psmFilter.getAssumptionFilter();
-                        boolean validated = assumptionFilter.isValidated(spectrumMatchKey, spectrumMatch.getSpectrumKey(), peptideAssumption, identification, sequenceProvider, identificationFeaturesGenerator, identificationParameters);
+                        boolean validated = assumptionFilter.isValidated(
+                                spectrumMatchKey,
+                                spectrumMatch.getSpectrumKey(),
+                                peptideAssumption,
+                                identification,
+                                sequenceProvider,
+                                identificationFeaturesGenerator,
+                                identificationParameters
+                        );
                         psParameter.setQcResult(filter.getName(), validated);
 
                         if (!validated) {
@@ -832,8 +889,13 @@ public class MatchesValidator {
      * @param waitingHandler the handler displaying feedback to the user
      * @param sequenceProvider the sequence provider
      */
-    public void fillPeptideMaps(Identification identification, Metrics metrics, WaitingHandler waitingHandler,
-            IdentificationParameters identificationParameters, SequenceProvider sequenceProvider) {
+    public void fillPeptideMaps(
+            Identification identification,
+            Metrics metrics,
+            WaitingHandler waitingHandler,
+            IdentificationParameters identificationParameters,
+            SequenceProvider sequenceProvider
+    ) {
 
         waitingHandler.setWaitingText("Filling Peptide Maps. Please Wait...");
 
@@ -974,7 +1036,11 @@ public class MatchesValidator {
      * @param fastaParameters the fasta file parameters
      * @param waitingHandler the handler displaying feedback to the user
      */
-    public void attachPeptideProbabilities(Identification identification, FastaParameters fastaParameters, WaitingHandler waitingHandler) {
+    public void attachPeptideProbabilities(
+            Identification identification,
+            FastaParameters fastaParameters,
+            WaitingHandler waitingHandler
+    ) {
 
         waitingHandler.setWaitingText("Attaching Peptide Probabilities. Please Wait...");
 
@@ -1042,7 +1108,10 @@ public class MatchesValidator {
      * validate
      * @param waitingHandler the handler displaying feedback to the user
      */
-    public void fillProteinMap(Identification identification, WaitingHandler waitingHandler) {
+    public void fillProteinMap(
+            Identification identification,
+            WaitingHandler waitingHandler
+    ) {
 
         waitingHandler.setWaitingText("Filling Protein Map. Please Wait...");
 
@@ -1154,8 +1223,14 @@ public class MatchesValidator {
      * @param waitingHandler the handler displaying feedback to the user
      * @param fractionParameters the fraction parameters
      */
-    public void attachProteinProbabilities(Identification identification, SequenceProvider sequenceProvider, FastaParameters fastaParameters, Metrics metrics, WaitingHandler waitingHandler,
-            FractionParameters fractionParameters) {
+    public void attachProteinProbabilities(
+            Identification identification,
+            SequenceProvider sequenceProvider,
+            FastaParameters fastaParameters,
+            Metrics metrics,
+            WaitingHandler waitingHandler,
+            FractionParameters fractionParameters
+    ) {
 
         waitingHandler.setWaitingText("Attaching Protein Probabilities. Please Wait...");
 
@@ -1425,10 +1500,20 @@ public class MatchesValidator {
          * @param storeContributions boolean indicating whether advocate
          * contributions should be stored.
          */
-        public PsmValidatorRunnable(SpectrumMatchesIterator psmIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+        public PsmValidatorRunnable(
+                SpectrumMatchesIterator psmIterator,
+                Identification identification,
+                IdentificationFeaturesGenerator identificationFeaturesGenerator,
                 SequenceProvider sequenceProvider,
-                ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps,
-                IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, InputMap inputMap, boolean applyQCFilters, boolean storeContributions) {
+                ProteinDetailsProvider proteinDetailsProvider,
+                GeneMaps geneMaps,
+                IdentificationParameters identificationParameters,
+                WaitingHandler waitingHandler,
+                ExceptionHandler exceptionHandler,
+                InputMap inputMap,
+                boolean applyQCFilters,
+                boolean storeContributions
+        ) {
 
             this.psmIterator = psmIterator;
             this.identification = identification;
@@ -1461,7 +1546,17 @@ public class MatchesValidator {
 
                     }
 
-                    updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, psmMap, spectrumKey, applyQCFilters);
+                    updateSpectrumMatchValidationLevel(
+                            identification,
+                            identificationFeaturesGenerator,
+                            sequenceProvider,
+                            proteinDetailsProvider,
+                            geneMaps,
+                            identificationParameters,
+                            psmMap,
+                            spectrumKey,
+                            applyQCFilters
+                    );
 
                     // update assumption validation level
                     HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> assumptions = spectrumMatch.getPeptideAssumptionsMap();
@@ -1472,7 +1567,17 @@ public class MatchesValidator {
 
                             for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : scoreList) {
 
-                                updatePeptideAssumptionValidationLevel(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, identificationParameters, inputMap, spectrumKey, (PeptideAssumption) spectrumIdentificationAssumption, applyQCFilters);
+                                updatePeptideAssumptionValidationLevel(
+                                        identification,
+                                        identificationFeaturesGenerator,
+                                        sequenceProvider,
+                                        proteinDetailsProvider,
+                                        identificationParameters,
+                                        inputMap,
+                                        spectrumKey,
+                                        (PeptideAssumption) spectrumIdentificationAssumption,
+                                        applyQCFilters
+                                );
 
                             }
                         }
@@ -1489,7 +1594,12 @@ public class MatchesValidator {
 
                             double precursorMz = spectrumFactory.getPrecursorMz(spectrumMatch.getSpectrumKey());
                             SearchParameters searchParameters = identificationParameters.getSearchParameters();
-                            double precursorMzError = peptideAssumption.getDeltaMass(precursorMz, searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection());
+                            double precursorMzError = peptideAssumption.getDeltaMass(
+                                    precursorMz,
+                                    searchParameters.isPrecursorAccuracyTypePpm(),
+                                    searchParameters.getMinIsotopicCorrection(),
+                                    searchParameters.getMaxIsotopicCorrection()
+                            );
 
                             ArrayList<Double> fileDeviations = threadPrecursorMzDeviations.get(spectrumFileName);
 
@@ -1648,10 +1758,18 @@ public class MatchesValidator {
          * of validated peptides per fraction
          * @param metrics the object used to store metrics on the project
          */
-        public PeptideValidatorRunnable(PeptideMatchesIterator peptideMatchesIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+        public PeptideValidatorRunnable(
+                PeptideMatchesIterator peptideMatchesIterator,
+                Identification identification,
+                IdentificationFeaturesGenerator identificationFeaturesGenerator,
                 SequenceProvider sequenceProvider,
-                ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps,
-                IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, Metrics metrics) {
+                ProteinDetailsProvider proteinDetailsProvider,
+                GeneMaps geneMaps,
+                IdentificationParameters identificationParameters,
+                WaitingHandler waitingHandler,
+                ExceptionHandler exceptionHandler,
+                Metrics metrics
+        ) {
 
             this.peptideMatchesIterator = peptideMatchesIterator;
             this.identification = identification;
@@ -1676,7 +1794,16 @@ public class MatchesValidator {
 
                     long peptideKey = peptideMatch.getKey();
 
-                    updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, peptideMap, peptideKey);
+                    updatePeptideMatchValidationLevel(
+                            identification,
+                            identificationFeaturesGenerator,
+                            sequenceProvider,
+                            proteinDetailsProvider,
+                            geneMaps,
+                            identificationParameters,
+                            peptideMap,
+                            peptideKey
+                    );
 
                     // set the fraction details
                     PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
@@ -1862,7 +1989,7 @@ public class MatchesValidator {
         /**
          * Keep track of the validated target protein matches.
          */
-        private HashSet<Long> validatedProteinMatches = new HashSet<>();
+        private final HashSet<Long> validatedProteinMatches = new HashSet<>();
 
         /**
          * Constructor.
@@ -1881,9 +2008,18 @@ public class MatchesValidator {
          * canceling the process
          * @param exceptionHandler handler for exceptions
          */
-        public ProteinValidatorRunnable(ProteinMatchesIterator proteinMatchesIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-                SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps, Metrics metrics,
-                IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
+        public ProteinValidatorRunnable(
+                ProteinMatchesIterator proteinMatchesIterator,
+                Identification identification,
+                IdentificationFeaturesGenerator identificationFeaturesGenerator,
+                SequenceProvider sequenceProvider,
+                ProteinDetailsProvider proteinDetailsProvider,
+                GeneMaps geneMaps,
+                Metrics metrics,
+                IdentificationParameters identificationParameters,
+                WaitingHandler waitingHandler,
+                ExceptionHandler exceptionHandler
+        ) {
 
             this.proteinMatchesIterator = proteinMatchesIterator;
             this.identification = identification;
@@ -1923,8 +2059,20 @@ public class MatchesValidator {
                 while ((proteinMatch = proteinMatchesIterator.next()) != null && !waitingHandler.isRunCanceled()) {
 
                     long proteinKey = proteinMatch.getKey();
-                    updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters,
-                            proteinMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
+                    updateProteinMatchValidationLevel(
+                            identification,
+                            identificationFeaturesGenerator,
+                            sequenceProvider,
+                            proteinDetailsProvider,
+                            geneMaps,
+                            identificationParameters,
+                            proteinMap,
+                            proteinThreshold,
+                            nTargetLimit,
+                            proteinConfidentThreshold,
+                            noValidated,
+                            proteinKey
+                    );
 
                     PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
@@ -2043,7 +2191,12 @@ public class MatchesValidator {
                 }
 
                 // set the max values in the metrics
-                setMaxValues(maxValidatedPeptidesFractionLevel, maxValidatedSpectraFractionLevel, maxProteinAveragePrecursorIntensity, maxProteinSummedPrecursorIntensity);
+                setMaxValues(
+                        maxValidatedPeptidesFractionLevel,
+                        maxValidatedSpectraFractionLevel,
+                        maxProteinAveragePrecursorIntensity,
+                        maxProteinSummedPrecursorIntensity
+                );
 
             } catch (Exception e) {
                 exceptionHandler.catchException(e);
@@ -2062,7 +2215,12 @@ public class MatchesValidator {
          * @param maxProteinSummedPrecursorIntensity the maximal protein summed
          * intensity
          */
-        private synchronized void setMaxValues(int maxValidatedPeptidesFractionLevel, int maxValidatedSpectraFractionLevel, double maxProteinAveragePrecursorIntensity, double maxProteinSummedPrecursorIntensity) {
+        private synchronized void setMaxValues(
+                int maxValidatedPeptidesFractionLevel,
+                int maxValidatedSpectraFractionLevel,
+                double maxProteinAveragePrecursorIntensity,
+                double maxProteinSummedPrecursorIntensity
+        ) {
 
             if (metrics.getMaxValidatedPeptidesPerFraction() != null && maxValidatedPeptidesFractionLevel > metrics.getMaxValidatedPeptidesPerFraction()) {
 

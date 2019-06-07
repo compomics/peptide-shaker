@@ -1,12 +1,10 @@
 package eu.isas.peptideshaker.scoring.maps;
 
-import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.parameters.identification.advanced.PsmScoringParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
@@ -182,9 +180,9 @@ public class InputMap implements Serializable {
         waitingHandler.resetSecondaryProgressCounter();
         waitingHandler.setMaxSecondaryProgressCounter(getNEntries() + getNEntriesSpecific());
 
-        for (TargetDecoyMap hitmap : inputMap.values()) {
+        for (TargetDecoyMap targetDecoyMap : inputMap.values()) {
 
-            hitmap.estimateProbabilities(waitingHandler);
+            targetDecoyMap.estimateProbabilities(waitingHandler);
 
             waitingHandler.increaseSecondaryProgressCounter();
 
