@@ -480,7 +480,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                                 if (!psParameter.getHidden()) {
 
-                                                    if (peptideMatch.getPeptide().getSequence().equals(matchingInput)) {
+                                                    if (peptideMatch.getPeptide().getSequence().toLowerCase().contains(matchingInput)) {
 
                                                         possibilities.get(jumpType).add(peptideKey);
                                                         types.get(jumpType).add(Type.PEPTIDE);
