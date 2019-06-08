@@ -1033,7 +1033,7 @@ public class MatchesValidator {
      *
      * @param identification the identification class containing the matches to
      * validate
-     * @param fastaParameters the fasta file parameters
+     * @param fastaParameters the FASTA file parameters
      * @param waitingHandler the handler displaying feedback to the user
      */
     public void attachPeptideProbabilities(
