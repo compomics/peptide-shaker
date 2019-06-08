@@ -3673,11 +3673,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     DisplayFeaturesGenerator displayFeaturesGenerator = peptideShakerGUI.getDisplayFeaturesGenerator();
                     String proteins = "";
                     String sequence = "";
+                    boolean matchFound = false;
+
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         String[] proteinAccessions = spectrumMatch.getBestPeptideAssumption().getPeptide().getProteinMapping().keySet().stream().toArray(String[]::new);
                         proteins = displayFeaturesGenerator.getDatabaseLinks(proteinAccessions);
                         sequence = displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true);
                         peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch);
+                        matchFound = true;
                     } else if (spectrumMatch.getBestTagAssumption() != null) {
                         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
                         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
@@ -3686,25 +3689,31 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         sequence = spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(modificationParameters,
                                 true, true, true, false, modificationSequenceMatchingParameters, displayParameters.getDisplayedModifications());
                         peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getTagModificationTooltipAsHtml(spectrumMatch.getBestTagAssumption().getTag());
+                        matchFound = true;
                     }
 
-                    switch (columnIndex) {
-                        case 0:
-                            return row + 1;
-                        case 1:
-                            return isBestPsmEqualForAllIdSoftware(spectrumMatch, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters(), advocatesUsed.size());
-                        case 2:
-                            return sequence;
-                        case 3:
-                            return proteins;
-                        case 4:
-                            return psParameter.getScore();
-                        case 5:
-                            return spectrumMatch.getBestPeptideAssumption() != null || spectrumMatch.getBestTagAssumption() != null ? psParameter.getConfidence() : "";
-                        case 6:
-                            return spectrumMatch.getBestPeptideAssumption() != null ? psParameter.getMatchValidationLevel().getIndex() : MatchValidationLevel.none.getIndex();
-                        default:
-                            return "";
+                    if (matchFound) {
+
+                        switch (columnIndex) {
+                            case 0:
+                                return row + 1;
+                            case 1:
+                                return isBestPsmEqualForAllIdSoftware(spectrumMatch, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters(), advocatesUsed.size());
+                            case 2:
+                                return sequence;
+                            case 3:
+                                return proteins;
+                            case 4:
+                                return psParameter.getScore();
+                            case 5:
+                                return spectrumMatch.getBestPeptideAssumption() != null || spectrumMatch.getBestTagAssumption() != null ? psParameter.getConfidence() : "";
+                            case 6:
+                                return spectrumMatch.getBestPeptideAssumption() != null ? psParameter.getMatchValidationLevel().getIndex() : MatchValidationLevel.none.getIndex();
+                            default:
+                                return "";
+                        }
+                    } else {
+                        return null;
                     }
                 }
             } catch (Exception e) {
