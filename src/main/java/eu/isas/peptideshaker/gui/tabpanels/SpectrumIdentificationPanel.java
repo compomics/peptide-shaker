@@ -2705,7 +2705,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
         SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumMatchKey);
-        String spectrumKey = spectrumMatch.getSpectrumKey();
+        String spectrumKey = spectrumMatch != null ? spectrumMatch.getSpectrumKey() : spectrumFactory.getSpectrumKeyAsString(spectrumMatchKey);
 
         String fileName = Spectrum.getSpectrumFile(spectrumKey);
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
@@ -3554,9 +3554,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     case 9:
 
                         if (spectrumMatch != null) {
-                            PSParameter pSParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
-                            if (pSParameter != null) {
-                                return pSParameter.getScore();
+                            PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
+                            if (psParameter != null) {
+                                return psParameter.getScore();
                             } else {
                                 return null;
                             }
@@ -3565,18 +3565,18 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     case 10:
                         if (spectrumMatch != null) {
-                            PSParameter pSParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
-                            if (pSParameter != null) {
-                                return pSParameter.getConfidence();
+                            PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
+                            if (psParameter != null && psParameter.getMatchValidationLevel() != MatchValidationLevel.none) {
+                                return psParameter.getConfidence();
                             }
                         }
                         return null;
 
                     case 11:
                         if (spectrumMatch != null) {
-                            PSParameter pSParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
-                            if (pSParameter != null) {
-                                return pSParameter.getMatchValidationLevel().getIndex();
+                            PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
+                            if (psParameter != null) {
+                                return psParameter.getMatchValidationLevel().getIndex();
                             }
                         }
                         return null;

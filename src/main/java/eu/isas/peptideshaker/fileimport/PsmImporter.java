@@ -710,14 +710,14 @@ public class PsmImporter {
 
                 if (firstPeptideHit != null) {
 
-                    checkPeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHit);
+                    savePeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHit);
 
                 } else {
 
                     // Check if a peptide with no protein can be a good candidate
                     if (firstPeptideHitNoProtein != null) {
 
-                        checkPeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHitNoProtein);
+                        savePeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHitNoProtein);
 
                     } else {
 
@@ -1277,7 +1277,7 @@ public class PsmImporter {
      * @param spectrumKey the key of the spectrum match
      * @param peptideAssumption the peptide assumption
      */
-    private synchronized void checkPeptidesMassErrorsAndCharges(
+    private synchronized void savePeptidesMassErrorsAndCharges(
             String spectrumKey, 
             PeptideAssumption peptideAssumption
     ) {

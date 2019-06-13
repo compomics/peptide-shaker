@@ -107,7 +107,7 @@ public class BestMatchSelection {
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
         PSParameter psmParameter = new PSParameter();
-        psmParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
+        psmParameter.setMatchValidationLevel(MatchValidationLevel.none);
         spectrumMatch.addUrParam(psmParameter);
 
         String spectrumKey = spectrumMatch.getSpectrumKey();
@@ -381,6 +381,8 @@ public class BestMatchSelection {
             }
 
             if (bestPeptideAssumption != null) {
+
+                psmParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
 
                 if (multiSE) {
 
