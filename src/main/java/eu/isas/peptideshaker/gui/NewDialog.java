@@ -115,10 +115,6 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private ProjectDetails projectDetails = new ProjectDetails();
     /**
-     * The project type.
-     */
-    private ProjectType projectType = ProjectType.protein;
-    /**
      * The identification parameters factory.
      */
     private IdentificationParametersFactory identificationParametersFactory = IdentificationParametersFactory.getInstance();
@@ -166,8 +162,12 @@ public class NewDialog extends javax.swing.JDialog {
      * Set up the GUI.
      */
     private void setUpGui() {
+        
         initComponents();
+        
         settingsComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        typeCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        
         idFilesTxt.setText(idFiles.size() + " file(s) selected");
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         fastaFileTxt.setText("");
@@ -201,6 +201,7 @@ public class NewDialog extends javax.swing.JDialog {
         projectDetailsPanel = new javax.swing.JPanel();
         projectNameIdTxt = new javax.swing.JTextField();
         projectReferenceLabel = new javax.swing.JLabel();
+        typeCmb = new javax.swing.JComboBox<>();
         processingParametersPanel = new javax.swing.JPanel();
         projectSettingsTxt = new javax.swing.JTextField();
         projectSettingsLabel = new javax.swing.JLabel();
@@ -264,6 +265,9 @@ public class NewDialog extends javax.swing.JDialog {
         projectReferenceLabel.setText("Project Reference*");
         projectReferenceLabel.setToolTipText("A project name for future reference");
 
+        typeCmb.setModel(new DefaultComboBoxModel<String>(ProjectType.getGuiOptions()));
+        typeCmb.setEnabled(false);
+
         javax.swing.GroupLayout projectDetailsPanelLayout = new javax.swing.GroupLayout(projectDetailsPanel);
         projectDetailsPanel.setLayout(projectDetailsPanelLayout);
         projectDetailsPanelLayout.setHorizontalGroup(
@@ -272,8 +276,10 @@ public class NewDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(projectReferenceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(projectNameIdTxt)
-                .addGap(164, 164, 164))
+                .addComponent(projectNameIdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(typeCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         projectDetailsPanelLayout.setVerticalGroup(
             projectDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -281,8 +287,9 @@ public class NewDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(projectDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(projectNameIdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(projectReferenceLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(projectReferenceLabel)
+                    .addComponent(typeCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         processingParametersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Project Settings"));
@@ -628,6 +635,7 @@ public class NewDialog extends javax.swing.JDialog {
             this.setVisible(false);
             peptideShakerGUI.setVisible(true);
 
+            ProjectType projectType = ProjectType.getProjectType(typeCmb.getSelectedItem().toString());
             peptideShakerGUI.setIdentificationParameters(identificationParameters);
             peptideShakerGUI.setProcessingParameters(processingParameters);
             peptideShakerGUI.setDisplayParameters(displayPreferences);
@@ -1448,6 +1456,7 @@ public class NewDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox settingsComboBox;
     private javax.swing.JLabel spectrumFilesLabel;
     private javax.swing.JTextField spectrumFilesTxt;
+    private javax.swing.JComboBox<String> typeCmb;
     // End of variables declaration//GEN-END:variables
 
     /**

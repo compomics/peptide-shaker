@@ -126,8 +126,10 @@
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="projectReferenceLabel" min="-2" pref="130" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="projectNameIdTxt" max="32767" attributes="2"/>
-                      <EmptySpace min="-2" pref="164" max="-2" attributes="0"/>
+                      <Component id="projectNameIdTxt" pref="521" max="32767" attributes="2"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="typeCmb" min="-2" pref="144" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -138,8 +140,9 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="projectNameIdTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="projectReferenceLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="typeCmb" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="13" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -161,6 +164,17 @@
                 <Property name="text" type="java.lang.String" value="Project Reference*"/>
                 <Property name="toolTipText" type="java.lang.String" value="A project name for future reference"/>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="typeCmb">
+              <Properties>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="new DefaultComboBoxModel&lt;String&gt;(ProjectType.getGuiOptions())" type="code"/>
+                </Property>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>
