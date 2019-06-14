@@ -266,6 +266,7 @@ public class NewDialog extends javax.swing.JDialog {
         projectReferenceLabel.setToolTipText("A project name for future reference");
 
         typeCmb.setModel(new DefaultComboBoxModel<String>(ProjectType.getGuiOptions()));
+        typeCmb.setToolTipText("Project type");
         typeCmb.setEnabled(false);
 
         javax.swing.GroupLayout projectDetailsPanelLayout = new javax.swing.GroupLayout(projectDetailsPanel);
