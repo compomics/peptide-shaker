@@ -90,7 +90,7 @@ public class DisplayFeaturesGenerator {
      * @return the transformed accession number
      */
     public String getDatabaseLink(String proteinAccession) {
-        return getDatabaseLink(proteinAccession, true);
+        return getDatabaseLink(proteinAccession, true, false);
     }
 
     /**
@@ -100,21 +100,25 @@ public class DisplayFeaturesGenerator {
      * @param proteinAccession the protein to get the database link for
      * @param includeHtmlTags if true, the starting and ending HTML tags are
      * included
+     * @param underlineLink if true, the link is underlined
      *
      * @return the transformed accession number
      */
-    public String getDatabaseLink(String proteinAccession, boolean includeHtmlTags) {
+    public String getDatabaseLink(String proteinAccession, boolean includeHtmlTags, boolean underlineLink) {
 
-        // No link for decoy proteins
+        // no link for decoy proteins
         if (ProteinUtils.isDecoy(proteinAccession, sequenceProvider)) {
-
             return proteinAccession;
-
         }
 
-        // Get link according to the database type
+        // get link according to the database type
         ProteinDatabase proteinDatabase = proteinDetailsProvider.getProteinDatabase(proteinAccession);
 
+        String underLineTag = "";
+        if (!underlineLink) {
+            underLineTag = " style=\"text-decoration: none\"";
+        }
+        
         String result;
 
         switch (proteinDatabase) {
@@ -124,7 +128,9 @@ public class DisplayFeaturesGenerator {
                 result = String.join("",
                         "<a href=\"",
                         getUniProtAccessionLink(proteinAccession),
-                        "\"><font color=\"",
+                        "\"",
+                        underLineTag,
+                        "><font color=\"",
                         notSelectedRowHtmlTagFontColor,
                         "\">",
                         proteinAccession,
@@ -134,7 +140,9 @@ public class DisplayFeaturesGenerator {
                 result = String.join("",
                         "<a href=\"",
                         getNextProtAccessionLink(proteinAccession),
-                        "\"><font color=\"",
+                        "\"",
+                        underLineTag,
+                        "><font color=\"",
                         notSelectedRowHtmlTagFontColor,
                         "\">",
                         proteinAccession,
@@ -144,7 +152,9 @@ public class DisplayFeaturesGenerator {
                 result = String.join("",
                         "<a href=\"",
                         getNcbiAccessionLink(proteinAccession),
-                        "\"><font color=\"",
+                        "\"",
+                        underLineTag,
+                        "><font color=\"",
                         notSelectedRowHtmlTagFontColor,
                         "\">",
                         proteinAccession,
@@ -155,7 +165,9 @@ public class DisplayFeaturesGenerator {
                 String uniProtProteinAccession = proteinAccession.substring(proteinAccession.indexOf("_") + 1);
                 result = String.join("",
                         "<a href=\"" + getUniProtAccessionLink(uniProtProteinAccession),
-                        "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">",
+                        "\"",
+                        underLineTag,
+                        "><font color=\"" + notSelectedRowHtmlTagFontColor + "\">",
                         proteinAccession,
                         "</font></a>");
                 break;
@@ -171,7 +183,7 @@ public class DisplayFeaturesGenerator {
 
         return result;
     }
-
+    
     /**
      * Transforms the protein accession number into an HTML link to the
      * corresponding database. Note that this is a complete HTML with HTML and a
@@ -183,11 +195,26 @@ public class DisplayFeaturesGenerator {
      * @return the transformed accession number
      */
     public String getDatabaseLinks(String[] proteinAccessions) {
+        return getDatabaseLinks(proteinAccessions, false);
+    }
+
+    /**
+     * Transforms the protein accession number into an HTML link to the
+     * corresponding database. Note that this is a complete HTML with HTML and a
+     * href tags, where the main use is to include it in the protein tables.
+     *
+     * @param proteinAccessions the list of the accessions of proteins to get
+     * the database links for
+     * @param underlineLink if true, the link is underlined
+     *
+     * @return the transformed accession number
+     */
+    public String getDatabaseLinks(String[] proteinAccessions, boolean underlineLink) {
 
         String result = proteinAccessions.length == 0 ? ""
                 : Arrays.stream(proteinAccessions)
                         .sorted()
-                        .map(accession -> getDatabaseLink(accession, false))
+                        .map(accession -> getDatabaseLink(accession, false, underlineLink))
                         .collect(Collectors.joining(", "));
 
         result = "<html>" + result + "</html>";

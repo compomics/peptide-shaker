@@ -19,6 +19,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
+import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -403,7 +404,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         proteinMatchTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(
                 TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
-        proteinMatchTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
+        proteinMatchTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer(Color.WHITE, Color.BLACK));
         proteinMatchTable.getColumn("Enz").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/selected_green-new.png")),
                 null,

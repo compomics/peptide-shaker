@@ -107,9 +107,7 @@
     </Container>
   </NonVisualComponents>
   <Properties>
-    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-      <Color blue="ff" green="ff" red="ff" type="rgb"/>
-    </Property>
+    <Property name="opaque" type="boolean" value="false"/>
   </Properties>
   <Events>
     <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="formComponentResized"/>
@@ -234,7 +232,9 @@
                           <Properties>
                             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                                <TitledBorder title="Proteins"/>
+                                <TitledBorder title="Proteins">
+                                  <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                                </TitledBorder>
                               </Border>
                             </Property>
                             <Property name="opaque" type="boolean" value="false"/>
@@ -260,11 +260,11 @@
                             </DimensionLayout>
                             <DimensionLayout dim="1">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <EmptySpace min="0" pref="277" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="255" max="32767" attributes="0"/>
                                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="proteinScrollPane" pref="255" max="32767" attributes="0"/>
+                                          <Component id="proteinScrollPane" pref="243" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -286,6 +286,9 @@
                                     </Property>
                                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                                       <TableColumnModel selectionModel="0"/>
+                                    </Property>
+                                    <Property name="gridColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                      <Color blue="cc" green="cc" red="cc" type="rgb"/>
                                     </Property>
                                     <Property name="opaque" type="boolean" value="false"/>
                                     <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
@@ -406,9 +409,7 @@
                         </Component>
                         <Container class="javax.swing.JPanel" name="contextMenuProteinsBackgroundPanel">
                           <Properties>
-                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                            </Property>
+                            <Property name="opaque" type="boolean" value="false"/>
                           </Properties>
                           <AuxValues>
                             <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
@@ -490,7 +491,9 @@
                                 </Property>
                                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                                    <TitledBorder title="Protein Sequence Coverage"/>
+                                    <TitledBorder title="Protein Sequence Coverage">
+                                      <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                                    </TitledBorder>
                                   </Border>
                                 </Property>
                                 <Property name="opaque" type="boolean" value="false"/>
@@ -521,7 +524,7 @@
                                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                                           <Component id="sequencePtmsPanel" min="-2" pref="7" max="-2" attributes="0"/>
                                           <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                                          <Component id="sequenceCoverageInnerPanel" pref="189" max="32767" attributes="0"/>
+                                          <Component id="sequenceCoverageInnerPanel" pref="167" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                                           <Component id="sequenceVariationsPanel" min="-2" pref="7" max="-2" attributes="0"/>
                                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
@@ -542,9 +545,7 @@
                                 </Container>
                                 <Container class="javax.swing.JPanel" name="sequenceCoverageInnerPanel">
                                   <Properties>
-                                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                    </Property>
+                                    <Property name="opaque" type="boolean" value="false"/>
                                   </Properties>
 
                                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
@@ -683,9 +684,7 @@
                             </Component>
                             <Container class="javax.swing.JPanel" name="contextMenuSequenceCoverageBackgroundPanel">
                               <Properties>
-                                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                </Property>
+                                <Property name="opaque" type="boolean" value="false"/>
                               </Properties>
                               <AuxValues>
                                 <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
@@ -781,7 +780,9 @@
                                       <Properties>
                                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                                           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                                            <TitledBorder title="Peptides"/>
+                                            <TitledBorder title="Peptides">
+                                              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                                            </TitledBorder>
                                           </Border>
                                         </Property>
                                         <Property name="opaque" type="boolean" value="false"/>
@@ -807,11 +808,11 @@
                                         </DimensionLayout>
                                         <DimensionLayout dim="1">
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <EmptySpace min="0" pref="147" max="32767" attributes="0"/>
+                                              <EmptySpace min="0" pref="125" max="32767" attributes="0"/>
                                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                                   <Group type="102" alignment="0" attributes="0">
                                                       <EmptySpace max="-2" attributes="0"/>
-                                                      <Component id="peptideScrollPane" pref="125" max="32767" attributes="0"/>
+                                                      <Component id="peptideScrollPane" pref="113" max="32767" attributes="0"/>
                                                       <EmptySpace max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
@@ -880,7 +881,6 @@
                                                     </Column>
                                                   </TableColumnModel>
                                                 </Property>
-                                                <Property name="opaque" type="boolean" value="false"/>
                                                 <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
                                                   <JTableSelectionModel selectionMode="0"/>
                                                 </Property>
@@ -996,9 +996,7 @@
                                     </Component>
                                     <Container class="javax.swing.JPanel" name="contextMenuPeptidesBackgroundPanel">
                                       <Properties>
-                                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                        </Property>
+                                        <Property name="opaque" type="boolean" value="false"/>
                                       </Properties>
                                       <AuxValues>
                                         <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
@@ -1059,7 +1057,9 @@
                                       <Properties>
                                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                                           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                                            <TitledBorder title="Peptide Spectrum Matches"/>
+                                            <TitledBorder title="Peptide Spectrum Matches">
+                                              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                                            </TitledBorder>
                                           </Border>
                                         </Property>
                                         <Property name="opaque" type="boolean" value="false"/>
@@ -1085,11 +1085,11 @@
                                         </DimensionLayout>
                                         <DimensionLayout dim="1">
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <EmptySpace min="0" pref="147" max="32767" attributes="0"/>
+                                              <EmptySpace min="0" pref="125" max="32767" attributes="0"/>
                                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                                   <Group type="102" alignment="0" attributes="0">
                                                       <EmptySpace max="-2" attributes="0"/>
-                                                      <Component id="spectraScrollPane" pref="125" max="32767" attributes="0"/>
+                                                      <Component id="spectraScrollPane" pref="113" max="32767" attributes="0"/>
                                                       <EmptySpace max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
@@ -1153,7 +1153,6 @@
                                                     </Column>
                                                   </TableColumnModel>
                                                 </Property>
-                                                <Property name="opaque" type="boolean" value="false"/>
                                                 <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                                                   <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                                                 </Property>
@@ -1266,9 +1265,7 @@
                                     </Component>
                                     <Container class="javax.swing.JPanel" name="contextMenuPsmsBackgroundPanel">
                                       <Properties>
-                                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                        </Property>
+                                        <Property name="opaque" type="boolean" value="false"/>
                                       </Properties>
                                       <AuxValues>
                                         <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
@@ -1331,7 +1328,9 @@
                                   <Properties>
                                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                                       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                                        <TitledBorder title="Spectrum &amp; Fragment Ions"/>
+                                        <TitledBorder title="Spectrum &amp; Fragment Ions">
+                                          <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                                        </TitledBorder>
                                       </Border>
                                     </Property>
                                     <Property name="opaque" type="boolean" value="false"/>
@@ -1364,6 +1363,9 @@
                                   <SubComponents>
                                     <Container class="javax.swing.JSplitPane" name="slidersSplitPane">
                                       <Properties>
+                                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                          <Color blue="33" green="33" red="33" type="rgb"/>
+                                        </Property>
                                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                                           <Border info="null"/>
                                         </Property>
@@ -1375,6 +1377,9 @@
                                       <SubComponents>
                                         <Container class="javax.swing.JTabbedPane" name="spectrumJTabbedPane">
                                           <Properties>
+                                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                              <Color blue="33" green="33" red="33" type="rgb"/>
+                                            </Property>
                                             <Property name="selectedIndex" type="int" value="2"/>
                                             <Property name="tabPlacement" type="int" value="3"/>
                                           </Properties>
@@ -1393,9 +1398,7 @@
                                           <SubComponents>
                                             <Container class="javax.swing.JPanel" name="fragmentIonJPanel">
                                               <Properties>
-                                                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                                </Property>
+                                                <Property name="opaque" type="boolean" value="false"/>
                                               </Properties>
                                               <Constraints>
                                                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
@@ -1422,7 +1425,7 @@
                                                   <Group type="103" groupAlignment="0" attributes="0">
                                                       <Group type="102" alignment="1" attributes="0">
                                                           <EmptySpace max="-2" attributes="0"/>
-                                                          <Component id="fragmentIonsJScrollPane" pref="271" max="32767" attributes="0"/>
+                                                          <Component id="fragmentIonsJScrollPane" pref="257" max="32767" attributes="0"/>
                                                           <EmptySpace max="-2" attributes="0"/>
                                                           <Component id="ionTableJToolBar" min="-2" max="-2" attributes="0"/>
                                                       </Group>
@@ -1448,6 +1451,7 @@
                                                     <Property name="floatable" type="boolean" value="false"/>
                                                     <Property name="rollover" type="boolean" value="true"/>
                                                     <Property name="borderPainted" type="boolean" value="false"/>
+                                                    <Property name="opaque" type="boolean" value="false"/>
                                                   </Properties>
 
                                                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
@@ -1465,6 +1469,7 @@
                                                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                                                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                                                 </Property>
+                                                <Property name="opaque" type="boolean" value="false"/>
                                               </Properties>
                                               <Constraints>
                                                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
@@ -1490,12 +1495,12 @@
                                                 <DimensionLayout dim="1">
                                                   <Group type="103" groupAlignment="0" attributes="0">
                                                       <Group type="102" alignment="0" attributes="0">
-                                                          <EmptySpace pref="288" max="32767" attributes="0"/>
+                                                          <EmptySpace pref="269" max="32767" attributes="0"/>
                                                           <Component id="bubblePlotJToolBar" min="-2" max="-2" attributes="0"/>
                                                       </Group>
                                                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                                           <Group type="102" alignment="0" attributes="0">
-                                                              <Component id="bubbleJPanel" pref="263" max="32767" attributes="0"/>
+                                                              <Component id="bubbleJPanel" pref="244" max="32767" attributes="0"/>
                                                               <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                                                           </Group>
                                                       </Group>
@@ -1521,6 +1526,7 @@
                                                     <Property name="floatable" type="boolean" value="false"/>
                                                     <Property name="rollover" type="boolean" value="true"/>
                                                     <Property name="borderPainted" type="boolean" value="false"/>
+                                                    <Property name="opaque" type="boolean" value="false"/>
                                                   </Properties>
 
                                                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
@@ -1535,9 +1541,7 @@
                                             </Container>
                                             <Container class="javax.swing.JPanel" name="spectrumContainerJPanel">
                                               <Properties>
-                                                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                                </Property>
+                                                <Property name="opaque" type="boolean" value="false"/>
                                               </Properties>
                                               <Constraints>
                                                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
@@ -1561,7 +1565,7 @@
                                                 <DimensionLayout dim="1">
                                                   <Group type="103" groupAlignment="0" attributes="0">
                                                       <Group type="102" alignment="1" attributes="0">
-                                                          <Component id="spectrumSplitPane" pref="282" max="32767" attributes="0"/>
+                                                          <Component id="spectrumSplitPane" pref="263" max="32767" attributes="0"/>
                                                           <EmptySpace max="-2" attributes="0"/>
                                                           <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
                                                       </Group>
@@ -1580,6 +1584,7 @@
                                                     <Property name="floatable" type="boolean" value="false"/>
                                                     <Property name="rollover" type="boolean" value="true"/>
                                                     <Property name="borderPainted" type="boolean" value="false"/>
+                                                    <Property name="opaque" type="boolean" value="false"/>
                                                   </Properties>
 
                                                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
@@ -1592,9 +1597,6 @@
                                                 </Container>
                                                 <Container class="javax.swing.JSplitPane" name="spectrumSplitPane">
                                                   <Properties>
-                                                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                                    </Property>
                                                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                                                       <Border info="null"/>
                                                     </Property>
@@ -1622,9 +1624,7 @@
                                                     </Container>
                                                     <Container class="javax.swing.JPanel" name="spectrumOuterJPanel">
                                                       <Properties>
-                                                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                                        </Property>
+                                                        <Property name="opaque" type="boolean" value="false"/>
                                                       </Properties>
                                                       <Constraints>
                                                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
@@ -1644,7 +1644,7 @@
                                                               <Group type="102" attributes="0">
                                                                   <Component id="spectrumPaddingPanel" min="-2" max="-2" attributes="0"/>
                                                                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                                                                  <Component id="spectrumJPanel" pref="179" max="32767" attributes="0"/>
+                                                                  <Component id="spectrumJPanel" pref="160" max="32767" attributes="0"/>
                                                               </Group>
                                                           </Group>
                                                         </DimensionLayout>
@@ -1652,9 +1652,7 @@
                                                       <SubComponents>
                                                         <Container class="javax.swing.JPanel" name="spectrumPaddingPanel">
                                                           <Properties>
-                                                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                                              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                                            </Property>
+                                                            <Property name="opaque" type="boolean" value="false"/>
                                                           </Properties>
 
                                                           <Layout>
@@ -1672,9 +1670,7 @@
                                                         </Container>
                                                         <Container class="javax.swing.JPanel" name="spectrumJPanel">
                                                           <Properties>
-                                                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                                              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                                            </Property>
+                                                            <Property name="opaque" type="boolean" value="false"/>
                                                           </Properties>
 
                                                           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
@@ -1714,9 +1710,9 @@
                                               <Group type="103" groupAlignment="0" attributes="0">
                                                   <Group type="102" alignment="0" attributes="0">
                                                       <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
-                                                      <Component id="accuracySlider" pref="96" max="32767" attributes="0"/>
+                                                      <Component id="accuracySlider" pref="86" max="32767" attributes="0"/>
                                                       <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
-                                                      <Component id="intensitySlider" pref="96" max="32767" attributes="0"/>
+                                                      <Component id="intensitySlider" pref="89" max="32767" attributes="0"/>
                                                       <EmptySpace min="-2" pref="66" max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
@@ -1875,9 +1871,7 @@
                                 </Component>
                                 <Container class="javax.swing.JPanel" name="contextMenuSpectrumBackgroundPanel">
                                   <Properties>
-                                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                    </Property>
+                                    <Property name="opaque" type="boolean" value="false"/>
                                   </Properties>
                                   <AuxValues>
                                     <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
@@ -1923,6 +1917,7 @@
             </Property>
             <Property name="floatable" type="boolean" value="false"/>
             <Property name="rollover" type="boolean" value="true"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

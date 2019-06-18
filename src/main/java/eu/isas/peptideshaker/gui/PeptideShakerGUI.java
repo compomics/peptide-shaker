@@ -112,6 +112,7 @@ import com.compomics.util.experiment.identification.features.IdentificationFeatu
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
+import com.compomics.util.gui.parameters.SparklineColorsDialog;
 import com.compomics.util.gui.parameters.identification.advanced.BackgroundSpeciesDialog;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.StarHider;
@@ -358,6 +359,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * Utility class to star or hide matches.
      */
     private StarHider starHider;
+    /**
+     * Enable or disable the dark theme.
+     */
+    private boolean darkTheme = false;
+    /**
+     * The dark theme background color.
+     */
+    public final static Color DARK_THEME_BACKGROUND_COLOR = new Color(18, 18, 18);
 
     /**
      * The main method used to start PeptideShaker.
@@ -377,7 +386,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             LookAndFeel lookAndFeel = UIManager.getLookAndFeel();
             UIDefaults defaults = lookAndFeel.getDefaults();
             defaults.put("ScrollBar.minimumThumbSize", new Dimension(30, 30));
-
+            
+            // edit the default font?
+            //defaults.put("defaultFont", new Font("Segoe UI", Font.PLAIN, 12));
         } catch (Exception e) {
         }
 
@@ -915,6 +926,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         validationQcMenuItem = new javax.swing.JMenuItem();
         speciesJMenuItem = new javax.swing.JMenuItem();
+        sparklineColorsMenuItem = new javax.swing.JMenuItem();
         jSeparator13 = new javax.swing.JPopupMenu.Separator();
         preferencesMenuItem = new javax.swing.JMenuItem();
         fractionDetailsJMenuItem = new javax.swing.JMenuItem();
@@ -955,6 +967,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         psmSortOrderMenu = new javax.swing.JMenu();
         psmSortScoreRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         psmSortRtRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        jSeparator21 = new javax.swing.JPopupMenu.Separator();
+        darkThemeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpJMenuItem = new javax.swing.JMenuItem();
         gettingStartedMenuItem = new javax.swing.JMenuItem();
@@ -1338,7 +1352,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("PeptideShaker");
-        setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(1280, 750));
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
@@ -1481,8 +1494,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(backgroundLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 862, Short.MAX_VALUE))
         );
-
-        menuBar.setBackground(new java.awt.Color(255, 255, 255));
 
         fileJMenu.setMnemonic('F');
         fileJMenu.setText("File");
@@ -1632,6 +1643,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             }
         });
         editMenu.add(speciesJMenuItem);
+
+        sparklineColorsMenuItem.setText("Sparkline Colors");
+        sparklineColorsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sparklineColorsMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(sparklineColorsMenuItem);
         editMenu.add(jSeparator13);
 
         preferencesMenuItem.setMnemonic('O');
@@ -1943,6 +1962,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         psmSortOrderMenu.add(psmSortRtRadioButtonMenuItem);
 
         viewJMenu.add(psmSortOrderMenu);
+        viewJMenu.add(jSeparator21);
+
+        darkThemeCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        darkThemeCheckBoxMenuItem.setText("Dark Theme (beta)");
+        darkThemeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                darkThemeCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        viewJMenu.add(darkThemeCheckBoxMenuItem);
 
         menuBar.add(viewJMenu);
 
@@ -3620,6 +3649,104 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }//GEN-LAST:event_relatedIonsCheckMenuActionPerformed
 
     /**
+     * Update the sparkline colors.
+     *
+     * @param evt
+     */
+    private void sparklineColorsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sparklineColorsMenuItemActionPerformed
+        new SparklineColorsDialog(this, utilitiesUserParameters);
+        utilitiesUserParameters = UtilitiesUserParameters.loadUserParameters();
+        scoresJCheckBoxMenuItemActionPerformed(null);
+    }//GEN-LAST:event_sparklineColorsMenuItemActionPerformed
+
+    /**
+     * Enable or disable the dark theme.
+     *
+     * @param evt
+     */
+    private void darkThemeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_darkThemeCheckBoxMenuItemActionPerformed
+
+        darkTheme = darkThemeCheckBoxMenuItem.isSelected();
+
+        try {
+
+            if (darkTheme) {
+
+                backgroundPanel.setBackground(DARK_THEME_BACKGROUND_COLOR);
+                
+                UtilitiesGUIDefaults.setLookAndFeel();
+
+                // fix for the scroll bar thumb disappearing...
+                LookAndFeel lookAndFeel = UIManager.getLookAndFeel();
+                UIDefaults defaults = lookAndFeel.getDefaults();
+                defaults.put("ScrollBar.minimumThumbSize", new Dimension(30, 30));
+
+                UIManager.put("control", new Color(128, 128, 128));
+                UIManager.put("info", new Color(128, 128, 128));
+                UIManager.put("nimbusBase", new Color(18, 30, 49));
+                UIManager.put("nimbusAlertYellow", new Color(248, 187, 0));
+                UIManager.put("nimbusDisabledText", new Color(128, 128, 128));
+                UIManager.put("nimbusFocus", new Color(115, 164, 209));
+                UIManager.put("nimbusGreen", new Color(176, 179, 50));
+                UIManager.put("nimbusInfoBlue", new Color(66, 139, 221));
+                UIManager.put("nimbusLightBackground", new Color(18, 30, 49));
+                UIManager.put("nimbusOrange", new Color(191, 98, 4));
+                UIManager.put("nimbusRed", new Color(169, 46, 34));
+                UIManager.put("nimbusSelectedText", new Color(255, 255, 255));
+                UIManager.put("nimbusSelectionBackground", new Color(104, 93, 156));
+                UIManager.put("text", new Color(230, 230, 230));
+                
+                UIManager.put("Table.alternateRowColor", new Color(180,180,180));
+
+                defaults.put("defaultFont", new Font("Segoe UI", Font.PLAIN, 12));
+
+                SwingUtilities.updateComponentTreeUI(this);
+                this.repaint();
+
+            } else {
+
+                backgroundPanel.setBackground(Color.WHITE);
+                
+                UtilitiesGUIDefaults.setLookAndFeel();
+
+                // fix for the scroll bar thumb disappearing...
+                LookAndFeel lookAndFeel = UIManager.getLookAndFeel();
+                UIDefaults defaults = lookAndFeel.getDefaults();
+                defaults.put("ScrollBar.minimumThumbSize", new Dimension(30, 30));
+
+                UIManager.put("control", new Color(214, 217, 223));
+                UIManager.put("info", new Color(242, 242, 189));
+                UIManager.put("nimbusBase", new Color(51, 98, 140));
+                UIManager.put("nimbusAlertYellow", new Color(255, 220, 35));
+                UIManager.put("nimbusDisabledText", new Color(142, 143, 145));
+                UIManager.put("nimbusFocus", new Color(115, 164, 209));
+                UIManager.put("nimbusGreen", new Color(176, 179, 50));
+                UIManager.put("nimbusInfoBlue", new Color(47, 92, 180));
+                UIManager.put("nimbusLightBackground", new Color(255, 255, 255));
+                UIManager.put("nimbusOrange", new Color(191, 98, 4));
+                UIManager.put("nimbusRed", new Color(169, 46, 34));
+                UIManager.put("nimbusSelectedText", new Color(255, 255, 255));
+                UIManager.put("nimbusSelectionBackground", new Color(57, 105, 138));
+                UIManager.put("text", new Color(0, 0, 0));
+                UIManager.put("Table.alternateRowColor", new Color(242,242,242));
+                UIManager.getLookAndFeelDefaults().put("Table:\"Table.cellRenderer\".background", Color.WHITE);
+
+                defaults.put("defaultFont", new Font("Segoe UI", Font.PLAIN, 12));
+
+                SwingUtilities.updateComponentTreeUI(this);
+                this.repaint();
+
+            }
+            
+            overviewPanel.enableDarkTheme(darkTheme);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }//GEN-LAST:event_darkThemeCheckBoxMenuItemActionPerformed
+
+    /**
      * Opens a dialog allowing the setting of paths.
      *
      * @param welcomeDialog reference to the Welcome dialog, can be null
@@ -3802,6 +3929,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JCheckBoxMenuItem cIonCheckBoxMenuItem;
     private javax.swing.JMenu chargeMenu;
     private javax.swing.JMenuItem configurationFilesSettings;
+    private javax.swing.JCheckBoxMenuItem darkThemeCheckBoxMenuItem;
     private javax.swing.ButtonGroup deNovoChargeButtonGroup;
     private javax.swing.JRadioButtonMenuItem deNovoChargeOneJRadioButtonMenuItem;
     private javax.swing.JRadioButtonMenuItem deNovoChargeTwoJRadioButtonMenuItem;
@@ -3853,6 +3981,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JPopupMenu.Separator jSeparator19;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator20;
+    private javax.swing.JPopupMenu.Separator jSeparator21;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
@@ -3906,6 +4035,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JMenuItem searchParametersMenu;
     private javax.swing.JCheckBoxMenuItem sequenceCoverageJCheckBoxMenuItem;
     private javax.swing.JMenu settingsMenu;
+    private javax.swing.JMenuItem sparklineColorsMenuItem;
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
     private javax.swing.JMenuItem speciesJMenuItem;
     private javax.swing.JCheckBoxMenuItem spectrumJCheckBoxMenuItem;
@@ -4547,14 +4677,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param updateGuiComponents true if the GUI components are to be updated
      */
     public void clearData(boolean clearDatabaseFolder, boolean updateGuiComponents) {
-        
+
         // reset the preferences
         selectedProteinKey = NO_KEY;
         selectedPeptideKey = NO_KEY;
         selectedPsmKey = NO_KEY;
 
         cpsParent.setProjectDetails(null);
-        
+
         resetIdentificationFeaturesGenerator();
 
         if (updateGuiComponents) {

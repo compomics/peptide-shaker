@@ -472,7 +472,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
         mwCellRenderer.showNumberAndChart(true, TableProperties.getLabelWidth());
         proteinTable.getColumn("MW").setCellRenderer(mwCellRenderer);
 
-        proteinTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
+        proteinTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer(Color.WHITE, Color.BLACK));
 
         try {
             proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColor));

@@ -125,17 +125,17 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
 
         colorsTable.setModel(new IonLabelColorTableModel(iontypes, neutralLosses));
         colorsTable.setOpaque(false);
+        colorsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                colorsTableMouseMoved(evt);
+            }
+        });
         colorsTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 colorsTableMouseExited(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 colorsTableMouseReleased(evt);
-            }
-        });
-        colorsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseMoved(java.awt.event.MouseEvent evt) {
-                colorsTableMouseMoved(evt);
             }
         });
         colorsScrollPane.setViewportView(colorsTable);
@@ -273,7 +273,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(backgroundPeakColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, peakColorsPanelLayout.createSequentialGroup()
-                        .addComponent(mirroredPeakColorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                        .addComponent(mirroredPeakColorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(mirroredPeakColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, peakColorsPanelLayout.createSequentialGroup()

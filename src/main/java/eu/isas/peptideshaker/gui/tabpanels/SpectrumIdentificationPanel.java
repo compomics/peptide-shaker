@@ -2701,34 +2701,37 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private void selectSpectrum(long spectrumMatchKey) {
 
-        // change the peptide shaker icon to a "waiting version"
-        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+        if (fileNamesCmb.getSelectedItem() != null) {
+        
+            // change the peptide shaker icon to a "waiting version"
+            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-        SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumMatchKey);
-        String spectrumKey = spectrumMatch != null ? spectrumMatch.getSpectrumKey() : spectrumFactory.getSpectrumKeyAsString(spectrumMatchKey);
+            SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumMatchKey);
+            String spectrumKey = spectrumMatch != null ? spectrumMatch.getSpectrumKey() : spectrumFactory.getSpectrumKeyAsString(spectrumMatchKey);
 
-        String fileName = Spectrum.getSpectrumFile(spectrumKey);
-        String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
+            String fileName = Spectrum.getSpectrumFile(spectrumKey);
+            String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
 
-        if (!((String) fileNamesCmb.getSelectedItem()).equalsIgnoreCase(fileName)) {
-            updateSelection = false;
-            fileNamesCmb.setSelectedItem(fileName);
-            updateSelection = true;
-            fileSelected = (String) fileNamesCmb.getSelectedItem();
+            if (!((String) fileNamesCmb.getSelectedItem()).equalsIgnoreCase(fileName)) {
+                updateSelection = false;
+                fileNamesCmb.setSelectedItem(fileName);
+                updateSelection = true;
+                fileSelected = (String) fileNamesCmb.getSelectedItem();
+            }
+
+            int line = spectrumFactory.getSpectrumTitles(fileSelected).indexOf(spectrumTitle);
+
+            if (line >= 0) {
+
+                // @TODO: this does not work when the table is sorted!!!
+                spectrumTable.setRowSelectionInterval(line, line);
+                spectrumTable.scrollRectToVisible(spectrumTable.getCellRect(line, 0, false));
+                spectrumSelectionChanged();
+            }
+
+            // change the peptide shaker icon to a "waiting version"
+            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         }
-
-        int line = spectrumFactory.getSpectrumTitles(fileSelected).indexOf(spectrumTitle);
-
-        if (line >= 0) {
-
-            // @TODO: this does not work when the table is sorted!!!
-            spectrumTable.setRowSelectionInterval(line, line);
-            spectrumTable.scrollRectToVisible(spectrumTable.getCellRect(line, 0, false));
-            spectrumSelectionChanged();
-        }
-
-        // change the peptide shaker icon to a "waiting version"
-        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
     }
 
     /**

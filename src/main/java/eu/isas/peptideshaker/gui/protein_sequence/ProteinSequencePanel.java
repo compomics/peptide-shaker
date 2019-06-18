@@ -31,7 +31,7 @@ public class ProteinSequencePanel {
     /**
      * The background color for the plot.
      */
-    private final Color backgroundColor;
+    private Color backgroundColor;
     /**
      * The reference line width.
      */
@@ -40,6 +40,10 @@ public class ProteinSequencePanel {
      * The reference line color.
      */
     private Color referenceLineColor = Color.BLACK;
+    /**
+     * The chart panel.
+     */
+    private ChartPanel chartPanel;
 
     /**
      * Creates a new ProteinSequencePanel object. Use getSequencePlot() to get
@@ -51,6 +55,15 @@ public class ProteinSequencePanel {
         this.backgroundColor = backgroundColor;
     }
 
+    /**
+     * Set the background color.
+     * 
+     * @param backgroundColor the plot/chart background color
+     */
+    public void setBackground(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+    
     /**
      * Set the reference line properties. Will not have any effect until
      * getSequencePlot(..) is called again with 'addReferenceLine' set to true.
@@ -146,7 +159,7 @@ public class ProteinSequencePanel {
         final HashMap<Integer, ArrayList<ResidueAnnotation>> blockTooltips = proteinAnnotations;
 
         // create the chart panel
-        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel = new ChartPanel(chart);
 
         chartPanel.addChartMouseListener(new ChartMouseListener() {
 
@@ -188,8 +201,17 @@ public class ProteinSequencePanel {
             chartPanel.setRangeZoomable(false);
         }
 
-        chartPanel.setBackground(Color.WHITE);
+        chartPanel.setBackground(backgroundColor);
 
+        return chartPanel;
+    }
+    
+    /**
+     * Returns the chart panel.
+     * 
+     * @return the chart panel
+     */
+    public ChartPanel getChartPanel() {
         return chartPanel;
     }
 

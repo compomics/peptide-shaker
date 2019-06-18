@@ -18,6 +18,7 @@ import com.google.common.collect.Sets;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
+import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -384,7 +385,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             otherProteinJTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
         }
 
-        otherProteinJTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
+        otherProteinJTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer(Color.WHITE, Color.BLACK));
         otherProteinJTable.getColumn("Enz").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/selected_green-new.png")),
                 null,
@@ -400,7 +401,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             retainedProteinJTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
         }
 
-        retainedProteinJTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
+        retainedProteinJTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer(Color.WHITE, Color.BLACK));
         retainedProteinJTable.getColumn("Enz").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/selected_green-new.png")),
                 null,

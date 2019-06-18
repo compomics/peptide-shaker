@@ -45,7 +45,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
     /**
      * A dummy parent frame to be able to show an icon in the task bar.
      */
-    private static final DummyFrame dummyParentFrame = new DummyFrame("", "/icons/peptide-shaker.gif");
+    private static final DummyFrame DUMMY_PARENT_FRAME = new DummyFrame("", "/icons/peptide-shaker.gif");
     /**
      * The progress dialog.
      */
@@ -60,7 +60,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param modal modal or not modal
      */
     public WelcomeDialog(PeptideShakerGUI peptideShakerGUI, boolean showLowMemoryWarning, boolean showJavaVersionWarning, boolean modal) {
-        super(dummyParentFrame.setNewTitle(peptideShakerGUI.getTitle()), modal);
+        super(DUMMY_PARENT_FRAME.setNewTitle(peptideShakerGUI.getTitle()), modal);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
 
@@ -248,7 +248,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
             }
         });
 
-        probeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/probe.png"))); // NOI18N
+        probeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/probe-new.png"))); // NOI18N
         probeButton.setToolTipText("Proteomics Unit at the University of Bergen");
         probeButton.setBorder(null);
         probeButton.setBorderPainted(false);
@@ -267,7 +267,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
             }
         });
 
-        isasButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/isas.png"))); // NOI18N
+        isasButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/isas-cropped.png"))); // NOI18N
         isasButton.setToolTipText("<html>ISAS - Institute for Analytical Science</html>");
         isasButton.setBorder(null);
         isasButton.setBorderPainted(false);
@@ -300,7 +300,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         });
 
         recentProjectsLabel.setFont(recentProjectsLabel.getFont().deriveFont(recentProjectsLabel.getFont().getStyle() | java.awt.Font.BOLD));
-        recentProjectsLabel.setText("<html><a href>Recent Projects</html>");
+        recentProjectsLabel.setText("<html><a href style=\"text-decoration: none\">Recent Projects</html>");
         recentProjectsLabel.setToolTipText("Open recently opened projects");
         recentProjectsLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         recentProjectsLabel.setIconTextGap(-4);
@@ -356,7 +356,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         });
 
         settingsLabel.setFont(settingsLabel.getFont().deriveFont(settingsLabel.getFont().getStyle() | java.awt.Font.BOLD));
-        settingsLabel.setText("<html><a href>Settings & Help</html>");
+        settingsLabel.setText("<html><a href style=\"text-decoration: none\">Settings & Help</html>");
         settingsLabel.setToolTipText("Edit the general settings or see the basic help");
         settingsLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         settingsLabel.setIconTextGap(-4);
@@ -374,7 +374,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
         lowMemoryWarningLabel.setFont(lowMemoryWarningLabel.getFont().deriveFont(lowMemoryWarningLabel.getFont().getStyle() | java.awt.Font.BOLD));
         lowMemoryWarningLabel.setForeground(new java.awt.Color(255, 0, 0));
-        lowMemoryWarningLabel.setText("<html><u>Low Memory Warning!</u>");
+        lowMemoryWarningLabel.setText("<html>Low Memory Warning!</html>");
         lowMemoryWarningLabel.setToolTipText("Click to see details");
         lowMemoryWarningLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         lowMemoryWarningLabel.setIconTextGap(-4);
@@ -395,45 +395,46 @@ public class WelcomeDialog extends javax.swing.JDialog {
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addGap(27, 27, 27)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(backgroundPanelLayout.createSequentialGroup()
+                            .addComponent(newJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(openJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(backgroundPanelLayout.createSequentialGroup()
+                            .addComponent(openExampleDatasetJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(gettingStartedJButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(backgroundPanelLayout.createSequentialGroup()
+                            .addComponent(searchJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(reshakeJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)))
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addGap(31, 31, 31)
-                        .addComponent(compomicsButton)
-                        .addGap(20, 20, 20)
-                        .addComponent(probeButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(isasButton, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 14, Short.MAX_VALUE))
-                    .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(backgroundPanelLayout.createSequentialGroup()
-                                    .addComponent(newJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(openJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGroup(backgroundPanelLayout.createSequentialGroup()
-                                    .addComponent(openExampleDatasetJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(gettingStartedJButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGroup(backgroundPanelLayout.createSequentialGroup()
-                                    .addComponent(searchJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(reshakeJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)))
-                            .addGroup(backgroundPanelLayout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(settingsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lowMemoryWarningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(90, 90, 90)
-                                .addComponent(recentProjectsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(10, 10, 10)))))
+                        .addGap(10, 10, 10)
+                        .addComponent(settingsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(92, 92, 92)
+                        .addComponent(lowMemoryWarningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(recentProjectsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(19, 19, 19)))
                 .addGap(27, 27, 27))
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSeparator1)
-                .addContainerGap())
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(compomicsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(probeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(isasButton, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 546, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6))
         );
+
+        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {compomicsButton, isasButton, probeButton});
+
         backgroundPanelLayout.setVerticalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
@@ -459,7 +460,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(compomicsButton)
-                    .addComponent(probeButton)
+                    .addComponent(probeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(isasButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -628,7 +629,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    ToolFactory.startSearchGUI(dummyParentFrame, null, null, null, null, null, null, null, null);
+                    ToolFactory.startSearchGUI(DUMMY_PARENT_FRAME, null, null, null, null, null, null, null, null);
                     peptideShakerGUI.close();
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -829,7 +830,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void javaSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_javaSettingsMenuItemActionPerformed
-        new JavaParametersDialog(dummyParentFrame, peptideShakerGUI, this, "PeptideShaker", true);
+        new JavaParametersDialog(DUMMY_PARENT_FRAME, peptideShakerGUI, this, "PeptideShaker", true);
     }//GEN-LAST:event_javaSettingsMenuItemActionPerformed
 
     /**
@@ -888,7 +889,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void lowMemoryWarningLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lowMemoryWarningLabelMouseReleased
-        new JavaParametersDialog(dummyParentFrame, peptideShakerGUI, this, "PeptideShaker", true);
+        new JavaParametersDialog(DUMMY_PARENT_FRAME, peptideShakerGUI, this, "PeptideShaker", true);
     }//GEN-LAST:event_lowMemoryWarningLabelMouseReleased
 
     /**
@@ -944,7 +945,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
     @Override
     public void setIconImage(Image image) {
         super.setIconImage(image);
-        dummyParentFrame.setIconImage(image);
+        DUMMY_PARENT_FRAME.setIconImage(image);
     }
 
     /**
@@ -1002,7 +1003,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
         if (downloadFolder != null) {
 
-            progressDialog = new ProgressDialogX(dummyParentFrame,
+            progressDialog = new ProgressDialogX(DUMMY_PARENT_FRAME,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);

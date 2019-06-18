@@ -69,6 +69,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
+import no.uib.jsparklines.extra.ChromosomeTableCellRenderer;
+import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.*;
 import org.jfree.chart.*;
@@ -179,6 +181,34 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * The sequence peptide variations chart.
      */
     private ChartPanel peptideVariationsChart;
+    /**
+     * The protein sequence panel.
+     */
+    private ProteinSequencePanel proteinSequencePanel;
+    /**
+     * The PTM sequence panel.
+     */
+    private ProteinSequencePanel ptmSequencePanel;
+    /**
+     * The peptide variation sequence panel.
+     */
+    private ProteinSequencePanel peptideVariationSequencePanel;
+    /**
+     * The mass error bubble plot.
+     */
+    private MassErrorBubblePlot massErrorBubblePlot;
+    /**
+     * The mass error plot.
+     */
+    private MassErrorPlot massErrorPlot;
+    /**
+     * The intensity histogram.
+     */
+    private IntensityHistogram intensityHistogram;
+    /**
+     * The sequence fragmentation panel.
+     */
+    private SequenceFragmentationPanel sequenceFragmentationPanel;
     /**
      * The last m/z maximum displayed.
      */
@@ -728,7 +758,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         });
         sequenceCoverageExportPopupMenu.add(sequenceCoverageSequenceExportMenuItem);
 
-        setBackground(new java.awt.Color(255, 255, 255));
+        setOpaque(false);
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);
@@ -744,16 +774,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         overviewJSplitPane.setDividerSize(0);
         overviewJSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         overviewJSplitPane.setResizeWeight(0.5);
-        overviewJSplitPane.setOpaque(false);
 
         proteinsJPanel.setOpaque(false);
 
-        proteinsLayeredPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Proteins"));
+        proteinsLayeredPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Proteins", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         proteinsLayeredPanel.setOpaque(false);
 
-        proteinScrollPane.setOpaque(false);
-
         proteinTable.setModel(new ProteinTableModel());
+        proteinTable.setGridColor(new java.awt.Color(204, 204, 204));
         proteinTable.setOpaque(false);
         proteinTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         proteinTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -793,11 +821,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         );
         proteinsLayeredPanelLayout.setVerticalGroup(
             proteinsLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 277, Short.MAX_VALUE)
+            .addGap(0, 255, Short.MAX_VALUE)
             .addGroup(proteinsLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(proteinsLayeredPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
+                    .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -875,7 +903,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         proteinsLayeredPane.add(hideProteinsJButton);
         hideProteinsJButton.setBounds(910, 0, 10, 19);
 
-        contextMenuProteinsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+        contextMenuProteinsBackgroundPanel.setOpaque(false);
 
         javax.swing.GroupLayout contextMenuProteinsBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuProteinsBackgroundPanel);
         contextMenuProteinsBackgroundPanel.setLayout(contextMenuProteinsBackgroundPanelLayout);
@@ -910,19 +938,18 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         coverageJSplitPane.setDividerSize(0);
         coverageJSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         coverageJSplitPane.setResizeWeight(1.0);
-        coverageJSplitPane.setOpaque(false);
 
         sequenceCoverageJPanel.setOpaque(false);
 
         sequenceCoverageTitledPanel.setBackground(new java.awt.Color(255, 255, 255));
-        sequenceCoverageTitledPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Sequence Coverage"));
+        sequenceCoverageTitledPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Protein Sequence Coverage", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         sequenceCoverageTitledPanel.setOpaque(false);
 
         sequencePtmsPanel.setBackground(new java.awt.Color(255, 255, 255));
         sequencePtmsPanel.setOpaque(false);
         sequencePtmsPanel.setLayout(new javax.swing.BoxLayout(sequencePtmsPanel, javax.swing.BoxLayout.LINE_AXIS));
 
-        sequenceCoverageInnerPanel.setBackground(new java.awt.Color(255, 255, 255));
+        sequenceCoverageInnerPanel.setOpaque(false);
         sequenceCoverageInnerPanel.setLayout(new javax.swing.BoxLayout(sequenceCoverageInnerPanel, javax.swing.BoxLayout.LINE_AXIS));
 
         sequenceVariationsPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -947,7 +974,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 .addGap(0, 0, 0)
                 .addComponent(sequencePtmsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 7, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(2, 2, 2)
-                .addComponent(sequenceCoverageInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
+                .addComponent(sequenceCoverageInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
                 .addGap(2, 2, 2)
                 .addComponent(sequenceVariationsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 7, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
@@ -1046,7 +1073,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         sequenceCoverageLayeredPane.add(sequenceCoverageOptionsJButton);
         sequenceCoverageOptionsJButton.setBounds(895, 5, 10, 19);
 
-        contextMenuSequenceCoverageBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+        contextMenuSequenceCoverageBackgroundPanel.setOpaque(false);
 
         javax.swing.GroupLayout contextMenuSequenceCoverageBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuSequenceCoverageBackgroundPanel);
         contextMenuSequenceCoverageBackgroundPanel.setLayout(contextMenuSequenceCoverageBackgroundPanelLayout);
@@ -1080,24 +1107,19 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         peptidesPsmSpectrumFragmentIonsJSplitPane.setDividerLocation(450);
         peptidesPsmSpectrumFragmentIonsJSplitPane.setDividerSize(0);
         peptidesPsmSpectrumFragmentIonsJSplitPane.setResizeWeight(0.5);
-        peptidesPsmSpectrumFragmentIonsJSplitPane.setOpaque(false);
 
         peptidesPsmJSplitPane.setBorder(null);
         peptidesPsmJSplitPane.setDividerLocation(175);
         peptidesPsmJSplitPane.setDividerSize(0);
         peptidesPsmJSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         peptidesPsmJSplitPane.setResizeWeight(0.5);
-        peptidesPsmJSplitPane.setOpaque(false);
 
         peptidesJPanel.setOpaque(false);
 
-        peptidesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptides"));
+        peptidesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Peptides", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         peptidesPanel.setOpaque(false);
 
-        peptideScrollPane.setOpaque(false);
-
         peptideTable.setModel(new PeptideTableModel());
-        peptideTable.setOpaque(false);
         peptideTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         peptideTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
@@ -1135,11 +1157,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         );
         peptidesPanelLayout.setVerticalGroup(
             peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 147, Short.MAX_VALUE)
+            .addGap(0, 125, Short.MAX_VALUE)
             .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(peptidesPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+                    .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1217,7 +1239,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         peptidesLayeredPane.add(hidePeptideAndPsmsJButton);
         hidePeptideAndPsmsJButton.setBounds(410, 0, 10, 19);
 
-        contextMenuPeptidesBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+        contextMenuPeptidesBackgroundPanel.setOpaque(false);
 
         javax.swing.GroupLayout contextMenuPeptidesBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuPeptidesBackgroundPanel);
         contextMenuPeptidesBackgroundPanel.setLayout(contextMenuPeptidesBackgroundPanelLayout);
@@ -1249,13 +1271,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         psmJPanel.setOpaque(false);
 
-        psmsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide Spectrum Matches"));
+        psmsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Peptide Spectrum Matches", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         psmsPanel.setOpaque(false);
 
-        spectraScrollPane.setOpaque(false);
-
         psmTable.setModel(new PsmTableModel());
-        psmTable.setOpaque(false);
         psmTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
                 psmTableMouseMoved(evt);
@@ -1292,11 +1311,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         );
         psmsPanelLayout.setVerticalGroup(
             psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 147, Short.MAX_VALUE)
+            .addGap(0, 125, Short.MAX_VALUE)
             .addGroup(psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(psmsPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+                    .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1374,7 +1393,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         psmsLayeredPane.add(hidePeptideAndPsmsJButton2);
         hidePeptideAndPsmsJButton2.setBounds(410, 0, 10, 19);
 
-        contextMenuPsmsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+        contextMenuPsmsBackgroundPanel.setOpaque(false);
 
         javax.swing.GroupLayout contextMenuPsmsBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuPsmsBackgroundPanel);
         contextMenuPsmsBackgroundPanel.setLayout(contextMenuPsmsBackgroundPanelLayout);
@@ -1408,14 +1427,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         spectrumMainJPanel.setOpaque(false);
 
-        spectrumMainPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum & Fragment Ions"));
+        spectrumMainPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Spectrum & Fragment Ions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         spectrumMainPanel.setOpaque(false);
 
+        slidersSplitPane.setBackground(new java.awt.Color(51, 51, 51));
         slidersSplitPane.setBorder(null);
         slidersSplitPane.setDividerLocation(430);
         slidersSplitPane.setDividerSize(0);
-        slidersSplitPane.setOpaque(false);
 
+        spectrumJTabbedPane.setBackground(new java.awt.Color(51, 51, 51));
         spectrumJTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
         spectrumJTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -1433,9 +1453,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             }
         });
 
-        fragmentIonJPanel.setBackground(new java.awt.Color(255, 255, 255));
+        fragmentIonJPanel.setOpaque(false);
 
-        fragmentIonsJScrollPane.setOpaque(false);
         fragmentIonsJScrollPane.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 fragmentIonsJScrollPaneMouseWheelMoved(evt);
@@ -1447,6 +1466,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         ionTableJToolBar.setFloatable(false);
         ionTableJToolBar.setRollover(true);
         ionTableJToolBar.setBorderPainted(false);
+        ionTableJToolBar.setOpaque(false);
 
         ionTableAnnotationMenuPanel.setLayout(new javax.swing.BoxLayout(ionTableAnnotationMenuPanel, javax.swing.BoxLayout.LINE_AXIS));
         ionTableJToolBar.add(ionTableAnnotationMenuPanel);
@@ -1466,7 +1486,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             fragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fragmentIonJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
+                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ionTableJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1474,6 +1494,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         spectrumJTabbedPane.addTab("Ion Table", fragmentIonJPanel);
 
         bubblePlotTabJPanel.setBackground(new java.awt.Color(255, 255, 255));
+        bubblePlotTabJPanel.setOpaque(false);
 
         bubbleJPanel.setOpaque(false);
         bubbleJPanel.setLayout(new javax.swing.BoxLayout(bubbleJPanel, javax.swing.BoxLayout.LINE_AXIS));
@@ -1483,6 +1504,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         bubblePlotJToolBar.setFloatable(false);
         bubblePlotJToolBar.setRollover(true);
         bubblePlotJToolBar.setBorderPainted(false);
+        bubblePlotJToolBar.setOpaque(false);
 
         bubbleAnnotationMenuPanel.setLayout(new javax.swing.BoxLayout(bubbleAnnotationMenuPanel, javax.swing.BoxLayout.LINE_AXIS));
         bubblePlotJToolBar.add(bubbleAnnotationMenuPanel);
@@ -1501,28 +1523,28 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         bubblePlotTabJPanelLayout.setVerticalGroup(
             bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bubblePlotTabJPanelLayout.createSequentialGroup()
-                .addContainerGap(288, Short.MAX_VALUE)
+                .addContainerGap(269, Short.MAX_VALUE)
                 .addComponent(bubblePlotJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(bubblePlotTabJPanelLayout.createSequentialGroup()
-                    .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
+                    .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
                     .addGap(25, 25, 25)))
         );
 
         spectrumJTabbedPane.addTab("Bubble Plot", bubblePlotTabJPanel);
 
-        spectrumContainerJPanel.setBackground(new java.awt.Color(255, 255, 255));
+        spectrumContainerJPanel.setOpaque(false);
 
         spectrumJToolBar.setBackground(new java.awt.Color(255, 255, 255));
         spectrumJToolBar.setBorder(null);
         spectrumJToolBar.setFloatable(false);
         spectrumJToolBar.setRollover(true);
         spectrumJToolBar.setBorderPainted(false);
+        spectrumJToolBar.setOpaque(false);
 
         spectrumAnnotationMenuPanel.setLayout(new javax.swing.BoxLayout(spectrumAnnotationMenuPanel, javax.swing.BoxLayout.LINE_AXIS));
         spectrumJToolBar.add(spectrumAnnotationMenuPanel);
 
-        spectrumSplitPane.setBackground(new java.awt.Color(255, 255, 255));
         spectrumSplitPane.setBorder(null);
         spectrumSplitPane.setDividerLocation(80);
         spectrumSplitPane.setDividerSize(0);
@@ -1533,9 +1555,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         secondarySpectrumPlotsJPanel.setLayout(new javax.swing.BoxLayout(secondarySpectrumPlotsJPanel, javax.swing.BoxLayout.LINE_AXIS));
         spectrumSplitPane.setTopComponent(secondarySpectrumPlotsJPanel);
 
-        spectrumOuterJPanel.setBackground(new java.awt.Color(255, 255, 255));
+        spectrumOuterJPanel.setOpaque(false);
 
-        spectrumPaddingPanel.setBackground(new java.awt.Color(255, 255, 255));
+        spectrumPaddingPanel.setOpaque(false);
 
         javax.swing.GroupLayout spectrumPaddingPanelLayout = new javax.swing.GroupLayout(spectrumPaddingPanel);
         spectrumPaddingPanel.setLayout(spectrumPaddingPanelLayout);
@@ -1548,7 +1570,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             .addGap(0, 17, Short.MAX_VALUE)
         );
 
-        spectrumJPanel.setBackground(new java.awt.Color(255, 255, 255));
+        spectrumJPanel.setOpaque(false);
         spectrumJPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout spectrumOuterJPanelLayout = new javax.swing.GroupLayout(spectrumOuterJPanel);
@@ -1563,7 +1585,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             .addGroup(spectrumOuterJPanelLayout.createSequentialGroup()
                 .addComponent(spectrumPaddingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spectrumJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE))
+                .addComponent(spectrumJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE))
         );
 
         spectrumSplitPane.setRightComponent(spectrumOuterJPanel);
@@ -1581,7 +1603,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         spectrumContainerJPanelLayout.setVerticalGroup(
             spectrumContainerJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumContainerJPanelLayout.createSequentialGroup()
-                .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+                .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1598,7 +1620,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         accuracySlider.setPaintTicks(true);
         accuracySlider.setToolTipText("Annotation Accuracy");
         accuracySlider.setValue(100);
-        accuracySlider.setOpaque(false);
         accuracySlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 accuracySliderStateChanged(evt);
@@ -1614,7 +1635,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         intensitySlider.setPaintTicks(true);
         intensitySlider.setToolTipText("Annotation Level");
         intensitySlider.setValue(75);
-        intensitySlider.setOpaque(false);
         intensitySlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 intensitySliderStateChanged(evt);
@@ -1641,9 +1661,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             slidersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(slidersPanelLayout.createSequentialGroup()
                 .addGap(29, 29, 29)
-                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                 .addGap(29, 29, 29)
-                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
                 .addGap(66, 66, 66))
         );
 
@@ -1760,7 +1780,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         spectrumLayeredPane.add(maximizeSpectrumPanelJButton);
         maximizeSpectrumPanelJButton.setBounds(425, 5, 10, 19);
 
-        contextMenuSpectrumBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+        contextMenuSpectrumBackgroundPanel.setOpaque(false);
 
         javax.swing.GroupLayout contextMenuSpectrumBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuSpectrumBackgroundPanel);
         contextMenuSpectrumBackgroundPanel.setLayout(contextMenuSpectrumBackgroundPanelLayout);
@@ -1818,6 +1838,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         toolBar.setBorder(null);
         toolBar.setFloatable(false);
         toolBar.setRollover(true);
+        toolBar.setOpaque(false);
 
         showProteinsBeforeSeparator.setOrientation(javax.swing.SwingConstants.VERTICAL);
         showProteinsBeforeSeparator.setOpaque(true);
@@ -1827,7 +1848,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         showProteinsJButton.setText("Proteins");
         showProteinsJButton.setToolTipText("Click to Show (Shift+Ctrl+P)");
         showProteinsJButton.setFocusable(false);
-        showProteinsJButton.setOpaque(false);
         showProteinsJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         showProteinsJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1844,7 +1864,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         showPeptidesAndPsmsJButton.setText("Peptides & PSMs");
         showPeptidesAndPsmsJButton.setToolTipText("Click to Show (Shift+Ctrl+E)");
         showPeptidesAndPsmsJButton.setFocusable(false);
-        showPeptidesAndPsmsJButton.setOpaque(false);
         showPeptidesAndPsmsJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         showPeptidesAndPsmsJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1861,7 +1880,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         showSpectrumJButton.setText("Spectrum & Fragment Ions");
         showSpectrumJButton.setToolTipText("Click to Show (Shift+Ctrl+S)");
         showSpectrumJButton.setFocusable(false);
-        showSpectrumJButton.setOpaque(false);
         showSpectrumJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         showSpectrumJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1878,7 +1896,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         showCoverageJButton.setText("Protein Sequence Coverage");
         showCoverageJButton.setToolTipText("Click to Show (Shift+Ctrl+C)");
         showCoverageJButton.setFocusable(false);
-        showCoverageJButton.setOpaque(false);
         showCoverageJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         showCoverageJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2181,7 +2198,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideKey, NO_KEY);
 
             // update the psm selection
-            updatePsmSelection(row, false);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    updatePsmSelection(row, false);
+                }
+            });
 
             // new peptide, reset spectrum boundaries
             SwingUtilities.invokeLater(new Runnable() {
@@ -4015,7 +4037,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 bubbleScale = annotationParameters.getFragmentIonAccuracy() * 10 * peptideShakerGUI.getBubbleScale();
             }
 
-            MassErrorBubblePlot massErrorBubblePlot = new MassErrorBubblePlot(
+            massErrorBubblePlot = new MassErrorBubblePlot(
                     selectedIndexes, allAnnotations, allSpectra, annotationParameters.getFragmentIonAccuracy(),
                     bubbleScale, selectedIndexes.size() == 1, displayParameters.showBars(),
                     identificationParameters.getSearchParameters().getFragmentAccuracyType() == SearchParameters.MassAccuracyType.PPM);
@@ -4142,10 +4164,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 String peptideSequence = peptideMatch.getPeptide().getSequence();
                 selectionLength = peptideSequence.length();
 
-                for (int startIndex : peptideMatch.getPeptide().getProteinMapping().get(currentProteinAccession)) {
+                try {
 
-                    selectedPeptideStart.add(startIndex);
+                    for (int startIndex : peptideMatch.getPeptide().getProteinMapping().get(currentProteinAccession)) {
+                        selectedPeptideStart.add(startIndex);
+                    }
 
+                } catch (Exception e) {
+                    // ignore errors due to the user switching too quickly between rows. seems to solve themselves anyway
                 }
             }
 
@@ -4231,7 +4257,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 blocCpt++;
             }
 
-            coverageChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesCoverage), blocTooltips, true, true);
+            proteinSequencePanel = new ProteinSequencePanel(Color.WHITE);
+            coverageChart = proteinSequencePanel.getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesCoverage), blocTooltips, true, true);
 
             // make sure that the range is the same for all the sequence annotation charts
             coverageChart.getChart().addChangeListener(new ChartChangeListener() {
@@ -4440,7 +4467,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
                 }
 
-                ptmChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesPtm), proteinTooltips, false, false);
+                ptmSequencePanel = new ProteinSequencePanel(Color.WHITE);
+                ptmChart = ptmSequencePanel.getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesPtm), proteinTooltips, false, false);
                 sequencePtmsPanel.removeAll();
                 sequencePtmsPanel.add(ptmChart);
                 sequencePtmsPanel.revalidate();
@@ -4576,7 +4604,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
                 }
 
-                peptideVariationsChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesPtm), proteinTooltips, false, false);
+                peptideVariationSequencePanel = new ProteinSequencePanel(Color.WHITE);
+                peptideVariationsChart = peptideVariationSequencePanel.getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesPtm), proteinTooltips, false, false);
                 sequenceVariationsPanel.removeAll();
                 sequenceVariationsPanel.add(peptideVariationsChart);
                 sequenceVariationsPanel.revalidate();
@@ -4722,7 +4751,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     // create the sequence fragment ion view
                     secondarySpectrumPlotsJPanel.removeAll();
-                    SequenceFragmentationPanel sequenceFragmentationPanel = new SequenceFragmentationPanel(
+                    sequenceFragmentationPanel = new SequenceFragmentationPanel(
                             peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(spectrumMatch, false, false, true),
                             annotations, true, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters(), forwardIon, rewindIon);
                     sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
@@ -4731,12 +4760,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     secondarySpectrumPlotsJPanel.add(sequenceFragmentationPanel);
 
                     // create the intensity histograms
-                    secondarySpectrumPlotsJPanel.add(new IntensityHistogram(
+                    intensityHistogram = new IntensityHistogram(
                             annotations, currentSpectrum, annotationParameters.getIntensityThresholdType(),
-                            annotationParameters.getAnnotationIntensityLimit()));
+                            annotationParameters.getAnnotationIntensityLimit());
+                    secondarySpectrumPlotsJPanel.add(intensityHistogram);
 
                     // create the miniature mass error plot
-                    MassErrorPlot massErrorPlot = new MassErrorPlot(
+                    massErrorPlot = new MassErrorPlot(
                             annotations, currentSpectrum,
                             specificAnnotationParameters.getFragmentIonAccuracy(),
                             peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentAccuracyType() == SearchParameters.MassAccuracyType.PPM);
@@ -5355,6 +5385,223 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         }
 
         updateProteinTableCellRenderers();
+    }
+
+    /**
+     * Enable or disable the dark theme.
+     *
+     * @param darkTheme
+     */
+    public void enableDarkTheme(boolean darkTheme) {
+
+        if (darkTheme) {
+            proteinTable.setBackground(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            proteinTable.setForeground(new Color(240, 240, 240));
+            proteinTable.setSelectionBackground(Color.DARK_GRAY);
+            proteinTable.setSelectionForeground(new Color(240, 240, 240));
+
+            proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), "FEFFFF"));
+            ((ChromosomeTableCellRenderer) proteinTable.getColumn("Chr").getCellRenderer()).setFontColors(new Color(240, 240, 240), new Color(240, 240, 240));
+
+            peptideTable.setBackground(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            peptideTable.setForeground(new Color(240, 240, 240));
+            peptideTable.setSelectionBackground(Color.DARK_GRAY);
+            peptideTable.setSelectionForeground(new Color(240, 240, 240));
+
+            ((JSparklinesMultiIntervalChartTableCellRenderer) peptideTable.getColumn("Start").getCellRenderer()).showReferenceLine(true, 0.03, Color.WHITE);
+
+            psmTable.setBackground(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            psmTable.setForeground(new Color(240, 240, 240));
+            psmTable.setSelectionBackground(Color.DARK_GRAY);
+            psmTable.setSelectionForeground(new Color(240, 240, 240));
+
+            spectrumPanel.setBackground(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            spectrumPanel.getGraphics().setColor(Color.WHITE);
+
+            ptmChart.setBackground(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            ptmSequencePanel.getChartPanel().setBackground(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            ptmSequencePanel.getChartPanel().getChart().setBackgroundPaint(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            ptmSequencePanel.getChartPanel().getChart().getPlot().setBackgroundPaint(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            ptmSequencePanel.getChartPanel().getChart().getCategoryPlot().setRangeGridlinePaint(Color.WHITE);
+            ptmSequencePanel.getChartPanel().getChart().getCategoryPlot().getRangeAxis().setLabelPaint(Color.WHITE);
+            ptmSequencePanel.getChartPanel().getChart().getCategoryPlot().getRangeAxis().setAxisLinePaint(Color.WHITE);
+            ptmSequencePanel.getChartPanel().getChart().getCategoryPlot().getRangeAxis().setTickLabelPaint(Color.WHITE);
+            ptmSequencePanel.getChartPanel().getChart().getCategoryPlot().setDomainGridlinePaint(Color.WHITE);
+            ptmSequencePanel.getChartPanel().getChart().getCategoryPlot().getDomainAxis().setLabelPaint(Color.WHITE);
+            ptmSequencePanel.getChartPanel().getChart().getCategoryPlot().getDomainAxis().setAxisLinePaint(Color.WHITE);
+            ptmSequencePanel.getChartPanel().getChart().getCategoryPlot().getDomainAxis().setTickLabelPaint(Color.WHITE);
+
+            coverageChart.setBackground(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            proteinSequencePanel.getChartPanel().setBackground(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            proteinSequencePanel.getChartPanel().getChart().setBackgroundPaint(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            proteinSequencePanel.getChartPanel().getChart().getPlot().setBackgroundPaint(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            proteinSequencePanel.getChartPanel().getChart().getCategoryPlot().setRangeGridlinePaint(Color.WHITE);
+            proteinSequencePanel.getChartPanel().getChart().getCategoryPlot().getRangeAxis().setLabelPaint(Color.WHITE);
+            proteinSequencePanel.getChartPanel().getChart().getCategoryPlot().getRangeAxis().setAxisLinePaint(Color.WHITE);
+            proteinSequencePanel.getChartPanel().getChart().getCategoryPlot().getRangeAxis().setTickLabelPaint(Color.WHITE);
+            proteinSequencePanel.getChartPanel().getChart().getCategoryPlot().setDomainGridlinePaint(Color.WHITE);
+            proteinSequencePanel.getChartPanel().getChart().getCategoryPlot().getDomainAxis().setLabelPaint(Color.WHITE);
+            proteinSequencePanel.getChartPanel().getChart().getCategoryPlot().getDomainAxis().setAxisLinePaint(Color.WHITE);
+            proteinSequencePanel.getChartPanel().getChart().getCategoryPlot().getDomainAxis().setTickLabelPaint(Color.WHITE);
+            proteinSequencePanel.setReferenceLine(0.03, Color.WHITE);
+
+            massErrorBubblePlot.setBackground(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            massErrorBubblePlot.getChartPanel().setBackground(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            massErrorBubblePlot.getChartPanel().getChart().setBackgroundPaint(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            massErrorBubblePlot.getChartPanel().getChart().getPlot().setBackgroundPaint(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            massErrorBubblePlot.getChartPanel().getChart().getXYPlot().setRangeGridlinePaint(Color.WHITE);
+            massErrorBubblePlot.getChartPanel().getChart().getXYPlot().getRangeAxis().setLabelPaint(Color.WHITE);
+            massErrorBubblePlot.getChartPanel().getChart().getXYPlot().getRangeAxis().setAxisLinePaint(Color.WHITE);
+            massErrorBubblePlot.getChartPanel().getChart().getXYPlot().getRangeAxis().setTickLabelPaint(Color.WHITE);
+            massErrorBubblePlot.getChartPanel().getChart().getXYPlot().setDomainGridlinePaint(Color.WHITE);
+            massErrorBubblePlot.getChartPanel().getChart().getXYPlot().getDomainAxis().setLabelPaint(Color.WHITE);
+            massErrorBubblePlot.getChartPanel().getChart().getXYPlot().getDomainAxis().setAxisLinePaint(Color.WHITE);
+            massErrorBubblePlot.getChartPanel().getChart().getXYPlot().getDomainAxis().setTickLabelPaint(Color.WHITE);
+
+            massErrorPlot.setBackground(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            massErrorPlot.getChartPanel().setBackground(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            massErrorPlot.getChartPanel().getChart().setBackgroundPaint(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            massErrorPlot.getChartPanel().getChart().getPlot().setBackgroundPaint(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            massErrorPlot.getChartPanel().getChart().getXYPlot().setRangeGridlinePaint(Color.WHITE);
+            massErrorPlot.getChartPanel().getChart().getXYPlot().getRangeAxis().setLabelPaint(Color.WHITE);
+            massErrorPlot.getChartPanel().getChart().getXYPlot().getRangeAxis().setAxisLinePaint(Color.WHITE);
+            massErrorPlot.getChartPanel().getChart().getXYPlot().getRangeAxis().setTickLabelPaint(Color.WHITE);
+            massErrorPlot.getChartPanel().getChart().getXYPlot().setDomainGridlinePaint(Color.WHITE);
+            massErrorPlot.getChartPanel().getChart().getXYPlot().getDomainAxis().setLabelPaint(Color.WHITE);
+            massErrorPlot.getChartPanel().getChart().getXYPlot().getDomainAxis().setAxisLinePaint(Color.WHITE);
+            massErrorPlot.getChartPanel().getChart().getXYPlot().getDomainAxis().setTickLabelPaint(Color.WHITE);
+
+            intensityHistogram.setBackground(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            intensityHistogram.getChartPanel().setBackground(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            intensityHistogram.getChartPanel().getChart().setBackgroundPaint(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            intensityHistogram.getChartPanel().getChart().getPlot().setBackgroundPaint(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            intensityHistogram.getChartPanel().getChart().getXYPlot().setRangeGridlinePaint(Color.WHITE);
+            intensityHistogram.getChartPanel().getChart().getXYPlot().getRangeAxis().setLabelPaint(Color.WHITE);
+            intensityHistogram.getChartPanel().getChart().getXYPlot().getRangeAxis().setAxisLinePaint(Color.WHITE);
+            intensityHistogram.getChartPanel().getChart().getXYPlot().getRangeAxis().setTickLabelPaint(Color.WHITE);
+            intensityHistogram.getChartPanel().getChart().getXYPlot().setDomainGridlinePaint(Color.WHITE);
+            intensityHistogram.getChartPanel().getChart().getXYPlot().getDomainAxis().setLabelPaint(Color.WHITE);
+            intensityHistogram.getChartPanel().getChart().getXYPlot().getDomainAxis().setAxisLinePaint(Color.WHITE);
+            intensityHistogram.getChartPanel().getChart().getXYPlot().getDomainAxis().setTickLabelPaint(Color.WHITE);
+
+            proteinSequencePanel.setBackground(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+            proteinSequencePanel.setReferenceLine(0.03, Color.WHITE);
+
+            ((TitledBorder) proteinsLayeredPanel.getBorder()).setTitleColor(new Color(240, 240, 240));
+            ((TitledBorder) peptidesPanel.getBorder()).setTitleColor(new Color(240, 240, 240));
+            ((TitledBorder) psmsPanel.getBorder()).setTitleColor(new Color(240, 240, 240));
+            ((TitledBorder) spectrumMainPanel.getBorder()).setTitleColor(new Color(240, 240, 240));
+            ((TitledBorder) sequenceCoverageTitledPanel.getBorder()).setTitleColor(new Color(240, 240, 240));
+
+            sequenceFragmentationPanel.setFontColor(new Color(240, 240, 240));
+            sequenceFragmentationPanel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            sequenceFragmentationPanel.setBackground(PeptideShakerGUI.DARK_THEME_BACKGROUND_COLOR);
+
+        } else {
+            proteinTable.setBackground(Color.WHITE);
+            proteinTable.setForeground(Color.BLACK);
+            proteinTable.setSelectionBackground(new Color(57, 105, 138));
+            proteinTable.setSelectionForeground(Color.WHITE);
+
+            proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
+            ((ChromosomeTableCellRenderer) proteinTable.getColumn("Chr").getCellRenderer()).setFontColors(Color.WHITE, Color.BLACK);
+
+            peptideTable.setBackground(Color.WHITE);
+            peptideTable.setForeground(Color.BLACK);
+            peptideTable.setSelectionBackground(new Color(57, 105, 138));
+            peptideTable.setSelectionForeground(Color.WHITE);
+
+            ((JSparklinesMultiIntervalChartTableCellRenderer) peptideTable.getColumn("Start").getCellRenderer()).showReferenceLine(true, 0.02, Color.BLACK);
+
+            psmTable.setBackground(Color.WHITE);
+            psmTable.setForeground(Color.BLACK);
+            psmTable.setSelectionBackground(new Color(57, 105, 138));
+            psmTable.setSelectionForeground(Color.WHITE);
+
+            spectrumPanel.setBackground(Color.WHITE);
+            spectrumPanel.getGraphics().setColor(Color.BLACK);
+
+            ptmChart.setBackground(Color.WHITE);
+            ptmSequencePanel.getChartPanel().setBackground(Color.WHITE);
+            ptmSequencePanel.getChartPanel().getChart().setBackgroundPaint(Color.WHITE);
+            ptmSequencePanel.getChartPanel().getChart().getPlot().setBackgroundPaint(Color.WHITE);
+            ptmSequencePanel.getChartPanel().getChart().getCategoryPlot().setRangeGridlinePaint(Color.BLACK);
+            ptmSequencePanel.getChartPanel().getChart().getCategoryPlot().getRangeAxis().setLabelPaint(Color.BLACK);
+            ptmSequencePanel.getChartPanel().getChart().getCategoryPlot().getRangeAxis().setAxisLinePaint(Color.BLACK);
+            ptmSequencePanel.getChartPanel().getChart().getCategoryPlot().getRangeAxis().setTickLabelPaint(Color.BLACK);
+            ptmSequencePanel.getChartPanel().getChart().getCategoryPlot().setDomainGridlinePaint(Color.BLACK);
+            ptmSequencePanel.getChartPanel().getChart().getCategoryPlot().getDomainAxis().setLabelPaint(Color.BLACK);
+            ptmSequencePanel.getChartPanel().getChart().getCategoryPlot().getDomainAxis().setAxisLinePaint(Color.BLACK);
+            ptmSequencePanel.getChartPanel().getChart().getCategoryPlot().getDomainAxis().setTickLabelPaint(Color.BLACK);
+
+            coverageChart.setBackground(Color.WHITE);
+            proteinSequencePanel.getChartPanel().setBackground(Color.WHITE);
+            proteinSequencePanel.getChartPanel().getChart().setBackgroundPaint(Color.WHITE);
+            proteinSequencePanel.getChartPanel().getChart().getPlot().setBackgroundPaint(Color.WHITE);
+            proteinSequencePanel.getChartPanel().getChart().getCategoryPlot().setRangeGridlinePaint(Color.BLACK);
+            proteinSequencePanel.getChartPanel().getChart().getCategoryPlot().getRangeAxis().setLabelPaint(Color.BLACK);
+            proteinSequencePanel.getChartPanel().getChart().getCategoryPlot().getRangeAxis().setAxisLinePaint(Color.BLACK);
+            proteinSequencePanel.getChartPanel().getChart().getCategoryPlot().getRangeAxis().setTickLabelPaint(Color.BLACK);
+            proteinSequencePanel.getChartPanel().getChart().getCategoryPlot().setDomainGridlinePaint(Color.BLACK);
+            proteinSequencePanel.getChartPanel().getChart().getCategoryPlot().getDomainAxis().setLabelPaint(Color.BLACK);
+            proteinSequencePanel.getChartPanel().getChart().getCategoryPlot().getDomainAxis().setAxisLinePaint(Color.BLACK);
+            proteinSequencePanel.getChartPanel().getChart().getCategoryPlot().getDomainAxis().setTickLabelPaint(Color.BLACK);
+            proteinSequencePanel.setReferenceLine(0.03, Color.BLACK);
+
+            proteinSequencePanel.setBackground(Color.WHITE);
+            proteinSequencePanel.setReferenceLine(0.03, Color.BLACK);
+
+            massErrorBubblePlot.setBackground(Color.WHITE);
+            massErrorBubblePlot.getChartPanel().setBackground(Color.WHITE);
+            massErrorBubblePlot.getChartPanel().getChart().setBackgroundPaint(Color.WHITE);
+            massErrorBubblePlot.getChartPanel().getChart().getPlot().setBackgroundPaint(Color.WHITE);
+            massErrorBubblePlot.getChartPanel().getChart().getXYPlot().setRangeGridlinePaint(Color.BLACK);
+            massErrorBubblePlot.getChartPanel().getChart().getXYPlot().getRangeAxis().setLabelPaint(Color.BLACK);
+            massErrorBubblePlot.getChartPanel().getChart().getXYPlot().getRangeAxis().setAxisLinePaint(Color.BLACK);
+            massErrorBubblePlot.getChartPanel().getChart().getXYPlot().getRangeAxis().setTickLabelPaint(Color.BLACK);
+            massErrorBubblePlot.getChartPanel().getChart().getXYPlot().setDomainGridlinePaint(Color.BLACK);
+            massErrorBubblePlot.getChartPanel().getChart().getXYPlot().getDomainAxis().setLabelPaint(Color.BLACK);
+            massErrorBubblePlot.getChartPanel().getChart().getXYPlot().getDomainAxis().setAxisLinePaint(Color.BLACK);
+            massErrorBubblePlot.getChartPanel().getChart().getXYPlot().getDomainAxis().setTickLabelPaint(Color.BLACK);
+
+            massErrorPlot.setBackground(Color.WHITE);
+            massErrorPlot.getChartPanel().setBackground(Color.WHITE);
+            massErrorPlot.getChartPanel().getChart().setBackgroundPaint(Color.WHITE);
+            massErrorPlot.getChartPanel().getChart().getPlot().setBackgroundPaint(Color.WHITE);
+            massErrorPlot.getChartPanel().getChart().getXYPlot().setRangeGridlinePaint(Color.BLACK);
+            massErrorPlot.getChartPanel().getChart().getXYPlot().getRangeAxis().setLabelPaint(Color.BLACK);
+            massErrorPlot.getChartPanel().getChart().getXYPlot().getRangeAxis().setAxisLinePaint(Color.BLACK);
+            massErrorPlot.getChartPanel().getChart().getXYPlot().getRangeAxis().setTickLabelPaint(Color.BLACK);
+            massErrorPlot.getChartPanel().getChart().getXYPlot().setDomainGridlinePaint(Color.BLACK);
+            massErrorPlot.getChartPanel().getChart().getXYPlot().getDomainAxis().setLabelPaint(Color.BLACK);
+            massErrorPlot.getChartPanel().getChart().getXYPlot().getDomainAxis().setAxisLinePaint(Color.BLACK);
+            massErrorPlot.getChartPanel().getChart().getXYPlot().getDomainAxis().setTickLabelPaint(Color.BLACK);
+
+            intensityHistogram.setBackground(Color.WHITE);
+            intensityHistogram.getChartPanel().setBackground(Color.WHITE);
+            intensityHistogram.getChartPanel().getChart().setBackgroundPaint(Color.WHITE);
+            intensityHistogram.getChartPanel().getChart().getPlot().setBackgroundPaint(Color.WHITE);
+            intensityHistogram.getChartPanel().getChart().getXYPlot().setRangeGridlinePaint(Color.BLACK);
+            intensityHistogram.getChartPanel().getChart().getXYPlot().getRangeAxis().setLabelPaint(Color.BLACK);
+            intensityHistogram.getChartPanel().getChart().getXYPlot().getRangeAxis().setAxisLinePaint(Color.BLACK);
+            intensityHistogram.getChartPanel().getChart().getXYPlot().getRangeAxis().setTickLabelPaint(Color.BLACK);
+            intensityHistogram.getChartPanel().getChart().getXYPlot().setDomainGridlinePaint(Color.BLACK);
+            intensityHistogram.getChartPanel().getChart().getXYPlot().getDomainAxis().setLabelPaint(Color.BLACK);
+            intensityHistogram.getChartPanel().getChart().getXYPlot().getDomainAxis().setAxisLinePaint(Color.BLACK);
+            intensityHistogram.getChartPanel().getChart().getXYPlot().getDomainAxis().setTickLabelPaint(Color.BLACK);
+
+            ((TitledBorder) proteinsLayeredPanel.getBorder()).setTitleColor(Color.BLACK);
+            ((TitledBorder) peptidesPanel.getBorder()).setTitleColor(Color.BLACK);
+            ((TitledBorder) psmsPanel.getBorder()).setTitleColor(Color.BLACK);
+            ((TitledBorder) spectrumMainPanel.getBorder()).setTitleColor(Color.BLACK);
+            ((TitledBorder) sequenceCoverageTitledPanel.getBorder()).setTitleColor(Color.BLACK);
+
+            sequenceFragmentationPanel.setFontColor(Color.BLACK);
+            sequenceFragmentationPanel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            sequenceFragmentationPanel.setBackground(Color.WHITE);
+        }
+
+        proteinTable.repaint();
     }
 
     /**
