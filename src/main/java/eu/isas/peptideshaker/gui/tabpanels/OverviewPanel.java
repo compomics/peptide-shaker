@@ -383,7 +383,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         ProteinTableModel.setProteinTableProperties(proteinTable, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(),
                 peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getUtilitiesUserParameters().getSparklineColorDoubtful(),
-                peptideShakerGUI.getScoreAndConfidenceDecimalFormat(), this.getClass(), peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
+                peptideShakerGUI.getScoreAndConfidenceDecimalFormat(), this.getClass(), peptideShakerGUI.getMetrics().getMaxProteinAccessionLength());
 
         proteinTable.getModel().addTableModelListener(new TableModelListener() {
             public void tableChanged(TableModelEvent e) {
@@ -6266,7 +6266,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         if (peptideShakerGUI.getIdentification() != null) {
 
             ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNPeptides());
-            ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNSpectra());
+            ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNPsms());
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxSpectrumCounting());
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxMW());
 

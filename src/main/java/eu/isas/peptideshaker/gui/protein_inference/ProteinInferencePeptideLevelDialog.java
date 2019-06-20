@@ -376,7 +376,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         otherProteinJTable.getColumn("Enz").setMaxWidth(50);
 
         // set the preferred size of the accession column
-        Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(otherProteinJTable, otherProteinJTable.getColumn("Accession").getModelIndex(), 2, peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
+        Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(otherProteinJTable, otherProteinJTable.getColumn("Accession").getModelIndex(), 2, peptideShakerGUI.getMetrics().getMaxProteinAccessionLength());
         if (width != null) {
             otherProteinJTable.getColumn("Accession").setMinWidth(width);
             otherProteinJTable.getColumn("Accession").setMaxWidth(width);
@@ -392,7 +392,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 "Enzymatic", "Not Enzymatic"));
 
         // set the preferred size of the accession column
-        width = ProteinTableModel.getPreferredAccessionColumnWidth(retainedProteinJTable, retainedProteinJTable.getColumn("Accession").getModelIndex(), 2, peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
+        width = ProteinTableModel.getPreferredAccessionColumnWidth(retainedProteinJTable, retainedProteinJTable.getColumn("Accession").getModelIndex(), 2, peptideShakerGUI.getMetrics().getMaxProteinAccessionLength());
         if (width != null) {
             retainedProteinJTable.getColumn("Accession").setMinWidth(width);
             retainedProteinJTable.getColumn("Accession").setMaxWidth(width);

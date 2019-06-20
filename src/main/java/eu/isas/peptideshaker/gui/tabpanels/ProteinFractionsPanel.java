@@ -195,7 +195,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         Integer maxProteinKeyLength = Integer.MAX_VALUE;
         if (peptideShakerGUI.getMetrics() != null) {
-            maxProteinKeyLength = peptideShakerGUI.getMetrics().getMaxProteinKeyLength();
+            maxProteinKeyLength = peptideShakerGUI.getMetrics().getMaxProteinAccessionLength();
         }
 
         ProteinTableModel.setProteinTableProperties(proteinTable, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(),
@@ -1821,7 +1821,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         if (peptideShakerGUI.getIdentification() != null) {
 
             ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNPeptides());
-            ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNSpectra());
+            ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNPsms());
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxSpectrumCounting());
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxMW());
 

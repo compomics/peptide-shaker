@@ -7,12 +7,20 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
+import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -38,6 +46,10 @@ public class ProteinProcessor {
      * The identification features generator.
      */
     private final IdentificationFeaturesGenerator identificationFeaturesGenerator;
+    /**
+     * The sequence provider.
+     */
+    private final SequenceProvider sequenceProvider;
 
     /**
      * Constructor.
@@ -46,12 +58,20 @@ public class ProteinProcessor {
      * @param identificationParameters the identification parameters
      * @param identificationFeaturesGenerator the identification features
      * generator
+     * @param sequenceProvider the sequence provider
      */
-    public ProteinProcessor(Identification identification, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator) {
+    public ProteinProcessor(
+            Identification identification,
+            IdentificationParameters identificationParameters,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SequenceProvider sequenceProvider
+    ) {
 
         this.identification = identification;
         this.identificationParameters = identificationParameters;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+        this.sequenceProvider = sequenceProvider;
+
     }
 
     /**
@@ -70,8 +90,13 @@ public class ProteinProcessor {
      * @throws java.util.concurrent.TimeoutException exception thrown if the
      * operation times out
      */
-    public void processProteins(ModificationLocalizationScorer modificationLocalizationScorer, Metrics metrics,
-            WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, ProcessingParameters processingParameters) throws InterruptedException, TimeoutException {
+    public void processProteins(
+            ModificationLocalizationScorer modificationLocalizationScorer,
+            Metrics metrics,
+            WaitingHandler waitingHandler,
+            ExceptionHandler exceptionHandler,
+            ProcessingParameters processingParameters
+    ) throws InterruptedException, TimeoutException {
 
         waitingHandler.setWaitingText("Scoring Protein Modification Localization. Please Wait...");
 
@@ -87,7 +112,12 @@ public class ProteinProcessor {
 
         for (int i = 1; i <= processingParameters.getnThreads(); i++) {
 
-            ProteinRunnable runnable = new ProteinRunnable(proteinMatchesIterator, modificationLocalizationScorer, waitingHandler, exceptionHandler);
+            ProteinRunnable runnable = new ProteinRunnable(
+                    proteinMatchesIterator,
+                    modificationLocalizationScorer,
+                    waitingHandler,
+                    exceptionHandler
+            );
             pool.submit(runnable);
             runnables.add(runnable);
 
@@ -103,6 +133,8 @@ public class ProteinProcessor {
         if (!pool.awaitTermination(identification.getProteinIdentification().size(), TimeUnit.MINUTES)) {
             throw new InterruptedException("Protein matches validation timed out. Please contact the developers.");
         }
+
+        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
         if (metrics != null) {
 
@@ -121,11 +153,93 @@ public class ProteinProcessor {
                             .mapToInt(ProteinRunnable::getnConfidentProteins)
                             .sum()
             );
+            metrics.setMaxNPeptides(
+                    runnables.stream()
+                            .mapToInt(ProteinRunnable::getMaxPeptides)
+                            .max()
+                            .orElse(0)
+            );
+            metrics.setMaxNPsms(
+                    runnables.stream()
+                            .mapToInt(ProteinRunnable::getMaxPsms)
+                            .max()
+                            .orElse(0)
+            );
+            metrics.setMaxMW(
+                    runnables.stream()
+                            .mapToDouble(ProteinRunnable::getMaxMW)
+                            .max()
+                            .orElse(0.0)
+            );
+            metrics.setMaxProteinAccessionLength(
+                    runnables.stream()
+                            .mapToInt(ProteinRunnable::getMaxProteinAccessionLength)
+                            .max()
+                            .orElse(0)
+            );
+
+            TreeMap<Double, TreeMap<Integer, TreeMap<Integer, TreeSet<Long>>>> orderMap1 = new TreeMap<>();
+
+            for (int i = 0; i < runnables.size(); i++) {
+
+                HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<Long>>>> threadMap1 = runnables.get(i).getOrderMap();
+
+                for (Entry<Double, HashMap<Integer, HashMap<Integer, HashSet<Long>>>> entry1 : threadMap1.entrySet()) {
+
+                    double key1 = entry1.getKey();
+                    HashMap<Integer, HashMap<Integer, HashSet<Long>>> threadMap2 = entry1.getValue();
+                    TreeMap<Integer, TreeMap<Integer, TreeSet<Long>>> orderMap2 = orderMap1.get(key1);
+
+                    if (orderMap2 == null) {
+
+                        orderMap2 = new TreeMap<>();
+                        orderMap1.put(key1, orderMap2);
+
+                    }
+
+                    for (Entry<Integer, HashMap<Integer, HashSet<Long>>> entry2 : threadMap2.entrySet()) {
+
+                        int key2 = entry2.getKey();
+                        HashMap<Integer, HashSet<Long>> threadMap3 = entry2.getValue();
+                        TreeMap<Integer, TreeSet<Long>> orderMap3 = orderMap2.get(key2);
+
+                        if (orderMap3 == null) {
+
+                            orderMap3 = new TreeMap<>();
+                            orderMap2.put(key2, orderMap3);
+
+                        }
+
+                        for (Entry<Integer, HashSet<Long>> entry3 : threadMap3.entrySet()) {
+
+                            int key3 = entry3.getKey();
+                            HashSet<Long> threadSet = entry3.getValue();
+                            TreeSet<Long> orderedSet = orderMap3.get(key3);
+
+                            if (orderedSet == null) {
+
+                                orderedSet = new TreeSet<>();
+                                orderMap3.put(key3, orderedSet);
+
+                            }
+
+                            orderedSet.addAll(threadSet);
+
+                        }
+                    }
+                }
+            }
+
+            long[] proteinKeys = orderMap1.values().stream()
+                    .flatMap(map -> map.values().stream())
+                    .flatMap(map -> map.values().stream())
+                    .flatMap(set -> set.stream())
+                    .mapToLong(a -> a)
+                    .toArray();
+
+            metrics.setProteinKeys(proteinKeys);
 
         }
-
-        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-
     }
 
     /**
@@ -163,6 +277,26 @@ public class ProteinProcessor {
          * The maximum spectrum counting value among proteins.
          */
         private double maxSpectrumCounting = 0.0;
+        /**
+         * A map of the ordered proteins.
+         */
+        private HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<Long>>>> orderMap = new HashMap<>();
+        /**
+         * The max mw among the proteins.
+         */
+        private double maxMW = 0;
+        /**
+         * The max protein key length among the proteins.
+         */
+        private int maxProteinAccessionLength = 6;
+        /**
+         * The max number of peptides among the proteins.
+         */
+        private int maxPeptides = 0;
+        /**
+         * The max number of PSMs among the proteins.
+         */
+        private int maxPsms = 0;
 
         /**
          * Constructor.
@@ -173,8 +307,12 @@ public class ProteinProcessor {
          * @param waitingHandler a waiting handler
          * @param exceptionHandler an exception handler
          */
-        public ProteinRunnable(ProteinMatchesIterator proteinMatchesIterator, ModificationLocalizationScorer modificationLocalizationScorer,
-                WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
+        public ProteinRunnable(
+                ProteinMatchesIterator proteinMatchesIterator,
+                ModificationLocalizationScorer modificationLocalizationScorer,
+                WaitingHandler waitingHandler,
+                ExceptionHandler exceptionHandler
+        ) {
 
             this.proteinMatchesIterator = proteinMatchesIterator;
             this.modificationLocalizationScorer = modificationLocalizationScorer;
@@ -195,14 +333,85 @@ public class ProteinProcessor {
 
                     PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
-                    if (psParameter.getMatchValidationLevel().isValidated()) {
+                    if (!proteinMatch.isDecoy()) {
 
-                        nValidatedProteins++;
+                        double score = psParameter.getScore();
 
-                        if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                        HashMap<Integer, HashMap<Integer, HashSet<Long>>> scoreMap = orderMap.get(score);
 
-                            nConfidentProteins++;
+                        if (scoreMap == null) {
 
+                            scoreMap = new HashMap<>(1);
+                            orderMap.put(score, scoreMap);
+
+                        }
+
+                        int nPeptides = proteinMatch.getPeptideMatchesKeys().length;
+
+                        HashMap<Integer, HashSet<Long>> nPeptidesMap = scoreMap.get(nPeptides);
+
+                        if (nPeptidesMap == null) {
+
+                            nPeptidesMap = new HashMap<>(1);
+                            scoreMap.put(nPeptides, nPeptidesMap);
+
+                            if (nPeptides > maxPeptides) {
+
+                                maxPeptides = nPeptides;
+
+                            }
+                        }
+
+                        int nSpectra = Arrays.stream(proteinMatch.getPeptideMatchesKeys())
+                                .mapToObj(peptideKey -> identification.getPeptideMatch(peptideKey))
+                                .mapToInt(peptideMatch -> peptideMatch.getSpectrumCount())
+                                .sum();
+
+                        HashSet<Long> nSpectraList = nPeptidesMap.get(nSpectra);
+
+                        if (nSpectraList == null) {
+
+                            nSpectraList = new HashSet<>(1);
+                            nPeptidesMap.put(nSpectra, nSpectraList);
+
+                            if (nSpectra > maxPsms) {
+
+                                maxPsms = nSpectra;
+
+                            }
+                        }
+
+                        nSpectraList.add(proteinMatch.getKey());
+
+                        // Get leading protein accession
+                        String mainAccession = proteinMatch.getLeadingAccession();
+
+                        // Save maximal mw
+                        String proteinSequence = sequenceProvider.getSequence(mainAccession);
+                        double mw = ProteinUtils.computeMolecularWeight(proteinSequence);
+
+                        if (mw > maxMW) {
+
+                            maxMW = mw;
+
+                        }
+
+                        // save the length of the longest protein accession number
+                        if (mainAccession.length() > maxProteinAccessionLength) {
+
+                            maxProteinAccessionLength = proteinMatch.getLeadingAccession().length();
+
+                        }
+
+                        if (psParameter.getMatchValidationLevel().isValidated()) {
+
+                            nValidatedProteins++;
+
+                            if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+
+                                nConfidentProteins++;
+
+                            }
                         }
                     }
 
@@ -252,5 +461,49 @@ public class ProteinProcessor {
             return maxSpectrumCounting;
         }
 
+        /**
+         * Returns the order map of proteins.
+         *
+         * @return the order map of proteins
+         */
+        public HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<Long>>>> getOrderMap() {
+            return orderMap;
+        }
+
+        /**
+         * Returns the max mw among proteins.
+         *
+         * @return the max mw among proteins
+         */
+        public double getMaxMW() {
+            return maxMW;
+        }
+
+        /**
+         * Returns the max length of protein keys among proteins.
+         *
+         * @return the max length of protein keys among proteins
+         */
+        public int getMaxProteinAccessionLength() {
+            return maxProteinAccessionLength;
+        }
+
+        /**
+         * Returns the max number of peptides among proteins.
+         *
+         * @return the max number of peptides among proteins
+         */
+        public int getMaxPeptides() {
+            return maxPeptides;
+        }
+
+        /**
+         * Returns the max number of PSMs among proteins.
+         *
+         * @return the max number of PSMs among proteins
+         */
+        public int getMaxPsms() {
+            return maxPsms;
+        }
     }
 }

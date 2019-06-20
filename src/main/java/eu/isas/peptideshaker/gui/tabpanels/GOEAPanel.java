@@ -235,7 +235,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         }
 
         // set the preferred size of the accession column
-        Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6, peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
+        Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6, peptideShakerGUI.getMetrics().getMaxProteinAccessionLength());
         if (width != null) {
             proteinTable.getColumn("Accession").setMinWidth(width);
             proteinTable.getColumn("Accession").setMaxWidth(width);
@@ -578,7 +578,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
                                     // set the preferred size of the accession column
-                                    Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(goMappingsTable, goMappingsTable.getColumn("GO Accession").getModelIndex(), 6, peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
+                                    Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(goMappingsTable, goMappingsTable.getColumn("GO Accession").getModelIndex(), 6, peptideShakerGUI.getMetrics().getMaxProteinAccessionLength());
                                     if (width != null) {
                                         goMappingsTable.getColumn("GO Accession").setMinWidth(width);
                                         goMappingsTable.getColumn("GO Accession").setMaxWidth(width);

@@ -1462,19 +1462,41 @@ public class ValidationPanel extends javax.swing.JPanel {
                         PSMaps pSMaps = new PSMaps();
                         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
 
-                        MatchesValidator matchesValidator = new MatchesValidator(pSMaps.getPsmMap(), pSMaps.getPeptideMap(), pSMaps.getProteinMap());
-                        matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(),
-                                pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getExceptionHandler(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
-                                peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getGeneMaps(),
-                                peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getProjectType(), peptideShakerGUI.getProcessingParameters());
+                        MatchesValidator matchesValidator = new MatchesValidator(
+                                pSMaps.getPsmMap(), 
+                                pSMaps.getPeptideMap(), 
+                                pSMaps.getProteinMap()
+                        );
+                        matchesValidator.validateIdentifications(
+                                peptideShakerGUI.getIdentification(), 
+                                peptideShakerGUI.getMetrics(),
+                                pSMaps.getInputMap(), 
+                                progressDialog, 
+                                peptideShakerGUI.getExceptionHandler(), 
+                                peptideShakerGUI.getIdentificationFeaturesGenerator(),
+                                peptideShakerGUI.getSequenceProvider(), 
+                                peptideShakerGUI.getProteinDetailsProvider(), 
+                                peptideShakerGUI.getGeneMaps(),
+                                peptideShakerGUI.getIdentificationParameters(), 
+                                peptideShakerGUI.getProjectType(), 
+                                peptideShakerGUI.getProcessingParameters()
+                        );
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
                         ProteinProcessor proteinProcessor = new ProteinProcessor(
                                 peptideShakerGUI.getIdentification(),
                                 peptideShakerGUI.getIdentificationParameters(),
-                                peptideShakerGUI.getIdentificationFeaturesGenerator());
-                        proteinProcessor.processProteins(new ModificationLocalizationScorer(), peptideShakerGUI.getMetrics(), progressDialog, peptideShakerGUI.getExceptionHandler(), peptideShakerGUI.getProcessingParameters());
+                                peptideShakerGUI.getIdentificationFeaturesGenerator(),
+                                peptideShakerGUI.getSequenceProvider()
+                        );
+                        proteinProcessor.processProteins(
+                                new ModificationLocalizationScorer(), 
+                                peptideShakerGUI.getMetrics(), 
+                                progressDialog, 
+                                peptideShakerGUI.getExceptionHandler(), 
+                                peptideShakerGUI.getProcessingParameters()
+                        );
 
                         if (!progressDialog.isRunCanceled()) {
                             // update the other tabs
