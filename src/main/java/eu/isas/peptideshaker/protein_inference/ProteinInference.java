@@ -1044,7 +1044,11 @@ public class ProteinInference {
 
                             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
 
-                            if (Arrays.stream(proteinMatch.getPeptideMatchesKeys())
+                            if (Arrays.stream(proteinMatch.getAccessions())
+                                    .allMatch(
+                                            accession -> peptide.getProteinMapping().containsKey(accession)
+                                    )
+                                    && Arrays.stream(proteinMatch.getPeptideMatchesKeys())
                                     .allMatch(
                                             key -> key != peptideMatchKey
                                     )) {
