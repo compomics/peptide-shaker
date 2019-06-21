@@ -254,7 +254,7 @@ public class MatchesValidator {
 
             ArrayList<Double> precursorMzDeviationsFile = precursorMzDeviations.get(spectrumFileName);
 
-            if (precursorMzDeviations.size() >= 100) {
+            if (precursorMzDeviationsFile.size() >= 100) {
 
                 Collections.sort(precursorMzDeviationsFile);
                 identificationFeaturesGenerator.setMassErrorDistribution(spectrumFileName, precursorMzDeviationsFile);
