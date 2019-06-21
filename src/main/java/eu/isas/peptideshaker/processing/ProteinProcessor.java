@@ -348,12 +348,12 @@ public class ProteinProcessor {
 
                         int nPeptides = proteinMatch.getPeptideMatchesKeys().length;
 
-                        HashMap<Integer, HashSet<Long>> nPeptidesMap = scoreMap.get(nPeptides);
+                        HashMap<Integer, HashSet<Long>> nPeptidesMap = scoreMap.get(-nPeptides);
 
                         if (nPeptidesMap == null) {
 
                             nPeptidesMap = new HashMap<>(1);
-                            scoreMap.put(nPeptides, nPeptidesMap);
+                            scoreMap.put(-nPeptides, nPeptidesMap);
 
                             if (nPeptides > maxPeptides) {
 
@@ -362,21 +362,21 @@ public class ProteinProcessor {
                             }
                         }
 
-                        int nSpectra = Arrays.stream(proteinMatch.getPeptideMatchesKeys())
+                        int nPsms = Arrays.stream(proteinMatch.getPeptideMatchesKeys())
                                 .mapToObj(peptideKey -> identification.getPeptideMatch(peptideKey))
                                 .mapToInt(peptideMatch -> peptideMatch.getSpectrumCount())
                                 .sum();
 
-                        HashSet<Long> nSpectraList = nPeptidesMap.get(nSpectra);
+                        HashSet<Long> nSpectraList = nPeptidesMap.get(-nPsms);
 
                         if (nSpectraList == null) {
 
                             nSpectraList = new HashSet<>(1);
-                            nPeptidesMap.put(nSpectra, nSpectraList);
+                            nPeptidesMap.put(-nPsms, nSpectraList);
 
-                            if (nSpectra > maxPsms) {
+                            if (nPsms > maxPsms) {
 
-                                maxPsms = nSpectra;
+                                maxPsms = nPsms;
 
                             }
                         }
