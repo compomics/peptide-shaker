@@ -208,20 +208,20 @@ public class MatchesValidator {
         for (int i = 1; i <= processingParameters.getnThreads(); i++) {
 
             PsmValidatorRunnable runnable = new PsmValidatorRunnable(
-                    psmIterator, 
-                    identification, 
+                    psmIterator,
+                    identification,
                     identificationFeaturesGenerator,
-                    sequenceProvider, 
-                    proteinDetailsProvider, 
-                    geneMaps, 
-                    identificationParameters, 
+                    sequenceProvider,
+                    proteinDetailsProvider,
+                    geneMaps,
+                    identificationParameters,
                     waitingHandler,
-                    exceptionHandler, 
-                    inputMap, 
-                    false, 
+                    exceptionHandler,
+                    inputMap,
+                    false,
                     true
             );
-            
+
             pool.submit(runnable);
             psmRunnables.add(runnable);
 
@@ -275,16 +275,16 @@ public class MatchesValidator {
                             if (searchParameters.isPrecursorAccuracyTypePpm()) {
 
                                 psmFilter.setFilterItem(
-                                        AssumptionFilterItem.precrusorMzErrorPpm.name, 
-                                        FilterItemComparator.lowerOrEqual, 
+                                        AssumptionFilterItem.precrusorMzErrorPpm.name,
+                                        FilterItemComparator.lowerOrEqual,
                                         searchParameters.getPrecursorAccuracy()
                                 );
 
                             } else {
 
                                 psmFilter.setFilterItem(
-                                        AssumptionFilterItem.precrusorMzErrorDa.name, 
-                                        FilterItemComparator.lowerOrEqual, 
+                                        AssumptionFilterItem.precrusorMzErrorDa.name,
+                                        FilterItemComparator.lowerOrEqual,
                                         searchParameters.getPrecursorAccuracy()
                                 );
 
@@ -301,16 +301,16 @@ public class MatchesValidator {
                             if (searchParameters.isPrecursorAccuracyTypePpm()) {
 
                                 assumptionFilter.setFilterItem(
-                                        AssumptionFilterItem.precrusorMzErrorPpm.name, 
-                                        FilterItemComparator.lowerOrEqual, 
+                                        AssumptionFilterItem.precrusorMzErrorPpm.name,
+                                        FilterItemComparator.lowerOrEqual,
                                         searchParameters.getPrecursorAccuracy()
                                 );
 
                             } else {
 
                                 assumptionFilter.setFilterItem(
-                                        AssumptionFilterItem.precrusorMzErrorDa.name, 
-                                        FilterItemComparator.lowerOrEqual, 
+                                        AssumptionFilterItem.precrusorMzErrorDa.name,
+                                        FilterItemComparator.lowerOrEqual,
                                         searchParameters.getPrecursorAccuracy()
                                 );
 
@@ -328,17 +328,17 @@ public class MatchesValidator {
         for (int i = 1; i <= processingParameters.getnThreads(); i++) {
 
             PsmValidatorRunnable runnable = new PsmValidatorRunnable(
-                    psmIterator, 
-                    identification, 
+                    psmIterator,
+                    identification,
                     identificationFeaturesGenerator,
-                    sequenceProvider, 
-                    proteinDetailsProvider, 
-                    geneMaps, 
-                    identificationParameters, 
+                    sequenceProvider,
+                    proteinDetailsProvider,
+                    geneMaps,
+                    identificationParameters,
                     waitingHandler,
-                    exceptionHandler, 
-                    inputMap, 
-                    true, 
+                    exceptionHandler,
+                    inputMap,
+                    true,
                     false
             );
             pool.submit(runnable);
@@ -373,15 +373,15 @@ public class MatchesValidator {
             for (int i = 1; i <= processingParameters.getnThreads(); i++) {
 
                 PeptideValidatorRunnable runnable = new PeptideValidatorRunnable(
-                        peptideMatchesIterator, 
-                        identification, 
+                        peptideMatchesIterator,
+                        identification,
                         identificationFeaturesGenerator,
-                        sequenceProvider, 
-                        proteinDetailsProvider, 
-                        geneMaps, 
-                        identificationParameters, 
-                        waitingHandler, 
-                        exceptionHandler, 
+                        sequenceProvider,
+                        proteinDetailsProvider,
+                        geneMaps,
+                        identificationParameters,
+                        waitingHandler,
+                        exceptionHandler,
                         metrics
                 );
                 pool.submit(runnable);
@@ -450,18 +450,18 @@ public class MatchesValidator {
                 for (int i = 1; i <= processingParameters.getnThreads(); i++) {
 
                     ProteinValidatorRunnable runnable = new ProteinValidatorRunnable(
-                            proteinMatchesIterator, 
-                            identification, 
+                            proteinMatchesIterator,
+                            identification,
                             identificationFeaturesGenerator,
-                            sequenceProvider, 
-                            proteinDetailsProvider, 
-                            geneMaps, 
-                            metrics, 
+                            sequenceProvider,
+                            proteinDetailsProvider,
+                            geneMaps,
+                            metrics,
                             identificationParameters,
-                            waitingHandler, 
+                            waitingHandler,
                             exceptionHandler
                     );
-                    
+
                     pool.submit(runnable);
                     proteinRunnables.add(runnable);
 
@@ -537,17 +537,17 @@ public class MatchesValidator {
         boolean noValidated = proteinMap.getTargetDecoyResults().noValidated();
 
         updateProteinMatchValidationLevel(
-                identification, 
+                identification,
                 identificationFeaturesGenerator,
-                sequenceProvider, 
-                proteinDetailsProvider, 
-                geneMaps, 
+                sequenceProvider,
+                proteinDetailsProvider,
+                geneMaps,
                 identificationParameters,
-                proteinMap, 
-                proteinThreshold, 
-                nTargetLimit, 
-                proteinConfidentThreshold, 
-                noValidated, 
+                proteinMap,
+                proteinThreshold,
+                nTargetLimit,
+                proteinConfidentThreshold,
+                noValidated,
                 proteinKey
         );
 
@@ -607,12 +607,12 @@ public class MatchesValidator {
 
                             ProteinFilter proteinFilter = (ProteinFilter) filter;
                             boolean validation = proteinFilter.isValidated(
-                                    proteinKey, 
-                                    identification, 
-                                    geneMaps, 
-                                    identificationFeaturesGenerator, 
-                                    identificationParameters, 
-                                    sequenceProvider, 
+                                    proteinKey,
+                                    identification,
+                                    geneMaps,
+                                    identificationFeaturesGenerator,
+                                    identificationParameters,
+                                    sequenceProvider,
                                     proteinDetailsProvider
                             );
                             psParameter.setQcResult(filter.getName(), validation);
@@ -703,12 +703,12 @@ public class MatchesValidator {
 
                         PeptideFilter peptideFilter = (PeptideFilter) filter;
                         boolean validation = peptideFilter.isValidated(
-                                peptideKey, 
-                                identification, 
-                                geneMaps, 
-                                identificationFeaturesGenerator, 
-                                identificationParameters, 
-                                sequenceProvider, 
+                                peptideKey,
+                                identification,
+                                geneMaps,
+                                identificationFeaturesGenerator,
+                                identificationParameters,
+                                sequenceProvider,
                                 proteinDetailsProvider
                         );
                         psParameter.setQcResult(filter.getName(), validation);
@@ -1223,7 +1223,7 @@ public class MatchesValidator {
             }
 
             HashMap<String, Double> fractionScores = new HashMap<>(nFractions);
-            double probaScore = 1.0;
+            double proteinGroupScore = 1.0;
 
             if (proteinMatch == null) {
 
@@ -1235,37 +1235,49 @@ public class MatchesValidator {
             for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
 
                 PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
-                probaScore = probaScore * psParameter.getProbability();
 
-                if (nFractions > 1) {
+                // Compute the score based on peptides unique to a group only.
+                HashSet<Long> proteinGroups = peptideMatch.getPeptide().getProteinMapping().keySet().stream()
+                        .filter(accession -> identification.getProteinMap().containsKey(accession))
+                        .flatMap(accession -> identification.getProteinMap().get(accession).stream())
+                        .filter(proteinKey2 -> Arrays.stream(identification.getProteinMatch(proteinKey2).getPeptideMatchesKeys())
+                                .anyMatch(peptideKey2 -> peptideKey2 == peptideKey))
+                        .collect(Collectors.toCollection(HashSet::new));
 
-                    for (String fraction : psParameter.getFractions()) {
+                if (proteinGroups.size() == 1) {
 
-                        Double fractionScore = fractionScores.get(fraction);
+                    PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
+                    proteinGroupScore = proteinGroupScore * psParameter.getProbability();
 
-                        boolean change = false;
+                    if (nFractions > 1) {
 
-                        if (fractionScore == null) {
+                        for (String fraction : psParameter.getFractions()) {
 
-                            fractionScore = 1.0;
-                            change = true;
+                            Double fractionScore = fractionScores.get(fraction);
 
-                        }
+                            boolean change = false;
 
-                        double peptideScore = psParameter.getFractionPEP(fraction);
+                            if (fractionScore == null) {
 
-                        if (peptideScore != 1.0) {
+                                fractionScore = 1.0;
+                                change = true;
 
-                            fractionScore *= peptideScore;
-                            change = true;
+                            }
 
-                        }
+                            double peptideScore = psParameter.getFractionPEP(fraction);
 
-                        if (change) {
+                            if (peptideScore != 1.0) {
 
-                            fractionScores.put(fraction, fractionScore);
+                                fractionScore *= peptideScore;
+                                change = true;
 
+                            }
+
+                            if (change) {
+
+                                fractionScores.put(fraction, fractionScore);
+
+                            }
                         }
                     }
                 }
@@ -1274,7 +1286,7 @@ public class MatchesValidator {
             if (nFractions == 1) {
 
                 String spectrumFile = spectrumFactory.getMgfFileNames().get(0);
-                fractionScores.put(spectrumFile, probaScore);
+                fractionScores.put(spectrumFile, proteinGroupScore);
 
             }
 
@@ -1288,7 +1300,7 @@ public class MatchesValidator {
             }
 
             // Set the global score
-            proteinParameter.setScore(probaScore);
+            proteinParameter.setScore(proteinGroupScore);
             proteinMatch.addUrParam(proteinParameter);
             proteinMap.put(proteinParameter.getScore(), proteinMatch.isDecoy());
 

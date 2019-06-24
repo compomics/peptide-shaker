@@ -385,32 +385,6 @@ public class PeptideShaker {
         identification.getObjectsDB().commit();
         System.gc();
 
-        ProteinInference proteinInference = new ProteinInference();
-
-        if (projectType == ProjectType.protein) {
-
-            if (identificationParameters.getProteinInferenceParameters().getSimplifyGroups()) {
-
-                waitingHandler.appendReport("Simplifying protein groups.", true, true);
-                proteinInference.removeRedundantGroups(
-                        identification,
-                        identificationParameters,
-                        sequenceProvider,
-                        proteinDetailsProvider,
-                        waitingHandler
-                );
-                waitingHandler.increasePrimaryProgressCounter();
-
-                if (waitingHandler.isRunCanceled()) {
-                    return;
-                }
-            }
-
-            identification.getObjectsDB().commit();
-            System.gc();
-
-        }
-
         if (projectType == ProjectType.peptide || projectType == ProjectType.protein) {
 
             waitingHandler.appendReport("Generating peptide map.", true, true);
@@ -458,6 +432,42 @@ public class PeptideShaker {
             System.gc();
 
             if (projectType == ProjectType.protein) {
+
+                ProteinInference proteinInference = new ProteinInference();
+
+                if (identificationParameters.getProteinInferenceParameters().getSimplifyGroups()) {
+
+                    waitingHandler.appendReport("Simplifying protein groups.", true, true);
+                    proteinInference.removeRedundantGroups(
+                            identification,
+                            identificationParameters,
+                            sequenceProvider,
+                            proteinDetailsProvider,
+                            waitingHandler
+                    );
+                    waitingHandler.increasePrimaryProgressCounter();
+
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
+                }
+
+                identification.getObjectsDB().commit();
+                System.gc();
+
+                waitingHandler.appendReport("Mapping shared peptides.", true, true);
+                proteinInference.distributeSharedPeptides(
+                        identification,
+                        waitingHandler
+                );
+                waitingHandler.increasePrimaryProgressCounter();
+
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
+
+                identification.getObjectsDB().commit();
+                System.gc();
 
                 waitingHandler.appendReport("Generating protein map.", true, true);
                 matchesValidator.fillProteinMap(identification, waitingHandler);

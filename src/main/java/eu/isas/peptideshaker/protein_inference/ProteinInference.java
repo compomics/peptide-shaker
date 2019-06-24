@@ -32,9 +32,13 @@ public class ProteinInference {
     public enum GroupSimplificationOption {
 
         /**
-         * Group supported by peptide shared with uncharacterized protein.
+         * Group supported by predicted or uncertain proteins.
          */
         lowerEvidence(0, "protein groups supported by predicted or uncertain proteins"),
+        /**
+         * Group supported by low confidence peptides.
+         */
+        lowerConfidence(0, "protein groups supported by low confidence peptides"),
         /**
          * Group supported by non-enzymatic shared peptide.
          */
@@ -119,12 +123,6 @@ public class ProteinInference {
 
                     if (!processedKeys.containsKey(sharedKey)) {
 
-                        if (sharedKey == 6469926113285211855l) {
-
-                            int debug = 1;
-
-                        }
-
                         ProteinMatch[] reducedGroups = getSubgroup(
                                 identification,
                                 proteinSharedGroup,
@@ -145,8 +143,6 @@ public class ProteinInference {
                                 ProteinMatch reducedGroup = reducedGroups[i];
                                 long reducedGroupKey = reducedGroup.getKey();
                                 reducedGroupKeys[i] = reducedGroupKey;
-
-                                mergeProteinGroups(proteinSharedGroup, reducedGroup);
 
                             }
 
@@ -300,8 +296,6 @@ public class ProteinInference {
                                             long reducedGroupKey = reducedGroup.getKey();
                                             reducedGroupKeys[i] = reducedGroupKey;
 
-                                            mergeProteinGroups(sharedProteinMatch, simplerProteinMatch);
-
                                             subgroups.put(reducedGroupKey, reducedGroup);
 
                                         }
@@ -334,11 +328,11 @@ public class ProteinInference {
                 }
             }
         }
-        
+
         if (subgroups.isEmpty()) {
-            
+
             return null;
-            
+
         }
 
         // Gather the proteins explained or not by the subgroups
@@ -412,12 +406,26 @@ public class ProteinInference {
 
         ProteinInferenceParameters proteinInferenceParameters = identificationParameters.getProteinInferenceParameters();
 
-        // See wheter the unique accession is from an uncharacterized protein
-        if (proteinInferenceParameters.getSimplifyGroupsUncharacterized()) {
+        // See wheter the unique accession is from a lower confidence protein
+        if (proteinInferenceParameters.getSimplifyGroupsEvidence()) {
 
             if (isLowerEvidence(accession, coveredAccessions, proteinDetailsProvider)) {
 
                 return GroupSimplificationOption.lowerEvidence;
+
+            }
+        }
+
+        // See whether unique accession is due to absent peptides
+        if (proteinInferenceParameters.getSimplifyGroupsVariants()) {
+            
+            double threshold = proteinInferenceParameters.getConfidenceThreshold();
+
+            if (Arrays.stream(sharedMatch.getPeptideMatchesKeys())
+                            .mapToDouble(key -> ((PSParameter) identification.getPeptideMatch(key).getUrParam(PSParameter.dummy)).getConfidence())
+                            .allMatch(confidence -> confidence <= threshold)) {
+
+                return GroupSimplificationOption.lowerConfidence;
 
             }
         }
@@ -555,21 +563,6 @@ public class ProteinInference {
         }
 
         return !otherUncharacterized && proteinUncharacterized;
-
-    }
-
-    /**
-     * Puts the peptide of the shared group in the unique group.
-     *
-     * @param sharedGroup the shared group
-     * @param uniqueGroup the unique group
-     */
-    private void mergeProteinGroups(
-            ProteinMatch sharedGroup,
-            ProteinMatch uniqueGroup
-    ) {
-
-        uniqueGroup.addPeptideMatchKeys(sharedGroup.getPeptideMatchesKeys());
 
     }
 
@@ -836,137 +829,106 @@ public class ProteinInference {
             Identification identification
     ) {
 
-        ProteinInferenceParameters proteinInferencePreferences = identificationParameters.getProteinInferenceParameters();
+        DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
 
-        if (proteinInferencePreferences.getSimplifyGroupsEnzymaticity()) {
+        if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
 
-            DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
+            boolean newEnzymatic = Arrays.stream(newProteinMatch.getPeptideMatchesKeys())
+                    .mapToObj(
+                            key -> identification.getPeptideMatch(key)
+                    )
+                    .anyMatch(
+                            peptideMatch -> PeptideUtils.isEnzymatic(
+                                    peptideMatch.getPeptide(),
+                                    newAccession,
+                                    sequenceProvider.getSequence(newAccession),
+                                    digestionPreferences.getEnzymes()
+                            )
+                    );
 
-            if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
+            boolean oldEnzymatic = Arrays.stream(oldProteinMatch.getPeptideMatchesKeys())
+                    .mapToObj(
+                            key -> identification.getPeptideMatch(key)
+                    )
+                    .anyMatch(
+                            peptideMatch -> PeptideUtils.isEnzymatic(
+                                    peptideMatch.getPeptide(),
+                                    oldAccession,
+                                    sequenceProvider.getSequence(oldAccession),
+                                    digestionPreferences.getEnzymes()
+                            )
+                    );
 
-                boolean newEnzymatic = Arrays.stream(newProteinMatch.getPeptideMatchesKeys())
-                        .mapToObj(
-                                key -> identification.getPeptideMatch(key)
-                        )
-                        .anyMatch(
-                                peptideMatch -> PeptideUtils.isEnzymatic(
-                                        peptideMatch.getPeptide(),
-                                        newAccession,
-                                        sequenceProvider.getSequence(newAccession),
-                                        digestionPreferences.getEnzymes()
-                                )
-                        );
+            if (newEnzymatic && !oldEnzymatic) {
 
-                boolean oldEnzymatic = Arrays.stream(oldProteinMatch.getPeptideMatchesKeys())
-                        .mapToObj(
-                                key -> identification.getPeptideMatch(key)
-                        )
-                        .anyMatch(
-                                peptideMatch -> PeptideUtils.isEnzymatic(
-                                        peptideMatch.getPeptide(),
-                                        oldAccession,
-                                        sequenceProvider.getSequence(oldAccession),
-                                        digestionPreferences.getEnzymes()
-                                )
-                        );
+                return 1;
 
-                if (newEnzymatic && !oldEnzymatic) {
+            } else if (!newEnzymatic && oldEnzymatic) {
 
-                    return 1;
+                return 0;
 
-                } else if (!newEnzymatic && oldEnzymatic) {
-
-                    return 0;
-
-                }
             }
         }
 
-        if (proteinInferencePreferences.getSimplifyGroupsEvidence()) {
+        Integer evidenceLevelOld = proteinDetailsProvider.getProteinEvidence(oldAccession);
+        Integer evidenceLevelNew = proteinDetailsProvider.getProteinEvidence(newAccession);
 
-            Integer evidenceLevelOld = proteinDetailsProvider.getProteinEvidence(oldAccession);
-            Integer evidenceLevelNew = proteinDetailsProvider.getProteinEvidence(newAccession);
+        // compare protein evidence levels
+        if (evidenceLevelOld != null && evidenceLevelNew != null) {
 
-            // compare protein evidence levels
-            if (evidenceLevelOld != null && evidenceLevelNew != null) {
-
-                try {
-
-                    if (evidenceLevelNew < evidenceLevelOld) {
-
-                        return 2;
-
-                    } else if (evidenceLevelOld < evidenceLevelNew) {
-
-                        return 0;
-
-                    }
-
-                } catch (NumberFormatException e) {
-                    // ignore
-                }
-            }
-
-            // only the new match has evidence information
-            if (evidenceLevelOld == null && evidenceLevelNew != null) {
+            if (evidenceLevelNew < evidenceLevelOld) {
 
                 return 2;
 
-            }
-
-            // only the old match has evidence information
-            if (evidenceLevelOld != null && evidenceLevelNew == null) {
+            } else if (evidenceLevelOld < evidenceLevelNew) {
 
                 return 0;
 
             }
         }
 
-        if (proteinInferencePreferences.getSimplifyGroupsUncharacterized()) {
+        // Compare descriptions for keywords of uncharacterized proteins
+        String oldDescription = proteinDetailsProvider.getSimpleDescription(oldAccession);
 
-            // Compare descriptions for keywords of uncharacterized proteins
-            String oldDescription = proteinDetailsProvider.getSimpleDescription(oldAccession);
-            String newDescription = proteinDetailsProvider.getSimpleDescription(newAccession);
+        if (oldDescription == null || oldDescription.trim().isEmpty()) {
 
-            // if the description is not set, return the accessions instead - fix for home made fasta headers
-            if (oldDescription == null || oldDescription.trim().isEmpty()) {
+            oldDescription = proteinDetailsProvider.getDescription(oldAccession);
 
-                oldDescription = oldAccession;
+        }
 
-            }
+        String newDescription = proteinDetailsProvider.getSimpleDescription(newAccession);
 
-            if (newDescription == null || newDescription.trim().isEmpty()) {
+        if (newDescription == null || newDescription.trim().isEmpty()) {
 
-                newDescription = newAccession;
+            newDescription = proteinDetailsProvider.getDescription(newAccession);
 
-            }
+        }
 
-            boolean oldUncharacterized = false, newUncharacterized = false;
+        boolean oldUncharacterized = false, newUncharacterized = false;
 
-            for (String keyWord : unchatacterizedKeyWords) {
+        for (String keyWord : unchatacterizedKeyWords) {
 
-                if (newDescription.contains(keyWord)) {
+            if (newDescription.contains(keyWord)) {
 
-                    newUncharacterized = true;
-
-                }
-
-                if (oldDescription.contains(keyWord)) {
-
-                    oldUncharacterized = true;
-
-                }
-            }
-
-            if (oldUncharacterized && !newUncharacterized) {
-
-                return 3;
-
-            } else if (!oldUncharacterized && newUncharacterized) {
-
-                return 0;
+                newUncharacterized = true;
 
             }
+
+            if (oldDescription.contains(keyWord)) {
+
+                oldUncharacterized = true;
+
+            }
+        }
+
+        if (oldUncharacterized && !newUncharacterized) {
+
+            return 3;
+
+        } else if (!oldUncharacterized && newUncharacterized) {
+
+            return 0;
+
         }
 
         return 0;
