@@ -6,10 +6,9 @@ import com.compomics.util.experiment.biology.enzymes.Enzyme;
 import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.identification.identification_parameters.IdentificationParametersFactory;
-import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.io.identification.MzIdentMLIdfileSearchParametersConverter;
-import com.compomics.util.experiment.mass_spectrometry.proteowizard.MsFormat;
+import com.compomics.util.experiment.mass_spectrometry.proteowizard.ProteoWizardMsFormat;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
@@ -296,46 +295,46 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         reshakeableFiles.get("RESULT").add(".xml.gz");
         reshakeableFiles.get("RESULT").add(".xml.zip");
         reshakeableFiles.put("PEAK", new ArrayList<>());
-        reshakeableFiles.get("PEAK").add(MsFormat.mgf.fileNameEnding);
-        reshakeableFiles.get("PEAK").add(MsFormat.mgf.fileNameEnding + ".gz");
-        reshakeableFiles.get("PEAK").add(MsFormat.mgf.fileNameEnding + ".zip");
+        reshakeableFiles.get("PEAK").add(ProteoWizardMsFormat.mgf.fileNameEnding);
+        reshakeableFiles.get("PEAK").add(ProteoWizardMsFormat.mgf.fileNameEnding + ".gz");
+        reshakeableFiles.get("PEAK").add(ProteoWizardMsFormat.mgf.fileNameEnding + ".zip");
 
         // add the raw file formats
         reshakeableFiles.put("RAW", new ArrayList<>());
-        reshakeableFiles.get("RAW").add(MsFormat.raw.fileNameEnding);
-        reshakeableFiles.get("RAW").add(MsFormat.raw.fileNameEnding + ".gz");
-        reshakeableFiles.get("RAW").add(MsFormat.raw.fileNameEnding + ".zip");
-        reshakeableFiles.get("RAW").add(MsFormat.mzML.fileNameEnding);
-        reshakeableFiles.get("RAW").add(MsFormat.mzML.fileNameEnding + ".gz");
-        reshakeableFiles.get("RAW").add(MsFormat.mzML.fileNameEnding + ".zip");
-        reshakeableFiles.get("RAW").add(MsFormat.mzXML.fileNameEnding);
-        reshakeableFiles.get("RAW").add(MsFormat.mzXML.fileNameEnding + ".gz");
-        reshakeableFiles.get("RAW").add(MsFormat.mzXML.fileNameEnding + ".zip");
-        reshakeableFiles.get("RAW").add(MsFormat.baf.fileNameEnding);
-        reshakeableFiles.get("RAW").add(MsFormat.baf.fileNameEnding + ".gz");
-        reshakeableFiles.get("RAW").add(MsFormat.baf.fileNameEnding + ".zip");
-        reshakeableFiles.get("RAW").add(MsFormat.fid.fileNameEnding);
-        reshakeableFiles.get("RAW").add(MsFormat.fid.fileNameEnding + ".gz");
-        reshakeableFiles.get("RAW").add(MsFormat.fid.fileNameEnding + ".zip");
-        reshakeableFiles.get("RAW").add(MsFormat.yep.fileNameEnding);
-        reshakeableFiles.get("RAW").add(MsFormat.yep.fileNameEnding + ".gz");
-        reshakeableFiles.get("RAW").add(MsFormat.yep.fileNameEnding + ".zip");
-        reshakeableFiles.get("RAW").add(MsFormat.d.fileNameEnding);
-        reshakeableFiles.get("RAW").add(MsFormat.d.fileNameEnding + ".gz");
-        reshakeableFiles.get("RAW").add(MsFormat.d.fileNameEnding + ".zip");
-//        reshakeableFiles.get("RAW").add(MsFormat.wiff.fileNameEnding); // @TODO: also requries the corresponding .scan file...
-//        reshakeableFiles.get("RAW").add(MsFormat.wiff.fileNameEnding + ".gz");
-//        reshakeableFiles.get("RAW").add(MsFormat.wiff.fileNameEnding + ".zip");
-        reshakeableFiles.get("RAW").add(MsFormat.mz5.fileNameEnding);
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.raw.fileNameEnding);
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.raw.fileNameEnding + ".gz");
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.raw.fileNameEnding + ".zip");
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.mzML.fileNameEnding);
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.mzML.fileNameEnding + ".gz");
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.mzML.fileNameEnding + ".zip");
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.mzXML.fileNameEnding);
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.mzXML.fileNameEnding + ".gz");
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.mzXML.fileNameEnding + ".zip");
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.baf.fileNameEnding);
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.baf.fileNameEnding + ".gz");
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.baf.fileNameEnding + ".zip");
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.fid.fileNameEnding);
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.fid.fileNameEnding + ".gz");
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.fid.fileNameEnding + ".zip");
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.yep.fileNameEnding);
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.yep.fileNameEnding + ".gz");
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.yep.fileNameEnding + ".zip");
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.d.fileNameEnding);
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.d.fileNameEnding + ".gz");
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.d.fileNameEnding + ".zip");
+//        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.wiff.fileNameEnding); // @TODO: also requries the corresponding .scan file...
+//        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.wiff.fileNameEnding + ".gz");
+//        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.wiff.fileNameEnding + ".zip");
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.mz5.fileNameEnding);
 
         // then check for incorrect labeling...
         reshakeableFiles.put("OTHER", new ArrayList<>());
-        reshakeableFiles.get("OTHER").add(MsFormat.mgf.fileNameEnding);
-        reshakeableFiles.get("OTHER").add(MsFormat.mgf.fileNameEnding + ".gz");
-        reshakeableFiles.get("OTHER").add(MsFormat.mgf.fileNameEnding + ".zip");
-        reshakeableFiles.get("RAW").add(MsFormat.mgf.fileNameEnding);
-        reshakeableFiles.get("RAW").add(MsFormat.mgf.fileNameEnding + ".gz");
-        reshakeableFiles.get("RAW").add(MsFormat.mgf.fileNameEnding + ".zip");
+        reshakeableFiles.get("OTHER").add(ProteoWizardMsFormat.mgf.fileNameEnding);
+        reshakeableFiles.get("OTHER").add(ProteoWizardMsFormat.mgf.fileNameEnding + ".gz");
+        reshakeableFiles.get("OTHER").add(ProteoWizardMsFormat.mgf.fileNameEnding + ".zip");
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.mgf.fileNameEnding);
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.mgf.fileNameEnding + ".gz");
+        reshakeableFiles.get("RAW").add(ProteoWizardMsFormat.mgf.fileNameEnding + ".zip");
 
         // the files from which settings can be extracted
         searchSettingsFiles = new HashMap<>();
@@ -2738,8 +2737,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                             // check if we have non-mgf spectrum file
                             boolean nonMgfSpectrumFile = false;
-                            for (MsFormat tempFormat : MsFormat.values()) {
-                                if (tempFormat != MsFormat.mgf
+                            for (ProteoWizardMsFormat tempFormat : ProteoWizardMsFormat.values()) {
+                                if (tempFormat != ProteoWizardMsFormat.mgf
                                         && (currentFileName.toLowerCase().endsWith(tempFormat.fileNameEnding)
                                         || currentFileName.toLowerCase().endsWith(tempFormat.fileNameEnding + ".gz")
                                         || currentFileName.toLowerCase().endsWith(tempFormat.fileNameEnding + ".zip"))) {
@@ -2758,10 +2757,10 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                             } else if (unzipped) {
                                 currentPrideDataFile = new File(outputFolder, currentFileName);
                                 if (i < selectedSpectrumFileLinks.size()) {
-                                    if (currentFileName.toLowerCase().endsWith(MsFormat.mgf.fileNameEnding)) {
+                                    if (currentFileName.toLowerCase().endsWith(ProteoWizardMsFormat.mgf.fileNameEnding)) {
                                         currentMgfFile = new File(outputFolder, currentFileName);
                                     } else {
-                                        currentMgfFile = new File(outputFolder, currentFileName.substring(0, currentFileName.lastIndexOf(".xml")) + MsFormat.mgf.fileNameEnding);
+                                        currentMgfFile = new File(outputFolder, currentFileName.substring(0, currentFileName.lastIndexOf(".xml")) + ProteoWizardMsFormat.mgf.fileNameEnding);
                                     }
                                 }
                             } else {
@@ -2772,18 +2771,18 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                                 }
 
                                 if (i < selectedSpectrumFileLinks.size()) {
-                                    if (currentFileName.toLowerCase().endsWith(MsFormat.mgf.fileNameEnding + ".gz")) {
+                                    if (currentFileName.toLowerCase().endsWith(ProteoWizardMsFormat.mgf.fileNameEnding + ".gz")) {
                                         currentMgfFile = new File(outputFolder, currentFileName.substring(0,
-                                                currentFileName.lastIndexOf(MsFormat.mgf.fileNameEnding + ".gz")) + MsFormat.mgf.fileNameEnding);
-                                    } else if (currentFileName.toLowerCase().endsWith(MsFormat.mgf.fileNameEnding + ".zip")) {
+                                                currentFileName.lastIndexOf(ProteoWizardMsFormat.mgf.fileNameEnding + ".gz")) + ProteoWizardMsFormat.mgf.fileNameEnding);
+                                    } else if (currentFileName.toLowerCase().endsWith(ProteoWizardMsFormat.mgf.fileNameEnding + ".zip")) {
                                         currentMgfFile = new File(outputFolder, currentFileName.substring(0,
-                                                currentFileName.lastIndexOf(MsFormat.mgf.fileNameEnding + ".zip")) + MsFormat.mgf.fileNameEnding);
+                                                currentFileName.lastIndexOf(ProteoWizardMsFormat.mgf.fileNameEnding + ".zip")) + ProteoWizardMsFormat.mgf.fileNameEnding);
                                     } else if (currentFileName.toLowerCase().endsWith(".xml.gz")) {
                                         currentMgfFile = new File(outputFolder, currentFileName.substring(0,
-                                                currentFileName.lastIndexOf(".xml.gz")) + MsFormat.mgf.fileNameEnding);
+                                                currentFileName.lastIndexOf(".xml.gz")) + ProteoWizardMsFormat.mgf.fileNameEnding);
                                     } else if (currentFileName.toLowerCase().endsWith(".xml.zip")) {
                                         currentMgfFile = new File(outputFolder, currentFileName.substring(0,
-                                                currentFileName.lastIndexOf(".xml.zip")) + MsFormat.mgf.fileNameEnding);
+                                                currentFileName.lastIndexOf(".xml.zip")) + ProteoWizardMsFormat.mgf.fileNameEnding);
                                     }
                                 }
                             }
@@ -2871,8 +2870,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                                     // check if we have non-mgf spectrum file
                                     boolean nonMgfSpectrumFile = false;
-                                    for (MsFormat tempFormat : MsFormat.values()) {
-                                        if (tempFormat != MsFormat.mgf && tempFile.getAbsolutePath().toLowerCase().endsWith(tempFormat.fileNameEnding)) {
+                                    for (ProteoWizardMsFormat tempFormat : ProteoWizardMsFormat.values()) {
+                                        if (tempFormat != ProteoWizardMsFormat.mgf && tempFile.getAbsolutePath().toLowerCase().endsWith(tempFormat.fileNameEnding)) {
                                             nonMgfSpectrumFile = true;
                                         }
                                     }
@@ -2886,7 +2885,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                                     } else {
                                         progressDialog.setTitle("Converting Spectrum Data (" + (i + 1) + "/" + allFileLinks.size() + "). Please Wait..."); // @TODO: check file count if zip file
                                         String tempPath = tempFile.getAbsolutePath();
-                                        tempPath = tempPath.substring(0, tempPath.lastIndexOf(".")) + MsFormat.mgf.fileNameEnding;
+                                        tempPath = tempPath.substring(0, tempPath.lastIndexOf(".")) + ProteoWizardMsFormat.mgf.fileNameEnding;
                                         File tempMgfFile = new File(tempPath);
                                         mgfConversionOk = convertPrideXmlToMgf(tempFile, tempMgfFile);
                                         mgfFiles.add(tempMgfFile);
