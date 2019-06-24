@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.gui.pride;
 import com.compomics.software.dialogs.ProteoWizardSetupDialog;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.mass_spectrometry.proteowizard.MsFormat;
+import com.compomics.util.experiment.mass_spectrometry.proteowizard.ProteoWizardMsFormat;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
@@ -778,8 +778,8 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         for (int i = 0; i < spectrumTable.getRowCount(); i++) {
             if ((Boolean) spectrumTable.getValueAt(i, spectrumTable.getColumn("  ").getModelIndex())) {
                 String fileName = (String) spectrumTable.getValueAt(i, spectrumTable.getColumn("File").getModelIndex());
-                for (MsFormat format : MsFormat.values()) {
-                    if (format != MsFormat.mgf && fileName.toLowerCase().endsWith(format.fileNameEnding)) {
+                for (ProteoWizardMsFormat format : ProteoWizardMsFormat.values()) {
+                    if (format != ProteoWizardMsFormat.mgf && fileName.toLowerCase().endsWith(format.fileNameEnding)) {
                         msConvertRequired = true;
                         break;
                     }
