@@ -35,11 +35,8 @@ import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.psm_scoring.PsmScorer;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
-import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import com.compomics.util.experiment.identification.protein_inference.PeptideAndProteinBuilder;
-import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.quantification.spectrumcounting.ScalingFactorsEstimators;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
@@ -52,10 +49,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -476,7 +470,7 @@ public class PeptideShaker {
                 identification.getObjectsDB().commit();
                 System.gc();
 
-                waitingHandler.appendReport("Resolving protein inference issues, inferring peptide and protein PI status.", true, true); // could be slow
+                waitingHandler.appendReport("Selecting leading proteins, inferring peptide and protein PI status.", true, true);
                 proteinInference.inferPiStatus(
                         identification,
                         metrics,
@@ -514,20 +508,6 @@ public class PeptideShaker {
                         metrics,
                         waitingHandler,
                         identificationParameters.getFractionParameters()
-                );
-                waitingHandler.increasePrimaryProgressCounter();
-
-                if (waitingHandler.isRunCanceled()) {
-                    return;
-                }
-
-                identification.getObjectsDB().commit();
-                System.gc();
-
-                waitingHandler.appendReport("Mapping shared peptides.", true, true);
-                proteinInference.distributeSharedPeptides(
-                        identification,
-                        waitingHandler
                 );
                 waitingHandler.increasePrimaryProgressCounter();
 
@@ -624,16 +604,16 @@ public class PeptideShaker {
 
                 waitingHandler.appendReport("Scoring PTMs in proteins, gathering summary metrics.", true, true);
                 ProteinProcessor proteinProcessor = new ProteinProcessor(
-                        identification, 
-                        identificationParameters, 
+                        identification,
+                        identificationParameters,
                         identificationFeaturesGenerator,
                         sequenceProvider
                 );
                 proteinProcessor.processProteins(
-                        modificationLocalizationScorer, 
-                        metrics, 
-                        waitingHandler, 
-                        exceptionHandler, 
+                        modificationLocalizationScorer,
+                        metrics,
+                        waitingHandler,
+                        exceptionHandler,
                         processingParameters
                 );
                 waitingHandler.increasePrimaryProgressCounter();

@@ -7,7 +7,6 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
-import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.search.DigestionParameters;
@@ -21,9 +20,6 @@ import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
@@ -38,15 +34,19 @@ public class ProteinInference {
         /**
          * Group supported by peptide shared with uncharacterized protein.
          */
-        uncharacterized(1, "protein groups supported by uncharacterized proteins"),
+        lowerEvidence(0, "protein groups supported by predicted or uncertain proteins"),
         /**
          * Group supported by non-enzymatic shared peptide.
          */
-        nonEnzymatic(2, "protein groups supported by non-enzymatic shared peptides"),
+        nonEnzymatic(1, "protein groups supported by non-enzymatic shared peptides"),
         /**
          * Group supported by peptide shared with protein with variant.
          */
-        variant(3, "protein groups supported by peptides shared by variant only");
+        variant(2, "protein groups supported by peptides shared by variant only"),
+        /**
+         * Group explained by simpler groups.
+         */
+        simplerGroups(3, "protein groups explained by simpler groups");
         /**
          * The index of the option.
          */
@@ -76,10 +76,10 @@ public class ProteinInference {
     /**
      * Number of groups indexed by option.
      */
-    private int[] nDeleted = new int[GroupSimplificationOption.values().length];
+    private final int[] nDeleted = new int[GroupSimplificationOption.values().length];
 
     /**
-     * Reduce artifact groups which can be explained by a simpler group.
+     * Remove groups that can be explained by a simpler group.
      *
      * @param identification the identification class containing all
      * identification matches
@@ -108,7 +108,7 @@ public class ProteinInference {
 
         HashSet<Long> proteinGroupKeys = identification.getProteinIdentification();
         HashSet<Long> toDelete = new HashSet<>();
-        HashMap<Long, Long> processedKeys = new HashMap<>();
+        HashMap<Long, long[]> processedKeys = new HashMap<>();
 
         proteinGroupKeys.stream()
                 .map(key -> identification.getProteinMatch(key))
@@ -119,7 +119,13 @@ public class ProteinInference {
 
                     if (!processedKeys.containsKey(sharedKey)) {
 
-                        ProteinMatch uniqueGroup = getSubgroup(
+                        if (sharedKey == 6469926113285211855l) {
+
+                            int debug = 1;
+
+                        }
+
+                        ProteinMatch[] reducedGroups = getSubgroup(
                                 identification,
                                 proteinSharedGroup,
                                 processedKeys,
@@ -129,16 +135,28 @@ public class ProteinInference {
                                 identificationParameters
                         );
 
-                        if (uniqueGroup != null) {
+                        if (reducedGroups != null) {
 
-                            mergeProteinGroups(proteinSharedGroup, uniqueGroup);
+                            long[] reducedGroupKeys = new long[reducedGroups.length];
+                            processedKeys.put(sharedKey, reducedGroupKeys);
+
+                            for (int i = 0; i < reducedGroups.length; i++) {
+
+                                ProteinMatch reducedGroup = reducedGroups[i];
+                                long reducedGroupKey = reducedGroup.getKey();
+                                reducedGroupKeys[i] = reducedGroupKey;
+
+                                mergeProteinGroups(proteinSharedGroup, reducedGroup);
+
+                            }
 
                             toDelete.add(sharedKey);
-                            processedKeys.put(sharedKey, uniqueGroup.getKey());
 
                         } else {
 
-                            processedKeys.put(sharedKey, sharedKey);
+                            long[] reducedGroupKeys = new long[1];
+                            reducedGroupKeys[0] = sharedKey;
+                            processedKeys.put(sharedKey, reducedGroupKeys);
 
                         }
                     }
@@ -222,10 +240,10 @@ public class ProteinInference {
      *
      * @return the best smaller group, null if none found.
      */
-    private ProteinMatch getSubgroup(
+    private ProteinMatch[] getSubgroup(
             Identification identification,
             ProteinMatch sharedProteinMatch,
-            HashMap<Long, Long> processedKeys,
+            HashMap<Long, long[]> processedKeys,
             HashSet<Long> toDelete,
             SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider,
@@ -234,37 +252,36 @@ public class ProteinInference {
 
         long sharedKey = sharedProteinMatch.getKey();
 
-        String[] sharedAccessions = sharedProteinMatch.getAccessions();
-        HashSet<String> sharedAccessionsAsSet = Sets.newHashSet(sharedAccessions);
+        String[] accessions = sharedProteinMatch.getAccessions();
+        HashSet<String> accessionsAsSet = Sets.newHashSet(accessions);
 
-        HashMap<Long, ProteinMatch> candidateUnique = new HashMap<>(0);
+        HashMap<Long, ProteinMatch> subgroups = new HashMap<>(0);
 
-        for (String accession : sharedAccessions) {
+        for (String accession : accessions) {
 
             HashSet<Long> otherGroups = identification.getProteinMap().get(accession);
 
             for (long uniqueKey : otherGroups) {
 
-                if (uniqueKey != sharedKey && !toDelete.contains(uniqueKey) && !candidateUnique.containsKey(uniqueKey)) {
+                if (uniqueKey != sharedKey && !toDelete.contains(uniqueKey) && !subgroups.containsKey(uniqueKey)) {
 
-                    ProteinMatch uniqueProteinMatch = identification.getProteinMatch(uniqueKey);
+                    ProteinMatch simplerProteinMatch = identification.getProteinMatch(uniqueKey);
 
-                    String[] uniqueAccessions = uniqueProteinMatch.getAccessions();
+                    String[] uniqueAccessions = simplerProteinMatch.getAccessions();
 
-                    if (sharedAccessions.length > uniqueAccessions.length) {
+                    if (accessions.length > uniqueAccessions.length) {
 
                         if (Arrays.stream(uniqueAccessions)
-                                .allMatch(uniqueAccession -> sharedAccessionsAsSet.contains(uniqueAccession))) {
+                                .allMatch(uniqueAccession -> accessionsAsSet.contains(uniqueAccession))) {
 
                             if (uniqueAccessions.length > 1) {
 
-                                Long reducedGroupKey = processedKeys.get(uniqueKey);
+                                long[] reducedGroupKeys = processedKeys.get(uniqueKey);
 
-                                if (reducedGroupKey == null) {
+                                if (reducedGroupKeys == null) {
 
-                                    ProteinMatch reducedGroup = getSubgroup(
-                                            identification,
-                                            uniqueProteinMatch,
+                                    ProteinMatch[] reducedGroups = getSubgroup(identification,
+                                            simplerProteinMatch,
                                             processedKeys,
                                             toDelete,
                                             sequenceProvider,
@@ -272,31 +289,44 @@ public class ProteinInference {
                                             identificationParameters
                                     );
 
-                                    if (reducedGroup != null) {
+                                    if (reducedGroups != null) {
 
-                                        reducedGroupKey = reducedGroup.getKey();
-                                        mergeProteinGroups(sharedProteinMatch, uniqueProteinMatch);
-                                        processedKeys.put(uniqueKey, reducedGroupKey);
+                                        reducedGroupKeys = new long[reducedGroups.length];
+                                        processedKeys.put(uniqueKey, reducedGroupKeys);
+
+                                        for (int i = 0; i < reducedGroups.length; i++) {
+
+                                            ProteinMatch reducedGroup = reducedGroups[i];
+                                            long reducedGroupKey = reducedGroup.getKey();
+                                            reducedGroupKeys[i] = reducedGroupKey;
+
+                                            mergeProteinGroups(sharedProteinMatch, simplerProteinMatch);
+
+                                            subgroups.put(reducedGroupKey, reducedGroup);
+
+                                        }
+
                                         toDelete.add(sharedKey);
-
-                                        candidateUnique.put(reducedGroupKey, reducedGroup);
 
                                     } else {
 
-                                        processedKeys.put(uniqueKey, uniqueKey);
-                                        candidateUnique.put(uniqueKey, uniqueProteinMatch);
+                                        reducedGroupKeys = new long[1];
+                                        reducedGroupKeys[0] = uniqueKey;
+                                        processedKeys.put(uniqueKey, reducedGroupKeys);
+                                        subgroups.put(uniqueKey, simplerProteinMatch);
 
                                     }
 
                                 } else {
 
-                                    candidateUnique.put(reducedGroupKey, identification.getProteinMatch(reducedGroupKey));
+                                    Arrays.stream(reducedGroupKeys)
+                                            .forEach(reducedGroupKey -> subgroups.put(reducedGroupKey, identification.getProteinMatch(reducedGroupKey))
+                                            );
 
                                 }
-
                             } else {
 
-                                candidateUnique.put(uniqueKey, uniqueProteinMatch);
+                                subgroups.put(uniqueKey, simplerProteinMatch);
 
                             }
                         }
@@ -304,83 +334,56 @@ public class ProteinInference {
                 }
             }
         }
+        
+        if (subgroups.isEmpty()) {
+            
+            return null;
+            
+        }
 
-        // Look for the smallest group that can be used
-        ProteinMatch minimalGroup = null;
-        int nUnique = 0, bestSimplification = GroupSimplificationOption.values().length;
+        // Gather the proteins explained or not by the subgroups
+        HashSet<String> coveredAccessionsSet = subgroups.values().stream()
+                .flatMap(proteinMatch -> Arrays.stream(proteinMatch.getAccessions()))
+                .collect(Collectors.toCollection(HashSet::new));
+        String[] uniqueAccessions = Arrays.stream(accessions)
+                .filter(accession -> !coveredAccessionsSet.contains(accession))
+                .toArray(String[]::new);
+        String[] coveredAccessions = coveredAccessionsSet.toArray(new String[coveredAccessionsSet.size()]);
 
-        for (Entry<Long, ProteinMatch> entry : candidateUnique.entrySet()) {
+        // Check whether simpler groups can explain the protein group
+        int bestSimplification = GroupSimplificationOption.values().length - 1;
 
-            long key = entry.getKey();
-            ProteinMatch uniqueMatch = entry.getValue();
-            HashSet<String> uniqueAccessions = getUniqueAccessions(sharedProteinMatch, uniqueMatch);
+        for (String uniqueAccession : uniqueAccessions) {
 
             GroupSimplificationOption groupSimplificationOption = getSimplificationOption(
                     sharedProteinMatch,
-                    uniqueAccessions,
+                    uniqueAccession,
+                    coveredAccessions,
                     sequenceProvider,
                     proteinDetailsProvider,
                     identificationParameters,
                     identification
             );
 
-            if (groupSimplificationOption != null) {
+            if (groupSimplificationOption == null) {
 
-                if (uniqueAccessions.size() >= nUnique) {
+                return null;
 
-                    if (uniqueAccessions.size() > nUnique) {
+            }
 
-                        nUnique = uniqueAccessions.size();
-                        bestSimplification = GroupSimplificationOption.values().length;
+            if (groupSimplificationOption.index < bestSimplification) {
 
-                    }
+                bestSimplification = groupSimplificationOption.index;
 
-                    if (groupSimplificationOption.index < bestSimplification) {
-
-                        bestSimplification = groupSimplificationOption.index;
-
-                    }
-
-                    if (minimalGroup == null || minimalGroup.getKey() > key) {
-
-                        minimalGroup = uniqueMatch;
-
-                    }
-                }
             }
         }
 
-        if (minimalGroup == null) {
-
-            return sharedProteinMatch;
-
-        }
-
         nDeleted[bestSimplification]++;
+        toDelete.add(sharedKey);
 
-        return minimalGroup;
-
-    }
-
-    /**
-     * Returns the accessions unique to a protein group.
-     *
-     * @param sharedMatch the shared protein group
-     * @param uniqueMatch the unique protein group
-     *
-     * @return a n array of accessions unique to a match
-     */
-    private HashSet<String> getUniqueAccessions(
-            ProteinMatch sharedMatch,
-            ProteinMatch uniqueMatch
-    ) {
-
-        HashSet<String> uniqueAsSet = Sets.newHashSet(uniqueMatch.getAccessions());
-
-        return Arrays.stream(sharedMatch.getAccessions())
-                .filter(accession -> !uniqueAsSet.contains(accession))
-                .collect(Collectors.toCollection(HashSet::new));
-
+        return subgroups.values().toArray(
+                new ProteinMatch[subgroups.size()]
+        );
     }
 
     /**
@@ -388,7 +391,8 @@ public class ProteinInference {
      * can be simplified.
      *
      * @param sharedMatch the protein match
-     * @param uniqueAccessions the unique shared protein accessions
+     * @param accession the unique shared protein accession
+     * @param coveredAccessions the accessions covered by the subgroups
      * @param sequenceProvider the sequence provider
      * @param proteinDetailsProvider the protein details provider
      * @param identificationParameters the identification parameters
@@ -398,7 +402,8 @@ public class ProteinInference {
      */
     private GroupSimplificationOption getSimplificationOption(
             ProteinMatch sharedMatch,
-            HashSet<String> uniqueAccessions,
+            String accession,
+            String[] coveredAccessions,
             SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider,
             IdentificationParameters identificationParameters,
@@ -407,27 +412,17 @@ public class ProteinInference {
 
         ProteinInferenceParameters proteinInferenceParameters = identificationParameters.getProteinInferenceParameters();
 
-        // See wheter the unique accessions are from uncharacterized proteins
+        // See wheter the unique accession is from an uncharacterized protein
         if (proteinInferenceParameters.getSimplifyGroupsUncharacterized()) {
 
-            boolean uncharacterizedUnique = uniqueAccessions.stream()
-                    .allMatch(accession -> isUncharacterized(accession, proteinDetailsProvider));
+            if (isLowerEvidence(accession, coveredAccessions, proteinDetailsProvider)) {
 
-            if (uncharacterizedUnique) {
+                return GroupSimplificationOption.lowerEvidence;
 
-                boolean uncharactrizedShared = Arrays.stream(sharedMatch.getAccessions())
-                        .filter(accession -> !uniqueAccessions.contains(accession))
-                        .allMatch(accession -> isUncharacterized(accession, proteinDetailsProvider));
-
-                if (uncharacterizedUnique && !uncharactrizedShared) {
-
-                    return GroupSimplificationOption.uncharacterized;
-
-                }
             }
         }
 
-        // See whether unique accessions are due to miscleaved peptides
+        // See whether the peptides in the group are non-enzymatic
         if (proteinInferenceParameters.getSimplifyGroupsEnzymaticity()) {
 
             DigestionParameters digestionParameters = identificationParameters.getSearchParameters().getDigestionParameters();
@@ -449,14 +444,13 @@ public class ProteinInference {
             }
         }
 
-        // See whether unique accessions are due to variant mapping
+        // See whether unique accession is due to variant mapping
         if (proteinInferenceParameters.getSimplifyGroupsVariants()) {
 
             if (identificationParameters.getPeptideVariantsParameters().getnVariants() > 0
                     && Arrays.stream(sharedMatch.getPeptideMatchesKeys())
                             .mapToObj(key -> identification.getPeptideMatch(key))
-                            .allMatch(peptideMatch -> uniqueAccessions.stream()
-                            .allMatch(accession -> PeptideUtils.isVariant(peptideMatch.getPeptide(), accession)))) {
+                            .allMatch(peptideMatch -> PeptideUtils.isVariant(peptideMatch.getPeptide(), accession))) {
 
                 return GroupSimplificationOption.variant;
 
@@ -469,19 +463,59 @@ public class ProteinInference {
 
     /**
      * Returns a boolean indicating whether the protein is considered as
-     * uncharacterized.
+     * uncharacterized compared to the others.
      *
      * @param accession the accession of the protein
+     * @param otherAccessions the accessions of the other protein
      * @param proteinDetailsProvider the protein details provider
      *
      * @return a boolean indicating whether the protein is considered as
      * uncharacterized
      */
-    public static boolean isUncharacterized(
+    public static boolean isLowerEvidence(
             String accession,
+            String[] otherAccessions,
             ProteinDetailsProvider proteinDetailsProvider
     ) {
 
+        // Get the protein evidence according to UnitProt
+        Integer proteinEvidence = proteinDetailsProvider.getProteinEvidence(accession);
+
+        if (proteinEvidence != null) {
+
+            // Return false if the evidence for this protein is transcript or protein
+            if (proteinEvidence <= 2) {
+
+                return false;
+
+            }
+
+            // See the evidence level of the other proteins
+            Integer bestEvidenceOthers = null;
+
+            for (String otherAccession : otherAccessions) {
+
+                Integer evidence = proteinDetailsProvider.getProteinEvidence(otherAccession);
+
+                if (evidence != null) {
+
+                    if (bestEvidenceOthers == null || evidence < bestEvidenceOthers) {
+
+                        bestEvidenceOthers = evidence;
+
+                    }
+                }
+            }
+
+            // If evidence is available, return true if the evidence is worse according to uniprot
+            if (bestEvidenceOthers != null) {
+
+                return proteinEvidence > bestEvidenceOthers;
+
+            }
+        }
+
+        // Evidence level not available, see whether the protein description contain key words
         String description = proteinDetailsProvider.getSimpleDescription(accession);
 
         if (description == null) {
@@ -492,8 +526,35 @@ public class ProteinInference {
 
         final String descriptionFinal = description.toLowerCase();
 
-        return Arrays.stream(unchatacterizedKeyWords)
-                .anyMatch(keyWord -> descriptionFinal.contains(keyWord));
+        boolean proteinUncharacterized = Arrays.stream(unchatacterizedKeyWords)
+                .anyMatch(keyWord -> descriptionFinal.equals(keyWord));
+
+        boolean otherUncharacterized = true;
+
+        for (String otherAccession : otherAccessions) {
+
+            description = proteinDetailsProvider.getSimpleDescription(otherAccession);
+
+            if (description == null) {
+
+                description = proteinDetailsProvider.getDescription(otherAccession);
+
+            }
+
+            final String otherDescriptionFinal = description.toLowerCase();
+
+            boolean tempUncharacterized = Arrays.stream(unchatacterizedKeyWords)
+                    .anyMatch(keyWord -> otherDescriptionFinal.equals(keyWord));
+
+            if (!tempUncharacterized) {
+
+                otherUncharacterized = false;
+                break;
+
+            }
+        }
+
+        return !otherUncharacterized && proteinUncharacterized;
 
     }
 
@@ -513,7 +574,8 @@ public class ProteinInference {
     }
 
     /**
-     * Retains the best scoring of intricate groups.
+     * Selects the leading protein of protein groups and infers PI status of
+     * peptide and proteins.
      *
      * @param identification the identification class containing all
      * identification matches
@@ -1049,9 +1111,9 @@ public class ProteinInference {
                                             accession -> peptide.getProteinMapping().containsKey(accession)
                                     )
                                     && Arrays.stream(proteinMatch.getPeptideMatchesKeys())
-                                    .allMatch(
-                                            key -> key != peptideMatchKey
-                                    )) {
+                                            .allMatch(
+                                                    key -> key != peptideMatchKey
+                                            )) {
 
                                 proteinMatch.addPeptideMatchKey(peptideMatchKey);
 
