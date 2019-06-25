@@ -63,6 +63,7 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.FRAG_PPM.id) + " " + IdentificationParametersCLIParams.FRAG_PPM.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.DIGESTION.id) + " " + IdentificationParametersCLIParams.DIGESTION.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.ENZYME.id) + " " + IdentificationParametersCLIParams.ENZYME.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SPECIFICITY.id) + " " + IdentificationParametersCLIParams.SPECIFICITY.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.FIXED_MODS.id) + " " + IdentificationParametersCLIParams.FIXED_MODS.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.VARIABLE_MODS.id) + " " + IdentificationParametersCLIParams.VARIABLE_MODS.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MIN_CHARGE.id) + " " + IdentificationParametersCLIParams.MIN_CHARGE.description + "\n";
