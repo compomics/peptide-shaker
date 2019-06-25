@@ -5390,7 +5390,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     /**
      * Enable or disable the dark theme.
      *
-     * @param darkTheme
+     * @param darkTheme enable or disable the dark theme
      */
     public void enableDarkTheme(boolean darkTheme) {
 

@@ -1274,7 +1274,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         @Override
         public Object getValueAt(int row, int column) {
 
-            ProteinMatch proteinMatch = identification.getProteinMatch(uniqueMatches[row]);
+            ProteinMatch proteinMatch = identification.getProteinMatch(associatedMatches[row]);
             PSParameter psParameter = (PSParameter) (proteinMatch).getUrParam(PSParameter.dummy);
 
             switch (column) {

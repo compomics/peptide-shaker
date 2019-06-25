@@ -480,7 +480,7 @@ public class PeptideShaker {
                 identification.getObjectsDB().commit();
                 System.gc();
 
-                waitingHandler.appendReport("Selecting leading proteins, inferring peptide and protein PI status.", true, true);
+                waitingHandler.appendReport("Selecting leading proteins, inferring peptide and protein inference status.", true, true);
                 proteinInference.inferPiStatus(
                         identification,
                         metrics,
