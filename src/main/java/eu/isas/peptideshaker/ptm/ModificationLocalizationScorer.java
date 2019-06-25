@@ -1070,10 +1070,6 @@ public class ModificationLocalizationScorer extends DbObject {
                         modPreferentialSites = preferentialSites.get(modMass);
 
                     }
-                    
-                    if (nToSelectMap.get(modMass) == null) { // @TODO: nToSelectMap only contains phospho, but modMass equals oxidation...
-                        int dfgdfg = 0;
-                    }
 
                     int toSelect = nToSelectMap.get(modMass);
                     int nSelected = nSelectedMap.get(modMass);
