@@ -554,7 +554,7 @@ public class NewDialog extends javax.swing.JDialog {
             }
         });
 
-        peptideShakerPublicationLabel.setText("<html>Please cite PeptideShaker as <a href=\"https://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html\">Vaudel <i>et al.</i>: Nature Biotechnol. 2015 Jan;33(1):22–24</a>.</html>\n\n");
+        peptideShakerPublicationLabel.setText("<html>Please cite PeptideShaker as <a style=\"text-decoration: none\" href=\"https://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html\">Vaudel <i>et al.</i>: Nature Biotechnol. 2015 Jan;33(1):22–24</a>.</html>\n\n");
         peptideShakerPublicationLabel.setToolTipText("Open the PeptideShaker publication");
         peptideShakerPublicationLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
