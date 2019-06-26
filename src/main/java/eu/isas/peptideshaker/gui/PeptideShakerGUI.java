@@ -6831,7 +6831,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                         SpectrumMatch spectrumMatch = getIdentification().getSpectrumMatch(spectrumMatchKey);
                         String spectrumKey = spectrumMatch.getSpectrumKey();
-                        Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
+                        Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey, true);
 
                         if (spectrum == null) {
                             throw new IllegalArgumentException("Spectrum " + spectrumKey + " not found.");
@@ -6892,7 +6892,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         SpectrumMatch spectrumMatch = getIdentification().getSpectrumMatch(spectrumMatchKey);
                         String spectrumKey = spectrumMatch.getSpectrumKey();
 
-                        Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
+                        Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey, true);
 
                         if (spectrum == null) {
 

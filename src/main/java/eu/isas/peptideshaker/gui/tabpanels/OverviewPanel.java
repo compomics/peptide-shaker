@@ -4004,7 +4004,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 String spectrumKey = spectrumMatch.getSpectrumKey();
                 selectedIndexes.add((psmIndex + 1) + " " + Charge.toString(spectrumMatch.getBestPeptideAssumption().getIdentificationCharge()));
 
-                Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumKey);
+                Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumKey, true);
 
                 if (currentSpectrum != null) {
 
@@ -4648,7 +4648,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumMatchKey);
                 String spectrumKey = spectrumMatch.getSpectrumKey();
 
-                Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumKey);
+                Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumKey, true);
 
                 if (currentSpectrum != null && currentSpectrum.getNPeaks() > 0) {
 
@@ -5157,7 +5157,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             long spectrumMatchKey = psmKeys[psmIndex];
             SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumMatchKey);
             String spectrumKey = spectrumMatch.getSpectrumKey();
-            Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumKey);
+            Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumKey, true);
 
             if (currentSpectrum != null && peptideTable.getSelectedRow() != -1) {
 
@@ -5177,7 +5177,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
-     * Returnsthe keys of the selected spectra in the PSM table.
+     * Returns the keys of the selected spectra in the PSM table.
      *
      * @return the keys of the selected spectra in the PSM table
      */
@@ -5229,7 +5229,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         return Arrays.stream(getSelectedSpectrumKeys())
                 .mapToObj(key -> peptideShakerGUI.getIdentification().getSpectrumMatch(key).getSpectrumKey())
-                .map(key -> spectrumFactory.getSpectrum(currentSpectrumKey))
+                .map(key -> spectrumFactory.getSpectrum(currentSpectrumKey, true))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -6252,7 +6252,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
             SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(peptideShakerGUI.getSelectedPsmKey());
-            Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumMatch.getSpectrumKey());
+            Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumMatch.getSpectrumKey(), true);
             updateSpectrumPanelBorderTitle(currentSpectrum);
 
         }

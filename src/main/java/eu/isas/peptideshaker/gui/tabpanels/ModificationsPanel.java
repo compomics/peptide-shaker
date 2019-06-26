@@ -3991,7 +3991,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
         String spectrumKey = spectrumMatch.getSpectrumKey();
 
-        Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumKey);
+        Spectrum currentSpectrum = spectrumFactory.getSpectrum(spectrumKey, true);
         SpectrumMatch secondSpectrumMatch = null;
 
         if (currentSpectrum != null && !currentSpectrum.getPeakMap().isEmpty()) {
@@ -4050,7 +4050,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                 secondSpectrumMatch = identification.getSpectrumMatch(secondSpectrumMatchKey);
                 String secondSpectrumKey = secondSpectrumMatch.getSpectrumKey();
 
-                currentSpectrum = spectrumFactory.getSpectrum(secondSpectrumKey);
+                currentSpectrum = spectrumFactory.getSpectrum(secondSpectrumKey, true);
 
                 if (currentSpectrum != null && !currentSpectrum.getPeakMap().isEmpty()) {
 

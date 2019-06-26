@@ -2937,7 +2937,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             spectrumChartPanel.removeAll();
 
             String spectrumKey = getSelectedSpectrumKey();
-            Spectrum currentSpectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
+            Spectrum currentSpectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey, true);
             AnnotationParameters annotationParameters = peptideShakerGUI.getIdentificationParameters().getAnnotationParameters();
 
             long spectrumMatchKey = ExperimentObject.asLong(spectrumKey);
