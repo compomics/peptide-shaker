@@ -30,6 +30,7 @@ public enum PsIdentificationAlgorithmMatchesFeature implements ExportFeature {
     rt("RT", "Retention time as provided in the spectrum file.", false),
     mz("m/z", "Measured m/z.", false),
     spectrum_charge("Measured Charge", "The charge as given in the spectrum file.", false),
+    precursor_intensity("Precursor Intensity", "The precursor intensity as given in the spectrum file", false),
     total_spectrum_intensity("Total Spectrum Intensity", "The summed intensity of all peaks in the spectrum.", true),
     intensity_coverage("Intensity Coverage [%]", "Annotated share of the total spectrum intensity.", true),
     max_intensity("Maximal Spectrum Intensity", "The maximal intensity found in the spectrum.", true),

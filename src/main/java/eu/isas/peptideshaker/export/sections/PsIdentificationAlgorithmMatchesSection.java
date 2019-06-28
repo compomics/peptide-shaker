@@ -595,6 +595,11 @@ public class PsIdentificationAlgorithmMatchesSection {
 
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getPossibleChargesAsString();
+                
+            case precursor_intensity:
+
+                precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
+                return Double.toString(precursor.getIntensity());
 
             case spectrum_file:
 
@@ -1037,6 +1042,11 @@ public class PsIdentificationAlgorithmMatchesSection {
 
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getPossibleChargesAsString();
+                
+            case precursor_intensity:
+
+                precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
+                return Double.toString(precursor.getIntensity());
 
             case spectrum_file:
 
