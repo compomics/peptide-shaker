@@ -7,7 +7,6 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.utils.ProteinUtils;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
@@ -20,7 +19,6 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -598,7 +596,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                                 }
                                             }
 
-                                            TreeMap<Long, TreeSet<Long>> itemsMap = modificationsMatchesMap.isEmpty() ? modificationsMatchesMap : sequencesMatchesMap;
+                                            TreeMap<Long, TreeSet<Long>> itemsMap = !modificationsMatchesMap.isEmpty() ? modificationsMatchesMap : sequencesMatchesMap;
 
                                             for (Entry<Long, TreeSet<Long>> entry : itemsMap.entrySet()) {
 
