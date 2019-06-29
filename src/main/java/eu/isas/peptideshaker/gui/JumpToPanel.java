@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.experiment.biology.aminoacids.AminoAcid;
+import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -18,7 +19,12 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * A Jump To panel for use in the menu bar in the main frame.
@@ -33,36 +39,37 @@ public class JumpToPanel extends javax.swing.JPanel {
      */
     public enum JumpType {
 
-        proteinAndPeptides, spectrum
+        protein, peptide, psm
     }
     /**
      * The type of data to jump to in that panel.
      */
-    private JumpType jumpType = JumpType.proteinAndPeptides;
+    private JumpType selectedJumpType = JumpType.protein;
     /**
      * Instance of the main GUI class.
      */
     private final PeptideShakerGUI peptideShakerGUI;
     /**
-     * Items matching the criterion for each type.
+     * Items matching the criterion for each type. Keys are in an array:
+     * protein, peptide, PSM.
      */
-    private final HashMap<JumpType, ArrayList<Long>> possibilities = new HashMap<>();
+    private final EnumMap<JumpType, ArrayList<long[]>> possibilities;
     /**
      * Currently selected item.
      */
-    private final HashMap<JumpType, Integer> currentSelection = new HashMap<>();
+    private final EnumMap<JumpType, Integer> currentSelection = new EnumMap<>(JumpType.class);
     /**
      * The text to display by default.
      */
-    private final HashMap<JumpType, String> lastInput = new HashMap<>();
+    private final EnumMap<JumpType, String> lastInput = new EnumMap<>(JumpType.class);
     /**
      * The text to display by default.
      */
-    private final HashMap<JumpType, String> lastLabel = new HashMap<>();
+    private final EnumMap<JumpType, String> lastLabel = new EnumMap<>(JumpType.class);
     /**
      * The text to display by default.
      */
-    private final HashMap<JumpType, String> welcomeText;
+    private final EnumMap<JumpType, String> welcomeText;
     /**
      * The spectrum factory.
      */
@@ -82,20 +89,6 @@ public class JumpToPanel extends javax.swing.JPanel {
     private final int waitingTime = 1000;
 
     /**
-     * Type of item selected.
-     */
-    private enum Type {
-
-        PROTEIN,
-        PEPTIDE,
-        SPECTRUM
-    }
-    /**
-     * Type of each possible item.
-     */
-    private final HashMap<JumpType, ArrayList<Type>> types = new HashMap<>();
-
-    /**
      * Creates a new JumpToPanel.
      *
      * @param peptideShakerGUI the parent
@@ -105,13 +98,22 @@ public class JumpToPanel extends javax.swing.JPanel {
 
         this.peptideShakerGUI = peptideShakerGUI;
 
-        welcomeText = new HashMap<>();
-        welcomeText.put(JumpType.proteinAndPeptides, "(protein or peptide)");
-        welcomeText.put(JumpType.spectrum, "(title, m/z or RT)");
-        inputTxt.setText(welcomeText.get(jumpType));
+        welcomeText = new EnumMap<>(JumpType.class);
+        welcomeText.put(JumpType.protein, "(protein, peptide, or spectrum)");
+        welcomeText.put(JumpType.peptide, "(protein, peptide, or spectrum)");
+        welcomeText.put(JumpType.psm, "(spectrum title, precursor m/z or RT)");
+        inputTxt.setText(welcomeText.get(selectedJumpType));
         indexLabel.setText("");
         previousButton.setEnabled(false);
         nextButton.setEnabled(false);
+
+        possibilities = new EnumMap<>(JumpType.class);
+
+        for (JumpType jumpType : JumpType.values()) {
+
+            possibilities.put(jumpType, new ArrayList<>());
+
+        }
     }
 
     /**
@@ -137,26 +139,23 @@ public class JumpToPanel extends javax.swing.JPanel {
     public void updateSelectionInTab() {
 
         indexLabel.setForeground(Color.BLACK);
+        int selectedIndex = currentSelection.get(selectedJumpType);
+        ArrayList<long[]> keys = possibilities.get(selectedJumpType);
+        long[] selection = keys.get(selectedIndex);
+        peptideShakerGUI.setSelectedItems(selection[0], selection[1], selection[2]);
+        peptideShakerGUI.updateSelectionInCurrentTab();
 
-        if (types.get(jumpType).get(currentSelection.get(jumpType)) == Type.PROTEIN) {
-            peptideShakerGUI.setSelectedItems(possibilities.get(jumpType).get(currentSelection.get(jumpType)), NO_KEY, NO_KEY);
-            peptideShakerGUI.updateSelectionInCurrentTab();
-        } else if (types.get(jumpType).get(currentSelection.get(jumpType)) == Type.PEPTIDE) {
-            peptideShakerGUI.setSelectedItems(NO_KEY, possibilities.get(jumpType).get(currentSelection.get(jumpType)), NO_KEY);
-            if (peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.MODIFICATIONS_TAB_INDEX
-                    && !Arrays.stream(peptideShakerGUI.getDisplayedPeptides()).anyMatch(key -> key == possibilities.get(jumpType).get(currentSelection.get(jumpType)))) {
-                // warn the user that the current selection is not in the tab
-                indexLabel.setForeground(Color.RED);
-            } else {
-                peptideShakerGUI.updateSelectionInCurrentTab();
-            }
-        } else {
-            peptideShakerGUI.setSelectedItems(NO_KEY, NO_KEY, possibilities.get(jumpType).get(currentSelection.get(jumpType)));
-            peptideShakerGUI.updateSelectionInCurrentTab();
-        }
-        String label = "(" + (currentSelection.get(jumpType) + 1) + " of " + possibilities.get(jumpType).size() + ")";
+        String label = String.join("",
+                "(",
+                Integer.toString(selectedIndex + 1),
+                " of ",
+                Integer.toString(keys.size()),
+                ")"
+        );
+
         indexLabel.setText(label);
-        lastLabel.put(jumpType, label);
+        lastLabel.put(selectedJumpType, label);
+
     }
 
     /**
@@ -165,81 +164,117 @@ public class JumpToPanel extends javax.swing.JPanel {
      *
      * @return a list of descriptions
      */
-    public ArrayList<String> getPossibilitiesDescriptions() {
+    public String[] getPossibilitiesDescriptions() {
 
-        // Some necessary pre-caching
-        ArrayList<Type> typeList = types.get(jumpType);
-        ArrayList<Long> keys = possibilities.get(jumpType),
-                proteinKeys = new ArrayList<>(),
-                peptideKeys = new ArrayList<>();
-
-        for (int i = 0; i < keys.size(); i++) {
-
-            long key = keys.get(i);
-
-            if (typeList.get(i) == Type.PROTEIN) {
-
-                proteinKeys.add(key);
-
-            } else if (typeList.get(i) == Type.PEPTIDE) {
-
-                peptideKeys.add(key);
-
-            }
-        }
-
-        ArrayList<String> descriptions = new ArrayList<>();
-
-        for (int i = 0; i < keys.size(); i++) {
-
-            long key = keys.get(i);
-            Type type = typeList.get(i);
-            String description = getItemDescription(key, type);
-            descriptions.add(description);
-
-        }
-
-        return descriptions;
+        return possibilities.get(selectedJumpType).stream()
+                .map(keys -> getItemsDescription(keys))
+                .toArray(String[]::new);
     }
 
     /**
      * Returns the description of an item.
      *
      * @param key the key of the item
-     * @param itemType the type of the item
      *
      * @return the description of an item
      */
-    private String getItemDescription(long key, Type itemType) {
+    private String getItemsDescription(long[] keys) {
+
+        StringBuilder sb = new StringBuilder();
+
+        if (keys[0] != NO_KEY) {
+
+            sb.append(getProteinDescription(keys[0]));
+
+        }
+        if (keys[1] != NO_KEY) {
+
+            if (sb.length() > 0) {
+
+                sb.append(" | ");
+
+            }
+
+            sb.append(getPeptideDescription(keys[1]));
+
+        }
+        if (keys[2] != NO_KEY) {
+
+            if (sb.length() > 0) {
+
+                sb.append(" | ");
+
+            }
+
+            sb.append(getSpectrumDescription(keys[2]));
+
+        }
+
+        return sb.toString();
+
+    }
+
+    /**
+     * Returns the description of a protein.
+     *
+     * @param key the key of the protein
+     *
+     * @return the description of a protein
+     */
+    private String getProteinDescription(long key) {
 
         Identification identification = peptideShakerGUI.getIdentification();
         ProteinDetailsProvider proteinDetailsProvider = peptideShakerGUI.getProteinDetailsProvider();
 
-        switch (itemType) {
+        ProteinMatch proteinMatch = identification.getProteinMatch(key);
+        String mainMatch = proteinMatch.getLeadingAccession();
+        String description = proteinDetailsProvider.getSimpleDescription(mainMatch);
+        return String.join(
+                " - ",
+                String.join(
+                        ",",
+                        proteinMatch.getAccessions()
+                ),
+                description
+        );
+    }
 
-            case PROTEIN:
+    /**
+     * Returns the description of a peptide.
+     *
+     * @param key the key of the peptide
+     *
+     * @return the description of a peptide
+     */
+    private String getPeptideDescription(long key) {
 
-                ProteinMatch proteinMatch = identification.getProteinMatch(key);
-                String mainMatch = proteinMatch.getLeadingAccession();
-                String description = proteinDetailsProvider.getSimpleDescription(mainMatch);
-                String result = String.join(",", proteinMatch.getAccessions());
-                result += " - " + description;
-                return result;
+        Identification identification = peptideShakerGUI.getIdentification();
 
-            case PEPTIDE:
+        PeptideMatch peptideMatch = identification.getPeptideMatch(key);
+        return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
+    }
 
-                PeptideMatch peptideMatch = identification.getPeptideMatch(key);
-                return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
+    /**
+     * Returns the description of a spectrum.
+     *
+     * @param key the key of the spectrum
+     *
+     * @return the description of a spectrum
+     */
+    private String getSpectrumDescription(long key) {
 
-            case SPECTRUM:
+        Identification identification = peptideShakerGUI.getIdentification();
 
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(key);
-                return Spectrum.getSpectrumTitle(spectrumMatch.getSpectrumKey()) + " (" + Spectrum.getSpectrumFile(spectrumMatch.getSpectrumKey()) + ")";
+        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(key);
 
-            default:
+        return String.join(
+                "",
+                Spectrum.getSpectrumTitle(spectrumMatch.getSpectrumKey()),
+                " (",
+                Spectrum.getSpectrumFile(spectrumMatch.getSpectrumKey()),
+                ")"
+        );
 
-                throw new UnsupportedOperationException("Item of type " + itemType + " not supported.");
-        }
     }
 
     /**
@@ -248,7 +283,7 @@ public class JumpToPanel extends javax.swing.JPanel {
      * @return the index of the selected item
      */
     public int getIndexOfSelectedItem() {
-        return currentSelection.get(jumpType);
+        return currentSelection.get(selectedJumpType);
     }
 
     /**
@@ -258,7 +293,7 @@ public class JumpToPanel extends javax.swing.JPanel {
      * @param itemIndex the item index
      */
     public void setSelectedItem(int itemIndex) {
-        currentSelection.put(jumpType, itemIndex);
+        currentSelection.put(selectedJumpType, itemIndex);
     }
 
     /**
@@ -394,11 +429,12 @@ public class JumpToPanel extends javax.swing.JPanel {
                 }
 
                 try {
-                    // see if the gui is to be updated or not
+                    // see if the gui needs to be updated
                     Identification identification = peptideShakerGUI.getIdentification();
+
                     if (identification != null && keyPressedCounter == 1) {
 
-                        if (!inputTxt.getText().equalsIgnoreCase(welcomeText.get(jumpType))) {
+                        if (!inputTxt.getText().equalsIgnoreCase(welcomeText.get(selectedJumpType))) {
                             inputTxt.setForeground(Color.black);
                         } else {
                             inputTxt.setForeground(new Color(204, 204, 204));
@@ -409,24 +445,32 @@ public class JumpToPanel extends javax.swing.JPanel {
                         } else if (event.getKeyCode() == KeyEvent.VK_DOWN && nextButton.isEnabled()) {
                             nextButtonActionPerformed(null);
                         } else {
-                            if (!possibilities.containsKey(jumpType)) {
-                                possibilities.put(jumpType, new ArrayList<>());
-                                types.put(jumpType, new ArrayList<>());
-                            } else {
-                                possibilities.get(jumpType).clear();
-                                types.get(jumpType).clear();
+
+                            possibilities.get(selectedJumpType).clear();
+                            currentSelection.put(selectedJumpType, 0);
+
+                            EnumMap<JumpType, Boolean> reinitializedMap = new EnumMap<>(JumpType.class);
+
+                            for (JumpType jumpType : JumpType.values()) {
+
+                                reinitializedMap.put(jumpType, jumpType == selectedJumpType);
+
                             }
-                            currentSelection.put(jumpType, 0);
+
                             String doubleString, input = inputTxt.getText().trim().toLowerCase();
-                            lastInput.put(jumpType, input);
+                            lastInput.put(selectedJumpType, input);
 
                             if (!input.equals("")) {
 
                                 peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
                                 inputTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-                                if (jumpType == JumpType.proteinAndPeptides) {
+                                boolean proteinFound = false;
+                                boolean peptidefound = false;
 
+                                if (selectedJumpType == JumpType.protein || selectedJumpType == JumpType.peptide) {
+
+                                    // See if the input is contained by a protein accession
                                     for (long proteinKey : peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterParameters())) {
 
                                         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
@@ -441,94 +485,153 @@ public class JumpToPanel extends javax.swing.JPanel {
                                                             .map(description -> description.toLowerCase())
                                                             .anyMatch(description -> description.contains(input))) {
 
-                                                possibilities.get(jumpType).add(proteinKey);
-                                                types.get(jumpType).add(Type.PROTEIN);
+                                                proteinFound = true;
 
+                                                long[] keys = new long[3];
+                                                Arrays.fill(keys, NO_KEY);
+                                                keys[0] = proteinKey;
+
+                                                for (JumpType jumpType : new JumpType[]{JumpType.protein, JumpType.peptide}) {
+
+                                                    if (!reinitializedMap.get(jumpType)) {
+
+                                                        possibilities.get(jumpType).clear();
+                                                        currentSelection.put(jumpType, 0);
+
+                                                    }
+
+                                                    possibilities.get(jumpType).add(keys);
+
+                                                }
                                             }
                                         }
                                     }
 
-                                    // check if it's a valid peptide sequence
-                                    boolean validPeptideSequence;
-                                    try {
+                                    if (!proteinFound) {
 
-                                        AminoAcid.getMatchingSequence(input, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
-                                        validPeptideSequence = true;
+                                        // See if the input is contained by a peptide sequence or is a modification
+                                        boolean validPeptideSequence;
+                                        try {
 
-                                    } catch (IllegalArgumentException e) {
+                                            AminoAcid.getMatchingSequence(input, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
+                                            validPeptideSequence = true;
 
-                                        // ignore, not a peptide sequence
-                                        validPeptideSequence = false;
+                                        } catch (IllegalArgumentException e) {
 
-                                    }
+                                            // ignore, not a peptide sequence
+                                            validPeptideSequence = false;
 
-                                    if (validPeptideSequence) {
+                                        }
 
-                                        ArrayList<Long> secondaryCandidates = new ArrayList<>(0);
+                                        if (validPeptideSequence) {
 
-                                        // pre-caching
-                                        identification.loadObjects(PeptideMatch.class, null, false);
-                                        String matchingInput = AminoAcid.getMatchingSequence(input, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
+                                            String matchingInput = AminoAcid.getMatchingSequence(input, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
 
-                                        for (long peptideKey : identification.getPeptideIdentification()) {
+                                            TreeMap<Long, TreeSet<Long>> sequencesMatchesMap = new TreeMap<>();
+                                            TreeMap<Long, TreeSet<Long>> modificationsMatchesMap = new TreeMap<>();
 
-                                            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                                            for (long peptideKey : identification.getPeptideIdentification()) {
 
-                                            try {
+                                                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 
                                                 PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
                                                 if (!psParameter.getHidden()) {
 
-                                                    if (peptideMatch.getPeptide().getSequence().toLowerCase().contains(matchingInput)) {
+                                                    Peptide peptide = peptideMatch.getPeptide();
 
-                                                        possibilities.get(jumpType).add(peptideKey);
-                                                        types.get(jumpType).add(Type.PEPTIDE);
-
-                                                    } else if (Arrays.stream(peptideMatch.getPeptide().getVariableModifications())
+                                                    boolean sequenceMatch = peptide.getSequence().toLowerCase().contains(matchingInput);
+                                                    boolean modMatch = Arrays.stream(peptideMatch.getPeptide().getVariableModifications())
                                                             .map(ModificationMatch::getModification)
-                                                            .anyMatch(modName -> modName.contains(matchingInput))) {
+                                                            .anyMatch(modName -> modName.contains(matchingInput));
 
-                                                        secondaryCandidates.add(peptideKey);
+                                                    if (sequenceMatch || modMatch) {
+
+                                                        peptidefound = true;
+
+                                                        for (String accession : peptide.getProteinMapping().keySet()) {
+
+                                                            HashSet<Long> proteinKeys = identification.getProteinMap().get(accession);
+
+                                                            if (proteinKeys != null) {
+
+                                                                for (long proteinKey : proteinKeys) {
+
+                                                                    ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+
+                                                                    if (!proteinMatch.isDecoy()) {
+
+                                                                        if (sequenceMatch) {
+
+                                                                            TreeSet<Long> peptideKeys = sequencesMatchesMap.get(proteinKey);
+
+                                                                            if (peptideKeys == null) {
+
+                                                                                peptideKeys = new TreeSet<>();
+                                                                                sequencesMatchesMap.put(proteinKey, peptideKeys);
+
+                                                                            }
+
+                                                                            peptideKeys.add(peptideKey);
+
+                                                                        }
+                                                                        if (modMatch) {
+
+                                                                            TreeSet<Long> peptideKeys = modificationsMatchesMap.get(proteinKey);
+
+                                                                            if (peptideKeys == null) {
+
+                                                                                peptideKeys = new TreeSet<>();
+                                                                                modificationsMatchesMap.put(proteinKey, peptideKeys);
+
+                                                                            }
+
+                                                                            peptideKeys.add(peptideKey);
+
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            TreeMap<Long, TreeSet<Long>> itemsMap = modificationsMatchesMap.isEmpty() ? modificationsMatchesMap : sequencesMatchesMap;
+
+                                            for (Entry<Long, TreeSet<Long>> entry : itemsMap.entrySet()) {
+
+                                                long proteinKey = entry.getKey();
+
+                                                for (long peptideKey : entry.getValue()) {
+
+                                                    long[] keys = new long[3];
+                                                    Arrays.fill(keys, NO_KEY);
+                                                    keys[0] = proteinKey;
+                                                    keys[1] = peptideKey;
+
+                                                    for (JumpType jumpType : new JumpType[]{JumpType.protein, JumpType.peptide}) {
+
+                                                        if (!reinitializedMap.get(jumpType)) {
+
+                                                            possibilities.get(jumpType).clear();
+                                                            currentSelection.put(jumpType, 0);
+
+                                                        }
+
+                                                        possibilities.get(jumpType).add(keys);
 
                                                     }
                                                 }
-
-                                            } catch (Exception e) {
-
-                                                peptideShakerGUI.catchException(e);
-                                                return;
-
                                             }
-                                        }
-
-                                        try {
-
-                                            for (long peptideKey : secondaryCandidates) {
-
-                                                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-
-                                                for (String accession : peptideMatch.getPeptide().getProteinMapping().keySet()) {
-
-                                                    if (!ProteinUtils.isDecoy(accession, peptideShakerGUI.getSequenceProvider())) {
-
-                                                        possibilities.get(jumpType).add(peptideKey);
-                                                        types.get(jumpType).add(Type.PEPTIDE);
-                                                        break;
-
-                                                    }
-                                                }
-                                            }
-
-                                        } catch (Exception e) {
-
-                                            peptideShakerGUI.catchException(e);
-                                            return;
-
                                         }
                                     }
-                                } else {
 
+                                }
+
+                                if (selectedJumpType == JumpType.psm || !proteinFound && !peptidefound) {
+
+                                    // See if the input is contained by a spectrum title or corresponds to a precursor mass or RT
                                     for (String spectrumTitle : spectrumFactory.getSpectrumTitles(spectrumfile)) {
 
                                         String spectrumKey = Spectrum.getSpectrumKey(spectrumfile, spectrumTitle);
@@ -536,8 +639,30 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                         if (spectrumKey.toLowerCase().contains(input)) {
 
-                                            possibilities.get(jumpType).add(psmKey);
-                                            types.get(jumpType).add(Type.SPECTRUM);
+                                            long[] keys = new long[3];
+                                            Arrays.fill(keys, NO_KEY);
+                                            keys[2] = psmKey;
+
+                                            for (JumpType jumpType : JumpType.values()) {
+
+                                                ArrayList<long[]> currentPossibilities = possibilities.get(jumpType);
+                                                long[] sample = currentPossibilities.isEmpty()
+                                                        ? new long[]{NO_KEY, NO_KEY, NO_KEY}
+                                                        : currentPossibilities.get(0);
+
+                                                if (jumpType == JumpType.psm || sample[0] == NO_KEY && sample[1] == NO_KEY) {
+
+                                                    if (!reinitializedMap.get(jumpType)) {
+
+                                                        possibilities.get(jumpType).clear();
+                                                        currentSelection.put(jumpType, 0);
+
+                                                    }
+
+                                                    possibilities.get(jumpType).add(keys);
+
+                                                }
+                                            }
 
                                         } else {
 
@@ -546,24 +671,69 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                             if (doubleString.startsWith(input)) {
 
-                                                possibilities.get(jumpType).add(psmKey);
-                                                types.get(jumpType).add(Type.SPECTRUM);
+                                                long[] keys = new long[3];
+                                                Arrays.fill(keys, NO_KEY);
+                                                keys[2] = psmKey;
+
+                                                for (JumpType jumpType : JumpType.values()) {
+
+                                                    ArrayList<long[]> currentPossibilities = possibilities.get(jumpType);
+                                                    long[] sample = currentPossibilities.isEmpty()
+                                                            ? new long[]{NO_KEY, NO_KEY, NO_KEY}
+                                                            : currentPossibilities.get(0);
+
+                                                    if (jumpType == JumpType.psm || sample[0] == NO_KEY && sample[1] == NO_KEY) {
+
+                                                        if (!reinitializedMap.get(jumpType)) {
+
+                                                            possibilities.get(jumpType).clear();
+                                                            currentSelection.put(jumpType, 0);
+
+                                                        }
+
+                                                        possibilities.get(jumpType).add(keys);
+
+                                                    }
+                                                }
 
                                             } else {
 
                                                 doubleString = Double.toString(precursor.getRt());
                                                 if (doubleString.startsWith(input)) {
-                                                    possibilities.get(jumpType).add(psmKey);
-                                                    types.get(jumpType).add(Type.SPECTRUM);
+
+                                                    long[] keys = new long[3];
+                                                    Arrays.fill(keys, NO_KEY);
+                                                    keys[2] = psmKey;
+
+                                                    for (JumpType jumpType : JumpType.values()) {
+
+                                                        ArrayList<long[]> currentPossibilities = possibilities.get(jumpType);
+                                                        long[] sample = currentPossibilities.isEmpty()
+                                                                ? new long[]{NO_KEY, NO_KEY, NO_KEY}
+                                                                : currentPossibilities.get(0);
+
+                                                        if (jumpType == JumpType.psm || sample[0] == NO_KEY && sample[1] == NO_KEY) {
+
+                                                            if (!reinitializedMap.get(jumpType)) {
+
+                                                                possibilities.get(jumpType).clear();
+                                                                currentSelection.put(jumpType, 0);
+
+                                                            }
+
+                                                            possibilities.get(jumpType).add(keys);
+
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
 
-                                if (possibilities.get(jumpType).size() > 0) {
+                                if (possibilities.get(selectedJumpType).size() > 0) {
 
-                                    if (possibilities.get(jumpType).size() > 1) {
+                                    if (possibilities.get(selectedJumpType).size() > 1) {
                                         previousButton.setEnabled(true);
                                         nextButton.setEnabled(true);
                                     } else { // possibilities.size() == 1
@@ -576,7 +746,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                     previousButton.setEnabled(false);
                                     nextButton.setEnabled(false);
 
-                                    if (!input.equalsIgnoreCase(welcomeText.get(jumpType))) {
+                                    if (!input.equalsIgnoreCase(welcomeText.get(selectedJumpType))) {
                                         indexLabel.setText("(no matches)");
                                     } else {
                                         indexLabel.setText("");
@@ -591,13 +761,13 @@ public class JumpToPanel extends javax.swing.JPanel {
                                 indexLabel.setText("");
                                 previousButton.setEnabled(false);
                                 nextButton.setEnabled(false);
-                                inputTxt.setText(welcomeText.get(jumpType));
+                                inputTxt.setText(welcomeText.get(selectedJumpType));
                                 inputTxt.selectAll();
                                 inputTxt.requestFocus();
                             }
                         }
 
-                        lastLabel.put(jumpType, indexLabel.getText());
+                        lastLabel.put(selectedJumpType, indexLabel.getText());
 
                         // gui updated, reset the counter
                         keyPressedCounter = 0;
@@ -618,10 +788,10 @@ public class JumpToPanel extends javax.swing.JPanel {
      * @param evt the action event
      */
     private void previousButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousButtonActionPerformed
-        if (currentSelection.get(jumpType) == 0) {
-            currentSelection.put(jumpType, possibilities.get(jumpType).size() - 1);
+        if (currentSelection.get(selectedJumpType) == 0) {
+            currentSelection.put(selectedJumpType, possibilities.get(selectedJumpType).size() - 1);
         } else {
-            currentSelection.put(jumpType, currentSelection.get(jumpType) - 1);
+            currentSelection.put(selectedJumpType, currentSelection.get(selectedJumpType) - 1);
         }
 
         updateSelectionInTab();
@@ -634,10 +804,10 @@ public class JumpToPanel extends javax.swing.JPanel {
      * @param evt the action event
      */
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
-        if (currentSelection.get(jumpType) == possibilities.get(jumpType).size() - 1) {
-            currentSelection.put(jumpType, 0);
+        if (currentSelection.get(selectedJumpType) == possibilities.get(selectedJumpType).size() - 1) {
+            currentSelection.put(selectedJumpType, 0);
         } else {
-            currentSelection.put(jumpType, currentSelection.get(jumpType) + 1);
+            currentSelection.put(selectedJumpType, currentSelection.get(selectedJumpType) + 1);
         }
 
         updateSelectionInTab();
@@ -650,7 +820,7 @@ public class JumpToPanel extends javax.swing.JPanel {
      * @param evt the mouse event
      */
     private void inputTxtMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inputTxtMouseReleased
-        if (inputTxt.getText().equals(welcomeText.get(jumpType))) {
+        if (inputTxt.getText().equals(welcomeText.get(selectedJumpType))) {
             inputTxt.selectAll();
         }
     }//GEN-LAST:event_inputTxtMouseReleased
@@ -723,7 +893,7 @@ public class JumpToPanel extends javax.swing.JPanel {
      * @param jumpType the new type of jump to panel
      */
     public void setType(JumpType jumpType) {
-        this.jumpType = jumpType;
+        this.selectedJumpType = jumpType;
         if (lastInput.get(jumpType) != null && !lastInput.get(jumpType).equals("")) {
             inputTxt.setText(lastInput.get(jumpType));
             indexLabel.setText(lastLabel.get(jumpType));

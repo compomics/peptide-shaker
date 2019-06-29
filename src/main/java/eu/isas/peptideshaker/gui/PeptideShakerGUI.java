@@ -2576,12 +2576,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                 || selectedIndex == PROTEIN_FRACTIONS_TAB_INDEX) {
 
                             jumpToPanel.setEnabled(true);
-                            jumpToPanel.setType(JumpToPanel.JumpType.proteinAndPeptides);
+                            jumpToPanel.setType(JumpToPanel.JumpType.protein);
 
                         } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
 
                             jumpToPanel.setEnabled(true);
-                            jumpToPanel.setType(JumpToPanel.JumpType.spectrum);
+                            jumpToPanel.setType(JumpToPanel.JumpType.psm);
 
                         } else {
 
