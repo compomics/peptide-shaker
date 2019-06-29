@@ -597,7 +597,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                                 }
                                             }
 
-                                            TreeMap<Long, TreeSet<Long>> itemsMap = modificationsMatchesMap.isEmpty() ? modificationsMatchesMap : sequencesMatchesMap;
+                                            TreeMap<Long, TreeSet<Long>> itemsMap = !modificationsMatchesMap.isEmpty() ? modificationsMatchesMap : sequencesMatchesMap;
 
                                             for (Entry<Long, TreeSet<Long>> entry : itemsMap.entrySet()) {
 
