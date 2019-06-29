@@ -273,7 +273,7 @@ public class PsPsmSection {
 
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
 
-                    HashSet<Long> proteinGroups = identification.getProteinMatches(spectrumMatch.getBestPeptideAssumption().getPeptide());
+                    TreeSet<Long> proteinGroups = identification.getProteinMatches(spectrumMatch.getBestPeptideAssumption().getPeptide().getKey());
 
                     return proteinGroups.stream()
                             .map(key -> getProteinGroupText(key, identification))
@@ -287,7 +287,7 @@ public class PsPsmSection {
 
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
 
-                    HashSet<Long> proteinGroups = identification.getProteinMatches(spectrumMatch.getBestPeptideAssumption().getPeptide());
+                    TreeSet<Long> proteinGroups = identification.getProteinMatches(spectrumMatch.getBestPeptideAssumption().getPeptide().getKey());
 
                     int bestIndex = proteinGroups.stream()
                             .map(key -> ((PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy)).getMatchValidationLevel())

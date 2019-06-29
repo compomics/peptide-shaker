@@ -278,7 +278,7 @@ public class PsPeptideSection {
 
             case protein_groups:
 
-                HashSet<Long> proteinGroups = identification.getProteinMatches(peptideMatch.getPeptide());
+                TreeSet<Long> proteinGroups = identification.getProteinMatches(peptideMatch.getKey());
                 
                 return proteinGroups.stream()
                         .sorted()
@@ -288,7 +288,7 @@ public class PsPeptideSection {
             case best_protein_group_validation:
                 
                 MatchValidationLevel bestProteinValidationLevel = MatchValidationLevel.none;
-                proteinGroups = identification.getProteinMatches(peptideMatch.getPeptide());
+                proteinGroups = identification.getProteinMatches(peptideMatch.getKey());
                 
                 for (long proteinGroup : proteinGroups) {
                     
@@ -403,7 +403,7 @@ public class PsPeptideSection {
                 
             case unique_group:
                 
-                return identification.getProteinMatches(peptideMatch.getPeptide()).size() == 1 ? "1" : "0";
+                return identification.getProteinMatches(peptideMatch.getKey()).size() == 1 ? "1" : "0";
                 
             case validated:
                 

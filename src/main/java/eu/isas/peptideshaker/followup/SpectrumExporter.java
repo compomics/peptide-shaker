@@ -165,7 +165,7 @@ public class SpectrumExporter {
 
                 }
 
-                return !identification.getProteinMatches(spectrumMatch.getBestPeptideAssumption().getPeptide()).stream()
+                return !identification.getProteinMatches(spectrumMatch.getBestPeptideAssumption().getPeptide().getKey()).stream()
                         .anyMatch(key -> ((PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy))
                         .getMatchValidationLevel().isValidated());
 
@@ -208,7 +208,7 @@ public class SpectrumExporter {
 
                 }
 
-                return !identification.getProteinMatches(spectrumMatch.getBestPeptideAssumption().getPeptide()).stream()
+                return !identification.getProteinMatches(spectrumMatch.getBestPeptideAssumption().getPeptide().getKey()).stream()
                         .anyMatch(key -> ((PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy))
                         .getMatchValidationLevel().isValidated());
 

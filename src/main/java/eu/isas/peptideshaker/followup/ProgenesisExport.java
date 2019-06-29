@@ -130,7 +130,7 @@ public class ProgenesisExport {
 
                                         } else {
 
-                                            for (long proteinMatchKey : identification.getProteinMatches(peptide)) {
+                                            for (long proteinMatchKey : identification.getProteinMatches(peptideKey)) {
 
                                                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
                                                 PSParameter proteinParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);

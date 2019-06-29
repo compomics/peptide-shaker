@@ -130,8 +130,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         associatedMatches = Arrays.stream(accessions)
                 .flatMap(accession -> identification.getProteinMap().get(accession).stream())
-                .distinct()
                 .mapToLong(key -> key)
+                .distinct()
                 .toArray();
 
         initComponents();

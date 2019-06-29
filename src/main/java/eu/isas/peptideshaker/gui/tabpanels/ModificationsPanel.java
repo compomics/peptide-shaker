@@ -3157,9 +3157,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
     public long[] getDisplayedProteinMatches() {
 
         return Arrays.stream(getDisplayedPeptides())
-                .mapToObj(peptideKey -> identification.getPeptideMatch(peptideKey).getPeptide().getProteinMapping().keySet().stream())
-                .flatMap(Function.identity())
-                .flatMapToLong(accession -> identification.getProteinMap().get(accession).stream().mapToLong(a -> a))
+                .flatMap(peptideKey -> identification.getProteinMatches(peptideKey).stream().mapToLong(a -> a))
                 .distinct()
                 .toArray();
 

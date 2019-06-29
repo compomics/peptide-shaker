@@ -1237,12 +1237,7 @@ public class MatchesValidator {
                 PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 
                 // Compute the score based on peptides unique to a group only.
-                HashSet<Long> proteinGroups = peptideMatch.getPeptide().getProteinMapping().keySet().stream()
-                        .filter(accession -> identification.getProteinMap().containsKey(accession))
-                        .flatMap(accession -> identification.getProteinMap().get(accession).stream())
-                        .filter(proteinKey2 -> Arrays.stream(identification.getProteinMatch(proteinKey2).getPeptideMatchesKeys())
-                                .anyMatch(peptideKey2 -> peptideKey2 == peptideKey))
-                        .collect(Collectors.toCollection(HashSet::new));
+                TreeSet<Long> proteinGroups = identification.getProteinMatches(peptideKey);
 
                 if (proteinGroups.size() == 1) {
 

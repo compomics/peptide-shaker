@@ -584,9 +584,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 // update protein level PTM scoring
                 ModificationLocalizationScorer ptmScorer = new ModificationLocalizationScorer();
                 IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                peptideMatch.getPeptide().getProteinMapping().keySet().parallelStream()
-                        .flatMap(accession -> identification.getProteinMap().get(accession).stream())
-                        .distinct()
+                identification.getProteinMatches(peptideMatch.getKey()).stream()
                         .map(key -> identification.getProteinMatch(key))
                         .forEach(proteinMatch -> ptmScorer.scorePTMs(identification, proteinMatch, identificationParameters, false, null));
 

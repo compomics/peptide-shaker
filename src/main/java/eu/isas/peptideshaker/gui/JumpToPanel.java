@@ -427,7 +427,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                 }
 
                 try {
-                   
+
                     // see if the gui needs to be updated
                     Identification identification = peptideShakerGUI.getIdentification();
 
@@ -548,47 +548,41 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                                         peptidefound = true;
 
-                                                        for (String accession : peptide.getProteinMapping().keySet()) {
+                                                        TreeSet<Long> proteinKeys = identification.getProteinMatches(peptideKey);
 
-                                                            HashSet<Long> proteinKeys = identification.getProteinMap().get(accession);
+                                                        for (long proteinKey : proteinKeys) {
 
-                                                            if (proteinKeys != null) {
+                                                            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
 
-                                                                for (long proteinKey : proteinKeys) {
+                                                            if (!proteinMatch.isDecoy()) {
 
-                                                                    ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+                                                                if (sequenceMatch) {
 
-                                                                    if (!proteinMatch.isDecoy()) {
+                                                                    TreeSet<Long> peptideKeys = sequencesMatchesMap.get(proteinKey);
 
-                                                                        if (sequenceMatch) {
+                                                                    if (peptideKeys == null) {
 
-                                                                            TreeSet<Long> peptideKeys = sequencesMatchesMap.get(proteinKey);
+                                                                        peptideKeys = new TreeSet<>();
+                                                                        sequencesMatchesMap.put(proteinKey, peptideKeys);
 
-                                                                            if (peptideKeys == null) {
-
-                                                                                peptideKeys = new TreeSet<>();
-                                                                                sequencesMatchesMap.put(proteinKey, peptideKeys);
-
-                                                                            }
-
-                                                                            peptideKeys.add(peptideKey);
-
-                                                                        }
-                                                                        if (modMatch) {
-
-                                                                            TreeSet<Long> peptideKeys = modificationsMatchesMap.get(proteinKey);
-
-                                                                            if (peptideKeys == null) {
-
-                                                                                peptideKeys = new TreeSet<>();
-                                                                                modificationsMatchesMap.put(proteinKey, peptideKeys);
-
-                                                                            }
-
-                                                                            peptideKeys.add(peptideKey);
-
-                                                                        }
                                                                     }
+
+                                                                    peptideKeys.add(peptideKey);
+
+                                                                }
+                                                                if (modMatch) {
+
+                                                                    TreeSet<Long> peptideKeys = modificationsMatchesMap.get(proteinKey);
+
+                                                                    if (peptideKeys == null) {
+
+                                                                        peptideKeys = new TreeSet<>();
+                                                                        modificationsMatchesMap.put(proteinKey, peptideKeys);
+
+                                                                    }
+
+                                                                    peptideKeys.add(peptideKey);
+
                                                                 }
                                                             }
                                                         }
@@ -625,7 +619,6 @@ public class JumpToPanel extends javax.swing.JPanel {
                                             }
                                         }
                                     }
-
                                 }
 
                                 if (selectedJumpType == JumpType.psm || !proteinFound && !peptidefound) {
