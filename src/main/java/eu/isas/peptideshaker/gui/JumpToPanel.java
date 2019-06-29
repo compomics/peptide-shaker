@@ -429,6 +429,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                 }
 
                 try {
+                   
                     // see if the gui needs to be updated
                     Identification identification = peptideShakerGUI.getIdentification();
 
