@@ -110,7 +110,6 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             retainedProteins = peptideMatch.getPeptide().getProteinMapping().keySet().stream()
                     .flatMap(accession -> identification.getProteinMap().get(accession).stream())
                     .flatMap(key -> Arrays.stream(identification.getProteinMatch(key).getAccessions()))
-                    .distinct()
                     .collect(Collectors.toCollection(HashSet::new));
 
         }
@@ -136,7 +135,6 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
             if (retainedProteins.contains(proteinAccession)) {
 
-                long tempKey = ExperimentObject.asLong(proteinAccession);
                 ((DefaultTableModel) retainedProteinJTable.getModel()).addRow(new Object[]{
                     (++retainedCpt),
                     peptideShakerGUI.getDisplayFeaturesGenerator().getDatabaseLink(proteinAccession),
@@ -144,19 +142,10 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                     geneName,
                     chromosome,
                     level,
-                    peptideShakerGUI.getIdentificationFeaturesGenerator().hasEnzymaticPeptides(tempKey)
+                    peptideShakerGUI.getIdentificationFeaturesGenerator().getNEnzymaticTermini(peptideMatch.getPeptide(), proteinAccession)
                 });
+                
             } else {
-
-                boolean hasEnzymaticPeptides;
-
-                long tempKey = ExperimentObject.asLong(proteinAccession);
-                ProteinMatch tempProteinMatch = identification.getProteinMatch(tempKey);
-                if (tempProteinMatch == null) {
-                    hasEnzymaticPeptides = false; // @TODO: use the information gathered when creating the graph via protein.isEnzymaticPeptide(..)
-                } else {
-                    hasEnzymaticPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().hasEnzymaticPeptides(tempKey);
-                }
 
                 ((DefaultTableModel) otherProteinJTable.getModel()).addRow(new Object[]{
                     (++possibleCpt),
@@ -165,7 +154,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                     geneName,
                     chromosome,
                     level,
-                    hasEnzymaticPeptides
+                    peptideShakerGUI.getIdentificationFeaturesGenerator().getNEnzymaticTermini(peptideMatch.getPeptide(), proteinAccession)
                 });
             }
         }
