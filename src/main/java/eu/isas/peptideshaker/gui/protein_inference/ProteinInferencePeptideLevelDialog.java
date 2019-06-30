@@ -36,7 +36,7 @@ import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.data.Chromosome;
 import no.uib.jsparklines.extra.ChromosomeTableCellRenderer;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
-import no.uib.jsparklines.extra.TrueFalseIconRenderer;
+import no.uib.jsparklines.renderers.JSparklinesIntegerIconTableCellRenderer;
 
 /**
  * A simple dialog for showing the list of proteins a given peptide can map to.
@@ -141,7 +141,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                     description,
                     geneName,
                     chromosome,
-                    level,
+                    Header.getProteinEvidencAsString(level),
                     peptideShakerGUI.getIdentificationFeaturesGenerator().getNEnzymaticTermini(peptideMatch.getPeptide(), proteinAccession)
                 });
                 
@@ -153,7 +153,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                     description,
                     geneName,
                     chromosome,
-                    level,
+                    Header.getProteinEvidencAsString(level),
                     peptideShakerGUI.getIdentificationFeaturesGenerator().getNEnzymaticTermini(peptideMatch.getPeptide(), proteinAccession)
                 });
             }
@@ -346,8 +346,8 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         retainedProteinJTable.getColumn(" ").setMaxWidth(50);
         retainedProteinJTable.getColumn("Gene").setMinWidth(90);
         retainedProteinJTable.getColumn("Gene").setMaxWidth(90);
-        retainedProteinJTable.getColumn("Chr").setMinWidth(50);
-        retainedProteinJTable.getColumn("Chr").setMaxWidth(50);
+        retainedProteinJTable.getColumn("Chr").setMinWidth(90);
+        retainedProteinJTable.getColumn("Chr").setMaxWidth(90);
         retainedProteinJTable.getColumn("Evidence").setMinWidth(90);
         retainedProteinJTable.getColumn("Evidence").setMaxWidth(90);
         retainedProteinJTable.getColumn("Enz").setMinWidth(50);
@@ -357,15 +357,15 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         otherProteinJTable.getColumn(" ").setMaxWidth(50);
         otherProteinJTable.getColumn("Gene").setMinWidth(90);
         otherProteinJTable.getColumn("Gene").setMaxWidth(90);
-        otherProteinJTable.getColumn("Chr").setMinWidth(50);
-        otherProteinJTable.getColumn("Chr").setMaxWidth(50);
+        otherProteinJTable.getColumn("Chr").setMinWidth(90);
+        otherProteinJTable.getColumn("Chr").setMaxWidth(90);
         otherProteinJTable.getColumn("Evidence").setMinWidth(90);
         otherProteinJTable.getColumn("Evidence").setMaxWidth(90);
         otherProteinJTable.getColumn("Enz").setMinWidth(50);
         otherProteinJTable.getColumn("Enz").setMaxWidth(50);
 
         // set the preferred size of the accession column
-        Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(otherProteinJTable, otherProteinJTable.getColumn("Accession").getModelIndex(), 2, peptideShakerGUI.getMetrics().getMaxProteinAccessionLength());
+        Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(otherProteinJTable, otherProteinJTable.getColumn("Accession").getModelIndex(), 6, peptideShakerGUI.getMetrics().getMaxProteinAccessionLength());
         if (width != null) {
             otherProteinJTable.getColumn("Accession").setMinWidth(width);
             otherProteinJTable.getColumn("Accession").setMaxWidth(width);
@@ -375,13 +375,21 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         }
 
         otherProteinJTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer(Color.WHITE, Color.BLACK));
-        otherProteinJTable.getColumn("Enz").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/selected_green-new.png")),
-                null,
-                "Enzymatic", "Not Enzymatic"));
+        
+        HashMap<Integer, ImageIcon> enzymeIcons = new HashMap<>();
+        enzymeIcons.put(0, new ImageIcon(this.getClass().getResource("/icons/warning-red.png")));
+        enzymeIcons.put(1, new ImageIcon(this.getClass().getResource("/icons/warning-new.png")));
+        enzymeIcons.put(2, new ImageIcon(this.getClass().getResource("/icons/selected_green-new.png")));
+        
+        HashMap<Integer, String> enzymeIconTooltips = new HashMap<>();
+        enzymeIconTooltips.put(0, "Non-enzymatic");
+        enzymeIconTooltips.put(1, "Semi-enzymatic");
+        enzymeIconTooltips.put(2, "Enzymatic");
+        
+        otherProteinJTable.getColumn("Enz").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(enzymeIcons, enzymeIconTooltips));
 
         // set the preferred size of the accession column
-        width = ProteinTableModel.getPreferredAccessionColumnWidth(retainedProteinJTable, retainedProteinJTable.getColumn("Accession").getModelIndex(), 2, peptideShakerGUI.getMetrics().getMaxProteinAccessionLength());
+        width = ProteinTableModel.getPreferredAccessionColumnWidth(retainedProteinJTable, retainedProteinJTable.getColumn("Accession").getModelIndex(), 6, peptideShakerGUI.getMetrics().getMaxProteinAccessionLength());
         if (width != null) {
             retainedProteinJTable.getColumn("Accession").setMinWidth(width);
             retainedProteinJTable.getColumn("Accession").setMaxWidth(width);
@@ -391,10 +399,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         }
 
         retainedProteinJTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer(Color.WHITE, Color.BLACK));
-        retainedProteinJTable.getColumn("Enz").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/selected_green-new.png")),
-                null,
-                "Enzymatic", "Not Enzymatic"));
+        retainedProteinJTable.getColumn("Enz").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(enzymeIcons, enzymeIconTooltips));
 
         // set up the table header tooltips
         retainedProteinsTableToolTips = new ArrayList<>();

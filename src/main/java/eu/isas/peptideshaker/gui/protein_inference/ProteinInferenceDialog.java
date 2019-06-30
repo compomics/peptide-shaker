@@ -362,15 +362,15 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         proteinMatchTable.getColumn("  ").setMaxWidth(50);
         proteinMatchTable.getColumn("Gene").setMinWidth(90);
         proteinMatchTable.getColumn("Gene").setMaxWidth(90);
-        proteinMatchTable.getColumn("Chr").setMinWidth(50);
-        proteinMatchTable.getColumn("Chr").setMaxWidth(50);
+        proteinMatchTable.getColumn("Chr").setMinWidth(90);
+        proteinMatchTable.getColumn("Chr").setMaxWidth(90);
         proteinMatchTable.getColumn("Evidence").setMinWidth(90);
         proteinMatchTable.getColumn("Evidence").setMaxWidth(90);
         proteinMatchTable.getColumn("Enz").setMinWidth(50);
         proteinMatchTable.getColumn("Enz").setMaxWidth(50);
 
         // set the preferred size of the accession column
-        Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(proteinMatchTable, proteinMatchTable.getColumn("Accession").getModelIndex(), 2, peptideShakerGUI.getMetrics().getMaxProteinAccessionLength());
+        Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(proteinMatchTable, proteinMatchTable.getColumn("Accession").getModelIndex(), 6, peptideShakerGUI.getMetrics().getMaxProteinAccessionLength());
         if (width != null) {
             proteinMatchTable.getColumn("Accession").setMinWidth(width);
             proteinMatchTable.getColumn("Accession").setMaxWidth(width);
