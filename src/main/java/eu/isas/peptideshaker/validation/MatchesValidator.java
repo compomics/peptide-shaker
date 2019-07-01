@@ -242,11 +242,20 @@ public class MatchesValidator {
 
         }
 
+        // combine the precursor mz deviations from the different threads into one map 
         HashMap<String, ArrayList<Double>> precursorMzDeviations = new HashMap<>();
 
         for (PsmValidatorRunnable runnable : psmRunnables) {
 
-            precursorMzDeviations.putAll(runnable.getThreadPrecursorMzDeviations());
+            for (String spectrumFileName : runnable.getThreadPrecursorMzDeviations().keySet()) {
+                
+                if (!precursorMzDeviations.containsKey(spectrumFileName)) {
+                    precursorMzDeviations.put(spectrumFileName, runnable.getThreadPrecursorMzDeviations().get(spectrumFileName));
+                } else {
+                    precursorMzDeviations.get(spectrumFileName).addAll(runnable.getThreadPrecursorMzDeviations().get(spectrumFileName));
+                }
+                
+            }
 
         }
 
