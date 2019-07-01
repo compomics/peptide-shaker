@@ -415,6 +415,8 @@ public class JumpToPanel extends javax.swing.JPanel {
      */
     private void inputTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputTxtKeyReleased
 
+        indexLabel.setText("Waiting...");
+
         final KeyEvent event = evt;
 
         newInput = true;
@@ -428,9 +430,17 @@ public class JumpToPanel extends javax.swing.JPanel {
                     searchMutex.acquire();
                     newInput = false;
 
+                    try {
+                        wait(800);
+                    } catch (InterruptedException e) {
+                        // Ignore
+                    }
+
                     Identification identification = peptideShakerGUI.getIdentification();
 
                     if (identification != null && !newInput) {
+
+                        indexLabel.setText("Searching...");
 
                         if (!inputTxt.getText().equalsIgnoreCase(welcomeText.get(selectedJumpType))) {
 
@@ -484,6 +494,11 @@ public class JumpToPanel extends javax.swing.JPanel {
                                     for (long proteinKey : peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterParameters())) {
 
                                         if (newInput) {
+
+                                            peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                                            inputTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                                            inputTxt.requestFocus();
+
                                             return;
                                         }
 
@@ -570,6 +585,11 @@ public class JumpToPanel extends javax.swing.JPanel {
                                             for (long peptideKey : identification.getPeptideIdentification()) {
 
                                                 if (newInput) {
+
+                                                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                                                    inputTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                                                    inputTxt.requestFocus();
+
                                                     return;
                                                 }
 
@@ -699,6 +719,11 @@ public class JumpToPanel extends javax.swing.JPanel {
                                         for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {
 
                                             if (newInput) {
+
+                                                peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                                                inputTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                                                inputTxt.requestFocus();
+
                                                 return;
                                             }
 
@@ -790,12 +815,14 @@ public class JumpToPanel extends javax.swing.JPanel {
                                 inputTxt.requestFocus();
 
                             } else {
+
                                 indexLabel.setText("");
                                 previousButton.setEnabled(false);
                                 nextButton.setEnabled(false);
                                 inputTxt.setText(welcomeText.get(selectedJumpType));
                                 inputTxt.selectAll();
                                 inputTxt.requestFocus();
+
                             }
                         }
 
