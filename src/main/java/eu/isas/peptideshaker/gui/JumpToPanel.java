@@ -415,7 +415,7 @@ public class JumpToPanel extends javax.swing.JPanel {
      */
     private void inputTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputTxtKeyReleased
 
-        indexLabel.setText("Waiting...");
+        indexLabel.setText("Typing...");
 
         final KeyEvent event = evt;
 
@@ -431,7 +431,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                     newInput = false;
 
                     try {
-                        wait(800);
+                        wait(500);
                     } catch (InterruptedException e) {
                         // Ignore
                     }
@@ -700,7 +700,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                                                 Arrays.fill(keys, NO_KEY);
                                                                 keys[1] = peptideKey;
 
-                                                                possibilities.get(JumpType.protein).add(keys);
+                                                                possibilities.get(JumpType.peptide).add(keys);
 
                                                             }
                                                     );
