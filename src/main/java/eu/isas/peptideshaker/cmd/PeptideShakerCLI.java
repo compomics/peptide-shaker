@@ -734,8 +734,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         spectrumCountingParameters = new SpectrumCountingParameters();
 
         // Set the project type
-        // @TODO: make it a user setting
-        projectType = ProjectType.protein;
+        projectType = ProjectType.protein; // @TODO: make it a user setting
 
         // incrementing the counter for a new PeptideShaker start run via GUI
         if (utilitiesUserParameters.isAutoUpdate()) {

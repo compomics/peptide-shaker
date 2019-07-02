@@ -2594,7 +2594,7 @@ public class MzIdentMLExport {
 
                 } else if (advocateIndex == Advocate.andromeda.getIndex()) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002576", "Andromeda result file", null)); // @TODO: term does not exist..?
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002576", "Andromeda result file", null));
 
                 } else {
                     // no cv term available for the given advocate...

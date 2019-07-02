@@ -11,7 +11,6 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.io.file.LastSelectedFolder;
 import com.compomics.util.parameters.identification.IdentificationParameters;
-import com.compomics.util.parameters.identification.search.SearchParameters;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.MzIdentMLExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -658,7 +657,6 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
             public void run() {
 
                 IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                SearchParameters searchParameters = identificationParameters.getSearchParameters();
                 AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
                 ProjectDetails projectDetails = peptideShakerGUI.getProjectDetails();
 

@@ -870,11 +870,8 @@ public class CpsParent extends UserPreferencesParent {
 
             }
 
-            report.append("<br><b>FASTA File (identification):</b><br>");
+            report.append("<br><b>FASTA File:</b><br>");
             report.append(projectDetails.getFastaFile()).append("<br>");
-
-            report.append("<br><b>FASTA File (protein inference):</b><br>");
-            // @TODO
 
             report.append("<br><br><b>Report:</b><br>");
 

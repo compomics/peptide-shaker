@@ -146,7 +146,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
                 HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinGroupKey);
                 Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
                 Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
-                Double sequenceCoverageNotValidated = 100 * sequenceCoverage.get(MatchValidationLevel.not_validated.getIndex()); //@TODO: this does not seem to be used?
+                Double sequenceCoverageNotValidated = 100 * sequenceCoverage.get(MatchValidationLevel.not_validated.getIndex());
                 double possibleCoverage = 100.0 * identificationFeaturesGenerator.getObservableCoverage(proteinGroupKey);
                 ArrayList<Double> doubleValues = new ArrayList<>(4);
                 doubleValues.add(sequenceCoverageConfident);

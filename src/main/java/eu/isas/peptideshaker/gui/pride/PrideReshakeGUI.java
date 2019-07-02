@@ -3502,7 +3502,11 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             bw.close();
             w.close();
         } catch (IOException ex) {
-            ex.printStackTrace(); // @TODO: add better error handling!!!
+            progressDialog.setRunFinished();
+            JOptionPane.showMessageDialog(this, "The file " + prideXmlFile.getName() + " could not be converted!", 
+                    "Conversion Canceled", JOptionPane.WARNING_MESSAGE);
+            ex.printStackTrace();
+            return false;
         }
 
         return conversionOk;
