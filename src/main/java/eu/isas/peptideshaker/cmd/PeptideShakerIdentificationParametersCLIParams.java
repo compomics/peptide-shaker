@@ -141,12 +141,12 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MSGF_INSTRUMENT.id) + " " + IdentificationParametersCLIParams.MSGF_INSTRUMENT.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MSGF_FRAGMENTATION.id) + " " + IdentificationParametersCLIParams.MSGF_FRAGMENTATION.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MSGF_PROTOCOL.id) + " " + IdentificationParametersCLIParams.MSGF_PROTOCOL.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MSGF_TERMINI.id) + " " + IdentificationParametersCLIParams.MSGF_TERMINI.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MSGF_MIN_PEP_LENGTH.id) + " " + IdentificationParametersCLIParams.MSGF_MIN_PEP_LENGTH.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MSGF_MAX_PEP_LENGTH.id) + " " + IdentificationParametersCLIParams.MSGF_MAX_PEP_LENGTH.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MSGF_PTMS.id) + " " + IdentificationParametersCLIParams.MSGF_PTMS.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MSGF_NUM_MATCHES.id) + " " + IdentificationParametersCLIParams.MSGF_NUM_MATCHES.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MSGF_ADDITIONAL.id) + " " + IdentificationParametersCLIParams.MSGF_ADDITIONAL.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MSGF_TERMINI.id) + " " + IdentificationParametersCLIParams.MSGF_TERMINI.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MSGF_PTMS.id) + " " + IdentificationParametersCLIParams.MSGF_PTMS.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MSGF_TASKS.id) + " " + IdentificationParametersCLIParams.MSGF_TASKS.description + "\n";
 
         output += "\n\nOMSSA advanced parameters:\n\n";
