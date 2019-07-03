@@ -220,7 +220,7 @@ public class FollowUpCLI extends CpsParent {
             try {
                 CLIExportMethods.exportProteoforms(followUpCLIInputBean, identification, waitingHandler);
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while generating the inclusion list.", true, true);
+                waitingHandler.appendReport("An error occurred while generating the proteoforms list.", true, true);
                 e.printStackTrace();
                 waitingHandler.setRunCanceled();
             }

@@ -276,6 +276,30 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                         waitingHandler.setRunCanceled();
                     }
                 }
+                
+                // inclusion list export
+                if (followUpCLIInputBean.inclusionListNeeded()) {
+                    try {
+                        CLIExportMethods.exportInclusionList(followUpCLIInputBean, identification, identificationFeaturesGenerator, identificationParameters.getSearchParameters(), waitingHandler, filterParameters);
+                    } catch (Exception e) {
+                        waitingHandler.appendReport("An error occurred while generating the inclusion list.", true, true);
+                        e.printStackTrace();
+                        waitingHandler.setRunCanceled();
+                    }
+                }
+
+                // proteoforms export
+                System.out.println("followUpCLIInputBean.proteoformsNeeded(): "+followUpCLIInputBean.proteoformsNeeded());
+                if (followUpCLIInputBean.proteoformsNeeded()) {
+                    try {
+                        CLIExportMethods.exportProteoforms(followUpCLIInputBean, identification, waitingHandler);
+                    } catch (Exception e) {
+                        waitingHandler.appendReport("An error occurred while generating the proteoforms list.", true, true);
+                        e.printStackTrace();
+                        waitingHandler.setRunCanceled();
+                    }
+                }
+                
             }
 
             // report export if needed
