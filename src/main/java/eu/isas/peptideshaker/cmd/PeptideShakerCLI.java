@@ -292,7 +292,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 }
 
                 // proteoforms export
-                System.out.println("followUpCLIInputBean.proteoformsNeeded(): "+followUpCLIInputBean.proteoformsNeeded());
                 if (followUpCLIInputBean.proteoformsNeeded()) {
                     try {
                         followupAnalysisFiles.add(CLIExportMethods.exportProteoforms(followUpCLIInputBean, identification, waitingHandler));
