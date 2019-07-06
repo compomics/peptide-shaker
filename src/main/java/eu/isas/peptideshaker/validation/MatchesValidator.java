@@ -1235,29 +1235,33 @@ public class MatchesValidator {
             for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
 
                 PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
                 // Compute the score based on peptides unique to a group only.
                 TreeSet<Long> proteinGroups = identification.getProteinMatches(peptideKey);
 
                 if (proteinGroups.size() == 1) {
 
-                    PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
                     proteinGroupScore = proteinGroupScore * psParameter.getProbability();
 
-                    if (nFractions > 1) {
+                }
 
-                        for (String fraction : psParameter.getFractions()) {
+                if (nFractions > 1) {
 
-                            Double fractionScore = fractionScores.get(fraction);
+                    for (String fraction : psParameter.getFractions()) {
 
-                            boolean change = false;
+                        Double fractionScore = fractionScores.get(fraction);
 
-                            if (fractionScore == null) {
+                        boolean change = false;
 
-                                fractionScore = 1.0;
-                                change = true;
+                        if (fractionScore == null) {
 
-                            }
+                            fractionScore = 1.0;
+                            change = true;
+
+                        }
+
+                        if (proteinGroups.size() == 1) {
 
                             double peptideScore = psParameter.getFractionPEP(fraction);
 
@@ -1267,12 +1271,12 @@ public class MatchesValidator {
                                 change = true;
 
                             }
+                        }
 
-                            if (change) {
+                        if (change) {
 
-                                fractionScores.put(fraction, fractionScore);
+                            fractionScores.put(fraction, fractionScore);
 
-                            }
                         }
                     }
                 }

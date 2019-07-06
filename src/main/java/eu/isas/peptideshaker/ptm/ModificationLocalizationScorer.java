@@ -1071,8 +1071,8 @@ public class ModificationLocalizationScorer extends DbObject {
 
                     }
 
-                    int toSelect = nToSelectMap.get(modMass);
-                    int nSelected = nSelectedMap.get(modMass);
+                    int toSelect = nToSelectMap.containsKey(modMass) ? nToSelectMap.get(modMass) : 0;
+                    int nSelected = nSelectedMap.containsKey(modMass) ? nSelectedMap.get(modMass) : 0;
                     int nNeeded = toSelect - nSelected;
 
                     if (nNeeded > 0) {
