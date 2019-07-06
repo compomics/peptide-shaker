@@ -13,6 +13,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+
 
 /**
  * This class exports recalibrated spectra.
@@ -47,15 +49,16 @@ public class RecalibrationExporter {
      * @param identificationParameters the identification parameters
      * @param waitingHandler waiting handler displaying progress and used to
      * cancel the process. Can be null. The method does not call RunFinished.
-     *
+     * @return ArrayList files containing recalibrated spectra
+
      * @throws IOException exception thrown whenever an error occurred while writing the file
      */
-    public static void writeRecalibratedSpectra(boolean recalibratePrecursors, boolean recalibrateFragmentIons, File folder,
+    public static ArrayList<File> writeRecalibratedSpectra(boolean recalibratePrecursors, boolean recalibrateFragmentIons, File folder,
             Identification identification, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         SpectrumRecalibrator spectrumRecalibrator = new SpectrumRecalibrator();
-
+        ArrayList<File> recalibratedSpectrums = new ArrayList<File>();
         int progress = 1;
 
         for (String fileName : spectrumFactory.getMgfFileNames()) {
@@ -139,7 +142,7 @@ public class RecalibrationExporter {
 
             if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                 
-                return;
+                return null;
                 
             }
 
@@ -179,7 +182,9 @@ public class RecalibrationExporter {
                 
                 spectrumRecalibrator.clearErrors(fileName);
             }
+            recalibratedSpectrums.add(file);
         }
+        return recalibratedSpectrums;
     }
 
     /**

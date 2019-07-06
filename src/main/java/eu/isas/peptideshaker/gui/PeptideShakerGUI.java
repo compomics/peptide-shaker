@@ -7762,7 +7762,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                         try {
 
-                            ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, null, null, cpsFile, false, progressDialog);
+                            ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, null, null, null, cpsFile, false, progressDialog);
 
                         } catch (FileNotFoundException e) {
 

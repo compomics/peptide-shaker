@@ -42,7 +42,7 @@ public class ProjectExport {
      * reading/writing the file
      */
     public static void exportProjectAsZip(File zipFile, File fastaFile, ArrayList<File> spectrumFiles, File cpsFile, boolean moveFilesIntoZip, WaitingHandler waitingHandler) throws IOException {
-        ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, null, null, cpsFile, moveFilesIntoZip, waitingHandler);
+        ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, null, null, null, cpsFile, moveFilesIntoZip, waitingHandler);
     }
 
     /**
@@ -51,7 +51,8 @@ public class ProjectExport {
      * @param zipFile the destination file
      * @param fastaFile path to the FASTA file
      * @param spectrumFiles the spectrum files
-     * @param reportFiles the report files
+     * @param followupAnalysisFiles followup analysis files
+     * @param reportFiles the identification features report files
      * @param mzidFile the mzid file
      * @param cpsFile the cps file
      * @param moveFilesIntoZip if true, the files will be moved into the zip
@@ -62,7 +63,7 @@ public class ProjectExport {
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing the file
      */
-    public static void exportProjectAsZip(File zipFile, File fastaFile, ArrayList<File> spectrumFiles, ArrayList<File> reportFiles, File mzidFile, File cpsFile, boolean moveFilesIntoZip, WaitingHandler waitingHandler) throws IOException {
+    public static void exportProjectAsZip(File zipFile, File fastaFile, ArrayList<File> spectrumFiles, ArrayList<File> followupAnalysisFiles, ArrayList<File> reportFiles, File mzidFile, File cpsFile, boolean moveFilesIntoZip, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Getting FASTA File. Please Wait...");
@@ -125,6 +126,12 @@ public class ProjectExport {
                     for (String dataFilePath : dataFiles) {
                         totalUncompressedSize += new File(dataFilePath).length();
                     }
+                    
+                    if (followupAnalysisFiles != null) {
+                        for (File followupReportFile : followupAnalysisFiles) {
+                            totalUncompressedSize += followupReportFile.length();
+                        }
+                    }
                     if (reportFiles != null) {
                         for (File reportFile : reportFiles) {
                             totalUncompressedSize += reportFile.length();
@@ -141,7 +148,7 @@ public class ProjectExport {
                         waitingHandler.setMaxSecondaryProgressCounter(100);
                     }
 
-                    // add the reports
+                    // add the identification features reports
                     if (reportFiles != null && reportFiles.size() > 0) {
                         // create the reports folder in the zip file
                         ZipUtils.addFolderToZip(defaultReportsFolder, out);
@@ -158,6 +165,28 @@ public class ProjectExport {
                             ZipUtils.addFileToZip(defaultReportsFolder, reportFile, out, waitingHandler, totalUncompressedSize);
                             if (moveFilesIntoZip) {
                                 reportFile.delete();
+                            }
+                        }
+                    }
+                    
+                    if (followupAnalysisFiles != null && followupAnalysisFiles.size() > 0) {
+                        if (reportFiles == null || reportFiles.size() == 0){
+                            // create the reports folder in the zip file if it was not previously created
+                            ZipUtils.addFolderToZip(defaultReportsFolder, out);
+                        }
+                        
+                        // move the files to the reports folder
+                        for (File followupAnalysisFile : followupAnalysisFiles) {
+
+                            if (waitingHandler != null) {
+                                if (waitingHandler.isRunCanceled()) {
+                                    return;
+                                }
+                                waitingHandler.increaseSecondaryProgressCounter();
+                            }
+                            ZipUtils.addFileToZip(defaultReportsFolder, followupAnalysisFile, out, waitingHandler, totalUncompressedSize);
+                            if (moveFilesIntoZip) {
+                                followupAnalysisFile.delete();
                             }
                         }
                     }

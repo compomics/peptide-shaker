@@ -53,13 +53,15 @@ public class SpectrumExporter {
      * the process. Can be null.
      * @param exportType the type of PSM to export
      * @param sequenceMatchingPreferences the sequence matching preferences
-     *
+     * @return ArrayList files containing exported spectra
+     * 
      * @throws IOException thrown if an error occurred while writing the file
      */
-    public void exportSpectra(File destinationFolder, WaitingHandler waitingHandler, ExportType exportType, SequenceMatchingParameters sequenceMatchingPreferences)
+    public ArrayList<File> exportSpectra(File destinationFolder, WaitingHandler waitingHandler, ExportType exportType, SequenceMatchingParameters sequenceMatchingPreferences)
             throws IOException {
 
         ArrayList<String> spectrumFileNames = spectrumFactory.getMgfFileNames();
+        ArrayList<File> destinationFiles = new ArrayList<File>();
 
         for (int i = 0; i < spectrumFileNames.size(); i++) {
 
@@ -94,7 +96,7 @@ public class SpectrumExporter {
 
                         if (waitingHandler.isRunCanceled()) {
 
-                            return;
+                            return null;
 
                         }
 
@@ -103,7 +105,9 @@ public class SpectrumExporter {
                     }
                 }
             }
+            destinationFiles.add(destinationFile);
         }
+        return destinationFiles;
     }
 
     /**
