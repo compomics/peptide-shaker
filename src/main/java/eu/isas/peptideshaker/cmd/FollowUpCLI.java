@@ -181,9 +181,9 @@ public class FollowUpCLI extends CpsParent {
         }
 
         // export protein details
-        if (followUpCLIInputBean.fastaExportNeeded()) {
+        if (followUpCLIInputBean.proteinSequencesExportNeeded()) {
             try {
-                CLIExportMethods.exportFasta(followUpCLIInputBean, identification, sequenceProvider, waitingHandler, filterParameters);
+                CLIExportMethods.exportProteinSequences(followUpCLIInputBean, identification, sequenceProvider, waitingHandler, filterParameters);
                 waitingHandler.appendReport("Protein details export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the protein details.", true, true);

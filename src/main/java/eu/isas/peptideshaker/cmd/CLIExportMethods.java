@@ -142,9 +142,9 @@ public class CLIExportMethods {
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
      */
-    public static File exportFasta(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, SequenceProvider sequenceProvider, WaitingHandler waitingHandler, FilterParameters filteringPreferences) throws IOException {
+    public static File exportProteinSequences(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, SequenceProvider sequenceProvider, WaitingHandler waitingHandler, FilterParameters filteringPreferences) throws IOException {
 
-        File destinationFileTemp = followUpCLIInputBean.getAccessionsExportFile();
+        File destinationFileTemp = followUpCLIInputBean.getProteinSequencesExportFile();
 
         if (!destinationFileTemp.exists()) {
 
@@ -153,7 +153,7 @@ public class CLIExportMethods {
         }
 
         File destinationFile = destinationFileTemp;
-        FastaExport.export(destinationFile, sequenceProvider, identification, FastaExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getAccessionsExportTypeIndex()), waitingHandler, false);
+        FastaExport.export(destinationFile, sequenceProvider, identification, FastaExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getProteinSequencesExportTypeIndex()), waitingHandler, false);
         return destinationFile;
     }
 

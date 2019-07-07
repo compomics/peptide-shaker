@@ -53,12 +53,12 @@ public class FollowUpCLIInputBean {
     /**
      * The file where to export protein details.
      */
-    private File fastaExportFile = null;
+    private File proteinSequencesExportFile = null;
     /**
      * The protein details export type index. See FastaExport.ExportType for
      * details.
      */
-    private int fastaExportTypeIndex = 0;
+    private int proteinSequencesExportTypeIndex = 0;
     /**
      * The file where to export the Progenesis file.
      */
@@ -135,11 +135,11 @@ public class FollowUpCLIInputBean {
         if (aLine.hasOption(FollowUpCLIParams.ACCESSIONS_TYPE.id)) {
             accessionsExportTypeIndex = new Integer(aLine.getOptionValue(FollowUpCLIParams.ACCESSIONS_TYPE.id));
         }
-        if (aLine.hasOption(FollowUpCLIParams.FASTA_FILE.id)) {
-            fastaExportFile = new File(aLine.getOptionValue(FollowUpCLIParams.FASTA_FILE.id));
+        if (aLine.hasOption(FollowUpCLIParams.SEQUENCES_FILE.id)) {
+            proteinSequencesExportFile = new File(aLine.getOptionValue(FollowUpCLIParams.SEQUENCES_FILE.id));
         }
-        if (aLine.hasOption(FollowUpCLIParams.FASTA_TYPE.id)) {
-            fastaExportTypeIndex = new Integer(aLine.getOptionValue(FollowUpCLIParams.FASTA_TYPE.id));
+        if (aLine.hasOption(FollowUpCLIParams.SEQUENCES_TYPE.id)) {
+            proteinSequencesExportTypeIndex = new Integer(aLine.getOptionValue(FollowUpCLIParams.SEQUENCES_TYPE.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.PROGENESIS_FILE.id)) {
             progenesisExportFile = new File(aLine.getOptionValue(FollowUpCLIParams.PROGENESIS_FILE.id));
@@ -268,8 +268,8 @@ public class FollowUpCLIInputBean {
      *
      * @return the file where to export the protein details
      */
-    public File getFastaExportFile() {
-        return fastaExportFile;
+    public File getProteinSequencesExportFile() {
+        return proteinSequencesExportFile;
     }
 
     /**
@@ -278,8 +278,8 @@ public class FollowUpCLIInputBean {
      *
      * @return the type of export needed for the protein details
      */
-    public int getFastaExportTypeIndex() {
-        return fastaExportTypeIndex;
+    public int getProteinSequencesExportTypeIndex() {
+        return proteinSequencesExportTypeIndex;
     }
 
     /**
@@ -386,7 +386,7 @@ public class FollowUpCLIInputBean {
         return recalibrationNeeded()
                 || spectrumExportNeeded()
                 || accessionExportNeeded()
-                || fastaExportNeeded()
+                || proteinSequencesExportNeeded()
                 || progenesisExportNeeded()
                 || inclusionListNeeded()
                 || proteoformsNeeded();
@@ -420,12 +420,12 @@ public class FollowUpCLIInputBean {
     }
 
     /**
-     * Indicates whether a FASTA export is needed.
+     * Indicates whether protein details (in FASTA format) export is needed.
      *
-     * @return whether a FASTA export is needed
+     * @return whether protein details (in FASTA format) export is needed
      */
-    public boolean fastaExportNeeded() {
-        return fastaExportFile != null;
+    public boolean proteinSequencesExportNeeded() {
+        return proteinSequencesExportFile != null;
     }
 
     /**

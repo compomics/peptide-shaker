@@ -21,8 +21,8 @@ public enum FollowUpCLIParams {
     PSM_TYPE("psm_type", "Type of PSMs. " + SpectrumExporter.ExportType.getCommandLineOptions(), true, false),
     ACCESSIONS_FILE("accessions_file", "Output file to export the protein accessions in text format. (Existing files will be overwritten.)", true, false),
     ACCESSIONS_TYPE("accessions_type", "When exporting accessions, select a category of proteins. " + FastaExport.ExportType.getCommandLineOptions(), true, false),
-    FASTA_FILE("fasta_file", "File where to export the protein details in fasta format. (Existing files will be overwritten.)", true, false),
-    FASTA_TYPE("fasta_type", "When exporting protein details, select a category of proteins. " + FastaExport.ExportType.getCommandLineOptions(), true, false),
+    SEQUENCES_FILE("sequences_file", "File where to export the protein details in fasta format. (Existing files will be overwritten.)", true, false),
+    SEQUENCES_TYPE("sequences_type", "When exporting protein details, select a category of proteins. " + FastaExport.ExportType.getCommandLineOptions(), true, false),
     PROGENESIS_FILE("progenesis_file", "Output file for identification results in Progenesis LC-MS compatible format. (Existing files will be overwritten.)", true, false),
     PROGENESIS_TYPE("progenesis_type", "Type of hits to export to Progenesis. " + ProgenesisExport.ExportType.getCommandLineOptions(), true, false),
     PROGENESIS_TARGETED_PTMS("progenesis_ptms", "For the progenesis PTM export, the comma separated list of targeted PTMs in a list of PTM names", true, false),
@@ -134,9 +134,9 @@ public enum FollowUpCLIParams {
         output += "-" + String.format(formatter, ACCESSIONS_FILE.id) + " " + ACCESSIONS_FILE.description + "\n";
         output += "-" + String.format(formatter, ACCESSIONS_TYPE.id) + " " + ACCESSIONS_TYPE.description + "\n";
 
-        output += "\nFASTA Export:\n\n";
-        output += "-" + String.format(formatter, FASTA_FILE.id) + " " + FASTA_FILE.description + "\n";
-        output += "-" + String.format(formatter, FASTA_TYPE.id) + " " + FASTA_TYPE.description + "\n";
+        output += "\nProtein Details Export:\n\n";
+        output += "-" + String.format(formatter, SEQUENCES_FILE.id) + " " + SEQUENCES_FILE.description + "\n";
+        output += "-" + String.format(formatter, SEQUENCES_TYPE.id) + " " + SEQUENCES_TYPE.description + "\n";
 
         output += "\nInclusion List Generation\n\n";
         output += "-" + String.format(formatter, INCLUSION_LIST_FILE.id) + " " + INCLUSION_LIST_FILE.description + "\n";
