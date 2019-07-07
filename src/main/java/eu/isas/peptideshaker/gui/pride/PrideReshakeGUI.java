@@ -42,7 +42,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -165,34 +164,9 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      */
     private String prideParametersReport = "";
     /**
-     * The list of all found species.
-     */
-    private ArrayList<String> speciesAll;
-    /**
-     * The list of all found instruments.
-     */
-    private ArrayList<String> instrumentsAll;
-    /**
-     * The list of all found tissues.
-     */
-    private ArrayList<String> tissuesAll;
-    /**
-     * The list of all found project tags.
-     */
-    private ArrayList<String> projectTagsAll;
-    /**
-     * The list of all found PTMs.
-     */
-    private ArrayList<String> ptmsAll;
-    /**
      * The current filter values.
      */
-    private String[] currentFilterValues = new String[10];
-    /**
-     * The assay number filter type. True means greater than, false means
-     * smaller than.
-     */
-    private boolean assaysGreaterThanFiler = true;
+    private String[] currentFilterValues = new String[11];
     /**
      * The list of reshakeable files.
      */
@@ -250,7 +224,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
         if (!dataTypeSelectionDialog.isCanceled()) {
             if (dataTypeSelectionDialog.isPublic()) {
-                loadPublicProjects();
+                findMenuItemActionPerformed(null);
             } else {
                 getPrivateProjectDetails(null);
             }
@@ -282,8 +256,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      * Set up the GUI.
      */
     private void setUpGui() {
-
-        clearProjectFiltersLabel.setVisible(false);
 
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
@@ -734,9 +706,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         };
         accessPrivateDataLabel = new javax.swing.JLabel();
         projectHelpLabel = new javax.swing.JLabel();
-        browsePublicDataLabel = new javax.swing.JLabel();
-        dataTypeSeparatorLabel = new javax.swing.JLabel();
-        clearProjectFiltersLabel = new javax.swing.JLabel();
         projectSearchLabel = new javax.swing.JLabel();
         assaysPanel = new javax.swing.JPanel();
         assayTableScrollPane = new javax.swing.JScrollPane();
@@ -850,37 +819,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         projectHelpLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         projectHelpLabel.setText("Select a project to see the project details. For more details click the Accession links.");
 
-        browsePublicDataLabel.setText("<html><a href=\"dummy\">Browse Public Data</a></html>  ");
-        browsePublicDataLabel.setToolTipText("Browse all public data");
-        browsePublicDataLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                browsePublicDataLabelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                browsePublicDataLabelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                browsePublicDataLabelMouseExited(evt);
-            }
-        });
-
-        dataTypeSeparatorLabel.setText("/");
-
-        clearProjectFiltersLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Error_3.png"))); // NOI18N
-        clearProjectFiltersLabel.setText("<html><a href=\"dummy\">Clear Project Filters</a></html>  ");
-        clearProjectFiltersLabel.setToolTipText("Clear all project filters");
-        clearProjectFiltersLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                clearProjectFiltersLabelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                clearProjectFiltersLabelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                clearProjectFiltersLabelMouseExited(evt);
-            }
-        });
-
         projectSearchLabel.setText("<html><a href=\\\"dummy\\\">Project Search</a></html>");
         projectSearchLabel.setToolTipText("Open Project Search Dialog");
         projectSearchLabel.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -908,13 +846,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                         .addComponent(projectHelpLabel)
                         .addGap(18, 18, 18)
                         .addComponent(projectSearchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(clearProjectFiltersLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(browsePublicDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(dataTypeSeparatorLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(accessPrivateDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(10, 10, 10)))
                 .addContainerGap())
@@ -923,14 +855,11 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             projectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(projectsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+                .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(projectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(accessPrivateDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(projectHelpLabel)
-                    .addComponent(browsePublicDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dataTypeSeparatorLabel)
-                    .addComponent(clearProjectFiltersLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(projectSearchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -1004,7 +933,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             assaysPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(assaysPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(assayTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                .addComponent(assayTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(assayHelpLabel)
                 .addContainerGap())
@@ -1113,7 +1042,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             filesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(filesPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filesTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                .addComponent(filesTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(filesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(filesHelpLabel)
@@ -1560,7 +1489,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      * @param evt
      */
     private void findMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findMenuItemActionPerformed
-        new ProjectsFilterDialog(this, false, currentFilterValues, assaysGreaterThanFiler, true, speciesAll, tissuesAll, instrumentsAll, ptmsAll, projectTagsAll);
+        new ProjectsFilterDialog(this, false, currentFilterValues, true);
     }//GEN-LAST:event_findMenuItemActionPerformed
 
     /**
@@ -1588,38 +1517,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      */
     private void accessPrivateDataLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_accessPrivateDataLabelMouseClicked
         getPrivateProjectDetails(null);
-        clearProjectFiltersLabelMouseClicked(null);
     }//GEN-LAST:event_accessPrivateDataLabelMouseClicked
-
-    /**
-     * Reload the public projects list.
-     *
-     * @param evt
-     */
-    private void browsePublicDataLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_browsePublicDataLabelMouseClicked
-        userName = null;
-        password = null;
-        loadPublicProjects();
-        clearProjectFiltersLabelMouseClicked(null);
-    }//GEN-LAST:event_browsePublicDataLabelMouseClicked
-
-    /**
-     * Change the cursor to a hand icon.
-     *
-     * @param evt
-     */
-    private void browsePublicDataLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_browsePublicDataLabelMouseEntered
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_browsePublicDataLabelMouseEntered
-
-    /**
-     * Change the cursor back to the default icon.
-     *
-     * @param evt
-     */
-    private void browsePublicDataLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_browsePublicDataLabelMouseExited
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_browsePublicDataLabelMouseExited
 
     /**
      * Update the file table.
@@ -1672,38 +1570,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 "PRIDE Reshake - Help");
     }//GEN-LAST:event_helpMenuItemActionPerformed
-
-    /**
-     * Clear the project filters.
-     *
-     * @param evt
-     */
-    private void clearProjectFiltersLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearProjectFiltersLabelMouseClicked
-        ((TableRowSorter) projectsTable.getRowSorter()).setRowFilter(null);
-        showProjectFilterRemovalOption(false);
-        clearProjectFiltersLabel.setVisible(false);
-        updateProjectTableSelection();
-        String[] tempFilterValues = new String[10];
-        setCurrentFilterValues(tempFilterValues, true);
-    }//GEN-LAST:event_clearProjectFiltersLabelMouseClicked
-
-    /**
-     * Change the cursor to a hand icon.
-     *
-     * @param evt
-     */
-    private void clearProjectFiltersLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearProjectFiltersLabelMouseEntered
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_clearProjectFiltersLabelMouseEntered
-
-    /**
-     * Change the cursor back to the default icon.
-     *
-     * @param evt
-     */
-    private void clearProjectFiltersLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearProjectFiltersLabelMouseExited
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_clearProjectFiltersLabelMouseExited
 
     /**
      * Change the cursor to a hand icon.
@@ -2280,11 +2146,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                 // get the project
                 try {
-                    speciesAll = new ArrayList<String>();
-                    instrumentsAll = new ArrayList<String>();
-                    ptmsAll = new ArrayList<String>();
-                    tissuesAll = new ArrayList<String>();
-                    projectTagsAll = new ArrayList<String>();
 
                     ResponseEntity<ProjectDetail> projectDetail = template.getForEntity(url, ProjectDetail.class);
 
@@ -2312,52 +2173,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                         projectCategory
                     });
 
-                    if (projectDetail.getBody().getNumAssays() > maxNumAssays) {
-                        maxNumAssays = projectDetail.getBody().getNumAssays();
-                    }
-
-                    for (String species : projectDetail.getBody().getSpecies()) {
-                        if (!speciesAll.contains(species)) {
-                            speciesAll.add(species);
-                        }
-                    }
-                    for (String instrument : projectDetail.getBody().getInstrumentNames()) {
-                        if (!instrumentsAll.contains(instrument)) {
-                            instrumentsAll.add(instrument);
-                        }
-                    }
-                    for (String tissue : projectDetail.getBody().getTissues()) {
-                        if (!tissuesAll.contains(tissue)) {
-                            tissuesAll.add(tissue);
-                        }
-                    }
-                    for (String ptm : projectDetail.getBody().getPtmNames()) {
-                        if (!ptmsAll.contains(ptm)) {
-                            ptmsAll.add(ptm);
-                        }
-                    }
-
-                    for (String tag : projectDetail.getBody().getProjectTags()) {
-                        if (!projectTagsAll.contains(tag)) {
-                            projectTagsAll.add(tag);
-                        }
-                    }
-
                     ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects (" + projectsTable.getRowCount() + ")");
                     projectsPanel.repaint();
-
-                    // sort the lists
-                    Collections.sort(speciesAll);
-                    Collections.sort(instrumentsAll);
-                    Collections.sort(tissuesAll);
-                    Collections.sort(ptmsAll);
-                    Collections.sort(projectTagsAll);
-
-                    speciesAll.add(0, "");
-                    tissuesAll.add(0, "");
-                    instrumentsAll.add(0, "");
-                    ptmsAll.add(0, "");
-                    projectTagsAll.add(0, "");
 
                     if (projectsTable.getRowCount() > 0) {
                         projectsTable.setRowSelectionInterval(0, 0);
@@ -2398,213 +2215,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 }
 
                 ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Project (" + pxAccession + ")");
-                projectsPanel.repaint();
-
-                ((TitledBorder) assaysPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Assays");
-                projectsPanel.repaint();
-
-                ((TitledBorder) filesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Files");
-                projectsPanel.repaint();
-
-                // update the sparklines with the max values
-                projectsTable.getColumn("#Assays").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxNumAssays, peptideShakerGUI.getSparklineColor()));
-                ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
-                ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).setLogScale(true);
-                ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).setMinimumChartValue(2.0);
-
-                projectsTable.repaint();
-            }
-        }.start();
-    }
-
-    /**
-     * Insert the public PRIDE project data.
-     */
-    private void loadPublicProjects() {
-
-        progressDialog = new ProgressDialogX(this,
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true);
-        progressDialog.setPrimaryProgressCounterIndeterminate(true);
-        progressDialog.setTitle("Loading PRIDE Projects. Please Wait...");
-
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    progressDialog.setVisible(true);
-                } catch (IndexOutOfBoundsException e) {
-                    // ignore
-                }
-            }
-        }, "ProgressDialog").start();
-
-        new Thread("DisplayThread") {
-            @Override
-            public void run() {
-
-                DefaultTableModel projectsTableModel = (DefaultTableModel) projectsTable.getModel();
-                projectsTableModel.getDataVector().removeAllElements();
-                projectsTableModel.fireTableDataChanged();
-
-                DefaultTableModel assayTableModel = (DefaultTableModel) assaysTable.getModel();
-                assayTableModel.getDataVector().removeAllElements();
-                assayTableModel.fireTableDataChanged();
-
-                DefaultTableModel filesTableModel = (DefaultTableModel) filesTable.getModel();
-                filesTableModel.getDataVector().removeAllElements();
-                filesTableModel.fireTableDataChanged();
-
-                double maxNumAssays = 0;
-
-                String url = PROJECT_SERVICE_URL + "project/count";
-                RestTemplate template = new RestTemplate();
-
-                // get the project count
-                try {
-                    ResponseEntity<Integer> projectCountResult = template.getForEntity(url, Integer.class); // can also use project/count/?q=*
-                    Integer numberOfProjects = projectCountResult.getBody();
-
-                    int projectBatchSize = 200;
-                    int numberOfPages = (int) Math.ceil(((double) numberOfProjects) / projectBatchSize);
-
-                    progressDialog.setPrimaryProgressCounterIndeterminate(false);
-                    progressDialog.setMaxPrimaryProgressCounter(numberOfProjects + 1);
-                    progressDialog.increasePrimaryProgressCounter();
-
-                    speciesAll = new ArrayList<String>();
-                    instrumentsAll = new ArrayList<String>();
-                    ptmsAll = new ArrayList<String>();
-                    tissuesAll = new ArrayList<String>();
-                    projectTagsAll = new ArrayList<String>();
-
-                    // load the projects in batches
-                    for (int currentPage = 0; currentPage < numberOfPages; currentPage++) {
-
-                        // get the list of projects
-                        ResponseEntity<ProjectDetailList> projectList = template.getForEntity(PROJECT_SERVICE_URL
-                                + "project/list?show=" + projectBatchSize + "&page=" + currentPage + "&sort=publication_date&order=desc", ProjectDetailList.class);
-
-                        // iterate the project and add them to the table
-                        for (ProjectDetail projectDetail : projectList.getBody().getList()) {
-
-                            String projectAccession = projectDetail.getAccession();
-
-                            int projectCategory = 0;
-                            if (projectClusterAnnotation.containsKey(projectAccession)) {
-                                projectCategory = projectClusterAnnotation.get(projectAccession);
-                            }
-
-                            ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
-                                (projectsTable.getRowCount() + 1),
-                                "<html><a href=\"" + DisplayFeaturesGenerator.getPrideProjectArchiveLink("" + projectAccession)
-                                + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
-                                + projectAccession + "</font></a><html>",
-                                projectDetail.getTitle(),
-                                setToString(projectDetail.getProjectTags(), ", "),
-                                setToString(projectDetail.getSpecies(), ", "),
-                                setToString(projectDetail.getTissues(), ", "),
-                                setToString(projectDetail.getPtmNames(), "; "),
-                                setToString(projectDetail.getInstrumentNames(), ", "),
-                                projectDetail.getNumAssays(),
-                                dateFormat.format(projectDetail.getPublicationDate()),
-                                projectDetail.getSubmissionType(),
-                                projectCategory
-                            });
-
-                            if (projectDetail.getNumAssays() > maxNumAssays) {
-                                maxNumAssays = projectDetail.getNumAssays();
-                            }
-
-                            for (String species : projectDetail.getSpecies()) {
-                                if (!speciesAll.contains(species)) {
-                                    speciesAll.add(species);
-                                }
-                            }
-                            for (String instrument : projectDetail.getInstrumentNames()) {
-                                if (!instrumentsAll.contains(instrument)) {
-                                    instrumentsAll.add(instrument);
-                                }
-                            }
-                            for (String tissue : projectDetail.getTissues()) {
-                                if (!tissuesAll.contains(tissue)) {
-                                    tissuesAll.add(tissue);
-                                }
-                            }
-                            for (String ptm : projectDetail.getPtmNames()) {
-                                if (!ptmsAll.contains(ptm)) {
-                                    ptmsAll.add(ptm);
-                                }
-                            }
-
-                            for (String tag : projectDetail.getProjectTags()) {
-                                if (!projectTagsAll.contains(tag)) {
-                                    projectTagsAll.add(tag);
-                                }
-                            }
-
-                            if (progressDialog.isRunCanceled()) {
-                                break;
-                            }
-
-                            progressDialog.increasePrimaryProgressCounter();
-                        }
-
-                        if (progressDialog.isRunCanceled()) {
-                            break;
-                        }
-
-                        ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects (" + projectsTable.getRowCount() + ")");
-                        projectsPanel.repaint();
-                    }
-
-                    // sort the lists
-                    Collections.sort(speciesAll);
-                    Collections.sort(instrumentsAll);
-                    Collections.sort(tissuesAll);
-                    Collections.sort(ptmsAll);
-                    Collections.sort(projectTagsAll);
-
-                    speciesAll.add(0, "");
-                    tissuesAll.add(0, "");
-                    instrumentsAll.add(0, "");
-                    ptmsAll.add(0, "");
-                    projectTagsAll.add(0, "");
-
-                    progressDialog.setRunFinished();
-
-                } catch (HttpServerErrorException e) {
-                    System.out.println("project/count or project/list");
-                    e.printStackTrace();
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(null, JOptionEditorPane.getJOptionEditorPane(
-                            "PRIDE web service access error. Cannot open:<br>"
-                            + "project/count or project/list<br>"
-                            + "Please contact the <a href=\"https://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
-                            "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
-                } catch (ResourceAccessException e) {
-                    JOptionPane.showMessageDialog(null, "PRIDE web service could not be reached.\n Please make sure that you are online.", "Network Error", JOptionPane.WARNING_MESSAGE);
-                } catch (HttpMessageNotReadableException e) {
-                    System.out.println(url);
-                    e.printStackTrace();
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(null, JOptionEditorPane.getJOptionEditorPane(
-                            "PRIDE web service access error. Cannot open:<br>"
-                            + url + "<br>"
-                            + "Please contact the <a href=\"https://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
-                            "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
-                } catch (Exception e) {
-                    System.out.println(url);
-                    e.printStackTrace();
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(null, JOptionEditorPane.getJOptionEditorPane(
-                            "PRIDE web service access error. Cannot open:<br>"
-                            + url + "<br>"
-                            + "Please contact the <a href=\"http://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
-                            "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
-                }
-
-                ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects (" + projectsTable.getRowCount() + ")");
                 projectsPanel.repaint();
 
                 ((TitledBorder) assaysPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Assays");
@@ -3000,7 +2610,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                             prideSearchParametersReport = "<html><br><b><u>Extracted Search Parameters</u></b><br><br>"
                                     + "(No search parameters extracted)<br></html>";
                         }
-                        
+
                         // set the PeptideShaker project name
                         String projectName = getCurrentPxAccession();
 
@@ -3620,7 +3230,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      * @param show if the option is to be shown or not
      */
     public void showProjectFilterRemovalOption(boolean show) {
-        clearProjectFiltersLabel.setVisible(show);
+        //clearProjectFiltersLabel.setVisible(show);
     }
 
     /**
@@ -3642,11 +3252,244 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      * Set the current filter values.
      *
      * @param currentFilterValues the current filter values
-     * @param assaysGreaterThanFiler the assays greater than filter
      */
-    public void setCurrentFilterValues(String[] currentFilterValues, boolean assaysGreaterThanFiler) {
+    public void setCurrentFilterValues(String[] currentFilterValues) {
         this.currentFilterValues = currentFilterValues;
-        this.assaysGreaterThanFiler = assaysGreaterThanFiler;
+
+        final String[] FILTER_VALUES = currentFilterValues;
+
+        progressDialog = new ProgressDialogX(this,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
+        progressDialog.setTitle("Searching PRIDE Projects. Please Wait...");
+
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    progressDialog.setVisible(true);
+                } catch (IndexOutOfBoundsException e) {
+                    // ignore
+                }
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("SearchThread") {
+            @Override
+            public void run() {
+
+                DefaultTableModel projectsTableModel = (DefaultTableModel) projectsTable.getModel();
+                projectsTableModel.getDataVector().removeAllElements();
+                projectsTableModel.fireTableDataChanged();
+
+                DefaultTableModel assayTableModel = (DefaultTableModel) assaysTable.getModel();
+                assayTableModel.getDataVector().removeAllElements();
+                assayTableModel.fireTableDataChanged();
+
+                DefaultTableModel filesTableModel = (DefaultTableModel) filesTable.getModel();
+                filesTableModel.getDataVector().removeAllElements();
+                filesTableModel.fireTableDataChanged();
+
+                ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects");
+                projectsPanel.repaint();
+
+                ((TitledBorder) assaysPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Assays");
+                assaysPanel.repaint();
+
+                ((TitledBorder) filesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Files");
+                filesPanel.repaint();
+
+                double maxNumAssays = 0;
+                String url = null;
+
+                RestTemplate template = new RestTemplate();
+
+                try {
+                    // check if an accession search should be done
+                    if (FILTER_VALUES[0] != null) {
+
+                        url = PROJECT_SERVICE_URL + "project/" + FILTER_VALUES[0];
+                        url = url.replaceAll(" ", "%20");
+
+                        System.out.println(url);
+
+                        ResponseEntity<ProjectDetail> searchResult = template.getForEntity(url, ProjectDetail.class);
+                        ProjectDetail projectDetail = searchResult.getBody();
+
+                        String projectAccession = projectDetail.getAccession();
+
+                        int projectCategory = 0;
+                        if (projectClusterAnnotation.containsKey(projectAccession)) {
+                            projectCategory = projectClusterAnnotation.get(projectAccession);
+                        }
+
+                        ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
+                            (projectsTable.getRowCount() + 1),
+                            "<html><a href=\"" + DisplayFeaturesGenerator.getPrideProjectArchiveLink("" + projectAccession)
+                            + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
+                            + projectAccession + "</font></a><html>",
+                            projectDetail.getTitle(),
+                            setToString(projectDetail.getProjectTags(), ", "),
+                            setToString(projectDetail.getSpecies(), ", "),
+                            setToString(projectDetail.getTissues(), ", "),
+                            setToString(projectDetail.getPtmNames(), "; "),
+                            setToString(projectDetail.getInstrumentNames(), ", "),
+                            projectDetail.getNumAssays(),
+                            dateFormat.format(projectDetail.getPublicationDate()),
+                            projectDetail.getSubmissionType(),
+                            projectCategory
+                        });
+
+                    } else {
+
+                        String filterUrl = "";
+
+                        if (FILTER_VALUES[1] != null) {
+                            filterUrl += "&query=" + FILTER_VALUES[1];
+                        }
+                        if (FILTER_VALUES[2] != null) {
+                            filterUrl += "&species=" + FILTER_VALUES[2];
+                        }
+                        if (FILTER_VALUES[3] != null) {
+                            filterUrl += "&ptmsFilter=" + FILTER_VALUES[3];
+                        }
+                        if (FILTER_VALUES[4] != null) {
+                            filterUrl += "&tissueFilter=" + FILTER_VALUES[4];
+                        }
+                        if (FILTER_VALUES[5] != null) {
+                            filterUrl += "&diseaseFilter=" + FILTER_VALUES[5];
+                        }
+                        if (FILTER_VALUES[6] != null) {
+                            filterUrl += "&titleFilter=" + FILTER_VALUES[6];
+                        }
+                        if (FILTER_VALUES[7] != null) {
+                            filterUrl += "&instrumentFilter=" + FILTER_VALUES[7];
+                        }
+                        if (FILTER_VALUES[8] != null) {
+                            filterUrl += "&experimentTypeFilter=" + FILTER_VALUES[8];
+                        }
+                        if (FILTER_VALUES[9] != null) {
+                            filterUrl += "&quantificationFilter=" + FILTER_VALUES[9];
+                        }
+                        if (FILTER_VALUES[10] != null) {
+                            filterUrl += "&projectTagFilter=" + FILTER_VALUES[10];
+                        }
+
+                        // get the number of projects
+                        url = PROJECT_SERVICE_URL + "project/count?" + filterUrl;
+
+                        url = url.replaceAll(" ", "%20");
+
+                        ResponseEntity<Integer> projectCountResult = template.getForEntity(url, Integer.class);
+                        Integer numberOfProjects = projectCountResult.getBody();
+
+                        int projectBatchSize = 50;
+                        int numberOfPages = (int) Math.ceil(((double) numberOfProjects) / projectBatchSize);
+
+                        progressDialog.setPrimaryProgressCounterIndeterminate(false);
+                        progressDialog.setMaxPrimaryProgressCounter(numberOfProjects + 1);
+                        progressDialog.increasePrimaryProgressCounter();
+
+                        // load the projects in batches
+                        for (int currentPage = 0; currentPage < numberOfPages; currentPage++) {
+
+                            url = PROJECT_SERVICE_URL + "project/list?show=" + projectBatchSize + "&page=" + currentPage + "&sort=publication_date&order=desc" + filterUrl;
+
+                            ResponseEntity<ProjectDetailList> projectList = template.getForEntity(url, ProjectDetailList.class);
+
+                            // iterate the projects and add them to the table
+                            for (ProjectDetail projectDetail : projectList.getBody().getList()) {
+
+                                String projectAccession = projectDetail.getAccession();
+
+                                int projectCategory = 0;
+                                if (projectClusterAnnotation.containsKey(projectAccession)) {
+                                    projectCategory = projectClusterAnnotation.get(projectAccession);
+                                }
+
+                                ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
+                                    (projectsTable.getRowCount() + 1),
+                                    "<html><a href=\"" + DisplayFeaturesGenerator.getPrideProjectArchiveLink("" + projectAccession)
+                                    + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
+                                    + projectAccession + "</font></a><html>",
+                                    projectDetail.getTitle(),
+                                    setToString(projectDetail.getProjectTags(), ", "),
+                                    setToString(projectDetail.getSpecies(), ", "),
+                                    setToString(projectDetail.getTissues(), ", "),
+                                    setToString(projectDetail.getPtmNames(), "; "),
+                                    setToString(projectDetail.getInstrumentNames(), ", "),
+                                    projectDetail.getNumAssays(),
+                                    dateFormat.format(projectDetail.getPublicationDate()),
+                                    projectDetail.getSubmissionType(),
+                                    projectCategory
+                                });
+
+                                if (projectDetail.getNumAssays() > maxNumAssays) {
+                                    maxNumAssays = projectDetail.getNumAssays();
+                                }
+
+                                if (progressDialog.isRunCanceled()) {
+                                    break;
+                                }
+
+                                progressDialog.increasePrimaryProgressCounter();
+                            }
+
+                            ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects (" + projectsTable.getRowCount() + ")");
+                            projectsPanel.repaint();
+
+                            // update the sparklines with the max values
+                            projectsTable.getColumn("#Assays").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxNumAssays, peptideShakerGUI.getSparklineColor()));
+                            ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
+                            ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).setLogScale(true);
+                            ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).setMinimumChartValue(2.0);
+
+                            projectsTable.repaint();
+
+                        }
+                    }
+
+                    progressDialog.setRunFinished();
+
+                    if (projectsTable.getRowCount() == 0) {
+                        JOptionPane.showMessageDialog(null,
+                                "Your search did not locate any matching projects.",
+                                "No Matching Projects Found", JOptionPane.INFORMATION_MESSAGE);
+                    }
+
+                } catch (HttpServerErrorException e) {
+                    System.out.println(url);
+                    e.printStackTrace();
+                    progressDialog.setRunFinished();
+                    JOptionPane.showMessageDialog(null, JOptionEditorPane.getJOptionEditorPane(
+                            "PRIDE web service access error. Cannot open:<br>"
+                            + url + "<br>"
+                            + "Please contact the <a href=\"https://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
+                            "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+                } catch (ResourceAccessException e) {
+                    JOptionPane.showMessageDialog(null, "PRIDE web service could not be reached.\n Please make sure that you are online.", "Network Error", JOptionPane.WARNING_MESSAGE);
+                } catch (HttpMessageNotReadableException e) {
+                    System.out.println(url);
+                    e.printStackTrace();
+                    progressDialog.setRunFinished();
+                    JOptionPane.showMessageDialog(null, JOptionEditorPane.getJOptionEditorPane(
+                            "PRIDE web service access error. Cannot open:<br>"
+                            + url + "<br>"
+                            + "Please contact the <a href=\"https://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
+                            "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+                } catch (Exception e) {
+                    System.out.println(url);
+                    e.printStackTrace();
+                    progressDialog.setRunFinished();
+                    JOptionPane.showMessageDialog(null, JOptionEditorPane.getJOptionEditorPane(
+                            "PRIDE web service access error. Cannot open:<br>"
+                            + url + "<br>"
+                            + "Please contact the <a href=\"http://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
+                            "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        }.start();
     }
 
     /**
@@ -3718,9 +3561,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     private javax.swing.JPanel assaysPanel;
     private javax.swing.JTable assaysTable;
     private javax.swing.JPanel backgroundPanel;
-    private javax.swing.JLabel browsePublicDataLabel;
-    private javax.swing.JLabel clearProjectFiltersLabel;
-    private javax.swing.JLabel dataTypeSeparatorLabel;
     private javax.swing.JLabel downloadAllLabel;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;

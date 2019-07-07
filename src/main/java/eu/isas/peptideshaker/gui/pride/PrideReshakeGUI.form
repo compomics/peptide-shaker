@@ -173,13 +173,7 @@
                               <Component id="projectHelpLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="projectSearchLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="clearProjectFiltersLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
-                              <Component id="browsePublicDataLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="dataTypeSeparatorLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
                               <Component id="accessPrivateDataLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                           </Group>
@@ -192,14 +186,11 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="projectsScrollPane" pref="114" max="32767" attributes="0"/>
+                      <Component id="projectsScrollPane" pref="110" max="32767" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="accessPrivateDataLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="projectHelpLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="browsePublicDataLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="dataTypeSeparatorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="clearProjectFiltersLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="projectSearchLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -268,36 +259,6 @@
                 <Property name="text" type="java.lang.String" value="Select a project to see the project details. For more details click the Accession links."/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="browsePublicDataLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=&quot;dummy&quot;&gt;Browse Public Data&lt;/a&gt;&lt;/html&gt;  "/>
-                <Property name="toolTipText" type="java.lang.String" value="Browse all public data"/>
-              </Properties>
-              <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="browsePublicDataLabelMouseClicked"/>
-                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="browsePublicDataLabelMouseEntered"/>
-                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="browsePublicDataLabelMouseExited"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JLabel" name="dataTypeSeparatorLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="/"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="clearProjectFiltersLabel">
-              <Properties>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/icons/Error_3.png"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=&quot;dummy&quot;&gt;Clear Project Filters&lt;/a&gt;&lt;/html&gt;  "/>
-                <Property name="toolTipText" type="java.lang.String" value="Clear all project filters"/>
-              </Properties>
-              <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="clearProjectFiltersLabelMouseClicked"/>
-                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="clearProjectFiltersLabelMouseEntered"/>
-                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="clearProjectFiltersLabelMouseExited"/>
-              </Events>
-            </Component>
             <Component class="javax.swing.JLabel" name="projectSearchLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=\u005c&quot;dummy\u005c&quot;&gt;Project Search&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
@@ -342,7 +303,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="assayTableScrollPane" pref="115" max="32767" attributes="0"/>
+                      <Component id="assayTableScrollPane" pref="111" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="assayHelpLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -456,7 +417,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="filesTableScrollPane" pref="115" max="32767" attributes="0"/>
+                      <Component id="filesTableScrollPane" pref="111" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="filesHelpLabel" alignment="3" min="-2" max="-2" attributes="0"/>

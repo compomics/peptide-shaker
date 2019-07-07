@@ -3,7 +3,7 @@
 <Form version="1.8" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="0"/>
-    <Property name="title" type="java.lang.String" value="Find"/>
+    <Property name="title" type="java.lang.String" value="Project Search"/>
     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
       <Dimension value="[400, 350]"/>
     </Property>
@@ -55,12 +55,9 @@
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Component id="filterPanel" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
-                          <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
-                          <Component id="projectSearchLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="329" max="32767" attributes="0"/>
-                          <Component id="okJButton" linkSize="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="searchJButton" linkSize="2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="clearJButton" linkSize="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="closeJButton" linkSize="2" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -74,9 +71,8 @@
                   <Component id="filterPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="clearJButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="okJButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="projectSearchLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="closeJButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="searchJButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
@@ -98,46 +94,64 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="accessionLabel" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
-                                  <Component id="tissueLabel" min="-2" pref="80" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="tagsLabel" alignment="1" min="-2" pref="80" max="-2" attributes="0"/>
+                              <Component id="speciesLabel" alignment="1" min="-2" pref="80" max="-2" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
                                   <Component id="ptmsLabel" min="-2" pref="80" max="-2" attributes="0"/>
-                                  <Component id="instrumentLabel" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
-                                  <Component id="titleLabel" min="-2" pref="80" max="-2" attributes="0"/>
-                                  <Component id="speciesLabel" min="-2" pref="80" max="-2" attributes="0"/>
-                                  <Component id="assaysLabel" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
-                                  <Component id="typeLabel" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                                      <Component id="assaysComboBox" min="-2" pref="52" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="assaysJTextField" max="32767" attributes="0"/>
-                                  </Group>
-                                  <Component id="tissuesComboBox" alignment="2" max="32767" attributes="0"/>
-                                  <Component id="ptmsComboBox" alignment="2" max="32767" attributes="0"/>
-                                  <Component id="instrumentsComboBox" alignment="2" max="32767" attributes="0"/>
-                                  <Component id="accessionJTextField" max="32767" attributes="0"/>
-                                  <Component id="titleJTextField" max="32767" attributes="0"/>
-                                  <Component id="speciesComboBox" max="32767" attributes="0"/>
-                                  <Component id="typeComboBox" alignment="0" max="32767" attributes="0"/>
                               </Group>
                           </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="tagsLabel" min="-2" pref="80" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="tagsComboBox" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="categoryLabel" min="-2" pref="80" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="categoryComboBox" max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="tissueLabel" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
+                                                  <Component id="diseaseLabel" alignment="1" min="-2" pref="80" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Component id="titleLabel" alignment="1" min="-2" pref="80" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Component id="instrumentLabel" alignment="1" min="-2" pref="80" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Component id="experimentLabel" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
+                                      <Component id="quantificationLabel" alignment="1" min="-2" pref="80" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="accessionLabel" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
+                                  <Component id="termLabel" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
+                      </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="quantificationTextField" alignment="0" pref="374" max="32767" attributes="0"/>
+                          <Component id="experimentTextField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="instrumentTextField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="titleTextField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="diseaseTextField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="tissueTextField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="ptmsTextField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="speciesTextField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="termTextField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="accessionTextField" max="32767" attributes="0"/>
+                          <Component id="tagsTextField" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="accessionExampleLabel" min="-2" max="-2" attributes="0"/>
+                          <Component id="termExampleLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="speciesExampleLabel" min="-2" max="-2" attributes="0"/>
+                          <Component id="ptmsExampleLabel" min="-2" max="-2" attributes="0"/>
+                          <Component id="tissueExampleLabel" min="-2" max="-2" attributes="0"/>
+                          <Component id="diseaseExampleLabel" min="-2" max="-2" attributes="0"/>
+                          <Component id="titleExampleLabel" min="-2" max="-2" attributes="0"/>
+                          <Component id="instrumentExampleLabel" min="-2" max="-2" attributes="0"/>
+                          <Component id="experimentExampleLabel" min="-2" max="-2" attributes="0"/>
+                          <Component id="quantificationExampleLabel" min="-2" max="-2" attributes="0"/>
+                          <Component id="tagsExampleLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -148,54 +162,69 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="accessionJTextField" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="accessionLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="accessionTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="accessionExampleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="titleJTextField" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="titleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="termTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="termLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="termExampleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="tagsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="tagsComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="speciesTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="speciesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="speciesComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="speciesExampleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="tissueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="tissuesComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="ptmsTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="ptmsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="ptmsComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="ptmsExampleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="tissueTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="tissueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="tissueExampleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="diseaseTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="diseaseLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="diseaseExampleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="titleTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="titleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="titleExampleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="instrumentTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="instrumentLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="instrumentsComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="instrumentExampleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="assaysLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="assaysComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="assaysJTextField" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="experimentTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="experimentLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="experimentExampleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="typeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="typeComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="quantificationTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="quantificationLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="quantificationExampleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="categoryLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="categoryComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="tagsTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="tagsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="tagsExampleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -208,35 +237,59 @@
                 <Property name="text" type="java.lang.String" value="Accession"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="accessionJTextField">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="test"/>
-                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
-                  <Insets value="[2, 10, 2, 2]"/>
-                </Property>
-              </Properties>
-              <Events>
-                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="accessionJTextFieldKeyReleased"/>
-              </Events>
+            <Component class="javax.swing.JTextField" name="accessionTextField">
             </Component>
-            <Component class="javax.swing.JLabel" name="titleLabel">
+            <Component class="javax.swing.JLabel" name="accessionExampleLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Title"/>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="sansserif" size="11" style="2"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="example: PXD000001"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="titleJTextField">
+            <Component class="javax.swing.JLabel" name="termLabel">
               <Properties>
-                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
-                  <Insets value="[2, 10, 2, 2]"/>
-                </Property>
+                <Property name="text" type="java.lang.String" value="Term"/>
               </Properties>
-              <Events>
-                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="titleJTextFieldKeyReleased"/>
-              </Events>
+            </Component>
+            <Component class="javax.swing.JTextField" name="termTextField">
+            </Component>
+            <Component class="javax.swing.JLabel" name="termExampleLabel">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="sansserif" size="11" style="2"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="examples: P02768, MDPNTIIEALR"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="speciesLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Species"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="speciesTextField">
+            </Component>
+            <Component class="javax.swing.JLabel" name="speciesExampleLabel">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="sansserif" size="11" style="2"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="NCBI taxon ID, example: 9606 for human"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="ptmsLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="PTMs"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="ptmsTextField">
+            </Component>
+            <Component class="javax.swing.JLabel" name="ptmsExampleLabel">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="sansserif" size="11" style="2"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="example: phosphorylation"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="tissueLabel">
@@ -244,24 +297,44 @@
                 <Property name="text" type="java.lang.String" value="Tissue"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="assaysLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="#Assays"/>
-              </Properties>
+            <Component class="javax.swing.JTextField" name="tissueTextField">
             </Component>
-            <Component class="javax.swing.JTextField" name="assaysJTextField">
+            <Component class="javax.swing.JLabel" name="tissueExampleLabel">
               <Properties>
-                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
-                  <Insets value="[2, 10, 2, 2]"/>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="sansserif" size="11" style="2"/>
                 </Property>
+                <Property name="text" type="java.lang.String" value="example: brain"/>
               </Properties>
-              <Events>
-                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="assaysJTextFieldKeyReleased"/>
-              </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="ptmsLabel">
+            <Component class="javax.swing.JLabel" name="diseaseLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="PTMs"/>
+                <Property name="text" type="java.lang.String" value="Disease"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="diseaseTextField">
+            </Component>
+            <Component class="javax.swing.JLabel" name="diseaseExampleLabel">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="sansserif" size="11" style="2"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="example: cancer"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="titleLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Title"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="titleTextField">
+            </Component>
+            <Component class="javax.swing.JLabel" name="titleExampleLabel">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="sansserif" size="11" style="2"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="example: stress"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="instrumentLabel">
@@ -269,72 +342,44 @@
                 <Property name="text" type="java.lang.String" value="Instrument"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="typeLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Type"/>
-              </Properties>
+            <Component class="javax.swing.JTextField" name="instrumentTextField">
             </Component>
-            <Component class="javax.swing.JComboBox" name="typeComboBox">
+            <Component class="javax.swing.JLabel" name="instrumentExampleLabel">
               <Properties>
-                <Property name="maximumRowCount" type="int" value="20"/>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="4">
-                    <StringItem index="0" value="COMPLETE"/>
-                    <StringItem index="1" value="PARTIAL"/>
-                    <StringItem index="2" value="PRIDE"/>
-                    <StringItem index="3" value="All"/>
-                  </StringArray>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="sansserif" size="11" style="2"/>
                 </Property>
-                <Property name="selectedIndex" type="int" value="3"/>
+                <Property name="text" type="java.lang.String" value="examples: ltq"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="typeComboBoxActionPerformed"/>
-              </Events>
             </Component>
-            <Component class="javax.swing.JComboBox" name="speciesComboBox">
+            <Component class="javax.swing.JLabel" name="experimentLabel">
               <Properties>
-                <Property name="editable" type="boolean" value="true"/>
-                <Property name="maximumRowCount" type="int" value="20"/>
+                <Property name="text" type="java.lang.String" value="Experiment"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="speciesComboBoxActionPerformed"/>
-              </Events>
             </Component>
-            <Component class="javax.swing.JComboBox" name="tissuesComboBox">
-              <Properties>
-                <Property name="editable" type="boolean" value="true"/>
-                <Property name="maximumRowCount" type="int" value="20"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tissuesComboBoxActionPerformed"/>
-              </Events>
+            <Component class="javax.swing.JTextField" name="experimentTextField">
             </Component>
-            <Component class="javax.swing.JComboBox" name="ptmsComboBox">
+            <Component class="javax.swing.JLabel" name="experimentExampleLabel">
               <Properties>
-                <Property name="editable" type="boolean" value="true"/>
-                <Property name="maximumRowCount" type="int" value="20"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ptmsComboBoxActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JComboBox" name="instrumentsComboBox">
-              <Properties>
-                <Property name="editable" type="boolean" value="true"/>
-                <Property name="maximumRowCount" type="int" value="20"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="instrumentsComboBoxActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JComboBox" name="assaysComboBox">
-              <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="2">
-                    <StringItem index="0" value="&gt;"/>
-                    <StringItem index="1" value="&lt;"/>
-                  </StringArray>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="sansserif" size="11" style="2"/>
                 </Property>
+                <Property name="text" type="java.lang.String" value="example: shotgun"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="quantificationLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Quantification"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="quantificationTextField">
+            </Component>
+            <Component class="javax.swing.JLabel" name="quantificationExampleLabel">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="sansserif" size="11" style="2"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="example: label-free"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="tagsLabel">
@@ -342,74 +387,32 @@
                 <Property name="text" type="java.lang.String" value="Tags"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JComboBox" name="tagsComboBox">
-              <Properties>
-                <Property name="editable" type="boolean" value="true"/>
-                <Property name="maximumRowCount" type="int" value="20"/>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="4">
-                    <StringItem index="0" value=" "/>
-                    <StringItem index="1" value="COMPLETE"/>
-                    <StringItem index="2" value="PARTIAL"/>
-                    <StringItem index="3" value="PRIDE"/>
-                  </StringArray>
-                </Property>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tagsComboBoxActionPerformed"/>
-              </Events>
+            <Component class="javax.swing.JTextField" name="tagsTextField">
             </Component>
-            <Component class="javax.swing.JLabel" name="categoryLabel">
+            <Component class="javax.swing.JLabel" name="tagsExampleLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Confidence"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JComboBox" name="categoryComboBox">
-              <Properties>
-                <Property name="maximumRowCount" type="int" value="20"/>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="6">
-                    <StringItem index="0" value="Not yet classified"/>
-                    <StringItem index="1" value="High confidence"/>
-                    <StringItem index="2" value="Good confidence"/>
-                    <StringItem index="3" value="Moderate confidence"/>
-                    <StringItem index="4" value="Low confidence"/>
-                    <StringItem index="5" value="All"/>
-                  </StringArray>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="sansserif" size="11" style="2"/>
                 </Property>
-                <Property name="selectedIndex" type="int" value="5"/>
+                <Property name="text" type="java.lang.String" value="example: biomedical"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="categoryComboBoxActionPerformed"/>
-              </Events>
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JButton" name="clearJButton">
+        <Component class="javax.swing.JButton" name="closeJButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Clear"/>
+            <Property name="text" type="java.lang.String" value="Close"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearJButtonActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="closeJButtonActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="okJButton">
+        <Component class="javax.swing.JButton" name="searchJButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="OK"/>
+            <Property name="text" type="java.lang.String" value="Search"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="okJButtonActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JLabel" name="projectSearchLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=\u005c&quot;dummy\u005c&quot;&gt;Free Text Project Search&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
-            <Property name="toolTipText" type="java.lang.String" value="Open Free Text Project Search"/>
-          </Properties>
-          <Events>
-            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="projectSearchLabelMouseEntered"/>
-            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="projectSearchLabelMouseExited"/>
-            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="projectSearchLabelMouseReleased"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchJButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
