@@ -1550,7 +1550,7 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private boolean validateUserInput() {
 
-        for (String forbiddenChar : Util.forbiddenCharacters) {
+        for (String forbiddenChar : Util.FORBIDDEN_CHARACTERS) {
             if (projectNameIdTxt.getText().contains(forbiddenChar)) {
                 JOptionPane.showMessageDialog(null, "The project name should not contain " + forbiddenChar + ".\n"
                         + "Forbidden character in project name",

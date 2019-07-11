@@ -24,7 +24,7 @@ public class PeptideShakerCLIInputBean {
     /**
      * The sample name.
      */
-    private String iSampleID = null;
+    private String sampleID = null;
     /**
      * The replicate number.
      */
@@ -159,17 +159,17 @@ public class PeptideShakerCLIInputBean {
      *
      * @return the experiment name
      */
-    public String getiExperimentID() {
+    public String getExperimentID() {
         return reference;
     }
 
     /**
      * Sets the experiment name.
      *
-     * @param iExperimentID the experiment name
+     * @param experimentID the experiment name
      */
-    public void setiExperimentID(String iExperimentID) {
-        this.reference = iExperimentID;
+    public void setExperimentID(String experimentID) {
+        this.reference = experimentID;
     }
 
     /**
@@ -195,17 +195,17 @@ public class PeptideShakerCLIInputBean {
      *
      * @return the name of the sample
      */
-    public String getiSampleID() {
-        return iSampleID;
+    public String getSampleID() {
+        return sampleID;
     }
 
     /**
      * Sets the name of the sample.
      *
-     * @param iSampleID the name of the sample
+     * @param sampleID the name of the sample
      */
-    public void setiSampleID(String iSampleID) {
-        this.iSampleID = iSampleID;
+    public void setSampleID(String sampleID) {
+        this.sampleID = sampleID;
     }
 
     /**

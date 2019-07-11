@@ -547,7 +547,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     public void createProject() throws IOException, InterruptedException, TimeoutException {
 
         // define new project references
-        projectParameters = new ProjectParameters(cliInputBean.getiExperimentID());
+        projectParameters = new ProjectParameters(cliInputBean.getExperimentID());
 
         // set the project details
         projectDetails = new ProjectDetails();
@@ -640,8 +640,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                                 MatchesValidator.setDefaultMatchesQCFilters(validationQCParameters);
                             }
                         } catch (Exception e) {
-                            waitingHandler.appendReport("An error occurred while parsing the parameters file " + unzippedFile.getName() + ". " + getLogFileMessage(), true, true);
                             e.printStackTrace();
+                            waitingHandler.appendReport("An error occurred while parsing the parameters file " + unzippedFile.getName() + ". " + getLogFileMessage(), true, true);
+                            waitingHandler.setRunCanceled();
                         }
                     } else if (nameLowerCase.endsWith(".fasta")) {
                         fastaFile = unzippedFile;
@@ -759,10 +760,18 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // set the spectrum counting prefrences
         spectrumCountingParameters = new SpectrumCountingParameters();
 
-        // Set the project type
+        // set the project type
         projectType = ProjectType.protein; // @TODO: make it a user setting
+        
+        // check the project reference
+        for (String forbiddenChar : Util.FORBIDDEN_CHARACTERS) {
+            if (cliInputBean.getExperimentID().contains(forbiddenChar)) {
+                waitingHandler.appendReport("The project name cannot not contain " + forbiddenChar + ".", true, true);
+                waitingHandler.setRunCanceled();
+            }
+        }
 
-        // incrementing the counter for a new PeptideShaker start run via GUI
+        // incrementing the counter for a new PeptideShaker start run via CLI
         if (utilitiesUserParameters.isAutoUpdate()) {
             Util.sendGAUpdate("UA-36198780-1", "startrun-cl", "peptide-shaker-" + PeptideShaker.getVersion());
         }
