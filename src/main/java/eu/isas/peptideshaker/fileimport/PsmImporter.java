@@ -541,7 +541,7 @@ public class PsmImporter {
                                     tempNames = ModificationUtils.getExpectedModifications(modMass, modificationParameters, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
 
                                 } catch (Exception e) {
-
+                                    e.printStackTrace();
                                     throw new IllegalArgumentException("Impossible to parse \'" + seMod + "\' as a modification.\n"
                                             + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in spectrum file "
                                             + spectrumFileName + ".\n" + "Identification file: " + idFile.getName());
