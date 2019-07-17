@@ -3296,47 +3296,51 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 || tableIndex == TableIndex.PDB_MATCHES
                 || tableIndex == TableIndex.PDB_CHAINS) {
 
-            if (tableIndex == TableIndex.PROTEIN_TABLE) {
-                long[] selectedProteins = getDisplayedProteins();
-                // @TODO: implement standard export
-                throw new UnsupportedOperationException("Export not implemented.");
-            } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
-                long[] selectedPeptides = getDisplayedPeptides();
-                SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
-                int proteinIndex = tableModel.getViewIndex(proteinTable.getSelectedRow());
-                long proteinKey = proteinKeys[proteinIndex];
-                // @TODO: implement standard export
-                throw new UnsupportedOperationException("Export not implemented.");
-            } else if (tableIndex == TableIndex.PDB_MATCHES || tableIndex == TableIndex.PDB_CHAINS) {
-
-                // get the file to send the output to
-                File selectedFile = peptideShakerGUI.getUserSelectedFile("pdb_details.txt", ".txt", "Tab separated text file (.txt)", "Export...", false);
-
-                if (selectedFile != null) {
-                    BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
-
-                    if (tableIndex == TableIndex.PDB_CHAINS) {
-
-                        writer.write("\tChain\tPDB-Start\tPDB-End\tCoverage");
-                        writer.newLine();
-
-                        for (int i = 0; i < pdbChainsJTable.getRowCount(); i++) {
-                            writer.write(pdbChainsJTable.getValueAt(i, 0) + "\t");
-                            writer.write(pdbChainsJTable.getValueAt(i, 1) + "\t");
-                            XYDataPoint pdbCoverage = (XYDataPoint) pdbChainsJTable.getValueAt(i, 2);
-                            writer.write(pdbCoverage.getX() + "\t" + pdbCoverage.getY() + "\t");
-                            writer.write(pdbChainsJTable.getValueAt(i, 3).toString());
+            if (null != tableIndex) switch (tableIndex) {
+                case PROTEIN_TABLE:
+                    long[] selectedProteins = getDisplayedProteins();
+                    // @TODO: implement standard export
+                    JOptionPane.showMessageDialog(peptideShakerGUI, "The table export feature has not yet been reimplmented.", "Not Yet Reimplemented", JOptionPane.INFORMATION_MESSAGE);
+                    throw new UnsupportedOperationException("Export not implemented.");
+                case PEPTIDE_TABLE:
+                    long[] selectedPeptides = getDisplayedPeptides();
+                    SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+                    int proteinIndex = tableModel.getViewIndex(proteinTable.getSelectedRow());
+                    long proteinKey = proteinKeys[proteinIndex];
+                    // @TODO: implement standard export
+                    JOptionPane.showMessageDialog(peptideShakerGUI, "The table export feature has not yet been reimplmented.", "Not Yet Reimplemented", JOptionPane.INFORMATION_MESSAGE);
+                    throw new UnsupportedOperationException("Export not implemented.");
+                case PDB_MATCHES:
+                case PDB_CHAINS:
+                    // get the file to send the output to
+                    File selectedFile = peptideShakerGUI.getUserSelectedFile("pdb_details.txt", ".txt", "Tab separated text file (.txt)", "Export...", false);
+                    if (selectedFile != null) {
+                        BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
+                        
+                        if (tableIndex == TableIndex.PDB_CHAINS) {
+                            
+                            writer.write("\tChain\tPDB-Start\tPDB-End\tCoverage");
                             writer.newLine();
+                            
+                            for (int i = 0; i < pdbChainsJTable.getRowCount(); i++) {
+                                writer.write(pdbChainsJTable.getValueAt(i, 0) + "\t");
+                                writer.write(pdbChainsJTable.getValueAt(i, 1) + "\t");
+                                XYDataPoint pdbCoverage = (XYDataPoint) pdbChainsJTable.getValueAt(i, 2);
+                                writer.write(pdbCoverage.getX() + "\t" + pdbCoverage.getY() + "\t");
+                                writer.write(pdbChainsJTable.getValueAt(i, 3).toString());
+                                writer.newLine();
+                            }
+                            
+                            JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getPath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
+                        } else if (tableIndex == TableIndex.PDB_MATCHES) {
+                            Util.tableToFile(pdbMatchesJTable, "\t", null, true, writer);
+                            JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getPath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         }
-
-                        JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getPath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
-                    } else if (tableIndex == TableIndex.PDB_MATCHES) {
-                        Util.tableToFile(pdbMatchesJTable, "\t", null, true, writer);
-                        JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getPath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
-                    }
-
-                    writer.close();
-                }
+                        
+                        writer.close();
+                    }   break;
+                default:
+                    break;
             }
         }
     }

@@ -5807,21 +5807,27 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 || tableIndex == TableIndex.PEPTIDE_TABLE
                 || tableIndex == TableIndex.PSM_TABLE) {
 
-            if (tableIndex == TableIndex.PROTEIN_TABLE) {
-                long[] selectedProteins = getDisplayedProteins();
-                // @TODO: implement standard export
-                throw new UnsupportedOperationException("Export not implemented.");
-            } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
-                long[] selectedPeptides = getDisplayedPeptides();
-                SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
-                int proteinIndex = tableModel.getViewIndex(proteinTable.getSelectedRow());
-                long proteinKey = proteinKeys[proteinIndex];
-                // @TODO: implement standard export
-                throw new UnsupportedOperationException("Export not implemented.");
-            } else if (tableIndex == TableIndex.PSM_TABLE) {
-                long[] selectedPsms = getDisplayedSpectrumMatches();
-                // @TODO: implement standard export
-                throw new UnsupportedOperationException("Export not implemented.");
+            if (null != tableIndex) switch (tableIndex) {
+                case PROTEIN_TABLE:
+                    long[] selectedProteins = getDisplayedProteins();
+                    // @TODO: implement standard export
+                    JOptionPane.showMessageDialog(peptideShakerGUI, "The table export feature has not yet been reimplmented.", "Not Yet Reimplemented", JOptionPane.INFORMATION_MESSAGE);
+                    throw new UnsupportedOperationException("Export not implemented.");
+                case PEPTIDE_TABLE:
+                    long[] selectedPeptides = getDisplayedPeptides();
+                    SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+                    int proteinIndex = tableModel.getViewIndex(proteinTable.getSelectedRow());
+                    long proteinKey = proteinKeys[proteinIndex];
+                    // @TODO: implement standard export
+                    JOptionPane.showMessageDialog(peptideShakerGUI, "The table export feature has not yet been reimplmented.", "Not Yet Reimplemented", JOptionPane.INFORMATION_MESSAGE);
+                    throw new UnsupportedOperationException("Export not implemented.");
+                case PSM_TABLE:
+                    long[] selectedPsms = getDisplayedSpectrumMatches();
+                    // @TODO: implement standard export
+                    JOptionPane.showMessageDialog(peptideShakerGUI, "The table export feature has not yet been reimplmented.", "Not Yet Reimplemented", JOptionPane.INFORMATION_MESSAGE);
+                    throw new UnsupportedOperationException("Export not implemented.");
+                default:
+                    break;
             }
         }
     }

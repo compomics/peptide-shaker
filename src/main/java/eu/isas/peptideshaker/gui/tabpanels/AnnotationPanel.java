@@ -1124,6 +1124,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
                     try {
                         // @TODO: implement standard export
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "This export feature has not yet been reimplmented.", "Not Yet Reimplemented", JOptionPane.INFORMATION_MESSAGE);
                         throw new UnsupportedOperationException("Export not implemented.");
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(this, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);

@@ -4796,25 +4796,34 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
                         String clipboardString = null;
 
-                        if (tableIndex == TableIndex.MODIFIED_PEPTIDES_TABLE) {
-                            // @TODO: implement standard export
-                            throw new UnsupportedOperationException("Export not implemented.");
-                        } else if (tableIndex == TableIndex.RELATED_PEPTIDES_TABLE) {
-                            // @TODO: implement standard export
-                            throw new UnsupportedOperationException("Export not implemented.");
-                        } else if (tableIndex == TableIndex.MODIFIED_PSMS_TABLE) {
-                            // @TODO: implement standard export
-                            throw new UnsupportedOperationException("Export not implemented.");
-                        } else if (tableIndex == TableIndex.RELATED_PSMS_TABLE) {
-                            // @TODO: implement standard export
-                            throw new UnsupportedOperationException("Export not implemented.");
-                        } else if (tableIndex == TableIndex.PTM_TABLE) {
-                            // @TODO: implement me!!
-                            clipboardString = "not yet implemented...";
-                        } else if (tableIndex == TableIndex.A_SCORES_TABLE) {
-                            clipboardString = Util.tableToText(psmAScoresTable, "\t", progressDialog, false);
-                        } else if (tableIndex == TableIndex.DELTA_SCORES_TABLE) {
-                            clipboardString = Util.tableToText(psmDeltaScoresTable, "\t", progressDialog, false);
+                        if (null != tableIndex) switch (tableIndex) {
+                            case MODIFIED_PEPTIDES_TABLE:
+                                // @TODO: implement standard export
+                                JOptionPane.showMessageDialog(peptideShakerGUI, "The table export feature has not yet been reimplmented.", "Not Yet Reimplemented", JOptionPane.INFORMATION_MESSAGE);
+                                throw new UnsupportedOperationException("Export not implemented.");
+                            case RELATED_PEPTIDES_TABLE:
+                                // @TODO: implement standard export
+                                JOptionPane.showMessageDialog(peptideShakerGUI, "The table export feature has not yet been reimplmented.", "Not Yet Reimplemented", JOptionPane.INFORMATION_MESSAGE);
+                                throw new UnsupportedOperationException("Export not implemented.");
+                            case MODIFIED_PSMS_TABLE:
+                                // @TODO: implement standard export
+                                JOptionPane.showMessageDialog(peptideShakerGUI, "The table export feature has not yet been reimplmented.", "Not Yet Reimplemented", JOptionPane.INFORMATION_MESSAGE);
+                                throw new UnsupportedOperationException("Export not implemented.");
+                            case RELATED_PSMS_TABLE:
+                                // @TODO: implement standard export
+                                JOptionPane.showMessageDialog(peptideShakerGUI, "The table export feature has not yet been reimplmented.", "Not Yet Reimplemented", JOptionPane.INFORMATION_MESSAGE);
+                                throw new UnsupportedOperationException("Export not implemented.");
+                            case PTM_TABLE:
+                                clipboardString = "not implemented..."; // @TODO: implement? (the contextual menu does not include the export option)
+                                break;
+                            case A_SCORES_TABLE:
+                                clipboardString = Util.tableToText(psmAScoresTable, "\t", progressDialog, false);
+                                break;
+                            case DELTA_SCORES_TABLE:
+                                clipboardString = Util.tableToText(psmDeltaScoresTable, "\t", progressDialog, false);
+                                break;
+                            default:
+                                break;
                         }
 
                         if (!progressDialog.isRunCanceled() && clipboardString != null) {
@@ -4831,7 +4840,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                         }
                     } catch (Exception e) {
                         progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
                 }

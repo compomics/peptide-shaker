@@ -1803,6 +1803,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             if (tableIndex == TableIndex.PROTEIN_TABLE) {
                 long[] selectedProteins = getDisplayedProteins();
                 // @TODO: implement standard export
+                JOptionPane.showMessageDialog(peptideShakerGUI, "The table export feature has not yet been reimplmented.", "Not Yet Reimplemented", JOptionPane.INFORMATION_MESSAGE);
                 throw new UnsupportedOperationException("Export not implemented.");
             }
         }
