@@ -2180,10 +2180,10 @@ public class MatchesValidator {
                             proteinKey
                     );
 
-                    PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
+                    PSParameter proteinMatchPsParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
                     // Load the coverage in cache
-                    if (!proteinMatch.isDecoy() && psParameter.getMatchValidationLevel().isValidated()) {
+                    if (!proteinMatch.isDecoy() && proteinMatchPsParameter.getMatchValidationLevel().isValidated()) {
 
                         identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                         validatedProteinMatches.add(proteinKey);
@@ -2199,20 +2199,20 @@ public class MatchesValidator {
                     for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
 
                         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                        PSParameter psParameter2 = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
+                        PSParameter peptideMatchPsParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
-                        for (String fraction : psParameter2.getFractions()) {
+                        for (String fraction : peptideMatchPsParameter.getFractions()) {
 
-                            if (psParameter2.getFractionValidatedSpectra(fraction) != null) {
+                            if (peptideMatchPsParameter.getFractionValidatedSpectra(fraction) != null) {
 
                                 if (validatedPsmsPerFraction.containsKey(fraction)) {
 
                                     int value = validatedPsmsPerFraction.get(fraction);
-                                    validatedPsmsPerFraction.put(fraction, value + psParameter2.getFractionValidatedSpectra(fraction));
+                                    validatedPsmsPerFraction.put(fraction, value + peptideMatchPsParameter.getFractionValidatedSpectra(fraction));
 
                                 } else {
 
-                                    validatedPsmsPerFraction.put(fraction, psParameter2.getFractionValidatedSpectra(fraction));
+                                    validatedPsmsPerFraction.put(fraction, peptideMatchPsParameter.getFractionValidatedSpectra(fraction));
 
                                 }
 
@@ -2223,7 +2223,7 @@ public class MatchesValidator {
                                 }
                             }
 
-                            ArrayList<Double> peptideIntensities = psParameter2.getPrecursorIntensityPerFraction(fraction);
+                            ArrayList<Double> peptideIntensities = peptideMatchPsParameter.getPrecursorIntensityPerFraction(fraction);
 
                             if (peptideIntensities != null) {
 
@@ -2240,7 +2240,7 @@ public class MatchesValidator {
                                 }
                             }
 
-                            if (psParameter2.getMatchValidationLevel().isValidated()) {
+                            if (peptideMatchPsParameter.getMatchValidationLevel().isValidated()) {
 
                                 if (validatedPeptidesPerFraction.containsKey(fraction)) {
 
@@ -2267,25 +2267,25 @@ public class MatchesValidator {
                     }
 
                     // set the number of validated spectra and peptides per fraction for each protein
-                    if (psParameter.getFractionScore().size() > 1) {
+                    if (proteinMatchPsParameter.getFractionScore().size() > 1) {
 
-                        psParameter.setValidatedSpectraPepFraction(validatedPsmsPerFraction);
-                        psParameter.setValidatedPeptidesPerFraction(validatedPeptidesPerFraction);
-                        psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionProteinLevel);
+                        proteinMatchPsParameter.setValidatedSpectraPepFraction(validatedPsmsPerFraction);
+                        proteinMatchPsParameter.setValidatedPeptidesPerFraction(validatedPeptidesPerFraction);
+                        proteinMatchPsParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionProteinLevel);
 
-                        for (String fraction : psParameter.getFractions()) {
+                        for (String fraction : proteinMatchPsParameter.getFractions()) {
 
-                            if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) != null) {
+                            if (proteinMatchPsParameter.getPrecursorIntensityAveragePerFraction(fraction) != null) {
 
-                                if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) > maxProteinAveragePrecursorIntensity) {
+                                if (proteinMatchPsParameter.getPrecursorIntensityAveragePerFraction(fraction) > maxProteinAveragePrecursorIntensity) {
 
-                                    maxProteinAveragePrecursorIntensity = psParameter.getPrecursorIntensityAveragePerFraction(fraction);
+                                    maxProteinAveragePrecursorIntensity = proteinMatchPsParameter.getPrecursorIntensityAveragePerFraction(fraction);
 
                                 }
 
-                                if (psParameter.getPrecursorIntensitySummedPerFraction(fraction) != null && psParameter.getPrecursorIntensitySummedPerFraction(fraction) > maxProteinSummedPrecursorIntensity) {
+                                if (proteinMatchPsParameter.getPrecursorIntensitySummedPerFraction(fraction) != null && proteinMatchPsParameter.getPrecursorIntensitySummedPerFraction(fraction) > maxProteinSummedPrecursorIntensity) {
 
-                                    maxProteinAveragePrecursorIntensity = psParameter.getPrecursorIntensitySummedPerFraction(fraction);
+                                    maxProteinSummedPrecursorIntensity = proteinMatchPsParameter.getPrecursorIntensitySummedPerFraction(fraction);
 
                                 }
                             }
