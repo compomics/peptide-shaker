@@ -597,7 +597,7 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the fraction pep. null if not found.
+     * Returns the fraction pep. Null if not found.
      *
      * @param fraction the fraction
      * @return the fraction pep
