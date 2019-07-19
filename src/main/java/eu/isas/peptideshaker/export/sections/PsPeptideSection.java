@@ -396,11 +396,11 @@ public class PsPeptideSection {
                         .map(aas -> (Arrays.stream(aas))
                         .collect(Collectors.joining(",")))
                         .collect(Collectors.joining(";"));
-                
+
             case nValidatedProteinGroups:
-                
-                return identificationFeaturesGenerator.getNValidatedProteinGroups(peptideMatch.getPeptide(), waitingHandler) + "";
-                
+
+                return identificationFeaturesGenerator.getNValidatedProteinGroups(peptideMatch.getKey(), waitingHandler) + "";
+
             case unique_group:
                 
                 return identification.getProteinMatches(peptideMatch.getKey()).size() == 1 ? "1" : "0";
