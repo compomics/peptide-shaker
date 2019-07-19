@@ -118,7 +118,7 @@ public class PsProteinSection {
      * @param keys the keys of the protein matches to output. if null all
      * proteins will be exported.
      * @param nSurroundingAas in case a peptide export is included with
-     * surrounding amino-acids, the number of surrounding amino acids to use
+     * surrounding amino acids, the number of surrounding amino acids to use
      * @param validatedOnly whether only validated matches should be exported
      * @param decoys whether decoy matches should be exported as well
      * @param waitingHandler the waiting handler

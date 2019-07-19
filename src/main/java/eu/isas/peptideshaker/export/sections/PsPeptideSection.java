@@ -68,38 +68,38 @@ public class PsPeptideSection {
      * @param writer the writer which will write to the file
      */
     public PsPeptideSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
-        
+
         ArrayList<ExportFeature> psmFeatures = new ArrayList<>();
-        
+
         for (ExportFeature exportFeature : exportFeatures) {
-            
+
             if (exportFeature instanceof PsPeptideFeature) {
-            
+
                 peptideFeatures.add((PsPeptideFeature) exportFeature);
-            
+
             } else if (exportFeature instanceof PsPsmFeature || exportFeature instanceof PsIdentificationAlgorithmMatchesFeature || exportFeature instanceof PsFragmentFeature) {
-            
+
                 psmFeatures.add(exportFeature);
-            
+
             } else {
-            
+
                 throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
-            
+
             }
         }
-        
+
         Collections.sort(peptideFeatures);
-        
+
         if (!psmFeatures.isEmpty()) {
-        
+
             psmSection = new PsPsmSection(psmFeatures, indexes, header, writer);
-        
+
         }
-        
+
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-    
+
     }
 
     /**
@@ -122,7 +122,7 @@ public class PsPeptideSection {
      * reading or writing a file
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, 
+            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider,
             IdentificationParameters identificationParameters, long[] keys, int nSurroundingAA,
             String linePrefix, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException {
 
@@ -137,13 +137,13 @@ public class PsPeptideSection {
         int lineNumber = 1;
 
         if (waitingHandler != null) {
-            
+
             waitingHandler.setWaitingText("Exporting. Please Wait...");
             waitingHandler.resetSecondaryProgressCounter();
             waitingHandler.setMaxSecondaryProgressCounter(keys == null ? identification.getPeptideIdentification().size() : keys.length);
-        
+
         }
-        
+
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(keys, waitingHandler);
 
         PeptideMatch peptideMatch;
@@ -155,7 +155,7 @@ public class PsPeptideSection {
                 }
                 waitingHandler.increaseSecondaryProgressCounter();
             }
-            
+
             PSParameter psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
             if (!validatedOnly || psParameter.getMatchValidationLevel().isValidated()) {
@@ -279,104 +279,104 @@ public class PsPeptideSection {
             case protein_groups:
 
                 TreeSet<Long> proteinGroups = identification.getProteinMatches(peptideMatch.getKey());
-                
+
                 return proteinGroups.stream()
                         .sorted()
                         .map(proteinGroupKey -> getProteinGroupText(proteinGroupKey, identification))
                         .collect(Collectors.joining(";"));
 
             case best_protein_group_validation:
-                
+
                 MatchValidationLevel bestProteinValidationLevel = MatchValidationLevel.none;
                 proteinGroups = identification.getProteinMatches(peptideMatch.getKey());
-                
+
                 for (long proteinGroup : proteinGroups) {
-                    
+
                     if (identification.getProteinIdentification().contains(proteinGroup)) {
-                    
+
                         psParameter = (PSParameter) (identification.getProteinMatch(proteinGroup)).getUrParam(psParameter);
-                        
+
                         if (psParameter.getMatchValidationLevel().getIndex() > bestProteinValidationLevel.getIndex()) {
-                        
+
                             bestProteinValidationLevel = psParameter.getMatchValidationLevel();
-                        
+
                         }
                     }
                 }
-                
+
                 return bestProteinValidationLevel.getName();
-                
+
             case confidence:
-                
+
                 return Double.toString(psParameter.getConfidence());
-                
+
             case decoy:
-                
+
                 return PeptideUtils.isDecoy(peptideMatch.getPeptide(), sequenceProvider) ? "1" : "0";
-                
+
             case hidden:
-                
+
                 return psParameter.getHidden() ? "1" : "0";
-                
+
             case localization_confidence:
-                
+
                 return getPeptideModificationLocationConfidence(peptideMatch, identificationParameters.getSearchParameters().getModificationParameters());
-                
+
             case pi:
-                
+
                 return psParameter.getProteinInferenceClassAsString();
-            
+
             case position:
-                
+
                 proteinMapping = peptideMatch.getPeptide().getProteinMapping();
-                
+
                 return proteinMapping.entrySet().stream()
                         .map(entry -> getPeptideLocalizationText(entry.getKey(), entry.getValue()))
                         .collect(Collectors.joining(";"));
-                
+
             case psms:
-                
+
                 return Integer.toString(peptideMatch.getSpectrumCount());
-                
+
             case variable_ptms:
-                
+
                 return PeptideUtils.getVariableModificationsAsString(peptideMatch.getPeptide());
-                
+
             case fixed_ptms:
-                
+
                 ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                 SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
                 return PeptideUtils.getFixedModificationsAsString(peptideMatch.getPeptide(), modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
-                
+
             case score:
-                
+
                 return Double.toString(PSParameter.transformScore(psParameter.getScore()));
-                
+
             case raw_score:
-                
+
                 return Double.toString(psParameter.getScore());
-                
+
             case sequence:
-                
+
                 return peptideMatch.getPeptide().getSequence();
-                
+
             case missed_cleavages:
-                
+
                 int nMissedCleavages = peptideMatch.getPeptide()
                         .getNMissedCleavages(identificationParameters.getSearchParameters().getDigestionParameters());
-                
+
                 return Integer.toString(nMissedCleavages);
-            
+
             case modified_sequence:
-                
+
                 modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                 modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
                 HashSet<String> modToExport = new HashSet(modificationParameters.getVariableModifications());
                 return peptideMatch.getPeptide()
                         .getTaggedModifiedSequence(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, false, false, true, modToExport);
-            
+
             case starred:
-                
+
                 return psParameter.getStarred() ? "1" : "0";
 
             case aaBefore:
@@ -402,17 +402,17 @@ public class PsPeptideSection {
                 return identificationFeaturesGenerator.getNValidatedProteinGroups(peptideMatch.getKey(), waitingHandler) + "";
 
             case unique_group:
-                
+
                 return identification.getProteinMatches(peptideMatch.getKey()).size() == 1 ? "1" : "0";
-                
+
             case validated:
-                
+
                 return psParameter.getMatchValidationLevel().toString();
-            
+
             case validated_psms:
-            
+
                 return Integer.toString(identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideMatch.getKey()));
-            
+
             case probabilistic_score:
                 PSModificationScores ptmScores = new PSModificationScores();
                 ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
@@ -523,15 +523,16 @@ public class PsPeptideSection {
     }
 
     /**
-     * Returns a description of the given protein group in the form proteinA,proteinB(confidence).
-     * 
+     * Returns a description of the given protein group in the form
+     * proteinA,proteinB(confidence).
+     *
      * @param proteinGroupKey the key of the protein group
      * @param identification the identification object
-     * 
+     *
      * @return a description of the given protein group
      */
     public static String getProteinGroupText(long proteinGroupKey, Identification identification) {
-        
+
         ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinGroupKey);
         String[] accessions = proteinMatch.getAccessions();
         String accessionsString = Arrays.stream(accessions)
@@ -541,29 +542,30 @@ public class PsPeptideSection {
         psParameter = (PSParameter) (proteinMatch).getUrParam(psParameter);
         String validationString = psParameter.getMatchValidationLevel().getName();
 
-        StringBuilder sb = new StringBuilder(accessionsString.length() + validationString.length() + 2);
-        sb.append(accessionsString).append("(").append(validationString).append(")");
-        
+        StringBuilder sb = new StringBuilder(accessionsString.length() + validationString.length() + 3);
+        sb.append(accessionsString).append(" (").append(validationString).append(")");
+
         return sb.toString();
     }
-    
+
     /**
-     * Returns the peptide localization on the given protein as text in the form accession(site1,site2).
-     * 
+     * Returns the peptide localization on the given protein as text in the form
+     * accession (site1,site2).
+     *
      * @param proteinAccession the protein accession
      * @param sites the position of the peptide on the protein
-     * 
+     *
      * @return the peptide localization on the given protein as text
      */
     public static String getPeptideLocalizationText(String proteinAccession, int[] sites) {
-        
+
         String sitesString = Arrays.stream(sites)
                 .mapToObj(site -> Integer.toString(site))
                 .collect(Collectors.joining(","));
-        
-        StringBuilder sb = new StringBuilder(proteinAccession.length() + sitesString.length() + 2);
-        sb.append(proteinAccession).append("(").append(sitesString).append(")");
-        
+
+        StringBuilder sb = new StringBuilder(proteinAccession.length() + sitesString.length() + 3);
+        sb.append(proteinAccession).append(" (").append(sitesString).append(")");
+
         return sb.toString();
     }
 
@@ -580,68 +582,66 @@ public class PsPeptideSection {
         PSModificationScores psPtmScores = (PSModificationScores) peptideMatch.getUrParam(new PSModificationScores());
 
         if (psPtmScores != null) {
-            
+
             TreeSet<String> modList = new TreeSet(psPtmScores.getScoredModifications());
 
             StringBuilder result = new StringBuilder();
 
             for (String mod : modList) {
-            
+
                 if (result.length() > 0) {
-                
+
                     result.append(", ");
-                
+
                 }
-                
+
                 result.append(mod).append(" (");
                 ModificationScoring ptmScoring = psPtmScores.getModificationScoring(mod);
                 boolean firstSite = true;
-                
+
                 for (int site : ptmScoring.getOrderedPtmLocations()) {
-                
+
                     if (firstSite) {
-                    
+
                         firstSite = false;
-    
+
                     } else {
-                    
+
                         result.append(", ");
-                    
+
                     }
-                    
+
                     int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
-                    
-                    if (ptmConfidence == ModificationScoring.NOT_FOUND) {
-                    
-                        result.append(site).append(": Not Scored");
-                  
-                    } else if (ptmConfidence == ModificationScoring.RANDOM) {
-                    
-                        result.append(site).append(": Random");
-                    
-                    } else if (ptmConfidence == ModificationScoring.DOUBTFUL) {
-                    
-                        result.append(site).append(": Doubtfull");
-                    
-                    } else if (ptmConfidence == ModificationScoring.CONFIDENT) {
-                    
-                        result.append(site).append(": Confident");
-                    
-                    } else if (ptmConfidence == ModificationScoring.VERY_CONFIDENT) {
-                    
-                        result.append(site).append(": Very Confident");
-                    
+
+                    switch (ptmConfidence) {
+                        case ModificationScoring.NOT_FOUND:
+                            result.append(site).append(": Not Scored");
+                            break;
+                        case ModificationScoring.RANDOM:
+                            result.append(site).append(": Random");
+                            break;
+                        case ModificationScoring.DOUBTFUL:
+                            result.append(site).append(": Doubtfull");
+                            break;
+                        case ModificationScoring.CONFIDENT:
+                            result.append(site).append(": Confident");
+                            break;
+                        case ModificationScoring.VERY_CONFIDENT:
+                            result.append(site).append(": Very Confident");
+                            break;
+                        default:
+                            break;
                     }
                 }
-                
+
                 result.append(")");
-            
+
             }
 
             return result.toString();
-            
+
         }
-        
+
         return "";
     }
 
