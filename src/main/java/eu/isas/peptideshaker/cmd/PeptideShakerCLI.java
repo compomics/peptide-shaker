@@ -558,7 +558,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         ArrayList<File> identificationFilesInput = cliInputBean.getIdFiles();
         ArrayList<File> dataFolders = new ArrayList<>();
         ArrayList<File> spectrumFiles = cliInputBean.getSpectrumFiles();
-        File fastaFile = cliInputBean.getFastaFile();
+        File fastaFile = null;
 
         // export data from zip files, try to find the search parameter and mgf files
         ArrayList<File> identificationFiles = new ArrayList<>();
@@ -644,8 +644,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                             waitingHandler.appendReport("An error occurred while parsing the parameters file " + unzippedFile.getName() + ". " + getLogFileMessage(), true, true);
                             waitingHandler.setRunCanceled();
                         }
-                    } else if (nameLowerCase.endsWith(".fasta")) {
-                        fastaFile = unzippedFile;
                     }
                 }
             } else {
@@ -664,8 +662,16 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 if (name.endsWith(".mgf") && !names.contains(name)) {
                     spectrumFiles.add(file);
                     names.add(name);
+                }else if (name.endsWith(".fasta") && !names.contains(name)) {
+                    fastaFile = file;
+                    names.add(name);
                 }
             }
+        }
+        
+        // If there is a specific fasta file chosen, it is used insted of the one included in the searchgui zip
+        if (cliInputBean.getFastaFile()!=null){
+            fastaFile = cliInputBean.getFastaFile();
         }
 
         // get the identification parameters
