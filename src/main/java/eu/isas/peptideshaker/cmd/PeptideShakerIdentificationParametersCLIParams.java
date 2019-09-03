@@ -122,6 +122,7 @@ public class PeptideShakerIdentificationParametersCLIParams {
 
         output += "\n\nMS Amanda advanced parameters:\n\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_DECOY.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_DECOY.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_DECOY_RANKING.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_DECOY_RANKING.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_INSTRUMENT.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_INSTRUMENT.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_MAX_RANK.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_MAX_RANK.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_MONOISOTOPIC.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_MONOISOTOPIC.description + "\n";
@@ -132,6 +133,7 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_MAX_NEUTRAL_LOSSES.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_MAX_NEUTRAL_LOSSES.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_MAX_NEUTRAL_LOSSES_MODIFICATIONS.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_MAX_NEUTRAL_LOSSES_MODIFICATIONS.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_MIN_PEPTIDE_LENGTH.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_MIN_PEPTIDE_LENGTH.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_MAX_PEPTIDE_LENGTH.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_MAX_PEPTIDE_LENGTH.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_LOADED_PROTEINS.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_LOADED_PROTEINS   .description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_LOADED_SPECTRA.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_LOADED_SPECTRA.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_OUTPUT_FORMAT.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_OUTPUT_FORMAT.description + "\n";
