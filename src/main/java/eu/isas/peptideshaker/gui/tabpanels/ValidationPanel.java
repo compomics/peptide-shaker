@@ -124,7 +124,7 @@ public class ValidationPanel extends javax.swing.JPanel {
     /**
      * Map keeping track of probabilities modifications.
      */
-    private final HashMap<Integer, Boolean> modifiedMaps = new HashMap<>();
+    private final HashMap<String, Boolean> modifiedMaps = new HashMap<>();
     /**
      * The score log axis.
      */
@@ -155,9 +155,24 @@ public class ValidationPanel extends javax.swing.JPanel {
         groupSelectionScrollPaneScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, groupSelectionCorner);
 
         // add the default values to the group selection
-        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{1, "Proteins"});
-        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{2, "Peptides"});
-        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{3, "PSMs"});
+        if (null != parent.getProjectType()) {
+            switch (parent.getProjectType()) {
+                case protein:
+                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{1, "Proteins"});
+                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{2, "Peptides"});
+                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{3, "PSMs"});
+                    break;
+                case peptide:
+                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{2, "Peptides"});
+                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{3, "PSMs"});
+                    break;
+                case psm:
+                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{3, "PSMs"});
+                    break;
+                default:
+                    break;
+            }
+        }
 
         groupSelectionScrollPaneScrollPane.getViewport().setOpaque(false);
 
@@ -1280,7 +1295,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                             double lastThreshold = new Double(thresholdInput.getText());
                             updateResults(thresholdType, lastThreshold);
                             updateDisplayedComponents();
-                            modifiedMaps.put(groupSelectionTable.getSelectedRow(), true);
+                            modifiedMaps.put((String) groupSelectionTable.getValueAt(groupSelectionTable.getSelectedRow(), 1), true);
                             applyButton.setEnabled(true);
                             pepWindowApplied = false;
                         }
@@ -1311,9 +1326,9 @@ public class ValidationPanel extends javax.swing.JPanel {
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-            if (groupSelectionTable.getSelectedRow() == 0) {
+            if (((String) groupSelectionTable.getValueAt(groupSelectionTable.getSelectedRow(), 1)).equalsIgnoreCase("Protein")) {
                 applyProteins();
-            } else if (groupSelectionTable.getSelectedRow() == 1) {
+            } else if (((String) groupSelectionTable.getValueAt(groupSelectionTable.getSelectedRow(), 1)).equalsIgnoreCase("Peptide")) {
                 recalculateProteins();
             } else {
                 recalculatePeptidesAndProteins();
@@ -1463,22 +1478,22 @@ public class ValidationPanel extends javax.swing.JPanel {
                         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
 
                         MatchesValidator matchesValidator = new MatchesValidator(
-                                pSMaps.getPsmMap(), 
-                                pSMaps.getPeptideMap(), 
+                                pSMaps.getPsmMap(),
+                                pSMaps.getPeptideMap(),
                                 pSMaps.getProteinMap()
                         );
                         matchesValidator.validateIdentifications(
-                                peptideShakerGUI.getIdentification(), 
+                                peptideShakerGUI.getIdentification(),
                                 peptideShakerGUI.getMetrics(),
-                                pSMaps.getInputMap(), 
-                                progressDialog, 
-                                peptideShakerGUI.getExceptionHandler(), 
+                                pSMaps.getInputMap(),
+                                progressDialog,
+                                peptideShakerGUI.getExceptionHandler(),
                                 peptideShakerGUI.getIdentificationFeaturesGenerator(),
-                                peptideShakerGUI.getSequenceProvider(), 
-                                peptideShakerGUI.getProteinDetailsProvider(), 
+                                peptideShakerGUI.getSequenceProvider(),
+                                peptideShakerGUI.getProteinDetailsProvider(),
                                 peptideShakerGUI.getGeneMaps(),
-                                peptideShakerGUI.getIdentificationParameters(), 
-                                peptideShakerGUI.getProjectType(), 
+                                peptideShakerGUI.getIdentificationParameters(),
+                                peptideShakerGUI.getProjectType(),
                                 peptideShakerGUI.getProcessingParameters()
                         );
 
@@ -1491,10 +1506,10 @@ public class ValidationPanel extends javax.swing.JPanel {
                                 peptideShakerGUI.getSequenceProvider()
                         );
                         proteinProcessor.processProteins(
-                                new ModificationLocalizationScorer(), 
-                                peptideShakerGUI.getMetrics(), 
-                                progressDialog, 
-                                peptideShakerGUI.getExceptionHandler(), 
+                                new ModificationLocalizationScorer(),
+                                peptideShakerGUI.getMetrics(),
+                                progressDialog,
+                                peptideShakerGUI.getExceptionHandler(),
                                 peptideShakerGUI.getProcessingParameters()
                         );
 
@@ -2283,27 +2298,61 @@ public class ValidationPanel extends javax.swing.JPanel {
                 pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
 
                 int cpt = 0;
+                
+                if (null != peptideShakerGUI.getProjectType()) {
+                    switch (peptideShakerGUI.getProjectType()) {
+                        case protein:
+                            modifiedMaps.put("Proteins", false);
+                            ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "Proteins"});
+                            TargetDecoyMap targetDecoyMap = pSMaps.getProteinMap();
+                            TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                            originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
+                            originalThresholds.put(cpt, targetDecoyResults.getUserInput());
 
-                modifiedMaps.put(cpt, false);
-                ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "Proteins"});
-                TargetDecoyMap targetDecoyMap = pSMaps.getProteinMap();
-                TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
-                originalThresholds.put(cpt, targetDecoyResults.getUserInput());
+                            cpt++;
+                            modifiedMaps.put("Peptides", false);
+                            ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "Peptides"});
+                            targetDecoyMap = pSMaps.getPeptideMap();
+                            targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                            originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
+                            originalThresholds.put(cpt, targetDecoyResults.getUserInput());
 
-                modifiedMaps.put(++cpt, false);
-                ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "Peptides"});
-                targetDecoyMap = pSMaps.getPeptideMap();
-                targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
-                originalThresholds.put(cpt, targetDecoyResults.getUserInput());
+                            cpt++;
+                            modifiedMaps.put("PSMs", false);
+                            ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "PSMs"});
+                            targetDecoyMap = pSMaps.getPsmMap();
+                            targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                            originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
+                            originalThresholds.put(cpt, targetDecoyResults.getUserInput());
+                            break;
+                        case peptide:
+                            modifiedMaps.put("Peptides", false);
+                            ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "Peptides"});
+                            targetDecoyMap = pSMaps.getPeptideMap();
+                            targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                            originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
+                            originalThresholds.put(cpt, targetDecoyResults.getUserInput());
 
-                modifiedMaps.put(++cpt, false);
-                ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt, "PSMs"});
-                targetDecoyMap = pSMaps.getPsmMap();
-                targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
-                originalThresholds.put(cpt, targetDecoyResults.getUserInput());
+                            cpt++;
+                            modifiedMaps.put("PSMs", false);
+                            ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "PSMs"});
+                            targetDecoyMap = pSMaps.getPsmMap();
+                            targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                            originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
+                            originalThresholds.put(cpt, targetDecoyResults.getUserInput());
+                            break;
+                        case psm:
+                            modifiedMaps.put("PSMs", false);
+                            ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "PSMs"});
+                            targetDecoyMap = pSMaps.getPsmMap();
+                            targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                            originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
+                            originalThresholds.put(cpt, targetDecoyResults.getUserInput());
+                            break;
+                        default:
+                            break;
+                    }
+                }
 
                 if (groupSelectionTable.getRowCount() > 0) {
                     groupSelectionTable.setRowSelectionInterval(0, 0);
@@ -2356,20 +2405,20 @@ public class ValidationPanel extends javax.swing.JPanel {
 
         PSMaps pSMaps = new PSMaps();
         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-        int selectedGroup = groupSelectionTable.getSelectedRow();
+        String selectedGroup = (String) groupSelectionTable.getValueAt(groupSelectionTable.getSelectedRow(), 1);
 
-        if (selectedGroup == 0) {
+        if (selectedGroup.equalsIgnoreCase("Proteins")) {
 
             currentTargetDecoyMap = pSMaps.getProteinMap();
 
-            if (modifiedMaps.get(2)) {
+            if (modifiedMaps.get("PSMs")) {
                 int outcome = JOptionPane.showConfirmDialog(this,
                         "Probabilities modifications at the PSM level will influence protein results.\n"
                         + "Recalculate probabilities?", "Apply Changes?", JOptionPane.YES_NO_OPTION);
                 if (outcome == JOptionPane.YES_OPTION) {
                     recalculatePeptidesAndProteins();
                 }
-            } else if (modifiedMaps.get(1)) {
+            } else if (modifiedMaps.get("Peptides")) {
                 int outcome = JOptionPane.showConfirmDialog(this,
                         "Probabilities modifications at the peptide level will influence protein results.\n"
                         + "Recalculate probabilities?", "Apply Changes", JOptionPane.YES_NO_OPTION);
@@ -2377,11 +2426,11 @@ public class ValidationPanel extends javax.swing.JPanel {
                     recalculateProteins();
                 }
             }
-        } else if (selectedGroup == 1) {
+        } else if (selectedGroup.equalsIgnoreCase("Peptides")) {
 
             currentTargetDecoyMap = pSMaps.getPeptideMap();
 
-            if (modifiedMaps.get(2)) {
+            if (modifiedMaps.get("PSMs")) {
                 int outcome = JOptionPane.showConfirmDialog(this,
                         "Probabilities modifications at the PSM level will influence peptide results.\n"
                         + "Recalculate probabilities?", "Apply Changes?", JOptionPane.YES_NO_OPTION);
@@ -2763,7 +2812,7 @@ public class ValidationPanel extends javax.swing.JPanel {
      * Updates the cost benefit chart.
      */
     private void updateCostBenefitChart() {
-        
+
         DefaultXYDataset benefitData = new DefaultXYDataset();
         double[][] benefitSeries = {targetDecoySeries.getFDR(), targetDecoySeries.getBenefit()};
         benefitData.addSeries("Possible Coverage", benefitSeries);
@@ -2858,7 +2907,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                             peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProjectType());
 
                     // update the tracking of probabilities modifications
-                    for (int key : modifiedMaps.keySet()) {
+                    for (String key : modifiedMaps.keySet()) {
                         modifiedMaps.put(key, false);
                     }
 
@@ -2913,8 +2962,8 @@ public class ValidationPanel extends javax.swing.JPanel {
                     e.printStackTrace();
                 }
 
-                modifiedMaps.put(0, false);
-                modifiedMaps.put(1, false);
+                modifiedMaps.put("Proteins", false);
+                modifiedMaps.put("Peptides", false);
 
                 progressDialog.setRunFinished();
             }
@@ -2952,7 +3001,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                     PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters());
 
                     miniShaker.proteinMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSequenceProvider());
-                    modifiedMaps.put(0, false);
+                    modifiedMaps.put("Proteins", false);
 
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);

@@ -182,7 +182,6 @@
                         <Property name="selected" type="boolean" value="true"/>
                         <Property name="text" type="java.lang.String" value="Precursor m/z Error"/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmPrecursorMassErrorJRadioButtonActionPerformed"/>
@@ -195,7 +194,6 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Precursor Charge"/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmPrecursorChargeJRadioButtonActionPerformed"/>
@@ -395,7 +393,6 @@
                         <Property name="selected" type="boolean" value="true"/>
                         <Property name="text" type="java.lang.String" value="# Validated PSMs"/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideValidatedPsmsJRadioButtonActionPerformed"/>
@@ -408,7 +405,6 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Missed Cleavages"/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideMissedCleavagesJRadioButtonActionPerformed"/>
@@ -421,7 +417,6 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Peptide Length"/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideLengthJRadioButtonActionPerformed"/>
@@ -434,7 +429,6 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Modification Efficiency"/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideModificationEfficiencyJRadioButtonActionPerformed"/>
@@ -447,7 +441,6 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="# Modifications"/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideModificationsJRadioButtonActionPerformed"/>
@@ -460,7 +453,6 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Modification Specificity"/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideModificationSpecificityJRadioButtonActionPerformed"/>
@@ -729,7 +721,6 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="MS2 Quantification Scores"/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinSpectrumCountingScoreJRadioButtonActionPerformed"/>
@@ -743,7 +734,6 @@
                         <Property name="selected" type="boolean" value="true"/>
                         <Property name="text" type="java.lang.String" value="#Validated Peptides"/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinNumberValidatedPeptidesJRadioButtonActionPerformed"/>
@@ -756,7 +746,6 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Sequence Coverage"/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinSequenceCoverageJRadioButtonActionPerformed"/>
@@ -769,7 +758,6 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Sequence Length"/>
                         <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinSequenceLengthJRadioButtonActionPerformed"/>

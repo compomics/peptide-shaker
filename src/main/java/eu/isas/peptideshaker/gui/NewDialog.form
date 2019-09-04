@@ -171,7 +171,6 @@
                   <Connection code="new DefaultComboBoxModel&lt;String&gt;(ProjectType.getGuiOptions())" type="code"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Project type"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>

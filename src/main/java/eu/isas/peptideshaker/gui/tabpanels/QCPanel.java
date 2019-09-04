@@ -32,6 +32,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
+import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
@@ -1075,7 +1076,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void tabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabbedPaneStateChanged
-        if (peptideShakerGUI.getIdentification() != null && peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.QC_PLOTS_TAB_INDEX) {
+        if (peptideShakerGUI.getIdentification() != null && peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.QC_PLOTS_TAB_INDEX && validatedValues != null) {
             switch (tabbedPane.getSelectedIndex()) {
                 case 0:
                     // psms
@@ -1179,6 +1180,15 @@ public class QCPanel extends javax.swing.JPanel {
 
         if (peptideShakerGUI.getIdentification() != null) {
 
+            if (peptideShakerGUI.getProjectType() == ProjectType.peptide) {
+                tabbedPane.setEnabledAt(2, false);
+                tabbedPane.setSelectedIndex(1);
+            } else if (peptideShakerGUI.getProjectType() == ProjectType.psm) {
+                tabbedPane.setEnabledAt(1, false);
+                tabbedPane.setEnabledAt(2, false);
+                tabbedPane.setSelectedIndex(0);
+            }
+            
             currentProteinPlotType = PlotType.None;
             currentPeptidePlotType = PlotType.None;
             currentPsmPlotType = PlotType.None;
@@ -1811,7 +1821,7 @@ public class QCPanel extends javax.swing.JPanel {
             progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
             progressDialog.setValue(0);
 
-            // Values for the number of validated PSMs
+            // values for the number of validated PSMs
             validatedValues = new ArrayList<>();
             validatedDoubtfulValues = new ArrayList<>();
             nonValidatedValues = new ArrayList<>();
@@ -1941,7 +1951,7 @@ public class QCPanel extends javax.swing.JPanel {
             progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
             progressDialog.setValue(0);
 
-            // Values for the peptide length
+            // values for the peptide length
             validatedValues = new ArrayList<>();
             validatedDoubtfulValues = new ArrayList<>();
             nonValidatedValues = new ArrayList<>();
@@ -2003,7 +2013,7 @@ public class QCPanel extends javax.swing.JPanel {
 
         if (psmPrecursorMassErrorJRadioButton.isSelected()) {
 
-            // Values for the precursor mass deviation
+            // values for the precursor mass deviation
             validatedValues = new ArrayList<>();
             validatedDoubtfulValues = new ArrayList<>();
             nonValidatedValues = new ArrayList<>();
@@ -2053,7 +2063,7 @@ public class QCPanel extends javax.swing.JPanel {
             }
         } else if (psmPrecursorChargeJRadioButton.isSelected()) {
 
-            // Values for the precursor charge
+            // values for the precursor charge
             validatedValues = new ArrayList<>();
             validatedDoubtfulValues = new ArrayList<>();
             nonValidatedValues = new ArrayList<>();

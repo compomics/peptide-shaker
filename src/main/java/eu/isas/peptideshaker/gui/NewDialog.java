@@ -267,7 +267,6 @@ public class NewDialog extends javax.swing.JDialog {
 
         typeCmb.setModel(new DefaultComboBoxModel<String>(ProjectType.getGuiOptions()));
         typeCmb.setToolTipText("Project type");
-        typeCmb.setEnabled(false);
 
         javax.swing.GroupLayout projectDetailsPanelLayout = new javax.swing.GroupLayout(projectDetailsPanel);
         projectDetailsPanel.setLayout(projectDetailsPanelLayout);

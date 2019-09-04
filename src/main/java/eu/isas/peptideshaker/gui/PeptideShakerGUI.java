@@ -3965,14 +3965,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public void displayResults() {
 
-        // move to the Overview tab
-        allTabsJTabbedPane.setSelectedIndex(0);
-
         try {
-
+            
             sequenceCoverageJCheckBoxMenuItem.setSelected(true);
 
-            // Display the variable modifications
+            // display the variable modifications
             getDisplayParameters().setDefaultSelection(getIdentificationParameters().getSearchParameters().getModificationParameters());
 
             overviewPanel.setDisplayOptions(true, true, true, true);
@@ -4015,12 +4012,44 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             exportMzIdentMLMenuItem.setEnabled(true);
             exportProjectMenuItem.setEnabled(true);
 
-            // disable the fractions tab if only one mgf file
-            boolean fractions = getIdentification().getFractions().size() > 1;
-            allTabsJTabbedPane.setEnabledAt(PROTEIN_FRACTIONS_TAB_INDEX, fractions);
-            fractionDetailsJMenuItem.setEnabled(fractions);
+            // disable tabs and menu options depending on the selected mode
+            if (null != cpsParent.getProjectType()) {
+                switch (cpsParent.getProjectType()) {
+                    case protein:
+                        
+                        // disable the fractions tab if only one mgf file
+                        boolean fractions = getIdentification().getFractions().size() > 1;
+                        allTabsJTabbedPane.setEnabledAt(PROTEIN_FRACTIONS_TAB_INDEX, fractions);
+                        fractionDetailsJMenuItem.setEnabled(fractions);
+                        
+                        // move to the Overview tab
+                        allTabsJTabbedPane.setSelectedIndex(OVER_VIEW_TAB_INDEX);
+                        
+                        break;
+                    case peptide:
+                        
+                        break;
+                    case psm:
+                        allTabsJTabbedPane.setEnabledAt(OVER_VIEW_TAB_INDEX, false);
+                        allTabsJTabbedPane.setEnabledAt(SPECTRUM_ID_TAB_INDEX, true);
+                        allTabsJTabbedPane.setEnabledAt(PROTEIN_FRACTIONS_TAB_INDEX, false);
+                        allTabsJTabbedPane.setEnabledAt(MODIFICATIONS_TAB_INDEX, false);
+                        allTabsJTabbedPane.setEnabledAt(STRUCTURES_TAB_INDEX, false);
+                        allTabsJTabbedPane.setEnabledAt(ANNOTATION_TAB_INDEX, false);
+                        allTabsJTabbedPane.setEnabledAt(GO_ANALYSIS_TAB_INDEX, false);
+                        allTabsJTabbedPane.setEnabledAt(VALIDATION_TAB_INDEX, true); // but only for PSMs...
+                        allTabsJTabbedPane.setEnabledAt(QC_PLOTS_TAB_INDEX, true); // but only for PSMs...
+                        
+                        // move to the Overview tab
+                        allTabsJTabbedPane.setSelectedIndex(SPECTRUM_ID_TAB_INDEX);
+                        
+                        break;
+                    default:
+                        break;
+                }
+            }
 
-            // Disable the validation tab if no decoy was used
+            // disable the validation tab if no decoy was used
             boolean targetDecoy = getIdentificationParameters().getFastaParameters().isTargetDecoy();
             allTabsJTabbedPane.setEnabledAt(VALIDATION_TAB_INDEX, targetDecoy);
             validatedProteinsOnlyJCheckBoxMenuItem.setEnabled(targetDecoy);
@@ -5637,8 +5666,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param modNames the names of the modifications
      */
     public void updateAnnotationMenus(
-            SpecificAnnotationParameters specificAnnotationParameters, 
-            int precursorCharge, 
+            SpecificAnnotationParameters specificAnnotationParameters,
+            int precursorCharge,
             HashSet<String> modNames
     ) {
 
@@ -5836,7 +5865,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * spectrum, hit, and the menu selection
      */
     public SpecificAnnotationParameters getSpecificAnnotationParameters(
-            String spectrumKey, 
+            String spectrumKey,
             SpectrumIdentificationAssumption spectrumIdentificationAssumption
     ) {
 
@@ -6017,10 +6046,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * export options are shown
      */
     public void updateAnnotationMenuBarVisableOptions(
-            boolean showSpectrumOptions, 
+            boolean showSpectrumOptions,
             boolean showBubblePlotOptions,
-            boolean showIonTableOptions, 
-            boolean showPtmPlotOptions, 
+            boolean showIonTableOptions,
+            boolean showPtmPlotOptions,
             boolean showSingleSpectrumExportOptions
     ) {
 
@@ -6136,7 +6165,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param welcomeDialog the welcome dialog reference
      */
     public void loadRecentProjectsList(
-            JPopupMenu menu, 
+            JPopupMenu menu,
             WelcomeDialog welcomeDialog
     ) {
 
@@ -6234,7 +6263,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param destinationFolder the folder to download and unzip the project in
      */
     public void importPeptideShakerZipFromURL(
-            final String zipURL, 
+            final String zipURL,
             final String destinationFolder
     ) {
 
@@ -7109,9 +7138,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param displaySpectrum if the spectrum panel is to be displayed
      */
     public void setDisplayOptions(
-            boolean displayProteins, 
+            boolean displayProteins,
             boolean displayPeptidesAndPsms,
-            boolean displayCoverage, 
+            boolean displayCoverage,
             boolean displaySpectrum
     ) {
 
@@ -7491,20 +7520,20 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * selected
      */
     public File getUserSelectedFile(
-            String aSuggestedFileName, 
-            String aFileEnding, 
-            String aFileFormatDescription, 
-            String aDialogTitle, 
+            String aSuggestedFileName,
+            String aFileEnding,
+            String aFileFormatDescription,
+            String aDialogTitle,
             boolean openDialog
     ) {
 
         File selectedFile = Util.getUserSelectedFile(
-                this, 
-                aFileEnding, 
-                aFileFormatDescription, 
-                aDialogTitle, 
-                lastSelectedFolder.getLastSelectedFolder(), 
-                aSuggestedFileName, 
+                this,
+                aFileEnding,
+                aFileFormatDescription,
+                aDialogTitle,
+                lastSelectedFolder.getLastSelectedFolder(),
+                aSuggestedFileName,
                 openDialog
         );
 
