@@ -4017,12 +4017,22 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 switch (cpsParent.getProjectType()) {
                     case protein:
                         
+                        allTabsJTabbedPane.setEnabledAt(OVER_VIEW_TAB_INDEX, true);
+                        allTabsJTabbedPane.setEnabledAt(SPECTRUM_ID_TAB_INDEX, true);
+                        
                         // disable the fractions tab if only one mgf file
                         boolean fractions = getIdentification().getFractions().size() > 1;
                         allTabsJTabbedPane.setEnabledAt(PROTEIN_FRACTIONS_TAB_INDEX, fractions);
                         fractionDetailsJMenuItem.setEnabled(fractions);
                         
-                        // move to the Overview tab
+                        allTabsJTabbedPane.setEnabledAt(MODIFICATIONS_TAB_INDEX, true);
+                        allTabsJTabbedPane.setEnabledAt(STRUCTURES_TAB_INDEX, true);
+                        allTabsJTabbedPane.setEnabledAt(ANNOTATION_TAB_INDEX, true);
+                        allTabsJTabbedPane.setEnabledAt(GO_ANALYSIS_TAB_INDEX, true);
+                        allTabsJTabbedPane.setEnabledAt(VALIDATION_TAB_INDEX, true);
+                        allTabsJTabbedPane.setEnabledAt(QC_PLOTS_TAB_INDEX, true);
+                        
+                        // move to the overview tab
                         allTabsJTabbedPane.setSelectedIndex(OVER_VIEW_TAB_INDEX);
                         
                         break;
@@ -4040,7 +4050,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         // move to the spectrum ids tab
                         allTabsJTabbedPane.setSelectedIndex(SPECTRUM_ID_TAB_INDEX);
                         
-                        // @TODO: check menu options!!!
+                        // @TODO: check menu options!!
                         
                         break;
                     case psm:
@@ -4057,7 +4067,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         // move to the spectrum ids tab
                         allTabsJTabbedPane.setSelectedIndex(SPECTRUM_ID_TAB_INDEX);
                         
-                        // @TODO: check menu options!!!
+                        // @TODO: check menu options!!
                         
                         break;
                     default:
@@ -4881,7 +4891,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             repaintPanels();
 
             // select the overview tab
-            allTabsJTabbedPane.setSelectedIndex(OVER_VIEW_TAB_INDEX);
+            //allTabsJTabbedPane.setSelectedIndex(SPECTRUM_ID_TAB_INDEX);
 
         }
 
