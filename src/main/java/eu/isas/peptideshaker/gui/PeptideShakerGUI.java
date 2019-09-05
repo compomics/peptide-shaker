@@ -4027,6 +4027,20 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         
                         break;
                     case peptide:
+                        allTabsJTabbedPane.setEnabledAt(OVER_VIEW_TAB_INDEX, false); // @TODO: need to get this one to work for peptides only...
+                        allTabsJTabbedPane.setEnabledAt(SPECTRUM_ID_TAB_INDEX, true);
+                        allTabsJTabbedPane.setEnabledAt(PROTEIN_FRACTIONS_TAB_INDEX, false);
+                        allTabsJTabbedPane.setEnabledAt(MODIFICATIONS_TAB_INDEX, true);
+                        allTabsJTabbedPane.setEnabledAt(STRUCTURES_TAB_INDEX, false);
+                        allTabsJTabbedPane.setEnabledAt(ANNOTATION_TAB_INDEX, false);
+                        allTabsJTabbedPane.setEnabledAt(GO_ANALYSIS_TAB_INDEX, false);
+                        allTabsJTabbedPane.setEnabledAt(VALIDATION_TAB_INDEX, true);
+                        allTabsJTabbedPane.setEnabledAt(QC_PLOTS_TAB_INDEX, true);
+                        
+                        // move to the spectrum ids tab
+                        allTabsJTabbedPane.setSelectedIndex(SPECTRUM_ID_TAB_INDEX);
+                        
+                        // @TODO: check menu options!!!
                         
                         break;
                     case psm:
@@ -4037,11 +4051,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         allTabsJTabbedPane.setEnabledAt(STRUCTURES_TAB_INDEX, false);
                         allTabsJTabbedPane.setEnabledAt(ANNOTATION_TAB_INDEX, false);
                         allTabsJTabbedPane.setEnabledAt(GO_ANALYSIS_TAB_INDEX, false);
-                        allTabsJTabbedPane.setEnabledAt(VALIDATION_TAB_INDEX, true); // but only for PSMs...
-                        allTabsJTabbedPane.setEnabledAt(QC_PLOTS_TAB_INDEX, true); // but only for PSMs...
+                        allTabsJTabbedPane.setEnabledAt(VALIDATION_TAB_INDEX, true);
+                        allTabsJTabbedPane.setEnabledAt(QC_PLOTS_TAB_INDEX, true);
                         
-                        // move to the Overview tab
+                        // move to the spectrum ids tab
                         allTabsJTabbedPane.setSelectedIndex(SPECTRUM_ID_TAB_INDEX);
+                        
+                        // @TODO: check menu options!!!
                         
                         break;
                     default:
