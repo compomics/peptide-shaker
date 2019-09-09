@@ -503,11 +503,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
         final String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
         String textFileFilterDescription = "Tab separated text file (.txt)";
-        String gzipFileFilterDescription = "gzipped tab separated text file (.gz)";
+        String gzipFileFilterDescription = "Gzipped tab separated text file (.gz)";
         String excelFileFilterDescription = "Excel Workbook (.xls)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
         FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".xls", ".txt", ".gz"},
-                new String[]{excelFileFilterDescription, textFileFilterDescription, gzipFileFilterDescription}, "Export Report", lastSelectedFolderPath, schemeName, false, true, false, 0);
+                new String[]{excelFileFilterDescription, textFileFilterDescription, gzipFileFilterDescription}, "Export Report", lastSelectedFolderPath, schemeName, false, true, false, 1);
 
         if (selectedFileAndFilter != null) {
 
