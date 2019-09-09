@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.gui.export.MzIdentMLExportDialog;
 
 /**
@@ -24,6 +25,13 @@ public class SaveDialog extends javax.swing.JDialog {
         super(peptideShakerGUI, modal);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
+        
+        if (peptideShakerGUI.getProjectType() != ProjectType.protein) {
+            exportPrideJButton.setEnabled(false);
+            exportPrideLabel.setEnabled(false);
+            exportPrideJButton.setToolTipText("Not available for your PeptideShaker project type");
+        }
+        
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }

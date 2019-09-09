@@ -4009,7 +4009,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             spectrumSlidersCheckBoxMenuItem.setSelected(getUserParameters().showSliders());
 
             projectExportMenu.setEnabled(true);
-            exportMzIdentMLMenuItem.setEnabled(true);
             exportProjectMenuItem.setEnabled(true);
 
             // disable tabs and menu options depending on the selected mode
@@ -4035,6 +4034,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         // move to the overview tab
                         allTabsJTabbedPane.setSelectedIndex(OVER_VIEW_TAB_INDEX);
                         
+                        exportMzIdentMLMenuItem.setEnabled(true);
+                        exportMzIdentMLMenuItem.setToolTipText("Export the project as mzIdentML");
+                        
                         break;
                     case peptide:
                         allTabsJTabbedPane.setEnabledAt(OVER_VIEW_TAB_INDEX, false); // @TODO: need to get this one to work for peptides only...
@@ -4050,7 +4052,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         // move to the spectrum ids tab
                         allTabsJTabbedPane.setSelectedIndex(SPECTRUM_ID_TAB_INDEX);
                         
-                        // @TODO: check menu options!!
+                        exportMzIdentMLMenuItem.setEnabled(false);
+                        exportMzIdentMLMenuItem.setToolTipText("Not available for your PeptideShaker project type");
                         
                         break;
                     case psm:
@@ -4067,7 +4070,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         // move to the spectrum ids tab
                         allTabsJTabbedPane.setSelectedIndex(SPECTRUM_ID_TAB_INDEX);
                         
-                        // @TODO: check menu options!!
+                        exportMzIdentMLMenuItem.setEnabled(false);
+                        exportMzIdentMLMenuItem.setToolTipText("Not available for your PeptideShaker project type");
                         
                         break;
                     default:
