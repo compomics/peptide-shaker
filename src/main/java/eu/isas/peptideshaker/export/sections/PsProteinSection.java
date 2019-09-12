@@ -392,7 +392,7 @@ public class PsProteinSection {
                 mainAccession = proteinMatch.getLeadingAccession();
                 sequence = sequenceProvider.getSequence(mainAccession);
                 return identificationFeaturesGenerator.getAmbiguousModificationSites(proteinMatch, sequence);
-
+                    
             case ambiguous_modification_sites_number:
 
                 return identificationFeaturesGenerator.getAmbiguousModificationSiteNumber(proteinMatch);
