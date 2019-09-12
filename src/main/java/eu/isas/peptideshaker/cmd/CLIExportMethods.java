@@ -14,6 +14,7 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.MzIdentMLExport;
+import eu.isas.peptideshaker.export.MgfIndexExport;
 import eu.isas.peptideshaker.followup.FastaExport;
 import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.ProgenesisExport;
@@ -347,5 +348,28 @@ public class CLIExportMethods {
 
         mzIdentMLExport.createMzIdentMLFile(mzidCLIInputBean.getMzIdentMLVersion());
 
+    }
+    
+    
+    
+    /**
+     * Exports the mgf indexes from a list of mgf files or from a PeptideShaker project.
+     *
+     * @param mgfIndexCLIInputBean the user input
+     * @param cpsParent a .psdb file parent allowing accessing the information it
+     * contains
+     * @param waitingHandler a waiting handler allowing display of progress and
+     * interruption of the export
+     *
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     */
+    public static void exportMgfIndex(MgfIndexCLIInputBean mgfIndexCLIInputBean, CpsParent cpsParent, WaitingHandler waitingHandler)
+            throws IOException {
+        
+        MgfIndexExport mgfIndexExport = new MgfIndexExport(mgfIndexCLIInputBean.getZipExport(), 
+                mgfIndexCLIInputBean.getExportFolder(), mgfIndexCLIInputBean.getSpectrumFiles(), 
+                mgfIndexCLIInputBean.getInputPsdbFile(), waitingHandler);
+        
     }
 }
