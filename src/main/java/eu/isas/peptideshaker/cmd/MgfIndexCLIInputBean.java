@@ -44,9 +44,9 @@ public class MgfIndexCLIInputBean {
     
 
     /**
-     * Parses a MzidCLI command line and stores the input in the attributes.
+     * Parses a MgfIndexCLI command line and stores the input in the attributes.
      *
-     * @param aLine a MzidCLI command line
+     * @param aLine a MgfIndexCLI command line
      */
     public MgfIndexCLIInputBean(CommandLine aLine) throws IOException {
 
