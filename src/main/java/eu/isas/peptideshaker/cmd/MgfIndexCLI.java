@@ -1,14 +1,8 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
-import com.compomics.util.experiment.biology.modifications.ModificationFactory;
-import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
-import com.compomics.util.parameters.UtilitiesUserParameters;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.utils.CpsParent;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -24,7 +18,7 @@ import org.apache.commons.cli.Options;
  * @author Harald Barsnes
  * @author Carlos horro
  */
-public class MgfIndexCLI extends CpsParent {
+public class MgfIndexCLI{
 
     /**
      * The mgf index creation options.
@@ -39,9 +33,8 @@ public class MgfIndexCLI extends CpsParent {
 
     /**
      * Construct a new MgfIndexCLI runnable from a MgfIndexCLI input bean. When
-     * initialization is successful, calling "run" with a PeptideShaker project 
-     * will open it, get its spectra and write its indexes. Callin "run" with 
-     * specific spectrum files will just use SpectrumFactory to generate their
+     * initialization is successful, calling "run" with 
+     * spectrum files will use SpectrumFactory to generate their
      * indexes and write them.
      *
      * @param mgfIndexCLIInputBean the mgf index creation options
@@ -58,107 +51,34 @@ public class MgfIndexCLI extends CpsParent {
     public Object call() {
         
         waitingHandler = new WaitingHandlerCLIImpl();
-
-        String inputFilePath = null;
         
-        try {
-            if (mgfIndexCLIInputBean.getInputZipFile() != null) {
-                inputFilePath = mgfIndexCLIInputBean.getInputZipFile().getAbsolutePath();
-                loadCpsFromZipFile(mgfIndexCLIInputBean.getInputZipFile(), PeptideShaker.getMatchesFolder(), waitingHandler);
-            } else if (mgfIndexCLIInputBean.getInputPsdbFile() != null) {
-                inputFilePath = mgfIndexCLIInputBean.getInputPsdbFile().getAbsolutePath();
-                cpsFile = mgfIndexCLIInputBean.getInputPsdbFile();
-                loadCpsFile(PeptideShaker.getMatchesFolder(), waitingHandler);
-            } else {
-                if ( (mgfIndexCLIInputBean.getSpectrumFiles() == null) ){
-                    waitingHandler.appendReport("PeptideShaker project input and spectrum files are missing.", true, true);
-                    return 1;
-                } 
+        SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+        ArrayList<File> spectrumFiles = mgfIndexCLIInputBean.getSpectrumFiles();
+        try{
+
+            if (waitingHandler != null) {
+                waitingHandler.setWaitingText("Getting Spectrum Files. Please Wait...");
+                waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+                waitingHandler.setSecondaryProgressCounter(0);
+                waitingHandler.setMaxSecondaryProgressCounter(spectrumFiles.size());
             }
-        } catch (IOException e) {
-            waitingHandler.appendReport("An error occurred while reading: " + inputFilePath + ".", true, true);
+            for(File spectrumFile : spectrumFiles){
+                spectrumFactory.addSpectra(spectrumFile, waitingHandler);
+            }  
+        }catch (IOException e) {
+            waitingHandler.appendReport("An error occurred while loading spectra.", true, true);
             e.printStackTrace();
-            try {
-                PeptideShakerCLI.closePeptideShaker(identification);
-            } catch (Exception e2) {
-                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-                e2.printStackTrace();
-            }
             return 1;
         }
-        // psdb or zip files...
-        if ( mgfIndexCLIInputBean.getInputZipFile() != null || mgfIndexCLIInputBean.getInputPsdbFile() != null ){
-            // load the spectrum files
-            try {
-                
-                if (!loadSpectrumFiles(waitingHandler)) {
-                    if (identification.getFractions().size() > 1) {
-                        waitingHandler.appendReport("The spectrum files were not found. Please provide their location in the command line parameters.", true, true);
-                    } else {
-                        waitingHandler.appendReport("The spectrum file was not found. Please provide its location in the command line parameters.", true, true);
-                    }
-                    try {
-                        PeptideShakerCLI.closePeptideShaker(identification);
-                    } catch (Exception e2) {
-                        waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-                        e2.printStackTrace();
-                    }
-                    return 1;
-                }
-            } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while loading the spectrum file(s).", true, true);
-                e.printStackTrace();
-                try {
-                    PeptideShakerCLI.closePeptideShaker(identification);
-                } catch (Exception e2) {
-                    waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-                    e2.printStackTrace();
-                }
-                return 1;
-            }
-            
-        }else{  // specified spectrum files...
-            SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-            ArrayList<File> spectrumFiles = mgfIndexCLIInputBean.getSpectrumFiles();
-            try{
-
-                if (waitingHandler != null) {
-                    waitingHandler.setWaitingText("Getting Spectrum Files. Please Wait...");
-                    waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-                    waitingHandler.setSecondaryProgressCounter(0);
-                    waitingHandler.setMaxSecondaryProgressCounter(spectrumFiles.size());
-                }
-                for(File spectrumFile : spectrumFiles){
-                    spectrumFactory.addSpectra(spectrumFile, waitingHandler);
-                }  
-            }catch (IOException e) {
-                waitingHandler.appendReport("An error occurred while loading spectra.", true, true);
-                e.printStackTrace();
-                try {
-                    PeptideShakerCLI.closePeptideShaker(identification);
-                } catch (Exception e2) {
-                    waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-                    e2.printStackTrace();
-                }
-                return 1;
-            }
-        }    
 
         try {
-            CLIExportMethods.exportMgfIndex(mgfIndexCLIInputBean, this, waitingHandler);
+            CLIExportMethods.exportMgfIndex(mgfIndexCLIInputBean, waitingHandler);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while creating the index files.", true, true);
             e.printStackTrace();
             waitingHandler.setRunCanceled();
         } 
-
-        try {
-            PeptideShakerCLI.closePeptideShaker(identification);
-        } catch (Exception e2) {
-            waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-            e2.printStackTrace();
-        }
-
+        
         if (!waitingHandler.isRunCanceled()) {
             waitingHandler.appendReport("Mgf indexes export completed.", true, true);
             System.exit(0);
@@ -204,23 +124,7 @@ public class MgfIndexCLI extends CpsParent {
                 System.out.println("\n" + mgfIndexCLIParam.description + " not specified.\n");
                 return false;
             }
-        }
-        
-        
-        String psdbFileTxt = aLine.getOptionValue(MgfIndexCLIParams.PSDB_FILE.id);
-        File psdbTestFile = null;
-        if (psdbFileTxt!=null)
-            psdbTestFile = new File(psdbFileTxt.trim());
-        
-        if (aLine.hasOption(MgfIndexCLIParams.PSDB_FILE.id) && aLine.hasOption(MgfIndexCLIParams.SPECTRUM_FILES.id)){
-            System.out.println("\n'" + MgfIndexCLIParams.PSDB_FILE.id + "\' and '"+MgfIndexCLIParams.SPECTRUM_FILES.id +"' options cannot be chosen together.\n");
-            return false;
-        }
-        
-        if (!aLine.hasOption(MgfIndexCLIParams.PSDB_FILE.id) && !aLine.hasOption(MgfIndexCLIParams.SPECTRUM_FILES.id)){
-            System.out.println("\n'" + MgfIndexCLIParams.PSDB_FILE.id + "\' or '"+MgfIndexCLIParams.SPECTRUM_FILES.id +"' options must be used.\n");
-            return false;
-        }
+        }       
         
         if (aLine.hasOption(MgfIndexCLIParams.EXPORT_FOLDER.id) && aLine.hasOption(MgfIndexCLIParams.EXPORT_ZIP.id)){
             System.out.println("\n'" + MgfIndexCLIParams.EXPORT_FOLDER.id + "\' and '"+MgfIndexCLIParams.EXPORT_ZIP.id +"' options cannot be chosen together.\n");
@@ -229,11 +133,6 @@ public class MgfIndexCLI extends CpsParent {
         
         if (!aLine.hasOption(MgfIndexCLIParams.EXPORT_FOLDER.id) && !aLine.hasOption(MgfIndexCLIParams.EXPORT_ZIP.id)){
             System.out.println("\n'" + MgfIndexCLIParams.EXPORT_FOLDER.id + "\' or '"+MgfIndexCLIParams.EXPORT_ZIP.id +"' options must be used.\n");
-            return false;
-        }
-        
-        if (aLine.hasOption(MgfIndexCLIParams.PSDB_FILE.id) && (psdbTestFile == null || !psdbTestFile.exists()) ) {
-            System.out.println("\n" + MgfIndexCLIParams.PSDB_FILE.id + " \'" + psdbTestFile.getAbsolutePath() + "\' not found.\n");
             return false;
         }
         
@@ -251,21 +150,16 @@ public class MgfIndexCLI extends CpsParent {
             }
         }
         
-        
-        if (aLine.hasOption(MgfIndexCLIParams.SPECTRUM_FILES.id) ) {
-            String spectrumFilesTxt = aLine.getOptionValue(MgfIndexCLIParams.SPECTRUM_FILES.id);
+        if (aLine.hasOption(MgfIndexCLIParams.MGF_FILES.id) ) {
+            String spectrumFilesTxt = aLine.getOptionValue(MgfIndexCLIParams.MGF_FILES.id);
             try{
                 ArrayList<File> spectrumFiles = MgfIndexCLIInputBean.getSpectrumFiles(spectrumFilesTxt);
             }catch(IOException ioe){
-                System.out.println("\n" + MgfIndexCLIParams.SPECTRUM_FILES.id + " not properly specified or without any file.\n");
+                System.out.println("\n" + MgfIndexCLIParams.MGF_FILES.id + " not properly specified or without any file.\n");
                 return false;
 
             }
         }
-        
-        
-        
-        
 
         return true;
     }

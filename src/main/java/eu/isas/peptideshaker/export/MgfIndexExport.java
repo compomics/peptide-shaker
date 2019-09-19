@@ -33,14 +33,13 @@ public class MgfIndexExport {
      * @param destinationZipFile the destination compressed file
      * @param destinationFolder the destination folder
      * @param spectrumFiles the spectrum files
-     * @param cpsFile the psdb file
      * @param waitingHandler a waiting handler to display progress to the user
      * and cancel the process (can be null)
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing the file
      */
-    public MgfIndexExport(File destinationZipFile, File destinationFolder, ArrayList<File> spectrumFiles, File cpsFile, WaitingHandler waitingHandler) throws IOException {
+    public MgfIndexExport(File destinationZipFile, File destinationFolder, ArrayList<File> spectrumFiles, WaitingHandler waitingHandler) throws IOException {
         if (spectrumFiles == null)
             spectrumFiles = new ArrayList<File>();
         

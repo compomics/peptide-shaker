@@ -356,20 +356,18 @@ public class CLIExportMethods {
      * Exports the mgf indexes from a list of mgf files or from a PeptideShaker project.
      *
      * @param mgfIndexCLIInputBean the user input
-     * @param cpsParent a .psdb file parent allowing accessing the information it
-     * contains
      * @param waitingHandler a waiting handler allowing display of progress and
      * interruption of the export
      *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
      */
-    public static void exportMgfIndex(MgfIndexCLIInputBean mgfIndexCLIInputBean, CpsParent cpsParent, WaitingHandler waitingHandler)
+    public static void exportMgfIndex(MgfIndexCLIInputBean mgfIndexCLIInputBean, WaitingHandler waitingHandler)
             throws IOException {
         
         MgfIndexExport mgfIndexExport = new MgfIndexExport(mgfIndexCLIInputBean.getZipExport(), 
                 mgfIndexCLIInputBean.getExportFolder(), mgfIndexCLIInputBean.getSpectrumFiles(), 
-                mgfIndexCLIInputBean.getInputPsdbFile(), waitingHandler);
+                waitingHandler);
         
     }
 }

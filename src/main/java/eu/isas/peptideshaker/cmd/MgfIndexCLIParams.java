@@ -11,10 +11,9 @@ import org.apache.commons.cli.Options;
  */
 public enum MgfIndexCLIParams {
 
-    PSDB_FILE("in", "PeptideShaker project (.psdb file).", true, false),
-    SPECTRUM_FILES("spectrum_files", "Spectrum files (mgf format), comma separated list or an entire folder. This or '"+PSDB_FILE.id+"' option must be used. ", true, false),
-    EXPORT_ZIP("zip", "Exports the mgf index files into the specified zip file.", true, false),
-    EXPORT_FOLDER("out_folder", "Output folder for mgf index files (existing files will be overwritten). This or '"+EXPORT_ZIP.id+"' option must be used.", true, false);
+    MGF_FILES("mgf_files", "Spectrum files (with mgf format), comma separated list or an entire folder. ", true, true),
+    EXPORT_ZIP("output_zip", "Exports the mgf index files into the specified zip file.", true, false),
+    EXPORT_FOLDER("output_folder", "Output folder for mgf index files (existing files will be overwritten). This or '"+EXPORT_ZIP.id+"' option must be used.", true, false);
 
     /**
      * Short Id for the CLI parameter.
@@ -72,6 +71,13 @@ public enum MgfIndexCLIParams {
         String output = "";
         String formatter = "%-35s";
 
+        output += "Mandatory Parameters:\n\n";
+        for (MgfIndexCLIParams mgfIndexCLIParams : values()) {
+            if (mgfIndexCLIParams.mandatory) {
+                output += "-" + String.format(formatter, mgfIndexCLIParams.id) + " " + mgfIndexCLIParams.description + "\n";
+            }
+        }
+        
         output += "\n\nOptional Parameters:\n";
         for (MgfIndexCLIParams mgfIndexCLIParams : values()) {
             if (!mgfIndexCLIParams.mandatory) {

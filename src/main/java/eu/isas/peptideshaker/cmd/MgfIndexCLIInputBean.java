@@ -18,14 +18,6 @@ import org.apache.commons.cli.CommandLine;
 public class MgfIndexCLIInputBean {
 
     /**
-     * The PeptideShaker psdb file.
-     */
-    private File inputPsdbFile;
-    /**
-     * The zip file.
-     */
-    private File inputZipFile = null;
-    /**
      * The spectrum files.
      */
     private ArrayList<File> spectrumFiles = new ArrayList<>();   
@@ -51,20 +43,9 @@ public class MgfIndexCLIInputBean {
     public MgfIndexCLIInputBean(CommandLine aLine) throws IOException {
 
         
-        if (aLine.hasOption(MgfIndexCLIParams.SPECTRUM_FILES.id)) {
-            String filesTxt = aLine.getOptionValue(MgfIndexCLIParams.SPECTRUM_FILES.id);
+        if (aLine.hasOption(MgfIndexCLIParams.MGF_FILES.id)) {
+            String filesTxt = aLine.getOptionValue(MgfIndexCLIParams.MGF_FILES.id);
             spectrumFiles = getSpectrumFiles(filesTxt);
-        }
-        
-        if (aLine.hasOption(MgfIndexCLIParams.PSDB_FILE.id)) {
-            String file = aLine.getOptionValue(MgfIndexCLIParams.PSDB_FILE.id);
-            if (file.toLowerCase().endsWith(".psdb")) {
-                inputPsdbFile = new File(file);
-            } else if (file.toLowerCase().endsWith(".zip")) {
-                inputZipFile = new File(file);
-            } else {
-                throw new IllegalArgumentException("Unknown file format \'" + file + "\' for PeptideShaker project input.");
-            }
         }
         
         // zipped export
@@ -96,24 +77,6 @@ public class MgfIndexCLIInputBean {
      */
     public void setSpectrumFiles(ArrayList<File> spectrumFiles) {
         this.spectrumFiles = spectrumFiles;
-    }
-    
-    /**
-     * Returns the psdb file.
-     *
-     * @return the psdb file
-     */
-    public File getInputPsdbFile() {
-        return inputPsdbFile;
-    }
-
-    /**
-     * The zip file selected by the user. Null if not set.
-     *
-     * @return zip file selected by the user
-     */
-    public File getInputZipFile() {
-        return inputZipFile;
     }
 
     /**
