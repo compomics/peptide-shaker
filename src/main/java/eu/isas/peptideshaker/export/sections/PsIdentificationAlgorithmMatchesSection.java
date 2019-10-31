@@ -588,8 +588,7 @@ public class PsIdentificationAlgorithmMatchesSection {
 
                 modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                 modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-                HashSet<String> modToExport = new HashSet(modificationParameters.getVariableModifications());
-                return peptideAssumption.getPeptide().getTaggedModifiedSequence(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, false, false, true, modToExport);
+                return peptideAssumption.getPeptide().getTaggedModifiedSequence(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, false, false, true, null);
 
             case spectrum_charge:
 

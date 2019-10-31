@@ -371,9 +371,8 @@ public class PsPeptideSection {
 
                 modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                 modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-                HashSet<String> modToExport = new HashSet(modificationParameters.getVariableModifications());
                 return peptideMatch.getPeptide()
-                        .getTaggedModifiedSequence(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, false, false, true, modToExport);
+                        .getTaggedModifiedSequence(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, false, false, true, null);
 
             case starred:
 

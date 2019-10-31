@@ -689,7 +689,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
                             ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                             SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-                            String modifiedSequence = peptideMatch.getPeptide().getTaggedModifiedSequence(modificationParameters, peptideShakerGUI.getSequenceProvider(), modificationSequenceMatchingParameters, false, false, true, peptideShakerGUI.getDisplayParameters().getDisplayedModifications());
+                            String modifiedSequence = peptideMatch.getPeptide().getTaggedModifiedSequence(modificationParameters, peptideShakerGUI.getSequenceProvider(), 
+                                    modificationSequenceMatchingParameters, false, false, true, peptideShakerGUI.getDisplayParameters().getDisplayedModifications());
 
                             // write the peptide node
                             if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
