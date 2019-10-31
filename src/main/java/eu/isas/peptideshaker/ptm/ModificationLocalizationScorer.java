@@ -906,18 +906,18 @@ public class ModificationLocalizationScorer extends DbObject {
 
                         }
 
-                        ArrayList<ModificationMatch> newModificatoinMatches = newMatches.get(modMass);
+                        ArrayList<ModificationMatch> modificatoinMatchesTemp = newMatches.get(modMass);
 
-                        if (newModificatoinMatches == null) {
+                        if (modificatoinMatchesTemp == null) {
 
-                            newModificatoinMatches = new ArrayList<>(1);
-                            newMatches.put(modMass, newModificatoinMatches);
+                            modificatoinMatchesTemp = new ArrayList<>(1);
+                            newMatches.put(modMass, modificatoinMatchesTemp);
 
                         }
 
-                        newModificatoinMatches.add(newMatch);
+                        modificatoinMatchesTemp.add(newMatch);
 
-                        if (newModificatoinMatches.size() > variableModifications.get(modMass)) {
+                        if (modificatoinMatchesTemp.size() > variableModifications.get(modMass)) {
 
                             throw new IllegalArgumentException("More sites than modifications on peptide " + peptideMatch.getKey() + " for modification of mass " + modMass + ".");
                         }
@@ -925,8 +925,6 @@ public class ModificationLocalizationScorer extends DbObject {
 
                     if (representativeSite != 0 && representativeSite != peptideSequence.length() + 1) {
 
-                        siteToModMap.remove(0);
-                        siteToModMap.remove(peptideSequence.length() + 1);
                         peptideScores.addAmbiguousModificationSites(representativeSite, siteToModMap);
 
                     }
@@ -2660,11 +2658,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                 HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> representativeToSecondaryMap;
 
-                try {
                     representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousScoreToSiteMap, nRepresentativesMap);
-                } catch (Exception e) {
-                    representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousScoreToSiteMap, nRepresentativesMap);
-                }
 
                 for (HashMap<Integer, HashMap<Integer, HashSet<String>>> massMap : representativeToSecondaryMap.values()) {
 
