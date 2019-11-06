@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
  * The PeptideShaker export factory
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class PSExportFactory implements ExportFactory {
 
@@ -384,7 +385,7 @@ public class PSExportFactory implements ExportFactory {
                 case PsProteinFeature.type:
                     
                         PsProteinSection psProteinSection = new PsProteinSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                        psProteinSection.writeSection(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, psmKeys, nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
+                        psProteinSection.writeSection(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, proteinKeys, nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
                         break;
                         
                 case PsPsmFeature.type:

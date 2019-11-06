@@ -11,19 +11,20 @@ import java.util.Arrays;
  */
 public enum PsPeptideFeature implements ExportFeature {
 
+    starred("Starred", "Indicates whether the match was starred in the interface (1: yes, 0: no).", false),
+    pi("Protein Inference", "The protein inference status of this peptide.", false),
     accessions("Protein(s)", "All Protein(s) to which this peptide can map.", false),
     protein_description("Description(s)", "Description of the protein(s) to which this peptide can map.", false),
     protein_groups("Protein Group(s)", "List of identified protein groups this peptide can map to with associated validation level.", true),
     best_protein_group_validation("Protein Validation", "Best validation status among the protein groups this peptide maps to.", true),
     nValidatedProteinGroups("#Validated Protein Group(s)", "Indicates the number of protein groups this peptide maps to.", false),
-    unique_group("Unique Group", "Indicates whether the peptide maps to a unique protein group.", false),
-    pi("Protein Inference", "The protein inference status of this peptide.", false),
+    unique_group("Unique Protein Group", "Indicates whether the peptide maps to a unique protein group.", false),
     sequence("Sequence", "Sequence of the peptide.", false),
-    missed_cleavages("Missed Cleavages", "The number of missed cleavages.", false),
     modified_sequence("Modified Sequence", "The peptide sequence annotated with variable modifications.", false),
     position("Position", "Position of the peptide in the protein sequence(s).", false),
     aaBefore("AAs Before", "The amino acids before the sequence.", false),
     aaAfter("AAs After", "The amino acids after the sequence.", false),
+    missed_cleavages("Missed Cleavages", "The number of missed cleavages.", false),
     variable_ptms("Variable Modifications", "The variable modifications.", false),
     fixed_ptms("Fixed Modifications", "The fixed modifications.", false),
     localization_confidence("Localization Confidence", "The confidence in PTMs localization.", false),
@@ -37,14 +38,13 @@ public enum PsPeptideFeature implements ExportFeature {
     confident_phosphosites_number("#Confident Phosphosites", "Number of confidently localized phosphorylations.", false),
     ambiguous_phosphosites("Ambiguous Phosphosites", "List of the sites where a phosphorylation was ambiguously localized.", false),
     ambiguous_phosphosites_number("#Ambiguous Phosphosites", "Number of ambiguously localized phosphorylations.", false),
-    validated_psms("#Validated PSMs", "Number of validated PSMs.", false),
     psms("#PSMs", "Number of PSMs.", false),
-    score("Score", "Score of the peptide.", true),
+    validated_psms("#Validated PSMs", "Number of validated PSMs.", false),
     raw_score("Raw Score", "Peptide score before log transform.", true),
+    score("Score", "Score of the peptide.", true),
     confidence("Confidence [%]", "Confidence in percent associated to the peptide.", false),
     decoy("Decoy", "Indicates whether the peptide is a decoy (1: yes, 0: no).", false),
     validated("Validation", "Indicates the validation level of the peptide.", false),
-    starred("Starred", "Indicates whether the match was starred in the interface (1: yes, 0: no).", false),
     hidden("Hidden", "Indicates whether the match was hidden in the interface (1: yes, 0: no).", false);
 
     /**

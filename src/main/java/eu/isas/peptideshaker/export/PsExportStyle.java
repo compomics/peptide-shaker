@@ -3,17 +3,21 @@ package eu.isas.peptideshaker.export;
 import com.compomics.util.io.export.WorkbookStyle;
 import com.compomics.util.io.export.writers.ExcelWriter;
 import java.util.HashMap;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 
 /**
  * This class contains the style for a PeptideShaker excel export.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class PsExportStyle implements WorkbookStyle {
 
@@ -88,18 +92,18 @@ public class PsExportStyle implements WorkbookStyle {
         f.setFontHeightInPoints((short) 8);
         standardHeader = workbook.createCellStyle();
         standardHeader.setFont(f);
-        standardHeader.setBorderBottom(CellStyle.BORDER_THIN);
-        standardHeader.setBorderTop(CellStyle.BORDER_THIN);
-        standardHeader.setBorderLeft(CellStyle.BORDER_THIN);
-        standardHeader.setBorderRight(CellStyle.BORDER_THIN);
-        standardHeader.setAlignment(CellStyle.ALIGN_CENTER);
-        standardHeader.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-        standardHeader.setFillForegroundColor(HSSFColor.PALE_BLUE.index);
-        standardHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        standardHeader.setBorderBottom(BorderStyle.THIN);
+        standardHeader.setBorderTop(BorderStyle.THIN);
+        standardHeader.setBorderLeft(BorderStyle.THIN);
+        standardHeader.setBorderRight(BorderStyle.THIN);
+        standardHeader.setAlignment(HorizontalAlignment.CENTER);
+        standardHeader.setVerticalAlignment(VerticalAlignment.CENTER);
+        standardHeader.setFillForegroundColor(HSSFColor.HSSFColorPredefined.PALE_BLUE.getIndex());
+        standardHeader.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         // Change PALE_BLUE to actually pale blue
         HSSFPalette palette = workbook.getCustomPalette();
-        palette.setColorAtIndex(HSSFColor.PALE_BLUE.index,
+        palette.setColorAtIndex(HSSFColor.HSSFColorPredefined.PALE_BLUE.getIndex(),
                 (byte) 200,
                 (byte) 200,
                 (byte) 250
@@ -110,53 +114,53 @@ public class PsExportStyle implements WorkbookStyle {
 
         CellStyle subHeader = workbook.createCellStyle();
         subHeader.setFont(f);
-        subHeader.setBorderBottom(CellStyle.BORDER_THIN);
-        subHeader.setBorderTop(CellStyle.BORDER_THIN);
-        subHeader.setBorderLeft(CellStyle.BORDER_THIN);
-        subHeader.setBorderRight(CellStyle.BORDER_THIN);
-        subHeader.setAlignment(CellStyle.ALIGN_CENTER);
-        subHeader.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-        subHeader.setFillForegroundColor(HSSFColor.GREY_50_PERCENT.index);
-        palette.setColorAtIndex(HSSFColor.GREY_50_PERCENT.index,
+        subHeader.setBorderBottom(BorderStyle.THIN);
+        subHeader.setBorderTop(BorderStyle.THIN);
+        subHeader.setBorderLeft(BorderStyle.THIN);
+        subHeader.setBorderRight(BorderStyle.THIN);
+        subHeader.setAlignment(HorizontalAlignment.CENTER);
+        subHeader.setVerticalAlignment(VerticalAlignment.CENTER);
+        subHeader.setFillForegroundColor(HSSFColor.HSSFColorPredefined.GREY_50_PERCENT.getIndex());
+        palette.setColorAtIndex(HSSFColor.HSSFColorPredefined.GREY_50_PERCENT.getIndex(),
                 (byte) 220,
                 (byte) 220,
                 (byte) 250
         );
-        subHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        subHeader.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         hierarchicalHeaders.put(1, subHeader);
 
         subHeader = workbook.createCellStyle();
         subHeader.setFont(f);
-        subHeader.setBorderBottom(CellStyle.BORDER_THIN);
-        subHeader.setBorderTop(CellStyle.BORDER_THIN);
-        subHeader.setBorderLeft(CellStyle.BORDER_THIN);
-        subHeader.setBorderRight(CellStyle.BORDER_THIN);
-        subHeader.setAlignment(CellStyle.ALIGN_CENTER);
-        subHeader.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-        subHeader.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
-        palette.setColorAtIndex(HSSFColor.GREY_40_PERCENT.index,
+        subHeader.setBorderBottom(BorderStyle.THIN);
+        subHeader.setBorderTop(BorderStyle.THIN);
+        subHeader.setBorderLeft(BorderStyle.THIN);
+        subHeader.setBorderRight(BorderStyle.THIN);
+        subHeader.setAlignment(HorizontalAlignment.CENTER);
+        subHeader.setVerticalAlignment(VerticalAlignment.CENTER);
+        subHeader.setFillForegroundColor(HSSFColor.HSSFColorPredefined.GREY_40_PERCENT.getIndex());
+        palette.setColorAtIndex(HSSFColor.HSSFColorPredefined.GREY_40_PERCENT.getIndex(),
                 (byte) 230,
                 (byte) 230,
                 (byte) 250
         );
-        subHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        subHeader.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         hierarchicalHeaders.put(2, subHeader);
 
         subHeader = workbook.createCellStyle();
         subHeader.setFont(f);
-        subHeader.setBorderBottom(CellStyle.BORDER_THIN);
-        subHeader.setBorderTop(CellStyle.BORDER_THIN);
-        subHeader.setBorderLeft(CellStyle.BORDER_THIN);
-        subHeader.setBorderRight(CellStyle.BORDER_THIN);
-        subHeader.setAlignment(CellStyle.ALIGN_CENTER);
-        subHeader.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-        subHeader.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
-        palette.setColorAtIndex(HSSFColor.GREY_25_PERCENT.index,
+        subHeader.setBorderBottom(BorderStyle.THIN);
+        subHeader.setBorderTop(BorderStyle.THIN);
+        subHeader.setBorderLeft(BorderStyle.THIN);
+        subHeader.setBorderRight(BorderStyle.THIN);
+        subHeader.setAlignment(HorizontalAlignment.CENTER);
+        subHeader.setVerticalAlignment(VerticalAlignment.CENTER);
+        subHeader.setFillForegroundColor(HSSFColor.HSSFColorPredefined.GREY_25_PERCENT.getIndex());
+        palette.setColorAtIndex(HSSFColor.HSSFColorPredefined.GREY_25_PERCENT.getIndex(),
                 (byte) 240,
                 (byte) 240,
                 (byte) 250
         );
-        subHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        subHeader.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         for (int i = 3; i < 100; i++) {
             hierarchicalHeaders.put(i, subHeader);
         }

@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
+import com.compomics.util.FileAndFileFilter;
+import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
@@ -22,8 +24,15 @@ import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanelParent;
 import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
+import com.compomics.util.io.export.ExportFeature;
+import com.compomics.util.io.export.ExportFormat;
+import com.compomics.util.io.export.ExportScheme;
+import eu.isas.peptideshaker.export.PSExportFactory;
+import eu.isas.peptideshaker.export.exportfeatures.PsProteinFeature;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -263,8 +272,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 // update the table model
                 if (proteinTable.getModel() instanceof ProteinTableModel && ((ProteinTableModel) proteinTable.getModel()).isInstantiated()) {
                     ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
-                                peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getSequenceProvider(),
-                                peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), proteinKeys);
+                            peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getSequenceProvider(),
+                            peptideShakerGUI.getGeneMaps(), peptideShakerGUI.getDisplayFeaturesGenerator(), proteinKeys);
                 } else {
                     ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
                             peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getGeneMaps(),
@@ -1334,7 +1343,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                     } else {
                         peptideShakerGUI.getStarHider().unStarProtein(proteinKey);
                     }
-        peptideShakerGUI.setDataSaved(false);
+                    peptideShakerGUI.setDataSaved(false);
                 }
 
                 // open protein link in web browser
@@ -1792,7 +1801,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     /**
      * Export the table contents to the file.
      *
-     * @param index
+     * @param index the table index
      */
     private void copyTableContentToClipboardOrFile(TableIndex index) {
 
@@ -1800,11 +1809,126 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         if (tableIndex == TableIndex.PROTEIN_TABLE) {
 
-            if (tableIndex == TableIndex.PROTEIN_TABLE) {
-                long[] selectedProteins = getDisplayedProteins();
-                // @TODO: implement standard export
-                JOptionPane.showMessageDialog(peptideShakerGUI, "The table export feature has not yet been reimplmented.", "Not Yet Reimplemented", JOptionPane.INFORMATION_MESSAGE);
-                throw new UnsupportedOperationException("Export not implemented.");
+            HashMap<String, ArrayList<ExportFeature>> exportFeatures = new HashMap<>();
+            ArrayList<ExportFeature> sectionContent = new ArrayList<>();
+
+            String textFileFilterDescription = "Tab separated text file (.txt)";
+            String gzipFileFilterDescription = "Gzipped tab separated text file (.gz)";
+            String excelFileFilterDescription = "Excel Workbook (.xls)";
+            String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
+
+            FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".xls", ".txt", ".gz"},
+                    new String[]{excelFileFilterDescription, textFileFilterDescription, gzipFileFilterDescription}, "Export Report", lastSelectedFolderPath, "Protein table", false, true, false, 1);
+
+            if (selectedFileAndFilter != null) {
+
+                final File selectedFile = selectedFileAndFilter.getFile();
+                final ExportFormat exportFormat;
+                final boolean gzip;
+                if (selectedFileAndFilter.getFileFilter().getDescription().equalsIgnoreCase(textFileFilterDescription)) {
+                    exportFormat = ExportFormat.text;
+                    gzip = false;
+                } else if (selectedFileAndFilter.getFileFilter().getDescription().equalsIgnoreCase(gzipFileFilterDescription)) {
+                    exportFormat = ExportFormat.text;
+                    gzip = true;
+                } else {
+                    exportFormat = ExportFormat.excel;
+                    gzip = false;
+                }
+
+                progressDialog = new ProgressDialogX(peptideShakerGUI,
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                        true);
+                progressDialog.setTitle("Exporting Data. Please Wait...");
+
+                final String filePath = selectedFile.getPath();
+
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            progressDialog.setVisible(true);
+                        } catch (IndexOutOfBoundsException e) {
+                            // ignore
+                        }
+                    }
+                }, "ProgressDialog").start();
+
+                new Thread("ExportThread") {
+                    @Override
+                    public void run() {
+
+                        try {
+
+                            sectionContent.add(PsProteinFeature.starred);
+                            sectionContent.add(PsProteinFeature.pi);
+                            sectionContent.add(PsProteinFeature.accession);
+                            sectionContent.add(PsProteinFeature.protein_description);
+                            sectionContent.add(PsProteinFeature.protein_group);
+                            sectionContent.add(PsProteinFeature.descriptions);
+                            sectionContent.add(PsProteinFeature.other_proteins);
+                            sectionContent.add(PsProteinFeature.chromosome);
+                            sectionContent.add(PsProteinFeature.coverage);
+                            sectionContent.add(PsProteinFeature.confident_coverage);
+                            sectionContent.add(PsProteinFeature.possible_coverage);
+                            sectionContent.add(PsProteinFeature.validated_peptides);
+                            sectionContent.add(PsProteinFeature.peptides);
+                            sectionContent.add(PsProteinFeature.unique_peptides);
+                            sectionContent.add(PsProteinFeature.unique_validated_peptides);
+                            sectionContent.add(PsProteinFeature.validated_psms);
+                            sectionContent.add(PsProteinFeature.psms);
+                            sectionContent.add(PsProteinFeature.spectrum_counting_nsaf);
+                            sectionContent.add(PsProteinFeature.spectrum_counting_empai);
+                            sectionContent.add(PsProteinFeature.spectrum_counting_nsaf_percent);
+                            sectionContent.add(PsProteinFeature.spectrum_counting_empai_percent);
+                            sectionContent.add(PsProteinFeature.spectrum_counting_nsaf_ppm);
+                            sectionContent.add(PsProteinFeature.spectrum_counting_empai_ppm);
+                            sectionContent.add(PsProteinFeature.spectrum_counting_nsaf_fmol);
+                            sectionContent.add(PsProteinFeature.spectrum_counting_empai_fmol);
+                            sectionContent.add(PsProteinFeature.mw);
+                            sectionContent.add(PsProteinFeature.confidence);
+                            sectionContent.add(PsProteinFeature.validated);
+                            exportFeatures.put(PsProteinFeature.type, sectionContent);
+
+                            ExportScheme validatedProteinReport = new ExportScheme("Protein Table", false, exportFeatures, "\t", true, true, 0, false, false, false);
+
+                            PSExportFactory.writeExport(validatedProteinReport, selectedFile, exportFormat, gzip, peptideShakerGUI.getProjectParameters().getProjectUniqueName(),
+                                    peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
+                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), getDisplayedProteins(), null, null,
+                                    peptideShakerGUI.getDisplayParameters().getnAASurroundingPeptides(), peptideShakerGUI.getIdentificationParameters(),
+                                    peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getSpectrumCountingParameters(), progressDialog);
+
+                            boolean processCancelled = progressDialog.isRunCanceled();
+                            progressDialog.setRunFinished();
+
+                            if (!processCancelled) {
+                                JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported", JOptionPane.INFORMATION_MESSAGE);
+                            }
+                        } catch (FileNotFoundException e) {
+                            progressDialog.setRunFinished();
+                            JOptionPane.showMessageDialog(peptideShakerGUI,
+                                    "An error occurred while generating the output. Please make sure "
+                                    + "that the destination file is not opened by another application.", "Output Error", JOptionPane.ERROR_MESSAGE);
+                            e.printStackTrace();
+                        } catch (IllegalArgumentException e) {
+                            if (e.getMessage().contains("Invalid row number (65536)")) {
+                                progressDialog.setRunFinished();
+                                JOptionPane.showMessageDialog(peptideShakerGUI,
+                                        "An error occurred while generating the output. This format can contain only 65,535 lines.\n" // @TODO: update the excel export library?
+                                        + "Please use a text export instead.", "Output Error", JOptionPane.ERROR_MESSAGE);
+                                e.printStackTrace();
+                            } else {
+                                progressDialog.setRunFinished();
+                                JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error", JOptionPane.ERROR_MESSAGE);
+                                e.printStackTrace();
+                            }
+                        } catch (Exception e) {
+                            progressDialog.setRunFinished();
+                            JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error", JOptionPane.ERROR_MESSAGE);
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
             }
         }
     }

@@ -1221,7 +1221,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      */
     private String getLastSelectedFolder() {
         LastSelectedFolder lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();
-        String folder = lastSelectedFolder.getLastSelectedFolder(ExportWriter.lastFolderKey);
+        String folder = lastSelectedFolder.getLastSelectedFolder(ExportWriter.LAST_FOLDER_KEY);
         if (folder == null) {
             folder = lastSelectedFolder.getLastSelectedFolder();
         }
@@ -1234,7 +1234,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      * @param folder the path to the folder
      */
     private void setLastSelectedFolder(String folder) {
-        peptideShakerGUI.getLastSelectedFolder().setLastSelectedFolder(ExportWriter.lastFolderKey, folder);
+        peptideShakerGUI.getLastSelectedFolder().setLastSelectedFolder(ExportWriter.LAST_FOLDER_KEY, folder);
     }
 
     /**

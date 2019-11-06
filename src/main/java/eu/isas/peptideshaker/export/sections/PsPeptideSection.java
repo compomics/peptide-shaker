@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -559,7 +558,7 @@ public class PsPeptideSection {
     public static String getPeptideLocalizationText(String proteinAccession, int[] sites) {
 
         String sitesString = Arrays.stream(sites)
-                .mapToObj(site -> Integer.toString(site))
+                .mapToObj(site -> Integer.toString(site + 1))
                 .collect(Collectors.joining(","));
 
         StringBuilder sb = new StringBuilder(proteinAccession.length() + sitesString.length() + 3);

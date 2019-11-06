@@ -42,17 +42,17 @@ import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelD
 import eu.isas.peptideshaker.gui.PtmSiteInferenceDialog;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import javax.swing.*;
@@ -4764,87 +4764,117 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
         final TableIndex tableIndex = index;
 
-        if (tableIndex == TableIndex.MODIFIED_PEPTIDES_TABLE
-                || tableIndex == TableIndex.RELATED_PEPTIDES_TABLE
-                || tableIndex == TableIndex.MODIFIED_PSMS_TABLE
-                || tableIndex == TableIndex.RELATED_PSMS_TABLE
-                || tableIndex == TableIndex.PTM_TABLE
-                || tableIndex == TableIndex.A_SCORES_TABLE
-                || tableIndex == TableIndex.DELTA_SCORES_TABLE) {
+        String exportName = "export";
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
-            progressDialog.setPrimaryProgressCounterIndeterminate(true);
-            progressDialog.setTitle("Copying to File/Clipboard. Please Wait...");
+        switch (tableIndex) {
 
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        progressDialog.setVisible(true);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore
+            case MODIFIED_PEPTIDES_TABLE:
+                exportName = "Modified peptides table";
+                break;
+            case RELATED_PEPTIDES_TABLE:
+                exportName = "Related peptides table";
+                break;
+            case MODIFIED_PSMS_TABLE:
+                exportName = "Modified PSMs table";
+                break;
+            case RELATED_PSMS_TABLE:
+                exportName = "Related PSMs table";
+                break;
+            case PTM_TABLE:
+                exportName = "PSM table";
+                break;
+            case A_SCORES_TABLE:
+                exportName = "A score table";
+                break;
+            case DELTA_SCORES_TABLE:
+                exportName = "Delta score table";
+                break;
+            default:
+                break;
+        }
+
+        // get the file to send the output to
+        File selectedFile = peptideShakerGUI.getUserSelectedFile(exportName, ".txt", "Tab separated text file (.txt)", "Export...", false);
+
+        if (selectedFile != null) {
+
+            if (tableIndex == TableIndex.MODIFIED_PEPTIDES_TABLE
+                    || tableIndex == TableIndex.RELATED_PEPTIDES_TABLE
+                    || tableIndex == TableIndex.MODIFIED_PSMS_TABLE
+                    || tableIndex == TableIndex.RELATED_PSMS_TABLE
+                    || tableIndex == TableIndex.PTM_TABLE
+                    || tableIndex == TableIndex.A_SCORES_TABLE
+                    || tableIndex == TableIndex.DELTA_SCORES_TABLE) {
+
+                progressDialog = new ProgressDialogX(peptideShakerGUI,
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                        true);
+                progressDialog.setPrimaryProgressCounterIndeterminate(true);
+                progressDialog.setTitle("Copying to File. Please Wait...");
+
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            progressDialog.setVisible(true);
+                        } catch (IndexOutOfBoundsException e) {
+                            // ignore
+                        }
                     }
-                }
-            }).start();
+                }).start();
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
 
-                        String clipboardString = null;
+                            BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
 
-                        if (null != tableIndex) switch (tableIndex) {
-                            case MODIFIED_PEPTIDES_TABLE:
-                                // @TODO: implement standard export
-                                JOptionPane.showMessageDialog(peptideShakerGUI, "The table export feature has not yet been reimplmented.", "Not Yet Reimplemented", JOptionPane.INFORMATION_MESSAGE);
-                                throw new UnsupportedOperationException("Export not implemented.");
-                            case RELATED_PEPTIDES_TABLE:
-                                // @TODO: implement standard export
-                                JOptionPane.showMessageDialog(peptideShakerGUI, "The table export feature has not yet been reimplmented.", "Not Yet Reimplemented", JOptionPane.INFORMATION_MESSAGE);
-                                throw new UnsupportedOperationException("Export not implemented.");
-                            case MODIFIED_PSMS_TABLE:
-                                // @TODO: implement standard export
-                                JOptionPane.showMessageDialog(peptideShakerGUI, "The table export feature has not yet been reimplmented.", "Not Yet Reimplemented", JOptionPane.INFORMATION_MESSAGE);
-                                throw new UnsupportedOperationException("Export not implemented.");
-                            case RELATED_PSMS_TABLE:
-                                // @TODO: implement standard export
-                                JOptionPane.showMessageDialog(peptideShakerGUI, "The table export feature has not yet been reimplmented.", "Not Yet Reimplemented", JOptionPane.INFORMATION_MESSAGE);
-                                throw new UnsupportedOperationException("Export not implemented.");
-                            case PTM_TABLE:
-                                clipboardString = "not implemented..."; // @TODO: implement? (the contextual menu does not include the export option)
-                                break;
-                            case A_SCORES_TABLE:
-                                clipboardString = Util.tableToText(psmAScoresTable, "\t", progressDialog, false);
-                                break;
-                            case DELTA_SCORES_TABLE:
-                                clipboardString = Util.tableToText(psmDeltaScoresTable, "\t", progressDialog, false);
-                                break;
-                            default:
-                                break;
+                            if (null != tableIndex) {
+
+                                switch (tableIndex) {
+                                    case MODIFIED_PEPTIDES_TABLE:
+                                        Util.tableToFile(peptidesTable, "\t", progressDialog, true, writer); // @TODO: replace by the PSExportFactory
+                                        break;
+                                    case RELATED_PEPTIDES_TABLE:
+                                        Util.tableToFile(relatedPeptidesTable, "\t", progressDialog, true, writer); // @TODO: replace by the PSExportFactory
+                                        break;
+                                    case MODIFIED_PSMS_TABLE:
+                                        Util.tableToFile(selectedPsmsTable, "\t", progressDialog, true, writer); // @TODO: replace by the PSExportFactory
+                                        break;
+                                    case RELATED_PSMS_TABLE:
+                                        Util.tableToFile(relatedPsmsTable, "\t", progressDialog, true, writer); // @TODO: replace by the PSExportFactory
+                                        break;
+                                    case PTM_TABLE:
+                                        // @TODO: implement? (the contextual menu does not currently include the export option)
+                                        break;
+                                    case A_SCORES_TABLE:
+                                        Util.tableToFile(psmAScoresTable, "\t", progressDialog, false, writer);
+                                        break;
+                                    case DELTA_SCORES_TABLE:
+                                        Util.tableToFile(psmDeltaScoresTable, "\t", progressDialog, false, writer);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+
+                            writer.close();
+
+                            boolean processCancelled = progressDialog.isRunCanceled();
+                            progressDialog.setRunFinished();
+
+                            if (!processCancelled) {
+                                JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getAbsolutePath(), "Data Exported", JOptionPane.INFORMATION_MESSAGE);
+                            }
+                        } catch (Exception e) {
+                            progressDialog.setRunFinished();
+                            JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error", JOptionPane.ERROR_MESSAGE);
+                            e.printStackTrace();
                         }
-
-                        if (!progressDialog.isRunCanceled() && clipboardString != null) {
-                            StringSelection stringSelection = new StringSelection(clipboardString);
-                            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                            clipboard.setContents(stringSelection, peptideShakerGUI);
-                        }
-
-                        boolean processCancelled = progressDialog.isRunCanceled();
-                        progressDialog.setRunFinished();
-
-                        if (!processCancelled && clipboardString != null) {
-                            JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
-                        }
-                    } catch (Exception e) {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
                     }
-                }
-            }).start();
+                }).start();
+            }
         }
     }
 

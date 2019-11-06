@@ -538,7 +538,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         // First check whether a file has already been selected.
         // If so, start from that file's parent.
         LastSelectedFolder lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();
-        String folder = lastSelectedFolder.getLastSelectedFolder(ExportWriter.lastFolderKey);
+        String folder = lastSelectedFolder.getLastSelectedFolder(ExportWriter.LAST_FOLDER_KEY);
         if (folder == null) {
             folder = lastSelectedFolder.getLastSelectedFolder();
         }
@@ -595,7 +595,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
             mzIdentMLVersion = MzIdentMLVersion.getMzIdentMLVersion(index);
 
-            lastSelectedFolder.setLastSelectedFolder(ExportWriter.lastFolderKey, folder);
+            lastSelectedFolder.setLastSelectedFolder(ExportWriter.LAST_FOLDER_KEY, folder);
             outputFolderJTextField.setText(path);
         }
 

@@ -280,7 +280,7 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
         if (validateInput()) {
 
             LastSelectedFolder lastSelectedFolder = followupPreferencesDialog.getPeptideShakerGUI().getLastSelectedFolder();
-            String folder = lastSelectedFolder.getLastSelectedFolder(ExportWriter.lastFolderKey);
+            String folder = lastSelectedFolder.getLastSelectedFolder(ExportWriter.LAST_FOLDER_KEY);
             if (folder == null) {
                 folder = lastSelectedFolder.getLastSelectedFolder();
             }
