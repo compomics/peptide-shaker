@@ -1823,14 +1823,14 @@ public class ModificationLocalizationScorer extends DbObject {
 
                 Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                 String sequence = peptide.getSequence();
-
+                
                 long nMod = Arrays.stream(peptide.getVariableModifications())
                         .map(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()))
                         .filter(modification -> modification.getMass() == modMass)
                         .count();
-
+                
                 HashSet<Integer> oldLocalizations = Arrays.stream(peptide.getVariableModifications())
-                        .filter(modificationMatch -> modificationMatch.getConfident() && modificationMatch.getInferred())
+                        .filter(modificationMatch -> modificationMatch.getConfident() || modificationMatch.getInferred())
                         .filter(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()).getMass() == modMass)
                         .map(ModificationMatch::getSite)
                         .collect(Collectors.toCollection(HashSet::new));
@@ -1843,7 +1843,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                     // See if we can explain this peptide by another already identified peptide with the same number of modifications (the two peptides will be merged)
                     HashSet<Long> keys = modConfidentPeptides.get(sequence);
-
+                    
                     if (keys != null) {
 
                         for (long tempKey : keys) {
@@ -1859,7 +1859,7 @@ public class ModificationLocalizationScorer extends DbObject {
                             if (tempNMod == nMod) {
 
                                 ArrayList<Integer> tempLocalizations = Arrays.stream(tempPeptide.getVariableModifications())
-                                        .filter(modificationMatch -> modificationMatch.getConfident() && modificationMatch.getInferred())
+                                        .filter(modificationMatch -> modificationMatch.getConfident() || modificationMatch.getInferred())
                                         .filter(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()).getMass() == modMass)
                                         .map(ModificationMatch::getSite)
                                         .collect(Collectors.toCollection(ArrayList::new));
@@ -1884,7 +1884,7 @@ public class ModificationLocalizationScorer extends DbObject {
                                 Peptide tempPeptide = secondaryMatch.getBestPeptideAssumption().getPeptide();
 
                                 ArrayList<Integer> tempLocalizations = Arrays.stream(tempPeptide.getVariableModifications())
-                                        .filter(modificationMatch -> modificationMatch.getConfident() && modificationMatch.getInferred())
+                                        .filter(modificationMatch -> modificationMatch.getConfident() || modificationMatch.getInferred())
                                         .filter(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()).getMass() == modMass)
                                         .map(ModificationMatch::getSite)
                                         .collect(Collectors.toCollection(ArrayList::new));
@@ -1916,7 +1916,7 @@ public class ModificationLocalizationScorer extends DbObject {
                                     Peptide tempPeptide = secondaryMatch.getBestPeptideAssumption().getPeptide();
 
                                     ArrayList<Integer> tempLocalizations = Arrays.stream(tempPeptide.getVariableModifications())
-                                            .filter(modificationMatch -> modificationMatch.getConfident() && modificationMatch.getInferred())
+                                            .filter(modificationMatch -> modificationMatch.getConfident() || modificationMatch.getInferred())
                                             .filter(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()).getMass() == modMass)
                                             .map(ModificationMatch::getSite)
                                             .collect(Collectors.toCollection(ArrayList::new));
@@ -1992,7 +1992,7 @@ public class ModificationLocalizationScorer extends DbObject {
                                     Peptide tempPeptide = secondaryMatch.getBestPeptideAssumption().getPeptide();
 
                                     ArrayList<Integer> tempLocalizations = Arrays.stream(tempPeptide.getVariableModifications())
-                                            .filter(modificationMatch -> modificationMatch.getConfident() && modificationMatch.getInferred())
+                                            .filter(modificationMatch -> modificationMatch.getConfident() || modificationMatch.getInferred())
                                             .filter(modificationMatch -> modificationFactory.getModification(modificationMatch.getModification()).getMass() == modMass)
                                             .map(ModificationMatch::getSite)
                                             .collect(Collectors.toCollection(ArrayList::new));
