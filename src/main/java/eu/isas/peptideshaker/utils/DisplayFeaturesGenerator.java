@@ -486,23 +486,24 @@ public class DisplayFeaturesGenerator {
 
                 StringBuilder tempTooltip = new StringBuilder(); // @TODO: should be a way of doing this without needing this second string builder..?
                 ModificationUtils.appendTaggedResidue(tempTooltip, aminoAcid, confidentMod, ambiguousMod, null, fixedMod, modificationParameters, true, true);
+
+                tempTooltip.append(": ");
+
+                if (fixedMod != null) {
+                    tempTooltip.append(fixedMod).append(" (fixed)<br>");
+                }
+                if (confidentMod != null) {
+                    tempTooltip.append(confidentMod).append(" (confident)<br>");
+                }
+                if (ambiguousMod != null) {
+                    tempTooltip.append(ambiguousMod).append(" (not confident)<br>");
+                }
+
                 String currentResidueAnnotation = tempTooltip.toString();
 
                 if (!alreadyAnnotated.contains(currentResidueAnnotation)) {
-
-                    tooltip.append(currentResidueAnnotation).append(": ");
-
-                    if (fixedMod != null) {
-                        tooltip.append(fixedMod).append(" (fixed)<br>");
-                    } 
-                    if (confidentMod != null) {
-                        tooltip.append(confidentMod).append(" (confident)<br>");
-                    } 
-                    if (ambiguousMod != null) {
-                        tooltip.append(ambiguousMod).append(" (not confident)<br>");
-                    }
-
-                    alreadyAnnotated.add(tempTooltip.toString());
+                    tooltip.append(currentResidueAnnotation);
+                    alreadyAnnotated.add(currentResidueAnnotation);
                 }
 
             }
