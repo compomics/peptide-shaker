@@ -122,7 +122,6 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
 import java.io.*;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -145,6 +144,7 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.processing.ProteinProcessor;
+import java.net.ConnectException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -8064,14 +8064,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             // no internet connection
             System.out.println("Checking for new version failed. No internet connection.");
             return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+        } catch (ConnectException ex) {
+            // connection refused
+            System.out.println("Checking for new version failed. Connection refused.");
             return false;
         } catch (Exception e) {
-            System.out.println("Checking for new version failed. Unknown error.");
+            e.printStackTrace();
             return false;
         }
     }

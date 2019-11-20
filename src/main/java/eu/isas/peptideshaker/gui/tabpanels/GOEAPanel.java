@@ -39,7 +39,6 @@ import java.io.*;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.RowSorterEvent;
@@ -2134,17 +2133,24 @@ public class GOEAPanel extends javax.swing.JPanel {
                         GeneMaps geneMaps = peptideShakerGUI.getGeneMaps();
                         HashSet<String> goProteins = geneMaps.getProteinsForGoTerm(selectedGoAccession);
                         Identification identification = peptideShakerGUI.getIdentification();
+                        
+                        ArrayList<Long> proteinKeys = new ArrayList<>(goProteins.size());
+                        HashMap<String, HashSet<Long>> proteinMap = identification.getProteinMap();
 
-                        ArrayList<Long> proteinKeys = goProteins.stream()
-                                .flatMap(accession -> identification.getProteinMap().get(accession).stream())
-                                .distinct()
-                                .collect(Collectors.toCollection(ArrayList::new));
+                        for (String goProtein : goProteins) {
+                            HashSet<Long> tempKeys = proteinMap.get(goProtein);
+                            if (tempKeys != null) {
+                                proteinKeys.addAll(tempKeys);
+                            }
+                        }                       
 
                         // update the table
                         if (proteinTable.getModel() instanceof ProteinGoTableModel) {
                             ((ProteinGoTableModel) proteinTable.getModel()).updateDataModel(proteinKeys);
                         } else {
-                            ProteinGoTableModel proteinTableModel = new ProteinGoTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getDisplayFeaturesGenerator(), proteinKeys, peptideShakerGUI.getDisplayParameters().showScores());
+                            ProteinGoTableModel proteinTableModel = new ProteinGoTableModel(peptideShakerGUI.getIdentification(), 
+                                    peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getIdentificationFeaturesGenerator(), 
+                                    peptideShakerGUI.getDisplayFeaturesGenerator(), proteinKeys, peptideShakerGUI.getDisplayParameters().showScores());
                             proteinTable.setModel(proteinTableModel);
                         }
 
