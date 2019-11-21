@@ -666,6 +666,8 @@ public class DisplayFeaturesGenerator {
 
         String peptideSequence = peptide.getSequence();
 
+        String[] allFixedModifications = peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+        String[] allVariableModifications = peptide.getIndexedVariableModifications();
         String[] fixedModifications = getDisplayedModifications(
                 peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters), displayParameters.getDisplayedModifications());
         String[] confidentVariableModifications = modificationScores == null ? new String[peptideSequence.length() + 2]
@@ -674,6 +676,7 @@ public class DisplayFeaturesGenerator {
                 : getFilteredAmbiguousModificationsRepresentativeSites(modificationScores, displayParameters.getDisplayedModifications(), peptideSequence.length());
 
         return PeptideUtils.getTaggedModifiedSequence(peptide, modificationParameters,
+                allFixedModifications, allVariableModifications,
                 confidentVariableModifications, ambiguousVariableModificationsRepresentative, null,
                 fixedModifications, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
     }

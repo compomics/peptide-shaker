@@ -226,6 +226,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 confidentLocations[aa] = null;
                 
             }
+
             if (secondarySelection[i]) {
                 
                 representativeAmbiguousLocations[aa] = modName;
@@ -237,7 +238,9 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
             }
         }
 
-        String taggedModifiedSequence = PeptideUtils.getTaggedModifiedSequence(peptide, modificationParameters, confidentLocations, representativeAmbiguousLocations, null, fixedModifications, true, true, true);
+        String taggedModifiedSequence = PeptideUtils.getTaggedModifiedSequence(peptide, modificationParameters, 
+                peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters),
+                peptide.getIndexedVariableModifications(), confidentLocations, representativeAmbiguousLocations, null, fixedModifications, true, true, true);
         sequenceLabel.setText(taggedModifiedSequence);
 
     }
