@@ -157,13 +157,18 @@
         <h3>Sequence Coverage</h3>
         <p align="justify">
             The sequence coverage is displayed for the selected protein. The validated peptides are displayed in green and the 
-            peptide selected in the peptide table is in blue. Areas if the sequence that is theoretically possible to cover 
+            peptide selected in the peptide table is in blue. Areas if the sequence that is possible to cover 
             with the given search settings is shown in light grey. PTMs are color coded and shown below the modified residue. 
             <br><br>
             You can access a peptide by clicking on the corresponding peptide. 
             In case of overlapping peptides you can select the peptide of interest using the appearing contextual menu.
             <br><br>
             It is also possible to zoom by left clicking an dragging the mouse towards the right.
+            <br><br>
+            <b>Warning:</b> the estimation of the possible sequence coverage is based on the distance between consecutive enzymatic 
+            cleavages only. It is a very simple approximation. Note that due to the presence of non-enzymatic cleavages and missed 
+            cleavages, search engines identify sections of the sequence that are not predicted to be coverable. Consequently, the 
+            observed sequence coverage might be higher than the possible sequence coverage.
         </p>
         <br>
         <a href="#top">More on the Overview tab</a>
