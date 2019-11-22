@@ -552,7 +552,7 @@
         <repository>
             <id>archiva.compomics_maven_2</id>
             <name>Internal Release Repository</name>
-            <url>http://genesis.ugent.be/archiva/repository/compomics_maven_2</url>
+            <url>http://genesis.ugent.be/maven2</url>
         </repository>
          
         <!-- UGent Genesis archiva snapshot repository -->
