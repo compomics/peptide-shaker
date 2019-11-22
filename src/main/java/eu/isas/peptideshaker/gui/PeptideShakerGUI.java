@@ -161,7 +161,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     /**
      * The path to the example dataset.
      */
-    private final String EXAMPLE_DATASET_PATH = "/resources/example_dataset/HeLa Example.cpsx";
+    private final String EXAMPLE_DATASET_PATH = "/resources/example_dataset/HeLa Example.psdb";
     /**
      * The currently selected protein key.
      */
