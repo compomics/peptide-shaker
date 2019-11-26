@@ -1026,7 +1026,7 @@ public class NewDialog extends javax.swing.JDialog {
 
             @Override
             public String getDescription() {
-                return "X!Tandem (.t.xml)";
+                return "X! Tandem (.t.xml)";
             }
         };
 
