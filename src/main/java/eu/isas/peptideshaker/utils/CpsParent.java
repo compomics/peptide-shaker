@@ -99,11 +99,7 @@ public class CpsParent extends UserPreferencesParent {
      */
     protected File cpsFile = null;
     /**
-     * The name of the table to use to store PeptideShaker experiment settings.
-     */
-    public static final String psParametersTableName = "PeptideShaker_experiment_parameters";
-    /**
-     * All parameters of a project
+     * All parameters of a project.
      */
     public ProjectParameters projectParameters;
     /**
@@ -409,7 +405,32 @@ public class CpsParent extends UserPreferencesParent {
      */
     public FastaSummary loadFastaFile(WaitingHandler waitingHandler) throws IOException {
 
-        return FastaSummary.getSummary(getProjectDetails().getFastaFile(), identificationParameters.getFastaParameters(), waitingHandler);
+        File providedFastaLocation = new File(projectDetails.getFastaFile());
+        File projectFolder = cpsFile.getParentFile();
+        File dataFolder = new File(projectFolder, "data");
+
+        // try to locate the fasta file
+        if (!providedFastaLocation.exists()) {
+
+            File fileInProjectFolder = new File(projectFolder, providedFastaLocation.getName());
+            File fileInDataFolder = new File(dataFolder, providedFastaLocation.getName());
+
+            if (fileInProjectFolder.exists()) {
+
+                projectDetails.setFastaFile(fileInProjectFolder);
+
+            } else if (fileInDataFolder.exists()) {
+
+                projectDetails.setFastaFile(fileInDataFolder);
+
+            } else {
+
+                return null;
+
+            }
+        }
+        
+        return FastaSummary.getSummary(projectDetails.getFastaFile(), identificationParameters.getFastaParameters(), waitingHandler);
 
     }
 

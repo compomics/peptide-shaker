@@ -648,6 +648,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             quantifyMenuItem.setVisible(false); // @TODO: re-enable later?
             jSeparator2.setVisible(false); // @TODO: re-enable later?
             reporterPreferencesJMenuItem.setVisible(false); // @TODO: re-enable later?
+            darkThemeCheckBoxMenuItem.setVisible(false); // @TODO: re-enable later?
 
             notesButton.setVisible(false); // @TODO: re-enable later?
             newsButton.setVisible(false); // @TODO: re-enable later?
@@ -3966,7 +3967,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public void displayResults() {
 
         try {
-            
+
             sequenceCoverageJCheckBoxMenuItem.setSelected(true);
 
             // display the variable modifications
@@ -4015,28 +4016,28 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             if (null != cpsParent.getProjectType()) {
                 switch (cpsParent.getProjectType()) {
                     case protein:
-                        
+
                         allTabsJTabbedPane.setEnabledAt(OVER_VIEW_TAB_INDEX, true);
                         allTabsJTabbedPane.setEnabledAt(SPECTRUM_ID_TAB_INDEX, true);
-                        
+
                         // disable the fractions tab if only one mgf file
                         boolean fractions = getIdentification().getFractions().size() > 1;
                         allTabsJTabbedPane.setEnabledAt(PROTEIN_FRACTIONS_TAB_INDEX, fractions);
                         fractionDetailsJMenuItem.setEnabled(fractions);
-                        
+
                         allTabsJTabbedPane.setEnabledAt(MODIFICATIONS_TAB_INDEX, true);
                         allTabsJTabbedPane.setEnabledAt(STRUCTURES_TAB_INDEX, true);
                         allTabsJTabbedPane.setEnabledAt(ANNOTATION_TAB_INDEX, true);
                         allTabsJTabbedPane.setEnabledAt(GO_ANALYSIS_TAB_INDEX, true);
                         allTabsJTabbedPane.setEnabledAt(VALIDATION_TAB_INDEX, true);
                         allTabsJTabbedPane.setEnabledAt(QC_PLOTS_TAB_INDEX, true);
-                        
+
                         // move to the overview tab
                         allTabsJTabbedPane.setSelectedIndex(OVER_VIEW_TAB_INDEX);
-                        
+
                         exportMzIdentMLMenuItem.setEnabled(true);
                         exportMzIdentMLMenuItem.setToolTipText("Export the project as mzIdentML");
-                        
+
                         break;
                     case peptide:
                         allTabsJTabbedPane.setEnabledAt(OVER_VIEW_TAB_INDEX, false); // @TODO: need to get this one to work for peptides only...
@@ -4048,13 +4049,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         allTabsJTabbedPane.setEnabledAt(GO_ANALYSIS_TAB_INDEX, false);
                         allTabsJTabbedPane.setEnabledAt(VALIDATION_TAB_INDEX, true);
                         allTabsJTabbedPane.setEnabledAt(QC_PLOTS_TAB_INDEX, true);
-                        
+
                         // move to the spectrum ids tab
                         allTabsJTabbedPane.setSelectedIndex(SPECTRUM_ID_TAB_INDEX);
-                        
+
                         exportMzIdentMLMenuItem.setEnabled(false);
                         exportMzIdentMLMenuItem.setToolTipText("Not available for your PeptideShaker project type");
-                        
+
                         break;
                     case psm:
                         allTabsJTabbedPane.setEnabledAt(OVER_VIEW_TAB_INDEX, false);
@@ -4066,13 +4067,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         allTabsJTabbedPane.setEnabledAt(GO_ANALYSIS_TAB_INDEX, false);
                         allTabsJTabbedPane.setEnabledAt(VALIDATION_TAB_INDEX, true);
                         allTabsJTabbedPane.setEnabledAt(QC_PLOTS_TAB_INDEX, true);
-                        
+
                         // move to the spectrum ids tab
                         allTabsJTabbedPane.setSelectedIndex(SPECTRUM_ID_TAB_INDEX);
-                        
+
                         exportMzIdentMLMenuItem.setEnabled(false);
                         exportMzIdentMLMenuItem.setToolTipText("Not available for your PeptideShaker project type");
-                        
+
                         break;
                     default:
                         break;
@@ -6540,7 +6541,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                     try {
 
-                        cpsParent.loadFastaFile(progressDialog);
+                        FastaSummary fastaSummary = cpsParent.loadFastaFile(progressDialog);
+
+                        if (fastaSummary == null) {
+                            fileFound = false;
+                        }
 
                     } catch (IOException e) {
 
