@@ -162,12 +162,12 @@ public class NewDialog extends javax.swing.JDialog {
      * Set up the GUI.
      */
     private void setUpGui() {
-        
+
         initComponents();
-        
+
         settingsComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         typeCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        
+
         idFilesTxt.setText(idFiles.size() + " file(s) selected");
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         fastaFileTxt.setText("");
@@ -1718,23 +1718,31 @@ public class NewDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Loads the path of the mgf files listed in the given searchGUI input files
-     * and provides them in a list without duplicates.
+     * Loads the path of the FASTA and mgf files listed in the given searchGUI
+     * input files and provides them in a list without duplicates.
      *
      * @param searchguiInputFiles the SearchGUI input files to inspect
      *
-     * @return a list of mgf input files
+     * @return a list of FASTA and mgf input files
      */
-    private ArrayList<String> getMgfFiles(ArrayList<File> searchguiInputFiles) {
+    private ArrayList<String> getFastaAndMgfFiles(ArrayList<File> searchguiInputFiles) {
+
         ArrayList<String> result = new ArrayList<>();
-        for (File searchguiInputFile : searchguiInputFiles) {
+
+        for (File searchGuiInputFile : searchguiInputFiles) {
+
             try {
-                BufferedReader br = new BufferedReader(new FileReader(searchguiInputFile));
+
+                BufferedReader br = new BufferedReader(new FileReader(searchGuiInputFile));
                 String line;
+
                 while ((line = br.readLine()) != null) {
+
                     // Skip empty lines.
                     line = line.trim();
+
                     if (!line.equals("")) {
+
                         // dirty fix to be able to open windows files on linux/mac and the other way around
                         if (System.getProperty("os.name").lastIndexOf("Windows") == -1) {
                             line = line.replaceAll("\\\\", "/");
@@ -1745,11 +1753,13 @@ public class NewDialog extends javax.swing.JDialog {
                             result.add(line);
                         }
                     }
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
         return result;
     }
 
@@ -1765,28 +1775,35 @@ public class NewDialog extends javax.swing.JDialog {
         progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Loading Spectrum Files. Please Wait...");
 
-        ArrayList<String> neededMgfs = getMgfFiles(inputFiles);
-        ArrayList<String> names = new ArrayList<>();
+        ArrayList<String> neededFastaAndMgfs = getFastaAndMgfFiles(inputFiles);
         String missing = "";
-        int nMissing = 0;
+        int nMissingMgfFiles = 0;
         boolean fastaFileFound = false;
         String tempFastaFile = null;
+
+        ArrayList<String> mgfFileNames = new ArrayList<>();
         for (File file : spectrumFiles) {
-            names.add(file.getName());
+            mgfFileNames.add(file.getName());
         }
 
-        for (String path : neededMgfs) {
+        for (String path : neededFastaAndMgfs) {
+            
             if (path.toLowerCase().endsWith(".mgf")) {
-                File newFile = new File(path);
-                String name = newFile.getName();
-                if (!names.contains(newFile.getName())) {
-                    if (newFile.exists()) {
-                        spectrumFiles.add(newFile);
+                
+                File tempMgfFile = new File(path);
+                String mgfFileName = tempMgfFile.getName();
+                
+                if (!mgfFileNames.contains(tempMgfFile.getName())) {
+                    
+                    if (tempMgfFile.exists()) {
+                        spectrumFiles.add(tempMgfFile);
                     } else {
+                        
                         boolean found = false;
+                        
                         for (File folder : dataFolders) {
                             for (File file : folder.listFiles()) {
-                                if (file.getName().equals(name)) {
+                                if (file.getName().equals(mgfFileName)) {
                                     spectrumFiles.add(file);
                                     found = true;
                                     break;
@@ -1796,32 +1813,58 @@ public class NewDialog extends javax.swing.JDialog {
                                 break;
                             }
                         }
+                        
                         if (!found) {
-                            nMissing++;
-                            missing += newFile.getName() + "\n";
+                            nMissingMgfFiles++;
+                            missing += tempMgfFile.getName() + "\n";
                         }
                     }
                 }
             } else if (path.toLowerCase().endsWith(".fasta") || path.toLowerCase().endsWith(".fas")) {
+                
                 tempFastaFile = path;
-                File newFile = new File(tempFastaFile);
-                if (newFile.exists()) {
-                    fastaFile = newFile;
+                File providedFastaFile = new File(tempFastaFile);
+                
+                if (providedFastaFile.exists()) {
+                    
+                    fastaFile = providedFastaFile;
                     fastaFileTxt.setText(fastaFile.getName());
                     fastaFileFound = true;
+                    
+                } else {
+                    
+                    boolean found = false;
+                    
+                    for (File folder : dataFolders) {
+                        
+                        for (File tempFile : folder.listFiles()) {
+                            
+                            if (tempFile.getName().equals(providedFastaFile.getName())) {
+                                fastaFile = tempFile;
+                                fastaFileTxt.setText(fastaFile.getName());
+                                found = true;
+                                break;
+                            }
+                        }
+                        
+                        if (found) {
+                            break;
+                        }
+                    }
+                    
                 }
             }
         }
 
         if (fastaFile == null && !fastaFileFound) {
             if (tempFastaFile != null) {
-            JOptionPane.showMessageDialog(this, "FASTA file not found:\n" + tempFastaFile
-                    + "\nPlease locate it manually.", "FASTA File Not Found", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "FASTA file not found:\n" + tempFastaFile
+                        + "\nPlease locate it manually.", "FASTA File Not Found", JOptionPane.WARNING_MESSAGE);
             }
         }
 
-        if (nMissing > 0) {
-            if (nMissing < 11) {
+        if (nMissingMgfFiles > 0) {
+            if (nMissingMgfFiles < 11) {
                 JOptionPane.showMessageDialog(this, "Spectrum file(s) not found:\n" + missing
                         + "\nPlease locate them manually.", "Spectrum File Not Found", JOptionPane.WARNING_MESSAGE);
             } else {
