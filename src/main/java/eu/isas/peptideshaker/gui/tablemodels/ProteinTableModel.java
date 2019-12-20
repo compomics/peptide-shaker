@@ -14,6 +14,7 @@ import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
 import java.awt.Color;
 import java.awt.Component;
 import java.text.DecimalFormat;
@@ -226,10 +227,10 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
 //                return null;
 //            }
 //
-//            if (!isSelfUpdating()) {
-//                dataMissingAtRow(row);
-//                return DisplayParameters.LOADING_MESSAGE;
-//            }
+            if (!isSelfUpdating()) {
+                dataMissingAtRow(row);
+                return DisplayParameters.LOADING_MESSAGE;
+            }
 
             long proteinKey = proteinKeys[viewIndex];
 

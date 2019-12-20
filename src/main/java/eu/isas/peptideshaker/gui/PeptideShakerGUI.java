@@ -7359,13 +7359,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         progressDialog.setRunFinished();
                         e.printStackTrace();
                         catchException(e);
+                    } finally {
+                        // turn off the self updating table models back on
+                        // @TODO: put in a separate function
+                        overviewPanel.selfUpdating(true);
+                        proteinFractionsPanel.selfUpdating(true);
+                        proteinStructurePanel.selfUpdating(true);
                     }
-
-                    // turn off the self updating table models back on
-                    // @TODO: put in a separate function
-                    overviewPanel.selfUpdating(true);
-                    proteinFractionsPanel.selfUpdating(true);
-                    proteinStructurePanel.selfUpdating(true);
                 }
             }.start();
         }

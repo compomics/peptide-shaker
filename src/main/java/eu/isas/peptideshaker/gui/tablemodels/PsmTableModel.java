@@ -11,6 +11,7 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
@@ -186,10 +187,10 @@ public class PsmTableModel extends SelfUpdatingTableModel {
 //                return null;
 //            }
 //
-//            if (!isSelfUpdating()) {
-//                dataMissingAtRow(row);
-//                return DisplayParameters.LOADING_MESSAGE;
-//            }
+            if (!isSelfUpdating()) {
+                dataMissingAtRow(row);
+                return DisplayParameters.LOADING_MESSAGE;
+            }
 
             long psmKey = psmKeys[viewIndex];
             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);

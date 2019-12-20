@@ -8,6 +8,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
+import eu.isas.peptideshaker.preferences.DisplayParameters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -185,10 +186,10 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
 //                return null;
 //            }
 //
-//            if (!isSelfUpdating()) {
-//                dataMissingAtRow(row);
-//                return DisplayParameters.LOADING_MESSAGE;
-//            }
+            if (!isSelfUpdating()) {
+                dataMissingAtRow(row);
+                return DisplayParameters.LOADING_MESSAGE;
+            }
             
             long peptideKey = peptideKeys[viewIndex];
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
