@@ -360,20 +360,23 @@ public class PeptideShaker {
 
         }
 
-        String reportTxt;
+        String reportTxt = "Saving probabilities";
+        String waitingTitle = "Saving Probabilities.";;
         switch (projectType) {
             case psm:
-                reportTxt = "Saving probabilities";
+                reportTxt += ".";
                 break;
             case peptide:
-                reportTxt = "Saving probabilities, building peptides.";
+                reportTxt += ", building peptides.";
+                waitingTitle += " Building Peptides.";
                 break;
             default:
-                reportTxt = "Saving probabilities, building peptides and proteins.";
+                reportTxt += ", building peptides and proteins.";
+                waitingTitle += " Building Peptides and Proteins.";
         }
 
         waitingHandler.appendReport(reportTxt, true, true);
-        waitingHandler.setWaitingText(reportTxt + " Please Wait...");
+        waitingHandler.setWaitingText(waitingTitle + " Please Wait...");
 
         attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(sequenceProvider, identificationParameters.getSequenceMatchingParameters(), projectType, fastaParameters, waitingHandler);
         waitingHandler.increasePrimaryProgressCounter();
