@@ -472,6 +472,7 @@ public class FileImporter {
 
                 boolean allLoaded = true;
                 int numberOfMatches = idFileSpectrumMatches.size();
+                waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                 waitingHandler.resetSecondaryProgressCounter();
                 waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                 waitingHandler.appendReport("Loading spectra for " + idFile.getName() + ".", true, true);
