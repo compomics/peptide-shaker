@@ -94,19 +94,10 @@ public class CpsExporter {
             long psMapsIdentKey = psMaps.getParameterKey();
 
             if (!identification.contains(psMapsIdentKey)) {
-
                 identification.addObject(psMapsIdentKey, identification.getUrParam(psMaps));
-
             }
 
-            // transfer all files in the match directory
-            if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
-
-                waitingHandler.setPrimaryProgressCounterIndeterminate(true);
-                waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-
-            }
-
+            // save the cache and the database
             if (waitingHandler == null || !waitingHandler.isRunCanceled()) {
 
                 identification.getObjectsDB().lock(waitingHandler);
@@ -117,7 +108,7 @@ public class CpsExporter {
 
         } finally {
 
-            // Restore the project navigability
+            // restore the project navigability
             identificationFeaturesCache.setReadOnly(false);
 
         }

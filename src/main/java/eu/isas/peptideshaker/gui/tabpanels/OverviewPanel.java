@@ -232,6 +232,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * The location of the divider showing or hiding the coverage plot.
      */
     private final int coveragePanelDividerLocation = 82;
+    /**
+     * Controls whether the component is selfupdating or not.
+     */
+    private boolean isSelfUpdating = true;
 
     /**
      * Creates a new OverviewPanel.
@@ -3930,26 +3934,29 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     public void updateSeparators() {
 
-        formComponentResized(null);
-        updateProteinTableSeparator();
-        updatePeptidesAndPsmsSeparator();
-        peptidesPsmJSplitPane.setDividerLocation(peptidesPsmJSplitPane.getHeight() / 2);
-        formComponentResized(null);
+        if (isSelfUpdating) {
+        
+            formComponentResized(null);
+            updateProteinTableSeparator();
+            updatePeptidesAndPsmsSeparator();
+            peptidesPsmJSplitPane.setDividerLocation(peptidesPsmJSplitPane.getHeight() / 2);
+            formComponentResized(null);
 
-        // invoke later to give time for components to update
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                updateSequenceCoverageSeparator();
-                updateProteinTableSeparator();
-                updatePeptidesAndPsmsSeparator();
-                overviewJPanel.revalidate();
-                overviewJPanel.repaint();
-                updateBubblePlot();
-                formComponentResized(null);
-            }
-        });
+            // invoke later to give time for components to update
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    updateSequenceCoverageSeparator();
+                    updateProteinTableSeparator();
+                    updatePeptidesAndPsmsSeparator();
+                    overviewJPanel.revalidate();
+                    overviewJPanel.repaint();
+                    updateBubblePlot();
+                    formComponentResized(null);
+                }
+            });
 
-        formComponentResized(null);
+            formComponentResized(null);
+        }
     }
 
     /**
@@ -6485,6 +6492,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * their content
      */
     public void selfUpdating(boolean selfUpdating) {
+        isSelfUpdating = selfUpdating;
         if (proteinTable.getModel() instanceof SelfUpdatingTableModel) {
             ((SelfUpdatingTableModel) proteinTable.getModel()).setSelfUpdating(selfUpdating);
         }

@@ -144,6 +144,7 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.processing.ProteinProcessor;
+import java.awt.image.BufferedImage;
 import java.net.ConnectException;
 import java.util.HashSet;
 import java.util.Set;
@@ -6461,7 +6462,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-     * Imports informations from a PeptideShaker file.
+     * Imports information from a PeptideShaker file.
      *
      * @param aPsFile the PeptideShaker file to import
      */
@@ -7293,7 +7294,17 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     true);
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Saving. Please Wait...");
-
+            
+            // replace the live panel with a place holder image
+            final JPanel tempPanel = ((JPanel) allTabsJTabbedPane.getSelectedComponent());
+            final Component tempComp = tempPanel.getComponent(0);
+            Rectangle rect = tempComp.getBounds();      
+            BufferedImage captureImage = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_ARGB);
+            tempComp.paint(captureImage.getGraphics());
+            tempPanel.removeAll();
+            tempPanel.add(new JLabel(new ImageIcon(captureImage)));
+            tempPanel.repaint();
+            
             // turn off the self updating table models
             // @TODO: put in a separate function
             overviewPanel.selfUpdating(false);
@@ -7365,6 +7376,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         overviewPanel.selfUpdating(true);
                         proteinFractionsPanel.selfUpdating(true);
                         proteinStructurePanel.selfUpdating(true);
+
+                        // replace the place holder image with the live panel
+                        tempPanel.removeAll();
+                        tempPanel.add(tempComp);
+                        tempPanel.repaint();
                     }
                 }
             }.start();
