@@ -176,7 +176,7 @@ public class CpsParent extends UserPreferencesParent {
      * @throws IOException thrown of IOException occurs exception thrown
      * whenever an error occurred while reading or writing a file
      */
-    public void loadCpsFile(File dbFolder, WaitingHandler waitingHandler) throws IOException {
+    public void loadCpsFile(File dbFolder, WaitingHandler waitingHandler) throws IOException { // @TODO: use the waiting handler!
 
         // close any open connection to an identification database
         if (identification != null) {

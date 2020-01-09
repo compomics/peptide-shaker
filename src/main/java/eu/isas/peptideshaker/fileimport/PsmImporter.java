@@ -236,9 +236,18 @@ public class PsmImporter {
             int nThreads,
             WaitingHandler waitingHandler
     ) {
-
+        
         idFileSpectrumMatches.stream()
                 .forEach(spectrumMatch -> importPsm(spectrumMatch, new PeptideSpectrumAnnotator(), waitingHandler));
+        
+        // @TODO: verify of the below speedup is valid or not
+//        HashMap<Long, Object> toAdd = new HashMap<>();
+//
+//        idFileSpectrumMatches.forEach((tempSpectrumMatch) -> {
+//            importPsm(tempSpectrumMatch, new PeptideSpectrumAnnotator(), toAdd, waitingHandler);
+//        });
+//        
+//        identification.addObjects(toAdd, waitingHandler, true);
 
     }
 
@@ -254,6 +263,7 @@ public class PsmImporter {
     private void importPsm(
             SpectrumMatch algorithmMatch,
             PeptideSpectrumAnnotator peptideSpectrumAnnotator,
+//            HashMap<Long, Object> toAdd,
             WaitingHandler waitingHandler
     ) {
 
@@ -276,12 +286,14 @@ public class PsmImporter {
 
                 identification.addObject(algorithmMatch.getKey(), algorithmMatch);
 
+//                toAdd.put(algorithmMatch.getKey(), algorithmMatch); // @TOOD: figure out if this is a possible speedup or not!
             }
         }
 
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+
         waitingHandler.setSecondaryProgressCounter(++progress);
     }
 

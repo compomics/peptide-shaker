@@ -109,7 +109,7 @@ public class PsmProcessor {
 
         identification.getSpectrumIdentification().values().stream()
                 .flatMap(HashSet::stream)
-                .map(key -> identification.getSpectrumMatch(key))
+                .map(key -> identification.getSpectrumMatch(key)) // @TODO: should use batches instead of one key at the time!
                 .forEach(spectrumMatch -> processPsm(
                         spectrumMatch, 
                         inputMap, 
@@ -117,7 +117,7 @@ public class PsmProcessor {
                         identificationParameters, 
                         waitingHandler
                 ));
-
+        
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
     }
