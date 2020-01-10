@@ -11,6 +11,7 @@ import java.util.List;
  * Export peptide sequences to the Unipept web interface.
  *
  * @author Tim Van Den Bossche
+ * @author Pieter Verschaffelt
  * @author Thilo Muth
  * @author Harald Barsnes
  */
