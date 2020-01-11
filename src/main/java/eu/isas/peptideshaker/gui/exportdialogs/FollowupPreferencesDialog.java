@@ -1063,7 +1063,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
                             if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
                                 if (PEPTIDE_EXPORT_TYPE == 1 || psParameter.getMatchValidationLevel().isValidated()) {
-                                    peptideSequences.add(peptideMatch.getTheoreticPeptide().getSequence());
+                                    peptideSequences.add(peptideMatch.getTheoreticPeptide().getSequence()); // @TODO: support filtering for unique sequences?
                                 }
                             }
 
@@ -1092,7 +1092,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                 PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
 
                                 if (!bestAssumption.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
-                                    peptideSequences.add(bestAssumption.getPeptide().getSequence());
+                                    peptideSequences.add(bestAssumption.getPeptide().getSequence()); // @TODO: support filtering for unique sequences?
                                 }
                             }
 
