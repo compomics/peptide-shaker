@@ -4,7 +4,10 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
+import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
+import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.JOptionEditorPane;
@@ -472,7 +475,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        unipeptiExportCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Validated Peptides", "All Peptides" }));
+        unipeptiExportCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Validated Peptides", "All Peptides", "Validated PSMs", "All PSMs" }));
 
         unipeptLabel.setText("Peptide Sequences");
 
@@ -1018,7 +1021,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Exporting Peptide Sequences. Please Wait...");
 
-        final boolean validatedPeptidesOnly = unipeptiExportCmb.getSelectedIndex() == 0;
+        final int PEPTIDE_EXPORT_TYPE = unipeptiExportCmb.getSelectedIndex();
 
         new Thread(new Runnable() {
             public void run() {
@@ -1034,37 +1037,72 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             @Override
             public void run() {
                 try {
-                    
+
                     ArrayList<String> peptideSequences = new ArrayList<String>();
 
                     PSParameter psParameter = new PSParameter();
                     ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
                     parameters.add(psParameter);
 
-                    PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(parameters, false, parameters, progressDialog);
-                    PeptideMatch peptideMatch;
-                    
-                    progressDialog.resetPrimaryProgressCounter();
-                    progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
+                    if (PEPTIDE_EXPORT_TYPE == 0 || PEPTIDE_EXPORT_TYPE == 1) {
 
-                    while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+                        progressDialog.resetPrimaryProgressCounter();
+                        progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
 
-                        if (progressDialog.isRunCanceled()) {
-                            break;
+                        PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(parameters, false, parameters, progressDialog);
+                        PeptideMatch peptideMatch;
+
+                        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+
+                            if (progressDialog.isRunCanceled()) {
+                                break;
+                            }
+
+                            String peptideKey = peptideMatch.getKey();
+                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
+
+                            if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                                if (PEPTIDE_EXPORT_TYPE == 1 || psParameter.getMatchValidationLevel().isValidated()) {
+                                    peptideSequences.add(peptideMatch.getTheoreticPeptide().getSequence());
+                                }
+                            }
+
+                            progressDialog.increasePrimaryProgressCounter();
                         }
 
-                        String peptideKey = peptideMatch.getKey();
-                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
+                    } else {
 
-                        if (!validatedPeptidesOnly || psParameter.getMatchValidationLevel().isValidated()) {
-                            peptideSequences.add(peptideMatch.getTheoreticPeptide().getSequence());
+                        progressDialog.resetPrimaryProgressCounter();
+                        progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
+
+                        PsmIterator psmIterator = peptideShakerGUI.getIdentification().getPsmIterator(false, parameters, progressDialog);
+                        SpectrumMatch spectrumMatch;
+
+                        while ((spectrumMatch = psmIterator.next()) != null) {
+
+                            if (progressDialog.isRunCanceled()) {
+                                break;
+                            }
+
+                            String spectrumKey = spectrumMatch.getKey();
+                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psParameter);
+
+                            if (PEPTIDE_EXPORT_TYPE == 3 || psParameter.getMatchValidationLevel().isValidated()) {
+
+                                PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
+
+                                if (!bestAssumption.getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                                    peptideSequences.add(bestAssumption.getPeptide().getSequence());
+                                }
+                            }
+
+                            progressDialog.increasePrimaryProgressCounter();
                         }
-                        
-                        progressDialog.increasePrimaryProgressCounter();
                     }
 
                     if (!progressDialog.isRunCanceled()) {
-                        UnipeptExport.analyzeInUnipept(peptideSequences, true, true, true, new File(PSExportFactory.getSerializationFolder(), "UnipeptExport.html"), progressDialog); // @TODO: allow the user to alter the boolean variables?
+                        UnipeptExport.analyzeInUnipept(peptideSequences, true, true, true, // @TODO: allow the user to alter the boolean variables?
+                                new File(PSExportFactory.getSerializationFolder(), "UnipeptExport.html"), progressDialog);
                     }
 
                     progressDialog.setRunFinished();

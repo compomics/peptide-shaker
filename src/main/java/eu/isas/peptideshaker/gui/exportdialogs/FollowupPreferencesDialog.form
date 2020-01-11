@@ -661,9 +661,11 @@
             <Component class="javax.swing.JComboBox" name="unipeptiExportCmb">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="2">
+                  <StringArray count="4">
                     <StringItem index="0" value="Validated Peptides"/>
                     <StringItem index="1" value="All Peptides"/>
+                    <StringItem index="2" value="Validated PSMs"/>
+                    <StringItem index="3" value="All PSMs"/>
                   </StringArray>
                 </Property>
               </Properties>
