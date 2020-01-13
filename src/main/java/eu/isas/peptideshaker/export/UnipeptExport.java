@@ -59,7 +59,7 @@ public class UnipeptExport {
         writer.write("\t\t\t<input type=\"text\" name=\"search_name\" id=\"search_name\" style=\"visibility: hidden;\">" + LINE_BREAK);
         writer.write("\t\t\t<input type=\"checkbox\" name=\"il\" id=\"il\" value=\"1\" " + (equateIandL ? "checked=\"checked\"" : "") + " style=\"visibility: hidden;\">" + LINE_BREAK);
         writer.write("\t\t\t<input type=\"checkbox\" name=\"dupes\" id=\"dupes\" value=\"1\" " + (filterDuplicates ? "checked=\"checked\"" : "") + " style=\"visibility: hidden;\">" + LINE_BREAK);
-        writer.write("\t\t\t<input type=\"checkbox\" name=\"missed\" id=\"missed\" value=\"0\" " + (handleMissingCleavage ? "checked=\"checked\"" : "") + " style=\"visibility: hidden;\">" + LINE_BREAK);
+        writer.write("\t\t\t<input type=\"checkbox\" name=\"missed\" id=\"missed\" value=\"1\" " + (handleMissingCleavage ? "checked=\"checked\"" : "") + " style=\"visibility: hidden;\">" + LINE_BREAK);
         writer.write("\t\t</form>" + LINE_BREAK);
         writer.write("\t\t<script>" + LINE_BREAK);
         writer.write("\t\t\twindow.onload = () => {" + LINE_BREAK);
