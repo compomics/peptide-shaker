@@ -45,7 +45,7 @@ public class UnipeptExport {
         // write the initial html section
         writer.write("<html>" + LINE_BREAK);
         writer.write("\t<body>" + LINE_BREAK);
-        writer.write("\t\t<form id=\"unipept-form\" action=\"https://unipept.ugent.be/mpa\" accept-charset=\"UTF-8\" method=\"post\">" + LINE_BREAK);  // @TODO: name should not be MPA anymore?
+        writer.write("\t\t<form id=\"unipept-form\" action=\"https://unipept.ugent.be/export\" accept-charset=\"UTF-8\" method=\"post\">" + LINE_BREAK);  
         writer.write("\t\t\t<input name=\"utf8\" type=\"hidden\" value=\"âœ“\">" + LINE_BREAK);
         writer.write("\t\t\t<textarea name=\"qs\" id=\"qs\" rows=\"7\" style=\"visibility: hidden;\">" + LINE_BREAK);
 
