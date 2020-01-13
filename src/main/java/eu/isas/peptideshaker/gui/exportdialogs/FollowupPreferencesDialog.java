@@ -1101,7 +1101,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     }
 
                     if (!progressDialog.isRunCanceled()) {
-                        UnipeptExport.analyzeInUnipept(peptideSequences, true, true, true, // @TODO: allow the user to alter the boolean variables?
+                        UnipeptExport.analyzeInUnipept(peptideSequences, true, true, false, // @TODO: allow the user to alter the boolean variables?
                                 new File(PSExportFactory.getSerializationFolder(), "UnipeptExport.html"), progressDialog);
                     }
 
