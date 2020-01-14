@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui.export;
 
 import com.compomics.util.Util;
+import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
@@ -28,12 +29,19 @@ import eu.isas.peptideshaker.followup.RecalibrationExporter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
+import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
+import com.compomics.util.experiment.personalization.UrParameter;
+import eu.isas.peptideshaker.export.PSExportFactory;
+import eu.isas.peptideshaker.export.UnipeptExport;
 import eu.isas.peptideshaker.followup.ProteoformExport;
 import java.awt.Toolkit;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import javax.swing.*;
 
@@ -75,6 +83,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         skylineExportCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         tppExportCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         proteoformsExportCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        unipeptiExportCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         this.setLocationRelativeTo(peptideShakerGUI);
 
@@ -128,6 +137,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         tppExportButton = new javax.swing.JButton();
         tppExportCmb = new javax.swing.JComboBox();
         tppLabel = new javax.swing.JLabel();
+        unipeptPanel = new javax.swing.JPanel();
+        unipeptExportButton = new javax.swing.JButton();
+        unipeptiExportCmb = new javax.swing.JComboBox();
+        unipeptLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Export - Follow Up Analysis");
@@ -487,6 +500,44 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        unipeptPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Unipept Export (beta)"));
+        unipeptPanel.setOpaque(false);
+
+        unipeptExportButton.setText("Export to Unipept");
+        unipeptExportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                unipeptExportButtonActionPerformed(evt);
+            }
+        });
+
+        unipeptiExportCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Validated Peptides", "All Peptides", "Validated PSMs", "All PSMs" }));
+
+        unipeptLabel.setText("Peptide Sequences");
+
+        javax.swing.GroupLayout unipeptPanelLayout = new javax.swing.GroupLayout(unipeptPanel);
+        unipeptPanel.setLayout(unipeptPanelLayout);
+        unipeptPanelLayout.setHorizontalGroup(
+            unipeptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, unipeptPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(unipeptLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(unipeptiExportCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(unipeptExportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        unipeptPanelLayout.setVerticalGroup(
+            unipeptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(unipeptPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(unipeptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(unipeptiExportCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(unipeptExportButton)
+                    .addComponent(unipeptLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -499,8 +550,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(proteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(spectraPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(graphDatabasesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(skylinePanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tppPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(tppPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(unipeptPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(skylinePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -518,9 +570,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(inclusionListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(skylinePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tppPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(unipeptPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1050,6 +1104,113 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_exportProteformsAsTxtButtonActionPerformed
 
     /**
+     * Export the peptide sequences to Unipept.
+     *
+     * @param evt
+     */
+    private void unipeptExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unipeptExportButtonActionPerformed
+
+        progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+            true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
+        progressDialog.setTitle("Exporting Peptide Sequences. Please Wait...");
+
+        final int PEPTIDE_EXPORT_TYPE = unipeptiExportCmb.getSelectedIndex();
+
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    progressDialog.setVisible(true);
+                } catch (IndexOutOfBoundsException e) {
+                    // ignore
+                }
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("UnipeptExportThread") {
+            @Override
+            public void run() {
+                try {
+
+                    ArrayList<String> peptideSequences = new ArrayList<String>();
+
+                    PSParameter psParameter = new PSParameter();
+                    ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+                    parameters.add(psParameter);
+
+                    if (PEPTIDE_EXPORT_TYPE == 0 || PEPTIDE_EXPORT_TYPE == 1) {
+
+                        progressDialog.resetPrimaryProgressCounter();
+                        progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
+
+                        PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(progressDialog);
+                        PeptideMatch peptideMatch;
+
+                        while ((peptideMatch = peptideMatchesIterator.next()) != null) {
+
+                            if (progressDialog.isRunCanceled()) {
+                                break;
+                            }
+
+                            Peptide peptide = peptideMatch.getPeptide();
+                            psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
+
+                            if (!PeptideUtils.isDecoy(peptide, peptideShakerGUI.getSequenceProvider())) {
+                                if (PEPTIDE_EXPORT_TYPE == 1 || psParameter.getMatchValidationLevel().isValidated()) {
+                                    peptideSequences.add(peptide.getSequence()); // @TODO: support filtering for unique sequences?
+                                }
+                            }
+
+                            progressDialog.increasePrimaryProgressCounter();
+                        }
+
+                    } else {
+
+                        progressDialog.resetPrimaryProgressCounter();
+                        progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
+
+                        SpectrumMatchesIterator spectrumMatchIerator = peptideShakerGUI.getIdentification().getSpectrumMatchesIterator(progressDialog);
+                        SpectrumMatch spectrumMatch;
+
+                        while ((spectrumMatch = spectrumMatchIerator.next()) != null) {
+
+                            if (progressDialog.isRunCanceled()) {
+                                break;
+                            }
+
+                            psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
+
+                            if (PEPTIDE_EXPORT_TYPE == 3 || psParameter.getMatchValidationLevel().isValidated()) {
+
+                                PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
+
+                                if (!PeptideUtils.isDecoy(bestAssumption.getPeptide(), peptideShakerGUI.getSequenceProvider())) {
+                                    peptideSequences.add(bestAssumption.getPeptide().getSequence()); // @TODO: support filtering for unique sequences?
+                                }
+                            }
+
+                            progressDialog.increasePrimaryProgressCounter();
+                        }
+                    }
+
+                    if (!progressDialog.isRunCanceled()) {
+                        UnipeptExport.analyzeInUnipept(peptideSequences, true, true, false, // @TODO: allow the user to alter the boolean variables?
+                            new File(PSExportFactory.getSerializationFolder(), "UnipeptExport.html"), progressDialog);
+                    }
+
+                    progressDialog.setRunFinished();
+
+                } catch (Exception e) {
+                    progressDialog.setRunCanceled();
+                    peptideShakerGUI.catchException(e);
+                }
+            }
+        }.start();
+    }//GEN-LAST:event_unipeptExportButtonActionPerformed
+
+    /**
      * Creates an mzIdentML file for Skyline.
      */
     private void skylineExport() {
@@ -1284,5 +1445,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox tppExportCmb;
     private javax.swing.JLabel tppLabel;
     private javax.swing.JPanel tppPanel;
+    private javax.swing.JButton unipeptExportButton;
+    private javax.swing.JLabel unipeptLabel;
+    private javax.swing.JPanel unipeptPanel;
+    private javax.swing.JComboBox unipeptiExportCmb;
     // End of variables declaration//GEN-END:variables
 }
