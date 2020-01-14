@@ -246,7 +246,7 @@ public class PsmScorer {
 
             TreeMap<Double, ArrayList<PeptideAssumption>> algorthmAssumptions = entry1.getValue();
 
-            // The hyperscore requires a second pass for the e-value estimation
+            // the hyperscore requires a second pass for the e-value estimation
             ArrayList<Double> hyperScores = null;
             ArrayList<PSParameter> hyperScoreParameters = null;
             ArrayList<Boolean> hyperScoreDecoys = null;
@@ -282,9 +282,9 @@ public class PsmScorer {
 
                             ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                             SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-                            SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(), 
+                            SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrum.getSpectrumKey(),
                                     peptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, peptideSpectrumAnnotator);
-                            score = psmScoresEstimator.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge(), spectrum, identificationParameters, 
+                            score = psmScoresEstimator.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge(), spectrum, identificationParameters,
                                     specificAnnotationPreferences, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, peptideSpectrumAnnotator, scoreIndex);
 
                         }
@@ -551,7 +551,7 @@ public class PsmScorer {
         /**
          * Constructor.
          *
-         * @param psmIterator An iterator of the PSMs to iterate
+         * @param psmIterator an iterator of the PSMs to iterate
          * @param identification the identification containing all matches
          * @param inputMap the input map used to store the scores
          * @param identificationParameters the identification parameters
