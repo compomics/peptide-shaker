@@ -3559,7 +3559,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         if (spectrumMatch != null) {
                             PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
                             if (psParameter != null) {
-                                return psParameter.getScore();
+                                return psParameter.getTransformedScore();
                             } else {
                                 return null;
                             }
@@ -3707,7 +3707,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             case 3:
                                 return proteins;
                             case 4:
-                                return psParameter.getScore();
+                                return psParameter.getTransformedScore();
                             case 5:
                                 return spectrumMatch.getBestPeptideAssumption() != null || spectrumMatch.getBestTagAssumption() != null ? psParameter.getConfidence() : "";
                             case 6:

@@ -184,7 +184,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
 
             case 7:
                 PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
-                return showScores ? psParameter.getScore() : psParameter.getConfidence();
+                return showScores ? psParameter.getTransformedScore() : psParameter.getConfidence();
 
             case 8:
                 psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);

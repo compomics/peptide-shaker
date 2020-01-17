@@ -539,8 +539,7 @@ public class PsProteinSection {
 
             case score:
 
-                return Double.toString(
-                        -10.0 * FastMath.log10(psParameter.getScore()));
+                return Double.toString(psParameter.getTransformedScore());
 
             case raw_score:
 

@@ -228,7 +228,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
 
                 case 6:
                     psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
-                    return showScores ? psParameter.getScore() : psParameter.getConfidence();
+                    return showScores ? psParameter.getTransformedScore() : psParameter.getConfidence();
 
                 case 7:
                     psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);

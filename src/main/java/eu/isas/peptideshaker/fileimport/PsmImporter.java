@@ -237,17 +237,13 @@ public class PsmImporter {
             WaitingHandler waitingHandler
     ) {
         
-        idFileSpectrumMatches.stream()
-                .forEach(spectrumMatch -> importPsm(spectrumMatch, new PeptideSpectrumAnnotator(), waitingHandler));
+        HashMap<Long, Object> matchesToAdd = new HashMap<>();
+
+        idFileSpectrumMatches.forEach((tempSpectrumMatch) -> {
+            importPsm(tempSpectrumMatch, new PeptideSpectrumAnnotator(), matchesToAdd, waitingHandler);
+        });
         
-        // @TODO: verify of the below speedup is valid or not
-//        HashMap<Long, Object> toAdd = new HashMap<>();
-//
-//        idFileSpectrumMatches.forEach((tempSpectrumMatch) -> {
-//            importPsm(tempSpectrumMatch, new PeptideSpectrumAnnotator(), toAdd, waitingHandler);
-//        });
-//        
-//        identification.addObjects(toAdd, waitingHandler, true);
+        identification.addObjects(matchesToAdd, waitingHandler, true);
 
     }
 
@@ -257,13 +253,14 @@ public class PsmImporter {
      * @param algorithmMatch the spectrum match to import
      * @param peptideSpectrumAnnotator the spectrum annotator to use to annotate
      * spectra
+     * @param matchesToAdd the list of matches to add to the database
      * @param waitingHandler waiting handler to display progress and allow
      * canceling the import
      */
     private void importPsm(
             SpectrumMatch algorithmMatch,
             PeptideSpectrumAnnotator peptideSpectrumAnnotator,
-//            HashMap<Long, Object> toAdd,
+            HashMap<Long, Object> matchesToAdd,
             WaitingHandler waitingHandler
     ) {
 
@@ -281,12 +278,11 @@ public class PsmImporter {
 
                 mergePeptideAssumptions(algorithmMatch.getPeptideAssumptionsMap(), dbMatch.getPeptideAssumptionsMap());
                 mergeTagAssumptions(algorithmMatch.getTagAssumptionsMap(), dbMatch.getTagAssumptionsMap());
-
+ 
             } else {
-
-                identification.addObject(algorithmMatch.getKey(), algorithmMatch);
-
-//                toAdd.put(algorithmMatch.getKey(), algorithmMatch); // @TOOD: figure out if this is a possible speedup or not!
+                
+                matchesToAdd.put(algorithmMatch.getKey(), algorithmMatch);
+                
             }
         }
 

@@ -349,7 +349,7 @@ public class PsPeptideSection {
 
             case score:
 
-                return Double.toString(PSParameter.transformScore(psParameter.getScore()));
+                return Double.toString(psParameter.getTransformedScore());
 
             case raw_score:
 

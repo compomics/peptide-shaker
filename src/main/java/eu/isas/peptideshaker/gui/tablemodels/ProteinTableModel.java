@@ -317,7 +317,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                 case 11:
                     psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
-                    return showScores ? psParameter.getScore() : psParameter.getConfidence();
+                    return showScores ? psParameter.getTransformedScore() : psParameter.getConfidence();
 
                 case 12:
                     psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
