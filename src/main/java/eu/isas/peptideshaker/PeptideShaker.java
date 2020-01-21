@@ -42,6 +42,7 @@ import com.compomics.util.experiment.quantification.spectrumcounting.ScalingFact
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.processing.ProteinProcessor;
 import eu.isas.peptideshaker.processing.PsmProcessor;
+import eu.isas.peptideshaker.protein_inference.GroupSimplification;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 
 import java.io.File;
@@ -436,12 +437,12 @@ public class PeptideShaker {
 
             if (projectType == ProjectType.protein) {
 
-                ProteinInference proteinInference = new ProteinInference();
-
                 if (identificationParameters.getProteinInferenceParameters().getSimplifyGroups()) {
 
                     waitingHandler.appendReport("Simplifying protein groups.", true, true);
-                    proteinInference.removeRedundantGroups(
+                    
+                    GroupSimplification groupSimplification = new GroupSimplification();
+                    groupSimplification.removeRedundantGroups(
                             identification,
                             identificationParameters,
                             sequenceProvider,
@@ -458,6 +459,7 @@ public class PeptideShaker {
                 identification.getObjectsDB().commit();
                 System.gc();
 
+                ProteinInference proteinInference = new ProteinInference();
                 waitingHandler.appendReport("Mapping shared peptides.", true, true);
                 proteinInference.distributeSharedPeptides(
                         identification,
