@@ -12,7 +12,7 @@ import com.compomics.util.parameters.identification.search.DigestionParameters;
 import com.compomics.util.threading.SimpleSemaphore;
 import com.compomics.util.waiting.WaitingHandler;
 import com.google.common.collect.Sets;
-import static eu.isas.peptideshaker.protein_inference.ProteinInference.isLowerEvidence;
+import static eu.isas.peptideshaker.protein_inference.ProteinInference.KEYWORDS_UNCHARACTERIZED;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -464,6 +464,103 @@ public class GroupSimplification {
         }
 
         return null;
+
+    }
+
+    /**
+     * Returns a boolean indicating whether the protein is considered as
+     * uncharacterized compared to the others.
+     *
+     * @param accession the accession of the protein
+     * @param otherAccessions the accessions of the other protein
+     * @param proteinDetailsProvider the protein details provider
+     *
+     * @return a boolean indicating whether the protein is considered as
+     * uncharacterized
+     */
+    public static boolean isLowerEvidence(
+            String accession,
+            String[] otherAccessions,
+            ProteinDetailsProvider proteinDetailsProvider
+    ) {
+
+        // Get the protein evidence according to UnitProt
+        Integer proteinEvidence = proteinDetailsProvider.getProteinEvidence(accession);
+
+        if (proteinEvidence != null) {
+
+            // Return false if the evidence for this protein is transcript or protein
+            if (proteinEvidence <= 2) {
+
+                return false;
+
+            }
+
+            // See the evidence level of the other proteins
+            Integer bestEvidenceOthers = null;
+
+            for (String otherAccession : otherAccessions) {
+
+                Integer evidence = proteinDetailsProvider.getProteinEvidence(otherAccession);
+
+                if (evidence != null) {
+
+                    if (bestEvidenceOthers == null || evidence < bestEvidenceOthers) {
+
+                        bestEvidenceOthers = evidence;
+
+                    }
+                }
+            }
+
+            // If evidence is available, return true if the evidence is worse according to uniprot
+            if (bestEvidenceOthers != null) {
+
+                return proteinEvidence > bestEvidenceOthers;
+
+            }
+        }
+
+        // Evidence level not available, see whether the protein description contain key words
+        String description = proteinDetailsProvider.getSimpleDescription(accession);
+
+        if (description == null) {
+
+            description = proteinDetailsProvider.getDescription(accession);
+
+        }
+
+        final String descriptionFinal = description.toLowerCase();
+
+        boolean proteinUncharacterized = Arrays.stream(KEYWORDS_UNCHARACTERIZED)
+                .anyMatch(keyWord -> descriptionFinal.equals(keyWord));
+
+        boolean otherUncharacterized = true;
+
+        for (String otherAccession : otherAccessions) {
+
+            description = proteinDetailsProvider.getSimpleDescription(otherAccession);
+
+            if (description == null) {
+
+                description = proteinDetailsProvider.getDescription(otherAccession);
+
+            }
+
+            final String otherDescriptionFinal = description.toLowerCase();
+
+            boolean tempUncharacterized = Arrays.stream(KEYWORDS_UNCHARACTERIZED)
+                    .anyMatch(keyWord -> otherDescriptionFinal.equals(keyWord));
+
+            if (!tempUncharacterized) {
+
+                otherUncharacterized = false;
+                break;
+
+            }
+        }
+
+        return !otherUncharacterized && proteinUncharacterized;
 
     }
 }

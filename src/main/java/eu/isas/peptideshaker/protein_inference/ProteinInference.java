@@ -71,107 +71,11 @@ public class ProteinInference {
         }
 
     }
+    
     /**
      * Key words used to flag uncharacterized proteins.
      */
-    public static final String[] unchatacterizedKeyWords = {"uncharacterized"};
-
-    /**
-     * Returns a boolean indicating whether the protein is considered as
-     * uncharacterized compared to the others.
-     *
-     * @param accession the accession of the protein
-     * @param otherAccessions the accessions of the other protein
-     * @param proteinDetailsProvider the protein details provider
-     *
-     * @return a boolean indicating whether the protein is considered as
-     * uncharacterized
-     */
-    public static boolean isLowerEvidence(
-            String accession,
-            String[] otherAccessions,
-            ProteinDetailsProvider proteinDetailsProvider
-    ) {
-
-        // Get the protein evidence according to UnitProt
-        Integer proteinEvidence = proteinDetailsProvider.getProteinEvidence(accession);
-
-        if (proteinEvidence != null) {
-
-            // Return false if the evidence for this protein is transcript or protein
-            if (proteinEvidence <= 2) {
-
-                return false;
-
-            }
-
-            // See the evidence level of the other proteins
-            Integer bestEvidenceOthers = null;
-
-            for (String otherAccession : otherAccessions) {
-
-                Integer evidence = proteinDetailsProvider.getProteinEvidence(otherAccession);
-
-                if (evidence != null) {
-
-                    if (bestEvidenceOthers == null || evidence < bestEvidenceOthers) {
-
-                        bestEvidenceOthers = evidence;
-
-                    }
-                }
-            }
-
-            // If evidence is available, return true if the evidence is worse according to uniprot
-            if (bestEvidenceOthers != null) {
-
-                return proteinEvidence > bestEvidenceOthers;
-
-            }
-        }
-
-        // Evidence level not available, see whether the protein description contain key words
-        String description = proteinDetailsProvider.getSimpleDescription(accession);
-
-        if (description == null) {
-
-            description = proteinDetailsProvider.getDescription(accession);
-
-        }
-
-        final String descriptionFinal = description.toLowerCase();
-
-        boolean proteinUncharacterized = Arrays.stream(unchatacterizedKeyWords)
-                .anyMatch(keyWord -> descriptionFinal.equals(keyWord));
-
-        boolean otherUncharacterized = true;
-
-        for (String otherAccession : otherAccessions) {
-
-            description = proteinDetailsProvider.getSimpleDescription(otherAccession);
-
-            if (description == null) {
-
-                description = proteinDetailsProvider.getDescription(otherAccession);
-
-            }
-
-            final String otherDescriptionFinal = description.toLowerCase();
-
-            boolean tempUncharacterized = Arrays.stream(unchatacterizedKeyWords)
-                    .anyMatch(keyWord -> otherDescriptionFinal.equals(keyWord));
-
-            if (!tempUncharacterized) {
-
-                otherUncharacterized = false;
-                break;
-
-            }
-        }
-
-        return !otherUncharacterized && proteinUncharacterized;
-
-    }
+    public static final String[] KEYWORDS_UNCHARACTERIZED = {"uncharacterized"};
 
     /**
      * Selects the leading protein of protein groups and infers PI status of
@@ -513,7 +417,7 @@ public class ProteinInference {
 
         boolean oldUncharacterized = false, newUncharacterized = false;
 
-        for (String keyWord : unchatacterizedKeyWords) {
+        for (String keyWord : KEYWORDS_UNCHARACTERIZED) {
 
             if (newDescription.contains(keyWord)) {
 
