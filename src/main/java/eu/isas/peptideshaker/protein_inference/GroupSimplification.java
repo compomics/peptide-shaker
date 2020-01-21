@@ -139,8 +139,9 @@ public class GroupSimplification {
 
     /**
      * Removes the redundant groups for the given protein shared group.
-     * 
-     * @param identification The identification object containing the identification matches.
+     *
+     * @param identification The identification object containing the
+     * identification matches.
      * @param identificationParameters The identification parameters.
      * @param sequenceProvider The protein sequence provider.
      * @param proteinDetailsProvider The protein details provider.
@@ -148,7 +149,8 @@ public class GroupSimplification {
      * @param processedKeys Map of the already processed keys.
      * @param toDelete Set of the keys to delete.
      * @param mutex Mutex to synchronize the different threads.
-     * @param waitingHandler Waiting handler to show progress and interrupt processes.
+     * @param waitingHandler Waiting handler to show progress and interrupt
+     * processes.
      */
     public void removeRedundantGroups(
             Identification identification,
@@ -162,8 +164,14 @@ public class GroupSimplification {
             WaitingHandler waitingHandler
     ) {
 
+        if (waitingHandler.isRunCanceled()) {
+
+            return;
+
+        }
+
         long sharedKey = proteinSharedGroup.getKey();
-        
+
         mutex.acquire();
 
         if (!processedKeys.containsKey(sharedKey)) {
@@ -201,20 +209,10 @@ public class GroupSimplification {
 
             }
         }
-        
+
         mutex.release();
 
-        if (waitingHandler != null) {
-
-            if (waitingHandler.isRunCanceled()) {
-
-                return;
-
-            }
-
-            waitingHandler.increaseSecondaryProgressCounter();
-
-        }
+        waitingHandler.increaseSecondaryProgressCounter();
     }
 
     /**

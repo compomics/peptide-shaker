@@ -5,7 +5,6 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
-import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
@@ -71,7 +70,7 @@ public class ProteinInference {
         }
 
     }
-    
+
     /**
      * Key words used to flag uncharacterized proteins.
      */
@@ -107,187 +106,226 @@ public class ProteinInference {
                 identification.getProteinIdentification().size()
         );
 
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
-        ProteinMatch proteinMatch;
+        identification.getProteinIdentification()
+                .parallelStream()
+                .map(
+                        key -> identification.getProteinMatch(key)
+                )
+                .forEach(
+                        proteinMatch -> inferPiStatus(
+                                proteinMatch,
+                                identification,
+                                metrics,
+                                proteinMap,
+                                identificationParameters,
+                                sequenceProvider,
+                                proteinDetailsProvider,
+                                waitingHandler
+                        )
+                );
 
-        while ((proteinMatch = proteinMatchesIterator.next()) != null) {
+        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
-            PSParameter proteinMatchParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
+    }
 
-            String[] accessions = proteinMatch.getAccessions();
-            String mainAccession = proteinMatch.getLeadingAccession();
+    /**
+     * Selects the leading protein of protein groups and infers PI status of
+     * peptide and proteins.
+     *
+     * @param proteinMatch the protein match
+     * @param identification the identification class containing all
+     * identification matches
+     * @param metrics if provided protein metrics will be loaded while iterating
+     * the groups
+     * @param proteinMap the protein matches scoring map
+     * @param identificationParameters the identification parameters
+     * @param sequenceProvider the sequence provider
+     * @param proteinDetailsProvider the protein details provider
+     * @param waitingHandler the handler displaying feedback to the user
+     */
+    public void inferPiStatus(
+            ProteinMatch proteinMatch,
+            Identification identification,
+            Metrics metrics,
+            TargetDecoyMap proteinMap,
+            IdentificationParameters identificationParameters,
+            SequenceProvider sequenceProvider,
+            ProteinDetailsProvider proteinDetailsProvider,
+            WaitingHandler waitingHandler
+    ) {
 
-            if (accessions.length > 1) {
+        if (waitingHandler.isRunCanceled()) {
 
-                boolean similarityFound = false;
-                boolean allSimilar = false;
+            return;
+
+        }
+
+        PSParameter proteinMatchParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
+
+        String[] accessions = proteinMatch.getAccessions();
+        String mainAccession = proteinMatch.getLeadingAccession();
+
+        if (accessions.length > 1) {
+
+            boolean similarityFound = false;
+            boolean allSimilar = false;
+
+            for (String accession : accessions) {
+
+                if (compareMainProtein(proteinMatch, mainAccession, proteinMatch, accession, sequenceProvider, proteinDetailsProvider, identificationParameters, identification) > 0) {
+
+                    mainAccession = accession;
+
+                }
+            }
+
+            similarityLoop:
+            for (int i = 0; i < accessions.length - 1; i++) {
+
+                for (int j = i + 1; j < accessions.length; j++) {
+
+                    if (getSimilarity(accessions[i], accessions[j], proteinDetailsProvider)) {
+
+                        similarityFound = true;
+
+                        if (compareMainProtein(proteinMatch, mainAccession, proteinMatch, accessions[j], sequenceProvider, proteinDetailsProvider, identificationParameters, identification) > 0) {
+
+                            mainAccession = accessions[i];
+
+                        }
+
+                        break similarityLoop;
+
+                    }
+                }
+            }
+
+            if (similarityFound) {
+
+                allSimilar = true;
 
                 for (String accession : accessions) {
 
-                    if (compareMainProtein(proteinMatch, mainAccession, proteinMatch, accession, sequenceProvider, proteinDetailsProvider, identificationParameters, identification) > 0) {
+                    if (!mainAccession.equals(accession)) {
 
-                        mainAccession = accession;
+                        if (!getSimilarity(mainAccession, accession, proteinDetailsProvider)) {
 
-                    }
-                }
-
-                similarityLoop:
-                for (int i = 0; i < accessions.length - 1; i++) {
-
-                    for (int j = i + 1; j < accessions.length; j++) {
-
-                        if (getSimilarity(accessions[i], accessions[j], proteinDetailsProvider)) {
-
-                            similarityFound = true;
-
-                            if (compareMainProtein(proteinMatch, mainAccession, proteinMatch, accessions[j], sequenceProvider, proteinDetailsProvider, identificationParameters, identification) > 0) {
-
-                                mainAccession = accessions[i];
-
-                            }
-
-                            break similarityLoop;
+                            allSimilar = false;
+                            break;
 
                         }
                     }
                 }
+            }
 
-                if (similarityFound) {
+            if (!similarityFound) {
 
-                    allSimilar = true;
+                proteinMatchParameter.setProteinInferenceClass(PSParameter.UNRELATED);
 
-                    for (String accession : accessions) {
+                for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
 
-                        if (!mainAccession.equals(accession)) {
+                    PSParameter peptideParameter = (PSParameter) (identification.getPeptideMatch(peptideKey)).getUrParam(PSParameter.dummy);
+                    peptideParameter.setProteinInferenceClass(PSParameter.UNRELATED);
 
-                            if (!getSimilarity(mainAccession, accession, proteinDetailsProvider)) {
-
-                                allSimilar = false;
-                                break;
-
-                            }
-                        }
-                    }
                 }
 
-                if (!similarityFound) {
+            } else if (!allSimilar) {
 
-                    proteinMatchParameter.setProteinInferenceClass(PSParameter.UNRELATED);
+                proteinMatchParameter.setProteinInferenceClass(PSParameter.RELATED_AND_UNRELATED);
 
-                    for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
+                for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
 
-                        PSParameter peptideParameter = (PSParameter) (identification.getPeptideMatch(peptideKey)).getUrParam(PSParameter.dummy);
-                        peptideParameter.setProteinInferenceClass(PSParameter.UNRELATED);
+                    PSParameter peptideParameter = (PSParameter) (identification.getPeptideMatch(peptideKey)).getUrParam(PSParameter.dummy);
+                    peptideParameter.setProteinInferenceClass(PSParameter.RELATED_AND_UNRELATED);
 
-                    }
-
-                } else if (!allSimilar) {
-
-                    proteinMatchParameter.setProteinInferenceClass(PSParameter.RELATED_AND_UNRELATED);
-
-                    for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-
-                        PSParameter peptideParameter = (PSParameter) (identification.getPeptideMatch(peptideKey)).getUrParam(PSParameter.dummy);
-                        peptideParameter.setProteinInferenceClass(PSParameter.RELATED_AND_UNRELATED);
-
-                    }
-
-                } else {
-
-                    proteinMatchParameter.setProteinInferenceClass(PSParameter.RELATED);
-                    HashSet<String> proteinGroupAccessions = Sets.newHashSet(proteinMatch.getAccessions());
-
-                    for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-
-                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-
-                        boolean unrelated = false;
-
-                        for (String proteinAccession : peptideMatch.getPeptide().getProteinMapping().navigableKeySet()) {
-
-                            if (!proteinGroupAccessions.contains(proteinAccession) && !getSimilarity(mainAccession, proteinAccession, proteinDetailsProvider)) {
-
-                                unrelated = true;
-                                break;
-
-                            }
-                        }
-
-                        PSParameter peptideParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
-
-                        if (unrelated) {
-
-                            peptideParameter.setProteinInferenceClass(PSParameter.RELATED_AND_UNRELATED);
-
-                        } else {
-
-                            peptideParameter.setProteinInferenceClass(PSParameter.RELATED);
-
-                        }
-                    }
                 }
 
             } else {
 
+                proteinMatchParameter.setProteinInferenceClass(PSParameter.RELATED);
                 HashSet<String> proteinGroupAccessions = Sets.newHashSet(proteinMatch.getAccessions());
 
                 for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
 
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+
                     boolean unrelated = false;
-                    boolean otherProtein = false;
 
                     for (String proteinAccession : peptideMatch.getPeptide().getProteinMapping().navigableKeySet()) {
 
-                        if (!proteinGroupAccessions.contains(proteinAccession)) {
+                        if (!proteinGroupAccessions.contains(proteinAccession) && !getSimilarity(mainAccession, proteinAccession, proteinDetailsProvider)) {
 
-                            otherProtein = true;
+                            unrelated = true;
+                            break;
 
-                            if (!getSimilarity(mainAccession, proteinAccession, proteinDetailsProvider)) {
-
-                                unrelated = true;
-                                break;
-
-                            }
                         }
                     }
 
                     PSParameter peptideParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
-                    if (otherProtein) {
+                    if (unrelated) {
+
+                        peptideParameter.setProteinInferenceClass(PSParameter.RELATED_AND_UNRELATED);
+
+                    } else {
 
                         peptideParameter.setProteinInferenceClass(PSParameter.RELATED);
 
                     }
+                }
+            }
 
-                    if (unrelated) {
+        } else {
 
-                        peptideParameter.setProteinInferenceClass(PSParameter.UNRELATED);
+            HashSet<String> proteinGroupAccessions = Sets.newHashSet(proteinMatch.getAccessions());
 
+            for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
+
+                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                boolean unrelated = false;
+                boolean otherProtein = false;
+
+                for (String proteinAccession : peptideMatch.getPeptide().getProteinMapping().navigableKeySet()) {
+
+                    if (!proteinGroupAccessions.contains(proteinAccession)) {
+
+                        otherProtein = true;
+
+                        if (!getSimilarity(mainAccession, proteinAccession, proteinDetailsProvider)) {
+
+                            unrelated = true;
+                            break;
+
+                        }
                     }
                 }
-            }
 
-            if (proteinMatch.getAccessions().length > 1) {
+                PSParameter peptideParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
 
-                if (!proteinMatch.getLeadingAccession().equals(mainAccession)) {
+                if (otherProtein) {
 
-                    proteinMatch.setLeadingAccession(mainAccession);
+                    peptideParameter.setProteinInferenceClass(PSParameter.RELATED);
+
+                }
+
+                if (unrelated) {
+
+                    peptideParameter.setProteinInferenceClass(PSParameter.UNRELATED);
 
                 }
             }
+        }
 
-            waitingHandler.increaseSecondaryProgressCounter();
+        if (proteinMatch.getAccessions().length > 1) {
 
-            if (waitingHandler.isRunCanceled()) {
+            if (!proteinMatch.getLeadingAccession().equals(mainAccession)) {
 
-                return;
+                proteinMatch.setLeadingAccession(mainAccession);
 
             }
         }
 
-        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-
+        waitingHandler.increaseSecondaryProgressCounter();
     }
 
     /**
@@ -307,8 +345,12 @@ public class ProteinInference {
         }
 
         return Arrays.stream(proteinDescription.split(" "))
-                .filter(component -> component.length() > 3)
-                .collect(Collectors.toCollection(HashSet::new));
+                .filter(
+                        component -> component.length() > 3
+                )
+                .collect(
+                        Collectors.toCollection(HashSet::new)
+                );
 
     }
 
