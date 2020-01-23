@@ -440,7 +440,7 @@ public class PeptideShaker {
                 if (identificationParameters.getProteinInferenceParameters().getSimplifyGroups()) {
 
                     waitingHandler.appendReport("Simplifying protein groups.", true, true);
-                    
+
                     GroupSimplification groupSimplification = new GroupSimplification();
                     groupSimplification.removeRedundantGroups(
                             identification,
@@ -777,24 +777,25 @@ public class PeptideShaker {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
-        PeptideAndProteinBuilder peptideAndProteinBuilder = new PeptideAndProteinBuilder(identification);
+        try (PeptideAndProteinBuilder peptideAndProteinBuilder = new PeptideAndProteinBuilder(identification)) {
 
-        identification.getSpectrumIdentification().values().stream()
-                .flatMap(keys -> keys.stream())
-                .map(
-                        key -> identification.getSpectrumMatch(key)
-                )
-                .forEach(
-                        spectrumMatch -> attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(
-                                spectrumMatch,
-                                peptideAndProteinBuilder,
-                                sequenceProvider,
-                                sequenceMatchingPreferences,
-                                projectType,
-                                fastaParameters,
-                                waitingHandler
-                        )
-                );
+            identification.getSpectrumIdentification().values().stream()
+                    .flatMap(keys -> keys.stream())
+                    .map(
+                            key -> identification.getSpectrumMatch(key)
+                    )
+                    .forEach(
+                            spectrumMatch -> attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(
+                                    spectrumMatch,
+                                    peptideAndProteinBuilder,
+                                    sequenceProvider,
+                                    sequenceMatchingPreferences,
+                                    projectType,
+                                    fastaParameters,
+                                    waitingHandler
+                            )
+                    );
+        }
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
     }
