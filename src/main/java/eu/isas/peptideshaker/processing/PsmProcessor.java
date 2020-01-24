@@ -199,7 +199,7 @@ public class PsmProcessor {
         // Peptides
         HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> peptideAssumptionsMap = spectrumMatch.getPeptideAssumptionsMap();
         TreeMap<Double, ArrayList<PSParameter>> pepToParameterMap = new TreeMap<>();
-
+        
         for (Map.Entry<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> entry : peptideAssumptionsMap.entrySet()) {
 
             int searchEngine = entry.getKey();
@@ -340,8 +340,7 @@ public class PsmProcessor {
 
                 for (TagAssumption assumption : entry2.getValue()) {
 
-                    PSParameter psParameter = new PSParameter();
-                    psParameter = (PSParameter) assumption.getUrParam(psParameter);
+                    PSParameter psParameter = (PSParameter) assumption.getUrParam(PSParameter.dummy);
 
                     if (psParameter == null) {
 

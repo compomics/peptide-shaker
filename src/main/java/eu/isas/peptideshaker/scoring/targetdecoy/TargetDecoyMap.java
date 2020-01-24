@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
-import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.db.object.DbObject;
 import com.compomics.util.waiting.WaitingHandler;
 import java.util.ArrayList;
@@ -78,7 +77,7 @@ public class TargetDecoyMap extends DbObject {
      * @param score the given score
      * @return the estimated posterior error probability
      */
-    public  double getProbability(double score) {
+    public double getProbability(double score) {
         
         readDBMode();
         
