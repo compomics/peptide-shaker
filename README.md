@@ -2,7 +2,7 @@
 
   * [Introduction](#introduction)
   * [Read Me](#read-me)
-  * [Troubleshooting](#troubleshooting)
+  * [Errors, questions, and bug report](#Errors-questions-and-bug-report)
 
   * [Bioinformatics for Proteomics Tutorial](http://compomics.com/bioinformatics-for-proteomics/)
 
