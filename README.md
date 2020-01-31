@@ -9,7 +9,7 @@
 ---
 
 ## PeptideShaker Publication:
-  * Vaudel M, Burkhart J, Zahedi RP, Oveland E, Berven FS, Sickmann A, Martens L: _PeptideShaker enables reanalysis of MS-derived proteomics data sets_ [[PMID 25574629](https://www.ncbi.nlm.nih.gov/pubmed/25574629)] [[pdf (accepted version)]([[pdf (accepted version)](https://github.com/mvaudel/Publications/blob/master/docs/aam/Barsnes_et_al_SearchGUI%20-%20revision.pdf)])] [[Request a reprint](lennart.martens@UGent.be)].
+  * Vaudel M, Burkhart J, Zahedi RP, Oveland E, Berven FS, Sickmann A, Martens L: _PeptideShaker enables reanalysis of MS-derived proteomics data sets_ [[PMID 25574629](https://www.ncbi.nlm.nih.gov/pubmed/25574629)] [[pdf (accepted version)](https://github.com/mvaudel/Publications/blob/master/docs/aam/Barsnes_et_al_SearchGUI%20-%20revision.pdf)] [[Request a reprint](lennart.martens@UGent.be)].
   * If you use PeptideShaker as part of a publication, please include this reference.
 
 ---
