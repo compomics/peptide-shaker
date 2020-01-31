@@ -2,7 +2,7 @@
 
   * [Introduction](#introduction)
   * [Read Me](#read-me)
-  * [Errors, Questions and Bug Reports](#Errors-questions-and-bug-reports)
+  * [Issues, Questions and Bug Reports](#Issues-questions-and-bug-reports)
 
   * [Bioinformatics for Proteomics Tutorial](http://compomics.com/bioinformatics-for-proteomics/)
 
@@ -226,7 +226,7 @@ PeptideShaker currently only supports mgf files as the input format for the spec
 
 ---
 
-## Errors, Questions and Bug Reports
+## Issues, Questions and Bug Reports
 
 ### Code of Conduct
 
