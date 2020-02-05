@@ -38,6 +38,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 /**
@@ -139,14 +140,10 @@ public class FileImporter {
      */
     private final TagMapper tagMapper;
     /**
-     * List of one hit wonders.
-     */
-    private final HashSet<String> singleProteinList = new HashSet<>();
-    /**
      * Map of proteins found several times with the number of times they
      * appeared as first hit.
      */
-    private final HashMap<String, Integer> proteinCount = new HashMap<>();
+    private final HashMap<String, Integer> proteinCount = new HashMap<>(10000);
     /**
      * The number of first hits.
      */
@@ -171,8 +168,15 @@ public class FileImporter {
      * @param metrics metrics of the dataset to be saved for the GUI
      * @param exceptionHandler the exception handler
      */
-    public FileImporter(Identification identification, IdentificationParameters identificationParameters, ProcessingParameters processingParameters,
-            Metrics metrics, ProjectDetails projectDetails, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
+    public FileImporter(
+            Identification identification,
+            IdentificationParameters identificationParameters,
+            ProcessingParameters processingParameters,
+            Metrics metrics,
+            ProjectDetails projectDetails,
+            WaitingHandler waitingHandler,
+            ExceptionHandler exceptionHandler
+    ) {
 
         this.identificationParameters = identificationParameters;
         this.metrics = metrics;
@@ -194,7 +198,10 @@ public class FileImporter {
      *
      * @return 0 if success, 1 if not
      */
-    public int importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles) {
+    public int importFiles(
+            ArrayList<File> idFiles,
+            ArrayList<File> spectrumFiles
+    ) {
 
         ArrayList<File> sortedIdFiles = idFiles.stream()
                 .collect(Collectors.groupingBy(File::getName, TreeMap::new, Collectors.toList()))
@@ -214,7 +221,7 @@ public class FileImporter {
 
             importSequences(
                     identificationParameters.getSequenceMatchingParameters(),
-                    identificationParameters.getSearchParameters(), 
+                    identificationParameters.getSearchParameters(),
                     identificationParameters.getFastaParameters(),
                     identificationParameters.getPeptideVariantsParameters(),
                     waitingHandler, exceptionHandler
@@ -279,7 +286,7 @@ public class FileImporter {
                                 .collect(Collectors.joining(", "));
 
                         waitingHandler.appendReport("MGF files missing: " + missingFiles, true, true);
-                        
+
                         return 1;
 
                     }
@@ -309,9 +316,6 @@ public class FileImporter {
 
                     }
                 }
-
-                // clear the objects not needed anymore
-                singleProteinList.clear();
 
                 if (nRetained == 0) {
 
@@ -396,8 +400,14 @@ public class FileImporter {
      *
      * @throws java.io.IOException exception thrown if an error occurred when
      * parsing the file
+     * @throws java.lang.InterruptedException Exception thrown if a thread is
+     * interrupted.
+     * @throws java.util.concurrent.TimeoutException Exception thrown if the
+     * process timed out.
      */
-    public void importPsms(File idFile) throws IOException {
+    public void importPsms(
+            File idFile
+    ) throws IOException, InterruptedException, TimeoutException {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         waitingHandler.appendReport("Parsing " + idFile.getName() + ".", true, true);
@@ -424,14 +434,14 @@ public class FileImporter {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
-        LinkedList<SpectrumMatch> idFileSpectrumMatches = null;
+        SpectrumMatch[] idFileSpectrumMatches = null;
 
         try {
 
             idFileSpectrumMatches = fileReader.getAllSpectrumMatches(
-                    waitingHandler, 
-                    identificationParameters.getSearchParameters(), 
-                    identificationParameters.getSequenceMatchingParameters(), 
+                    waitingHandler,
+                    identificationParameters.getSearchParameters(),
+                    identificationParameters.getSequenceMatchingParameters(),
                     true
             );
 
@@ -471,23 +481,24 @@ public class FileImporter {
 
         if (idFileSpectrumMatches != null && !waitingHandler.isRunCanceled()) {
 
-            if (idFileSpectrumMatches.isEmpty()) {
+            int nMatches = idFileSpectrumMatches.length;
+
+            if (nMatches == 0) {
 
                 waitingHandler.appendReport("No PSM found in " + idFile.getName() + ".", true, true);
 
             } else {
 
                 boolean allLoaded = true;
-                int numberOfMatches = idFileSpectrumMatches.size();
                 waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                 waitingHandler.resetSecondaryProgressCounter();
-                waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
+                waitingHandler.setMaxSecondaryProgressCounter(nMatches);
                 waitingHandler.appendReport("Loading spectra for " + idFile.getName() + ".", true, true);
 
                 for (SpectrumMatch spectrumMatch : idFileSpectrumMatches) {
 
                     // Verify that the spectrum is in the provided mgf files
-                    if (!importSpectrum(idFile, spectrumMatch, numberOfMatches)) {
+                    if (!importSpectrum(idFile, spectrumMatch, nMatches)) {
 
                         allLoaded = false;
 
@@ -503,36 +514,51 @@ public class FileImporter {
                     if (fileReader.hasDeNovoTags()) {
 
                         waitingHandler.resetSecondaryProgressCounter();
-                        waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
+                        waitingHandler.setMaxSecondaryProgressCounter(nMatches);
                         waitingHandler.appendReport("Mapping tags to peptides.", true, true);
                         tagMapper.mapTags(idFileSpectrumMatches, fastaMapper, waitingHandler);
 
                     }
 
-                    waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
+                    waitingHandler.setMaxSecondaryProgressCounter(nMatches);
                     waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);
 
-                    PsmImporter psmImporter = new PsmImporter(
-                            identificationParameters, 
-                            fileReader, 
-                            idFile, 
-                            identification, 
-                            inputMap, 
-                            proteinCount, 
-                            singleProteinList, 
-                            sequenceProvider, 
-                            fastaMapper
-                    );
+                    PsmImporter psmImporter = new PsmImporter();
                     psmImporter.importPsms(
-                            idFileSpectrumMatches, 
-                            processingParameters.getnThreads(), 
-                            waitingHandler
+                            idFileSpectrumMatches,
+                            identification,
+                            identificationParameters,
+                            inputMap,
+                            fileReader,
+                            idFile,
+                            sequenceProvider,
+                            fastaMapper,
+                            processingParameters.getnThreads(),
+                            waitingHandler,
+                            exceptionHandler
                     );
 
                     if (waitingHandler.isRunCanceled()) {
 
                         return;
 
+                    }
+
+                    for (Map.Entry<String, Integer> entry : psmImporter.getProteinCount().entrySet()) {
+
+                        String accession = entry.getKey();
+                        int fileCount = entry.getValue();
+                        Integer count = proteinCount.get(accession);
+
+                        if (count != null) {
+
+                            proteinCount.put(accession, count + fileCount);
+
+                        } else {
+
+                            proteinCount.put(accession, fileCount);
+
+                        }
                     }
 
                     nPSMs += psmImporter.getnPSMs();
@@ -575,7 +601,7 @@ public class FileImporter {
                     int ptmIssue = psmImporter.getModificationIssue();
                     int totalAssumptionsRejected = noProteins + proteinIssue + peptideIssue + precursorIssue + ptmIssue;
 
-                    double sharePsmsRejected = 100.0 * psmsRejected / numberOfMatches;
+                    double sharePsmsRejected = 100.0 * psmsRejected / nMatches;
 
                     if (psmsRejected > 0) {
 
@@ -764,7 +790,11 @@ public class FileImporter {
      * @return indicates whether the spectrum is imported, false if the file was
      * not found
      */
-    private boolean importSpectrum(File idFile, SpectrumMatch spectrumMatch, int numberOfMatches) {
+    private boolean importSpectrum(
+            File idFile,
+            SpectrumMatch spectrumMatch,
+            int numberOfMatches
+    ) {
 
         String spectrumKey = spectrumMatch.getSpectrumKey();
         String fileName = Spectrum.getSpectrumFile(spectrumKey);
@@ -861,7 +891,9 @@ public class FileImporter {
      *
      * @param targetFileName the spectrum file
      */
-    public void importSpectra(String targetFileName) {
+    public void importSpectra(
+            String targetFileName
+    ) {
 
         File spectrumFile = spectrumFiles.get(targetFileName);
 
@@ -911,8 +943,14 @@ public class FileImporter {
      * @throws java.io.IOException exception thrown if an error occurred while
      * reading the FASTA file
      */
-    public void importSequences(SequenceMatchingParameters sequenceMatchingPreferences, SearchParameters searchParameters, FastaParameters fastaParameters, PeptideVariantsParameters peptideVariantsPreferences, WaitingHandler waitingHandler,
-            ExceptionHandler exceptionHandler) throws IOException {
+    public void importSequences(
+            SequenceMatchingParameters sequenceMatchingPreferences,
+            SearchParameters searchParameters,
+            FastaParameters fastaParameters,
+            PeptideVariantsParameters peptideVariantsPreferences,
+            WaitingHandler waitingHandler,
+            ExceptionHandler exceptionHandler
+    ) throws IOException {
 
         String fastaFilePath = projectDetails.getFastaFile();
         File fastaFile = new File(fastaFilePath);
@@ -984,10 +1022,20 @@ public class FileImporter {
         return fastaMapper;
     }
 
+    /**
+     * Returns the input map.
+     *
+     * @return the input map
+     */
     public InputMap getInputMap() {
         return inputMap;
     }
 
+    /**
+     * Returns the occurrence of proteins.
+     *
+     * @return the occurrence of proteins
+     */
     public HashMap<String, Integer> getProteinCount() {
         return proteinCount;
     }

@@ -21,7 +21,6 @@ import com.compomics.util.waiting.WaitingHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -57,34 +56,25 @@ public class TagMapper {
     /**
      * Maps the tags to the proteins in the sequence factory.
      *
-     * @param spectrumMatches the spectrum matches containing the peptides to
-     * map
+     * @param spectrumMatches the spectrum matches containing the tags to map
      * @param fastaMapper the FASTA mapper to use
      * @param waitingHandler a waiting handler
      */
-    public void mapTags(LinkedList<SpectrumMatch> spectrumMatches, FastaMapper fastaMapper, WaitingHandler waitingHandler) {
+    public void mapTags(
+            SpectrumMatch[] spectrumMatches, 
+            FastaMapper fastaMapper, 
+            WaitingHandler waitingHandler
+    ) {
 
-        spectrumMatches.stream().forEach((spectrumMatch) -> {
+        for (SpectrumMatch spectrumMatch : spectrumMatches) {
 
-            try {
+            if (!waitingHandler.isRunCanceled()) {
 
-                if (!waitingHandler.isRunCanceled()) {
+                mapTagsForSpectrumMatch(spectrumMatch, fastaMapper);
+                waitingHandler.increaseSecondaryProgressCounter();
 
-                    mapTagsForSpectrumMatch(spectrumMatch, fastaMapper);
-                    waitingHandler.increaseSecondaryProgressCounter();
-
-                }
-
-            } catch (Exception e) {
-
-                if (!waitingHandler.isRunCanceled()) {
-
-                    exceptionHandler.catchException(e);
-                    waitingHandler.setRunCanceled();
-
-                }
             }
-        });
+        }
     }
 
     /**
@@ -93,7 +83,10 @@ public class TagMapper {
      * @param fastaMapper the fasta mapper to use
      * @param spectrumMatch the spectrum match containing the tags to map
      */
-    private void mapTagsForSpectrumMatch(SpectrumMatch spectrumMatch, FastaMapper fastaMapper) {
+    private void mapTagsForSpectrumMatch(
+            SpectrumMatch spectrumMatch, 
+            FastaMapper fastaMapper
+    ) {
 
         SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
         HashMap<Integer, TreeMap<Double, ArrayList<TagAssumption>>> assumptionsMap = spectrumMatch.getTagAssumptionsMap();
