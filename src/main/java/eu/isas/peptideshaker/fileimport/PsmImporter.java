@@ -1,70 +1,33 @@
 package eu.isas.peptideshaker.fileimport;
 
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.io.identification.idfilereaders.MascotIdfileReader;
-import com.compomics.util.experiment.io.identification.idfilereaders.XTandemIdfileReader;
 import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
-import com.compomics.util.experiment.biology.modifications.ModificationType;
-import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.gui.parameters.identification.IdentificationAlgorithmParameter;
-import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
-import com.compomics.util.parameters.identification.tool_specific.AndromedaParameters;
-import com.compomics.util.parameters.identification.tool_specific.OmssaParameters;
 import com.compomics.util.parameters.identification.tool_specific.XtandemParameters;
-import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.modification.ModificationSiteMapping;
-import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.io.identification.IdfileReader;
-import com.compomics.util.experiment.io.identification.idfilereaders.AndromedaIdfileReader;
-import com.compomics.util.experiment.io.identification.idfilereaders.DirecTagIdfileReader;
-import com.compomics.util.experiment.io.identification.idfilereaders.MsAmandaIdfileReader;
-import com.compomics.util.experiment.io.identification.idfilereaders.MzIdentMLIdfileReader;
-import com.compomics.util.experiment.io.identification.idfilereaders.PepxmlIdfileReader;
-import com.compomics.util.experiment.io.identification.idfilereaders.TideIdfileReader;
-import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
-import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
-import com.compomics.util.experiment.identification.matches.PeptideVariantMatches;
 import com.compomics.util.experiment.identification.protein_inference.FastaMapper;
-import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
-import com.compomics.util.experiment.identification.utils.ModificationUtils;
-import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
-import com.compomics.util.experiment.io.identification.idfilereaders.NovorIdfileReader;
-import com.compomics.util.experiment.io.identification.idfilereaders.OnyaseIdfileReader;
-import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
-import com.compomics.util.threading.SimpleArrayIterator;
 import com.compomics.util.threading.SimpleArrayListIterator;
 import com.compomics.util.threading.SimpleSemaphore;
 import com.compomics.util.waiting.WaitingHandler;
-import de.proteinms.omxparser.util.OMSSAIdfileReader;
 import static eu.isas.peptideshaker.PeptideShaker.TIMEOUT_DAYS;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
-import eu.isas.peptideshaker.scoring.psm_scoring.BestMatchSelection;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map.Entry;
-import static eu.isas.peptideshaker.fileimport.FileImporter.MOD_MASS_TOLERANCE;
-import java.util.Arrays;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * This class can be used to import PSMs from search engine results.
@@ -188,25 +151,23 @@ public class PsmImporter {
             int nThreads,
             WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler
-            
     ) throws InterruptedException, TimeoutException {
 
         SimpleArrayListIterator<SpectrumMatch> spectrumMatchIterator = new SimpleArrayListIterator<>(spectrumMatches);
 
-        ExecutorService pool = Executors.newFixedThreadPool(nThreads);
+        ExecutorService importPool = Executors.newFixedThreadPool(nThreads);
 
-        ArrayList<PsmImportRunnable> runnables = new ArrayList<>(nThreads);
+        ArrayList<PsmImportRunnable> importRunnables = new ArrayList<>(nThreads);
 
         for (int i = 0; i < nThreads; i++) {
 
-            runnables.add(
+            importRunnables.add(
                     new PsmImportRunnable(
                             spectrumMatchIterator,
                             identificationParameters,
                             fileReader,
                             idFile,
                             identification,
-                            inputMap,
                             sequenceProvider,
                             fastaMapper,
                             waitingHandler,
@@ -215,35 +176,25 @@ public class PsmImporter {
             );
         }
 
-        runnables.forEach(
-                worker -> pool.submit(worker)
+        importRunnables.forEach(
+                worker -> importPool.submit(worker)
         );
 
-        pool.shutdown();
+        importPool.shutdown();
 
-        if (!pool.awaitTermination(TIMEOUT_DAYS, TimeUnit.DAYS)) {
+        if (!importPool.awaitTermination(TIMEOUT_DAYS, TimeUnit.DAYS)) {
 
             throw new TimeoutException("Analysis timed out (time out: " + TIMEOUT_DAYS + " days)");
 
         }
 
         // Gather metrics from each thread
-        for (PsmImportRunnable runnable : runnables) {
+        for (PsmImportRunnable runnable : importRunnables) {
 
             nPSMs += runnable.getnPSMs();
             nPeptideAssumptionsTotal += runnable.getnPeptideAssumptionsTotal();
-            psmsRejected += runnable.getPsmsRejected();
-            proteinIssue += runnable.getProteinIssue();
             peptideIssue += runnable.getPeptideIssue();
-            precursorIssue += runnable.getPrecursorIssue();
             modificationIssue += runnable.getModificationIssue();
-            nRetained += runnable.getnRetained();
-            missingProteins += runnable.getMissingProteins();
-            maxPeptideErrorPpm = Math.max(maxPeptideErrorPpm, runnable.getMaxPeptideErrorPpm());
-            maxPeptideErrorDa = Math.max(maxPeptideErrorDa, runnable.getMaxPeptideErrorDa());
-            maxTagErrorPpm = Math.max(maxTagErrorPpm, runnable.getMaxPeptideErrorPpm());
-            maxTagErrorDa = Math.max(maxTagErrorDa, runnable.getMaxPeptideErrorDa());
-            charges.addAll(runnable.getCharges());
 
             for (Entry<String, Integer> entry : runnable.getProteinCount().entrySet()) {
 
@@ -261,6 +212,56 @@ public class PsmImporter {
 
                 }
             }
+        }
+
+        spectrumMatchIterator = new SimpleArrayListIterator<>(spectrumMatches);
+
+        ExecutorService firstHitPool = Executors.newFixedThreadPool(nThreads);
+
+        ArrayList<PsmFirstHitRunnable> firstHitRunnables = new ArrayList<>(nThreads);
+
+        for (int i = 0; i < nThreads; i++) {
+
+            firstHitRunnables.add(
+                    new PsmFirstHitRunnable(
+                            spectrumMatchIterator,
+                            identificationParameters,
+                            sequenceProvider,
+                            inputMap,
+                            proteinCount,
+                            waitingHandler,
+                            exceptionHandler
+                    )
+            );
+        }
+
+        firstHitRunnables.forEach(
+                worker -> firstHitPool.submit(worker)
+        );
+
+        firstHitPool.shutdown();
+
+        if (!firstHitPool.awaitTermination(TIMEOUT_DAYS, TimeUnit.DAYS)) {
+
+            throw new TimeoutException("Analysis timed out (time out: " + TIMEOUT_DAYS + " days)");
+
+        }
+
+        // Gather metrics from each thread
+        for (PsmFirstHitRunnable runnable : firstHitRunnables) {
+
+            psmsRejected += runnable.getPsmsRejected();
+            proteinIssue += runnable.getProteinIssue();
+            peptideIssue += runnable.getPeptideIssue();
+            precursorIssue += runnable.getPrecursorIssue();
+            nRetained += runnable.getnRetained();
+            missingProteins += runnable.getMissingProteins();
+            maxPeptideErrorPpm = Math.max(maxPeptideErrorPpm, runnable.getMaxPeptideErrorPpm());
+            maxPeptideErrorDa = Math.max(maxPeptideErrorDa, runnable.getMaxPeptideErrorDa());
+            maxTagErrorPpm = Math.max(maxTagErrorPpm, runnable.getMaxPeptideErrorPpm());
+            maxTagErrorDa = Math.max(maxTagErrorDa, runnable.getMaxPeptideErrorDa());
+            charges.addAll(runnable.getCharges());
+
         }
     }
 

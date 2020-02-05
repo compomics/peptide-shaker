@@ -14,11 +14,9 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.modification.ModificationSiteMapping;
 import com.compomics.util.experiment.identification.protein_inference.FastaMapper;
 import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
-import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import com.compomics.util.experiment.identification.utils.ModificationUtils;
-import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.io.identification.IdfileReader;
 import com.compomics.util.experiment.io.identification.idfilereaders.AndromedaIdfileReader;
@@ -39,14 +37,10 @@ import com.compomics.util.parameters.identification.search.ModificationParameter
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.parameters.identification.tool_specific.AndromedaParameters;
 import com.compomics.util.parameters.identification.tool_specific.OmssaParameters;
-import com.compomics.util.threading.SimpleArrayIterator;
 import com.compomics.util.threading.SimpleArrayListIterator;
-import com.compomics.util.threading.SimpleSemaphore;
 import com.compomics.util.waiting.WaitingHandler;
 import de.proteinms.omxparser.util.OMSSAIdfileReader;
 import static eu.isas.peptideshaker.fileimport.FileImporter.MOD_MASS_TOLERANCE;
-import eu.isas.peptideshaker.scoring.maps.InputMap;
-import eu.isas.peptideshaker.scoring.psm_scoring.BestMatchSelection;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,10 +77,6 @@ public class PsmImportRunnable implements Runnable {
      */
     private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
-     * The spectrum annotator to use for peptides.
-     */
-    private final PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
-    /**
      * Iterator for the spectrum matches to import.
      */
     private final SimpleArrayListIterator<SpectrumMatch> spectrumMatchIterator;
@@ -103,38 +93,14 @@ public class PsmImportRunnable implements Runnable {
      */
     private long nPeptideAssumptionsTotal = 0;
     /**
-     * The progress of the import.
-     */
-    private int progress = 0;
-    /**
-     * The number of PSMs which did not pass the import filters.
-     */
-    private int psmsRejected = 0;
-    /**
-     * The number of PSMs which were rejected due to a protein issue.
-     */
-    private int proteinIssue = 0;
-    /**
      * The number of PSMs which were rejected due to a peptide issue.
      */
     private int peptideIssue = 0;
-    /**
-     * The number of PSMs which were rejected due to a precursor issue.
-     */
-    private int precursorIssue = 0;
     /**
      * The number of PSMs which were rejected due to a modification parsing
      * issue.
      */
     private int modificationIssue = 0;
-    /**
-     * The number of retained first hits.
-     */
-    private int nRetained = 0;
-    /**
-     * The number of peptides where no protein was found.
-     */
-    private int missingProteins = 0;
     /**
      * The id file reader where the PSMs are from.
      */
@@ -148,26 +114,6 @@ public class PsmImportRunnable implements Runnable {
      */
     private final HashSet<Integer> ignoredModifications = new HashSet<>(2);
     /**
-     * The maximal peptide mass error found in ppm.
-     */
-    private double maxPeptideErrorPpm = 0;
-    /**
-     * The maximal peptide mass error found in Da.
-     */
-    private double maxPeptideErrorDa = 0;
-    /**
-     * The maximal tag mass error found in ppm.
-     */
-    private double maxTagErrorPpm = 0;
-    /**
-     * The maximal tag mass error found in Da.
-     */
-    private double maxTagErrorDa = 0;
-    /**
-     * List of charges found.
-     */
-    private final HashSet<Integer> charges = new HashSet<>();
-    /**
      * Map of the number of times proteins appeared as first hit.
      */
     private final HashMap<String, Integer> proteinCount = new HashMap<>(10000);
@@ -175,10 +121,6 @@ public class PsmImportRunnable implements Runnable {
      * The identification object database.
      */
     private final Identification identification;
-    /**
-     * The input map.
-     */
-    private final InputMap inputMap;
     /**
      * The identification parameters.
      */
@@ -210,7 +152,6 @@ public class PsmImportRunnable implements Runnable {
      * @param idFile the file which the matches are imported from
      * @param identification the identification object where to store the
      * matches
-     * @param inputMap the input map to use for scoring
      * @param sequenceProvider the protein sequence provider
      * @param fastaMapper the FASTA mapper used to map peptides to proteins
      * @param waitingHandler The waiting handler to display feedback to the
@@ -223,7 +164,6 @@ public class PsmImportRunnable implements Runnable {
             IdfileReader fileReader,
             File idFile,
             Identification identification,
-            InputMap inputMap,
             SequenceProvider sequenceProvider,
             FastaMapper fastaMapper,
             WaitingHandler waitingHandler,
@@ -235,7 +175,6 @@ public class PsmImportRunnable implements Runnable {
         this.fileReader = fileReader;
         this.idFile = idFile;
         this.identification = identification;
-        this.inputMap = inputMap;
         this.sequenceProvider = sequenceProvider;
         this.fastaMapper = fastaMapper;
         this.waitingHandler = waitingHandler;
@@ -252,6 +191,12 @@ public class PsmImportRunnable implements Runnable {
             while ((spectrumMatch = spectrumMatchIterator.next()) != null) {
 
                 importPsm(spectrumMatch);
+
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
+
+                waitingHandler.increaseSecondaryProgressCounter();
 
             }
 
@@ -293,8 +238,14 @@ public class PsmImportRunnable implements Runnable {
 
             if (dbMatch != null) {
 
-                mergePeptideAssumptions(spectrumMatch.getPeptideAssumptionsMap(), dbMatch.getPeptideAssumptionsMap());
-                mergeTagAssumptions(spectrumMatch.getTagAssumptionsMap(), dbMatch.getTagAssumptionsMap());
+                mergePeptideAssumptions(
+                        spectrumMatch.getPeptideAssumptionsMap(),
+                        dbMatch.getPeptideAssumptionsMap()
+                );
+                mergeTagAssumptions(
+                        spectrumMatch.getTagAssumptionsMap(),
+                        dbMatch.getTagAssumptionsMap()
+                );
 
             } else {
 
@@ -313,12 +264,6 @@ public class PsmImportRunnable implements Runnable {
 
             }
         }
-
-        if (waitingHandler.isRunCanceled()) {
-            return;
-        }
-
-        waitingHandler.increaseSecondaryProgressCounter();
     }
 
     /**
@@ -523,7 +468,14 @@ public class PsmImportRunnable implements Runnable {
 
                                 Modification modification = modificationFactory.getModification(omssaName);
 
-                                tempNames = ModificationUtils.getExpectedModifications(modification.getMass(), modificationParameters, peptide, MOD_MASS_TOLERANCE, sequenceProvider, modificationSequenceMatchingPreferences);
+                                tempNames = ModificationUtils.getExpectedModifications(
+                                        modification.getMass(),
+                                        modificationParameters,
+                                        peptide,
+                                        MOD_MASS_TOLERANCE,
+                                        sequenceProvider,
+                                        modificationSequenceMatchingPreferences
+                                );
 
                             } else if (fileReader instanceof AndromedaIdfileReader) {
 
@@ -648,6 +600,22 @@ public class PsmImportRunnable implements Runnable {
                             // Add new assumption
                             newAssumptions.add(peptideAssumption);
 
+                            // Get protein count
+                            for (String protein : peptide.getProteinMapping().navigableKeySet()) {
+
+                                Integer count = proteinCount.get(protein);
+
+                                if (count != null) {
+
+                                    proteinCount.put(protein, count + 1);
+
+                                } else {
+
+                                    proteinCount.put(protein, 1);
+
+                                }
+                            }
+
                         } else {
 
                             modificationIssue++;
@@ -667,122 +635,6 @@ public class PsmImportRunnable implements Runnable {
                 } else {
 
                     assumptionsForAdvocate.remove(score);
-
-                }
-            }
-
-            // try to find the best peptide hit passing the initial filters
-            PeptideAssumption firstPeptideHit = null;
-            PeptideAssumption firstPeptideHitNoProtein = null;
-            TagAssumption firstTagHit = null;
-
-            if (!assumptionsForAdvocate.isEmpty()) {
-
-                for (Map.Entry<Double, ArrayList<PeptideAssumption>> entry1 : assumptionsForAdvocate.entrySet()) {
-
-                    ArrayList<PeptideAssumption> firstHits = new ArrayList<>(1);
-                    ArrayList<PeptideAssumption> firstHitsNoProteins = new ArrayList<>(1);
-
-                    for (PeptideAssumption peptideAssumption : entry1.getValue()) {
-
-                        Peptide peptide = peptideAssumption.getPeptide();
-                        boolean filterPassed = true;
-
-                        if (!peptideAssumptionFilter.validatePeptide(peptide, sequenceMatchingPreferences, searchParameters.getDigestionParameters())) {
-
-                            filterPassed = false;
-                            peptideIssue++;
-
-                        } else if (!peptideAssumptionFilter.validatePrecursor(peptideAssumption, spectrumKey, spectrumFactory, searchParameters)) {
-
-                            filterPassed = false;
-                            precursorIssue++;
-
-                        } else if (!peptideAssumptionFilter.validateProteins(peptide, sequenceMatchingPreferences, sequenceProvider)) {
-
-                            filterPassed = false;
-                            proteinIssue++;
-
-                        } else {
-
-                            if (peptide.getProteinMapping().isEmpty()) {
-
-                                missingProteins++;
-                                filterPassed = false;
-
-                                if (firstPeptideHitNoProtein != null) {
-
-                                    firstHitsNoProteins.add(peptideAssumption);
-
-                                }
-                            }
-                        }
-
-                        if (filterPassed) {
-
-                            firstHits.add(peptideAssumption);
-
-                        }
-                    }
-
-                    if (!firstHits.isEmpty()) {
-
-                        firstPeptideHit = BestMatchSelection.getBestHit(
-                                spectrumKey,
-                                firstHits,
-                                proteinCount,
-                                sequenceProvider,
-                                identificationParameters,
-                                peptideSpectrumAnnotator
-                        );
-
-                    }
-                    if (firstPeptideHit != null) {
-
-                        inputMap.addEntry(advocateId, spectrumFileName, firstPeptideHit.getScore(), PeptideUtils.isDecoy(firstPeptideHit.getPeptide(), sequenceProvider));
-                        nRetained++;
-                        break;
-
-                    } else if (!firstHitsNoProteins.isEmpty()) {
-
-                        // See if a peptide without protein can be a best match
-                        firstPeptideHitNoProtein = BestMatchSelection.getBestHit(spectrumKey, firstHits, proteinCount, sequenceProvider, identificationParameters, peptideSpectrumAnnotator);
-
-                    }
-                }
-
-                if (firstPeptideHit != null) {
-
-                    savePeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHit);
-
-                } else {
-
-                    // Check if a peptide with no protein can be a good candidate
-                    if (firstPeptideHitNoProtein != null) {
-
-                        savePeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHitNoProtein);
-
-                    } else {
-
-                        // Try to find the best tag hit
-                        TreeMap<Double, ArrayList<TagAssumption>> tagsForAdvocate = spectrumMatch.getAllTagAssumptions(advocateId);
-
-                        if (tagsForAdvocate != null) {
-
-                            firstTagHit = tagsForAdvocate.keySet().stream()
-                                    .sorted()
-                                    .flatMap(score -> tagsForAdvocate.get(score).stream())
-                                    .findFirst()
-                                    .get();
-                            checkTagMassErrorsAndCharge(spectrumKey, firstTagHit);
-
-                        }
-                    }
-                }
-
-                if (firstPeptideHit == null && firstPeptideHitNoProtein == null && firstTagHit == null) {
-
-                    psmsRejected++;
 
                 }
             }
@@ -1316,83 +1168,6 @@ public class PsmImportRunnable implements Runnable {
     }
 
     /**
-     * Saves the peptide maximal mass error and found charge.
-     *
-     * @param spectrumKey the key of the spectrum match
-     * @param peptideAssumption the peptide assumption
-     */
-    private void savePeptidesMassErrorsAndCharges(
-            String spectrumKey,
-            PeptideAssumption peptideAssumption
-    ) {
-
-        SearchParameters searchParameters = identificationParameters.getSearchParameters();
-
-        double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
-
-        maxPeptideErrorPpm = Math.max(
-                maxPeptideErrorPpm,
-                Math.abs(
-                        peptideAssumption.getDeltaMass(
-                                precursorMz,
-                                true,
-                                searchParameters.getMinIsotopicCorrection(),
-                                searchParameters.getMaxIsotopicCorrection()
-                        )));
-
-        maxPeptideErrorDa = Math.max(
-                maxPeptideErrorDa,
-                Math.abs(peptideAssumption.getDeltaMass(
-                        precursorMz,
-                        false,
-                        searchParameters.getMinIsotopicCorrection(),
-                        searchParameters.getMaxIsotopicCorrection()
-                )));
-
-        charges.add(peptideAssumption.getIdentificationCharge());
-
-        for (String protein : peptideAssumption.getPeptide().getProteinMapping().navigableKeySet()) {
-
-            Integer count = proteinCount.get(protein);
-
-            if (count != null) {
-
-                proteinCount.put(protein, count + 1);
-
-            } else {
-
-                proteinCount.put(protein, 1);
-
-            }
-        }
-    }
-
-    /**
-     * Saves the maximal precursor error and charge.
-     *
-     * @param spectrumKey the key of the spectrum match
-     * @param tagAssumption the tag assumption
-     */
-    private void checkTagMassErrorsAndCharge(
-            String spectrumKey,
-            TagAssumption tagAssumption
-    ) {
-
-        SearchParameters searchParameters = identificationParameters.getSearchParameters();
-
-        double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
-
-        maxTagErrorPpm = Math.max(maxTagErrorPpm,
-                Math.abs(tagAssumption.getDeltaMass(precursorMz, true, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection())));
-
-        maxTagErrorDa = Math.max(maxTagErrorDa,
-                Math.abs(tagAssumption.getDeltaMass(precursorMz, false, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection())));
-
-        charges.add(tagAssumption.getIdentificationCharge());
-
-    }
-
-    /**
      * Returns the mass indicated by the identification algorithm for the given
      * modification. 0 if not found.
      *
@@ -1499,26 +1274,6 @@ public class PsmImportRunnable implements Runnable {
     }
 
     /**
-     * Returns the number of PSMs which did not pass the import filters.
-     *
-     * @return the number of PSMs which did not pass the import filters
-     */
-    public int getPsmsRejected() {
-        return psmsRejected;
-    }
-
-    /**
-     * Returns the number of PSMs which did not pass the import filters due to a
-     * protein issue.
-     *
-     * @return the number of PSMs which did not pass the import filters due to a
-     * protein issue
-     */
-    public int getProteinIssue() {
-        return proteinIssue;
-    }
-
-    /**
      * Returns the number of PSMs which did not pass the import filters due to a
      * peptide issue.
      *
@@ -1531,17 +1286,6 @@ public class PsmImportRunnable implements Runnable {
 
     /**
      * Returns the number of PSMs which did not pass the import filters due to a
-     * precursor issue.
-     *
-     * @return the number of PSMs which did not pass the import filters due to a
-     * precursor issue
-     */
-    public int getPrecursorIssue() {
-        return precursorIssue;
-    }
-
-    /**
-     * Returns the number of PSMs which did not pass the import filters due to a
      * modification parsing issue.
      *
      * @return the number of PSMs which did not pass the import filters due to a
@@ -1549,70 +1293,6 @@ public class PsmImportRunnable implements Runnable {
      */
     public int getModificationIssue() {
         return modificationIssue;
-    }
-
-    /**
-     * Returns the number of PSMs where a protein was missing.
-     *
-     * @return the number of PSMs where a protein was missing
-     */
-    public int getMissingProteins() {
-        return missingProteins;
-    }
-
-    /**
-     * Returns the number of PSMs retained after filtering.
-     *
-     * @return the number of PSMs retained after filtering
-     */
-    public int getnRetained() {
-        return nRetained;
-    }
-
-    /**
-     * Returns the different charges found.
-     *
-     * @return the different charges found
-     */
-    public HashSet<Integer> getCharges() {
-        return charges;
-    }
-
-    /**
-     * Returns the maximal peptide mass error found in ppm.
-     *
-     * @return the maximal peptide mass error found in ppm
-     */
-    public double getMaxPeptideErrorPpm() {
-        return maxPeptideErrorPpm;
-    }
-
-    /**
-     * Returns the maximal peptide mass error found in Da.
-     *
-     * @return the maximal peptide mass error found in Da
-     */
-    public double getMaxPeptideErrorDa() {
-        return maxPeptideErrorDa;
-    }
-
-    /**
-     * Returns the maximal tag mass error found in ppm.
-     *
-     * @return the maximal tag mass error found in ppm
-     */
-    public double getMaxTagErrorPpm() {
-        return maxTagErrorPpm;
-    }
-
-    /**
-     * Returns the maximal tag mass error found in Da.
-     *
-     * @return the maximal tag mass error found in Da
-     */
-    public double getMaxTagErrorDa() {
-        return maxTagErrorDa;
-
     }
 
     /**

@@ -520,7 +520,7 @@ public class FileImporter {
 
                     }
 
-                    waitingHandler.setMaxSecondaryProgressCounter(nMatches);
+                    waitingHandler.setMaxSecondaryProgressCounter(2 * nMatches);
                     waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);
 
                     PsmImporter psmImporter = new PsmImporter();
