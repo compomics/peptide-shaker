@@ -212,11 +212,13 @@ public class FileImporter {
 
         try {
 
-            importSequences(identificationParameters.getSequenceMatchingParameters(),
+            importSequences(
+                    identificationParameters.getSequenceMatchingParameters(),
                     identificationParameters.getSearchParameters(), 
                     identificationParameters.getFastaParameters(),
                     identificationParameters.getPeptideVariantsParameters(),
-                    waitingHandler, exceptionHandler);
+                    waitingHandler, exceptionHandler
+            );
 
             if (waitingHandler.isRunCanceled()) {
 
@@ -426,7 +428,12 @@ public class FileImporter {
 
         try {
 
-            idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, identificationParameters.getSearchParameters(), identificationParameters.getSequenceMatchingParameters(), true);
+            idFileSpectrumMatches = fileReader.getAllSpectrumMatches(
+                    waitingHandler, 
+                    identificationParameters.getSearchParameters(), 
+                    identificationParameters.getSequenceMatchingParameters(), 
+                    true
+            );
 
         } catch (Exception e) {
 
@@ -505,8 +512,22 @@ public class FileImporter {
                     waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                     waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);
 
-                    PsmImporter psmImporter = new PsmImporter(identificationParameters, fileReader, idFile, identification, inputMap, proteinCount, singleProteinList, sequenceProvider, fastaMapper);
-                    psmImporter.importPsms(idFileSpectrumMatches, processingParameters.getnThreads(), waitingHandler);
+                    PsmImporter psmImporter = new PsmImporter(
+                            identificationParameters, 
+                            fileReader, 
+                            idFile, 
+                            identification, 
+                            inputMap, 
+                            proteinCount, 
+                            singleProteinList, 
+                            sequenceProvider, 
+                            fastaMapper
+                    );
+                    psmImporter.importPsms(
+                            idFileSpectrumMatches, 
+                            processingParameters.getnThreads(), 
+                            waitingHandler
+                    );
 
                     if (waitingHandler.isRunCanceled()) {
 

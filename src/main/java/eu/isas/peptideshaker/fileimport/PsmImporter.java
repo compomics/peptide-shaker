@@ -236,13 +236,13 @@ public class PsmImporter {
             int nThreads,
             WaitingHandler waitingHandler
     ) {
-        
+
         HashMap<Long, Object> matchesToAdd = new HashMap<>();
 
         idFileSpectrumMatches.forEach((tempSpectrumMatch) -> {
             importPsm(tempSpectrumMatch, new PeptideSpectrumAnnotator(), matchesToAdd, waitingHandler);
         });
-        
+
         identification.addObjects(matchesToAdd, waitingHandler, true);
 
     }
@@ -278,11 +278,11 @@ public class PsmImporter {
 
                 mergePeptideAssumptions(algorithmMatch.getPeptideAssumptionsMap(), dbMatch.getPeptideAssumptionsMap());
                 mergeTagAssumptions(algorithmMatch.getTagAssumptionsMap(), dbMatch.getTagAssumptionsMap());
- 
+
             } else {
-                
+
                 matchesToAdd.put(algorithmMatch.getKey(), algorithmMatch);
-                
+
             }
         }
 
@@ -316,9 +316,10 @@ public class PsmImporter {
 
             } else {
 
-                for (double score : algorithmMap.keySet()) {
+                for (Entry<Double, ArrayList<TagAssumption>> entry2 : algorithmMap.entrySet()) {
 
-                    ArrayList<TagAssumption> scoreAssumptions = algorithmMap.get(score);
+                    double score = entry2.getKey();
+                    ArrayList<TagAssumption> scoreAssumptions = entry2.getValue();
                     ArrayList<TagAssumption> combinedScoreAssumptions = combinedAlgorithmMap.get(score);
 
                     if (combinedScoreAssumptions == null) {
@@ -342,7 +343,7 @@ public class PsmImporter {
      * @param combinedAssumptions the combined assumptions
      */
     private void mergePeptideAssumptions(
-            HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> matchAssumptions, 
+            HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> matchAssumptions,
             HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> combinedAssumptions
     ) {
 
@@ -358,9 +359,10 @@ public class PsmImporter {
 
             } else {
 
-                for (double score : algorithmMap.keySet()) {
+                for (Entry<Double, ArrayList<PeptideAssumption>> entry2 : algorithmMap.entrySet()) {
 
-                    ArrayList<PeptideAssumption> scoreAssumptions = algorithmMap.get(score);
+                    double score = entry2.getKey();
+                    ArrayList<PeptideAssumption> scoreAssumptions = entry2.getValue();
                     ArrayList<PeptideAssumption> combinedScoreAssumptions = combinedAlgorithmMap.get(score);
 
                     if (combinedScoreAssumptions == null) {
@@ -391,8 +393,8 @@ public class PsmImporter {
      * canceling the import
      */
     private void importAssumptions(
-            SpectrumMatch spectrumMatch, 
-            PeptideSpectrumAnnotator peptideSpectrumAnnotator, 
+            SpectrumMatch spectrumMatch,
+            PeptideSpectrumAnnotator peptideSpectrumAnnotator,
             WaitingHandler waitingHandler
     ) {
 
@@ -765,9 +767,9 @@ public class PsmImporter {
      * @param searchParameters the search parameters
      */
     private void modificationLocalization(
-            Peptide peptide, 
-            HashMap<Integer, ArrayList<String>> expectedNames, 
-            HashMap<ModificationMatch, ArrayList<String>> modNames, 
+            Peptide peptide,
+            HashMap<Integer, ArrayList<String>> expectedNames,
+            HashMap<ModificationMatch, ArrayList<String>> modNames,
             SearchParameters searchParameters
     ) {
 
@@ -1286,7 +1288,7 @@ public class PsmImporter {
      * @param peptideAssumption the peptide assumption
      */
     private synchronized void savePeptidesMassErrorsAndCharges(
-            String spectrumKey, 
+            String spectrumKey,
             PeptideAssumption peptideAssumption
     ) {
 
@@ -1294,22 +1296,22 @@ public class PsmImporter {
 
         double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
 
-        maxTagErrorPpm = Math.max(
-                maxTagErrorPpm,
+        maxPeptideErrorPpm = Math.max(
+                maxPeptideErrorPpm,
                 Math.abs(
                         peptideAssumption.getDeltaMass(
-                                precursorMz, 
-                                true, 
-                                searchParameters.getMinIsotopicCorrection(), 
+                                precursorMz,
+                                true,
+                                searchParameters.getMinIsotopicCorrection(),
                                 searchParameters.getMaxIsotopicCorrection()
                         )));
 
-        maxTagErrorDa = Math.max(
-                maxTagErrorDa,
+        maxPeptideErrorDa = Math.max(
+                maxPeptideErrorDa,
                 Math.abs(peptideAssumption.getDeltaMass(
-                        precursorMz, 
-                        false, 
-                        searchParameters.getMinIsotopicCorrection(), 
+                        precursorMz,
+                        false,
+                        searchParameters.getMinIsotopicCorrection(),
                         searchParameters.getMaxIsotopicCorrection()
                 )));
 
@@ -1346,7 +1348,7 @@ public class PsmImporter {
      * @param tagAssumption the tag assumption
      */
     private synchronized void checkTagMassErrorsAndCharge(
-            String spectrumKey, 
+            String spectrumKey,
             TagAssumption tagAssumption
     ) {
 
@@ -1422,7 +1424,7 @@ public class PsmImporter {
      * @return the mass of the modification
      */
     private double getRefMass(
-            String seModName, 
+            String seModName,
             SearchParameters searchParameters
     ) {
 
