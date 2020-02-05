@@ -434,7 +434,7 @@ public class FileImporter {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
-        SpectrumMatch[] idFileSpectrumMatches = null;
+        ArrayList<SpectrumMatch> idFileSpectrumMatches = null;
 
         try {
 
@@ -481,7 +481,7 @@ public class FileImporter {
 
         if (idFileSpectrumMatches != null && !waitingHandler.isRunCanceled()) {
 
-            int nMatches = idFileSpectrumMatches.length;
+            int nMatches = idFileSpectrumMatches.size();
 
             if (nMatches == 0) {
 

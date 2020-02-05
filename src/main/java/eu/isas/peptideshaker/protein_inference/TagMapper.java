@@ -61,7 +61,7 @@ public class TagMapper {
      * @param waitingHandler a waiting handler
      */
     public void mapTags(
-            SpectrumMatch[] spectrumMatches, 
+            ArrayList<SpectrumMatch> spectrumMatches, 
             FastaMapper fastaMapper, 
             WaitingHandler waitingHandler
     ) {

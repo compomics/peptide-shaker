@@ -42,6 +42,7 @@ import com.compomics.util.experiment.io.identification.idfilereaders.NovorIdfile
 import com.compomics.util.experiment.io.identification.idfilereaders.OnyaseIdfileReader;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.threading.SimpleArrayIterator;
+import com.compomics.util.threading.SimpleArrayListIterator;
 import com.compomics.util.threading.SimpleSemaphore;
 import com.compomics.util.waiting.WaitingHandler;
 import de.proteinms.omxparser.util.OMSSAIdfileReader;
@@ -145,7 +146,7 @@ public class PsmImporter {
      * Map of proteins found several times with the number of times they
      * appeared as first hit.
      */
-    private HashMap<String, Integer> proteinCount;
+    private HashMap<String, Integer> proteinCount = new HashMap<>(10000);
 
     /**
      * Constructor.
@@ -176,7 +177,7 @@ public class PsmImporter {
      * process timed out.
      */
     public void importPsms(
-            SpectrumMatch[] spectrumMatches,
+            ArrayList<SpectrumMatch> spectrumMatches,
             Identification identification,
             IdentificationParameters identificationParameters,
             InputMap inputMap,
@@ -190,7 +191,7 @@ public class PsmImporter {
             
     ) throws InterruptedException, TimeoutException {
 
-        SimpleArrayIterator<SpectrumMatch> spectrumMatchIterator = new SimpleArrayIterator<>(spectrumMatches);
+        SimpleArrayListIterator<SpectrumMatch> spectrumMatchIterator = new SimpleArrayListIterator<>(spectrumMatches);
 
         ExecutorService pool = Executors.newFixedThreadPool(nThreads);
 

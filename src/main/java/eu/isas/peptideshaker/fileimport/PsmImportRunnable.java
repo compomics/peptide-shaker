@@ -40,6 +40,7 @@ import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.parameters.identification.tool_specific.AndromedaParameters;
 import com.compomics.util.parameters.identification.tool_specific.OmssaParameters;
 import com.compomics.util.threading.SimpleArrayIterator;
+import com.compomics.util.threading.SimpleArrayListIterator;
 import com.compomics.util.threading.SimpleSemaphore;
 import com.compomics.util.waiting.WaitingHandler;
 import de.proteinms.omxparser.util.OMSSAIdfileReader;
@@ -65,8 +66,8 @@ import java.util.stream.IntStream;
 public class PsmImportRunnable implements Runnable {
 
     /**
-     * The mass added per amino acid as part of the reference mass
-     * when converting Dalton tolerances to ppm.
+     * The mass added per amino acid as part of the reference mass when
+     * converting Dalton tolerances to ppm.
      */
     public static final double MASS_PER_AA = 100.0;
     /**
@@ -88,7 +89,7 @@ public class PsmImportRunnable implements Runnable {
     /**
      * Iterator for the spectrum matches to import.
      */
-    private final SimpleArrayIterator<SpectrumMatch> spectrumMatchIterator;
+    private final SimpleArrayListIterator<SpectrumMatch> spectrumMatchIterator;
     /**
      * Map of the objects to add to the database.
      */
@@ -167,8 +168,7 @@ public class PsmImportRunnable implements Runnable {
      */
     private final HashSet<Integer> charges = new HashSet<>();
     /**
-     * Map of the number of times proteins
-     * appeared as first hit.
+     * Map of the number of times proteins appeared as first hit.
      */
     private final HashMap<String, Integer> proteinCount = new HashMap<>(10000);
     /**
@@ -218,7 +218,7 @@ public class PsmImportRunnable implements Runnable {
      * @param exceptionHandler The handler of exceptions.
      */
     public PsmImportRunnable(
-            SimpleArrayIterator<SpectrumMatch> spectrumMatchIterator,
+            SimpleArrayListIterator<SpectrumMatch> spectrumMatchIterator,
             IdentificationParameters identificationParameters,
             IdfileReader fileReader,
             File idFile,
@@ -245,23 +245,30 @@ public class PsmImportRunnable implements Runnable {
 
     @Override
     public void run() {
-        
+
         try {
 
-        SpectrumMatch spectrumMatch;
-        while ((spectrumMatch = spectrumMatchIterator.next()) != null) {
+            SpectrumMatch spectrumMatch;
+            while ((spectrumMatch = spectrumMatchIterator.next()) != null) {
 
-            importPsm(spectrumMatch);
+                importPsm(spectrumMatch);
 
-        }
+            }
 
-        identification.addObjects(matchesToAdd, waitingHandler, false);
+            if (!matchesToAdd.isEmpty()) {
+
+                identification.addObjects(
+                        matchesToAdd,
+                        waitingHandler,
+                        false
+                );
+            }
 
         } catch (Exception e) {
-            
+
             waitingHandler.setRunCanceled();
             exceptionHandler.catchException(e);
-            
+
         }
     }
 
@@ -295,7 +302,11 @@ public class PsmImportRunnable implements Runnable {
 
                 if (matchesToAdd.size() == BATCH_SIZE) {
 
-                    identification.addObjects(matchesToAdd, waitingHandler, false);
+                    identification.addObjects(
+                            matchesToAdd,
+                            waitingHandler,
+                            false
+                    );
                     matchesToAdd.clear();
 
                 }
@@ -307,7 +318,7 @@ public class PsmImportRunnable implements Runnable {
             return;
         }
 
-        waitingHandler.setSecondaryProgressCounter(++progress);
+        waitingHandler.increaseSecondaryProgressCounter();
     }
 
     /**
@@ -717,11 +728,11 @@ public class PsmImportRunnable implements Runnable {
                     if (!firstHits.isEmpty()) {
 
                         firstPeptideHit = BestMatchSelection.getBestHit(
-                                spectrumKey, 
-                                firstHits, 
-                                proteinCount, 
-                                sequenceProvider, 
-                                identificationParameters, 
+                                spectrumKey,
+                                firstHits,
+                                proteinCount,
+                                sequenceProvider,
+                                identificationParameters,
                                 peptideSpectrumAnnotator
                         );
 
@@ -1351,7 +1362,7 @@ public class PsmImportRunnable implements Runnable {
             } else {
 
                 proteinCount.put(protein, 1);
-                
+
             }
         }
     }
@@ -1606,7 +1617,7 @@ public class PsmImportRunnable implements Runnable {
 
     /**
      * Returns the occurrence of each protein.
-     * 
+     *
      * @return the occurrence of each protein
      */
     public HashMap<String, Integer> getProteinCount() {
