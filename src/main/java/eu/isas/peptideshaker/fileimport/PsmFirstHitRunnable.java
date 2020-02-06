@@ -147,6 +147,7 @@ public class PsmFirstHitRunnable implements Runnable {
         this.proteinCount = proteinCount;
         this.waitingHandler = waitingHandler;
         this.exceptionHandler = exceptionHandler;
+        
         this.bestMatchSelection = new BestMatchSelection(
                 proteinCount,
                 sequenceProvider,
@@ -254,7 +255,7 @@ public class PsmFirstHitRunnable implements Runnable {
 
                     if (!firstHits.isEmpty()) {
 
-                        firstPeptideHit = bestMatchSelection.getBestMatch(spectrumKey, firstHits);
+                        firstPeptideHit = bestMatchSelection.getBestMatch(spectrumKey, firstHits, true);
 
                     }
                     if (firstPeptideHit != null) {
@@ -266,7 +267,7 @@ public class PsmFirstHitRunnable implements Runnable {
                     } else if (!firstHitsNoProteins.isEmpty()) {
 
                         // See if a peptide without protein can be a best match
-                        firstPeptideHit = bestMatchSelection.getBestMatch(spectrumKey, firstHits);
+                        firstPeptideHit = bestMatchSelection.getBestMatch(spectrumKey, firstHits, true);
 
                     }
                 }

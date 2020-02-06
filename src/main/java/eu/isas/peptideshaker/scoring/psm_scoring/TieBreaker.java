@@ -57,7 +57,8 @@ public class TieBreaker {
     public PeptideAssumption getBestPeptideAssumption(
             String spectrumKey,
             PeptideAssumption peptideAssumption1,
-            PeptideAssumption peptideAssumption2
+            PeptideAssumption peptideAssumption2,
+            boolean silentFail
     ) {
 
         int proteinMaxOccurrence1 = peptideAssumption1.getPeptide().getProteinMapping().navigableKeySet().stream()
@@ -119,6 +120,12 @@ public class TieBreaker {
         } else if (massError1 > massError2) {
 
             return peptideAssumption2;
+
+        }
+
+        if (silentFail) {
+
+            return peptideAssumption1;
 
         }
 

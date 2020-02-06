@@ -322,8 +322,18 @@ public class PeptideShaker {
 
         waitingHandler.appendReport("Saving assumptions probabilities, selecting best match, scoring modification localization.", true, true);
 
-        PsmProcessor psmProcessor = new PsmProcessor(identification, sequenceProvider, proteinCount, matchesValidator, modificationLocalizationScorer);
-        psmProcessor.processPsms(inputMap, identificationParameters, waitingHandler);
+        PsmProcessor psmProcessor = new PsmProcessor(identification);
+        psmProcessor.processPsms(
+                inputMap, 
+                identificationParameters, 
+                matchesValidator, 
+                modificationLocalizationScorer, 
+                sequenceProvider, 
+                proteinCount, 
+                processingParameters.getnThreads(), 
+                waitingHandler, 
+                exceptionHandler
+        );
         waitingHandler.increasePrimaryProgressCounter();
 
         if (waitingHandler.isRunCanceled()) {

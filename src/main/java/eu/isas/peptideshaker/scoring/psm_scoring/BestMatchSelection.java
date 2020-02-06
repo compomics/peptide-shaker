@@ -140,7 +140,7 @@ public class BestMatchSelection {
                 for (PeptideAssumption peptideAssumption1 : advocate1Entry.getValue()) {
 
                     Peptide peptide1 = peptideAssumption1.getPeptide();
-                    long id = peptide1.getKey();
+                    long id = peptide1.getMatchingKey();
 
                     if (!ids.contains(id)) {
 
@@ -173,8 +173,11 @@ public class BestMatchSelection {
 
                                         for (PeptideAssumption peptideAssumption2 : advocate2Entry.getValue()) {
 
-                                            if (peptideAssumption1.getPeptide().isSameSequenceAndModificationStatus(peptideAssumption2.getPeptide(),
-                                                    sequenceMatchingPreferences)) {
+                                            if (peptideAssumption1.getPeptide()
+                                                    .isSameSequenceAndModificationStatus(
+                                                            peptideAssumption2.getPeptide(),
+                                                            sequenceMatchingPreferences
+                                                    )) {
 
                                                 PSParameter psParameter2 = (PSParameter) peptideAssumption2.getUrParam(PSParameter.dummy);
                                                 p *= psParameter2.getProbability();
@@ -391,6 +394,27 @@ public class BestMatchSelection {
             ArrayList<PeptideAssumption> assumptions
     ) {
 
+        return getBestMatch(spectrumKey, assumptions, false);
+
+    }
+
+    /**
+     * Returns the best match for the given spectrum among the given peptide
+     * assumptions.
+     *
+     * @param spectrumKey The key of the spectrum.
+     * @param assumptions A list of peptide assumptions.
+     * @param silentFail If true, no exception will be thrown if ties cannot be
+     * broken and the first of the best hits will be returned.
+     *
+     * @return The best match.
+     */
+    public PeptideAssumption getBestMatch(
+            String spectrumKey,
+            ArrayList<PeptideAssumption> assumptions,
+            boolean silentFail
+    ) {
+
         PeptideAssumption bestPeptideAssumption = assumptions.get(0);
 
         for (int i = 1; i < assumptions.size(); i++) {
@@ -400,7 +424,8 @@ public class BestMatchSelection {
             bestPeptideAssumption = tieBreaker.getBestPeptideAssumption(
                     spectrumKey,
                     bestPeptideAssumption,
-                    peptideAssumption
+                    peptideAssumption,
+                    silentFail
             );
 
         }
