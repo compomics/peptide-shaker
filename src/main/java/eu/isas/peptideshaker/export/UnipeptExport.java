@@ -51,7 +51,7 @@ public class UnipeptExport {
 
         // write the peptide sequences
         for (String peptide : peptides) {
-            writer.write("\t\t\t\t" + peptide + LINE_BREAK); // @TODO: possible to also avoid creating the potentially large peptide list?
+            writer.write(peptide + LINE_BREAK); // @TODO: possible to also avoid creating the potentially large peptide list?
         }
 
         // write the ending html section
