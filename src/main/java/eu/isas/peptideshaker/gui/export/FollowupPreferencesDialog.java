@@ -100,17 +100,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         backgroundPanel = new javax.swing.JPanel();
-        spectraPanel = new javax.swing.JPanel();
-        exportSpectraLabel = new javax.swing.JLabel();
-        spectrumValidationCmb = new javax.swing.JComboBox();
-        exportMgfButton = new javax.swing.JButton();
-        recalibrateSpectraLabel = new javax.swing.JLabel();
-        spectrumRecalibrationCmb = new javax.swing.JComboBox();
-        recalibrateMgfButton = new javax.swing.JButton();
-        inclusionListPanel = new javax.swing.JPanel();
-        includeValidatedPsmsLabel = new javax.swing.JLabel();
-        inclusionListFormat = new javax.swing.JComboBox();
-        inclusionListButton = new javax.swing.JButton();
+        scrollPane = new javax.swing.JScrollPane();
+        scrollPanel = new javax.swing.JPanel();
+        tppPanel = new javax.swing.JPanel();
+        tppExportButton = new javax.swing.JButton();
+        tppExportCmb = new javax.swing.JComboBox();
+        tppLabel = new javax.swing.JLabel();
         progenesisPanel = new javax.swing.JPanel();
         exportProgenesisButton = new javax.swing.JButton();
         psmSelectionComboBox = new javax.swing.JComboBox();
@@ -125,18 +120,25 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         proteoformsLabel = new javax.swing.JLabel();
         proteoformsExportCmb = new javax.swing.JComboBox();
         exportProteformsAsTxtButton = new javax.swing.JButton();
+        inclusionListPanel = new javax.swing.JPanel();
+        includeValidatedPsmsLabel = new javax.swing.JLabel();
+        inclusionListFormat = new javax.swing.JComboBox();
+        inclusionListButton = new javax.swing.JButton();
         graphDatabasesPanel = new javax.swing.JPanel();
         graphDatabasesLabel = new javax.swing.JLabel();
         graphDatabaseFormat = new javax.swing.JComboBox();
         graphDatabasetButton = new javax.swing.JButton();
+        spectraPanel = new javax.swing.JPanel();
+        exportSpectraLabel = new javax.swing.JLabel();
+        spectrumValidationCmb = new javax.swing.JComboBox();
+        exportMgfButton = new javax.swing.JButton();
+        recalibrateSpectraLabel = new javax.swing.JLabel();
+        spectrumRecalibrationCmb = new javax.swing.JComboBox();
+        recalibrateMgfButton = new javax.swing.JButton();
         skylinePanel = new javax.swing.JPanel();
         skylineExportButton = new javax.swing.JButton();
         skylineExportCmb = new javax.swing.JComboBox();
         skylineExportLabel = new javax.swing.JLabel();
-        tppPanel = new javax.swing.JPanel();
-        tppExportButton = new javax.swing.JButton();
-        tppExportCmb = new javax.swing.JComboBox();
-        tppLabel = new javax.swing.JLabel();
         unipeptPanel = new javax.swing.JPanel();
         unipeptExportButton = new javax.swing.JButton();
         unipeptiExportCmb = new javax.swing.JComboBox();
@@ -144,107 +146,46 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Export - Follow Up Analysis");
-        setResizable(false);
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        spectraPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectra"));
-        spectraPanel.setOpaque(false);
+        tppPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("TPP Export (beta)"));
+        tppPanel.setOpaque(false);
 
-        exportSpectraLabel.setText("Export Spectra");
-
-        spectrumValidationCmb.setModel(new DefaultComboBoxModel(SpectrumExporter.ExportType.getPossibilities()));
-
-        exportMgfButton.setText("Export as MGF");
-        exportMgfButton.addActionListener(new java.awt.event.ActionListener() {
+        tppExportButton.setText("Export as pepXML");
+        tppExportButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportMgfButtonActionPerformed(evt);
+                tppExportButtonActionPerformed(evt);
             }
         });
 
-        recalibrateSpectraLabel.setText("Recalibrate Spectra (beta)");
+        tppExportCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "(no filters yet supported)" }));
+        tppExportCmb.setEnabled(false);
 
-        spectrumRecalibrationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Precursor and Fragment Ions", "Precursor Ions", "Fragment Ions" }));
+        tppLabel.setText("pepXML Format");
+        tppLabel.setToolTipText("Click for Progenesis LC-MS export help");
 
-        recalibrateMgfButton.setText("Export as MGF");
-        recalibrateMgfButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                recalibrateMgfButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout spectraPanelLayout = new javax.swing.GroupLayout(spectraPanel);
-        spectraPanel.setLayout(spectraPanelLayout);
-        spectraPanelLayout.setHorizontalGroup(
-            spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(spectraPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout tppPanelLayout = new javax.swing.GroupLayout(tppPanel);
+        tppPanel.setLayout(tppPanelLayout);
+        tppPanelLayout.setHorizontalGroup(
+            tppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tppPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(spectraPanelLayout.createSequentialGroup()
-                        .addComponent(exportSpectraLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spectrumValidationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(spectraPanelLayout.createSequentialGroup()
-                        .addComponent(recalibrateSpectraLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spectrumRecalibrationCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(18, 18, 18)
-                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(exportMgfButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(recalibrateMgfButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        spectraPanelLayout.setVerticalGroup(
-            spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(spectraPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(exportSpectraLabel)
-                    .addComponent(spectrumValidationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportMgfButton))
+                .addComponent(tppLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(recalibrateSpectraLabel)
-                    .addComponent(spectrumRecalibrationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(recalibrateMgfButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        inclusionListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Inclusion/Exclusion List (beta)"));
-        inclusionListPanel.setOpaque(false);
-
-        includeValidatedPsmsLabel.setText("Instrument Format");
-
-        inclusionListFormat.setModel(new DefaultComboBoxModel(InclusionListExport.ExportFormat.getPossibilities()));
-
-        inclusionListButton.setText("Export as List");
-        inclusionListButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                inclusionListButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout inclusionListPanelLayout = new javax.swing.GroupLayout(inclusionListPanel);
-        inclusionListPanel.setLayout(inclusionListPanelLayout);
-        inclusionListPanelLayout.setHorizontalGroup(
-            inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(inclusionListPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(includeValidatedPsmsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(inclusionListFormat, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(tppExportCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(inclusionListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tppExportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        inclusionListPanelLayout.setVerticalGroup(
-            inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(inclusionListPanelLayout.createSequentialGroup()
+        tppPanelLayout.setVerticalGroup(
+            tppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tppPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(inclusionListFormat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(includeValidatedPsmsLabel)
-                    .addComponent(inclusionListButton))
+                .addGroup(tppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tppExportCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tppExportButton)
+                    .addComponent(tppLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -282,7 +223,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(exportToProgenesisLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(psmSelectionComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(psmSelectionComboBox, 0, 434, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(exportProgenesisButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -382,6 +323,44 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        inclusionListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Inclusion/Exclusion List (beta)"));
+        inclusionListPanel.setOpaque(false);
+
+        includeValidatedPsmsLabel.setText("Instrument Format");
+
+        inclusionListFormat.setModel(new DefaultComboBoxModel(InclusionListExport.ExportFormat.getPossibilities()));
+
+        inclusionListButton.setText("Export as List");
+        inclusionListButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inclusionListButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout inclusionListPanelLayout = new javax.swing.GroupLayout(inclusionListPanel);
+        inclusionListPanel.setLayout(inclusionListPanelLayout);
+        inclusionListPanelLayout.setHorizontalGroup(
+            inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(inclusionListPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(includeValidatedPsmsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(inclusionListFormat, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(inclusionListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        inclusionListPanelLayout.setVerticalGroup(
+            inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(inclusionListPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(inclusionListFormat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(includeValidatedPsmsLabel)
+                    .addComponent(inclusionListButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         graphDatabasesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Graph Databases"));
         graphDatabasesPanel.setOpaque(false);
 
@@ -417,6 +396,71 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(graphDatabaseFormat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(graphDatabasesLabel)
                     .addComponent(graphDatabasetButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        spectraPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectra"));
+        spectraPanel.setOpaque(false);
+
+        exportSpectraLabel.setText("Export Spectra");
+
+        spectrumValidationCmb.setModel(new DefaultComboBoxModel(SpectrumExporter.ExportType.getPossibilities()));
+
+        exportMgfButton.setText("Export as MGF");
+        exportMgfButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportMgfButtonActionPerformed(evt);
+            }
+        });
+
+        recalibrateSpectraLabel.setText("Recalibrate Spectra (beta)");
+
+        spectrumRecalibrationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Precursor and Fragment Ions", "Precursor Ions", "Fragment Ions" }));
+
+        recalibrateMgfButton.setText("Export as MGF");
+        recalibrateMgfButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                recalibrateMgfButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout spectraPanelLayout = new javax.swing.GroupLayout(spectraPanel);
+        spectraPanel.setLayout(spectraPanelLayout);
+        spectraPanelLayout.setHorizontalGroup(
+            spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(spectraPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(spectraPanelLayout.createSequentialGroup()
+                        .addComponent(exportSpectraLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(spectrumValidationCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(spectraPanelLayout.createSequentialGroup()
+                        .addComponent(recalibrateSpectraLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(spectrumRecalibrationCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(spectraPanelLayout.createSequentialGroup()
+                        .addGap(17, 17, 17)
+                        .addComponent(recalibrateMgfButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectraPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(exportMgfButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        spectraPanelLayout.setVerticalGroup(
+            spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(spectraPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(exportSpectraLabel)
+                    .addComponent(spectrumValidationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exportMgfButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(recalibrateSpectraLabel)
+                    .addComponent(spectrumRecalibrationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(recalibrateMgfButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -460,47 +504,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        tppPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("TPP Export (beta)"));
-        tppPanel.setOpaque(false);
-
-        tppExportButton.setText("Export as pepXML");
-        tppExportButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tppExportButtonActionPerformed(evt);
-            }
-        });
-
-        tppExportCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "(no filters yet supported)" }));
-        tppExportCmb.setEnabled(false);
-
-        tppLabel.setText("pepXML Format");
-        tppLabel.setToolTipText("Click for Progenesis LC-MS export help");
-
-        javax.swing.GroupLayout tppPanelLayout = new javax.swing.GroupLayout(tppPanel);
-        tppPanel.setLayout(tppPanelLayout);
-        tppPanelLayout.setHorizontalGroup(
-            tppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tppPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(tppLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tppExportCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(tppExportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        tppPanelLayout.setVerticalGroup(
-            tppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tppPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(tppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tppExportCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tppExportButton)
-                    .addComponent(tppLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        unipeptPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Unipept Export (beta)"));
+        unipeptPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Unipept Export"));
         unipeptPanel.setOpaque(false);
 
         unipeptExportButton.setText("Export to Unipept");
@@ -538,26 +542,26 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
-        backgroundPanel.setLayout(backgroundPanelLayout);
-        backgroundPanelLayout.setHorizontalGroup(
-            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(backgroundPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout scrollPanelLayout = new javax.swing.GroupLayout(scrollPanel);
+        scrollPanel.setLayout(scrollPanelLayout);
+        scrollPanelLayout.setHorizontalGroup(
+            scrollPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(scrollPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(inclusionListPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(progenesisPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(proteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(spectraPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(graphDatabasesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tppPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(unipeptPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(skylinePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(scrollPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(unipeptPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tppPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(skylinePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(inclusionListPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(graphDatabasesPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(progenesisPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(proteinsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(spectraPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        backgroundPanelLayout.setVerticalGroup(
-            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(backgroundPanelLayout.createSequentialGroup()
+        scrollPanelLayout.setVerticalGroup(
+            scrollPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(scrollPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(spectraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -575,6 +579,21 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(unipeptPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
+        );
+
+        scrollPane.setViewportView(scrollPanel);
+
+        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(backgroundPanelLayout);
+        backgroundPanelLayout.setHorizontalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addComponent(scrollPane)
+                .addGap(0, 0, 0))
+        );
+        backgroundPanelLayout.setVerticalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(scrollPane)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1434,6 +1453,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox psmSelectionComboBox;
     private javax.swing.JButton recalibrateMgfButton;
     private javax.swing.JLabel recalibrateSpectraLabel;
+    private javax.swing.JScrollPane scrollPane;
+    private javax.swing.JPanel scrollPanel;
     private javax.swing.JButton skylineExportButton;
     private javax.swing.JComboBox skylineExportCmb;
     private javax.swing.JLabel skylineExportLabel;
