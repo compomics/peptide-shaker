@@ -93,6 +93,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        scrollPane = new javax.swing.JScrollPane();
         backgroundPanel = new javax.swing.JPanel();
         spectraPanel = new javax.swing.JPanel();
         exportSpectraLabel = new javax.swing.JLabel();
@@ -135,7 +136,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Export - Follow Up Analysis");
-        setResizable(false);
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
@@ -170,20 +170,20 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectraPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(spectraPanelLayout.createSequentialGroup()
                         .addComponent(exportSpectraLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spectrumValidationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(spectrumValidationCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(spectraPanelLayout.createSequentialGroup()
                         .addComponent(recalibrateSpectraLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spectrumRecalibrationCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(spectrumRecalibrationCmb, 0, 460, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(exportMgfButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(recalibrateMgfButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(9, 9, 9))
         );
         spectraPanelLayout.setVerticalGroup(
             spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -465,7 +465,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        unipeptPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Unipept Export (beta)"));
+        unipeptPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Unipept Export"));
         unipeptPanel.setOpaque(false);
 
         unipeptExportButton.setText("Export to Unipept");
@@ -542,15 +542,17 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
+        scrollPane.setViewportView(backgroundPanel);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(scrollPane)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(scrollPane)
         );
 
         pack();
@@ -1326,6 +1328,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox psmSelectionComboBox;
     private javax.swing.JButton recalibrateMgfButton;
     private javax.swing.JLabel recalibrateSpectraLabel;
+    private javax.swing.JScrollPane scrollPane;
     private javax.swing.JButton skylineExportButton;
     private javax.swing.JComboBox skylineExportCmb;
     private javax.swing.JLabel skylineExportLabel;
