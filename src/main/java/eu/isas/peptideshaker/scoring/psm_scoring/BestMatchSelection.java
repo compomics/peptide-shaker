@@ -115,7 +115,7 @@ public class BestMatchSelection {
         // map of the peptide first hits for this spectrum: score -> max protein count -> max search engine votes -> amino acids annotated -> min mass deviation -> peptide sequence
         TreeMap<Double, TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, TreeMap<Double, TreeMap<Long, PeptideAssumption>>>>>> validAssumptions = new TreeMap<>();
 
-        HashSet<Long> ids = new HashSet<>();
+        HashSet<Long> ids = new HashSet<>(2);
 
         HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> assumptions = spectrumMatch.getPeptideAssumptionsMap();
 

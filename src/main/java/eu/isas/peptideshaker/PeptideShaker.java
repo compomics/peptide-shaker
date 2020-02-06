@@ -63,6 +63,10 @@ import java.util.concurrent.TimeoutException;
 public class PeptideShaker {
 
     /**
+     * Default time out in days.
+     */
+    public static final int TIMEOUT_DAYS = 365;
+    /**
      * The experiment conducted.
      */
     private ProjectParameters projectParameters;
