@@ -2,21 +2,21 @@
 
   * [Introduction](#introduction)
   * [Read Me](#read-me)
-  * [Troubleshooting](#troubleshooting)
+  * [Issues, Questions and Bug Reports](#Issues-questions-and-bug-reports)
 
   * [Bioinformatics for Proteomics Tutorial](http://compomics.com/bioinformatics-for-proteomics/)
 
 ---
 
 ## PeptideShaker Publication:
-  * [Vaudel et al. Nature Biotechnol. 2015 Jan;33(1):22–24](http://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html).
+  * Vaudel M, Burkhart J, Zahedi RP, Oveland E, Berven FS, Sickmann A, Martens L: _PeptideShaker enables reanalysis of MS-derived proteomics data sets_ [[PMID 25574629](https://www.ncbi.nlm.nih.gov/pubmed/25574629)] [[pdf (accepted version)](https://github.com/mvaudel/Publications/blob/master/docs/aam/Barsnes_et_al_SearchGUI%20-%20revision.pdf)] [[Request a reprint](lennart.martens@UGent.be)].
   * If you use PeptideShaker as part of a publication, please include this reference.
 
 ---
 
 |   |   |   |
 | :------------------------- | :---------------: | :--: |
-| [![download](https://github.com/compomics/peptide-shaker/wiki/images/download_button.png)](http://genesis.ugent.be/maven2/eu/isas/peptideshaker/PeptideShaker/1.16.42/PeptideShaker-1.16.42.zip) | *v1.16.42 - All platforms* | [ReleaseNotes](https://github.com/compomics/peptide-shaker/wiki/ReleaseNotes) |
+| [![download](https://github.com/compomics/peptide-shaker/wiki/images/download_button.png)](http://genesis.ugent.be/maven2/eu/isas/peptideshaker/PeptideShaker/1.16.43/PeptideShaker-1.16.43.zip) | *v1.16.43 - All platforms* | [ReleaseNotes](https://github.com/compomics/peptide-shaker/wiki/ReleaseNotes) |
 
 ---
 
@@ -226,7 +226,17 @@ PeptideShaker currently only supports mgf files as the input format for the spec
 
 ---
 
-## Troubleshooting ##
+## Issues, Questions and Bug Reports
+
+### Code of Conduct
+
+As part of our efforts toward delivering open and inclusive science, we follow the [Contributor Convenant](https://www.contributor-covenant.org) [Code of Conduct for Open Source Projects](docs/CODE_OF_CONDUCT.md).
+
+### Issue Tracker
+
+Despite our efforts at enforcing good practices in our work, like every software, PeptideShaker might crash, fail to cover specific use cases, not perform as well as expected. We apologize for any inconvenience and will try to fix things to the best of our capabilities. We welcome bug reports, suggestions of improvements, and contributions _via_ our [issue tracker](https://github.com/compomics/peptide-shaker/issues). 
+
+### Troubleshooting
 
   * **Mascot Issues** - See [Mascot Support](#mascot-support) and [Database Help](https://github.com/compomics/searchgui/wiki/DatabaseHelp).
 
