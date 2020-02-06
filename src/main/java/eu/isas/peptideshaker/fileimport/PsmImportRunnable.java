@@ -73,10 +73,6 @@ public class PsmImportRunnable implements Runnable {
      */
     private final ModificationFactory modificationFactory = ModificationFactory.getInstance();
     /**
-     * The spectrum factory.
-     */
-    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-    /**
      * Iterator for the spectrum matches to import.
      */
     private final SimpleArrayListIterator<SpectrumMatch> spectrumMatchIterator;

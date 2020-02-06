@@ -98,12 +98,7 @@ public class PsmProcessor {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
         
-        FastaParameters fastaParameters = identificationParameters.getFastaParameters();
-        BestMatchSelection bestMatchSelection = new BestMatchSelection(
-                proteinCount, 
-                sequenceProvider, 
-                fastaParameters
-        );
+        BestMatchSelection bestMatchSelection = new BestMatchSelection(proteinCount, sequenceProvider, identificationParameters, new PeptideSpectrumAnnotator());
         
         identification.fillSpectrumIdentification();
 
@@ -153,7 +148,7 @@ public class PsmProcessor {
 
         attachAssumptionsProbabilities(spectrumMatch, inputMap, fastaParameters, sequenceMatchingParameters, waitingHandler);
 
-        bestMatchSelection.selectBestHit(spectrumMatch, inputMap, matchesValidator.getPsmMap(), waitingHandler, identificationParameters);
+        bestMatchSelection.selectBestHit(spectrumMatch, inputMap, matchesValidator.getPsmMap());
 
         if (spectrumMatch.getBestPeptideAssumption() != null) {
 

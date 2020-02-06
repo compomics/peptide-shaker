@@ -58,6 +58,10 @@ public class PsmFirstHitRunnable implements Runnable {
      */
     private final PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
     /**
+     * The best match selection module.
+     */
+    private final BestMatchSelection bestMatchSelection;
+    /**
      * Iterator for the spectrum matches to import.
      */
     private final SimpleArrayListIterator<SpectrumMatch> spectrumMatchIterator;
@@ -143,6 +147,12 @@ public class PsmFirstHitRunnable implements Runnable {
         this.proteinCount = proteinCount;
         this.waitingHandler = waitingHandler;
         this.exceptionHandler = exceptionHandler;
+        this.bestMatchSelection = new BestMatchSelection(
+                proteinCount,
+                sequenceProvider,
+                identificationParameters,
+                peptideSpectrumAnnotator
+        );
 
     }
 
@@ -244,14 +254,7 @@ public class PsmFirstHitRunnable implements Runnable {
 
                     if (!firstHits.isEmpty()) {
 
-                        firstPeptideHit = BestMatchSelection.getBestHit(
-                                spectrumKey,
-                                firstHits,
-                                proteinCount,
-                                sequenceProvider,
-                                identificationParameters,
-                                peptideSpectrumAnnotator
-                        );
+                        firstPeptideHit = bestMatchSelection.getBestMatch(spectrumKey, firstHits);
 
                     }
                     if (firstPeptideHit != null) {
@@ -263,7 +266,7 @@ public class PsmFirstHitRunnable implements Runnable {
                     } else if (!firstHitsNoProteins.isEmpty()) {
 
                         // See if a peptide without protein can be a best match
-                        firstPeptideHitNoProtein = BestMatchSelection.getBestHit(spectrumKey, firstHits, proteinCount, sequenceProvider, identificationParameters, peptideSpectrumAnnotator);
+                        firstPeptideHit = bestMatchSelection.getBestMatch(spectrumKey, firstHits);
 
                     }
                 }
