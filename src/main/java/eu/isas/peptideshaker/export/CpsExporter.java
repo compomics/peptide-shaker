@@ -17,6 +17,7 @@ import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCo
 import eu.isas.peptideshaker.scoring.PSMaps;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesCache;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import com.compomics.util.io.IoUtils;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import java.io.*;
 
@@ -51,7 +52,8 @@ public class CpsExporter {
      * @throws IOException thrown whenever an error occurred while reading or
      * writing a file
      */
-    public static void saveAs(File destinationFile,
+    public static void saveAs(
+            File destinationFile,
             WaitingHandler waitingHandler,
             Identification identification,
             IdentificationParameters identificationParameters,
@@ -66,7 +68,8 @@ public class CpsExporter {
             IdentificationFeaturesCache identificationFeaturesCache,
             boolean emptyCache,
             DisplayParameters displayParameters,
-            File dbFolder) throws IOException {
+            File dbFolder
+    ) throws IOException {
 
         identificationFeaturesCache.setReadOnly(true);
 
@@ -101,7 +104,7 @@ public class CpsExporter {
             if (waitingHandler == null || !waitingHandler.isRunCanceled()) {
 
                 identification.getObjectsDB().lock(waitingHandler);
-                Util.copyFile(identification.getObjectsDB().getDbFile(), destinationFile);
+                IoUtils.copyFile(identification.getObjectsDB().getDbFile(), destinationFile);
                 identification.getObjectsDB().unlock();
 
             }

@@ -28,6 +28,7 @@ import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCo
 import eu.isas.peptideshaker.preferences.UserParameters;
 import eu.isas.peptideshaker.preferences.UserPreferencesParent;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
+import com.compomics.util.io.IoUtils;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import java.io.File;
@@ -197,7 +198,7 @@ public class CpsParent extends UserPreferencesParent {
 
         File destinationFile = new File(dbFolder.getAbsolutePath(), dbName);
 
-        Util.copyFile(cpsFile, destinationFile);
+        IoUtils.copyFile(cpsFile, destinationFile);
 
         ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), destinationFile.getName(), false);
         PeptideShakerParameters psParameters = (PeptideShakerParameters) objectsDB.retrieveObject(PeptideShakerParameters.key);

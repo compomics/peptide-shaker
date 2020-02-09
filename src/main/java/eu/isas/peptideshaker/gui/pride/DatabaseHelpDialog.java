@@ -6,6 +6,7 @@ import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.converters.DecoyConverter;
 import com.compomics.util.gui.parameters.identification.search.SequenceDbDetailsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.io.IoUtils;
 import com.compomics.util.io.file.LastSelectedFolder;
 import com.compomics.util.parameters.UtilitiesUserParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -546,7 +547,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
 
             if (success) {
 
-                Util.copyFile(fastaFile, renamedFile, true);
+                IoUtils.copyFile(fastaFile, renamedFile, true);
 
             }
 

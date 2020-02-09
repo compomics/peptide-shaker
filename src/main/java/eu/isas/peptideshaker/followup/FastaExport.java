@@ -61,7 +61,7 @@ public class FastaExport {
                         )
                         .forEach(accession -> {
                             writer.writeLine(String.join("", ">", sequenceProvider.getHeader(accession)));
-                            writer.write(sequenceProvider.getSequence(accession), true, true);
+                            writer.write(sequenceProvider.getSequence(accession), true);
                             waitingHandler.increaseSecondaryProgressCounter();
                         });
             }
