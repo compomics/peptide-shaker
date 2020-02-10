@@ -29,7 +29,6 @@ import com.compomics.util.experiment.io.identification.idfilereaders.OnyaseIdfil
 import com.compomics.util.experiment.io.identification.idfilereaders.PepxmlIdfileReader;
 import com.compomics.util.experiment.io.identification.idfilereaders.TideIdfileReader;
 import com.compomics.util.experiment.io.identification.idfilereaders.XTandemIdfileReader;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
@@ -198,7 +197,7 @@ public class PsmImportRunnable implements Runnable {
 
             if (!matchesToAdd.isEmpty()) {
 
-                identification.addObjects(
+                identification.addSpectrumMatches(
                         matchesToAdd,
                         waitingHandler,
                         false
@@ -249,7 +248,7 @@ public class PsmImportRunnable implements Runnable {
 
                 if (matchesToAdd.size() == BATCH_SIZE) {
 
-                    identification.addObjects(
+                    identification.addSpectrumMatches(
                             matchesToAdd,
                             waitingHandler,
                             false

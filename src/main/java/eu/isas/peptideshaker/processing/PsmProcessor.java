@@ -83,7 +83,6 @@ public class PsmProcessor {
             ExceptionHandler exceptionHandler
     ) throws InterruptedException, TimeoutException {
 
-        identification.fillSpectrumIdentification();
         ArrayList<Long> spectrumKeys = new ArrayList<>(identification.getSpectrumIdentificationKeys());
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
