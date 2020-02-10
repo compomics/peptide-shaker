@@ -18,6 +18,7 @@ import eu.isas.peptideshaker.scoring.PSMaps;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesCache;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import com.compomics.util.io.IoUtils;
+import com.compomics.util.io.compression.GzUtils;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import java.io.*;
 
@@ -104,7 +105,11 @@ public class CpsExporter {
             if (waitingHandler == null || !waitingHandler.isRunCanceled()) {
 
                 identification.getObjectsDB().lock(waitingHandler);
-                IoUtils.copyFile(identification.getObjectsDB().getDbFile(), destinationFile);
+                GzUtils.gzFile(
+                        identification.getObjectsDB().getDbFile(),
+                        destinationFile,
+                        false
+                );
                 identification.getObjectsDB().unlock();
 
             }
