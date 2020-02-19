@@ -461,13 +461,13 @@ public class ProteinInference {
 
         for (String keyWord : KEYWORDS_UNCHARACTERIZED) {
 
-            if (newDescription.contains(keyWord)) {
+            if (newDescription != null && newDescription.contains(keyWord)) {
 
                 newUncharacterized = true;
 
             }
 
-            if (oldDescription.contains(keyWord)) {
+            if (oldDescription != null && oldDescription.contains(keyWord)) {
 
                 oldUncharacterized = true;
 
