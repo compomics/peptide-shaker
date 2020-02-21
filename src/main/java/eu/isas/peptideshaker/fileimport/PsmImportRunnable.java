@@ -66,7 +66,7 @@ public class PsmImportRunnable implements Runnable {
     /**
      * Size of the batches to use when adding objects to the database.
      */
-    public static final int BATCH_SIZE = 1000;
+    public static final int BATCH_SIZE = 100000;
     /**
      * The modification factory.
      */

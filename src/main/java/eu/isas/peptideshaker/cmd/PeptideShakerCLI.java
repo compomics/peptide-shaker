@@ -220,7 +220,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             FollowUpCLIInputBean followUpCLIInputBean = cliInputBean.getFollowUpCLIInputBean();
             // array to be filled with all exported follow-up reports
             ArrayList<File> followupAnalysisFiles = new ArrayList<File>();
-            
+
             if (followUpCLIInputBean.followUpNeeded()) {
                 waitingHandler.appendReport("Starting follow up tasks.", true, true);
 
@@ -279,7 +279,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                         waitingHandler.setRunCanceled();
                     }
                 }
-                
+
                 // inclusion list export
                 if (followUpCLIInputBean.inclusionListNeeded()) {
                     try {
@@ -301,7 +301,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                         waitingHandler.setRunCanceled();
                     }
                 }
-                
+
             }
 
             // report export if needed
@@ -338,8 +338,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
                         for (String reportType : reportCLIInputBean.getReportTypes()) {
                             try {
-                                reportFiles.add(CLIExportMethods.exportReport(reportCLIInputBean, reportType, projectParameters.getProjectUniqueName(), 
-                                        projectDetails, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, 
+                                reportFiles.add(CLIExportMethods.exportReport(reportCLIInputBean, reportType, projectParameters.getProjectUniqueName(),
+                                        projectDetails, identification, geneMaps, identificationFeaturesGenerator, identificationParameters,
                                         sequenceProvider, proteinDetailsProvider, nSurroundingAAs, spectrumCountingParameters, waitingHandler));
                             } catch (Exception e) {
                                 waitingHandler.appendReport("An error occurred while exporting the " + reportType + ". " + getLogFileMessage(), true, true);
@@ -613,19 +613,30 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 }
                 for (File unzippedFile : destinationFolder.listFiles()) {
                     String nameLowerCase = unzippedFile.getName().toLowerCase();
-                    if (nameLowerCase.endsWith(".dat")
-                            || nameLowerCase.endsWith(".omx")
-                            || nameLowerCase.endsWith(".xml")
+                    if (nameLowerCase.endsWith(".omx")
+                            || nameLowerCase.endsWith(".t.xml")
+                            || nameLowerCase.endsWith(".pep.xml")
+                            || nameLowerCase.endsWith(".dat")
                             || nameLowerCase.endsWith(".mzid")
-                            || nameLowerCase.endsWith(".csv")
-                            || nameLowerCase.endsWith(".tags")
+                            || nameLowerCase.endsWith(".ms-amanda.csv")
+                            || nameLowerCase.endsWith(".res")
                             || nameLowerCase.endsWith(".tide-search.target.txt")
-                            || nameLowerCase.endsWith(".res")) {
-                        if (!nameLowerCase.endsWith("mods.xml")
-                                && !nameLowerCase.endsWith("usermods.xml")
-                                && !nameLowerCase.endsWith("settings.xml")) {
-                            identificationFiles.add(unzippedFile);
-                        }
+                            || nameLowerCase.endsWith(".tags")
+                            || nameLowerCase.endsWith(".pnovo.txt")
+                            || nameLowerCase.endsWith(".novor.csv")
+                            || nameLowerCase.endsWith(".psm")
+                            || nameLowerCase.endsWith(".omx.gz")
+                            || nameLowerCase.endsWith(".t.xml.gz")
+                            || nameLowerCase.endsWith(".pep.xml.gz")
+                            || nameLowerCase.endsWith(".mzid.gz")
+                            || nameLowerCase.endsWith(".ms-amanda.csv.gz")
+                            || nameLowerCase.endsWith(".res.gz")
+                            || nameLowerCase.endsWith(".tide-search.target.txt.gz")
+                            || nameLowerCase.endsWith(".tags.gz")
+                            || nameLowerCase.endsWith(".pnovo.txt.gz")
+                            || nameLowerCase.endsWith(".novor.csv.gz")
+                            || nameLowerCase.endsWith(".psm.gz")) {
+                        identificationFiles.add(unzippedFile);
                     } else if (nameLowerCase.endsWith(".par")) {
                         try {
                             tempIdentificationParameters = IdentificationParameters.getIdentificationParameters(unzippedFile);
@@ -662,15 +673,15 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 if (name.endsWith(".mgf") && !names.contains(name)) {
                     spectrumFiles.add(file);
                     names.add(name);
-                }else if (name.endsWith(".fasta") && !names.contains(name)) {
+                } else if (name.endsWith(".fasta") && !names.contains(name)) {
                     fastaFile = file;
                     names.add(name);
                 }
             }
         }
-        
+
         // If there is a specific fasta file chosen, it is used insted of the one included in the searchgui zip
-        if (cliInputBean.getFastaFile()!=null){
+        if (cliInputBean.getFastaFile() != null) {
             fastaFile = cliInputBean.getFastaFile();
         }
 
@@ -744,7 +755,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
             // get the FASTA summary
             FastaSummary fastaSummary = loadFastaFile(waitingHandler);
-            
+
             // set the background species
             identificationParameters.getGeneParameters().setBackgroundSpeciesFromFastaSummary(fastaSummary);
 
@@ -768,7 +779,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         // set the project type
         projectType = ProjectType.protein; // @TODO: make it a user setting
-        
+
         // check the project reference
         for (String forbiddenChar : Util.FORBIDDEN_CHARACTERS) {
             if (cliInputBean.getExperimentID().contains(forbiddenChar)) {
@@ -826,10 +837,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
             // the sequence provider
             sequenceProvider = peptideShaker.getSequenceProvider();
-            
+
             // the protein details provider
             proteinDetailsProvider = peptideShaker.getProteinDetailsProvider();
-            
+
             if (waitingHandler instanceof WaitingDialog) {
                 projectDetails.setReport(((WaitingDialog) waitingHandler).getReport(null));
                 ((WaitingDialog) waitingHandler).setRunNotFinished();

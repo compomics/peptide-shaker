@@ -972,7 +972,7 @@ public class NewDialog extends javax.swing.JDialog {
                         || fileName.endsWith(".tags.gz")
                         || fileName.endsWith(".pnovo.txt.gz")
                         || fileName.endsWith(".novor.csv.gz")
-                        || fileName.endsWith(".psm")
+                        || fileName.endsWith(".psm.gz")
                         || fileName.endsWith(".zip")
                         || myFile.isDirectory();
             }

@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.utils;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesCache;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
-import com.compomics.util.Util;
 import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
@@ -186,7 +185,7 @@ public class CpsParent extends UserPreferencesParent {
             identification.close();
 
         }
-        
+
         // create the matches folder if it does not exist
         if (!dbFolder.exists()) {
             if (!dbFolder.mkdirs()) {
@@ -199,7 +198,8 @@ public class CpsParent extends UserPreferencesParent {
 
         File destinationFile = new File(dbFolder.getAbsolutePath(), dbName);
 
-        GzUtils.gunzipFile(cpsFile, destinationFile, false);
+        IoUtils.copyFile(cpsFile, destinationFile);
+        //GzUtils.gunzipFile(cpsFile, destinationFile, false); // @TODO: re-add when the zipping works
 
         ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), destinationFile.getName(), false);
         PeptideShakerParameters psParameters = (PeptideShakerParameters) objectsDB.retrieveObject(PeptideShakerParameters.key);
@@ -408,30 +408,39 @@ public class CpsParent extends UserPreferencesParent {
     public FastaSummary loadFastaFile(WaitingHandler waitingHandler) throws IOException {
 
         File providedFastaLocation = new File(projectDetails.getFastaFile());
-        File projectFolder = cpsFile.getParentFile();
-        File dataFolder = new File(projectFolder, "data");
 
         // try to locate the fasta file
         if (!providedFastaLocation.exists()) {
 
-            File fileInProjectFolder = new File(projectFolder, providedFastaLocation.getName());
-            File fileInDataFolder = new File(dataFolder, providedFastaLocation.getName());
+            boolean fastaFileFound = false;
 
-            if (fileInProjectFolder.exists()) {
+            if (cpsFile != null) {
 
-                projectDetails.setFastaFile(fileInProjectFolder);
+                File projectFolder = cpsFile.getParentFile();
+                File dataFolder = new File(projectFolder, "data");
 
-            } else if (fileInDataFolder.exists()) {
+                File fileInProjectFolder = new File(projectFolder, providedFastaLocation.getName());
+                File fileInDataFolder = new File(dataFolder, providedFastaLocation.getName());
 
-                projectDetails.setFastaFile(fileInDataFolder);
+                if (fileInProjectFolder.exists()) {
 
-            } else {
+                    projectDetails.setFastaFile(fileInProjectFolder);
+                    fastaFileFound = true;
 
-                return null;
+                } else if (fileInDataFolder.exists()) {
+
+                    projectDetails.setFastaFile(fileInDataFolder);
+                    fastaFileFound = true;
+
+                }
 
             }
+            
+            if (!fastaFileFound) {
+                throw new IOException("FASTA file not found: " + providedFastaLocation.getAbsolutePath());
+            }
         }
-        
+
         return FastaSummary.getSummary(projectDetails.getFastaFile(), identificationParameters.getFastaParameters(), waitingHandler);
 
     }

@@ -105,11 +105,13 @@ public class CpsExporter {
             if (waitingHandler == null || !waitingHandler.isRunCanceled()) {
 
                 identification.getObjectsDB().lock(waitingHandler);
-                GzUtils.gzFile(
-                        identification.getObjectsDB().getDbFile(),
-                        destinationFile,
-                        false
-                );
+                IoUtils.copyFile(identification.getObjectsDB().getDbFile(), destinationFile);
+                // @TODO: re-add when the zipping works
+//                GzUtils.gzFile(
+//                        identification.getObjectsDB().getDbFile(),
+//                        destinationFile,
+//                        false
+//                );
                 identification.getObjectsDB().unlock();
 
             }
