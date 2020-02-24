@@ -21,15 +21,15 @@ import eu.isas.peptideshaker.export.exportfeatures.PsPsmFeature;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import org.apache.commons.math.util.FastMath;
 
 /**
  * This class outputs the protein related export features.
@@ -42,7 +42,7 @@ public class PsProteinSection {
     /**
      * The protein features to export.
      */
-    private final ArrayList<PsProteinFeature> proteinFeatures = new ArrayList<>();
+    private final EnumSet<PsProteinFeature> proteinFeatures = EnumSet.noneOf(PsProteinFeature.class);
     /**
      * The peptide subsection if any.
      */
@@ -70,7 +70,12 @@ public class PsProteinSection {
      * @param header indicates whether the table header should be written
      * @param writer the writer which will write to the file
      */
-    public PsProteinSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
+    public PsProteinSection(
+            ArrayList<ExportFeature> exportFeatures,
+            boolean indexes,
+            boolean header,
+            ExportWriter writer
+    ) {
 
         ArrayList<ExportFeature> peptideFeatures = new ArrayList<>();
 
@@ -80,7 +85,10 @@ public class PsProteinSection {
 
                 proteinFeatures.add((PsProteinFeature) exportFeature);
 
-            } else if (exportFeature instanceof PsPeptideFeature || exportFeature instanceof PsPsmFeature || exportFeature instanceof PsIdentificationAlgorithmMatchesFeature || exportFeature instanceof PsFragmentFeature) {
+            } else if (exportFeature instanceof PsPeptideFeature
+                    || exportFeature instanceof PsPsmFeature
+                    || exportFeature instanceof PsIdentificationAlgorithmMatchesFeature
+                    || exportFeature instanceof PsFragmentFeature) {
 
                 peptideFeatures.add(exportFeature);
 
@@ -91,12 +99,14 @@ public class PsProteinSection {
             }
         }
 
-        Collections.sort(proteinFeatures);
-
         if (!peptideFeatures.isEmpty()) {
 
-            peptideSection = new PsPeptideSection(peptideFeatures, indexes, header, writer);
-
+            peptideSection = new PsPeptideSection(
+                    peptideFeatures,
+                    indexes,
+                    header,
+                    writer
+            );
         }
 
         this.indexes = indexes;
@@ -108,29 +118,37 @@ public class PsProteinSection {
     /**
      * Writes the desired section.
      *
-     * @param identification the identification of the project
-     * @param identificationFeaturesGenerator the identification features
-     * generator of the project
-     * @param sequenceProvider the sequence provider
-     * @param proteinDetailsProvider the protein details provider
-     * @param geneMaps the gene maps
-     * @param identificationParameters the identification parameters
-     * @param keys the keys of the protein matches to output. if null all
-     * proteins will be exported.
-     * @param nSurroundingAas in case a peptide export is included with
-     * surrounding amino acids, the number of surrounding amino acids to use
-     * @param validatedOnly whether only validated matches should be exported
-     * @param decoys whether decoy matches should be exported as well
-     * @param waitingHandler the waiting handler
+     * @param identification The identification of the project.
+     * @param identificationFeaturesGenerator The identification features
+     * generator of the project.
+     * @param sequenceProvider The sequence provider.
+     * @param proteinDetailsProvider The protein details provider.
+     * @param spectrumProvider The spectrum provider.
+     * @param geneMaps The gene maps.
+     * @param identificationParameters The identification parameters.
+     * @param keys The keys of the PSM matches to output.
+     * @param nSurroundingAa The number of surrounding amino acids to export.
+     * @param validatedOnly Whether only validated matches should be exported.
+     * @param decoys Whether decoy matches should be exported as well.
+     * @param waitingHandler The waiting handler.
      *
      * @throws IOException exception thrown whenever an error occurred while
      * writing to the file
      */
-    public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider,
-            GeneMaps geneMaps, IdentificationParameters identificationParameters, long[] keys,
-            int nSurroundingAas, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
-            throws IOException {
+    public void writeSection(
+            Identification identification,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SequenceProvider sequenceProvider,
+            ProteinDetailsProvider proteinDetailsProvider,
+            SpectrumProvider spectrumProvider,
+            GeneMaps geneMaps,
+            IdentificationParameters identificationParameters,
+            long[] keys,
+            int nSurroundingAa,
+            boolean validatedOnly,
+            boolean decoys,
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
         if (waitingHandler != null) {
 
@@ -206,8 +224,19 @@ public class PsProteinSection {
                         }
 
                         PsProteinFeature tempProteinFeatures = (PsProteinFeature) exportFeature;
-                        writer.write(getFeature(identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, geneMaps, identificationParameters, nSurroundingAas, key, proteinMatch, psParameter, tempProteinFeatures, waitingHandler));
-
+                        writer.write(getFeature(identificationFeaturesGenerator,
+                                        sequenceProvider,
+                                        proteinDetailsProvider,
+                                        geneMaps,
+                                        identificationParameters,
+                                        nSurroundingAa,
+                                        key,
+                                        proteinMatch,
+                                        psParameter,
+                                        tempProteinFeatures,
+                                        waitingHandler
+                                )
+                        );
                     }
 
                     writer.newLine();
@@ -222,7 +251,19 @@ public class PsProteinSection {
 
                         }
 
-                        peptideSection.writeSection(identification, identificationFeaturesGenerator, sequenceProvider, proteinDetailsProvider, identificationParameters, proteinMatch.getPeptideMatchesKeys(), nSurroundingAas, line + ".", validatedOnly, decoys, waitingHandler);
+                        peptideSection.writeSection(identification,
+                                identificationFeaturesGenerator,
+                                sequenceProvider,
+                                proteinDetailsProvider,
+                                spectrumProvider,
+                                identificationParameters,
+                                proteinMatch.getPeptideMatchesKeys(),
+                                nSurroundingAa,
+                                line + ".",
+                                validatedOnly,
+                                decoys,
+                                waitingHandler
+                        );
 
                         if (waitingHandler != null) {
 
@@ -261,10 +302,19 @@ public class PsProteinSection {
      *
      * @return the string to write
      */
-    public static String getFeature(IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider, GeneMaps geneMaps,
-            IdentificationParameters identificationParameters, int nSurroundingAas, long proteinKey,
-            ProteinMatch proteinMatch, PSParameter psParameter, PsProteinFeature tempProteinFeatures, WaitingHandler waitingHandler) {
+    public static String getFeature(
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SequenceProvider sequenceProvider,
+            ProteinDetailsProvider proteinDetailsProvider,
+            GeneMaps geneMaps,
+            IdentificationParameters identificationParameters,
+            int nSurroundingAas,
+            long proteinKey,
+            ProteinMatch proteinMatch,
+            PSParameter psParameter,
+            PsProteinFeature tempProteinFeatures,
+            WaitingHandler waitingHandler
+    ) {
 
         switch (tempProteinFeatures) {
             case accession:
@@ -334,24 +384,43 @@ public class PsProteinSection {
 
                 return proteinMatch.isDecoy() ? ""
                         : Arrays.stream(proteinMatch.getAccessions())
-                                .map(accession -> geneMaps.getGoTermsForProtein(accession))
-                                .filter(Objects::nonNull)
-                                .flatMap(HashSet::stream)
+                                .map(
+                                        accession -> geneMaps.getGoTermsForProtein(accession)
+                                )
+                                .filter(
+                                        Objects::nonNull
+                                )
+                                .flatMap(
+                                        HashSet::stream
+                                )
                                 .distinct()
                                 .sorted()
-                                .collect(Collectors.joining(","));
+                                .collect(
+                                        Collectors.joining(",")
+                                );
 
             case go_description:
 
                 return proteinMatch.isDecoy() ? ""
                         : Arrays.stream(proteinMatch.getAccessions())
-                                .map(accession -> geneMaps.getGoTermsForProtein(accession))
-                                .filter(Objects::nonNull)
-                                .flatMap(HashSet::stream)
+                                .map(
+                                        accession -> geneMaps.getGoTermsForProtein(accession)
+                                )
+                                .filter(
+                                        Objects::nonNull
+                                )
+                                .flatMap(
+                                        HashSet::stream
+                                )
+                                .distinct()
+                                .map(
+                                        goTerm -> geneMaps.getNameForGoTerm(goTerm)
+                                )
+                                .filter(
+                                        Objects::nonNull
+                                )
                                 .distinct()
                                 .sorted()
-                                .map(goTerm -> geneMaps.getNameForGoTerm(goTerm))
-                                .map(goName -> goName == null ? "" : goName)
                                 .collect(Collectors.joining(","));
 
             case other_proteins:
@@ -359,19 +428,29 @@ public class PsProteinSection {
                 String mainAccession = proteinMatch.getLeadingAccession();
 
                 return Arrays.stream(proteinMatch.getAccessions())
-                        .filter(accession -> !accession.equals(mainAccession))
-                        .collect(Collectors.joining(","));
+                        .filter(
+                                accession -> !accession.equals(mainAccession)
+                        )
+                        .collect(
+                                Collectors.joining(",")
+                        );
 
             case protein_group:
 
                 return Arrays.stream(proteinMatch.getAccessions())
-                        .collect(Collectors.joining(","));
+                        .collect(
+                                Collectors.joining(",")
+                        );
 
             case descriptions:
 
                 return Arrays.stream(proteinMatch.getAccessions())
-                        .map(accession -> proteinDetailsProvider.getDescription(accession))
-                        .collect(Collectors.joining(","));
+                        .map(
+                                accession -> proteinDetailsProvider.getDescription(accession)
+                        )
+                        .collect(
+                                Collectors.joining(",")
+                        );
 
             case confidence:
 
@@ -392,7 +471,7 @@ public class PsProteinSection {
                 mainAccession = proteinMatch.getLeadingAccession();
                 sequence = sequenceProvider.getSequence(mainAccession);
                 return identificationFeaturesGenerator.getAmbiguousModificationSites(proteinMatch, sequence);
-                    
+
             case ambiguous_modification_sites_number:
 
                 return identificationFeaturesGenerator.getAmbiguousModificationSiteNumber(proteinMatch);
@@ -412,7 +491,11 @@ public class PsProteinSection {
 
                 mainAccession = proteinMatch.getLeadingAccession();
                 sequence = sequenceProvider.getSequence(mainAccession);
-                return identificationFeaturesGenerator.getConfidentModificationSites(proteinMatch, sequence, modifications);
+                return identificationFeaturesGenerator.getConfidentModificationSites(
+                        proteinMatch,
+                        sequence,
+                        modifications
+                );
 
             case confident_phosphosites_number:
 
@@ -496,12 +579,17 @@ public class PsProteinSection {
 
                 return Double.toString(
                         sequenceProvider.getSequence(
-                                proteinMatch.getLeadingAccession()).length());
+                                proteinMatch.getLeadingAccession()).length()
+                );
 
             case non_enzymatic:
 
                 return Integer.toString(
-                        identificationFeaturesGenerator.getNonEnzymatic(proteinKey, identificationParameters.getSearchParameters().getDigestionParameters()).length);
+                        identificationFeaturesGenerator.getNonEnzymatic(
+                                proteinKey,
+                                identificationParameters.getSearchParameters().getDigestionParameters()
+                        ).length
+                );
 
             case pi:
 
@@ -549,53 +637,86 @@ public class PsProteinSection {
             case spectrum_counting:
 
                 return Double.toString(
-                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey));
+                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey)
+                );
 
             case spectrum_counting_nsaf:
 
-                return Double.toString(identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
-                        SpectrumCountingMethod.NSAF));
+                return Double.toString(
+                        identificationFeaturesGenerator.getSpectrumCounting(
+                                proteinKey,
+                                SpectrumCountingMethod.NSAF
+                        )
+                );
 
             case spectrum_counting_empai:
 
-                return Double.toString(identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
-                        SpectrumCountingMethod.EMPAI));
+                return Double.toString(
+                        identificationFeaturesGenerator.getSpectrumCounting(
+                                proteinKey,
+                                SpectrumCountingMethod.EMPAI
+                        )
+                );
 
             case spectrum_counting_empai_percent:
 
-                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey,
-                        Units.percent,
-                        SpectrumCountingMethod.EMPAI));
+                return Double.toString(
+                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(
+                                proteinKey,
+                                Units.percent,
+                                SpectrumCountingMethod.EMPAI
+                        )
+                );
 
             case spectrum_counting_nsaf_percent:
 
-                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey,
-                        Units.percent,
-                        SpectrumCountingMethod.NSAF));
+                return Double.toString(
+                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(
+                                proteinKey,
+                                Units.percent,
+                                SpectrumCountingMethod.NSAF
+                        )
+                );
 
             case spectrum_counting_empai_ppm:
 
-                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey,
-                        Units.ppm,
-                        SpectrumCountingMethod.EMPAI));
+                return Double.toString(
+                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(
+                                proteinKey,
+                                Units.ppm,
+                                SpectrumCountingMethod.EMPAI
+                        )
+                );
 
             case spectrum_counting_nsaf_ppm:
 
-                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey,
-                        Units.ppm,
-                        SpectrumCountingMethod.NSAF));
+                return Double.toString(
+                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(
+                                proteinKey,
+                                Units.ppm,
+                                SpectrumCountingMethod.NSAF
+                        )
+                );
 
             case spectrum_counting_empai_fmol:
 
-                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey,
-                        Units.fmol,
-                        SpectrumCountingMethod.EMPAI));
+                return Double.toString(
+                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(
+                                proteinKey,
+                                Units.fmol,
+                                SpectrumCountingMethod.EMPAI
+                        )
+                );
 
             case spectrum_counting_nsaf_fmol:
 
-                return Double.toString(identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey,
-                        Units.fmol,
-                        SpectrumCountingMethod.NSAF));
+                return Double.toString(
+                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(
+                                proteinKey,
+                                Units.fmol,
+                                SpectrumCountingMethod.NSAF
+                        )
+                );
 
             case starred:
 

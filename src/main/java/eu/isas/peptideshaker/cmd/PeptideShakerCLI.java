@@ -7,7 +7,6 @@ import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.cli.identification_parameters.IdentificationParametersInputBean;
@@ -19,6 +18,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.gui.DummyFrame;
 import com.compomics.util.gui.file_handling.TempFilesManager;
+import com.compomics.util.io.IoUtil;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.tools.ProcessingParameters;
@@ -227,7 +227,14 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // recalibrate spectra
                 if (followUpCLIInputBean.recalibrationNeeded()) {
                     try {
-                        followupAnalysisFiles.addAll(CLIExportMethods.recalibrateSpectra(followUpCLIInputBean, identification, sequenceProvider, identificationParameters, waitingHandler));
+                        followupAnalysisFiles.addAll(CLIExportMethods.recalibrateSpectra(
+                                followUpCLIInputBean, 
+                                identification, 
+                                sequenceProvider, 
+                                identificationParameters, 
+                                waitingHandler
+                        )
+                        );
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while recalibrating the spectra. " + getLogFileMessage(), true, true);
                         e.printStackTrace();
@@ -238,7 +245,14 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // export spectra
                 if (followUpCLIInputBean.spectrumExportNeeded()) {
                     try {
-                        followupAnalysisFiles.addAll(CLIExportMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingParameters()));
+                        followupAnalysisFiles.addAll(
+                                CLIExportMethods.exportSpectra(
+                                        followUpCLIInputBean, 
+                                        identification, 
+                                        waitingHandler, 
+                                        identificationParameters.getSequenceMatchingParameters()
+                                )
+                        );
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the spectra. " + getLogFileMessage(), true, true);
                         e.printStackTrace();
@@ -249,7 +263,15 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // export protein accessions
                 if (followUpCLIInputBean.accessionExportNeeded()) {
                     try {
-                        followupAnalysisFiles.add(CLIExportMethods.exportAccessions(followUpCLIInputBean, identification, sequenceProvider, waitingHandler, filterParameters));
+                        followupAnalysisFiles.add(
+                                CLIExportMethods.exportAccessions(
+                                        followUpCLIInputBean, 
+                                        identification, 
+                                        sequenceProvider, 
+                                        waitingHandler, 
+                                        filterParameters
+                                )
+                        );
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the protein accessions. " + getLogFileMessage(), true, true);
                         e.printStackTrace();
@@ -260,7 +282,15 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // export protein details
                 if (followUpCLIInputBean.proteinSequencesExportNeeded()) {
                     try {
-                        followupAnalysisFiles.add(CLIExportMethods.exportProteinSequences(followUpCLIInputBean, identification, sequenceProvider, waitingHandler, filterParameters));
+                        followupAnalysisFiles.add(
+                                CLIExportMethods.exportProteinSequences(
+                                        followUpCLIInputBean, 
+                                        identification, 
+                                        sequenceProvider, 
+                                        waitingHandler, 
+                                        filterParameters
+                                )
+                        );
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the protein details. " + getLogFileMessage(), true, true);
                         e.printStackTrace();
@@ -271,7 +301,16 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // progenesis export
                 if (followUpCLIInputBean.progenesisExportNeeded()) {
                     try {
-                        followupAnalysisFiles.add(CLIExportMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, sequenceProvider, proteinDetailsProvider, identificationParameters.getSequenceMatchingParameters()));
+                        followupAnalysisFiles.add(
+                                CLIExportMethods.exportProgenesis(
+                                        followUpCLIInputBean, 
+                                        identification, 
+                                        waitingHandler, 
+                                        sequenceProvider, 
+                                        proteinDetailsProvider, 
+                                        identificationParameters.getSequenceMatchingParameters()
+                                )
+                        );
                         waitingHandler.appendReport("Progenesis export completed.", true, true);
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the Progenesis file. " + getLogFileMessage(), true, true);
@@ -283,7 +322,16 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // inclusion list export
                 if (followUpCLIInputBean.inclusionListNeeded()) {
                     try {
-                        followupAnalysisFiles.add(CLIExportMethods.exportInclusionList(followUpCLIInputBean, identification, identificationFeaturesGenerator, identificationParameters.getSearchParameters(), waitingHandler, filterParameters));
+                        followupAnalysisFiles.add(
+                                CLIExportMethods.exportInclusionList(
+                                        followUpCLIInputBean, 
+                                        identification, 
+                                        identificationFeaturesGenerator, 
+                                        identificationParameters.getSearchParameters(), 
+                                        waitingHandler, 
+                                        filterParameters
+                                )
+                        );
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while generating the inclusion list.", true, true);
                         e.printStackTrace();
@@ -294,7 +342,13 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // proteoforms export
                 if (followUpCLIInputBean.proteoformsNeeded()) {
                     try {
-                        followupAnalysisFiles.add(CLIExportMethods.exportProteoforms(followUpCLIInputBean, identification, waitingHandler));
+                        followupAnalysisFiles.add(
+                                CLIExportMethods.exportProteoforms(
+                                        followUpCLIInputBean, 
+                                        identification, 
+                                        waitingHandler
+                                )
+                        );
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while generating the proteoforms list.", true, true);
                         e.printStackTrace();
@@ -338,9 +392,23 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
                         for (String reportType : reportCLIInputBean.getReportTypes()) {
                             try {
-                                reportFiles.add(CLIExportMethods.exportReport(reportCLIInputBean, reportType, projectParameters.getProjectUniqueName(),
-                                        projectDetails, identification, geneMaps, identificationFeaturesGenerator, identificationParameters,
-                                        sequenceProvider, proteinDetailsProvider, nSurroundingAAs, spectrumCountingParameters, waitingHandler));
+                                reportFiles.add(
+                                        CLIExportMethods.exportReport(
+                                                reportCLIInputBean, 
+                                                reportType, 
+                                                projectParameters.getProjectUniqueName(),
+                                        projectDetails, 
+                                        identification, 
+                                        geneMaps, 
+                                        identificationFeaturesGenerator, 
+                                        identificationParameters,
+                                        sequenceProvider, 
+                                        proteinDetailsProvider, 
+                                        nSurroundingAAs, 
+                                        spectrumCountingParameters, 
+                                        waitingHandler
+                                        )
+                                );
                             } catch (Exception e) {
                                 waitingHandler.appendReport("An error occurred while exporting the " + reportType + ". " + getLogFileMessage(), true, true);
                                 e.printStackTrace();
@@ -353,7 +421,11 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     if (reportCLIInputBean.documentationExportNeeded()) {
                         for (String reportType : reportCLIInputBean.getReportTypes()) {
                             try {
-                                CLIExportMethods.exportDocumentation(reportCLIInputBean, reportType, waitingHandler);
+                                CLIExportMethods.exportDocumentation(
+                                        reportCLIInputBean, 
+                                        reportType, 
+                                        waitingHandler
+                                );
                             } catch (Exception e) {
                                 waitingHandler.appendReport("An error occurred while exporting the documentation for " + reportType + ". " + getLogFileMessage(), true, true);
                                 e.printStackTrace();
@@ -413,7 +485,17 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
                 File fastaFile = new File(projectDetails.getFastaFile());
                 try {
-                    ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, followupAnalysisFiles, reportFiles, mzidFile, cpsFile, true, waitingHandler);
+                    ProjectExport.exportProjectAsZip(
+                            zipFile, 
+                            fastaFile, 
+                            spectrumFiles, 
+                            followupAnalysisFiles, 
+                            reportFiles, 
+                            mzidFile, 
+                            cpsFile, 
+                            true, 
+                            waitingHandler
+                    );
                     final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
                     double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
                     waitingHandler.appendReport("Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + " MB)", true, true);
@@ -879,23 +961,23 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         try {
+            
             File matchFolder = PeptideShaker.getMatchesFolder();
             File[] tempFiles = matchFolder.listFiles();
 
             if (tempFiles != null) {
+
                 for (File currentFile : tempFiles) {
-                    boolean deleted = Util.deleteDir(currentFile);
+
+                    boolean deleted = IoUtil.deleteDir(currentFile);
+
                     if (!deleted) {
+
                         System.out.println(currentFile.getAbsolutePath() + " could not be deleted!"); // @TODO: better handling of this error?
+
                     }
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            SpectrumFactory.getInstance().closeFiles();
         } catch (Exception e) {
             e.printStackTrace();
         }

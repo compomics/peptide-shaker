@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
-import com.compomics.util.FileAndFileFilter;
+import com.compomics.util.gui.file_handling.FileAndFileFilter;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
@@ -1143,7 +1143,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                     String gzipFileFilterDescription = "Gzipped tab separated text file (.gz)";
                     String excelFileFilterDescription = "Excel Workbook (.xls)";
                     String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
-                    FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".xls", ".txt", ".gz"},
+                    FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(this, new String[]{".xls", ".txt", ".gz"},
                             new String[]{excelFileFilterDescription, textFileFilterDescription, gzipFileFilterDescription}, "Export Report", lastSelectedFolderPath, "All Validated Proteins", false, true, false, 1);
 
                     if (selectedFileAndFilter != null) {

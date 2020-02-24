@@ -9,6 +9,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 
 /**
@@ -21,7 +22,7 @@ public class PsProjectSection {
     /**
      * The features to export.
      */
-    private final ArrayList<PsProjectFeature> projectFeatures;
+    private final EnumSet<PsProjectFeature> projectFeatures;
     /**
      * Boolean indicating whether the line shall be indexed.
      */
@@ -43,19 +44,29 @@ public class PsProjectSection {
      * @param header indicates whether the table header should be written
      * @param writer the writer which will write to the file
      */
-    public PsProjectSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
+    public PsProjectSection(
+            ArrayList<ExportFeature> exportFeatures, 
+            boolean indexes, 
+            boolean header, 
+            ExportWriter writer
+    ) {
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        projectFeatures = new ArrayList<>(exportFeatures.size());
+        projectFeatures = EnumSet.noneOf(PsProjectFeature.class);
+        
         for (ExportFeature exportFeature : exportFeatures) {
+        
             if (exportFeature instanceof PsProjectFeature) {
+            
                 projectFeatures.add((PsProjectFeature) exportFeature);
+            
             } else {
+            
                 throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as project feature.");
+            
             }
         }
-        Collections.sort(projectFeatures);
     }
 
     /**
@@ -68,7 +79,11 @@ public class PsProjectSection {
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file
      */
-    public void writeSection(String experiment, ProjectDetails projectDetails, WaitingHandler waitingHandler) throws IOException {
+    public void writeSection(
+            String experiment, 
+            ProjectDetails projectDetails, 
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);

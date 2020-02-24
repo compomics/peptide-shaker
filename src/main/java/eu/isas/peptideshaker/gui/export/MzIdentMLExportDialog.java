@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.gui.export;
 
-import com.compomics.util.FileAndFileFilter;
+import com.compomics.util.gui.file_handling.FileAndFileFilter;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
@@ -572,7 +572,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 throw new UnsupportedOperationException("mzIdentML version " + mzIdentMLVersion.name + " not supported.");
         }
 
-        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".mzid.gzip", ".mzid.gzip"},
+        FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(this, new String[]{".mzid.gzip", ".mzid.gzip"},
                 versionsDescriptions, "Select Export File",
                 folder, peptideShakerGUI.getProjectParameters().getProjectUniqueName(), false, true, false, defaultFilterIndex);
 

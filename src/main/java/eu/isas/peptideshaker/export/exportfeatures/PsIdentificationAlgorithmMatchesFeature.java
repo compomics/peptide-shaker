@@ -25,7 +25,6 @@ public enum PsIdentificationAlgorithmMatchesFeature implements ExportFeature {
     fixed_ptms("Fixed Modifications", "The fixed modifications.", false),
     spectrum_file("Spectrum File", "The spectrum file.", false),
     spectrum_title("Spectrum Title", "The title of the spectrum.", false),
-    spectrum_scan_number("Spectrum Scan Number", "The spectrum scan number.", false),
     spectrum_array_list("Spectrum Array List", "The peaks in the spectrum as an array list.", false),
     rt("RT", "Retention time as provided in the spectrum file.", false),
     mz("m/z", "Measured m/z.", false),

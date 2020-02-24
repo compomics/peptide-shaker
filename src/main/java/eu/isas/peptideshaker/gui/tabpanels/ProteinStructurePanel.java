@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
-import com.compomics.util.FileAndFileFilter;
+import com.compomics.util.gui.file_handling.FileAndFileFilter;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidPattern;
@@ -3324,7 +3324,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     break;
             }
 
-            FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".xls", ".txt", ".gz"},
+            FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(this, new String[]{".xls", ".txt", ".gz"},
                     new String[]{excelFileFilterDescription, textFileFilterDescription, gzipFileFilterDescription}, "Export Report", lastSelectedFolderPath, exportName, false, true, false, 1);
 
             if (selectedFileAndFilter != null) {

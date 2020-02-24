@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.gui.export;
 
-import com.compomics.util.FileAndFileFilter;
+import com.compomics.util.gui.file_handling.FileAndFileFilter;
 import com.compomics.util.Util;
 import com.compomics.util.gui.export.report.ReportEditor;
 import com.compomics.util.gui.error_handlers.HelpDialog;
@@ -506,7 +506,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         String gzipFileFilterDescription = "Gzipped tab separated text file (.gz)";
         String excelFileFilterDescription = "Excel Workbook (.xls)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
-        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".xls", ".txt", ".gz"},
+        FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(this, new String[]{".xls", ".txt", ".gz"},
                 new String[]{excelFileFilterDescription, textFileFilterDescription, gzipFileFilterDescription}, "Export Report", lastSelectedFolderPath, schemeName, false, true, false, 1);
 
         if (selectedFileAndFilter != null) {
@@ -599,7 +599,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         String textFileFilterDescription = "Tab separated text file (.txt)";
         String excelFileFilterDescription = "Excel Workbook (.xls)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
-        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".txt", ".xls"},
+        FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(this, new String[]{".txt", ".xls"},
                 new String[]{textFileFilterDescription, excelFileFilterDescription}, "Export Report", lastSelectedFolderPath, schemeName + "_documentation", false, true, false, 0);
 
         if (selectedFileAndFilter != null) {

@@ -1,8 +1,6 @@
 package eu.isas.peptideshaker.export.sections;
 
-import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.enzymes.Enzyme;
-import com.compomics.util.experiment.biology.ions.impl.PeptideFragmentIon;
+import com.compomics.util.io.IoUtil;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
@@ -12,7 +10,8 @@ import eu.isas.peptideshaker.export.exportfeatures.PsSearchFeature;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.EnumSet;
+import java.util.stream.Collectors;
 
 /**
  * This class outputs the search parameters related export features.
@@ -24,7 +23,7 @@ public class PsSearchParametersSection {
     /**
      * The features to export.
      */
-    private final ArrayList<PsSearchFeature> searchFeatures;
+    private final EnumSet<PsSearchFeature> searchFeatures;
     /**
      * Boolean indicating whether the line shall be indexed.
      */
@@ -46,19 +45,29 @@ public class PsSearchParametersSection {
      * @param header indicates whether the table header should be written
      * @param writer the writer which will write to the file
      */
-    public PsSearchParametersSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
+    public PsSearchParametersSection(
+            ArrayList<ExportFeature> exportFeatures,
+            boolean indexes,
+            boolean header,
+            ExportWriter writer
+    ) {
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        searchFeatures = new ArrayList<>(exportFeatures.size());
+        searchFeatures = EnumSet.noneOf(PsSearchFeature.class);
+
         for (ExportFeature exportFeature : exportFeatures) {
+
             if (exportFeature instanceof PsSearchFeature) {
+
                 searchFeatures.add((PsSearchFeature) exportFeature);
+
             } else {
+
                 throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as search parameter feature.");
+
             }
         }
-        Collections.sort(searchFeatures);
     }
 
     /**
@@ -70,161 +79,219 @@ public class PsSearchParametersSection {
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file
      */
-    public void writeSection(SearchParameters searchParameters, ProjectDetails projectDetails, WaitingHandler waitingHandler) throws IOException {
+    public void writeSection(
+            SearchParameters searchParameters,
+            ProjectDetails projectDetails,
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         }
 
         if (header) {
+
             if (indexes) {
+
                 writer.writeHeaderText("");
                 writer.addSeparator();
+
             }
+
             writer.writeHeaderText("Parameter");
             writer.addSeparator();
             writer.writeHeaderText("Value");
             writer.newLine();
+
         }
 
         int line = 1;
 
         for (PsSearchFeature exportFeature : searchFeatures) {
+
             if (indexes) {
+
                 writer.write(Integer.toString(line));
                 writer.addSeparator();
+
             }
+
             writer.write(exportFeature.getTitle());
             writer.addSeparator();
+
             switch (exportFeature) {
+
                 case database:
-                    String fastaFileName = Util.getFileName(projectDetails.getFastaFile());
+
+                    String fastaFileName = IoUtil.getFileName(projectDetails.getFastaFile());
                     writer.write(fastaFileName);
                     break;
+
                 case cleavage:
+
                     DigestionParameters digestionPreferences = searchParameters.getDigestionParameters();
                     writer.write(digestionPreferences.getCleavageParameter().toString());
                     break;
+
                 case enzyme:
+
                     digestionPreferences = searchParameters.getDigestionParameters();
-                    StringBuilder content = new StringBuilder();
+
                     if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
-                        for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
-                            if (content.length() > 0) {
-                                content.append(", ");
-                            }
-                            content.append(enzyme.getName());
-                        }
+
+                        String enzymeString = digestionPreferences.getEnzymes().stream()
+                                .map(
+                                        enzyme -> enzyme.getName()
+                                )
+                                .collect(
+                                        Collectors.joining(", ")
+                                );
+                        writer.write(enzymeString);
+
                     }
-                    writer.write(content.toString());
+
                     break;
+
                 case mc:
+
                     digestionPreferences = searchParameters.getDigestionParameters();
-                    content = new StringBuilder();
+
                     if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
-                        for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
-                            String enzymeName = enzyme.getName();
-                            if (content.length() > 0) {
-                                content.append(", ");
-                            }
-                            Integer mc = digestionPreferences.getnMissedCleavages(enzymeName);
-                            content.append(mc);
-                        }
+
+                        String nMissedCleavagesString = digestionPreferences.getEnzymes().stream()
+                                .map(
+                                        enzyme -> digestionPreferences.getnMissedCleavages(
+                                                enzyme.getName()
+                                        )
+                                                .toString()
+                                )
+                                .collect(
+                                        Collectors.joining(", ")
+                                );
+                        writer.write(nMissedCleavagesString);
+
                     }
-                    writer.write(content.toString());
                     break;
                 case specificity:
+
                     digestionPreferences = searchParameters.getDigestionParameters();
-                    content = new StringBuilder();
+
                     if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
-                        for (Enzyme enzyme : digestionPreferences.getEnzymes()) {
-                            String enzymeName = enzyme.getName();
-                            if (content.length() > 0) {
-                                content.append(", ");
-                            }
-                            DigestionParameters.Specificity specificity = digestionPreferences.getSpecificity(enzymeName);
-                            content.append(specificity);
-                        }
+
+                        String specificityString = digestionPreferences.getEnzymes().stream()
+                                .map(
+                                        enzyme -> digestionPreferences.getSpecificity(
+                                                enzyme.getName()
+                                        ).name
+                                )
+                                .collect(
+                                        Collectors.joining(", ")
+                                );
+                        writer.write(specificityString);
+
                     }
-                    writer.write(content.toString());
+
                     break;
+
                 case fixed_modifications:
-                    content = new StringBuilder();
-                    for (String modification : searchParameters.getModificationParameters().getFixedModifications()) {
-                        if (content.length() > 0) {
-                            content.append(", ");
-                        }
-                        content.append(modification);
-                    }
-                    writer.write(content.toString());
+
+                    writer.write(
+                            searchParameters.getModificationParameters().getFixedModifications().stream()
+                                    .collect(
+                                            Collectors.joining(", ")
+                                    )
+                    );
                     break;
                 case variable_modifications:
-                    content = new StringBuilder();
-                    for (String modification : searchParameters.getModificationParameters().getVariableModifications()) {
-                        if (content.length() > 0) {
-                            content.append(", ");
-                        }
-                        content.append(modification);
-                    }
-                    writer.write(content.toString());
+
+                    writer.write(
+                            searchParameters.getModificationParameters().getVariableModifications().stream()
+                                    .collect(
+                                            Collectors.joining(", ")
+                                    )
+                    );
                     break;
+
                 case refinement_variable_modifications:
-                    content = new StringBuilder();
-                    for (String modification : searchParameters.getModificationParameters().getRefinementVariableModifications()) {
-                        if (content.length() > 0) {
-                            content.append(", ");
-                        }
-                        content.append(modification);
-                    }
-                    writer.write(content.toString());
+
+                    writer.write(
+                            searchParameters.getModificationParameters().getRefinementVariableModifications().stream()
+                                    .collect(
+                                            Collectors.joining(", ")
+                                    )
+                    );
                     break;
+
                 case refinement_fixed_modifications:
-                    content = new StringBuilder();
-                    for (String modification : searchParameters.getModificationParameters().getRefinementFixedModifications()) {
-                        if (content.length() > 0) {
-                            content.append(", ");
-                        }
-                        content.append(modification);
-                    }
-                    writer.write(content.toString());
+
+                    writer.write(
+                            searchParameters.getModificationParameters().getRefinementFixedModifications().stream()
+                                    .collect(
+                                            Collectors.joining(", ")
+                                    )
+                    );
                     break;
+
                 case forward_ion:
-                    content = new StringBuilder();
-                    for (Integer ion : searchParameters.getForwardIons()) {
-                        if (content.length() > 0) {
-                            content.append(", ");
-                        }
-                        content.append(PeptideFragmentIon.getSubTypeAsString(ion));
-                    }
-                    writer.write(content.toString());
+                    writer.write(
+                            searchParameters.getForwardIons().stream()
+                                    .map(
+                                            ion -> ion.toString()
+                                    )
+                                    .collect(
+                                            Collectors.joining(", ")
+                                    )
+                    );
                     break;
+
                 case rewind_ion:
-                    content = new StringBuilder();
-                    for (Integer ion : searchParameters.getRewindIons()) {
-                        if (content.length() > 0) {
-                            content.append(", ");
-                        }
-                        content.append(PeptideFragmentIon.getSubTypeAsString(ion));
-                    }
-                    writer.write(content.toString());
+                    writer.write(
+                            searchParameters.getRewindIons().stream()
+                                    .map(
+                                            ion -> ion.toString()
+                                    )
+                                    .collect(
+                                            Collectors.joining(", ")
+                                    )
+                    );
                     break;
+
                 case fragment_tolerance:
-                    writer.write(searchParameters.getFragmentIonAccuracy() + "");
+                    writer.write(
+                            Double.toString(
+                                    searchParameters.getFragmentIonAccuracy()
+                            )
+                    );
                     break;
+                    
                 case precursor_tolerance_unit:
-                    writer.write(searchParameters.getPrecursorAccuracyType().toString());
+                    writer.write(
+                            searchParameters.getPrecursorAccuracyType().toString()
+                    );
                     break;
+                    
                 case fragment_tolerance_unit:
-                    writer.write(searchParameters.getFragmentAccuracyType().toString());
+                    writer.write(
+                            searchParameters.getFragmentAccuracyType().toString()
+                    );
                     break;
+                    
                 case precursor_tolerance:
-                    writer.write(searchParameters.getPrecursorAccuracy() + "");
+                    writer.write(
+                            Double.toString(
+                                    searchParameters.getPrecursorAccuracy()
+                            )
+                    );
                     break;
+                    
                 default:
                     writer.write("Not implemented");
+            
             }
+            
             writer.newLine();
             line++;
+        
         }
     }
 }

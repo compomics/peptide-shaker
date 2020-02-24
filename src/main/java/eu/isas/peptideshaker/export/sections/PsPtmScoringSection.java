@@ -7,7 +7,7 @@ import com.compomics.util.io.export.ExportWriter;
 import eu.isas.peptideshaker.export.exportfeatures.PsPtmScoringFeature;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.EnumSet;
 
 /**
  * This class outputs the project related export features.
@@ -19,7 +19,7 @@ public class PsPtmScoringSection {
     /**
      * The features to export.
      */
-    private final ArrayList<PsPtmScoringFeature> ptmScoringFeatures;
+    private final EnumSet<PsPtmScoringFeature> ptmScoringFeatures;
     /**
      * Boolean indicating whether the line shall be indexed.
      */
@@ -41,19 +41,29 @@ public class PsPtmScoringSection {
      * @param header indicates whether the table header should be written
      * @param writer the writer which will write to the file
      */
-    public PsPtmScoringSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
+    public PsPtmScoringSection(
+            ArrayList<ExportFeature> exportFeatures, 
+            boolean indexes, 
+            boolean header, 
+            ExportWriter writer
+    ) {
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        ptmScoringFeatures = new ArrayList<>(exportFeatures.size());
+        ptmScoringFeatures = EnumSet.noneOf(PsPtmScoringFeature.class);
+
         for (ExportFeature exportFeature : exportFeatures) {
+
             if (exportFeature instanceof PsPtmScoringFeature) {
+
                 ptmScoringFeatures.add((PsPtmScoringFeature) exportFeature);
+
             } else {
+
                 throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as PTM scoring feature.");
+
             }
         }
-        Collections.sort(ptmScoringFeatures);
     }
 
     /**
@@ -65,7 +75,10 @@ public class PsPtmScoringSection {
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file
      */
-    public void writeSection(ModificationLocalizationParameters ptmScoringPreferences, WaitingHandler waitingHandler) throws IOException {
+    public void writeSection(
+            ModificationLocalizationParameters ptmScoringPreferences, 
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -85,31 +98,46 @@ public class PsPtmScoringSection {
         int line = 1;
 
         for (PsPtmScoringFeature ptmScoringFeature : ptmScoringFeatures) {
+
             if (indexes) {
+
                 writer.write(Integer.toString(line));
                 writer.addSeparator();
+
             }
-            writer.write(ptmScoringFeature.getTitle() + "");
+
+            writer.write(ptmScoringFeature.getTitle());
             writer.addSeparator();
+
             switch (ptmScoringFeature) {
+
                 case probabilitstic_score:
+
                     writer.write(ptmScoringPreferences.getSelectedProbabilisticScore().getName());
                     break;
+
                 case threshold:
+
                     writer.write(Double.toString(ptmScoringPreferences.getProbabilisticScoreThreshold()));
                     break;
+
                 case neutral_losses:
+
                     if (ptmScoringPreferences.isProbabilisticScoreNeutralLosses()) {
                         writer.write("Yes");
                     } else {
                         writer.write("No");
                     }
                     break;
+
                 default:
                     writer.write("Not implemented");
+
             }
+
             writer.newLine();
             line++;
+
         }
     }
 }

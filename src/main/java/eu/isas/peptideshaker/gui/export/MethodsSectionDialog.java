@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.gui.export;
 
-import com.compomics.util.FileAndFileFilter;
+import com.compomics.util.gui.file_handling.FileAndFileFilter;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
@@ -168,7 +168,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
         String textFileFilterDescription = "Tab separated text file (.txt)";
         String excelFileFilterDescription = "Excel Workbook (.xls)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
-        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".txt", ".xls"},
+        FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(this, new String[]{".txt", ".xls"},
                 new String[]{textFileFilterDescription, excelFileFilterDescription}, "Export Report", lastSelectedFolderPath, "certificate_of_analysis", false, true, false, 0);
 
         if (selectedFileAndFilter != null) {

@@ -24,10 +24,12 @@ import com.compomics.util.experiment.identification.peptide_shaker.PSModificatio
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import com.compomics.util.experiment.identification.peptide_shaker.ModificationScoring;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Function;
@@ -43,11 +45,11 @@ public class PsPsmSection {
     /**
      * The features to export.
      */
-    private final ArrayList<PsPsmFeature> psmFeatures = new ArrayList<>();
+    private final EnumSet<PsPsmFeature> psmFeatures = EnumSet.noneOf(PsPsmFeature.class);
     /**
      * The features to export.
      */
-    private final ArrayList<PsIdentificationAlgorithmMatchesFeature> identificationAlgorithmMatchesFeatures = new ArrayList<>();
+    private final EnumSet<PsIdentificationAlgorithmMatchesFeature> identificationAlgorithmMatchesFeatures = EnumSet.noneOf(PsIdentificationAlgorithmMatchesFeature.class);
     /**
      * The fragment subsection if needed.
      */
@@ -68,57 +70,91 @@ public class PsPsmSection {
     /**
      * Constructor.
      *
-     * @param exportFeatures the features to export in this section
-     * @param indexes indicates whether the line index should be written
-     * @param header indicates whether the table header should be written
-     * @param writer the writer which will write to the file
+     * @param exportFeatures The features to export in this section.
+     * @param indexes A boolean indicating whether the line index should be written.
+     * @param header A boolean indicating whether the table header should be written.
+     * @param writer The writer which will write to the file.
      */
-    public PsPsmSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
-        ArrayList<ExportFeature> fragmentFeatures = new ArrayList<>();
+    public PsPsmSection(
+            ArrayList<ExportFeature> exportFeatures,
+            boolean indexes,
+            boolean header,
+            ExportWriter writer
+    ) {
+
+        ArrayList<ExportFeature> fragmentFeatures = new ArrayList<>(0);
+
         for (ExportFeature exportFeature : exportFeatures) {
+
             if (exportFeature instanceof PsPsmFeature) {
+
                 psmFeatures.add((PsPsmFeature) exportFeature);
+
             } else if (exportFeature instanceof PsIdentificationAlgorithmMatchesFeature) {
+
                 identificationAlgorithmMatchesFeatures.add((PsIdentificationAlgorithmMatchesFeature) exportFeature);
+
             } else if (exportFeature instanceof PsFragmentFeature) {
+
                 fragmentFeatures.add(exportFeature);
+
             } else {
+
                 throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
+
             }
         }
-        Collections.sort(psmFeatures);
-        Collections.sort(identificationAlgorithmMatchesFeatures);
+
         if (!fragmentFeatures.isEmpty()) {
-            fragmentSection = new PsFragmentSection(fragmentFeatures, indexes, header, writer);
+
+            fragmentSection = new PsFragmentSection(
+                    fragmentFeatures,
+                    indexes,
+                    header,
+                    writer
+            );
         }
+
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
+
     }
 
     /**
      * Writes the desired section.
      *
-     * @param identification the identification of the project
-     * @param identificationFeaturesGenerator the identification features
-     * generator of the project
-     * @param sequenceProvider the sequence provider
-     * @param proteinDetailsProvider the protein details provider
-     * @param identificationParameters the identification parameters
-     * @param keys the keys of the PSM matches to output
-     * @param linePrefix the line prefix
-     * @param nSurroundingAA the number of surrounding amino acids to export
-     * @param validatedOnly whether only validated matches should be exported
-     * @param decoys whether decoy matches should be exported as well
-     * @param waitingHandler the waiting handler
+     * @param identification The identification of the project.
+     * @param identificationFeaturesGenerator The identification features
+     * generator of the project.
+     * @param sequenceProvider The sequence provider.
+     * @param proteinDetailsProvider The protein details provider.
+     * @param spectrumProvider The spectrum provider.
+     * @param identificationParameters The identification parameters.
+     * @param keys The keys of the PSM matches to output.
+     * @param linePrefix The line prefix.
+     * @param nSurroundingAA The number of surrounding amino acids to export.
+     * @param validatedOnly Whether only validated matches should be exported.
+     * @param decoys Whether decoy matches should be exported as well.
+     * @param waitingHandler The waiting handler.
      *
      * @throws java.io.IOException exception thrown if an error occurred while
      * writing to the file.
      */
-    public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider,
-            IdentificationParameters identificationParameters, long[] keys,
-            String linePrefix, int nSurroundingAA, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException {
+    public void writeSection(
+            Identification identification,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SequenceProvider sequenceProvider,
+            ProteinDetailsProvider proteinDetailsProvider,
+            SpectrumProvider spectrumProvider,
+            IdentificationParameters identificationParameters,
+            long[] keys,
+            String linePrefix,
+            int nSurroundingAA,
+            boolean validatedOnly,
+            boolean decoys,
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -149,7 +185,8 @@ public class PsPsmSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
-            String spectrumMatchKey = spectrumMatch.getSpectrumKey();
+            String spectrumFile = spectrumMatch.getSpectrumFile();
+            String spectrumTitle = spectrumMatch.getSpectrumTitle();
             PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
 
             if (!validatedOnly || psParameter.getMatchValidationLevel().isValidated()) {
@@ -191,20 +228,42 @@ public class PsPsmSection {
                             String feature;
                             if (peptideAssumption != null) {
 
-                                feature = PsIdentificationAlgorithmMatchesSection.getPeptideAssumptionFeature(identification, identificationFeaturesGenerator,
-                                        sequenceProvider, proteinDetailsProvider,
-                                        identificationParameters, linePrefix, nSurroundingAA, peptideAssumption, spectrumMatch.getSpectrumKey(),
-                                        psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
+                                feature = PsIdentificationAlgorithmMatchesSection.getPeptideAssumptionFeature(
+                                        identification,
+                                        identificationFeaturesGenerator,
+                                        sequenceProvider,
+                                        proteinDetailsProvider,
+                                        spectrumProvider,
+                                        identificationParameters,
+                                        linePrefix,
+                                        nSurroundingAA,
+                                        peptideAssumption,
+                                        spectrumFile,
+                                        spectrumTitle,
+                                        psParameter,
+                                        identificationAlgorithmMatchesFeature,
+                                        waitingHandler
+                                );
 
                             } else if (spectrumMatch.getBestTagAssumption() != null) {
 
-                                feature = PsIdentificationAlgorithmMatchesSection.getTagAssumptionFeature(identification, identificationFeaturesGenerator,
-                                        identificationParameters, linePrefix, tagAssumption, spectrumMatch.getSpectrumKey(), psParameter,
-                                        identificationAlgorithmMatchesFeature, waitingHandler);
+                                feature = PsIdentificationAlgorithmMatchesSection.getTagAssumptionFeature(
+                                        identification,
+                                        identificationFeaturesGenerator,
+                                        spectrumProvider,
+                                        identificationParameters,
+                                        linePrefix,
+                                        tagAssumption,
+                                        spectrumFile,
+                                        spectrumTitle,
+                                        psParameter,
+                                        identificationAlgorithmMatchesFeature,
+                                        waitingHandler
+                                );
 
                             } else {
 
-                                throw new IllegalArgumentException("No best match found for spectrum " + spectrumMatch.getSpectrumKey() + ".");
+                                throw new IllegalArgumentException("No best match found for spectrum " + spectrumTitle + " in " + spectrumFile + ".");
 
                             }
 
@@ -217,25 +276,70 @@ public class PsPsmSection {
                             } else {
                                 first = false;
                             }
-                            writer.write(getFeature(identification, identificationFeaturesGenerator, identificationParameters,
-                                    linePrefix, spectrumMatch, psParameter, psmFeature, validatedOnly, decoys, waitingHandler));
+                            writer.write(
+                                    getFeature(
+                                            identification,
+                                            identificationFeaturesGenerator,
+                                            identificationParameters,
+                                            linePrefix,
+                                            spectrumMatch,
+                                            psParameter,
+                                            psmFeature,
+                                            validatedOnly,
+                                            decoys,
+                                            waitingHandler
+                                    )
+                            );
                         }
+
                         writer.newLine();
+
                         if (fragmentSection != null) {
+
                             StringBuilder fractionPrefix = new StringBuilder();
+
                             if (linePrefix != null) {
+
                                 fractionPrefix.append(linePrefix);
+
                             }
+
                             fractionPrefix.append(line).append(".");
                             writer.increaseDepth();
+
                             if (spectrumMatch.getBestPeptideAssumption() != null) {
-                                fragmentSection.writeSection(spectrumMatchKey, spectrumMatch.getBestPeptideAssumption(), sequenceProvider, identificationParameters, fractionPrefix.toString(), null);
+
+                                fragmentSection.writeSection(
+                                        spectrumFile,
+                                        spectrumTitle,
+                                        spectrumMatch.getBestPeptideAssumption(),
+                                        sequenceProvider,
+                                        spectrumProvider,
+                                        identificationParameters,
+                                        fractionPrefix.toString(),
+                                        null
+                                );
+
                             } else if (spectrumMatch.getBestTagAssumption() != null) {
-                                fragmentSection.writeSection(spectrumMatchKey, spectrumMatch.getBestTagAssumption(), sequenceProvider, identificationParameters, fractionPrefix.toString(), null);
+
+                                fragmentSection.writeSection(
+                                        spectrumFile,
+                                        spectrumTitle,
+                                        spectrumMatch.getBestTagAssumption(),
+                                        sequenceProvider,
+                                        spectrumProvider,
+                                        identificationParameters,
+                                        fractionPrefix.toString(),
+                                        null
+                                );
                             }
+
                             writer.decreseDepth();
+
                         }
+
                         line++;
+
                     }
                 }
             }
@@ -261,10 +365,18 @@ public class PsPsmSection {
      * @return the content corresponding to the given feature of the current
      * section
      */
-    public static String getFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            IdentificationParameters identificationParameters, String linePrefix,
-            SpectrumMatch spectrumMatch, PSParameter psParameter, PsPsmFeature psmFeature, boolean validatedOnly, boolean decoys,
-            WaitingHandler waitingHandler) {
+    public static String getFeature(
+            Identification identification,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            IdentificationParameters identificationParameters,
+            String linePrefix,
+            SpectrumMatch spectrumMatch,
+            PSParameter psParameter,
+            PsPsmFeature psmFeature,
+            boolean validatedOnly,
+            boolean decoys,
+            WaitingHandler waitingHandler
+    ) {
 
         switch (psmFeature) {
 
@@ -275,9 +387,12 @@ public class PsPsmSection {
                     TreeSet<Long> proteinGroups = identification.getProteinMatches(spectrumMatch.getBestPeptideAssumption().getPeptide().getKey());
 
                     return proteinGroups.stream()
-                            .map(key -> getProteinGroupText(key, identification))
-                            .collect(Collectors.joining(";"));
-
+                            .map(
+                                    key -> getProteinGroupText(key, identification)
+                            )
+                            .collect(
+                                    Collectors.joining(";")
+                            );
                 }
 
                 return "";
@@ -289,10 +404,16 @@ public class PsPsmSection {
                     TreeSet<Long> proteinGroups = identification.getProteinMatches(spectrumMatch.getBestPeptideAssumption().getPeptide().getKey());
 
                     int bestIndex = proteinGroups.stream()
-                            .map(key -> ((PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy)).getMatchValidationLevel())
-                            .mapToInt(MatchValidationLevel::getIndex)
+                            .map(
+                                    key -> ((PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy)).getMatchValidationLevel()
+                            )
+                            .mapToInt(
+                                    MatchValidationLevel::getIndex
+                            )
                             .max()
-                            .orElse(MatchValidationLevel.none.getIndex());
+                            .orElse(
+                                    MatchValidationLevel.none.getIndex()
+                            );
 
                     return MatchValidationLevel.getMatchValidationLevel(bestIndex).getName();
 
@@ -306,32 +427,52 @@ public class PsPsmSection {
 
                     PSModificationScores ptmScores = new PSModificationScores();
                     ptmScores = (PSModificationScores) spectrumMatch.getUrParam(ptmScores);
+
                     if (ptmScores != null) {
+
                         StringBuilder result = new StringBuilder();
-                        ArrayList<String> modList = new ArrayList<>(ptmScores.getScoredModifications());
-                        Collections.sort(modList);
+                        TreeSet<String> modList = new TreeSet<>(ptmScores.getScoredModifications());
+
                         for (String mod : modList) {
+
                             ModificationScoring ptmScoring = ptmScores.getModificationScoring(mod);
-                            ArrayList<Integer> sites = new ArrayList<>(ptmScoring.getProbabilisticSites());
+                            TreeSet<Integer> sites = new TreeSet<>(ptmScoring.getProbabilisticSites());
+
                             if (!sites.isEmpty()) {
-                                Collections.sort(sites);
+
                                 if (result.length() > 0) {
+
                                     result.append(", ");
+
                                 }
+
                                 result.append(mod).append(" (");
+
                                 boolean firstSite = true;
+
                                 for (int site : sites) {
+
                                     if (firstSite) {
+
                                         firstSite = false;
+
                                     } else {
+
                                         result.append(", ");
+
                                     }
+
                                     result.append(site).append(": ").append(ptmScoring.getProbabilisticScore(site));
+
                                 }
+
                                 result.append(")");
+
                             }
                         }
+
                         return result.toString();
+
                     }
                 }
 
@@ -344,39 +485,61 @@ public class PsPsmSection {
                     StringBuilder result = new StringBuilder();
                     PSModificationScores ptmScores = new PSModificationScores();
                     ptmScores = (PSModificationScores) spectrumMatch.getUrParam(ptmScores);
+
                     if (ptmScores != null) {
-                        ArrayList<String> modList = new ArrayList<>(ptmScores.getScoredModifications());
-                        Collections.sort(modList);
+
+                        TreeSet<String> modList = new TreeSet<>(ptmScores.getScoredModifications());
+
                         for (String mod : modList) {
+
                             ModificationScoring ptmScoring = ptmScores.getModificationScoring(mod);
-                            ArrayList<Integer> sites = new ArrayList<>(ptmScoring.getDSites());
+                            TreeSet<Integer> sites = new TreeSet<>(ptmScoring.getDSites());
+
                             if (!sites.isEmpty()) {
-                                Collections.sort(sites);
+
                                 if (result.length() > 0) {
+
                                     result.append(", ");
+
                                 }
+
                                 result.append(mod).append(" (");
                                 boolean firstSite = true;
+
                                 for (int site : sites) {
+
                                     if (firstSite) {
+
                                         firstSite = false;
+
                                     } else {
+
                                         result.append(", ");
+
                                     }
+
                                     result.append(site).append(": ").append(ptmScoring.getDeltaScore(site));
+
                                 }
+
                                 result.append(")");
+
                             }
                         }
                     }
+
                     return result.toString();
+
                 }
 
                 return "";
 
             case localization_confidence:
 
-                return getPeptideModificationLocationConfidence(spectrumMatch, identificationParameters.getSearchParameters().getModificationParameters());
+                return getPeptideModificationLocationConfidence(
+                        spectrumMatch,
+                        identificationParameters.getSearchParameters().getModificationParameters()
+                );
 
             case algorithm_score:
 
@@ -386,30 +549,60 @@ public class PsPsmSection {
                 if (bestPeptideAssumption != null) {
 
                     return spectrumMatch.getAllPeptideAssumptions()
-                            .filter(peptideAssumption -> peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(
-                            bestPeptideAssumption.getPeptide(), identificationParameters.getSequenceMatchingParameters()))
-                            .collect(Collectors.toMap(PeptideAssumption::getAdvocate,
-                                    Function.identity(),
-                                    (a, b) -> b.getScore() < a.getScore() ? b : a,
-                                    TreeMap::new))
+                            .filter(
+                                    peptideAssumption -> peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(
+                                            bestPeptideAssumption.getPeptide(),
+                                            identificationParameters.getSequenceMatchingParameters()
+                                    )
+                            )
+                            .collect(
+                                    Collectors.toMap(
+                                            PeptideAssumption::getAdvocate,
+                                            Function.identity(),
+                                            (a, b) -> b.getScore() < a.getScore() ? b : a,
+                                            TreeMap::new
+                                    )
+                            )
                             .entrySet().stream()
-                            .map(entry -> Util.toString(Advocate.getAdvocate(entry.getKey()).getName(),
-                            Double.toString(entry.getValue().getRawScore())))
-                            .collect(Collectors.joining(","));
+                            .map(
+                                    entry -> Util.keyValueToString(Advocate.getAdvocate(entry.getKey()).getName(),
+                                            Double.toString(
+                                                    entry.getValue().getRawScore()
+                                            )
+                                    )
+                            )
+                            .collect(
+                                    Collectors.joining(",")
+                            );
 
                 } else if (bestTagAssumption != null) {
 
                     return spectrumMatch.getAllTagAssumptions()
-                            .filter(tagAssumption -> tagAssumption.getTag().isSameSequenceAndModificationStatusAs(
-                            bestTagAssumption.getTag(), identificationParameters.getSequenceMatchingParameters()))
-                            .collect(Collectors.toMap(TagAssumption::getAdvocate,
-                                    Function.identity(),
-                                    (a, b) -> b.getScore() < a.getScore() ? b : a,
-                                    TreeMap::new))
+                            .filter(
+                                    tagAssumption -> tagAssumption.getTag().isSameSequenceAndModificationStatusAs(
+                                            bestTagAssumption.getTag(),
+                                            identificationParameters.getSequenceMatchingParameters()
+                                    )
+                            )
+                            .collect(
+                                    Collectors.toMap(
+                                            TagAssumption::getAdvocate,
+                                            Function.identity(),
+                                            (a, b) -> b.getScore() < a.getScore() ? b : a,
+                                            TreeMap::new
+                                    )
+                            )
                             .entrySet().stream()
-                            .map(entry -> Util.toString(Advocate.getAdvocate(entry.getKey()).getName(),
-                            Double.toString(entry.getValue().getRawScore())))
-                            .collect(Collectors.joining(","));
+                            .map(
+                                    entry -> Util.keyValueToString(Advocate.getAdvocate(entry.getKey()).getName(),
+                                            Double.toString(
+                                                    entry.getValue().getRawScore()
+                                            )
+                                    )
+                            )
+                            .collect(
+                                    Collectors.joining(",")
+                            );
 
                 }
 
@@ -558,7 +751,10 @@ public class PsPsmSection {
      *
      * @return a description of the given protein group
      */
-    public static String getProteinGroupText(long proteinGroupKey, Identification identification) {
+    public static String getProteinGroupText(
+            long proteinGroupKey, 
+            Identification identification
+    ) {
 
         ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinGroupKey);
         String[] accessions = proteinMatch.getAccessions();
@@ -583,7 +779,10 @@ public class PsPsmSection {
      *
      * @return the peptide modification location confidence as a string
      */
-    public static String getPeptideModificationLocationConfidence(SpectrumMatch spectrumMatch, ModificationParameters modificationParameters) {
+    public static String getPeptideModificationLocationConfidence(
+            SpectrumMatch spectrumMatch, 
+            ModificationParameters modificationParameters
+    ) {
 
         PSModificationScores psPtmScores = (PSModificationScores) spectrumMatch.getUrParam(new PSModificationScores());
 

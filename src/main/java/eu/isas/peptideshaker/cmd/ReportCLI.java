@@ -4,9 +4,9 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
+import com.compomics.util.io.IoUtil;
 import com.compomics.util.parameters.UtilitiesUserParameters;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.utils.CpsParent;
@@ -39,9 +39,9 @@ public class ReportCLI extends CpsParent {
      */
     private WaitingHandler waitingHandler;
     /**
-     * The PTM factory.
+     * The modification factory.
      */
-    private ModificationFactory ptmFactory;
+    private ModificationFactory modificationFactory;
     /**
      * The utilities user preferences.
      */
@@ -72,7 +72,7 @@ public class ReportCLI extends CpsParent {
 
         // Instantiate factories
         PeptideShaker.instantiateFacories(utilitiesUserPreferences);
-        ptmFactory = ModificationFactory.getInstance();
+        modificationFactory = ModificationFactory.getInstance();
         enzymeFactory = EnzymeFactory.getInstance();
 
         // Load resources files
@@ -158,7 +158,21 @@ public class ReportCLI extends CpsParent {
             int nSurroundingAAs = 2; //@TODO: this shall not be hard coded
             for (String reportType : reportCLIInputBean.getReportTypes()) {
                 try {
-                    CLIExportMethods.exportReport(reportCLIInputBean, reportType, projectParameters.getProjectUniqueName(), projectDetails, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider, nSurroundingAAs, spectrumCountingParameters, waitingHandler);
+                    CLIExportMethods.exportReport(
+                            reportCLIInputBean, 
+                            reportType, 
+                            projectParameters.getProjectUniqueName(), 
+                            projectDetails, 
+                            identification, 
+                            geneMaps, 
+                            identificationFeaturesGenerator, 
+                            identificationParameters, 
+                            sequenceProvider, 
+                            proteinDetailsProvider, 
+                            nSurroundingAAs, 
+                            spectrumCountingParameters, 
+                            waitingHandler
+                    );
                 } catch (Exception e) {
                     waitingHandler.appendReport("An error occurred while exporting the " + reportType + ".", true, true);
                     e.printStackTrace();
@@ -171,7 +185,11 @@ public class ReportCLI extends CpsParent {
         if (reportCLIInputBean.documentationExportNeeded()) {
             for (String reportType : reportCLIInputBean.getReportTypes()) {
                 try {
-                    CLIExportMethods.exportDocumentation(reportCLIInputBean, reportType, waitingHandler);
+                    CLIExportMethods.exportDocumentation(
+                            reportCLIInputBean, 
+                            reportType, 
+                            waitingHandler
+                    );
                 } catch (Exception e) {
                     waitingHandler.appendReport("An error occurred while exporting the documentation for " + reportType + ".", true, true);
                     e.printStackTrace();
@@ -223,7 +241,9 @@ public class ReportCLI extends CpsParent {
      *
      * @return true if the startup was valid
      */
-    private static boolean isValidStartup(CommandLine aLine) throws IOException {
+    private static boolean isValidStartup(
+            CommandLine aLine
+    ) throws IOException {
 
         if (aLine.getOptions().length == 0) {
             return false;
@@ -322,8 +342,6 @@ public class ReportCLI extends CpsParent {
      */
     public void closePeptideShaker() throws IOException, SQLException, InterruptedException, ClassNotFoundException {
 
-        SpectrumFactory.getInstance().closeFiles();
-
         identification.close();
 
         File matchFolder = PeptideShaker.getMatchesFolder();
@@ -332,7 +350,7 @@ public class ReportCLI extends CpsParent {
 
         if (tempFiles != null) {
             for (File currentFile : tempFiles) {
-                Util.deleteDir(currentFile);
+                IoUtil.deleteDir(currentFile);
             }
         }
     }

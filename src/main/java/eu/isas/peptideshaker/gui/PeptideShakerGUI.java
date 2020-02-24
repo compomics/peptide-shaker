@@ -9,7 +9,6 @@ import com.compomics.util.experiment.biology.ions.NeutralLoss;
 import com.compomics.util.experiment.biology.ions.IonFactory;
 import com.compomics.util.experiment.biology.aminoacids.AminoAcid;
 import com.compomics.util.experiment.biology.proteins.Peptide;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Peak;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
@@ -74,7 +73,7 @@ import com.compomics.util.io.file.LastSelectedFolder;
 import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathParameters;
 import com.compomics.software.settings.gui.PathParametersDialog;
-import com.compomics.util.FileAndFileFilter;
+import com.compomics.util.gui.file_handling.FileAndFileFilter;
 import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.biology.genes.ProteinGeneDetailsProvider;
@@ -112,6 +111,7 @@ import com.compomics.util.experiment.identification.features.IdentificationFeatu
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
+import com.compomics.util.gui.file_handling.FileChooserUtils;
 import com.compomics.util.gui.parameters.SparklineColorsDialog;
 import com.compomics.util.gui.parameters.identification.advanced.BackgroundSpeciesDialog;
 import eu.isas.peptideshaker.utils.PsZipUtils;
@@ -2684,7 +2684,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         String cpsFileFilterDescription = "PeptideShaker (.psdb)";
         String zipFileFilterDescription = "Zipped PeptideShaker (.zip)";
-        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(
+        FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(
                 this,
                 new String[]{".psdb", ".zip"},
                 new String[]{cpsFileFilterDescription, zipFileFilterDescription},
@@ -6349,7 +6349,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     }
 
                     File tmpFile = new File(destinationFolder, new File(path).getName());
-                    Util.saveUrl(tmpFile, zipURL, Util.getFileSize(url), null, null, progressDialog);
+                    Util.saveUrl(tmpFile, zipURL, IoUtils.getFileSize(url), null, null, progressDialog);
                     progressDialog.setRunFinished();
                     importPeptideShakerZipFile(tmpFile);
 
@@ -7578,7 +7578,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             boolean openDialog
     ) {
 
-        File selectedFile = Util.getUserSelectedFile(
+        File selectedFile = FileChooserUtils.getUserSelectedFile(
                 this,
                 aFileEnding,
                 aFileFormatDescription,

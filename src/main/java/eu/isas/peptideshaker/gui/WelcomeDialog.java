@@ -9,7 +9,7 @@ import com.compomics.software.autoupdater.WebDAO;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.software.dialogs.JavaParametersDialog;
-import com.compomics.util.FileAndFileFilter;
+import com.compomics.util.gui.file_handling.FileAndFileFilter;
 import com.compomics.util.Util;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.gui.error_handlers.HelpDialog;
@@ -500,7 +500,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         String cpsFileFilterDescription = "PeptideShaker Database (.psdb)";
         String zipFileFilterDescription = "Zipped PeptideShaker (.zip)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
-        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".psdb", ".zip"},
+        FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(this, new String[]{".psdb", ".zip"},
                 new String[]{cpsFileFilterDescription, zipFileFilterDescription}, "Open PeptideShaker Project", lastSelectedFolderPath, null, true, false, false, 0);
 
         if (selectedFileAndFilter != null) {

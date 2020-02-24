@@ -9,6 +9,7 @@ import com.compomics.util.experiment.identification.validation.MatchValidationLe
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 
 /**
  * This class outputs the spectrum counting related export features.
@@ -20,7 +21,7 @@ public class PsSpectrumCountingSection {
     /**
      * The features to export.
      */
-    private final ArrayList<PsSpectrumCountingFeature> spectrumCountingFeatures;
+    private final EnumSet<PsSpectrumCountingFeature> spectrumCountingFeatures;
     /**
      * Boolean indicating whether the line shall be indexed.
      */
@@ -42,19 +43,29 @@ public class PsSpectrumCountingSection {
      * @param header indicates whether the table header should be written
      * @param writer the writer which will write to the file
      */
-    public PsSpectrumCountingSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
+    public PsSpectrumCountingSection(
+            ArrayList<ExportFeature> exportFeatures, 
+            boolean indexes, 
+            boolean header, 
+            ExportWriter writer
+    ) {
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        spectrumCountingFeatures = new ArrayList<>(exportFeatures.size());
+        spectrumCountingFeatures = EnumSet.noneOf(PsSpectrumCountingFeature.class);
+        
         for (ExportFeature exportFeature : exportFeatures) {
+
             if (exportFeature instanceof PsSpectrumCountingFeature) {
+
                 spectrumCountingFeatures.add((PsSpectrumCountingFeature) exportFeature);
+
             } else {
+
                 throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as spectrum counting feature.");
+
             }
         }
-        Collections.sort(spectrumCountingFeatures);
     }
 
     /**
@@ -67,7 +78,10 @@ public class PsSpectrumCountingSection {
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file
      */
-    public void writeSection(SpectrumCountingParameters spectrumCountingPreferences, WaitingHandler waitingHandler) throws IOException {
+    public void writeSection(
+            SpectrumCountingParameters spectrumCountingPreferences, 
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -87,33 +101,52 @@ public class PsSpectrumCountingSection {
         int line = 1;
 
         for (PsSpectrumCountingFeature spectrumCountingFeature : spectrumCountingFeatures) {
+
             if (indexes) {
+
                 writer.write(Integer.toString(line));
                 writer.addSeparator();
+
             }
+
             writer.write(spectrumCountingFeature.getTitle());
             writer.addSeparator();
+
             switch (spectrumCountingFeature) {
+
                 case method:
+
                     switch (spectrumCountingPreferences.getSelectedMethod()) {
+
                         case EMPAI:
                             writer.write("emPAI");
                             break;
+
                         case NSAF:
                             writer.write("NSAF");
                             break;
+
                         default:
                             writer.write("unknown");
+
                     }
+
                     break;
+
                 case validated:
+
                     writer.write(MatchValidationLevel.getMatchValidationLevel(spectrumCountingPreferences.getMatchValidationLevel()).getName());
                     break;
+
                 default:
+
                     writer.write("Not implemented");
+
             }
+
             writer.newLine();
             line++;
+
         }
     }
 }

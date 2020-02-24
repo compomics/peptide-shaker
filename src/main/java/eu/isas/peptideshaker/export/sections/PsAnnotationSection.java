@@ -10,6 +10,8 @@ import eu.isas.peptideshaker.export.exportfeatures.PsAnnotationFeature;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
+import java.util.stream.Collectors;
 
 /**
  * This class outputs the annotation related export features.
@@ -21,7 +23,7 @@ public class PsAnnotationSection {
     /**
      * The features to export.
      */
-    private final ArrayList<PsAnnotationFeature> annotationFeatures;
+    private final EnumSet<PsAnnotationFeature> annotationFeatures;
     /**
      * Boolean indicating whether the line shall be indexed.
      */
@@ -43,19 +45,29 @@ public class PsAnnotationSection {
      * @param header indicates whether the table header should be written
      * @param writer the writer which will write to the file
      */
-    public PsAnnotationSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
+    public PsAnnotationSection(
+            ArrayList<ExportFeature> exportFeatures,
+            boolean indexes,
+            boolean header,
+            ExportWriter writer
+    ) {
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        this.annotationFeatures = new ArrayList<>(exportFeatures.size());
+        this.annotationFeatures = EnumSet.noneOf(PsAnnotationFeature.class);
+
         for (ExportFeature exportFeature : exportFeatures) {
+
             if (exportFeature instanceof PsAnnotationFeature) {
+
                 annotationFeatures.add((PsAnnotationFeature) exportFeature);
+
             } else {
+
                 throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as annotation feature.");
+
             }
         }
-        Collections.sort(this.annotationFeatures);
     }
 
     /**
@@ -63,11 +75,14 @@ public class PsAnnotationSection {
      *
      * @param annotationPreferences the annotation preferences of the project
      * @param waitingHandler the waiting handler
-     * 
+     *
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      */
-    public void writeSection(AnnotationParameters annotationPreferences, WaitingHandler waitingHandler) throws IOException {
+    public void writeSection(
+            AnnotationParameters annotationPreferences,
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -105,36 +120,35 @@ public class PsAnnotationSection {
                     }
                     break;
                 case fragment_ion_accuracy:
-                    writer.write(annotationPreferences.getFragmentIonAccuracy() + "");
+                    writer.write(Double.toString(annotationPreferences.getFragmentIonAccuracy()));
                     break;
                 case intensity_limit:
-                    writer.write(annotationPreferences.getAnnotationIntensityLimit() + "");
+                    writer.write(Double.toString(annotationPreferences.getAnnotationIntensityLimit()));
                     break;
                 case neutral_losses:
-                    String neutralLosses = "";
-                    for (NeutralLoss neutralLoss : annotationPreferences.getNeutralLosses()) {
-                        if (!neutralLosses.equals("")) {
-                            neutralLosses += ", ";
-                        }
-                        neutralLosses += neutralLoss.name;
-                    }
+
+                    String neutralLosses = annotationPreferences.getNeutralLosses().stream()
+                            .map(
+                                    neutralLoss -> neutralLoss.name
+                            )
+                            .collect(
+                                    Collectors.joining(", ")
+                            );
                     writer.write(neutralLosses);
                     break;
                 case neutral_losses_sequence_dependence:
-                    if (annotationPreferences.areNeutralLossesSequenceAuto()) {
-                        writer.write("Yes");
-                    } else {
-                        writer.write("No");
-                    }
+                    String value = annotationPreferences.areNeutralLossesSequenceAuto() ? "Yes" : "No";
+                    writer.write(value);
                     break;
                 case selected_ions:
-                    String ions = "";
-                    for (int fragmentType : annotationPreferences.getFragmentIonTypes()) {
-                        if (!ions.equals("")) {
-                            ions += ", ";
-                        }
-                        ions += PeptideFragmentIon.getSubTypeAsString(fragmentType);
-                    }
+                    
+                    String ions = annotationPreferences.getFragmentIonTypes().stream()
+                            .map(
+                                    fragmentType -> PeptideFragmentIon.getSubTypeAsString(fragmentType)
+                            )
+                            .collect(
+                                    Collectors.joining(", ")
+                            );
                     writer.write(ions);
                     break;
                 default:
